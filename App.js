@@ -7,22 +7,17 @@
  */
 
 import React, { useEffect } from 'react';
-import {
-  NativeModules,
-  SafeAreaView,
-  Text
-} from 'react-native';
+import { SafeAreaView, Text } from 'react-native';
+import RNSplashScreen from './NativeModules/RNSplashScreen';
 
 
 const App = () => {
 
   useEffect(() => {
-    setTimeout(() => {
-      NativeModules.RNSplashModule.hideSplash();
-    }, 3000);
-
+    RNSplashScreen.hide();
     return () => { }
-  }, [])
+  }, []);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.5)" }}>
       <Text>etesting</Text>
