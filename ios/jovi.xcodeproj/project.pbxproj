@@ -11,7 +11,13 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		9F7E40FB27A27AB500EA150D /* RNSplashModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F7E40FA27A27AB500EA150D /* RNSplashModule.m */; };
+		9F943D3C27A187FA00F74F26 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F943D3B27A187FA00F74F26 /* Launch Screen.storyboard */; };
+		9F943D3E27A18B1700F74F26 /* SplashGif.gif in Resources */ = {isa = PBXBuildFile; fileRef = 9F943D3D27A18B1700F74F26 /* SplashGif.gif */; };
+		9F943D4127A18BB600F74F26 /* LogoAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F943D4027A18BB600F74F26 /* LogoAnimationView.swift */; };
+		9F943D4327A18BD700F74F26 /* UIView+Constraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F943D4227A18BD700F74F26 /* UIView+Constraints.swift */; };
+		9F943D4527A18C3B00F74F26 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F943D4427A18C3B00F74F26 /* ViewController.swift */; };
+		9F943D4727A1909F00F74F26 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F943D4627A1909F00F74F26 /* Main.storyboard */; };
 		D389051199D75342566325AB /* libPods-jovi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E5B4C234413A32092FC84A70 /* libPods-jovi.a */; };
 		FEE8993AF0D75BE3BBA84C86 /* libPods-jovi-joviTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9321C510B4A5E695254FB2CF /* libPods-jovi-joviTests.a */; };
 /* End PBXBuildFile section */
@@ -36,10 +42,18 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = jovi/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = jovi/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = jovi/main.m; sourceTree = "<group>"; };
-		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = jovi/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8669EFCE3A6624FB35B430A3 /* Pods-jovi.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jovi.debug.xcconfig"; path = "Target Support Files/Pods-jovi/Pods-jovi.debug.xcconfig"; sourceTree = "<group>"; };
 		90FA065A62BA607A9A01097A /* Pods-jovi-joviTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jovi-joviTests.release.xcconfig"; path = "Target Support Files/Pods-jovi-joviTests/Pods-jovi-joviTests.release.xcconfig"; sourceTree = "<group>"; };
 		9321C510B4A5E695254FB2CF /* libPods-jovi-joviTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-jovi-joviTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F7E40F927A27A8C00EA150D /* RNSplashModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RNSplashModule.h; path = jovi/RNSplashModule.h; sourceTree = "<group>"; };
+		9F7E40FA27A27AB500EA150D /* RNSplashModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RNSplashModule.m; path = jovi/RNSplashModule.m; sourceTree = "<group>"; };
+		9F943D3B27A187FA00F74F26 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "Launch Screen.storyboard"; path = "jovi/Launch Screen.storyboard"; sourceTree = "<group>"; };
+		9F943D3D27A18B1700F74F26 /* SplashGif.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = SplashGif.gif; sourceTree = "<group>"; };
+		9F943D3F27A18BB500F74F26 /* jovi-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "jovi-Bridging-Header.h"; sourceTree = "<group>"; };
+		9F943D4027A18BB600F74F26 /* LogoAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LogoAnimationView.swift; path = jovi/LogoAnimationView.swift; sourceTree = "<group>"; };
+		9F943D4227A18BD700F74F26 /* UIView+Constraints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UIView+Constraints.swift"; path = "jovi/UIView+Constraints.swift"; sourceTree = "<group>"; };
+		9F943D4427A18C3B00F74F26 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = jovi/ViewController.swift; sourceTree = "<group>"; };
+		9F943D4627A1909F00F74F26 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Main.storyboard; path = jovi/Main.storyboard; sourceTree = "<group>"; };
 		D99429C104C0F3C83B09D772 /* Pods-jovi.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jovi.release.xcconfig"; path = "Target Support Files/Pods-jovi/Pods-jovi.release.xcconfig"; sourceTree = "<group>"; };
 		DDCE02A387D5AAA058256518 /* Pods-jovi-joviTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jovi-joviTests.debug.xcconfig"; path = "Target Support Files/Pods-jovi-joviTests/Pods-jovi-joviTests.debug.xcconfig"; sourceTree = "<group>"; };
 		E5B4C234413A32092FC84A70 /* libPods-jovi.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-jovi.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -86,12 +100,20 @@
 		13B07FAE1A68108700A75B9A /* jovi */ = {
 			isa = PBXGroup;
 			children = (
+				9F943D3D27A18B1700F74F26 /* SplashGif.gif */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
-				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				9F943D3B27A187FA00F74F26 /* Launch Screen.storyboard */,
+				9F943D4027A18BB600F74F26 /* LogoAnimationView.swift */,
+				9F943D3F27A18BB500F74F26 /* jovi-Bridging-Header.h */,
+				9F943D4227A18BD700F74F26 /* UIView+Constraints.swift */,
+				9F943D4427A18C3B00F74F26 /* ViewController.swift */,
+				9F943D4627A1909F00F74F26 /* Main.storyboard */,
+				9F7E40F927A27A8C00EA150D /* RNSplashModule.h */,
+				9F7E40FA27A27AB500EA150D /* RNSplashModule.m */,
 			);
 			name = jovi;
 			sourceTree = "<group>";
@@ -114,7 +136,6 @@
 				DDCE02A387D5AAA058256518 /* Pods-jovi-joviTests.debug.xcconfig */,
 				90FA065A62BA607A9A01097A /* Pods-jovi-joviTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -208,7 +229,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1320;
 					};
 				};
 			};
@@ -243,8 +264,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				9F943D3C27A187FA00F74F26 /* Launch Screen.storyboard in Resources */,
+				9F943D3E27A18B1700F74F26 /* SplashGif.gif in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				9F943D4727A1909F00F74F26 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -411,8 +434,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F943D4527A18C3B00F74F26 /* ViewController.swift in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				9F7E40FB27A27AB500EA150D /* RNSplashModule.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				9F943D4127A18BB600F74F26 /* LogoAnimationView.swift in Sources */,
+				9F943D4327A18BD700F74F26 /* UIView+Constraints.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -431,6 +458,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = DDCE02A387D5AAA058256518 /* Pods-jovi-joviTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -458,6 +486,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 90FA065A62BA607A9A01097A /* Pods-jovi-joviTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = joviTests/Info.plist;
@@ -498,6 +527,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = jovi;
+				SWIFT_OBJC_BRIDGING_HEADER = "jovi-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -523,6 +553,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = jovi;
+				SWIFT_OBJC_BRIDGING_HEADER = "jovi-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
