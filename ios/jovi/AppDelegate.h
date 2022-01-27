@@ -5,4 +5,7 @@
 
 @property (nonatomic, strong) UIWindow *window;
 
+- (void) resetRoot;
+
+
 @end
