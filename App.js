@@ -1,18 +1,11 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
 import React, { useEffect } from 'react';
-import { SafeAreaView, Text,NativeModules } from 'react-native';
+import { SafeAreaView, Text, View } from 'react-native';
 import RNSplashScreen from './NativeModules/RNSplashScreen';
 import IntroScreen from './src/screens/IntroScreen/IntroScreen';
+import Image from './src/components/atoms/Image';
 
-
-const App = () => {
+const size = 330;
+export default App = () => {
   useEffect(() => {
       setTimeout(()=>{
           RNSplashScreen.hide();
@@ -21,11 +14,15 @@ const App = () => {
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
         <IntroScreen />
-    </SafeAreaView>
+      {/* <Text>Jovi</Text>
+      <View style={{ height: size, width: size, backgroundColor: 'red', alignSelf: "center", borderRadius: 0, overflow: "hidden", }}>
+        <Image
+          source={{ uri: 'https://www.ppic.org/wp-content/uploads/Crowd-of-Diverse-People_800x528-768x512.jpg' }}
+        />
+      </View> */}
+
+    </SafeAreaView >
   );
-};
-
-
-export default App;
+}
