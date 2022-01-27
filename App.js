@@ -19,8 +19,8 @@ const App = () => {
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.5)" }}>
-      <Text>etesting</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "purple" }}>
+      <Text>Jovi</Text>
 
     </SafeAreaView>
   );
