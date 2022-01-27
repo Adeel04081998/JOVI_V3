@@ -12,7 +12,7 @@ import RNSplashScreen from './NativeModules/RNSplashScreen';
 
 
 const App = () => {
-
+let svg = ``
   useEffect(() => {
     RNSplashScreen.hide();
     return () => { }
