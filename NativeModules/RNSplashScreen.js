@@ -6,6 +6,7 @@ export default {
             NativeModules.RNSplashModule.hideSplash();
             return
         } else {
+            NativeModules.SplashScreen.hide();
             return;
         }
 
