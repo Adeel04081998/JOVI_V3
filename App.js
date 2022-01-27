@@ -7,7 +7,7 @@
  */
 
 import React, { useEffect } from 'react';
-import { SafeAreaView, Text } from 'react-native';
+import { SafeAreaView, Text,NativeModules } from 'react-native';
 import RNSplashScreen from './NativeModules/RNSplashScreen';
 
 
