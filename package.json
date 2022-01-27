@@ -3,11 +3,11 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
-    "start": "react-native start",
-    "dev": "cd android&&./gradlew clean&&./gradlew --stop&&cd - &&npx react-native run-android",
-    "build": "cd android&&./gradlew clean&&./gradlew --stop&& ./gradlew bundleRelease &&cd - &&npx react-native run-android --variant=release",
+    "android": "npx react-native run-android",
+    "ios": "npx react-native run-ios",
+    "start": "npx react-native start",
+    "dev": "cd android && ./gradlew clean && ./gradlew --stop && cd - && npx react-native run-android",
+    "build": "cd android && ./gradlew clean && ./gradlew --stop && ./gradlew bundleRelease && cd - && npx react-native run-android --variant=release",
     "test": "jest",
     "lint": "eslint ."
   },
