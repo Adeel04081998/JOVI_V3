@@ -23,6 +23,9 @@ static void InitializeFlipper(UIApplication *application) {
 }
 #endif
 
+RCTRootView *rootView;
+UIView *launchScreenView;
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -32,7 +35,7 @@ static void InitializeFlipper(UIApplication *application) {
 #endif
 
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
-  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
+  rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                    moduleName:@"jovi"
                                             initialProperties:nil];
 
@@ -47,7 +50,22 @@ static void InitializeFlipper(UIApplication *application) {
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+  
+  
+  //SPLASH SCREEN
+  UIStoryboard *launchScreenStoryboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+  UIViewController *launchScreenViewController = [launchScreenStoryboard instantiateViewControllerWithIdentifier:@"MainViewController"];
+  launchScreenView = [launchScreenViewController view];
+  launchScreenView.frame = self.window.bounds;
+  launchScreenView.insetsLayoutMarginsFromSafeArea = false;
+  [rootView addSubview:launchScreenView];
+  //SPLASH SCREEN END
+
   return YES;
+}
+
+- (void) resetRoot{
+    [launchScreenView removeFromSuperview];
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
