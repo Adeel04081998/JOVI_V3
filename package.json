@@ -3,11 +3,12 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "npx react-native run-android",
-    "ios": "npx react-native run-ios",
-    "start": "npx react-native start",
-    "dev": "cd android && ./gradlew clean && ./gradlew --stop && cd - && npx react-native run-android",
-    "build": "cd android && ./gradlew clean && ./gradlew --stop && ./gradlew bundleRelease && cd - && npx react-native run-android --variant=release",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "dev_ios": "npx pod-install ios && react-native run-ios",
+    "dev_android": "cd android&&./gradlew clean&&./gradlew --stop&&cd - &&npx react-native run-android",
+    "build_android": "cd android&&./gradlew clean&&./gradlew --stop&& ./gradlew bundleRelease &&cd - &&npx react-native run-android --variant=release",
     "test": "jest",
     "lint": "eslint ."
   },
@@ -16,9 +17,19 @@
     "axios": "^0.25.0",
     "lottie-ios": "3.2.3",
     "lottie-react-native": "^5.0.1",
+    "react-native-svg": "^12.1.1",
+    "@react-native-community/masked-view": "^0.1.11",
+    "@react-navigation/drawer": "^6.1.8",
+    "@react-navigation/native": "^6.0.6",
+    "@react-navigation/stack": "^6.0.11",
     "react": "17.0.2",
     "react-native": "0.67.0",
-    "react-native-svg": "^12.1.1"
+    "react-native-gesture-handler": "^2.2.0",
+    "react-native-reanimated": "2.2.4",
+    "react-native-safe-area-context": "^3.3.2",
+    "react-native-screens": "^3.10.2",
+    "react-native-shared-element": "^0.8.4",
+    "react-navigation-shared-element": "^3.1.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

@@ -1,28 +1,29 @@
 import React, { useEffect } from 'react';
-import { SafeAreaView, Text, View } from 'react-native';
+import { SafeAreaView, StatusBar, useColorScheme, View, Text, LogBox } from 'react-native';
 import RNSplashScreen from './NativeModules/RNSplashScreen';
-import IntroScreen from './src/screens/IntroScreen/IntroScreen';
-import Image from './src/components/atoms/Image';
+import { NavigationContainer } from "@react-navigation/native";
+import RootStack from "./src/navigations"
 
 const size = 330;
 export default App = () => {
+  const isDarkMode = useColorScheme() === "dark";
   useEffect(() => {
       setTimeout(()=>{
           RNSplashScreen.hide();
       },3000)
     return () => { }
   }, []);
-
+  LogBox.ignoreLogs([
+    "[react-native-gesture-handler] Seems like you\'re using an old API with gesture components, check out new Gestures system!",
+  ]);
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-        <IntroScreen />
-      {/* <Text>Jovi</Text>
-      <View style={{ height: size, width: size, backgroundColor: 'red', alignSelf: "center", borderRadius: 0, overflow: "hidden", }}>
-        <Image
-          source={{ uri: 'https://www.ppic.org/wp-content/uploads/Crowd-of-Diverse-People_800x528-768x512.jpg' }}
-        />
-      </View> */}
-
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} backgroundColor="#fff" />
+      <NavigationContainer>
+        <View style={{ flex: 1 }}>
+          <RootStack />
+        </View>
+      </NavigationContainer>
     </SafeAreaView >
   );
 }
