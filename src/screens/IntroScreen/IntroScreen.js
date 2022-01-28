@@ -22,9 +22,9 @@ const IntroScreen = () => {
                 resizeMode='cover' source={require('../../assets/Onboarding.json')} autoPlay loop />
             <Button
                 onPress={onGetStarted}
-                parentTouchableStyle={introStyles.buttonTopView}
+                style={introStyles.buttonTopView}
                 textStyle={introStyles.buttonText}
-                buttonText={'Get Started'}
+                text={'Get Started'}
             />
         </View>
     );

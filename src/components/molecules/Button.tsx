@@ -1,11 +1,11 @@
 import * as React from "react";
-import {Text as RNText,TouchableOpacity as RNTouchableOpacity, Animated, Easing, GestureResponderEvent, TextProps, TextStyle } from "react-native";
+import { Animated, Easing, GestureResponderEvent, TextProps, TextStyle } from "react-native";
 import Text from "../atoms/Text";
 import TouchableOpacity from "../atoms/TouchableOpacity";
 
-const AnimatedTouchable = Animated.createAnimatedComponent(RNTouchableOpacity);
+const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
-type Props = React.ComponentProps<typeof RNTouchableOpacity> & {
+type Props = React.ComponentProps<typeof TouchableOpacity> & {
     children?: any;
     text?: string;
     textStyle?: TextStyle;
