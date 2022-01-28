@@ -1,30 +1,53 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
 import React, { useEffect } from 'react';
-import { SafeAreaView, Text,NativeModules } from 'react-native';
+import { SafeAreaView, StatusBar, useColorScheme, View, Text, LogBox } from 'react-native';
+import { NavigationContainer } from "@react-navigation/native";
+import RootStack from "./src/navigations"
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Entypo from 'react-native-vector-icons/Entypo';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import Feather from 'react-native-vector-icons/Feather';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Fontisto from 'react-native-vector-icons/Fontisto';
+import Foundation from 'react-native-vector-icons/Foundation';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import RNSplashScreen from './NativeModules/RNSplashScreen';
 
+AntDesign.loadFont();
+Entypo.loadFont();
+EvilIcons.loadFont();
+Feather.loadFont();
+FontAwesome.loadFont();
+Fontisto.loadFont();
+Ionicons.loadFont();
+MaterialCommunityIcons.loadFont();
+MaterialIcons.loadFont();
+Foundation.loadFont();
+SimpleLineIcons.loadFont();
 
-const App = () => {
-let svg = ``
+
+export default App = () => {
+  const isDarkMode = useColorScheme() === "dark";
   useEffect(() => {
-    RNSplashScreen.hide();
+    setTimeout(() => {
+      RNSplashScreen.hide();
+    }, 3000)
     return () => { }
   }, []);
-
+  
+  LogBox.ignoreLogs([
+    "[react-native-gesture-handler] Seems like you\'re using an old API with gesture components, check out new Gestures system!",
+  ]);
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "purple" }}>
-      <Text>Jovi</Text>
-
-    </SafeAreaView>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} backgroundColor="#fff" />
+      <NavigationContainer>
+        <View style={{ flex: 1 }}>
+          <RootStack />
+        </View>
+      </NavigationContainer>
+    </SafeAreaView >
   );
-};
-
-
-export default App;
+}
