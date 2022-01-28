@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
-import { SafeAreaView, Text } from 'react-native';
+import { SafeAreaView, StatusBar, useColorScheme, View, Text, LogBox } from 'react-native';
+import { NavigationContainer } from "@react-navigation/native";
+import RootStack from "./src/navigations"
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
@@ -27,27 +29,25 @@ SimpleLineIcons.loadFont();
 
 
 export default App = () => {
+  const isDarkMode = useColorScheme() === "dark";
   useEffect(() => {
     setTimeout(() => {
       RNSplashScreen.hide();
     }, 3000)
     return () => { }
   }, []);
-
-
+  
+  LogBox.ignoreLogs([
+    "[react-native-gesture-handler] Seems like you\'re using an old API with gesture components, check out new Gestures system!",
+  ]);
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      <Text>Jovi</Text>
-
-      
-      
-
-
-            {/* <VectorIcon type='AntDesign' name={"stepbackward"}/> */}
-
-      
-      
-
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} backgroundColor="#fff" />
+      <NavigationContainer>
+        <View style={{ flex: 1 }}>
+          <RootStack />
+        </View>
+      </NavigationContainer>
     </SafeAreaView >
   );
 }

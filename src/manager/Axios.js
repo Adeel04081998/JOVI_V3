@@ -1,6 +1,6 @@
 import Axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { BASE_URL } from '../utils/config.android';
+import { BASE_URL } from '../utils/configs';
 Axios.interceptors.request.use(
     async config => {
         config.baseURL = BASE_URL;
