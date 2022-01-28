@@ -1,7 +1,7 @@
 import LottieView from 'lottie-react-native';
 import React from 'react';
 import { Dimensions } from 'react-native';
-import Button from '../../components/atoms/Button';
+import Button from '../../components/molecules/Button';
 import View from '../../components/atoms/View';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import introStyles from './styles';
