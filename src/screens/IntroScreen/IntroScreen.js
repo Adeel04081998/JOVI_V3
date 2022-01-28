@@ -17,11 +17,11 @@ const IntroScreen = () => {
               ...introStyles.lottieView
             }}
             resizeMode='cover' source={require('../../assets/Onboarding.json')} autoPlay loop/>
-           
             <Button 
                 onPress={onGetStarted}
                 parentTouchableStyle={introStyles.buttonTopView}
                 textStyle={introStyles.buttonText}
+                buttonText={'Get Started'}
             />
         </View>
     );

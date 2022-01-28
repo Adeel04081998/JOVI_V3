@@ -8,10 +8,12 @@ interface Props{
     onPress: Function,
     parentTouchableStyle: Object,
     textStyle: Object,
+    buttonText: String,
     activeOpacity:number
 }
 const defaultProps = {
-    activeOpacity:0.9
+    activeOpacity:0.9,
+    buttonText:''
 }
 const Button =(props: Props) =>{
     const buttonMargin = React.useRef(new Animated.Value(1)).current;
@@ -42,7 +44,7 @@ const Button =(props: Props) =>{
                 outputRange:[1,0.8]
             }),
           }],...props.parentTouchableStyle}}>
-                <Text style={[props.textStyle]}>Get Started</Text>
+                <Text style={[props.textStyle]}>{props.buttonText}</Text>
         </AnimatedTouchable>
     );
 }
