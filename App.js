@@ -7,22 +7,29 @@
  */
 
 import React, { useEffect } from 'react';
-import { SafeAreaView, Text,NativeModules } from 'react-native';
+import { SafeAreaView, StatusBar, useColorScheme, View, Text, LogBox } from 'react-native';
 import RNSplashScreen from './NativeModules/RNSplashScreen';
-
+import { NavigationContainer } from "@react-navigation/native";
+import RootStack from "./src/navigations"
 
 const App = () => {
-
+  const isDarkMode = useColorScheme() === "dark";
   useEffect(() => {
     RNSplashScreen.hide();
     return () => { }
   }, []);
-
+  LogBox.ignoreLogs([
+    "[react-native-gesture-handler] Seems like you\'re using an old API with gesture components, check out new Gestures system!",
+  ]);
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.5)" }}>
-      <Text>etesting</Text>
-
-    </SafeAreaView>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} backgroundColor="#fff" />
+      <NavigationContainer>
+        <View style={{ flex: 1 }}>
+          <RootStack />
+        </View>
+      </NavigationContainer>
+    </SafeAreaView >
   );
 };
 
