@@ -3,14 +3,16 @@ import { SafeAreaView, StatusBar, useColorScheme, View, Text, LogBox } from 'rea
 import RNSplashScreen from './NativeModules/RNSplashScreen';
 import { NavigationContainer } from "@react-navigation/native";
 import RootStack from "./src/navigations"
+import colours from './src/res/colours';
+import constants from './src/res/constants';
 
 const size = 330;
 export default App = () => {
   const isDarkMode = useColorScheme() === "dark";
   useEffect(() => {
-      setTimeout(()=>{
-          RNSplashScreen.hide();
-      },3000)
+    setTimeout(() => {
+      RNSplashScreen.hide();
+    }, 3000)
     return () => { }
   }, []);
   LogBox.ignoreLogs([
@@ -18,7 +20,7 @@ export default App = () => {
   ]);
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} backgroundColor="#fff" />
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} backgroundColor={colours.DEFAULT[constants.ACTIVE_THEME_INDEX]} />
       <NavigationContainer>
         <View style={{ flex: 1 }}>
           <RootStack />

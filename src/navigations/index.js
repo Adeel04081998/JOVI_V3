@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import Introduction from '../screens/IntroScreen/IntroScreen';
+import Introduction from '../screens/IntroScreen';
 import Home from '../screens/Home';
 
 import NAVIGATIONS from './NAVIGATIONS';
@@ -70,10 +70,9 @@ const AppDrawers = (props) => {
 export default (props) => {
     const [isLoggedIn, setIsLoggedIn] = React.useState(false);
     GV.NAVIGATION_LISTENER = {
-        ...GV.NAVIGATION_LISTENER,
         ...props,
-        auth_handler: setIsLoggedIn
-    };
+        auth_handler: setIsLoggedIn,
+    }
     return <ContainerStack.Navigator screenOptions={stackOpts} initialRouteName={INIT_ROUTES.INIT_APP}>
         <ContainerStack.Screen
             name={INIT_ROUTES.INIT_APP}
