@@ -1,28 +1,68 @@
 import React, { useEffect } from 'react';
-import { SafeAreaView, Text, View } from 'react-native';
+import { SafeAreaView, StyleSheet,  Dimensions } from 'react-native';
 import RNSplashScreen from './NativeModules/RNSplashScreen';
-import IntroScreen from './src/screens/IntroScreen/IntroScreen';
-import Image from './src/components/atoms/Image';
+import OTPCode from './src/screens/OtpScreen/OTPCode';
+import OtpScreen from './src/screens/OtpScreen/OtpScreen';
 
-const size = 330;
 export default App = () => {
   useEffect(() => {
-      setTimeout(()=>{
-          RNSplashScreen.hide();
-      },3000)
+    setTimeout(() => {
+      RNSplashScreen.hide();
+    }, 3000)
     return () => { }
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-        <IntroScreen />
-      {/* <Text>Jovi</Text>
-      <View style={{ height: size, width: size, backgroundColor: 'red', alignSelf: "center", borderRadius: 0, overflow: "hidden", }}>
-        <Image
-          source={{ uri: 'https://www.ppic.org/wp-content/uploads/Crowd-of-Diverse-People_800x528-768x512.jpg' }}
-        />
-      </View> */}
-
-    </SafeAreaView >
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+      {/* <OtpScreen /> */}
+      <OTPCode/>
+    </SafeAreaView>
   );
-}
+};
+
+
+const styles = StyleSheet.create({
+  container: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  btn: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  btnText: {
+    color: '#fff',
+    fontSize: 25,
+  },
+  dropdown: {
+    shadowColor: '#000000',
+    shadowRadius: 4,
+    shadowOffset: { height: 4, width: 0 },
+    shadowOpacity: 0.5,
+    elevation: 2,
+    borderBottomRightRadius: 20,
+    borderBottomLeftRadius: 20,
+    backgroundColor: 'white'
+  },
+  overlay: {
+    marginHorizontal: 0,
+    zIndex: 999,
+    position: 'absolute',
+    width: Dimensions.get('window').width - 30,
+    top: 50
+  },
+  item: (index) => {
+    return {
+      paddingHorizontal: 10,
+      paddingVertical: 10,
+      borderBottomWidth: index == 4 ? 0 : 1,
+      borderBottomColor: 'lightgrey'
+    }
+  },
+  button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#efefef',
+    height: 50,
+    zIndex: 1,
+    width: '100%'
+  },
+});

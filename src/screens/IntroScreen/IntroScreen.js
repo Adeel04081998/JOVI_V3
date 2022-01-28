@@ -14,7 +14,7 @@ const IntroScreen = () => {
     return (
         <View style={introStyles.topView}>
             <LottieView style={{
-              width: 300, 
+              width: width, 
               aspectRatio: 300 / 585,
               flexGrow: 1, 
               alignSelf: 'center',
