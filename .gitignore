@@ -65,3 +65,5 @@ android/java_pid26726.hprof
 
 #yarn lock
 yarn.lock
+yarn.lock
+ios/Podfile.lock
