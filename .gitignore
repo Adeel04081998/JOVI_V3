@@ -59,3 +59,9 @@ buck-out/
 /ios/Pods/
 android/java_pid26726.hprof
 *.hprof
+
+#pod
+/ios/Podfile.lock
+
+#yarn lock
+yarn.lock
