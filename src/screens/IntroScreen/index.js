@@ -1,6 +1,7 @@
 import LottieView from 'lottie-react-native';
 import React from 'react';
-import Button from '../../components/atoms/Button';
+import { Dimensions, StatusBar } from 'react-native';
+import Button from '../../components/molecules/Button';
 import View from '../../components/atoms/View';
 import introStyles from './styles';
 import GV from '../../utils/GV';
@@ -19,6 +20,7 @@ const IntroScreen = () => {
     }
     return (
         <View style={introStyles.topView}>
+            <StatusBar backgroundColor={'#637EBF'}/>
             <LottieView style={{
                 width,
                 ...introStyles.lottieView
@@ -26,9 +28,9 @@ const IntroScreen = () => {
                 resizeMode='cover' source={require('../../assets/Onboarding.json')} autoPlay loop />
             <Button
                 onPress={onGetStarted}
-                parentTouchableStyle={introStyles.buttonTopView}
+                style={introStyles.buttonTopView}
                 textStyle={introStyles.buttonText}
-                buttonText={'Get Started'}
+                text={'Get Started'}
             />
         </View>
     );
