@@ -9,18 +9,17 @@ import preference_manager from '../../preference_manager';
 import ENUMS from '../../utils/ENUMS';
 import constants from '../../res/constants';
 const IntroScreen = () => {
-    const { width } = constants.WINDOW_DIMENSIONS;;
+    const { width } = constants.WINDOW_DIMENSIONS;
     React.useEffect(() => {
         const save = async () => await preference_manager.getSetIntroScreenAsync(ENUMS.SET_VALUE, true);
         save();
     }, [])
     const onGetStarted = () => {
         GV.NAVIGATION_LISTENER.auth_handler(true);
-        // THEME_LISTENER.set_theme(2);
     }
     return (
         <View style={introStyles.topView}>
-            <StatusBar backgroundColor={'#637EBF'}/>
+            <StatusBar backgroundColor={'#637EBF'} />
             <LottieView style={{
                 width,
                 ...introStyles.lottieView

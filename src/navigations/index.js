@@ -54,7 +54,7 @@ const AuthStacks = (props) => {
 }
 
 const AppDrawers = (props) => {
-    console.log("[AppDrawers].props", props)
+    // console.log("[AppDrawers].props", props)
     return <Drawer.Navigator screenOptions={stackOpts} initialRouteName={APP_ROUTES.Home.screen_name}>
         {(APP_STACKS || []).map((routeInfo, index) => (
             <Drawer.Screen

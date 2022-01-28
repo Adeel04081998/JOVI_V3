@@ -1,9 +1,5 @@
 import React, { useEffect } from 'react';
-import { SafeAreaView, StatusBar, useColorScheme, View, Text, LogBox } from 'react-native';
-import { NavigationContainer } from "@react-navigation/native";
-import RootStack from "./src/navigations"
-import colours from './src/res/colours';
-import constants from './src/res/constants';
+import { SafeAreaView, StatusBar, useColorScheme, View, LogBox, StyleSheet } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
@@ -16,6 +12,10 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import RNSplashScreen from './NativeModules/RNSplashScreen';
+import { NavigationContainer, DefaultTheme, DarkTheme } from "@react-navigation/native";
+import RootStack from "./src/navigations";
+import JoviTheme from './src/res/theme';
+import ENUMS from './src/utils/ENUMS';
 
 AntDesign.loadFont();
 Entypo.loadFont();
@@ -32,21 +32,35 @@ SimpleLineIcons.loadFont();
 
 export default App = () => {
   const isDarkMode = useColorScheme() === "dark";
+  const theme = isDarkMode ? {
+    ...DarkTheme,
+    colors: {
+      ...DarkTheme.colors,
+      ...JoviTheme.getCurrentTheme(ENUMS.THEME_VALUES.JOVI)
+    }
+
+  } : {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      ...JoviTheme.getCurrentTheme(ENUMS.THEME_VALUES.JOVI)
+    }
+  }
   useEffect(() => {
     setTimeout(() => {
       RNSplashScreen.hide();
     }, 3000)
     return () => { }
   }, []);
-  
+
   LogBox.ignoreLogs([
     "[react-native-gesture-handler] Seems like you\'re using an old API with gesture components, check out new Gestures system!",
   ]);
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} backgroundColor={colours.DEFAULT[constants.ACTIVE_THEME_INDEX]} />
-      <NavigationContainer>
-        <View style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 }}>
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <NavigationContainer theme={theme}>
+        <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
           <RootStack />
         </View>
       </NavigationContainer>
