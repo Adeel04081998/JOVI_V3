@@ -2,7 +2,7 @@ import React from 'react';
 import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import Introduction from '../screens/Introduction';
+import Introduction from '../screens/IntroScreen/IntroScreen';
 import Home from '../screens/Home';
 
 import NAVIGATIONS from './NAVIGATIONS';
@@ -45,7 +45,7 @@ const AuthStacks = (props) => {
             <Stack.Screen
                 key={`AuthStack-Screen-key-${index}-${routeInfo.id}`}
                 name={routeInfo.screen_name}
-                component={AuthComponents[routeInfo.screen_name]}
+                component={AuthComponents[routeInfo.componenet]}
                 options={routeInfo.options ? routeInfo.options : options}
 
             />
@@ -60,7 +60,7 @@ const AppDrawers = (props) => {
             <Drawer.Screen
                 key={`AppDrawers-Screen-key-${index}-${routeInfo.id}`}
                 name={routeInfo.screen_name}
-                component={AppComponents[routeInfo.screen_name]}
+                component={AppComponents[routeInfo.componenet]}
                 options={routeInfo.options ? routeInfo.options : options}
             />
         ))}

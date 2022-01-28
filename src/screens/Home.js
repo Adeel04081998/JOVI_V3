@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { } from "../navigations"
 import GV from '../utils/GV';
 export default ({ navigation }) => {
     const onPress = () => {

@@ -14,8 +14,8 @@ const APP_ROUTES = {
         options: null,
     },
 };
-const AUTH_STACKS = Object.keys(AUTH_ROUTES).map((key, index) => ({ id: `init-${index}-${key}`, screen_name: key, componenet: AUTH_ROUTES[key] }));
-const APP_STACKS = Object.keys(APP_ROUTES).map((key, index) => ({ id: `init-${index}-${key}`, screen_name: key, componenet: APP_ROUTES[key] }));
+const AUTH_STACKS = Object.keys(AUTH_ROUTES).map((key, index) => ({ id: `init-${index}-${key}`, screen_name: AUTH_ROUTES[key].screen_name, componenet: key }));
+const APP_STACKS = Object.keys(APP_ROUTES).map((key, index) => ({ id: `init-${index}-${key}`, screen_name: APP_ROUTES[key].screen_name, componenet: key }));
 export default {
     AUTH_ROUTES,
     AUTH_STACKS,
