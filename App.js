@@ -1,22 +1,29 @@
 import React, { useEffect } from 'react';
-import { SafeAreaView, StyleSheet,  Dimensions } from 'react-native';
+import { SafeAreaView, StatusBar, useColorScheme, View, Text, LogBox } from 'react-native';
 import RNSplashScreen from './NativeModules/RNSplashScreen';
-import OTPCode from './src/screens/OtpScreen/OTPCode';
-import OtpScreen from './src/screens/OtpScreen/OtpScreen';
+import { NavigationContainer } from "@react-navigation/native";
+import RootStack from "./src/navigations"
 
 export default App = () => {
+  const isDarkMode = useColorScheme() === "dark";
   useEffect(() => {
     setTimeout(() => {
       RNSplashScreen.hide();
     }, 3000)
     return () => { }
   }, []);
-
+  LogBox.ignoreLogs([
+    "[react-native-gesture-handler] Seems like you\'re using an old API with gesture components, check out new Gestures system!",
+  ]);
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-      {/* <OtpScreen /> */}
-      <OTPCode/>
-    </SafeAreaView>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} backgroundColor="#fff" />
+      <NavigationContainer>
+        <View style={{ flex: 1 }}>
+          <RootStack />
+        </View>
+      </NavigationContainer>
+    </SafeAreaView >
   );
 };
 
