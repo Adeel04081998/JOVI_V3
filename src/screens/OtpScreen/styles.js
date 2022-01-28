@@ -32,5 +32,30 @@ export default StyleSheet.create({
         elevation: 2,
         backgroundColor:'white',
     },
+    borderStyleBase: {
+        width: 30,
+        height: 45
+      },
+     
+      borderStyleHighLighted: {
+        borderColor: "#03DAC6",
+      },
+     
+      underlineStyleBase: {
+        height: 50,
+        width: 50,
+        borderWidth: 0,
+        shadowColor: '#000000',
+        shadowRadius: 4,
+        shadowOffset: { height: 2, width: 0 },
+        shadowOpacity: 0.2,
+        elevation: 2,
+        backgroundColor:'white',
+        borderRadius:10
+      },
+     
+      underlineStyleHighLighted: {
+        borderColor: "#03DAC6",
+      },
 
 });

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { SafeAreaView, StatusBar, useColorScheme, View, Text, LogBox } from 'react-native';
+import { SafeAreaView, StatusBar, useColorScheme, View, Text, LogBox,StyleSheet, Dimensions } from 'react-native';
 import RNSplashScreen from './NativeModules/RNSplashScreen';
 import { NavigationContainer } from "@react-navigation/native";
 import RootStack from "./src/navigations"

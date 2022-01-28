@@ -22,6 +22,7 @@ export default Otp = () => {
     const [maxLengthForeign, setMaxLengthForeign] = useState(FOREIGN_NUMBER_MAX_LENGTH)
     const [maxLength, setMaxLength] = useState(10)
     const [selected, setSelected] = useState(undefined)
+    const [fadeAnimation, setFadeAnimation] = useState(new Animated.Value(0))
     const [allowedCountryCodes, setAllowedCountryCodes] = useState([])
     const [countryCodeSelectionList, setCountryCodeSelectionList] = useState([
         { id: 1, selected: true, title: "Receive Code by SMS", desc: "get OTP through SMS", icon: (color) => commonSvgIcons.chatOTPICON(color) },
@@ -31,6 +32,26 @@ export default Otp = () => {
     const IS_PK_SELECTED = checkCountryCode === "92";
     const keyboardVerticalOffset = Platform.OS === 'ios' ? 40 : 0
     let cellNoCheck = !IS_PK_SELECTED && (cellNo.length >= FOREIGN_NUMBER_Min_LENGTH || (cellNo.length > FOREIGN_NUMBER_Min_LENGTH && cellNo.length <= FOREIGN_NUMBER_MAX_LENGTH)) ? true : ((IS_PK_SELECTED && cellNo.length > 9) ? true : false);
+
+    useEffect(() => {
+        fadeIn()
+        // fadeOut()
+    }, [])
+    fadeIn = () => {
+        Animated.timing(fadeAnimation, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true
+        }).start();
+      };
+
+    // fadeOut = () => {
+    //     Animated.timing(fadeAnimation, {
+    //         toValue: 0,
+    //         duration: 4000,
+    //         useNativeDriver: true
+    //     }).start();
+    // };
     const toggleDropdown = () => {
         openDropDown ? setOpenDropDown(false) : setOpenDropDown(true)
     };
@@ -95,7 +116,7 @@ export default Otp = () => {
                         </View>
                     </View>
                 </TouchableWithoutFeedback>
-                <TextInput placeholder="Type number" value={cellNo} />
+                <TextInput placeholder="Type number" value={cellNo} keyboardType="numeric"/>
             </View>
 
         </View>)
@@ -116,7 +137,12 @@ export default Otp = () => {
     }
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : null} keyboardVerticalOffset={keyboardVerticalOffset} >
-            <View style={{ flex: 5 }} >
+            <Animated.View style={[
+                {
+                    flex: 5,
+                    opacity: fadeAnimation
+                }
+            ]} >
                 <View style={{ alignItems: 'center', flex: 0.8 }} >
                     <Image source={images.otp()} resizeMode="contain" style={{ height: '100%', width: '100%' }} />
                 </View>
@@ -135,7 +161,7 @@ export default Otp = () => {
                         countryCodes={["AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AG", "AR", "AM", "AW", "AU", "AT", "AZ", "BS", "BH", "BD", "BB", "BY", "BE", "BZ", "BJ", "BM", "BT", "BO", "BA", "BW", "BV", "BR", "IO", "VG", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "BQ", "KY", "CF", "TD", "CL", "CN", "CX", "CC", "CO", "KM", "CK", "CR", "HR", "CU", "CW", "CY", "CZ", "CD", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "GQ", "ER", "EE", "SZ", "ET", "FK", "FO", "FJ", "FI", "FR", "GF", "PF", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GD", "GP", "GU", "GT", "GG", "GN", "GW", "GY", "HT", "HN", "HU", "IS", "IN", "ID", "IR", "IQ", "IE", "IM", "IL", "IT", "CI", "JM", "JP", "JE", "JO", "KZ", "KE", "XK", "KW", "KG", "LA", "LV", "LB", "LS", "LR", "LY", "LI", "LT", "LU", "MO", "MK", "MG", "MW", "MY", "MV", "ML", "MT", "MH", "MQ", "MR", "MU", "YT", "MX", "FM", "MD", "MC", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NC", "NZ", "NI", "NE", "NG", "NU", "NF", "KP", "MP", "NO", "OM", "PK", "PW", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "CG", "RO", "RU", "RW", "RE", "BL", "SH", "KN", "LC", "MF", "PM", "VC", "WS", "SM", "SA", "SN", "RS", "SC", "SL", "SG", "SX", "SK", "SI", "SB", "SO", "ZA", "GS", "KR", "SS", "ES", "LK", "SD", "SR", "SJ", "SE", "CH", "SY", "ST", "TW", "TJ", "TZ", "TH", "TL", "TG", "TK", "TO", "TT", "TN", "TR", "TM", "TC", "TV", "UG", "UA", "AE", "GB", "US", "VI", "UY", "UZ", "VU", "VA", "VE", "VN", "WF", "EH", "YE", "ZM", "ZW", "KI", "HK", "AX"]}
                     />
                 }
-            </View>
+            </Animated.View>
         </KeyboardAvoidingView>
     );
 };
