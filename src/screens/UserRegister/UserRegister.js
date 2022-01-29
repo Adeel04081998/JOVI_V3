@@ -5,6 +5,8 @@ import styles from './UserRegisterStyles';
 import AnimatedTextInput from "../../components/atoms/Textinput";
 import { sharedGetDevicInfo } from "../../helpers/SharedActions";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
+import TextInput from "../../components/atoms/TextInput";
+import Button from "../../components/molecules/Button";
 
 const AnimatedSafeAreaView = Animated.createAnimatedComponent(SafeAreaView)
 
@@ -24,10 +26,10 @@ const RegisterUser = () => {
     const startValue = new Animated.Value(1000);
     const endValue = 0;
     let tempArray = [
-        { field: "email", title: 'Email Address', pattern: 'alpha', validationerror: "Invalid email address", value: email, maxLength: 15, },
-        { field: "fname", title: 'First name', pattern: 'alpha', validationerror: "Invalid first name", value: fname, maxLength: 15, },
-        { field: "lname", title: 'Last name', pattern: 'alpha', validationerror: "Invalid last name", value: lname, maxLength: 15, },
-        { field: "mobile", title: 'Mobile number', pattern: 'alpha', validationerror: "Invalid mobile number", value: mobile, maxLength: 15, },
+        { field: "email", title: 'Email Address', placeholder: 'Email', pattern: 'alpha', validationerror: "Invalid email address", value: email, maxLength: 15, },
+        { field: "fname", title: 'First name', placeholder: 'First name', pattern: 'alpha', validationerror: "Invalid first name", value: fname, maxLength: 15, },
+        { field: "lname", title: 'Last name', placeholder: 'Last name', pattern: 'alpha', validationerror: "Invalid last name", value: lname, maxLength: 15, },
+        { field: "mobile", title: 'Mobile number', placeholder: 'Mobile', pattern: 'alpha', validationerror: "Invalid mobile number", value: mobile, maxLength: 15, },
     ]
     const _onStartAnimation = () => {
         Animated.spring(startValue, {
@@ -74,39 +76,45 @@ const RegisterUser = () => {
     }, []);
     console.log("state=>>", state);
     return (
-        <AnimatedSafeAreaView style={[styles.container, { transform: [{ translateX: startValue }] }]}>
+        <View style={[styles.container]}>
             <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                 <Text style={{ color: 'black', fontSize: 20, }}>{'Registration'}</Text>
-
             </View>
-            <KeyboardAwareScrollView style={{ borderWidth: 1 }}
+            <KeyboardAwareScrollView style={{ flex: 1, backgroundColor: 'blue' }} contentContainerStyle={{ flexGrow: 1 }}>
+                <View style={{ flex: 1, backgroundColor: 'red' }}>
+                    {
+                        tempArray.map((x, i) => (
+                            console.log("x=>>", x),
 
-            >
-                {
-                    tempArray.map((x, i) => (
-                        console.log("x=>>", x),
-                        <View style={{}}>
 
-                            <Text>{x.title}</Text>
-                            <AnimatedTextInput
-                                style={styles.textInput}
-                            />
-                        </View>
-                    ))
-                }
+                            <View style={{ marginTop: 20 }} key={`key-${i}`}>
+                                <TextInput
+                                    containerStyle={{}}
+                                    title={x.title}
+                                    placeholder={x.placeholder}
 
-                <View style={{ borderWidth: 1, justifyContent: 'center', alignContent: 'flex-end' }}>
-                    <TouchableOpacity
-                        style={{ alignSelf: 'center', backgroundColor: '#7359BE', width: '80%', paddingVertical: 20, borderRadius: 10, }}>
-                        <Text style={{ alignSelf: 'center' }}>sign Up</Text>
-                    </TouchableOpacity>
+
+
+                                />
+
+                            </View>
+
+
+
+
+
+
+                        ))
+                    }
 
                 </View>
 
-            </KeyboardAwareScrollView>
+                <Button/>
+
+            </KeyboardAwareScrollView >
 
 
-        </AnimatedSafeAreaView>
+        </View >
     )
 }
 
