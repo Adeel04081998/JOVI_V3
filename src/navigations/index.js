@@ -1,4 +1,5 @@
 import React from 'react';
+import { Animated } from 'react-native';
 import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -7,11 +8,10 @@ import Home from '../screens/Home';
 
 import NAVIGATIONS from './NAVIGATIONS';
 import GV from '../utils/GV';
-
 const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES } = NAVIGATIONS;
 
 const AuthComponents = {
-    Introduction
+    Introduction,
 }
 const AppComponents = {
     Home
@@ -23,17 +23,48 @@ const Drawer = createDrawerNavigator();
 const options = () => ({
     gestureEnabled: false,
     transitionSpec: {
-        open: { animation: "timing", config: { duration: 600 } },
-        close: { animation: "timing", config: { duration: 600 } }
+        open: { animation: "timing", config: { duration: 400 } },
+        close: { animation: "timing", config: { duration: 400 } }
     },
-    cardStyleInterpolator: ({ current: { progress } }) => {
-        return {
-            cardStyle: {
-                opacity: progress
-            },
-        }
-    }
+    cardStyleInterpolator: forSlide
 })
+const forSlide = ({ current, next, inverted, layouts: { screen } }) => {
+    //current targets the current active screen, next is the screen which will be rendered after transition
+    const progress = Animated.add(
+        current.progress.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, 1],
+            extrapolate: 'clamp',
+        }),
+        next
+            ? next.progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 1],
+                extrapolate: 'clamp',
+            })
+            : 0
+    );
+    return {
+        cardStyle: {
+            transform: [
+                {
+                    translateX: Animated.multiply(
+                        progress.interpolate({
+                            inputRange: [0, 1, 2],
+                            outputRange: [
+                                screen.width, // Focused, but offscreen in the beginning
+                                0, // Fully focused
+                                screen.width * -0.3, // Fully unfocused
+                            ],
+                            extrapolate: 'clamp',
+                        }),
+                        inverted
+                    ),
+                },
+            ],
+        },
+    };
+};
 const stackOpts = () => ({
     headerShown: false,
 });
