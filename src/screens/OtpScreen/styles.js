@@ -14,7 +14,8 @@ export default StyleSheet.create({
         // top: 20,
         flexDirection: 'row',
         paddingVertical: 5,
-        alignItems:'center'
+        alignItems:'center',
+        justifyContent:'center'
     },
     otpCode: {
         borderRadius: 5,
@@ -24,11 +25,12 @@ export default StyleSheet.create({
         marginRight: 10,
         fontSize: 12,
         // textAlign: 'center',
+        paddingLeft:10,
         color: '#000',
         shadowColor: '#000000',
         shadowRadius: 4,
         shadowOffset: { height: 4, width: 0 },
-        shadowOpacity: 0.5,
+        shadowOpacity: 0.2,
         elevation: 2,
         backgroundColor:'white',
     },
@@ -57,5 +59,9 @@ export default StyleSheet.create({
       underlineStyleHighLighted: {
         borderColor: "#03DAC6",
       },
-
+      box: {
+        marginTop: 32,
+        borderRadius: 4,
+        backgroundColor: "#61dafb"
+      },
 });

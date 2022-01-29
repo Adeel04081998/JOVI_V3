@@ -3,6 +3,8 @@ import { SafeAreaView, StatusBar, useColorScheme, View, Text, LogBox,StyleSheet,
 import RNSplashScreen from './NativeModules/RNSplashScreen';
 import { NavigationContainer } from "@react-navigation/native";
 import RootStack from "./src/navigations"
+import OTPCode from './src/screens/OtpScreen/OTPCode';
+import OtpScreen from './src/screens/OtpScreen/OtpScreen';
 
 export default App = () => {
   const isDarkMode = useColorScheme() === "dark";
@@ -20,7 +22,9 @@ export default App = () => {
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} backgroundColor="#fff" />
       <NavigationContainer>
         <View style={{ flex: 1 }}>
-          <RootStack />
+          {/* <RootStack /> */}
+          <OTPCode/>
+          {/* <OtpScreen/> */}
         </View>
       </NavigationContainer>
     </SafeAreaView >

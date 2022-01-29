@@ -32,18 +32,18 @@ export default Otp = () => {
     const IS_PK_SELECTED = checkCountryCode === "92";
     const keyboardVerticalOffset = Platform.OS === 'ios' ? 40 : 0
     let cellNoCheck = !IS_PK_SELECTED && (cellNo.length >= FOREIGN_NUMBER_Min_LENGTH || (cellNo.length > FOREIGN_NUMBER_Min_LENGTH && cellNo.length <= FOREIGN_NUMBER_MAX_LENGTH)) ? true : ((IS_PK_SELECTED && cellNo.length > 9) ? true : false);
-
+    const LIST_ITEM_HEIGHT = 54;
     useEffect(() => {
         fadeIn()
         // fadeOut()
     }, [])
     fadeIn = () => {
         Animated.timing(fadeAnimation, {
-          toValue: 1,
-          duration: 500,
-          useNativeDriver: true
+            toValue: 1,
+            duration: 500,
+            useNativeDriver: true
         }).start();
-      };
+    };
 
     // fadeOut = () => {
     //     Animated.timing(fadeAnimation, {
@@ -54,8 +54,31 @@ export default Otp = () => {
     // };
     const toggleDropdown = () => {
         openDropDown ? setOpenDropDown(false) : setOpenDropDown(true)
+        animate(Easing.linear)
     };
 
+    const animate = easing => {
+        // animation.setValue(0);
+        console.log('easing',easing);
+        Animated.timing(animation, {
+            toValue: 1,
+            duration: 500,
+            easing,
+            useNativeDriver: false
+        }).start();
+    };
+
+    const size = animation.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 80]
+    });
+
+    const animatedStyles = [
+        styles.dropdown,
+        {
+            transform: [{ scaleX: size}],
+        }
+    ];
     const renderItem = ({ item, index }) => (
         <TouchableOpacity style={styles.item(index)} onPress={() => onItemPress(item)}>
             <Text>{item}</Text>
@@ -83,13 +106,13 @@ export default Otp = () => {
                 style={[styles.overlay]}
                 onPress={() => setOpenDropDown(false)}
             >
-                <View style={[styles.dropdown]}>
+                <Animated.View style={animatedStyles}>
                     <FlatList
                         data={ENUMS.networkList}
                         renderItem={renderItem}
                         keyExtractor={(item, index) => index.toString()}
                     />
-                </View>
+                </Animated.View>
             </TouchableOpacity>
         )
     }
@@ -116,7 +139,7 @@ export default Otp = () => {
                         </View>
                     </View>
                 </TouchableWithoutFeedback>
-                <TextInput placeholder="Type number" value={cellNo} keyboardType="numeric"/>
+                <TextInput numberOfLines={1} placeholder="Type number" value={cellNo} keyboardType="numeric" textContentType={"oneTimeCode"} onChangeText={(val) => setCellNo(val)} />
             </View>
 
         </View>)
@@ -127,7 +150,7 @@ export default Otp = () => {
                 onPress={() => { console.log('Hello') }}
                 parentTouchableStyle={{ backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center', width: Dimensions.get('window').width - 30, height: 50, borderWidth: 0, borderRadius: 10 }}
                 textStyle={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}
-                title={'Continue'}
+                buttonText={'Continue'}
             />
             <View style={{ alignItems: 'center' }} >
                 <Text>By Tapping send OTP I am agreeing to</Text>
@@ -219,5 +242,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center'
+    },
+    box: {
+        marginTop: 32,
+        borderRadius: 4,
+        backgroundColor: "red",
     },
 });

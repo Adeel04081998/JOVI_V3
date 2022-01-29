@@ -4,7 +4,6 @@ import Button from '../../components/atoms/Button';
 import Text from '../../components/atoms/Text';
 import View from '../../components/atoms/View';
 import styles from './styles';
-import OTPInputView from '@twotalltotems/react-native-otp-input'
 
 export default OtpCode = () => {
     const [refsArr, setRefsArr] = useState(['', '', '', ''])
@@ -24,77 +23,99 @@ export default OtpCode = () => {
     const [disableOnchange, setDisableOnchange] = useState(false)
     const otpInput = useRef(null)
     const keyboardVerticalOffset = Platform.OS === 'ios' ? 40 : 0
+    // const animation = new Animated.Value(0);
 
     useLayoutEffect(() => {
 
         if (Platform.OS === "android") {
             setTimeout(() => {
                 otpInput.current.focusField(0)
-            }, 0)
+            }, 1000)
         }
 
     }, [])
 
+    const otpInputUI = () => {
+        return (
+            <View style={styles.androidOtpWrap}>
+                {
+                    (refsArr || []).map((val, i) => {
+                        if (i < 4) return <View key={i}>
+                            <TextInput
+                                autoCorrect={false}
+                                autoCapitalize="none"
+                                // ref={elRefs.current[i]}
+                                // value={val}
+                                // value={state[i]}
+                                style={[styles.otpCode]}
+                                // style={{
+                                //     width: 65, elevation: 2,
+                                //     shadowColor: '#000000',
+                                //     shadowRadius: 4,
+                                //     shadowOffset: { height: 4, width: 0 },
+                                //     shadowOpacity: 0.5,
+                                // }}
+                                keyboardType="numeric"
+                                maxLength={1}
+                                autoFocus={i === 0 ? true : false}
+                                underlineColorAndroid="transparent"
+                                autoCompleteType="tel"
+                                returnKeyType="next"
+                                textContentType="oneTimeCode"
+                            // onFocus={() => setState(pre => ({ ...pre, focusedIndex: i }))}
+                            // onChangeText={val => onChangeHanlder(val, i)}
+                            // onKeyPress={e => _focusNextField(e, i + 1, i)}
+                            // onChange={(e) => _onChange(e, i + 1, i)}
+                            />
+                        </View>
+                    })
+                }
+                {
+                    refsArr.includes("") ? null :
+                        <View style={{ top: 15, right: 10 }}>
+                            {/* <Image source={require('../../assets/correctsign.png')} style={styles.correntSign} /> */}
+                        </View>
+                }
+            </View>
+        )
+    }
+
+
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : null} keyboardVerticalOffset={keyboardVerticalOffset} >
-        <View style={{ flex: 1, backgroundColor: 'white' }} >
-            <View style={{ alignItems: 'center', justifyContent: 'center' }} >
-                <Text>Verify Phone</Text>
-            </View>
-            <View style={{ alignItems: 'center', justifyContent: 'center' }} >
-                <Text>Code is sent to 894 534 6789</Text>
-            </View>
-            <View style={{ alignItems: 'center' }} >
-                <OTPInputView
-                    ref={otpInput}
-                    style={{ width: '80%', height: 200 }}
-                    pinCount={4}
-                    // code={this.state.code} //You can supply this prop or not. The component will be used as a controlled / uncontrolled component respectively.
-                    // onCodeChanged = {code => { this.setState({code})}}
-                    autoFocusOnLoad={false}
-                    codeInputFieldStyle={styles.underlineStyleBase}
-                    codeInputHighlightStyle={styles.underlineStyleHighLighted}
-                    onCodeFilled={(code => {
-                        console.log(`Code is ${code}, you are good to go!`)
-                    })}
-                    keyboardAppearance={"default"}
-                    keyboardType="number-pad"
-                />
-            </View>
-            <View style={{ alignItems: 'center', justifyContent: 'center',position:'absolute', bottom:10 }} >
-                <View style={{alignItems:'center'}} >
-            {
-                    !intervalStoped &&
-                    <View>
-                        <Text style={{ color: '#7359BE', fontSize: 16 }}>{mins + ":" + sec}</Text>
+            <View style={{ flex: 1, backgroundColor: 'white' }} >
+                <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 10 }} >
+                    <Text style={{ paddingVertical: 10 }} >Verify Phone</Text>
+                    <Text style={{ paddingVertical: 10 }}>Code is sent to 894 534 6789</Text>
+                </View>
+                {otpInputUI()}
+                <View style={{ justifyContent: 'center', alignSelf: 'center', position: 'absolute', bottom: 10 }} >
+                    <View style={{ alignItems: 'center' }} >
+                        <View style={{ alignItems: 'center', marginVertical: 10 }} >
+                            {
+                                !intervalStoped &&
+                                <View>
+                                    <Text style={{ color: '#7359BE', fontSize: 16, paddingBottom: 10 }}>{mins + ":" + sec}</Text>
+                                </View>
+                            }
+                            <Text>Didn't receive code</Text>
+                            <Text style={{ textDecorationLine: 'underline', textDecorationColor: '#7359BE', color: '#7359BE' }} >Request again Get Via SMS</Text>
+                        </View>
+                        <Button
+                            onPress={() => { console.log('Hello') }}
+                            parentTouchableStyle={{ backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', marginVertical: 10, width: Dimensions.get('window').width - 30, height: 50, borderWidth: 0, borderRadius: 10 }}
+                            textStyle={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}
+                            buttonText={'Verfiy and Create Account'}
+                        />
+
+                        <View style={{ alignItems: 'center' }} >
+                            <Text style={{ textDecorationLine: 'underline', textDecorationColor: '#7359BE', color: '#7359BE' }} >Change Number</Text>
+                        </View>
                     </View>
-                }
-                <Text>Didn't receive code</Text>
-                <Text>Request again Get Via SMS</Text>
-                </View>
-                <View style={{ alignItems: 'center' }} >
-
-                <Button
-                    onPress={() => { console.log('Hello') }}
-                    parentTouchableStyle={{ backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center', width: Dimensions.get('window').width - 30, height: 50, borderWidth: 0, borderRadius: 10 }}
-                    textStyle={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}
-                    title={'Verfiy and Create Account'}
-                />
-                </View>
-
-                <View style={{ alignItems: 'center' }} >
-                    <Text style={{ textDecorationLine: 'underline', textDecorationColor: 'purple' }} >Change Number</Text>
                 </View>
             </View>
-        </View>
         </KeyboardAvoidingView>
 
     )
 }
 
-// {
-//     refsArr.includes("") ? null :
-//         <View style={{ top: 15, right: 10 }}>
-//             <Image source={require('../../assets/correctsign.png')} style={styles.correntSign} />
-//         </View>
-// }
