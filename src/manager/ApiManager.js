@@ -1,17 +1,17 @@
-import { Platform } from "react-native";
 import Axios from './Axios';
 // import CustomToast from "../components/toast/CustomToast";
 // import NetInfo from "@react-native-community/netinfo";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import preference_manager from "../preference_manager";
+import ENUMS from "../utils/ENUMS";
 
 const CustomToast = {
-    error:()=>{},
+    error: () => { },
 }
 
-const dispatch = ()=>{}; // import from store when redux is added
+const dispatch = () => { }; // import from store when redux is added
 
 export const refreshTokenMiddleware = async (requestCallback, params, dispatch) => {
-    let prevToken = await AsyncStorage.getItem('User');
+    let prevToken = preference_manager.getSetUserAsync(ENUMS.GET_VALUE);
     postRequest(
         "/api/User/RefreshToken",
         {
@@ -30,7 +30,7 @@ export const refreshTokenMiddleware = async (requestCallback, params, dispatch) 
                 return;
             }
             else {
-                await AsyncStorage.setItem('User', JSON.stringify(res.data));
+                await preference_manager.getSetUserAsync(ENUMS.SET_VALUE, res.data);
                 requestCallback.apply(this, params);
             }
         },
@@ -42,7 +42,7 @@ export const refreshTokenMiddleware = async (requestCallback, params, dispatch) 
 
 };
 
-export const postRequest = async (url, data, onSuccess= () => {}, onError=()=>{},headers={}, showLoader = true, middleWareCallback = () => { },) => {
+export const postRequest = async (url, data, onSuccess = () => { }, onError = () => { }, headers = {}, showLoader = true, middleWareCallback = () => { },) => {
     // let internetConnectivity = await NetInfo.fetch();
     // if (Platform.OS === "ios") {
     //     //In iOS sometime we have internet reacheable is null that's why we are using below (3 lines of code)
@@ -71,9 +71,9 @@ export const postRequest = async (url, data, onSuccess= () => {}, onError=()=>{}
     } catch (error) {
         middleWareCallback(false);
         if (error?.response?.data) {
-            if (error.response.data.StatusCode === 401) return refreshTokenMiddleware(postRequest, [url, data, onSuccess, onError,headers, showLoader , middleWareCallback ], dispatch);
-            else if (error.response.data.statusCode === 500){
-                 CustomToast.error('Something went wrong!!');
+            if (error.response.data.StatusCode === 401) return refreshTokenMiddleware(postRequest, [url, data, onSuccess, onError, headers, showLoader, middleWareCallback], dispatch);
+            else if (error.response.data.statusCode === 500) {
+                CustomToast.error('Something went wrong!!');
             }
             // showLoader && dispatch();//uncomment when loader added
             onError(error.response.data);
@@ -87,7 +87,7 @@ export const postRequest = async (url, data, onSuccess= () => {}, onError=()=>{}
         // showLoader && dispatch();//uncomment when loader added
     }
 };
-export const getRequest = async (url, onSuccess= () => {}, onError=()=>{},headers={}, showLoader = true, middleWareCallback = () => { },) => {
+export const getRequest = async (url, onSuccess = () => { }, onError = () => { }, headers = {}, showLoader = true, middleWareCallback = () => { },) => {
     // let internetConnectivity = await NetInfo.fetch();
     // if (Platform.OS === "ios") {
     //     //In iOS sometime we have internet reacheable is null that's why we are using below (3 lines of code)
@@ -116,9 +116,9 @@ export const getRequest = async (url, onSuccess= () => {}, onError=()=>{},header
     } catch (error) {
         middleWareCallback(false);
         if (error?.response?.data) {
-            if (error.response.data.StatusCode === 401) return refreshTokenMiddleware(postRequest, [url, data, onSuccess, onError,headers, showLoader , middleWareCallback ], dispatch);
-            else if (error.response.data.statusCode === 500){
-                 CustomToast.error('Something went wrong!!');
+            if (error.response.data.StatusCode === 401) return refreshTokenMiddleware(postRequest, [url, data, onSuccess, onError, headers, showLoader, middleWareCallback], dispatch);
+            else if (error.response.data.statusCode === 500) {
+                CustomToast.error('Something went wrong!!');
             }
             // showLoader && dispatch();//uncomment when loader added
             onError(error.response.data);
