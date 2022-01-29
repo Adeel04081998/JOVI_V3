@@ -1,11 +1,11 @@
 import { Appearance } from "react-native";
 import colors from "./colors";
 import ENUMS from "../utils/ENUMS";
-let initTheme = { ...colors };
 const { THEME_VALUES } = ENUMS;
 export default {
-    getCurrentTheme: (themeValue = THEME_VALUES.JOVI) => {
+    getTheme: (themeValue = THEME_VALUES.JOVI) => {
         const isDarkMode = Appearance.getColorScheme() === "dark";
+        let initTheme = { ...colors };
         initTheme = isDarkMode ? initTheme.DarkMode : initTheme.LightMode;
         if (themeValue === THEME_VALUES.SUPER_MARKET) {
             initTheme = {

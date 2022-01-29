@@ -14,7 +14,7 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import RNSplashScreen from './NativeModules/RNSplashScreen';
 import { NavigationContainer, DefaultTheme, DarkTheme } from "@react-navigation/native";
 import RootStack from "./src/navigations";
-import JoviTheme from './src/res/theme';
+import AppTheme from './src/res/theme';
 import ENUMS from './src/utils/ENUMS';
 
 AntDesign.loadFont();
@@ -36,14 +36,14 @@ export default App = () => {
     ...DarkTheme,
     colors: {
       ...DarkTheme.colors,
-      ...JoviTheme.getCurrentTheme(ENUMS.THEME_VALUES.JOVI)
+      ...AppTheme.getTheme(ENUMS.THEME_VALUES.JOVI)
     }
 
   } : {
     ...DefaultTheme,
     colors: {
       ...DefaultTheme.colors,
-      ...JoviTheme.getCurrentTheme(ENUMS.THEME_VALUES.JOVI)
+      ...AppTheme.getTheme(ENUMS.THEME_VALUES.JOVI)
     }
   }
   useEffect(() => {
