@@ -1,9 +1,10 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Dimensions, Platform, TextInput, KeyboardAvoidingView } from 'react-native';
-import Button from '../../components/atoms/Button';
+import {SafeAreaView, Dimensions, Platform, KeyboardAvoidingView } from 'react-native';
+import Button from '../../components/molecules/Button';
 import Text from '../../components/atoms/Text';
 import View from '../../components/atoms/View';
 import styles from './styles';
+import TextInput from '../../components/atoms/TextInput';
 
 export default OtpCode = () => {
     const [refsArr, setRefsArr] = useState(['', '', '', ''])
@@ -44,6 +45,7 @@ export default OtpCode = () => {
                             <TextInput
                                 autoCorrect={false}
                                 autoCapitalize="none"
+                                placeholder=""
                                 // ref={elRefs.current[i]}
                                 // value={val}
                                 // value={state[i]}
@@ -82,40 +84,42 @@ export default OtpCode = () => {
 
 
     return (
-        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : null} keyboardVerticalOffset={keyboardVerticalOffset} >
-            <View style={{ flex: 1, backgroundColor: 'white' }} >
-                <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 10 }} >
-                    <Text style={{ paddingVertical: 10 }} >Verify Phone</Text>
-                    <Text style={{ paddingVertical: 10 }}>Code is sent to 894 534 6789</Text>
-                </View>
-                {otpInputUI()}
-                <View style={{ justifyContent: 'center', alignSelf: 'center', position: 'absolute', bottom: 10 }} >
-                    <View style={{ alignItems: 'center' }} >
-                        <View style={{ alignItems: 'center', marginVertical: 10 }} >
-                            {
-                                !intervalStoped &&
-                                <View>
-                                    <Text style={{ color: '#7359BE', fontSize: 16, paddingBottom: 10 }}>{mins + ":" + sec}</Text>
-                                </View>
-                            }
-                            <Text>Didn't receive code</Text>
-                            <Text style={{ textDecorationLine: 'underline', textDecorationColor: '#7359BE', color: '#7359BE' }} >Request again Get Via SMS</Text>
-                        </View>
-                        <Button
-                            onPress={() => { console.log('Hello') }}
-                            parentTouchableStyle={{ backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', marginVertical: 10, width: Dimensions.get('window').width - 30, height: 50, borderWidth: 0, borderRadius: 10 }}
-                            textStyle={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}
-                            buttonText={'Verfiy and Create Account'}
-                        />
-
+        <SafeAreaView style={{ flex: 1 }} >
+            <KeyboardAvoidingView style={{ flex: 1,marginVertical:10 }} behavior={Platform.OS === "ios" ? "padding" : null} keyboardVerticalOffset={keyboardVerticalOffset} >
+                <View style={{ flex: 1, backgroundColor: 'white' }} >
+                    <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 10 }} >
+                        <Text style={{ paddingVertical: 10 }} >Verify Phone</Text>
+                        <Text style={{ paddingVertical: 10 }}>Code is sent to 894 534 6789</Text>
+                    </View>
+                    {otpInputUI()}
+                    <View style={{ justifyContent: 'center', alignSelf: 'center', position: 'absolute', bottom: 10 }} >
                         <View style={{ alignItems: 'center' }} >
-                            <Text style={{ textDecorationLine: 'underline', textDecorationColor: '#7359BE', color: '#7359BE' }} >Change Number</Text>
+                            <View style={{ alignItems: 'center', marginVertical: 10 }} >
+                                {
+                                    !intervalStoped &&
+                                    <View>
+                                        <Text style={{ color: '#7359BE', fontSize: 16, paddingBottom: 10 }}>{mins + ":" + sec}</Text>
+                                    </View>
+                                }
+                                <Text>Didn't receive code</Text>
+                                <Text style={{ textDecorationLine: 'underline', textDecorationColor: '#7359BE', color: '#7359BE' }} >Request again Get Via SMS</Text>
+                            </View>
+                            <Button
+                                onPress={() => { console.log('Hello') }}
+                                style={{ backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', marginVertical: 10, width: Dimensions.get('window').width - 30, height: 50, borderWidth: 0, borderRadius: 10 }}
+                                textStyle={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}
+                                text={'Verfiy and Create Account'}
+                                wait={0}
+                            />
+
+                            <View style={{ alignItems: 'center' }} >
+                                <Text style={{ textDecorationLine: 'underline', textDecorationColor: '#7359BE', color: '#7359BE' }} >Change Number</Text>
+                            </View>
                         </View>
                     </View>
                 </View>
-            </View>
-        </KeyboardAvoidingView>
-
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     )
 }
 
