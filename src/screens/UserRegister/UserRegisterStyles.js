@@ -5,7 +5,7 @@ export default StyleSheet.create({
     container: {
         flex: 1,
         marginHorizontal: 13,
-        marginTop: 15,
+        // marginTop: 15,
     }
     ,
     textInput: {
@@ -31,7 +31,10 @@ export default StyleSheet.create({
     },
     buttonView :{
         marginBottom:14,
+        // borderWidth:2
+
     }
     
 
 })
+
