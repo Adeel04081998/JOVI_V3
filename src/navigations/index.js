@@ -3,7 +3,7 @@ import { Animated } from 'react-native';
 import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import Introduction from '../screens/IntroScreen/IntroScreen';
+import Introduction from '../screens/IntroScreen';
 import Home from '../screens/Home';
 
 import NAVIGATIONS from './NAVIGATIONS';
@@ -85,7 +85,7 @@ const AuthStacks = (props) => {
 }
 
 const AppDrawers = (props) => {
-    console.log("[AppDrawers].props", props)
+    // console.log("[AppDrawers].props", props)
     return <Drawer.Navigator screenOptions={stackOpts} initialRouteName={APP_ROUTES.Home.screen_name}>
         {(APP_STACKS || []).map((routeInfo, index) => (
             <Drawer.Screen
@@ -101,10 +101,9 @@ const AppDrawers = (props) => {
 export default (props) => {
     const [isLoggedIn, setIsLoggedIn] = React.useState(false);
     GV.NAVIGATION_LISTENER = {
-        ...GV.NAVIGATION_LISTENER,
         ...props,
-        auth_handler: setIsLoggedIn
-    };
+        auth_handler: setIsLoggedIn,
+    }
     return <ContainerStack.Navigator screenOptions={stackOpts} initialRouteName={INIT_ROUTES.INIT_APP}>
         <ContainerStack.Screen
             name={INIT_ROUTES.INIT_APP}
