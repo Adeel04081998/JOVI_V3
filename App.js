@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { SafeAreaView, StatusBar, useColorScheme, View, Text, LogBox } from 'react-native';
+import { SafeAreaView, StatusBar, useColorScheme, View, Text, LogBox, StyleSheet } from 'react-native';
 import { NavigationContainer } from "@react-navigation/native";
 import RootStack from "./src/navigations"
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -44,7 +44,7 @@ export default App = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} backgroundColor="#fff" />
       <NavigationContainer>
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
           <RootStack />
         </View>
       </NavigationContainer>
