@@ -5,6 +5,7 @@ export default {
     // Theme values
     // Prefixes : J => JOVI, R => Restaurant, S => Supermarket, P => pharmacy, JM => Jovi Mart
     "THEME_VALUES": {
+        "DEFAULT": 0,
         "SUPER_MARKET": 1,
         "JOVI": 2,
         "PHARMACY": 3,
