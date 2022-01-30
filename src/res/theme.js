@@ -1,6 +1,6 @@
 import colors from "./colors";
-import ENUMS from "../utils/ENUMS";
-const { THEME_VALUES } = ENUMS;
+import GV from "../utils/GV";
+const { THEME_VALUES } = GV;
 export default {
     getTheme: (themeValue = THEME_VALUES.DEFAULT, isDarkMode = false) => {
         let initTheme = { ...colors };
