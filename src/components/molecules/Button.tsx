@@ -1,7 +1,7 @@
 import * as React from "react";
-import { Animated, Easing, GestureResponderEvent, TextProps, TextStyle } from "react-native";
+import { Animated, Easing,TouchableOpacity, GestureResponderEvent, TextProps, TextStyle } from "react-native";
 import Text from "../atoms/Text";
-import TouchableOpacity from "../atoms/TouchableOpacity";
+// import TouchableOpacity from "../atoms/TouchableOpacity";
 
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 

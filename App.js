@@ -16,6 +16,8 @@ import { NavigationContainer, DefaultTheme, DarkTheme } from "@react-navigation/
 import RootStack from "./src/navigations";
 import AppTheme from './src/res/theme';
 import ENUMS from './src/utils/ENUMS';
+import OTPCode from './src/screens/OtpScreen/OTPCode';
+import OtpScreen from './src/screens/OtpScreen/OtpScreen';
 
 AntDesign.loadFont();
 Entypo.loadFont();
@@ -60,8 +62,10 @@ export default App = () => {
     <SafeAreaView style={{ flex: 1 }}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <NavigationContainer theme={theme}>
-        <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
-          <RootStack />
+        <View style={{ flex: 1}}>
+          {/* <RootStack /> */}
+          {/* <OTPCode/> */}
+          <OtpScreen/>
         </View>
       </NavigationContainer>
     </SafeAreaView >
