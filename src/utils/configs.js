@@ -1,3 +1,3 @@
 export default {
-    BASE_URL: 'qa-api.jovi-app.com',
+    BASE_URL: 'https://qa-api.jovi-app.com'
 } 

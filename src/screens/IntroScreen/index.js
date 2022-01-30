@@ -3,6 +3,7 @@ import React from 'react';
 import { StatusBar } from 'react-native';
 import View from '../../components/atoms/View';
 import Button from '../../components/molecules/Button';
+import SharedActions from '../../helpers/SharedActions';
 import preference_manager from '../../preference_manager';
 import constants from '../../res/constants';
 import GV from '../../utils/GV';
@@ -14,7 +15,7 @@ const IntroScreen = () => {
         save();
     }, [])
     const onGetStarted = () => {
-        GV.NAVIGATION_LISTENER.auth_handler(true);
+        SharedActions.navigation_listener.auth_handler(true);
     }
     return (
         <View style={introStyles.topView}>

@@ -1,5 +1,4 @@
 export default {
-    NAVIGATION_LISTENER: null,
     SET_VALUE: 1,
     GET_VALUE: 2,
     THEME_VALUES: {
