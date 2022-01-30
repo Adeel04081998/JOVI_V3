@@ -8,6 +8,7 @@ import Home from '../screens/Home';
 
 import NAVIGATIONS from './NAVIGATIONS';
 import GV from '../utils/GV';
+import SharedActions from '../helpers/SharedActions';
 const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES } = NAVIGATIONS;
 
 const AuthComponents = {
@@ -100,7 +101,7 @@ const AppDrawers = (props) => {
 
 export default (props) => {
     const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-    GV.NAVIGATION_LISTENER = {
+    SharedActions.navigation_listener = {
         ...props,
         auth_handler: setIsLoggedIn,
     }
