@@ -16,6 +16,7 @@ import { NavigationContainer, DefaultTheme, DarkTheme } from "@react-navigation/
 import RootStack from "./src/navigations";
 import AppTheme from './src/res/theme';
 import ENUMS from './src/utils/ENUMS';
+import UserRegister from './src/screens/UserRegister';
 
 AntDesign.loadFont();
 Entypo.loadFont();
@@ -61,7 +62,8 @@ export default App = () => {
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <NavigationContainer theme={theme}>
         <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
-          <RootStack />
+          {/* <RootStack /> */}
+          <UserRegister />
         </View>
       </NavigationContainer>
     </SafeAreaView >
