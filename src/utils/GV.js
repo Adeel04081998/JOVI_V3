@@ -1,5 +1,3 @@
 export default {
-    NAVIGATION_LISTENER: {
-        auth_handler: () => { }
-    }
+    NAVIGATION_LISTENER: null
 } 
