@@ -3,20 +3,14 @@ import NetInfo from '@react-native-community/netinfo';
 let currentNetwork = {};
 NetInfo.fetch()
     .then((state) => {
-        currentNetwork = {
-            isConnected: state.isConnected,
-            isInternetReachable: state.isInternetReachable,
-        }
+        currentNetwork = state
     })
-    .catch(error => "An error accured during fetching network state...")
+    .catch(error => console.log("An error accured during fetching network state...", error))
 export default () => {
     const [netInfo, setNetInfo] = React.useState(currentNetwork);
     React.useEffect(() => {
         const unsubscribe = NetInfo.addEventListener((state) => {
-            setNetInfo({
-                isConnected: state.isConnected,
-                isInternetReachable: state.isInternetReachable,
-            });
+            setNetInfo(state);
         });
         return () => unsubscribe();
     }, []);
