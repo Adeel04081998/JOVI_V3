@@ -204,7 +204,7 @@ export default Otp = () => {
             >
                 <View style={styles.dropdown}>
                     <FlatList
-                        data={ENUMS.networkList}
+                        data={ENUMS.NETWORK_LIST}
                         renderItem={renderItem}
                         keyExtractor={(item, index) => index.toString()}
                     />
