@@ -2,6 +2,7 @@ import * as React from "react";
 import { Animated, Easing,TouchableOpacity, GestureResponderEvent, TextProps, TextStyle } from "react-native";
 import Text from "../atoms/Text";
 // import TouchableOpacity from "../atoms/TouchableOpacity";
+import debounce from 'lodash.debounce'; // 4.0.8
 
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
@@ -9,6 +10,7 @@ type Props = React.ComponentProps<typeof TouchableOpacity> & {
     children?: any;
     text?: string;
     textStyle?: TextStyle;
+    wait:number,
     activeOpacity?:number;
 
 };
@@ -16,6 +18,7 @@ type Props = React.ComponentProps<typeof TouchableOpacity> & {
 const defaultProps = {
     text: 'JOVI',
     activeOpacity:0.9,
+    wait:0.3
 };
 
 const Button = (props: Props, textProps: TextProps) => {
@@ -33,7 +36,7 @@ const Button = (props: Props, textProps: TextProps) => {
             }
         });
     };//end of animateIn
-
+    const onPressParent = debounce(props.onPress,props.wait * 1000,{ leading: true, trailing: false, });
     const animateOut = (event: GestureResponderEvent) => {
         Animated.timing(buttonMargin, {
             toValue: 1,
@@ -42,7 +45,7 @@ const Button = (props: Props, textProps: TextProps) => {
             easing: Easing.ease,
         }).start((finished) => {
             if (finished && props.onPress) {
-                props.onPress(event);
+                onPressParent(event);
             }
         });
     };//end of animateOut

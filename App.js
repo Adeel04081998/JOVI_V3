@@ -15,9 +15,8 @@ import RNSplashScreen from './NativeModules/RNSplashScreen';
 import { NavigationContainer, DefaultTheme, DarkTheme } from "@react-navigation/native";
 import RootStack from "./src/navigations";
 import AppTheme from './src/res/theme';
-import ENUMS from './src/utils/ENUMS';
-import OTPCode from './src/screens/OtpScreen/OTPCode';
-import OtpScreen from './src/screens/OtpScreen/OtpScreen';
+import useNetInfo from './src/hooks/useNetInfo';
+import GV from './src/utils/GV';
 
 AntDesign.loadFont();
 Entypo.loadFont();
@@ -34,18 +33,19 @@ SimpleLineIcons.loadFont();
 
 export default App = () => {
   const isDarkMode = useColorScheme() === "dark";
+  const netInfo = useNetInfo();
   const theme = isDarkMode ? {
     ...DarkTheme,
     colors: {
       ...DarkTheme.colors,
-      ...AppTheme.getTheme(ENUMS.THEME_VALUES.JOVI)
+      ...AppTheme.getTheme(GV.THEME_VALUES.JOVI)
     }
 
   } : {
     ...DefaultTheme,
     colors: {
       ...DefaultTheme.colors,
-      ...AppTheme.getTheme(ENUMS.THEME_VALUES.JOVI)
+      ...AppTheme.getTheme(GV.THEME_VALUES.JOVI)
     }
   }
   useEffect(() => {
@@ -58,14 +58,13 @@ export default App = () => {
   LogBox.ignoreLogs([
     "[react-native-gesture-handler] Seems like you\'re using an old API with gesture components, check out new Gestures system!",
   ]);
+  console.log("netInfo", netInfo)
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <NavigationContainer theme={theme}>
-        <View style={{ flex: 1}}>
-          {/* <RootStack /> */}
-          {/* <OTPCode/> */}
-          <OtpScreen/>
+        <View style={{ flex: 1 }}>
+          <RootStack />
         </View>
       </NavigationContainer>
     </SafeAreaView >
