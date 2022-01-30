@@ -15,7 +15,7 @@ import RNSplashScreen from './NativeModules/RNSplashScreen';
 import { NavigationContainer, DefaultTheme, DarkTheme } from "@react-navigation/native";
 import RootStack from "./src/navigations";
 import AppTheme from './src/res/theme';
-import useNetInfo from './src/hooks/useNetInfo';
+// import useNetInfo from './src/hooks/useNetInfo';
 import GV from './src/utils/GV';
 import { _NavgationRef } from './src/navigations/NavigationService';
 AntDesign.loadFont();
