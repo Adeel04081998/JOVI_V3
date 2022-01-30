@@ -17,7 +17,7 @@ import RootStack from "./src/navigations";
 import AppTheme from './src/res/theme';
 import useNetInfo from './src/hooks/useNetInfo';
 import GV from './src/utils/GV';
-
+import { _NavgationRef } from './src/navigations/NavigationService';
 AntDesign.loadFont();
 Entypo.loadFont();
 EvilIcons.loadFont();
@@ -32,8 +32,9 @@ SimpleLineIcons.loadFont();
 
 
 export default App = () => {
+  // const netInfo = useNetInfo();
+  // console.log("netInfo", netInfo)
   const isDarkMode = useColorScheme() === "dark";
-  const netInfo = useNetInfo();
   const theme = isDarkMode ? {
     ...DarkTheme,
     colors: {
@@ -58,11 +59,10 @@ export default App = () => {
   LogBox.ignoreLogs([
     "[react-native-gesture-handler] Seems like you\'re using an old API with gesture components, check out new Gestures system!",
   ]);
-  console.log("netInfo", netInfo)
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <NavigationContainer theme={theme}>
+      <NavigationContainer theme={theme} ref={_NavgationRef}>
         <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
           <RootStack />
         </View>
