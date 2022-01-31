@@ -23,7 +23,7 @@ import ReduxAction from '../../redux/actions/index'
 
 
 const SPACING = 20;
-export default () => {
+export default (props) => {
     const cellNo = "923039839093"; // should be redux value
     const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark");
     const styles = otpStyles.styles(colors);
@@ -36,11 +36,11 @@ export default () => {
     const intervalRef = React.useRef(null);
     const [disableOnchange, setDisableOnChange] = useState(false)
     const disbleContinueButton = inputs.includes('');
+    const params = props.route.params;
     const inputRef = useRef([]);
     const dispatch = useDispatch()
     const listerner = (info) => {
         const { minutes, seconds, isItervalStoped } = info;
-        console.log("info", info);
         setMinutes(minutes);
         setSeconds(seconds);
         if (!isItervalStoped) {
@@ -90,25 +90,33 @@ export default () => {
 
         const payload = {
             "code": otpCode,
-            "phoneNumber": __DEV__ ? '923365898423' : '',
+            "phoneNumber": params.phoneNumber,
             "userType": 1,
             "imei": SharedActions.sharedGetDeviceInfo().devieID,
             "smartPhone": SharedActions.sharedGetDeviceInfo().model,
             "hardwareID": SharedActions.sharedGetDeviceInfo().devieID
         };
+        console.log('params', params);
         postRequest(Endpoints.OTPVerify, payload, res => {
-            console.log("res...", res);
+            console.log("[verifyOtpToServer].res...", res);
             const { statusCode, message, otpResult } = res.data;
             if (statusCode === 417) return Toast.error(message);
             setRunInterval(false)
             clearInterval(intervalRef.current);
-            dispatch(ReduxAction.userAction(...otpResult))
-            if(otpResult.newUser){
-            NavigationService.common_actions.navigate(ROUTES.AUTH_ROUTES.SignUP.screen_name)
+            try {
+                dispatch(ReduxAction.userAction({...otpResult, ...params}))
+                console.log('otpResult', otpResult);
+                if (otpResult.newUser) {
+                    NavigationService.NavigationActions.common_actions.navigate(ROUTES.AUTH_ROUTES.SignUP.screen_name)
+                }
+                else {
+                    NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_ROUTES.Home.screen_name)
+                }
             }
-            else{
-                NavigationService.common_actions.navigate(ROUTES.APP_ROUTES.Home.screen_name)
+            catch (error) {
+                console.log('error', error);
             }
+
         },
             err => {
                 console.log("err...", err.response);
@@ -121,25 +129,18 @@ export default () => {
         );
     };
     const resendOtp = () => {
-        // setState(prevState => ({ ...prevState, intervalStoped: true, otpVerified: false, '0': '', '1': '', '2': '', '3': '', focusedIndex: initState.focusedIndex, inputs: initState.inputs }));
-        // postRequest('/api/User/OTP/Send', { "phoneNumber": phoneNumber, "appHash": appHash[0], "isResend": true, 'otpType': 1, "isNewVersion": true, 'userType': isJoviCustomerApp ? 1 : 2, }, {}, dispatch, onResendSuccess, onResendError, '');
-        // startListeningForOtp();
+
     };
 
     const _onSmsListener = async () => {
         try {
             const registered = await RNOtpVerify.getOtp();
-            console.log("registered", registered)
             if (registered) {
                 RNOtpVerify.addListener(message => {
-                    console.log("message", message);
+                    if (message === "Timeout Error.") return
                     let stringify = message.toString().match(Regex.androidOTP);
-                    console.log('stringify', stringify);
                     let parsedValue = parseInt(stringify[0]);
-                    console.log('parsedValue', parsedValue);
-
                     let commaSplittedArray = stringify[0].split('');
-                    console.log('commaSplittedArray', commaSplittedArray);
                     setInputs(commaSplittedArray)
                     RNOtpVerify.removeListener()
                     // SmsRetriever.removeSmsListener();
@@ -159,7 +160,6 @@ export default () => {
         if (e.nativeEvent.text === " " || e.nativeEvent.text === "") return;
         if (isNaN(e.nativeEvent.text)) return;
         if (!disableOnchange && e.nativeEvent.text && nextField < inputs.length) {
-            console.log('OnChange', inputRef.current[nextField]);
             inputRef.current[nextField].current.focus();
         };
     };
@@ -182,7 +182,6 @@ export default () => {
                 newVal = typedCode.concat(val);
                 inputs[index] = newVal[index];
             };
-            // setState(prevState => ({ ...prevState, typedCode: newVal, inputs, [index]: val }));
             setTypedCode(newVal)
             setInputs(inputs)
             if (newVal.length === 4) {
