@@ -1,4 +1,7 @@
+import React from 'react';
 import Toast from "../components/atoms/Toast";
+import { useIsFocused } from '@react-navigation/native';
+import { StatusBar } from "react-native";
 export default {
     navigation_listener: null,
     sharedExceptionHandler: (err) => {
@@ -29,4 +32,9 @@ export default {
             }
         }
     }
+}
+export const focusAwareStatusBar = (props) => {
+    const isFocused = useIsFocused();
+
+    return isFocused ? <StatusBar {...props} /> : null;
 }

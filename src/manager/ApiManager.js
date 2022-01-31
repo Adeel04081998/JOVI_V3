@@ -42,13 +42,21 @@ export const refreshTokenMiddleware = async (requestCallback, params) => {
 
 };
 
-export const postRequest = async (url, data, onSuccess = () => { }, onError = () => { }, headers = {}, showLoader = true) => {
+export const postRequest = async (url, data, onSuccess = () => { }, onError = () => { }, headers = {}, showLoader = true, customLoader = null) => {
+    if(customLoader){
+        customLoader(true);
+    }
     try {
         let res = await Axios.post(url, data, headers);
         onSuccess(res);
+        
     } catch (error) {
         if (error?.response?.data?.StatusCode === 401) return refreshTokenMiddleware(postRequest, [url, data, onSuccess, onError, headers, false]);
         onError(error);
+    }finally{
+        if(customLoader){
+            customLoader(false);
+        }
     }
 };
 export const getRequest = async (url, onSuccess = () => { }, onError = () => { }, headers = {}, showLoader = true) => {

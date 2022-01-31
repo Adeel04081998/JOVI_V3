@@ -1,8 +1,8 @@
 import LottieView from 'lottie-react-native';
 import React from 'react';
-import { Platform, StatusBar } from 'react-native';
 import View from '../../components/atoms/View';
 import Button from '../../components/molecules/Button';
+import { focusAwareStatusBar } from '../../helpers/SharedActions';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import preference_manager from '../../preference_manager';
@@ -22,12 +22,12 @@ const IntroScreen = () => {
     }
     return (
         <View style={introStyles.topView}>
-            {Platform.OS === "android" && <StatusBar
-                translucent
-                backgroundColor="#637EBF"//to be moved to theme file once that is created
-                barStyle="light-content"
-            />}
-
+            {
+                focusAwareStatusBar({
+                    translucent: true,
+                    barStyle: "light-content"
+                })
+            }
             <LottieView style={{
                 width,
                 ...introStyles.lottieView
@@ -38,7 +38,6 @@ const IntroScreen = () => {
                 style={introStyles.buttonTopView}
                 textStyle={introStyles.buttonText}
                 text={'Get Started'}
-                wait={0}
             />
         </View>
     );
