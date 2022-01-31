@@ -53,10 +53,10 @@ export default () => {
             formData.append("Gender", 0),
             formData.append("UserType", 1),
             formData.append("Hash", fname),
-            formData.append("Imei", SharedActions.sharedGetDevicInfo().deviceImei),
-            formData.append("Firmware", SharedActions.sharedGetDevicInfo().deviceFirmware)
-        formData.append("SmartPhone", SharedActions.sharedGetDevicInfo().deviceModel)
-        formData.append("HardwareID", SharedActions.sharedGetDevicInfo().deviceHardWareId)
+            formData.append("Imei", SharedActions.sharedGetDeviceInfo().deviceImei),
+            formData.append("Firmware", SharedActions.sharedGetDeviceInfo().deviceFirmware)
+            formData.append("SmartPhone", SharedActions.sharedGetDeviceInfo().deviceModel)
+            formData.append("HardwareID", SharedActions.sharedGetDeviceInfo().deviceHardWareId)
 
     }
 
