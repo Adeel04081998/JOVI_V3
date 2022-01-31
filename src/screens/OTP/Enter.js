@@ -48,7 +48,6 @@ export default () => {
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
     const styles = otpStyles.styles(colors, SPACING_VERTICAL);
     const [collapsed, setCollapsed] = React.useState(true);
-    const isDarkMode = useColorScheme() === "dark";
     const [pickerVisible, setPickerVisible] = React.useState(false);
     const [cellNo, setCellNo] = React.useState("");
     const [isLoading,setIsLoading] = React.useState(false);
@@ -59,22 +58,23 @@ export default () => {
     const [country, setCountry] = React.useState("92");
     const onPress = async () => {
         if (network.value <= 0) return Toast.info("Please select your mobile network.");
-        postRequest(Endpoints.SEND_OTP, {
+        const payload = {
             'phoneNumber': country + cellNo,
-            'appHash': await RNOtpVerify.getHash(),
+            'appHash': (await RNOtpVerify.getHash())[0],
             'otpType': 1,
             'userType': 1,
             'isWhatsapp': false,
             "isNewVersion": true,
             "mobileNetwork": network.value
-        }, res => {
+        };
+        postRequest(Endpoints.SEND_OTP,payload , res => {
             console.log("res...", res);
             const { statusCode, message } = res.data;
             if (statusCode === 417) return Toast.error(message);
             NavigationService.common_actions.navigate(ROUTES.AUTH_ROUTES.VerifyOTP.screen_name)
         },
             err => {
-                console.log("err...", err);
+                console.log("err...", err.response);
             },{},true,(loader)=>setIsLoading(loader)
         );
     }
