@@ -29,7 +29,7 @@ const defaultProps = {
     title: '',
 }
 
-const AnimatedTab = (props: Props) => {
+const CategoryCardItem = (props: Props) => {
     const transFormAngle = React.useRef(new Animated.Value(0)).current;
     useEffect(() => {
         Animated.timing(transFormAngle, {
@@ -92,5 +92,5 @@ const AnimatedTab = (props: Props) => {
     );
 }
 
-AnimatedTab.defaultProps = defaultProps;
-export default AnimatedTab;
+CategoryCardItem.defaultProps = defaultProps;
+export default CategoryCardItem;
