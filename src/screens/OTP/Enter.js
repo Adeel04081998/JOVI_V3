@@ -49,7 +49,7 @@ export default () => {
     const styles = otpStyles.styles(colors, SPACING_VERTICAL);
     const [collapsed, setCollapsed] = React.useState(true);
     const [pickerVisible, setPickerVisible] = React.useState(false);
-    const [cellNo, setCellNo] = React.useState("");
+    const [cellNo, setCellNo] = React.useState(__DEV__ ? '923365898423' : "");
     const [isLoading,setIsLoading] = React.useState(false);
     const [network, setNetwork] = React.useState({
         text: "Choose your mobile network",
@@ -59,7 +59,7 @@ export default () => {
     const onPress = async () => {
         if (network.value <= 0) return Toast.info("Please select your mobile network.");
         const payload = {
-            'phoneNumber': country + cellNo,
+            'phoneNumber': __DEV__ ? cellNo : country + cellNo,
             'appHash': (await RNOtpVerify.getHash())[0],
             'otpType': 1,
             'userType': 1,
@@ -89,7 +89,7 @@ export default () => {
                     <VectorIcon type='AntDesign' name={collapsed? "down":"up"} style={{ paddingLeft: 5, }} size={12} color={"#fff"} onPress={() => setCollapsed(!collapsed)} />
                 </TouchableOpacity>
                 {/* Networks list */}
-                <Dropdown collapsed={collapsed} scrollViewStyles={{ top: 42 }} options={ENUMS.NETWORK_LIST} itemUI={(item, index, collapsed) => <TouchableOpacity key={`network-key-${index}`} style={{ paddingVertical: 4,borderTopWidth:0,borderBottomWidth:0.2,borderLeftWidth:0.2,borderRightWidth:0.2,borderColor:'rgba(0,0,0,0.3)', borderBottomRightRadius:index === ENUMS.NETWORK_LIST.length-1?12:0, borderBottomLeftRadius:index === ENUMS.NETWORK_LIST.length-1?12:0 }} onPress={() => {
+                <Dropdown collapsed={collapsed} scrollViewStyles={{ top: 42 }} options={ENUMS.NETWORK_LIST} itemUI={(item, index, collapsed) => <TouchableOpacity key={`network-key-${index}`} style={{ paddingVertical: 4,borderWidth:0.5,borderTopWidth:0,borderColor:'rgba(0,0,0,0.3)', borderBottomRightRadius:index === ENUMS.NETWORK_LIST.length-1?12:0, borderBottomLeftRadius:index === ENUMS.NETWORK_LIST.length-1?12:0 }} onPress={() => {
                     setNetwork(item);
                     setCollapsed(!collapsed);
                 }}>

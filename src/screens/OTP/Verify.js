@@ -1,11 +1,11 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Dimensions, Platform, KeyboardAvoidingView, Appearance } from 'react-native';
+import React, { createRef, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Dimensions, Platform, KeyboardAvoidingView, Appearance, Keyboard, TextInput } from 'react-native';
 import Button from '../../components/molecules/Button';
 import Text from '../../components/atoms/Text';
 import View from '../../components/atoms/View';
 import SafeAreaView from '../../components/atoms/SafeAreaView';
 import otpStyles from './styles';
-import TextInput from '../../components/atoms/TextInput';
+// import TextInput from '../../components/atoms/TextInput';
 import theme from '../../res/theme';
 import GV from '../../utils/GV';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
@@ -14,16 +14,25 @@ import Sms from "../../helpers/Sms";
 import RNOtpVerify from "react-native-otp-verify";
 import Regex from '../../utils/Regex';
 import NavigationService from '../../navigations/NavigationService';
+import Endpoints from '../../manager/Endpoints';
+import ROUTES from '../../navigations/ROUTES';
+import { postRequest } from '../../manager/ApiManager';
 const SPACING = 20;
 export default () => {
     const cellNo = "923039839093"; // should be redux value
     const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark");
     const styles = otpStyles.styles(colors);
-    const inputs = Array(4).fill();
+    const [inputs, setInputs] = React.useState(["", "", "", ""]);
+    const [typedCode, setTypedCode] = useState('')
     const [minutes, setMinutes] = React.useState("00");
     const [seconds, setSeconds] = React.useState("00");
+    const [isLoading, setIsLoading] = React.useState(false);
     const [runInterval, setRunInterval] = React.useState(true);
     const intervalRef = React.useRef(null);
+    const [disableOnchange, setDisableOnChange] = useState(false)
+    const disbleContinueButton = inputs.includes('');
+    const inputRef = useRef([]);
+
     const listerner = (info) => {
         const { minutes, seconds, isItervalStoped } = info;
         console.log("info", info);
@@ -41,18 +50,116 @@ export default () => {
             intervalRef.current = SharedActions.sharedInteval(GV.OTP_INTERVAL, 1, listerner)
         }
     }, [runInterval])
-    const onResend = () => setRunInterval(true);
+    // const onResend = () => setRunInterval(true);
     React.useEffect(() => {
         Sms.requestReadSmsPermission()
             .then(async res => {
                 _onSmsListener();
             })
             .catch(err => console.log("err...", err));
-            return()=>{
-                clearInterval(intervalRef.current);
-                RNOtpVerify.removeListener()
-            };
+        return () => {
+            clearInterval(intervalRef.current);
+            RNOtpVerify.removeListener()
+        };
     }, [])
+    const _customEffect = () => {
+        if (inputRef.current.length !== inputs.length) {
+            inputRef.current = Array(inputs.length).fill().map((_, i) => inputRef.current[i] || createRef());
+        };
+        return () => {
+            // console.log('RNOtpVerify.removeListener------')
+            setRunInterval(false)
+            RNOtpVerify.removeListener();
+        }
+    };
+    useEffect(() => {
+        typedCode.length === 4 && Keyboard.dismiss();
+    }, [typedCode]);
+
+
+    useEffect(_customEffect, []);
+
+
+    const onSuccessHandler = async (resposne) => {
+        // console.log('Verify code Success---- :', resposne);
+        const { statusCode, otpResult } = resposne.data;
+        if (statusCode === 200) {
+            // console.log('intervalIDRef:', intervalIDRef.current);
+            RNOtpVerify.removeListener();
+            clearInterval(intervalRef.current);
+            if (otpResult) {
+                // CustomToast.success("OTP verified", null, "long");
+            }
+        }
+    };
+    const onErrorHandler = (error) => {
+        // console.log('onErrorHandler Error---- :', error);
+        if (error) {
+            inputRef.current[0].current.focus();
+            // setState(prevState => ({ ...prevState, otpVerified: false, inputs: initState.inputs, typedCode: initState.typedCode, "0": "", "1": "", "2": "", "3": "", focusedIndex: initState.focusedIndex }));
+            if (error.statusCode === 417) {
+                CustomToast.error(error.errors.Code[0], null, "long");
+                // clearInterval(intervalIDRef.current);
+                // setState(prevState => ({ ...prevState, otpVerified: false, intervalStoped: true, }));
+            } else {
+                sharedServerErrorToast(error)
+            }
+        }
+    };
+    const verifyOtpToServer = async (otpCode) => {
+
+        const payload = {
+            "code": otpCode,
+            "phoneNumber": __DEV__ ? '923365898423' : '',
+            "userType": 1,
+            "imei": SharedActions.sharedGetDeviceInfo().devieID,
+            "smartPhone": SharedActions.sharedGetDeviceInfo().model,
+            "hardwareID": SharedActions.sharedGetDeviceInfo().devieID
+        };
+        console.log('payload', payload);
+        postRequest(Endpoints.OTPVerify, payload, res => {
+            console.log("res...", res);
+            const { statusCode, message } = res.data;
+            if (statusCode === 417) return Toast.error(message);
+            setRunInterval(false)
+            clearInterval(intervalRef.current);
+
+            // NavigationService.common_actions.navigate(ROUTES.AUTH_ROUTES.VerifyOTP.screen_name)
+        },
+            err => {
+                console.log("err...", err.response);
+                setRunInterval(false)
+                clearInterval(intervalRef.current);
+            }, {}, true, (loader) => setIsLoading(loader)
+        );
+    };
+    const otpHandler = (message) => {
+        if (message !== "Timeout Error.") {
+            let stringify = message.toString().match(/\b\d{4}\b/);
+            let parsedValue = parseInt(stringify[0]);
+            let commaSplittedArray = stringify[0].split('');
+            verifyOtpToServer(parsedValue);
+            // setState(prevState => ({ ...prevState, inputs: commaSplittedArray, '0': stringify[0][0], '1': stringify[0][1], '2': stringify[0][2], '3': stringify[0][3] }));
+        } else {
+            startListeningForOtp();
+        }
+    };
+    const onResendSuccess = (response) => {
+        if (response.data.statusCode === 200) {
+            setRunInterval(true);
+        }
+    };
+    const onResendError = (error) => {
+        setRunInterval(false);
+        clearInterval(intervalRef.current);
+        // setState(prevState => ({ ...prevState, intervalStoped: true }));
+    };
+    const resendOtp = () => {
+        // setState(prevState => ({ ...prevState, intervalStoped: true, otpVerified: false, '0': '', '1': '', '2': '', '3': '', focusedIndex: initState.focusedIndex, inputs: initState.inputs }));
+        // postRequest('/api/User/OTP/Send', { "phoneNumber": phoneNumber, "appHash": appHash[0], "isResend": true, 'otpType': 1, "isNewVersion": true, 'userType': isJoviCustomerApp ? 1 : 2, }, {}, dispatch, onResendSuccess, onResendError, '');
+        // startListeningForOtp();
+    };
+
     const _onSmsListener = async () => {
         try {
             const registered = await RNOtpVerify.getOtp();
@@ -61,8 +168,13 @@ export default () => {
                 RNOtpVerify.addListener(message => {
                     console.log("message", message);
                     let stringify = message.toString().match(Regex.androidOTP);
+                    console.log('stringify', stringify);
                     let parsedValue = parseInt(stringify[0]);
+                    console.log('parsedValue', parsedValue);
+
                     let commaSplittedArray = stringify[0].split('');
+                    console.log('commaSplittedArray', commaSplittedArray);
+                    setInputs(commaSplittedArray)
                     RNOtpVerify.removeListener()
                     // SmsRetriever.removeSmsListener();
                 });
@@ -74,6 +186,47 @@ export default () => {
     const onChangeNumber = () => {
         NavigationService.common_actions.goBack();
     }
+
+
+    const _onChange = (e, nextField) => {
+        e.persist();
+        if (e.nativeEvent.text === " " || e.nativeEvent.text === "") return;
+        if (isNaN(e.nativeEvent.text)) return;
+        if (!disableOnchange && e.nativeEvent.text && nextField < inputs.length) {
+            console.log('OnChange', inputRef.current[nextField]);
+            inputRef.current[nextField].current.focus();
+        };
+    };
+    const _focusNextField = (e, nextField, currentIndex) => {
+        if (e.nativeEvent.key === "Backspace") {
+            let prevField = nextField >= 2 ? nextField - 2 : 0;
+            if (inputs[currentIndex] !== "") return;
+            else if (inputs[currentIndex] === "") return inputRef.current[prevField].current.focus();
+        }
+    };
+    const onChangeHanlder = (val, index) => {
+        if (isNaN(val)) return;
+        else {
+            val = val.trim();
+            let newVal = "";
+            if (!val) {
+                inputs[index] = "";
+                newVal = typedCode.slice(0, typedCode.length - 1);
+            } else {
+                newVal = typedCode.concat(val);
+                inputs[index] = newVal[index];
+            };
+            // setState(prevState => ({ ...prevState, typedCode: newVal, inputs, [index]: val }));
+            setTypedCode(newVal)
+            setInputs(inputs)
+            if (newVal.length === 4) {
+                verifyOtpToServer(parseInt(newVal));
+            }
+        }
+
+        // debugger;
+    };
+
     return <SafeAreaView style={{ flex: 1, backgroundColor: "#F6F5FA" }}>
         <Text style={{ textAlign: "center" }}>Verify Phone</Text>
         <Text style={{ textAlign: "center", paddingVertical: SPACING }}>{`Code is sent to ${cellNo}`}</Text>
@@ -85,46 +238,37 @@ export default () => {
                         autoCorrect={false}
                         autoCapitalize="none"
                         placeholder=""
-                        // ref={elRefs.current[i]}
-                        // value={val}
-                        // value={state[i]}
+                        ref={inputRef.current[index]}
+                        value={input}
                         style={[styles.otpCode]}
-                        // style={{
-                        //     width: 65, elevation: 2,
-                        //     shadowColor: '#000000',
-                        //     shadowRadius: 4,
-                        //     shadowOffset: { height: 4, width: 0 },
-                        //     shadowOpacity: 0.5,
-                        // }}
                         keyboardType="numeric"
                         maxLength={1}
-                        // autoFocus={i === 0 ? true : false}
+                        autoFocus={index === 0 ? true : false}
                         underlineColorAndroid="transparent"
                         autoCompleteType="tel"
                         returnKeyType="next"
                         textContentType="oneTimeCode"
-                    // onFocus={() => setState(pre => ({ ...pre, focusedIndex: i }))}
-                    // onChangeText={val => onChangeHanlder(val, i)}
-                    // onKeyPress={e => _focusNextField(e, i + 1, i)}
-                    // onChange={(e) => _onChange(e, i + 1, i)}
+                        onFocus={() => { }}
+                        onChangeText={val => onChangeHanlder(val, index)}
+                        onKeyPress={e => _focusNextField(e, index + 1, index)}
+                        onChange={(e) => _onChange(e, index + 1, index)}
                     />
                 ))
             }
         </View>
         <Text style={{ textAlign: "center", paddingVertical: SPACING - 5 }}>{`${minutes}:${seconds}`}</Text>
         <Text style={{ textAlign: "center", fontSize: 16 }}>{`Didn't recieve code?`}</Text>
-        <TouchableOpacity onPress={onResend} disabled={parseInt(seconds) !== 0}>
+        <TouchableOpacity onPress={resendOtp} disabled={parseInt(seconds) !== 0}>
             <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 10, color: parseInt(seconds) !== 0 ? 'grey' : "#7359BE", marginTop: 3 }}>{`Request again Get Via SMS`}</Text>
         </TouchableOpacity>
         <View style={styles.buttonView}>
             <Button
-                // style={{ marginHorizontal: 20, backgroundColor: "#7359BE", borderRadius: 10, paddingVertical: 15, marginVertical: SPACING }}
                 style={styles.continueButton}
                 text={'Verify and Create Account'}
-                textStyle={{ color: '#fff',...styles.textAlignCenter }}
+                textStyle={{ color: '#fff', ...styles.textAlignCenter }}
                 onPress={() => { }}
-            // isLoading={isLoading}
-            // disabled={disbleContinueButton || isLoading}
+                isLoading={isLoading}
+                disabled={disbleContinueButton || isLoading}
             />
         </View>
         <TouchableOpacity onPress={onChangeNumber}>

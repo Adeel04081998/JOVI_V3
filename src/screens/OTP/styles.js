@@ -43,7 +43,7 @@ export default {
                 paddingVertical: 0,
                 height: 50,
                 width: 50,
-                // marginRight: 10,
+                marginRight: 10,
                 fontSize: 12,
                 // textAlign: 'center',
                 paddingLeft: 10,

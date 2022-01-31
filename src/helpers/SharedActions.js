@@ -7,10 +7,11 @@ import Toast from "../components/atoms/Toast";
 import BackgroundTimer from 'react-native-background-timer';
 export default {
     navigation_listener: null,
-    sharedGetDeviceInfo: () => {
+    sharedGetDeviceInfo: async () => {
         let model = DeviceInfo.getModel();
-        let devieID = Platform.OS === "ios" ? DeviceInfo.getUniqueId() : DeviceInfo.getAndroidId();
+        let devieID = Platform.OS === "ios" ? DeviceInfo.getUniqueId() : await DeviceInfo.getAndroidId();
         let systemVersion = DeviceInfo.getSystemVersion();
+        console.log(devieID, model, systemVersion, '<<<====== here');
         return { devieID, model, systemVersion }
     },
     sharedExceptionHandler: (err) => {
