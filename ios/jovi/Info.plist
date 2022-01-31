@@ -53,5 +53,29 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+
+	<key>UIAppFonts</key>
+	<array>
+		<string>PoppinsBlack.ttf</string>
+		<string>PoppinsBlackItalic.ttf</string>
+		<string>PoppinsBold.ttf</string>
+		<string>PoppinsBoldItalic.ttf</string>
+		<string>PoppinsExtraBold.ttf</string>
+		<string>PoppinsExtraBoldItalic.ttf</string>
+		<string>PoppinsExtraLight.ttf</string>
+		<string>PoppinsExtraLightItalic.ttf</string>
+		<string>PoppinsItalic.ttf</string>
+		<string>PoppinsLight.ttf</string>
+		<string>PoppinsLightItalic.ttf</string>
+		<string>PoppinsMedium.ttf</string>
+		<string>PoppinsMediumItalic.ttf</string>
+		<string>PoppinsRegular.ttf</string>
+		<string>PoppinsSemiBold.ttf</string>
+		<string>PoppinsSemiBoldItalic.ttf</string>
+		<string>PoppinsThin.ttf</string>
+		<string>PoppinsThinItalic.ttf</string>
+
+	</array>
+
 </dict>
 </plist>

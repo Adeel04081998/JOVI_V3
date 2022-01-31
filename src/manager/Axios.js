@@ -1,7 +1,8 @@
 import Axios from 'axios';
 import configs from '../utils/configs';
 import preference_manager from '../preference_manager';
-import ENUMS from '../utils/ENUMS';
+import GV from '../utils/GV';
+import Toast from '../components/atoms/Toast';
 // import perf from '@react-native-firebase/perf';
 // import { getLocalSettings } from '../utils/sharedActions';
 
@@ -10,7 +11,7 @@ Axios.interceptors.request.use(
     async config => {
         try {
             config.baseURL = configs.BASE_URL;
-            let res = await preference_manager.getSetUserAsync(ENUMS.GET_VALUE);
+            let res = await preference_manager.getSetUserAsync(GV.GET_VALUE);
             if (!res) config.headers['content-type: application/json'];
             else {
                 config.headers['Authorization'] = 'Bearer ' + res.token.authToken;
@@ -36,18 +37,19 @@ Axios.interceptors.request.use(
             console.log("[axios].request.catch.error", error)
         }
         finally {
-            console.log("[axios].config", config)
+            // console.log("[axios].config", config)
             return config;
         }
 
     },
     error => {
+        console.log("[Axios.Request.Error]", JSON.stringify(error))
         return Promise.reject(error)
     });
 
 Axios.interceptors.response.use(
     async (response) => {
-        console.log("[axios].response", response)
+        // console.log("[axios].response", response)
         try {
             // if (response.config.metadata) {
             //     // Request was successful, e.g. HTTP code 200
@@ -72,6 +74,10 @@ Axios.interceptors.response.use(
     },
     async (error) => {
         try {
+            console.log("[Axios.Reponse.Error]", JSON.stringify(error))
+            if (error?.response?.status === 400) Toast.error('Bad Request!');
+            else if (error?.response?.status === 404) Toast.error('Bad Request!');
+            else if (error?.response?.status === 500) Toast.error('Something went wrong!');
             // if (error.config.metadata) {
             //     // Request failed, e.g. HTTP code 500
 

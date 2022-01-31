@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { SafeAreaView, StatusBar, useColorScheme, View, Text, LogBox, StyleSheet } from 'react-native';
+import { SafeAreaView, StatusBar, useColorScheme, LogBox, StyleSheet } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
@@ -15,9 +15,11 @@ import RNSplashScreen from './NativeModules/RNSplashScreen';
 import { NavigationContainer, DefaultTheme, DarkTheme } from "@react-navigation/native";
 import RootStack from "./src/navigations";
 import AppTheme from './src/res/theme';
-import ENUMS from './src/utils/ENUMS';
-import UserRegister from './src/screens/UserRegister';
-
+// import useNetInfo from './src/hooks/useNetInfo';
+import GV from './src/utils/GV';
+import { _NavgationRef } from './src/navigations/NavigationService';
+import View from './src/components/atoms/View';
+import Toast from 'react-native-toast-message';
 AntDesign.loadFont();
 Entypo.loadFont();
 EvilIcons.loadFont();
@@ -32,19 +34,21 @@ SimpleLineIcons.loadFont();
 
 
 export default App = () => {
+  // const netInfo = useNetInfo();
+  // console.log("netInfo", netInfo)
   const isDarkMode = useColorScheme() === "dark";
   const theme = isDarkMode ? {
     ...DarkTheme,
     colors: {
       ...DarkTheme.colors,
-      ...AppTheme.getTheme(ENUMS.THEME_VALUES.JOVI)
+      ...AppTheme.getTheme(GV.THEME_VALUES.JOVI)
     }
 
   } : {
     ...DefaultTheme,
     colors: {
       ...DefaultTheme.colors,
-      ...AppTheme.getTheme(ENUMS.THEME_VALUES.JOVI)
+      ...AppTheme.getTheme(GV.THEME_VALUES.JOVI)
     }
   }
   useEffect(() => {
@@ -60,12 +64,13 @@ export default App = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <NavigationContainer theme={theme}>
+      <NavigationContainer theme={theme} ref={_NavgationRef} >
         <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
           {/* <RootStack /> */}
           <UserRegister />
         </View>
       </NavigationContainer>
-    </SafeAreaView >
+      <Toast />
+    </SafeAreaView>
   );
-}
+};
