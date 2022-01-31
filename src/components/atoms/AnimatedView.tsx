@@ -1,7 +1,7 @@
 import * as React from "react";
-import { View as RNView,Animated, } from "react-native";
+import { Animated } from "react-native";
 
-type Props = React.ComponentProps<typeof RNView> & {
+type Props = React.ComponentProps<typeof Animated.View> & {
   children?: any;
 };
 
