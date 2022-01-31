@@ -5,4 +5,7 @@ export default {
     numberOnly: /^[0-9]+$/,
     pkCellNo: /^[1-9]+[0-9]*$/,
     name: /^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)/,
+    Space_Regex: /\s/,
+    androidOTP: /\b\d{4}\b/
+
 }

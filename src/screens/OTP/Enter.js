@@ -2,6 +2,7 @@ import React from 'react';
 import { Appearance, SafeAreaView, useColorScheme } from 'react-native';
 import CountryPicker from 'react-native-country-picker-modal';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
+import RNOtpVerify from "react-native-otp-verify";
 import { SvgXml } from 'react-native-svg';
 import svgs from '../../assets/svgs';
 import AnimatedView from '../../components/atoms/AnimatedView';
@@ -22,6 +23,8 @@ import ENUMS from '../../utils/ENUMS';
 import GV from '../../utils/GV';
 import Regex from '../../utils/Regex';
 import otpStyles from './styles';
+
+
 const SPACING_VERTICAL = 10;
 
 const Picker = ({ pickerVisible, setCountry, setPickerVisible }) => {
@@ -54,11 +57,11 @@ export default () => {
         value: 0
     });
     const [country, setCountry] = React.useState("92");
-    const onPress = () => {
+    const onPress = async () => {
         if (network.value <= 0) return Toast.info("Please select your mobile network.");
         postRequest(Endpoints.SEND_OTP, {
             'phoneNumber': country + cellNo,
-            'appHash': "XNZuxsosN/Q",
+            'appHash': await RNOtpVerify.getHash(),
             'otpType': 1,
             'userType': 1,
             'isWhatsapp': false,
