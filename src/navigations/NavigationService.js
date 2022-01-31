@@ -3,7 +3,7 @@
 import React from "react";
 import { CommonActions, StackActions, DrawerActions, TabActions } from '@react-navigation/native';
 export const _NavgationRef = React.createRef({});
-export default {
+const NavigationActions = {
     common_actions: {
         navigate: (name = "", params = {}, navigation = _NavgationRef.current) => {
             navigation.dispatch(
@@ -91,4 +91,8 @@ export default {
             navigation.dispatch(TabActions.jumpTo(routeName, { ...routeParams }))
         },
     }
+}
+export const goBack = NavigationActions.common_actions.goBack; // Example to import as an individual;
+export default {
+    NavigationActions
 }
