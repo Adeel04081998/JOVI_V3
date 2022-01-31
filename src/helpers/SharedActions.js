@@ -1,10 +1,10 @@
-export const VALIDATION_CHECK=(text)=>{
-    if (text === "" || text === " " || text === "null" || text === null || text === "undefined" || text === undefined || text === false || text === "false") {
+export const VALIDATION_CHECK = (text) => {
+    text = `${text}`.toLowerCase().trim();
+    if (text === "" || text === " " || text === "null" || text === "undefined" || text === "false") {
         return false;
     }
-    else {
-        return true;
-    }
+    return true;
+  
 }
 export default {
     navigation_listener: null,
