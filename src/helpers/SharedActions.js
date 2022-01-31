@@ -59,6 +59,7 @@ export default {
                 return;
             }
         }, delay * 1000);
+        return interlID;
     }
 }
 export const focusAwareStatusBar = (props) => {

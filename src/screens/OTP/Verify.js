@@ -13,6 +13,7 @@ import SharedActions from '../../helpers/SharedActions';
 import Sms from "../../helpers/Sms";
 import RNOtpVerify from "react-native-otp-verify";
 import Regex from '../../utils/Regex';
+import NavigationService from '../../navigations/NavigationService';
 const SPACING = 20;
 export default () => {
     const cellNo = "923039839093"; // should be redux value
@@ -22,6 +23,7 @@ export default () => {
     const [minutes, setMinutes] = React.useState("00");
     const [seconds, setSeconds] = React.useState("00");
     const [runInterval, setRunInterval] = React.useState(true);
+    const intervalRef = React.useRef(null);
     const listerner = (info) => {
         const { minutes, seconds, isItervalStoped } = info;
         console.log("info", info);
@@ -33,7 +35,10 @@ export default () => {
     };
     React.useEffect(() => {
         if (runInterval) {
-            SharedActions.sharedInteval(GV.OTP_INTERVAL, 1, listerner)
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+            }
+            intervalRef.current = SharedActions.sharedInteval(GV.OTP_INTERVAL, 1, listerner)
         }
     }, [runInterval])
     const onResend = () => setRunInterval(true);
@@ -42,7 +47,11 @@ export default () => {
             .then(async res => {
                 _onSmsListener();
             })
-            .catch(err => console.log("err...", err))
+            .catch(err => console.log("err...", err));
+            return()=>{
+                clearInterval(intervalRef.current);
+                RNOtpVerify.removeListener()
+            };
     }, [])
     const _onSmsListener = async () => {
         try {
@@ -62,6 +71,9 @@ export default () => {
             console.log(`[_onSmsListenerPressed].catch`, JSON.stringify(error));
         }
     };
+    const onChangeNumber = () => {
+        NavigationService.common_actions.goBack();
+    }
     return <SafeAreaView style={{ flex: 1, backgroundColor: "#F6F5FA" }}>
         <Text style={{ textAlign: "center" }}>Verify Phone</Text>
         <Text style={{ textAlign: "center", paddingVertical: SPACING }}>{`Code is sent to ${cellNo}`}</Text>
@@ -101,15 +113,23 @@ export default () => {
         </View>
         <Text style={{ textAlign: "center", paddingVertical: SPACING - 5 }}>{`${minutes}:${seconds}`}</Text>
         <Text style={{ textAlign: "center", fontSize: 16 }}>{`Didn't recieve code?`}</Text>
-        <TouchableOpacity onPress={onResend}>
-            <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 10, color: "#7359BE", marginTop: 3 }}>{`Request again Get Via SMS`}</Text>
+        <TouchableOpacity onPress={onResend} disabled={parseInt(seconds) !== 0}>
+            <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 10, color: parseInt(seconds) !== 0 ? 'grey' : "#7359BE", marginTop: 3 }}>{`Request again Get Via SMS`}</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity style={{ marginHorizontal: 20, backgroundColor: "#7359BE", borderRadius: 10, paddingVertical: 15, marginVertical: SPACING }} activeOpacity={.7} onPress={() => { }}>
-            <Text style={{ color: "#fff", textAlign: "center" }}>Verify and Create Account</Text>
+        <View style={styles.buttonView}>
+            <Button
+                // style={{ marginHorizontal: 20, backgroundColor: "#7359BE", borderRadius: 10, paddingVertical: 15, marginVertical: SPACING }}
+                style={styles.continueButton}
+                text={'Verify and Create Account'}
+                textStyle={{ color: '#fff',...styles.textAlignCenter }}
+                onPress={() => { }}
+            // isLoading={isLoading}
+            // disabled={disbleContinueButton || isLoading}
+            />
+        </View>
+        <TouchableOpacity onPress={onChangeNumber}>
+            <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 10, color: "#7359BE" }}>{`Change number`}</Text>
         </TouchableOpacity>
-
-        <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 10, color: "#7359BE" }}>{`Change number`}</Text>
 
 
     </SafeAreaView>
