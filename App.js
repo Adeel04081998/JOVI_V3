@@ -66,8 +66,7 @@ export default App = () => {
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <NavigationContainer theme={theme} ref={_NavgationRef} >
         <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
-          {/* <RootStack /> */}
-          <UserRegister />
+          <RootStack />
         </View>
       </NavigationContainer>
       <Toast />
