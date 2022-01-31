@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Animated, TouchableWithoutFeedback, FlatList, Dimensions, KeyboardAvoidingView, Platform, Easing, SafeAreaView, Appearance, StyleSheet } from 'react-native';
+import { Animated, TouchableWithoutFeedback, FlatList, Dimensions, KeyboardAvoidingView, Platform, Easing, Appearance, StyleSheet } from 'react-native';
 import Button from '../../components/molecules/Button';
 import images from '../../assets/images';
 import ENUMS from '../../utils/ENUMS';
 import View from '../../components/atoms/View';
 import CountryPicker, { getAllCountries, getCallingCode } from 'react-native-country-picker-modal';
 import Text from '../../components/atoms/Text';
+import SafeAreaView from '../../components/atoms/SafeAreaView';
 import TextInput from '../../components/atoms/TextInput';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import Image from '../../components/atoms/Image';
@@ -24,6 +25,8 @@ import GV from '../../utils/GV';
 import otpStyles from './styles';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
+import RNOtpVerify from "react-native-otp-verify";
+
 
 const HEIGHT = 120;
 const SPACING_VERTICAL = 10;
@@ -62,7 +65,7 @@ const Picker = ({ pickerVisible, setCountry, setPickerVisible }) => {
 }
 
 export default () => {
-    const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
+    const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark");
     const styles = otpStyles.styles(colors);
     const [collapsed, setCollapsed] = React.useState(true);
     const [pickerVisible, setPickerVisible] = React.useState(false);
@@ -91,11 +94,11 @@ export default () => {
             }).start();
         }
     }, [collapsed]);
-    const onPress = () => {
+    const onPress = async () => {
         if (network.value <= 0) return Toast.info("Please select your mobile network.");
         postRequest(Endpoints.SEND_OTP, {
             'phoneNumber': country + cellNo,
-            'appHash': "XNZuxsosN/Q",
+            'appHash': await RNOtpVerify.getHash(),
             'otpType': 1,
             'userType': 1,
             'isWhatsapp': false,
