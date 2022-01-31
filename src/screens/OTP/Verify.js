@@ -1,5 +1,6 @@
 import React, { createRef, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Dimensions, Platform, KeyboardAvoidingView, Appearance, Keyboard, TextInput } from 'react-native';
+import { useDispatch } from 'react-redux';
 import Button from '../../components/molecules/Button';
 import Text from '../../components/atoms/Text';
 import View from '../../components/atoms/View';
@@ -17,6 +18,10 @@ import NavigationService from '../../navigations/NavigationService';
 import Endpoints from '../../manager/Endpoints';
 import ROUTES from '../../navigations/ROUTES';
 import { postRequest } from '../../manager/ApiManager';
+import Toast from '../../components/atoms/Toast';
+import ReduxAction from '../../redux/actions/index'
+
+
 const SPACING = 20;
 export default () => {
     const cellNo = "923039839093"; // should be redux value
@@ -32,7 +37,7 @@ export default () => {
     const [disableOnchange, setDisableOnChange] = useState(false)
     const disbleContinueButton = inputs.includes('');
     const inputRef = useRef([]);
-
+    const dispatch = useDispatch()
     const listerner = (info) => {
         const { minutes, seconds, isItervalStoped } = info;
         console.log("info", info);
@@ -50,7 +55,6 @@ export default () => {
             intervalRef.current = SharedActions.sharedInteval(GV.OTP_INTERVAL, 1, listerner)
         }
     }, [runInterval])
-    // const onResend = () => setRunInterval(true);
     React.useEffect(() => {
         Sms.requestReadSmsPermission()
             .then(async res => {
@@ -59,6 +63,7 @@ export default () => {
             .catch(err => console.log("err...", err));
         return () => {
             clearInterval(intervalRef.current);
+            setRunInterval(false)
             RNOtpVerify.removeListener()
         };
     }, [])
@@ -69,6 +74,7 @@ export default () => {
         return () => {
             // console.log('RNOtpVerify.removeListener------')
             setRunInterval(false)
+            clearInterval(intervalRef.current);
             RNOtpVerify.removeListener();
         }
     };
@@ -80,32 +86,6 @@ export default () => {
     useEffect(_customEffect, []);
 
 
-    const onSuccessHandler = async (resposne) => {
-        // console.log('Verify code Success---- :', resposne);
-        const { statusCode, otpResult } = resposne.data;
-        if (statusCode === 200) {
-            // console.log('intervalIDRef:', intervalIDRef.current);
-            RNOtpVerify.removeListener();
-            clearInterval(intervalRef.current);
-            if (otpResult) {
-                // CustomToast.success("OTP verified", null, "long");
-            }
-        }
-    };
-    const onErrorHandler = (error) => {
-        // console.log('onErrorHandler Error---- :', error);
-        if (error) {
-            inputRef.current[0].current.focus();
-            // setState(prevState => ({ ...prevState, otpVerified: false, inputs: initState.inputs, typedCode: initState.typedCode, "0": "", "1": "", "2": "", "3": "", focusedIndex: initState.focusedIndex }));
-            if (error.statusCode === 417) {
-                CustomToast.error(error.errors.Code[0], null, "long");
-                // clearInterval(intervalIDRef.current);
-                // setState(prevState => ({ ...prevState, otpVerified: false, intervalStoped: true, }));
-            } else {
-                sharedServerErrorToast(error)
-            }
-        }
-    };
     const verifyOtpToServer = async (otpCode) => {
 
         const payload = {
@@ -116,43 +96,29 @@ export default () => {
             "smartPhone": SharedActions.sharedGetDeviceInfo().model,
             "hardwareID": SharedActions.sharedGetDeviceInfo().devieID
         };
-        console.log('payload', payload);
         postRequest(Endpoints.OTPVerify, payload, res => {
             console.log("res...", res);
-            const { statusCode, message } = res.data;
+            const { statusCode, message, otpResult } = res.data;
             if (statusCode === 417) return Toast.error(message);
             setRunInterval(false)
             clearInterval(intervalRef.current);
-
-            // NavigationService.common_actions.navigate(ROUTES.AUTH_ROUTES.VerifyOTP.screen_name)
+            dispatch(ReduxAction.userAction(...otpResult))
+            if(otpResult.newUser){
+            NavigationService.common_actions.navigate(ROUTES.AUTH_ROUTES.SignUP.screen_name)
+            }
+            else{
+                NavigationService.common_actions.navigate(ROUTES.APP_ROUTES.Home.screen_name)
+            }
         },
             err => {
                 console.log("err...", err.response);
                 setRunInterval(false)
                 clearInterval(intervalRef.current);
-            }, {}, true, (loader) => setIsLoading(loader)
+            },
+            {},
+            true,
+            (loader) => setIsLoading(loader)
         );
-    };
-    const otpHandler = (message) => {
-        if (message !== "Timeout Error.") {
-            let stringify = message.toString().match(/\b\d{4}\b/);
-            let parsedValue = parseInt(stringify[0]);
-            let commaSplittedArray = stringify[0].split('');
-            verifyOtpToServer(parsedValue);
-            // setState(prevState => ({ ...prevState, inputs: commaSplittedArray, '0': stringify[0][0], '1': stringify[0][1], '2': stringify[0][2], '3': stringify[0][3] }));
-        } else {
-            startListeningForOtp();
-        }
-    };
-    const onResendSuccess = (response) => {
-        if (response.data.statusCode === 200) {
-            setRunInterval(true);
-        }
-    };
-    const onResendError = (error) => {
-        setRunInterval(false);
-        clearInterval(intervalRef.current);
-        // setState(prevState => ({ ...prevState, intervalStoped: true }));
     };
     const resendOtp = () => {
         // setState(prevState => ({ ...prevState, intervalStoped: true, otpVerified: false, '0': '', '1': '', '2': '', '3': '', focusedIndex: initState.focusedIndex, inputs: initState.inputs }));
