@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { SafeAreaView, StatusBar, useColorScheme, View, Text, LogBox, StyleSheet, Dimensions } from 'react-native';
+import { SafeAreaView, StatusBar, useColorScheme, LogBox, StyleSheet } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
@@ -18,6 +18,8 @@ import AppTheme from './src/res/theme';
 // import useNetInfo from './src/hooks/useNetInfo';
 import GV from './src/utils/GV';
 import { _NavgationRef } from './src/navigations/NavigationService';
+import View from './src/components/atoms/View';
+import Toast from 'react-native-toast-message';
 AntDesign.loadFont();
 Entypo.loadFont();
 EvilIcons.loadFont();
@@ -62,58 +64,12 @@ export default App = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <NavigationContainer theme={theme} ref={_NavgationRef}>
+      <NavigationContainer theme={theme} ref={_NavgationRef} >
         <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
           <RootStack />
         </View>
       </NavigationContainer>
-    </SafeAreaView >
+      <Toast />
+    </SafeAreaView>
   );
 };
-
-
-const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  btn: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  btnText: {
-    color: '#fff',
-    fontSize: 25,
-  },
-  dropdown: {
-    shadowColor: '#000000',
-    shadowRadius: 4,
-    shadowOffset: { height: 4, width: 0 },
-    shadowOpacity: 0.5,
-    elevation: 2,
-    borderBottomRightRadius: 20,
-    borderBottomLeftRadius: 20,
-    backgroundColor: 'white'
-  },
-  overlay: {
-    marginHorizontal: 0,
-    zIndex: 999,
-    position: 'absolute',
-    width: Dimensions.get('window').width - 30,
-    top: 50
-  },
-  item: (index) => {
-    return {
-      paddingHorizontal: 10,
-      paddingVertical: 10,
-      borderBottomWidth: index == 4 ? 0 : 1,
-      borderBottomColor: 'lightgrey'
-    }
-  },
-  button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#efefef',
-    height: 50,
-    zIndex: 1,
-    width: '100%'
-  },
-});

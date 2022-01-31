@@ -7,6 +7,14 @@ const AUTH_ROUTES = {
         screen_name: "INTRODUCTION",
         options: null,
     },
+    "EnterOTP": {
+        screen_name: "ENTER_OTP",
+        options: null,
+    },
+    "VerifyOTP": {
+        screen_name: "VERIFY_OTP",
+        options: null,
+    },
 };
 const APP_ROUTES = {
     "Home": {

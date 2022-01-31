@@ -8,9 +8,10 @@ import CountryPicker, { getAllCountries, getCallingCode } from 'react-native-cou
 import Text from '../../components/atoms/Text';
 import TextInput from '../../components/atoms/TextInput';
 import VectorIcon from '../../components/atoms/VectorIcon';
-import styles from './styles';
+import Style from './styles';
 
 export default Otp = () => {
+    const styles = Style.styles();
     const FOREIGN_NUMBER_MAX_LENGTH = 18;
     const FOREIGN_NUMBER_Min_LENGTH = 4;
     const animation = new Animated.Value(0);

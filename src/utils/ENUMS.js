@@ -1,29 +1,50 @@
 export default {
-    "NETWORK_LIST": ['Ufone', 'Jazz', 'Warid', 'Telenor', 'Zong'],
+    "NETWORK_LIST": [
+        {
+            "text": "Ufone",
+            "value": 1
+        },
+        {
+            "text": "Jazz",
+            "value": 2
+        },
+        {
+            "text": "Warid",
+            "value": 3
+        },
+        {
+            "text": "Telenor",
+            "value": 4
+        },
+        {
+            "text": "Zong",
+            "value": 5
+        }
+    ],
     "PITSTOP_TYPES": [
         {
-            "Text": "Super Market",
-            "Value": 1,
+            "text": "Super Market",
+            "value": 1,
             "icon": null,
         },
         {
-            "Text": "Jovi",
-            "Value": 2,
+            "text": "Jovi",
+            "value": 2,
             "icon": null,
         },
         {
-            "Text": "Pharmacy",
-            "Value": 3,
+            "text": "Pharmacy",
+            "value": 3,
             "icon": null,
         },
         {
-            "Text": "Restaurants",
-            "Value": 4,
+            "text": "Restaurants",
+            "value": 4,
             "icon": null,
         },
         {
-            "Text": "Jovi Mart",
-            "Value": 5,
+            "text": "Jovi Mart",
+            "value": 5,
             "icon": null,
 
         }

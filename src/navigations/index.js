@@ -3,7 +3,10 @@ import { Animated } from 'react-native';
 import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+// Auth imports
 import Introduction from '../screens/IntroScreen';
+import EnterOTP from '../screens/OTP/Enter';
+import VerifyOTP from '../screens/OTP/Verify';
 import Home from '../screens/Home';
 import ROUTES from './ROUTES';
 import SharedActions from '../helpers/SharedActions';
@@ -11,6 +14,9 @@ const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES } = ROUTES
 
 const AuthComponents = {
     Introduction,
+    EnterOTP,
+    VerifyOTP
+
 }
 const AppComponents = {
     Home
