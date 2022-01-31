@@ -6,3 +6,6 @@ export const VALIDATION_CHECK=(text)=>{
         return true;
     }
 }
+export default {
+    navigation_listener: null,
+};

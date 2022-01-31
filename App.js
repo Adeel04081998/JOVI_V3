@@ -15,8 +15,9 @@ import RNSplashScreen from './NativeModules/RNSplashScreen';
 import { NavigationContainer, DefaultTheme, DarkTheme } from "@react-navigation/native";
 import RootStack from "./src/navigations";
 import AppTheme from './src/res/theme';
-import ENUMS from './src/utils/ENUMS';
-
+// import useNetInfo from './src/hooks/useNetInfo';
+import GV from './src/utils/GV';
+import { _NavgationRef } from './src/navigations/NavigationService';
 AntDesign.loadFont();
 Entypo.loadFont();
 EvilIcons.loadFont();
@@ -31,19 +32,21 @@ SimpleLineIcons.loadFont();
 
 
 export default App = () => {
+  // const netInfo = useNetInfo();
+  // console.log("netInfo", netInfo)
   const isDarkMode = useColorScheme() === "dark";
   const theme = isDarkMode ? {
     ...DarkTheme,
     colors: {
       ...DarkTheme.colors,
-      ...AppTheme.getTheme(ENUMS.THEME_VALUES.JOVI)
+      ...AppTheme.getTheme(GV.THEME_VALUES.JOVI)
     }
 
   } : {
     ...DefaultTheme,
     colors: {
       ...DefaultTheme.colors,
-      ...AppTheme.getTheme(ENUMS.THEME_VALUES.JOVI)
+      ...AppTheme.getTheme(GV.THEME_VALUES.JOVI)
     }
   }
   useEffect(() => {
@@ -59,7 +62,7 @@ export default App = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <NavigationContainer theme={theme}>
+      <NavigationContainer theme={theme} ref={_NavgationRef}>
         <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
           <RootStack />
         </View>

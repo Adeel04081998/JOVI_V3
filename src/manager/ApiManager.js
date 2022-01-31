@@ -2,7 +2,7 @@ import Axios from './Axios';
 // import CustomToast from "../components/toast/CustomToast";
 // import NetInfo from "@react-native-community/netinfo";
 import preference_manager from "../preference_manager";
-import ENUMS from "../utils/ENUMS";
+import GV from '../utils/GV';
 
 const CustomToast = {
     error: () => { },
@@ -11,7 +11,7 @@ const CustomToast = {
 const dispatch = () => { }; // import from store when redux is added
 
 export const refreshTokenMiddleware = async (requestCallback, params, dispatch) => {
-    let prevToken = preference_manager.getSetUserAsync(ENUMS.GET_VALUE);
+    let prevToken = preference_manager.getSetUserAsync(GV.GET_VALUE);
     postRequest(
         "/api/User/RefreshToken",
         {
@@ -30,7 +30,7 @@ export const refreshTokenMiddleware = async (requestCallback, params, dispatch) 
                 return;
             }
             else {
-                await preference_manager.getSetUserAsync(ENUMS.SET_VALUE, res.data);
+                await preference_manager.getSetUserAsync(GV.SET_VALUE, res.data);
                 requestCallback.apply(this, params);
             }
         },

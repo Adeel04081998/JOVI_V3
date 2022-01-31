@@ -3,19 +3,19 @@ import React from 'react';
 import { StatusBar } from 'react-native';
 import View from '../../components/atoms/View';
 import Button from '../../components/molecules/Button';
+import SharedActions from '../../helpers/SharedActions';
 import preference_manager from '../../preference_manager';
 import constants from '../../res/constants';
-import ENUMS from '../../utils/ENUMS';
 import GV from '../../utils/GV';
 import introStyles from './styles';
 const IntroScreen = () => {
     const { width } = constants.WINDOW_DIMENSIONS;
     React.useEffect(() => {
-        const save = async () => await preference_manager.getSetIntroScreenAsync(ENUMS.SET_VALUE, true);
+        const save = async () => await preference_manager.getSetIntroScreenAsync(GV.SET_VALUE, true);
         save();
     }, [])
     const onGetStarted = () => {
-        GV.NAVIGATION_LISTENER.auth_handler(true);
+        SharedActions.navigation_listener.auth_handler(true);
     }
     return (
         <View style={introStyles.topView}>
