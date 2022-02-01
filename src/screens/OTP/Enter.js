@@ -1,5 +1,5 @@
 import React from 'react';
-import { Appearance, SafeAreaView, useColorScheme } from 'react-native';
+import { Appearance, Platform, SafeAreaView } from 'react-native';
 import CountryPicker from 'react-native-country-picker-modal';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import RNOtpVerify from "react-native-otp-verify";
@@ -50,7 +50,7 @@ export default () => {
     const [collapsed, setCollapsed] = React.useState(true);
     const [pickerVisible, setPickerVisible] = React.useState(false);
     const [cellNo, setCellNo] = React.useState("");
-    const [isLoading,setIsLoading] = React.useState(false);
+    const [isLoading, setIsLoading] = React.useState(false);
     const [network, setNetwork] = React.useState({
         text: "Choose your mobile network",
         value: 0
@@ -60,14 +60,14 @@ export default () => {
         if (network.value <= 0) return Toast.info("Please select your mobile network.");
         const payload = {
             'phoneNumber': country + cellNo,
-            'appHash': (await RNOtpVerify.getHash())[0],
+            'appHash': Platform.OS === "android" ? (await RNOtpVerify.getHash())[0] : '',
             'otpType': 1,
             'userType': 1,
             'isWhatsapp': false,
             "isNewVersion": true,
             "mobileNetwork": network.value
         };
-        postRequest(Endpoints.SEND_OTP,payload , res => {
+        postRequest(Endpoints.SEND_OTP, payload, res => {
             console.log("res...", res);
             const { statusCode, message } = res.data;
             if (statusCode === 417) return Toast.error(message);
@@ -75,31 +75,31 @@ export default () => {
         },
             err => {
                 console.log("err...", err.response);
-            },{},true,(loader)=>setIsLoading(loader)
+            }, {}, true, (loader) => setIsLoading(loader)
         );
     }
     const disbleContinueButton = network.value <= 0 || cellNo === '';
     return <SafeAreaView style={styles.otpSafeArea}>
         <KeyboardAwareScrollView>
-            <SvgXml xml={svgs.otp()} height={120} width={120} style={{ alignSelf: "center",marginBottom:20, }} />
-            <Text fontFamily={'PoppinsMedium'} style={{fontSize:14,marginHorizontal:20,color:'black'}}>Enter your mobile number</Text>
+            <SvgXml xml={svgs.otp()} height={120} width={120} style={{ alignSelf: "center", marginBottom: 20, }} />
+            <Text fontFamily={'PoppinsMedium'} style={{ fontSize: 14, marginHorizontal: 20, color: 'black' }}>Enter your mobile number</Text>
             <View style={styles.otpDropdownParentView}>
                 <TouchableOpacity activeOpacity={1} style={styles.otpDropdownView} onPress={() => setCollapsed(!collapsed)} >
                     <Text style={{ color: "#fff", ...styles.textAlignCenter }}>{network.text}</Text>
-                    <VectorIcon type='AntDesign' name={collapsed? "down":"up"} style={{ paddingLeft: 5, }} size={12} color={"#fff"} onPress={() => setCollapsed(!collapsed)} />
+                    <VectorIcon type='AntDesign' name={collapsed ? "down" : "up"} style={{ paddingLeft: 5, }} size={12} color={"#fff"} onPress={() => setCollapsed(!collapsed)} />
                 </TouchableOpacity>
                 {/* Networks list */}
-                <Dropdown collapsed={collapsed} scrollViewStyles={{ top: 42 }} options={ENUMS.NETWORK_LIST} itemUI={(item, index, collapsed) => <TouchableOpacity key={`network-key-${index}`} style={{ paddingVertical: 4,borderTopWidth:0,borderBottomWidth:0.2,borderLeftWidth:0.2,borderRightWidth:0.2,borderColor:'rgba(0,0,0,0.3)', borderBottomRightRadius:index === ENUMS.NETWORK_LIST.length-1?12:0, borderBottomLeftRadius:index === ENUMS.NETWORK_LIST.length-1?12:0 }} onPress={() => {
+                <Dropdown collapsed={collapsed} scrollViewStyles={{ top: 42 }} options={ENUMS.NETWORK_LIST} itemUI={(item, index, collapsed) => <TouchableOpacity key={`network-key-${index}`} style={{ paddingVertical: 4, borderTopWidth: 0, borderBottomWidth: 0.2, borderLeftWidth: 0.2, borderRightWidth: 0.2, borderColor: 'rgba(0,0,0,0.3)', borderBottomRightRadius: index === ENUMS.NETWORK_LIST.length - 1 ? 12 : 0, borderBottomLeftRadius: index === ENUMS.NETWORK_LIST.length - 1 ? 12 : 0 }} onPress={() => {
                     setNetwork(item);
                     setCollapsed(!collapsed);
                 }}>
                     <Text style={{ textAlign: "center", paddingVertical: 3 }}>{item.text}</Text>
-                    <View style={{ }} />
+                    <View style={{}} />
                 </TouchableOpacity>} />
                 <AnimatedView style={styles.inputView}>
                     <TouchableOpacity style={{ flexDirection: "row", left: 10 }} onPress={() => setPickerVisible(true)}>
                         <Text>{`+${country}`}</Text>
-                        <VectorIcon type='AntDesign' name="down" color={"#000"} style={{margin:5}} size={12} onPress={() => setPickerVisible(true)} />
+                        <VectorIcon type='AntDesign' name="down" color={"#000"} style={{ margin: 5 }} size={12} onPress={() => setPickerVisible(true)} />
                     </TouchableOpacity>
 
                     <View style={{ flex: 1 }}>
@@ -115,20 +115,20 @@ export default () => {
             </View>
             <View style={styles.buttonView}>
 
-            <Button
-                style={styles.continueButton}
-                text={'Continue'}
-                textStyle={{ color: '#fff',...styles.textAlignCenter }}
-                onPress={onPress}
-                isLoading={isLoading}
-                disabled={disbleContinueButton || isLoading}
-            />
+                <Button
+                    style={styles.continueButton}
+                    text={'Continue'}
+                    textStyle={{ color: '#fff', ...styles.textAlignCenter }}
+                    onPress={onPress}
+                    isLoading={isLoading}
+                    disabled={disbleContinueButton || isLoading}
+                />
             </View>
 
             <View style={styles.termsAndConditionView}>
-                <Text fontFamily={'PoppinsBold'} style={{alignSelf:'center', paddingVertical: 5,fontSize:12 }}>By tapping send OTP I am agreeing to </Text>
+                <Text fontFamily={'PoppinsBold'} style={{ alignSelf: 'center', paddingVertical: 5, fontSize: 12 }}>By tapping send OTP I am agreeing to </Text>
                 <TouchableOpacity onPress={() => alert('c')}>
-                    <Text fontFamily={'PoppinsLight'} style={{ color: "#6D51BB",fontSize:14 }}>
+                    <Text fontFamily={'PoppinsLight'} style={{ color: "#6D51BB", fontSize: 14 }}>
                         terms & conditions and privacy & policy
                     </Text>
                 </TouchableOpacity>
