@@ -1,5 +1,5 @@
 import React, { createRef, useEffect, useRef, useState } from 'react';
-import {Appearance, Keyboard, TextInput } from 'react-native';
+import { Appearance, Keyboard, TextInput } from 'react-native';
 import { useDispatch } from 'react-redux';
 import Button from '../../components/molecules/Button';
 import Text from '../../components/atoms/Text';
@@ -10,7 +10,7 @@ import otpStyles from './styles';
 import theme from '../../res/theme';
 import GV from '../../utils/GV';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
-import SharedActions, { sendOTPToServer,sharedGetDeviceInfo } from '../../helpers/SharedActions';
+import SharedActions, { sendOTPToServer, sharedGetDeviceInfo } from '../../helpers/SharedActions';
 import Sms from "../../helpers/Sms";
 import RNOtpVerify from "react-native-otp-verify";
 import Regex from '../../utils/Regex';
@@ -118,6 +118,8 @@ export default (props) => {
         },
             err => {
                 console.log("err...", err.response);
+                setInputs(["", "", "", ""])
+                SharedActions.sharedExceptionHandler(err)
                 setRunInterval(false)
                 clearInterval(intervalRef.current);
             },
@@ -170,7 +172,7 @@ export default (props) => {
                     setInputs(commaSplittedArray)
                     if (commaSplittedArray.length === 4) verifyOtpToServer(stringify)
                     RNOtpVerify.removeListener()
-                    
+
                     // SmsRetriever.removeSmsListener();
                 });
             }
@@ -200,11 +202,11 @@ export default (props) => {
     };
     const onChangeHanlder = (val, index) => {
         if (isNaN(val)) return;
-        if(val?.length === 4){
+        if (val?.length === 4) {
             let arr = []
             for (let index = 0; index < val.length; index++) {
                 arr.push(val[index])
-                
+
             }
             setInputs(arr)
             verifyOtpToServer(val);
