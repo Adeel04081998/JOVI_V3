@@ -45,7 +45,7 @@ export default {
             }
         }
     },
-    sharedInteval: (duration = 5, delay = 1, listener = () => { }) => {
+    sharedInteval: (duration = 30, delay = 1, listener = () => { }) => {
         // DURATION MUST BE IS SECONDS
         var timer = duration, minutes, seconds;
         BackgroundTimer.start();
