@@ -3,17 +3,16 @@ import { useIsFocused } from '@react-navigation/native';
 import { StatusBar } from "react-native";
 import { Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
-import Toast from "../components/atoms/Toast";
 import BackgroundTimer from 'react-native-background-timer';
+import Toast from "../components/atoms/Toast";
+export const sharedGetDeviceInfo = () => {
+    let model = DeviceInfo.getModel();
+    let deviceID = Platform.OS === "ios" ? DeviceInfo.getUniqueId() : DeviceInfo.getAndroidId();
+    let systemVersion = DeviceInfo.getSystemVersion();
+    return { deviceID, model, systemVersion }
+}
 export default {
     navigation_listener: null,
-    sharedGetDeviceInfo: async () => {
-        let model = DeviceInfo.getModel();
-        let devieID = Platform.OS === "ios" ? DeviceInfo.getUniqueId() : await DeviceInfo.getAndroidId();
-        let systemVersion = DeviceInfo.getSystemVersion();
-        console.log(devieID, model, systemVersion, '<<<====== here');
-        return { devieID, model, systemVersion }
-    },
     sharedExceptionHandler: (err) => {
         if (err) {
             if (err.errors && typeof err.errors === "object") {
