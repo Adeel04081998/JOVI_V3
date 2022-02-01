@@ -45,7 +45,7 @@ export default {
                 width: 50,
                 marginRight: 10,
                 fontSize: 12,
-                // textAlign: 'center',
+                textAlign: 'center',
                 paddingLeft: 10,
                 color: '#000',
                 shadowColor: '#000000',

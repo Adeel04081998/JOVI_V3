@@ -108,7 +108,7 @@ export default (props) => {
                     NavigationService.NavigationActions.common_actions.navigate(ROUTES.AUTH_ROUTES.SignUp.screen_name)
                 }
                 else {
-                    NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_ROUTES.Home.screen_name)
+                    SharedActions.navigation_listener.auth_handler(true);
                 }
             }
             catch (error) {
