@@ -6,7 +6,7 @@ import Text from '../../components/atoms/Text';
 import View from '../../components/atoms/View';
 import SafeAreaView from '../../components/atoms/SafeAreaView';
 import otpStyles from './styles';
-// import TextInput from '../../components/atoms/TextInput';
+// import TextInput from '../../components/atoms/TextInput'; //NOT Using Component because it is not handling ref for now!!!!
 import theme from '../../res/theme';
 import GV from '../../utils/GV';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
@@ -47,7 +47,7 @@ export default (props) => {
             setRunInterval(isItervalStoped)
         }
     };
-    const resetInterval = () =>{
+    const resetInterval = () => {
         clearInterval(intervalRef.current);
         setRunInterval(false)
         setMinutes("00");
@@ -91,8 +91,7 @@ export default (props) => {
     useEffect(_customEffect, []);
 
 
-    const verifyOtpToServer = async (otpCode) => {
-
+    const verifyOtpToServer = async (otpCode = inputs.join('')) => {
         const payload = {
             "code": parseInt(otpCode),
             "phoneNumber": params.payload.phoneNumber,
@@ -123,6 +122,7 @@ export default (props) => {
             err => {
                 console.log("err...", err.response);
                 setInputs(["", "", "", ""])
+                setTypedCode('')
                 SharedActions.sharedExceptionHandler(err)
                 resetInterval()
             },
@@ -133,6 +133,7 @@ export default (props) => {
     };
     const resendOtp = () => {
         setInputs(["", "", "", ""])
+        setTypedCode('')
         const { appHash, isNewVersion, isWhatsapp, mobileNetwork, otpType, userType, phoneNumber } = params.payload;
         const payload = {
             'phoneNumber': phoneNumber,
@@ -171,7 +172,7 @@ export default (props) => {
                     let parsedValue = parseInt(stringify[0]);
                     let commaSplittedArray = stringify[0].split('');
                     setInputs(commaSplittedArray)
-                    if (commaSplittedArray.length === 4) verifyOtpToServer(stringify)
+                    if (commaSplittedArray.length === 4) verifyOtpToServer(stringify[0])
                     RNOtpVerify.removeListener()
 
                     // SmsRetriever.removeSmsListener();
@@ -201,13 +202,12 @@ export default (props) => {
             else if (inputs[currentIndex] === "") return inputRef.current[prevField].current.focus();
         }
     };
-    const onChangeHanlder = (val, index) => {
+    const onChangeHandler = (val, index) => {
         if (isNaN(val)) return;
         if (val?.length === 4) {
             let arr = []
             for (let index = 0; index < val.length; index++) {
                 arr.push(val[index])
-
             }
             setInputs(arr)
             verifyOtpToServer(val);
@@ -254,7 +254,7 @@ export default (props) => {
                         returnKeyType="next"
                         textContentType="oneTimeCode"
                         onFocus={() => { }}
-                        onChangeText={val => onChangeHanlder(val, index)}
+                        onChangeText={val => onChangeHandler(val, index)}
                         onKeyPress={e => _focusNextField(e, index + 1, index)}
                         onChange={(e) => _onChange(e, index + 1, index)}
                     />
@@ -271,7 +271,7 @@ export default (props) => {
                 style={styles.continueButton}
                 text={'Verify and Create Account'}
                 textStyle={{ color: '#fff', ...styles.textAlignCenter }}
-                onPress={() => { }}
+                onPress={() => verifyOtpToServer()}
                 isLoading={isLoading}
                 disabled={disbleContinueButton || isLoading}
             />
