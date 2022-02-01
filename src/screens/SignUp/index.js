@@ -9,7 +9,7 @@ import theme from "../../res/theme";
 import GV from "../../utils/GV";
 import Button from "../../components/molecules/Button";
 import CheckBox from "@react-native-community/checkbox";
-import { getRequest, postRequest } from "../../manager/ApiManager";
+import { getRequest, multipartPostRequest } from "../../manager/ApiManager";
 import Endpoints from "../../manager/Endpoints";
 import debounce from 'lodash.debounce'; // 4.0.8
 import Text from "../../components/atoms/Text";
@@ -34,10 +34,10 @@ export default () => {
     }
     let initialState = {
         inputsArr: [
-            { id: 1, field: "Email", title: 'Email Address', placeholder: 'Email', pattern: Regex.email, keyboardType: "email-address", validationerror: "Invalid email address",backgroundColor:'white', value: '', maxLength: 56, isValid: false },
-            { id: 2, field: "FirstName", title: 'First name', placeholder: 'First name', pattern: Regex.name, keyboardType: "default", validationerror: "Invalid first name",backgroundColor:'white', value: '', maxLength: 15, isValid: false },
-            { id: 3, field: "LastName", title: 'Last name', placeholder: 'Last name', pattern: Regex.name, keyboardType: "default", validationerror: "Invalid last name",backgroundColor:'white', value: '', maxLength: 15, isValid: false },
-            { id: 4, field: "Mobile", title: 'Mobile number', placeholder: 'Mobile', pattern: Regex.numberOnly, keyboardType: "number-pad", validationerror: "Invalid mobile number",backgroundColor:'#EFEFEF', value: tempData.mobileNumber, maxLength: 15, isValid: true, },
+            { id: 1, field: "Email", title: 'Email Address', placeholder: 'Email', pattern: Regex.email, keyboardType: "email-address", validationerror: "Invalid email address", backgroundColor: 'white', value: '', maxLength: 56, isValid: false },
+            { id: 2, field: "FirstName", title: 'First name', placeholder: 'First name', pattern: Regex.name, keyboardType: "default", validationerror: "Invalid first name", backgroundColor: 'white', value: '', maxLength: 15, isValid: false },
+            { id: 3, field: "LastName", title: 'Last name', placeholder: 'Last name', pattern: Regex.name, keyboardType: "default", validationerror: "Invalid last name", backgroundColor: 'white', value: '', maxLength: 15, isValid: false },
+            { id: 4, field: "Mobile", title: 'Mobile number', placeholder: 'Mobile', pattern: Regex.numberOnly, keyboardType: "number-pad", validationerror: "Invalid mobile number", backgroundColor: '#EFEFEF', value: tempData.mobileNumber, maxLength: 15, isValid: true, },
         ],
         'isChecked': false,
         'emailAlreadyExist': null,
@@ -102,17 +102,19 @@ export default () => {
 
     const signUpSuccessHandler = (res) => {
         console.log("if signUpSuccessHandler res=>>", res)
-        const { statusCode, loginResult } = res.data;
-        if (statusCode === 200) {
-            dispatch(ReduxActions.setUserAction({ ...res.data.loginResult }))
+        const { statusCode, loginResult, message } = res;
+        if (statusCode !== 200) {
+            Toast.error(message)
+        } else {
+            dispatch(ReduxActions.setUserAction({ ...loginResult }))
             SharedActions.navigation_listener.auth_handler(true)
         }
 
     }
     const signUpErrorHandler = (err) => {
-        console.log("ifsignUpErrorHandler  Error=>>", err.response);
+        console.log("ifsignUpErrorHandler  Error=>>", err);
         //   Toast.error(err)
-        sharedExceptionHandler(err)
+        // sharedExceptionHandler(err)
 
     }
     const _signUpHandler = async () => {
@@ -136,7 +138,7 @@ export default () => {
         formData.append("isChecked", isChecked);
 
         console.log("if formData", formData);
-        postRequest(
+        multipartPostRequest(
             Endpoints.CREATE_UPDATE,
             formData,
             res => {
@@ -158,11 +160,6 @@ export default () => {
 
             },
             {})
-
-
-
-
-
     }
 
     const editable = (item) => {
@@ -183,7 +180,7 @@ export default () => {
         <SafeAreaView style={[styles.container]}>
 
             <View style={{ flexDirection: 'row', justifyContent: 'center', width: '100%', paddingVertical: 5, }}>
-                <TouchableOpacity style={{ flexDirection: 'column', position:'absolute',left:10,alignSelf:'center', justifyContent: 'center', }} wait={0} onPress={onCrossHandler} >
+                <TouchableOpacity style={{ flexDirection: 'column', position: 'absolute', left: 10, alignSelf: 'center', justifyContent: 'center', }} wait={0} onPress={onCrossHandler} >
                     <VectorIcon
                         name={CROSS_ICON}
                         color={"black"}
@@ -215,7 +212,7 @@ export default () => {
                                 }}
                                 forceError={x.id === 1 ? emailAlreadyExist : false}
                                 titleStyle={{ top: -30, color: 'black', fontSize: 15 }}
-                                containerStyle={{ borderColor: x.isValid === false && x.value.length > 0 ? "red" : "#707070",backgroundColor:x.backgroundColor, borderWidth: 0.6 }}
+                                containerStyle={{ borderColor: x.isValid === false && x.value.length > 0 ? "red" : "#707070", backgroundColor: x.backgroundColor, borderWidth: 0.6 }}
                                 editable={editable(x)}
                                 errorTextStyle={styles.errorText}
                                 maxLength={x.maxLength}
@@ -225,7 +222,7 @@ export default () => {
                         </View>
                     })
                     }
-                    <View style={{ margin: 9, flexDirection: "row", width: '100%',  }}>
+                    <View style={{ margin: 9, flexDirection: "row", width: '100%', }}>
                         <CheckBox
                             boxType="square"
                             value={isChecked}
@@ -243,10 +240,10 @@ export default () => {
                             onCheckColor="white"
                             // style={{height:20,width:20,marginRight:10,
                             // }}
-                            style={Platform.OS === 'android'?{ transform: [{ scaleX: 1.3 }, { scaleY: 1.3}] }:{height:20,width:20,marginRight:10}}
-                            //Platform checks are added for checkbox style and the text below, because checkbox height width doesnt work for android, so had to change its style through transform
+                            style={Platform.OS === 'android' ? { transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }] } : { height: 20, width: 20, marginRight: 10 }}
+                        //Platform checks are added for checkbox style and the text below, because checkbox height width doesnt work for android, so had to change its style through transform
                         />
-                        <Text style={{ color: 'black', fontSize: 14, width: '90%',paddingTop:Platform.OS === 'android'?5:0, }}>{"Receive news, updates, and offers from JOVI"}</Text>
+                        <Text style={{ color: 'black', fontSize: 14, width: '90%', paddingTop: Platform.OS === 'android' ? 5 : 0, }}>{"Receive news, updates, and offers from JOVI"}</Text>
                     </View>
                 </View>
                 <Button
