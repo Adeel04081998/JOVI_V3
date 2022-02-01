@@ -24,7 +24,6 @@ import ReduxAction from '../../redux/actions/index'
 
 const SPACING = 20;
 export default (props) => {
-    const cellNo = "923039839093"; // should be redux value
     const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark");
     const styles = otpStyles.styles(colors);
     const [inputs, setInputs] = React.useState(["", "", "", ""]);
@@ -37,6 +36,7 @@ export default (props) => {
     const [disableOnchange, setDisableOnChange] = useState(false)
     const disbleContinueButton = inputs.includes('');
     const params = props.route.params;
+    const cellNo = params.payload.phoneNumber; // should be redux value
     const inputRef = useRef([]);
     const dispatch = useDispatch()
     const listerner = (info) => {
