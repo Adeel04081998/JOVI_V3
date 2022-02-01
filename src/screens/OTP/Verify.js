@@ -47,7 +47,7 @@ export default (props) => {
             setRunInterval(isItervalStoped)
         }
     };
-    const resetInterval = () =>{
+    const resetInterval = () => {
         clearInterval(intervalRef.current);
         setRunInterval(false)
         setMinutes("00");
@@ -91,8 +91,7 @@ export default (props) => {
     useEffect(_customEffect, []);
 
 
-    const verifyOtpToServer = async (otpCode) => {
-
+    const verifyOtpToServer = async (otpCode = inputs.join('')) => {
         const payload = {
             "code": parseInt(otpCode),
             "phoneNumber": params.payload.phoneNumber,
@@ -173,7 +172,7 @@ export default (props) => {
                     let parsedValue = parseInt(stringify[0]);
                     let commaSplittedArray = stringify[0].split('');
                     setInputs(commaSplittedArray)
-                    if (commaSplittedArray.length === 4) verifyOtpToServer(stringify)
+                    if (commaSplittedArray.length === 4) verifyOtpToServer(stringify[0])
                     RNOtpVerify.removeListener()
 
                     // SmsRetriever.removeSmsListener();
@@ -272,7 +271,7 @@ export default (props) => {
                 style={styles.continueButton}
                 text={'Verify and Create Account'}
                 textStyle={{ color: '#fff', ...styles.textAlignCenter }}
-                onPress={() => { }}
+                onPress={() => verifyOtpToServer()}
                 isLoading={isLoading}
                 disabled={disbleContinueButton || isLoading}
             />

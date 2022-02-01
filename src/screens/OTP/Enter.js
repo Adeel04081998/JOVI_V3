@@ -50,7 +50,7 @@ export default () => {
     const styles = otpStyles.styles(colors, SPACING_VERTICAL);
     const [collapsed, setCollapsed] = React.useState(true);
     const [pickerVisible, setPickerVisible] = React.useState(false);
-    const [cellNo, setCellNo] = React.useState(__DEV__ ? '923175106769' : "");
+    const [cellNo, setCellNo] = React.useState("");
     const [isLoading, setIsLoading] = React.useState(false);
     const [network, setNetwork] = React.useState({
         text: "Choose your mobile network",
@@ -60,7 +60,7 @@ export default () => {
     const onPress = async () => {
 
         const appHash = Platform.OS === "android" && (await RNOtpVerify.getHash())[0]
-        const phoneNumber = __DEV__ ? cellNo : country + cellNo
+        const phoneNumber =  country + cellNo
         if (network.value <= 0) return Toast.info("Please select your mobile network.");
 
         const onSuccess = (res) => {
