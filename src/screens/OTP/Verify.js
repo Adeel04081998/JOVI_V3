@@ -6,7 +6,7 @@ import Text from '../../components/atoms/Text';
 import View from '../../components/atoms/View';
 import SafeAreaView from '../../components/atoms/SafeAreaView';
 import otpStyles from './styles';
-// import TextInput from '../../components/atoms/TextInput';
+// import TextInput from '../../components/atoms/TextInput'; //NOT Using Component because it is not handling ref for now!!!!
 import theme from '../../res/theme';
 import GV from '../../utils/GV';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
