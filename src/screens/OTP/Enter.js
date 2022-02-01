@@ -1,5 +1,5 @@
 import React from 'react';
-import { Appearance, Platform, SafeAreaView, useColorScheme } from 'react-native';
+import { Appearance, Platform, SafeAreaView } from 'react-native';
 import CountryPicker from 'react-native-country-picker-modal';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import RNOtpVerify from "react-native-otp-verify";
