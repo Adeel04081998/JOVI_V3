@@ -14,6 +14,7 @@ import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import Button from '../../components/molecules/Button';
 import Dropdown from '../../components/molecules/Dropdown/Index';
+import SharedActions, { sendOTPToServer } from '../../helpers/SharedActions';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
@@ -49,7 +50,7 @@ export default () => {
     const styles = otpStyles.styles(colors, SPACING_VERTICAL);
     const [collapsed, setCollapsed] = React.useState(true);
     const [pickerVisible, setPickerVisible] = React.useState(false);
-    const [cellNo, setCellNo] = React.useState("");
+    const [cellNo, setCellNo] = React.useState(__DEV__ ? '923039839093' : "");
     const [isLoading, setIsLoading] = React.useState(false);
     const [network, setNetwork] = React.useState({
         text: "Choose your mobile network",
@@ -57,27 +58,36 @@ export default () => {
     });
     const [country, setCountry] = React.useState("92");
     const onPress = async () => {
+
+        const appHash = Platform.OS === "android" && (await RNOtpVerify.getHash())[0]
+        const phoneNumber = __DEV__ ? cellNo : country + cellNo
         if (network.value <= 0) return Toast.info("Please select your mobile network.");
+        
+        const onSuccess = (res) =>{
+            console.log("res...", res);
+            const { statusCode, message } = res.data;
+            if (statusCode === 417) return Toast.error(message);
+            NavigationService.NavigationActions.common_actions.navigate(ROUTES.AUTH_ROUTES.VerifyOTP.screen_name, { payload })
+        }
+        const onError = (err) =>{
+            console.log("err...", err.response);
+            SharedActions.sharedExceptionHandler(err)
+        }
+        const onLoader = (loader) =>{
+            setIsLoading(loader)
+        }
         const payload = {
-            'phoneNumber': country + cellNo,
-            'appHash': Platform.OS === "android" ? (await RNOtpVerify.getHash())[0] : '',
+            'phoneNumber': phoneNumber,
+            'appHash': appHash,
             'otpType': 1,
             'userType': 1,
             'isWhatsapp': false,
             "isNewVersion": true,
             "mobileNetwork": network.value
         };
-        postRequest(Endpoints.SEND_OTP, payload, res => {
-            console.log("res...", res);
-            const { statusCode, message } = res.data;
-            if (statusCode === 417) return Toast.error(message);
-            NavigationService.common_actions.navigate(ROUTES.AUTH_ROUTES.VerifyOTP.screen_name)
-        },
-            err => {
-                console.log("err...", err.response);
-            }, {}, true, (loader) => setIsLoading(loader)
-        );
+        sendOTPToServer(payload, onSuccess, onError, onLoader)
     }
+ 
     const disbleContinueButton = network.value <= 0 || cellNo === '';
     return <SafeAreaView style={styles.otpSafeArea}>
         <KeyboardAwareScrollView>
@@ -89,7 +99,7 @@ export default () => {
                     <VectorIcon type='AntDesign' name={collapsed ? "down" : "up"} style={{ paddingLeft: 5, }} size={12} color={"#fff"} onPress={() => setCollapsed(!collapsed)} />
                 </TouchableOpacity>
                 {/* Networks list */}
-                <Dropdown collapsed={collapsed} scrollViewStyles={{ top: 42 }} options={ENUMS.NETWORK_LIST} itemUI={(item, index, collapsed) => <TouchableOpacity key={`network-key-${index}`} style={{ paddingVertical: 4, borderTopWidth: 0, borderBottomWidth: 0.2, borderLeftWidth: 0.2, borderRightWidth: 0.2, borderColor: 'rgba(0,0,0,0.3)', borderBottomRightRadius: index === ENUMS.NETWORK_LIST.length - 1 ? 12 : 0, borderBottomLeftRadius: index === ENUMS.NETWORK_LIST.length - 1 ? 12 : 0 }} onPress={() => {
+                <Dropdown collapsed={collapsed} scrollViewStyles={{ top: 42 }} options={ENUMS.NETWORK_LIST} itemUI={(item, index, collapsed) => <TouchableOpacity key={`network-key-${index}`} style={{ paddingVertical: 4, borderWidth: 0.5, borderTopWidth: 0, borderColor: 'rgba(0,0,0,0.3)', borderBottomRightRadius: index === ENUMS.NETWORK_LIST.length - 1 ? 12 : 0, borderBottomLeftRadius: index === ENUMS.NETWORK_LIST.length - 1 ? 12 : 0 }} onPress={() => {
                     setNetwork(item);
                     setCollapsed(!collapsed);
                 }}>

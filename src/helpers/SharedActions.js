@@ -3,16 +3,20 @@ import { useIsFocused } from '@react-navigation/native';
 import { StatusBar } from "react-native";
 import { Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
-import Toast from "../components/atoms/Toast";
 import BackgroundTimer from 'react-native-background-timer';
+import { postRequest } from '../manager/ApiManager';
+import Endpoints from '../manager/Endpoints';
+import NavigationService from '../navigations/NavigationService';
+import ROUTES from '../navigations/ROUTES';
+import Toast from "../components/atoms/Toast";
+export const sharedGetDeviceInfo = async () => {
+    let model = DeviceInfo.getModel();
+    let deviceID = Platform.OS === "ios" ? DeviceInfo.getUniqueId() : await DeviceInfo.getAndroidId();
+    let systemVersion = DeviceInfo.getSystemVersion();
+    return { deviceID, model, systemVersion }
+}
 export default {
     navigation_listener: null,
-    sharedGetDeviceInfo: () => {
-        let model = DeviceInfo.getModel();
-        let devieID = Platform.OS === "ios" ? DeviceInfo.getUniqueId() : DeviceInfo.getAndroidId();
-        let systemVersion = DeviceInfo.getSystemVersion();
-        return { devieID, model, systemVersion }
-    },
     sharedExceptionHandler: (err) => {
         if (err) {
             if (err.errors && typeof err.errors === "object") {
@@ -41,7 +45,7 @@ export default {
             }
         }
     },
-    sharedInteval: (duration = 30, delay = 1, listener = () => { }) => {
+    sharedInteval: (duration = 5, delay = 1, listener = () => { }) => {
         // DURATION MUST BE IS SECONDS
         var timer = duration, minutes, seconds;
         BackgroundTimer.start();
@@ -66,4 +70,24 @@ export const focusAwareStatusBar = (props) => {
     const isFocused = useIsFocused();
 
     return isFocused ? <StatusBar {...props} /> : null;
+}
+export const VALIDATION_CHECK = (text) => {
+    text = `${text}`.toLowerCase().trim();
+    if (text === "" || text === " " || text === "null" || text === "undefined" || text === "false") {
+        return false;
+    }
+    return true;
+
+}
+export const sendOTPToServer = (payload, onSuccess, onError, onLoader) => {
+    postRequest(Endpoints.SEND_OTP, payload, res => {
+        onSuccess(res)
+    },
+        err => {
+            onError(err)
+        },
+        {},
+        true,
+        (loader) => { onLoader(loader) }
+    );
 }

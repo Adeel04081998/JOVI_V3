@@ -75,9 +75,9 @@ Axios.interceptors.response.use(
     async (error) => {
         try {
             console.log("[Axios.Reponse.Error]", JSON.stringify(error))
-            if (error?.response?.status === 400) Toast.error('Bad Request!');
-            else if (error?.response?.status === 404) Toast.error('Bad Request!');
-            else if (error?.response?.status === 500) Toast.error('Something went wrong!');
+            // if (error?.response?.status === 400) Toast.error('Bad Request!');
+            // else if (error?.response?.status === 404) Toast.error('Bad Request!');
+            if (error?.response?.status === 500) Toast.error('Something went wrong!');
             // if (error.config.metadata) {
             //     // Request failed, e.g. HTTP code 500
 

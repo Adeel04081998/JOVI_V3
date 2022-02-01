@@ -6,8 +6,7 @@ export default {
         return StyleSheet.create({
             container: {
                 flex: 1,
-                marginTop:20
-               
+                backgroundColor: 'white',
             }
             ,
             textInput: {
@@ -15,8 +14,7 @@ export default {
                 borderWidth: 1.5,
                 borderRadius: 5,
                 borderColor: 'rgba(0,0,0,0.1)',
-                backgroundColor: 'white',
-                opacity: 0.9, 
+                opacity: 0.9,
                 height: 50,
                 paddingHorizontal: 10,
                 marginVertical: 10
@@ -24,21 +22,19 @@ export default {
             view: {
                 marginBottom: 5,
             },
-            text :{
+            errorText: {
+                color: "#7359BE",
+                textAlign: 'center',
+                width: '100%',
+                top: 50,
+
             },
-            errorText :{
-                alignSelf:'center',
-                color:"red"
-        
-            },
-            buttonView :{
-                marginBottom:14,
-                // borderWidth:2
-        
+            buttonView: {
+                marginBottom: 14,
             }
         })
     }
-} 
+}
 
 
 

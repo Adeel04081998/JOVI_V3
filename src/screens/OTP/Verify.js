@@ -1,32 +1,46 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Dimensions, Platform, KeyboardAvoidingView, Appearance } from 'react-native';
+import React, { createRef, useEffect, useRef, useState } from 'react';
+import {Appearance, Keyboard, TextInput } from 'react-native';
+import { useDispatch } from 'react-redux';
 import Button from '../../components/molecules/Button';
 import Text from '../../components/atoms/Text';
 import View from '../../components/atoms/View';
 import SafeAreaView from '../../components/atoms/SafeAreaView';
 import otpStyles from './styles';
-import TextInput from '../../components/atoms/TextInput';
+// import TextInput from '../../components/atoms/TextInput';
 import theme from '../../res/theme';
 import GV from '../../utils/GV';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
-import SharedActions from '../../helpers/SharedActions';
+import SharedActions, { sendOTPToServer,sharedGetDeviceInfo } from '../../helpers/SharedActions';
 import Sms from "../../helpers/Sms";
 import RNOtpVerify from "react-native-otp-verify";
 import Regex from '../../utils/Regex';
 import NavigationService from '../../navigations/NavigationService';
+import Endpoints from '../../manager/Endpoints';
+import ROUTES from '../../navigations/ROUTES';
+import { postRequest } from '../../manager/ApiManager';
+import Toast from '../../components/atoms/Toast';
+import ReduxAction from '../../redux/actions/index'
+
+
 const SPACING = 20;
-export default () => {
+export default (props) => {
     const cellNo = "923039839093"; // should be redux value
     const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark");
     const styles = otpStyles.styles(colors);
-    const inputs = Array(4).fill();
+    const [inputs, setInputs] = React.useState(["", "", "", ""]);
+    const [typedCode, setTypedCode] = useState('')
     const [minutes, setMinutes] = React.useState("00");
     const [seconds, setSeconds] = React.useState("00");
+    const [isLoading, setIsLoading] = React.useState(false);
     const [runInterval, setRunInterval] = React.useState(true);
     const intervalRef = React.useRef(null);
+    const [disableOnchange, setDisableOnChange] = useState(false)
+    const disbleContinueButton = inputs.includes('');
+    const params = props.route.params;
+    const inputRef = useRef([]);
+    const dispatch = useDispatch()
     const listerner = (info) => {
         const { minutes, seconds, isItervalStoped } = info;
-        console.log("info", info);
         setMinutes(minutes);
         setSeconds(seconds);
         if (!isItervalStoped) {
@@ -41,29 +55,122 @@ export default () => {
             intervalRef.current = SharedActions.sharedInteval(GV.OTP_INTERVAL, 1, listerner)
         }
     }, [runInterval])
-    const onResend = () => setRunInterval(true);
     React.useEffect(() => {
         Sms.requestReadSmsPermission()
             .then(async res => {
                 _onSmsListener();
             })
             .catch(err => console.log("err...", err));
-            return()=>{
-                clearInterval(intervalRef.current);
-                RNOtpVerify.removeListener()
-            };
+        return () => {
+            clearInterval(intervalRef.current);
+            setRunInterval(false)
+            RNOtpVerify.removeListener()
+        };
     }, [])
+    const _customEffect = () => {
+        if (inputRef.current.length !== inputs.length) {
+            inputRef.current = Array(inputs.length).fill().map((_, i) => inputRef.current[i] || createRef());
+        };
+        return () => {
+            // console.log('RNOtpVerify.removeListener------')
+            setRunInterval(false)
+            clearInterval(intervalRef.current);
+            RNOtpVerify.removeListener();
+        }
+    };
+    useEffect(() => {
+        typedCode.length === 4 && Keyboard.dismiss();
+    }, [typedCode]);
+
+
+    useEffect(_customEffect, []);
+
+
+    const verifyOtpToServer = async (otpCode) => {
+
+        const payload = {
+            "code": parseInt(otpCode),
+            "phoneNumber": params.payload.phoneNumber,
+            "userType": 1,
+            "imei": sharedGetDeviceInfo().deviceID,
+            "smartPhone": sharedGetDeviceInfo().model,
+            "hardwareID": sharedGetDeviceInfo().deviceID
+        };
+        postRequest(Endpoints.OTPVerify, payload, res => {
+            console.log("[verifyOtpToServer].res...", res);
+            const { statusCode, message, otpResult } = res.data;
+            if (statusCode === 417) return Toast.error(message);
+            // setRunInterval(false)
+            clearInterval(intervalRef.current);
+            try {
+                dispatch(ReduxAction.setUserAction({ ...otpResult, ...params }))
+                if (otpResult.newUser) {
+                    NavigationService.NavigationActions.common_actions.navigate(ROUTES.AUTH_ROUTES.SignUp.screen_name)
+                }
+                else {
+                    SharedActions.navigation_listener.auth_handler(true);
+                }
+            }
+            catch (error) {
+                console.log('error', error);
+            }
+
+        },
+            err => {
+                console.log("err...", err.response);
+                setRunInterval(false)
+                clearInterval(intervalRef.current);
+            },
+            {},
+            true,
+            (loader) => setIsLoading(loader)
+        );
+    };
+    const resendOtp = () => {
+        setInputs(["", "", "", ""])
+        setRunInterval(true)
+        const { appHash, isNewVersion, isWhatsapp, mobileNetwork, otpType, userType, phoneNumber } = params.payload;
+        const payload = {
+            'phoneNumber': phoneNumber,
+            'appHash': appHash,
+            'otpType': otpType,
+            'userType': userType,
+            'isWhatsapp': isWhatsapp,
+            "isNewVersion": isNewVersion,
+            "mobileNetwork": mobileNetwork
+        };
+        const onSuccess = (res) => {
+            console.log("res...", res);
+            const { statusCode, message } = res.data;
+            if (statusCode === 417) return Toast.error(message);
+            setRunInterval(false)
+
+        }
+        const onError = (err) => {
+            setRunInterval(false)
+            console.log("err...", err.response);
+        }
+        const onLoader = (loader) => {
+            setIsLoading(loader)
+        }
+
+        sendOTPToServer(payload, onSuccess, onError, onLoader)
+
+    };
+
     const _onSmsListener = async () => {
         try {
             const registered = await RNOtpVerify.getOtp();
-            console.log("registered", registered)
             if (registered) {
                 RNOtpVerify.addListener(message => {
-                    console.log("message", message);
+                    if (message === "Timeout Error.") return
                     let stringify = message.toString().match(Regex.androidOTP);
                     let parsedValue = parseInt(stringify[0]);
                     let commaSplittedArray = stringify[0].split('');
+                    setInputs(commaSplittedArray)
+                    if (commaSplittedArray.length === 4) verifyOtpToServer(stringify)
                     RNOtpVerify.removeListener()
+                    
                     // SmsRetriever.removeSmsListener();
                 });
             }
@@ -72,8 +179,56 @@ export default () => {
         }
     };
     const onChangeNumber = () => {
-        NavigationService.common_actions.goBack();
+        NavigationService.NavigationActions.common_actions.goBack();
     }
+
+
+    const _onChange = (e, nextField) => {
+        e.persist();
+        if (e.nativeEvent.text === " " || e.nativeEvent.text === "") return;
+        if (isNaN(e.nativeEvent.text)) return;
+        if (!disableOnchange && e.nativeEvent.text && nextField < inputs.length) {
+            inputRef.current[nextField].current.focus();
+        };
+    };
+    const _focusNextField = (e, nextField, currentIndex) => {
+        if (e.nativeEvent.key === "Backspace") {
+            let prevField = nextField >= 2 ? nextField - 2 : 0;
+            if (inputs[currentIndex] !== "") return;
+            else if (inputs[currentIndex] === "") return inputRef.current[prevField].current.focus();
+        }
+    };
+    const onChangeHanlder = (val, index) => {
+        if (isNaN(val)) return;
+        if(val?.length === 4){
+            let arr = []
+            for (let index = 0; index < val.length; index++) {
+                arr.push(val[index])
+                
+            }
+            setInputs(arr)
+            verifyOtpToServer(val);
+        }
+        else {
+            val = val.trim();
+            let newVal = "";
+            if (!val) {
+                inputs[index] = "";
+                newVal = typedCode.slice(0, typedCode.length - 1);
+            } else {
+                newVal = typedCode.concat(val);
+                inputs[index] = newVal[index];
+            };
+            setTypedCode(newVal)
+            setInputs(inputs)
+            if (newVal.length === 4) {
+                verifyOtpToServer(newVal);
+            }
+        }
+
+        // debugger;
+    };
+
     return <SafeAreaView style={{ flex: 1, backgroundColor: "#F6F5FA" }}>
         <Text style={{ textAlign: "center" }}>Verify Phone</Text>
         <Text style={{ textAlign: "center", paddingVertical: SPACING }}>{`Code is sent to ${cellNo}`}</Text>
@@ -85,53 +240,42 @@ export default () => {
                         autoCorrect={false}
                         autoCapitalize="none"
                         placeholder=""
-                        // ref={elRefs.current[i]}
-                        // value={val}
-                        // value={state[i]}
+                        ref={inputRef.current[index]}
+                        value={input}
                         style={[styles.otpCode]}
-                        // style={{
-                        //     width: 65, elevation: 2,
-                        //     shadowColor: '#000000',
-                        //     shadowRadius: 4,
-                        //     shadowOffset: { height: 4, width: 0 },
-                        //     shadowOpacity: 0.5,
-                        // }}
                         keyboardType="numeric"
-                        maxLength={1}
-                        // autoFocus={i === 0 ? true : false}
+                        maxLength={4}
+                        autoFocus={index === 0 ? true : false}
                         underlineColorAndroid="transparent"
                         autoCompleteType="tel"
                         returnKeyType="next"
                         textContentType="oneTimeCode"
-                    // onFocus={() => setState(pre => ({ ...pre, focusedIndex: i }))}
-                    // onChangeText={val => onChangeHanlder(val, i)}
-                    // onKeyPress={e => _focusNextField(e, i + 1, i)}
-                    // onChange={(e) => _onChange(e, i + 1, i)}
+                        onFocus={() => { }}
+                        onChangeText={val => onChangeHanlder(val, index)}
+                        onKeyPress={e => _focusNextField(e, index + 1, index)}
+                        onChange={(e) => _onChange(e, index + 1, index)}
                     />
                 ))
             }
         </View>
         <Text style={{ textAlign: "center", paddingVertical: SPACING - 5 }}>{`${minutes}:${seconds}`}</Text>
         <Text style={{ textAlign: "center", fontSize: 16 }}>{`Didn't recieve code?`}</Text>
-        <TouchableOpacity onPress={onResend} disabled={parseInt(seconds) !== 0}>
+        <TouchableOpacity onPress={resendOtp} disabled={parseInt(seconds) !== 0}>
             <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 10, color: parseInt(seconds) !== 0 ? 'grey' : "#7359BE", marginTop: 3 }}>{`Request again Get Via SMS`}</Text>
         </TouchableOpacity>
         <View style={styles.buttonView}>
             <Button
-                // style={{ marginHorizontal: 20, backgroundColor: "#7359BE", borderRadius: 10, paddingVertical: 15, marginVertical: SPACING }}
                 style={styles.continueButton}
                 text={'Verify and Create Account'}
-                textStyle={{ color: '#fff',...styles.textAlignCenter }}
+                textStyle={{ color: '#fff', ...styles.textAlignCenter }}
                 onPress={() => { }}
-            // isLoading={isLoading}
-            // disabled={disbleContinueButton || isLoading}
+                isLoading={isLoading}
+                disabled={disbleContinueButton || isLoading}
             />
         </View>
         <TouchableOpacity onPress={onChangeNumber}>
             <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 10, color: "#7359BE" }}>{`Change number`}</Text>
         </TouchableOpacity>
-
-
     </SafeAreaView>
 }
 

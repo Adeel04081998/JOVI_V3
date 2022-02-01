@@ -3,11 +3,11 @@ import { GestureResponderEvent, StyleProp, ViewStyle } from "react-native";
 import View from './View';
 
 interface Props{
-    type: 'Ionicons' | 'AntDesign' | 'Entypo' | 'EvilIcons' | 'Feather' | 'FontAwesome' | 'FontAwesome5' | 'Fontisto' | 'MaterialCommunityIcons' | 'MaterialIcons' | "Foundation" | "SimpleLineIcons" | 'Zocial' | 'Octicons';
-    style: StyleProp<ViewStyle>;
-    name: any;
-    size: number;
-    color: any;
+    type?: 'Ionicons' | 'AntDesign' | 'Entypo' | 'EvilIcons' | 'Feather' | 'FontAwesome' | 'FontAwesome5' | 'Fontisto' | 'MaterialCommunityIcons' | 'MaterialIcons' | "Foundation" | "SimpleLineIcons" | 'Zocial' | 'Octicons';
+    style?: StyleProp<ViewStyle>;
+    name?: string;
+    size?: number;
+    color?: any;
     onPress?: (event: GestureResponderEvent) => void;
 
     brand?: boolean;//ONLY FOR FontAwesome5
@@ -19,7 +19,7 @@ const defaultProps = {
     color: '#757575',
     size: 20,
     style: null,
-    onPress:()=> { },
+    onPress:undefined,
 }
 
 

@@ -7,6 +7,8 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import Introduction from '../screens/IntroScreen';
 import EnterOTP from '../screens/OTP/Enter';
 import VerifyOTP from '../screens/OTP/Verify';
+import SignUp from '../screens/SignUp/index';
+
 import Home from '../screens/Home';
 import ROUTES from './ROUTES';
 import SharedActions from '../helpers/SharedActions';
@@ -15,7 +17,8 @@ const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES } = ROUTES
 const AuthComponents = {
     Introduction,
     EnterOTP,
-    VerifyOTP
+    VerifyOTP,
+    SignUp
 
 }
 const AppComponents = {

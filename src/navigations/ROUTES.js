@@ -15,6 +15,10 @@ const AUTH_ROUTES = {
         screen_name: "VERIFY_OTP",
         options: null,
     },
+    "SignUp": {
+        screen_name: "SIGN_UP",
+        options: null,
+    },
 };
 const APP_ROUTES = {
     "Home": {
