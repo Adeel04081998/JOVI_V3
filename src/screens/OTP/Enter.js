@@ -1,5 +1,5 @@
 import React from 'react';
-import { Appearance, SafeAreaView, useColorScheme } from 'react-native';
+import { Appearance, Platform, SafeAreaView, useColorScheme } from 'react-native';
 import CountryPicker from 'react-native-country-picker-modal';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import RNOtpVerify from "react-native-otp-verify";
@@ -14,6 +14,7 @@ import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import Button from '../../components/molecules/Button';
 import Dropdown from '../../components/molecules/Dropdown/Index';
+import SharedActions, { sendOTPToServer } from '../../helpers/SharedActions';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
@@ -49,7 +50,7 @@ export default () => {
     const styles = otpStyles.styles(colors, SPACING_VERTICAL);
     const [collapsed, setCollapsed] = React.useState(true);
     const [pickerVisible, setPickerVisible] = React.useState(false);
-    const [cellNo, setCellNo] = React.useState(__DEV__ ? '923365898423' : "");
+    const [cellNo, setCellNo] = React.useState(__DEV__ ? '923175106769' : "");
     const [isLoading, setIsLoading] = React.useState(false);
     const [network, setNetwork] = React.useState({
         text: "Choose your mobile network",
@@ -57,9 +58,24 @@ export default () => {
     });
     const [country, setCountry] = React.useState("92");
     const onPress = async () => {
-        const appHash = (await RNOtpVerify.getHash())[0]
+
+        const appHash = Platform.OS === "android" && (await RNOtpVerify.getHash())[0]
         const phoneNumber = __DEV__ ? cellNo : country + cellNo
         if (network.value <= 0) return Toast.info("Please select your mobile network.");
+        
+        const onSuccess = (res) =>{
+            console.log("res...", res);
+            const { statusCode, message } = res.data;
+            if (statusCode === 417) return Toast.error(message);
+            NavigationService.NavigationActions.common_actions.navigate(ROUTES.AUTH_ROUTES.VerifyOTP.screen_name, { payload })
+        }
+        const onError = (err) =>{
+            console.log("err...", err.response);
+            SharedActions.sharedExceptionHandler(err)
+        }
+        const onLoader = (loader) =>{
+            setIsLoading(loader)
+        }
         const payload = {
             'phoneNumber': phoneNumber,
             'appHash': appHash,
@@ -69,17 +85,9 @@ export default () => {
             "isNewVersion": true,
             "mobileNetwork": network.value
         };
-        postRequest(Endpoints.SEND_OTP, payload, res => {
-            console.log("res...", res);
-            const { statusCode, message } = res.data;
-            if (statusCode === 417) return Toast.error(message);
-            NavigationService.NavigationActions.common_actions.navigate(ROUTES.AUTH_ROUTES.VerifyOTP.screen_name, { appHash, phoneNumber })
-        },
-            err => {
-                console.log("err...", err.response);
-            }, {}, true, (loader) => setIsLoading(loader)
-        );
+        sendOTPToServer(payload, onSuccess, onError, onLoader)
     }
+ 
     const disbleContinueButton = network.value <= 0 || cellNo === '';
     return <SafeAreaView style={styles.otpSafeArea}>
         <KeyboardAwareScrollView>
