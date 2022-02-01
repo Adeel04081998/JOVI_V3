@@ -5,6 +5,10 @@ import { Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import Toast from "../components/atoms/Toast";
 import BackgroundTimer from 'react-native-background-timer';
+import { postRequest } from '../manager/ApiManager';
+import Endpoints from '../manager/Endpoints';
+import NavigationService from '../navigations/NavigationService';
+import ROUTES from '../navigations/ROUTES';
 export default {
     navigation_listener: null,
     sharedGetDeviceInfo: async () => {
@@ -42,7 +46,7 @@ export default {
             }
         }
     },
-    sharedInteval: (duration = 30, delay = 1, listener = () => { }) => {
+    sharedInteval: (duration = 5, delay = 1, listener = () => { }) => {
         // DURATION MUST BE IS SECONDS
         var timer = duration, minutes, seconds;
         BackgroundTimer.start();
@@ -74,5 +78,17 @@ export const VALIDATION_CHECK = (text) => {
         return false;
     }
     return true;
-  
+
+}
+export const sendOTPToServer = (payload, onSuccess, onError, onLoader) => {
+    postRequest(Endpoints.SEND_OTP, payload, res => {
+        onSuccess(res)
+    },
+        err => {
+            onError(err)
+        },
+        {},
+        true,
+        (loader) => { onLoader(loader) }
+    );
 }

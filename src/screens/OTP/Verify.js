@@ -10,7 +10,7 @@ import otpStyles from './styles';
 import theme from '../../res/theme';
 import GV from '../../utils/GV';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
-import SharedActions from '../../helpers/SharedActions';
+import SharedActions, { sendOTPToServer } from '../../helpers/SharedActions';
 import Sms from "../../helpers/Sms";
 import RNOtpVerify from "react-native-otp-verify";
 import Regex from '../../utils/Regex';
@@ -90,18 +90,17 @@ export default (props) => {
 
         const payload = {
             "code": otpCode,
-            "phoneNumber": params.phoneNumber,
+            "phoneNumber": params.payload.phoneNumber,
             "userType": 1,
             "imei": SharedActions.sharedGetDeviceInfo().devieID,
             "smartPhone": SharedActions.sharedGetDeviceInfo().model,
             "hardwareID": SharedActions.sharedGetDeviceInfo().devieID
         };
-        console.log('params', params);
         postRequest(Endpoints.OTPVerify, payload, res => {
             console.log("[verifyOtpToServer].res...", res);
             const { statusCode, message, otpResult } = res.data;
             if (statusCode === 417) return Toast.error(message);
-            setRunInterval(false)
+            // setRunInterval(false)
             clearInterval(intervalRef.current);
             try {
                 dispatch(ReduxAction.userAction({...otpResult, ...params}))
@@ -129,6 +128,34 @@ export default (props) => {
         );
     };
     const resendOtp = () => {
+        setInputs(["","","",""])
+        setRunInterval(true)
+        const {appHash, isNewVersion, isWhatsapp, mobileNetwork, otpType, userType, phoneNumber} = params.payload;
+        const payload = {
+            'phoneNumber': phoneNumber,
+            'appHash': appHash,
+            'otpType': otpType,
+            'userType': userType,
+            'isWhatsapp': isWhatsapp,
+            "isNewVersion": isNewVersion,
+            "mobileNetwork": mobileNetwork
+        };
+        const onSuccess = (res) =>{
+            console.log("res...", res);
+            const { statusCode, message } = res.data;
+            if (statusCode === 417) return Toast.error(message);
+            setRunInterval(false)
+        
+        }
+        const onError = (err) =>{
+            setRunInterval(false)
+            console.log("err...", err.response);
+        }
+        const onLoader = (loader) =>{
+            setIsLoading(loader)
+        }
+
+        sendOTPToServer(payload, onSuccess, onError, onLoader)
 
     };
 
@@ -151,11 +178,12 @@ export default (props) => {
         }
     };
     const onChangeNumber = () => {
-        NavigationService.common_actions.goBack();
+        NavigationService.NavigationActions.common_actions.goBack();
     }
 
 
     const _onChange = (e, nextField) => {
+        console.log('e',e);
         e.persist();
         if (e.nativeEvent.text === " " || e.nativeEvent.text === "") return;
         if (isNaN(e.nativeEvent.text)) return;
@@ -170,7 +198,8 @@ export default (props) => {
             else if (inputs[currentIndex] === "") return inputRef.current[prevField].current.focus();
         }
     };
-    const onChangeHanlder = (val, index) => {
+    const onChangeHandler = (val, index) => {
+        console.log('val',val);
         if (isNaN(val)) return;
         else {
             val = val.trim();
@@ -181,6 +210,7 @@ export default (props) => {
             } else {
                 newVal = typedCode.concat(val);
                 inputs[index] = newVal[index];
+                console.log('else inputs', inputs);
             };
             setTypedCode(newVal)
             setInputs(inputs)
@@ -200,7 +230,7 @@ export default (props) => {
                 inputs.map((input, index) => (
                     <TextInput
                         key={`input-key-${index}`}
-                        autoCorrect={false}
+                        autoCorrect={true}
                         autoCapitalize="none"
                         placeholder=""
                         ref={inputRef.current[index]}
@@ -208,13 +238,13 @@ export default (props) => {
                         style={[styles.otpCode]}
                         keyboardType="numeric"
                         maxLength={1}
-                        autoFocus={index === 0 ? true : false}
+                        // autoFocus={index === 0 ? true : false}
                         underlineColorAndroid="transparent"
                         autoCompleteType="tel"
                         returnKeyType="next"
                         textContentType="oneTimeCode"
                         onFocus={() => { }}
-                        onChangeText={val => onChangeHanlder(val, index)}
+                        onChangeText={val => onChangeHandler(val, index)}
                         onKeyPress={e => _focusNextField(e, index + 1, index)}
                         onChange={(e) => _onChange(e, index + 1, index)}
                     />
@@ -231,7 +261,7 @@ export default (props) => {
                 style={styles.continueButton}
                 text={'Verify and Create Account'}
                 textStyle={{ color: '#fff', ...styles.textAlignCenter }}
-                onPress={() => { }}
+                onPress={verifyOtpToServer}
                 isLoading={isLoading}
                 disabled={disbleContinueButton || isLoading}
             />
