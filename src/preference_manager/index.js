@@ -2,6 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import GV from '../utils/GV';
 import PreferenceManagerKeys from './PreferenceManagerKeys';
 
+export const RNAsyncStorage = AsyncStorage;
+
 export default {
     getSetUserAsync: async (type = GV.SET_VALUE, data = {}) => {
         let result = null;

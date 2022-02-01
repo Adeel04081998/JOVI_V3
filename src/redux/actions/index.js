@@ -1,15 +1,36 @@
 import TYPES from "../TYPES"
 
-const userAction = (payload) => {
+const setUserAction = (payload = {}) => {
     return {
-        type: TYPES.USER_ACTION,
+        type: TYPES.SET_USER_ACTION,
         payload: { ...payload }
+    }
+}
+const clearUserAction = (payload = {}) => {
+    return {
+        type: TYPES.CLEAR_USER_ACTION,
+        payload,
+    }
+}
+const setCartAction = (payload = {}) => {
+    return {
+        type: TYPES.SET_CART_ACTION,
+        payload: { ...payload }
+    }
+}
+const clearCartAction = (payload = {}) => {
+    return {
+        type: TYPES.CLEAR_CART_ACTION,
+        payload
     }
 }
 //...Rest of the actions would be here
 
 
 export default {
-    userAction
+    setUserAction,
+    clearUserAction,
+    setCartAction,
+    clearCartAction
     //...
 }
