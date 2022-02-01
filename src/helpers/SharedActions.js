@@ -1,14 +1,14 @@
 import { Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import Toast from "../components/atoms/Toast";
+export const sharedGetDeviceInfo = () => {
+    let model = DeviceInfo.getModel();
+    let deviceID = Platform.OS === "ios" ? DeviceInfo.getUniqueId() : DeviceInfo.getAndroidId();
+    let systemVersion = DeviceInfo.getSystemVersion();
+    return { deviceID, model, systemVersion }
+}
 export default {
     navigation_listener: null,
-    sharedGetDeviceInfo: () => {
-        let model = DeviceInfo.getModel();
-        let devieID = Platform.OS === "ios" ? DeviceInfo.getUniqueId() : DeviceInfo.getAndroidId();
-        let systemVersion = DeviceInfo.getSystemVersion();
-        return { devieID, model, systemVersion }
-    },
     sharedExceptionHandler: (err) => {
         if (err) {
             if (err.errors && typeof err.errors === "object") {
