@@ -17,6 +17,12 @@ export const sharedGetDeviceInfo = () => {
 }
 export default {
     navigation_listener: null,
+    sharedGetDeviceInfo: () => {
+        let model = DeviceInfo.getModel();
+        let deviceID = Platform.OS === "ios" ? DeviceInfo.getUniqueId() : DeviceInfo.getAndroidId();
+        let systemVersion = DeviceInfo.getSystemVersion();
+        return { deviceID, model, systemVersion }
+    },
     sharedExceptionHandler: (err) => {
         if (err) {
             if (err.errors && typeof err.errors === "object") {
