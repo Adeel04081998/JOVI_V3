@@ -14,7 +14,7 @@ import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import Button from '../../components/molecules/Button';
 import Dropdown from '../../components/molecules/Dropdown/Index';
-import SharedActions, { sendOTPToServer } from '../../helpers/SharedActions';
+import { sendOTPToServer, sharedExceptionHandler } from '../../helpers/SharedActions';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
@@ -60,7 +60,7 @@ export default () => {
     const onPress = async () => {
 
         const appHash = Platform.OS === "android" && (await RNOtpVerify.getHash())[0]
-        const phoneNumber =  country + cellNo
+        const phoneNumber = country + cellNo
         if (network.value <= 0) return Toast.info("Please select your mobile network.");
 
         const onSuccess = (res) => {
@@ -71,7 +71,7 @@ export default () => {
         }
         const onError = (err) => {
             console.log("err...", err.response);
-            SharedActions.sharedExceptionHandler(err)
+            sharedExceptionHandler(err)
         }
         const onLoader = (loader) => {
             setIsLoading(loader)
@@ -139,7 +139,7 @@ export default () => {
                 <Text fontFamily={'PoppinsBold'} style={{ alignSelf: 'center', paddingVertical: 5, fontSize: 12 }}>By tapping Continue I am agreeing to </Text>
                 <TouchableOpacity onPress={() => alert('c')}>
                     <Text fontFamily={'PoppinsLight'} style={{ color: "#6D51BB", fontSize: 14 }}>
-                        terms & conditions <Text style={{ color: 'black' }} onPress={()=>{}} >and</Text> privacy & policy
+                        terms & conditions <Text style={{ color: 'black' }} onPress={() => { }} >and</Text> privacy & policy
                     </Text>
                 </TouchableOpacity>
             </View>

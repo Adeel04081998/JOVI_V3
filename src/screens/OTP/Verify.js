@@ -10,7 +10,7 @@ import otpStyles from './styles';
 import theme from '../../res/theme';
 import GV from '../../utils/GV';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
-import SharedActions, { sendOTPToServer, sharedGetDeviceInfo } from '../../helpers/SharedActions';
+import SharedActions, { sendOTPToServer, sharedGetDeviceInfo, sharedInteval, sharedExceptionHandler } from '../../helpers/SharedActions';
 import Sms from "../../helpers/Sms";
 import RNOtpVerify from "react-native-otp-verify";
 import Regex from '../../utils/Regex';
@@ -59,7 +59,7 @@ export default (props) => {
                 clearInterval(intervalRef.current);
                 // resetInterval()
             }
-            intervalRef.current = SharedActions.sharedInteval(GV.OTP_INTERVAL, 1, listerner)
+            intervalRef.current = sharedInteval(GV.OTP_INTERVAL, 1, listerner)
         }
     }, [runInterval])
     React.useEffect(() => {
@@ -106,7 +106,7 @@ export default (props) => {
             if (statusCode === 417) return Toast.error(message);
             resetInterval()
             try {
-                dispatch(ReduxAction.setUserAction({ ...otpResult, ...params }))
+                dispatch(ReduxAction.setUserAction({ ...otpResult, ...params.payload }))
                 if (otpResult.newUser) {
                     NavigationService.NavigationActions.stack_actions.replace(ROUTES.AUTH_ROUTES.SignUp.screen_name,{},ROUTES.AUTH_ROUTES.VerifyOTP.screen_name)
                 }
@@ -123,7 +123,7 @@ export default (props) => {
                 console.log("err...", err.response);
                 setInputs(["", "", "", ""])
                 setTypedCode('')
-                SharedActions.sharedExceptionHandler(err)
+                sharedExceptionHandler(err)
                 resetInterval()
             },
             {},

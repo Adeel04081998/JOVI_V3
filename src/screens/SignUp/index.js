@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { View, Appearance, Keyboard, Alert, } from "react-native"
-import SharedActions, { sharedGetDeviceInfo } from "../../helpers/SharedActions"
+import SharedActions, { sharedGetDeviceInfo, sharedExceptionHandler, navigation_listener } from "../../helpers/SharedActions"
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
 import TextInput from "../../components/atoms/TextInput";
 import Regex from "../../utils/Regex";
@@ -15,24 +15,25 @@ import debounce from 'lodash.debounce'; // 4.0.8
 import Text from "../../components/atoms/Text";
 import VectorIcon from "../../components/atoms/VectorIcon";
 import TouchableOpacity from "../../components/atoms/TouchableOpacity";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import NavigationService from "../../navigations/NavigationService";
-import ROUTES from "../../navigations/ROUTES";
 import Toast from "../../components/atoms/Toast";
-
-
+import ReduxActions from "../../redux/actions"
 
 export default () => {
     const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === 'light')
     const styles = style.styles(colors);
-    const { phoneNumber, hash } = useSelector(state => state.userReducer);
+    const userReducer = useSelector(state => state.userReducer);
+    const dispatch = useDispatch()
+    const { phoneNumber, hash, } = userReducer;
+    console.log("if userReducer=>>>", userReducer);
     const tempData = {
         hash: hash || "as1234",
         mobileNumber: phoneNumber || '03005069491'
     }
     let initialState = {
         inputsArr: [
-            { id: 1, field: "Email", title: 'Email Address', placeholder: 'Email', pattern: Regex.email, keyboardType: "email-address", validationerror: "Invalid email address", value: '', maxLength: 18, isValid: false },
+            { id: 1, field: "Email", title: 'Email Address', placeholder: 'Email', pattern: Regex.email, keyboardType: "email-address", validationerror: "Invalid email address", value: '', maxLength: 56, isValid: false },
             { id: 2, field: "FirstName", title: 'First name', placeholder: 'First name', pattern: Regex.name, keyboardType: "default", validationerror: "Invalid first name", value: '', maxLength: 15, isValid: false },
             { id: 3, field: "LastName", title: 'Last name', placeholder: 'Last name', pattern: Regex.name, keyboardType: "default", validationerror: "Invalid last name", value: '', maxLength: 15, isValid: false },
             { id: 4, field: "Mobile", title: 'Mobile number', placeholder: 'Mobile', pattern: Regex.numberOnly, keyboardType: "number-pad", validationerror: "Invalid mobile number", value: tempData.mobileNumber, maxLength: 15, isValid: true },
@@ -61,7 +62,7 @@ export default () => {
     const enableSubmit = () => {
         let isValidField = true;
         for (let index = 0; index < inputsArr.length; index++) {
-            if (inputsArr[index].field !== "Mobile"   && !inputsArr[index].isValid) isValidField = false
+            if (inputsArr[index].field !== "Mobile" && !inputsArr[index].isValid) isValidField = false
         }
         return isValidField;
     }
@@ -97,50 +98,62 @@ export default () => {
 
     }, 200);
 
-    const signUpSuccessHandler = (res)=>{
+    const signUpSuccessHandler = (res) => {
+        console.log("if signUpSuccessHandler res=>>", res)
         const { statusCode, loginResult } = res.data;
-        if (statusCode === 200) {   
+        if (statusCode === 200) {
+            dispatch(ReduxActions.setUserAction({ ...res.data.loginResult }))
             SharedActions.navigation_listener.auth_handler(true)
+
+
 
         }
 
     }
-    const signUpErrorHandler = (err)=>{
-      console.log("if Error=>>", err);
-        
+    const signUpErrorHandler = (err) => {
+        console.log("ifsignUpErrorHandler  Error=>>", err.response);
+        //   Toast.error(err)
+
+        sharedExceptionHandler(err)
+
+
+
     }
     const _signUpHandler = async () => {
-        console.log("signup calllllll=>",SharedActions.navigation_listener);
-        // SharedActions.navigation_listener.auth_handler(true)
-        let formData = new FormData()
+
+        let deviceInformation = await sharedGetDeviceInfo()
+        let formData = new FormData();
         for (let index = 0; index < inputsArr.length; index++) {
             formData.append(inputsArr[index].field, inputsArr[index].value)
         }
         formData.append("Gender", 0),
             formData.append("UserType", 1),
             formData.append("Hash", tempData.hash),
-            formData.append("Imei", await sharedGetDeviceInfo().deviceID),
-            formData.append("Firmware", sharedGetDeviceInfo().systemVersion)
-        formData.append("SmartPhone", sharedGetDeviceInfo().model)
-        formData.append("HardwareID", await sharedGetDeviceInfo().deviceID)
+            formData.append("Imei", deviceInformation.deviceID),
+            formData.append("Firmware", deviceInformation.systemVersion)
+        formData.append("SmartPhone", deviceInformation.model)
+        formData.append("HardwareID", deviceInformation.deviceID)
+        console.log("if formData", formData);
         postRequest(
             Endpoints.CREATE_UPDATE,
             formData,
             res => {
+
                 signUpSuccessHandler(res)
+
             },
             err => {
                 signUpErrorHandler(err);
 
             },
-            { headers: { 'content-type': 'multipart/form-data' } })
+            {})
 
     }
 
     const editable = (item) => {
         if (item.id === 1) return true;
         if (item.id === 2 || item.id === 3) {
-            if (inputsArr[0].isValid ) return true;
+            if (inputsArr[0].isValid) return true;
             else return false;
         }
         if (item.id === 4) return false;
@@ -151,7 +164,7 @@ export default () => {
     return (
         <View style={[styles.container]}>
 
-            <View style={{ flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', width: '100%', paddingVertical: 5 }}>
                 <TouchableOpacity style={{ flexDirection: 'column', justifyContent: 'center', marginLeft: 9, }} wait={0} onPress={onCrossHandler} >
                     <VectorIcon
                         name={CROSS_ICON}
@@ -194,26 +207,31 @@ export default () => {
                         </View>
                     })
                     }
-                    <View style={{ margin: 8, flexDirection: "row", alignItems: "center", }}>
+                    <View style={{ margin: 8, flexDirection: "row", alignItems: "center", width: '100%' }}>
                         <CheckBox
                             boxType="square"
                             value={isChecked}
                             tintColors={{ false: "#767577", true: "#7359BE" }}
+
                             onValueChange={(value) => {
                                 setState((pre) => ({
                                     ...pre,
                                     isChecked: value
                                 }))
                             }}
+                            onFillColor="#7359BE"
+                            onTintColor="#7359BE"
+                            onCheckColor="white"
+
                         />
-                        <Text style={{ color: 'black', fontSize: 14 }}>{"Receive news, updates, and offers from JOVI"}</Text>
+                        <Text style={{ color: 'black', fontSize: 14, marginLeft: 5, marginRight: 10 }}>{"Receive news, updates, and offers from JOVI"}</Text>
                     </View>
                 </View>
                 <Button
                     text="Sign Up"
                     onPress={_signUpHandler}
                     disabled={!enableSubmit()}
-                    
+
                     style={{ width: "90%", alignSelf: "center", marginBottom: 20, backgroundColor: !enableSubmit() ? "#D3D3D3" : "#7359BE" }}
                 />
             </KeyboardAwareScrollView >
