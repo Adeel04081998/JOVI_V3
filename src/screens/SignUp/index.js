@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { View, Appearance, Keyboard, Alert, } from "react-native"
-import { sharedGetDeviceInfo } from "../../helpers/SharedActions"
+import SharedActions, { sharedGetDeviceInfo } from "../../helpers/SharedActions"
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
 import TextInput from "../../components/atoms/TextInput";
 import Regex from "../../utils/Regex";
@@ -15,14 +15,20 @@ import debounce from 'lodash.debounce'; // 4.0.8
 import Text from "../../components/atoms/Text";
 import VectorIcon from "../../components/atoms/VectorIcon";
 import TouchableOpacity from "../../components/atoms/TouchableOpacity";
+import { useSelector } from "react-redux";
+import NavigationService from "../../navigations/NavigationService";
+import ROUTES from "../../navigations/ROUTES";
+import Toast from "../../components/atoms/Toast";
+
 
 
 export default () => {
     const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === 'light')
     const styles = style.styles(colors);
+    const { phoneNumber, hash } = useSelector(state => state.userReducer);
     const tempData = {
-        hash: "as1234",
-        mobileNumber: '03005069491' || "Props.user"
+        hash: hash || "as1234",
+        mobileNumber: phoneNumber || '03005069491'
     }
     let initialState = {
         inputsArr: [
@@ -55,7 +61,7 @@ export default () => {
     const enableSubmit = () => {
         let isValidField = true;
         for (let index = 0; index < inputsArr.length; index++) {
-            if (inputsArr[index].field !== "Mobile" && !inputsArr[index].isValid) isValidField = false
+            if (inputsArr[index].field !== "Mobile"   && !inputsArr[index].isValid) isValidField = false
         }
         return isValidField;
     }
@@ -91,7 +97,21 @@ export default () => {
 
     }, 200);
 
+    const signUpSuccessHandler = (res)=>{
+        const { statusCode, loginResult } = res.data;
+        if (statusCode === 200) {   
+            SharedActions.navigation_listener.auth_handler(true)
+
+        }
+
+    }
+    const signUpErrorHandler = (err)=>{
+      console.log("if Error=>>", err);
+        
+    }
     const _signUpHandler = async () => {
+        console.log("signup calllllll=>",SharedActions.navigation_listener);
+        // SharedActions.navigation_listener.auth_handler(true)
         let formData = new FormData()
         for (let index = 0; index < inputsArr.length; index++) {
             formData.append(inputsArr[index].field, inputsArr[index].value)
@@ -107,11 +127,11 @@ export default () => {
             Endpoints.CREATE_UPDATE,
             formData,
             res => {
-                console.log("res...", res);
-                const { statusCode, message } = res.data;
+                signUpSuccessHandler(res)
             },
             err => {
-                console.log("err...", err);
+                signUpErrorHandler(err);
+
             },
             { headers: { 'content-type': 'multipart/form-data' } })
 
@@ -120,14 +140,13 @@ export default () => {
     const editable = (item) => {
         if (item.id === 1) return true;
         if (item.id === 2 || item.id === 3) {
-            if (inputsArr[0].isValid) return true;
+            if (inputsArr[0].isValid ) return true;
             else return false;
         }
         if (item.id === 4) return false;
     }
     const onCrossHandler = () => {
-        console.log("Hy");
-
+        NavigationService.NavigationActions.common_actions.goBack();
     }
     return (
         <View style={[styles.container]}>
@@ -180,10 +199,10 @@ export default () => {
                             boxType="square"
                             value={isChecked}
                             tintColors={{ false: "#767577", true: "#7359BE" }}
-                            onValueChange={() => {
+                            onValueChange={(value) => {
                                 setState((pre) => ({
                                     ...pre,
-                                    isChecked: true
+                                    isChecked: value
                                 }))
                             }}
                         />
@@ -194,6 +213,7 @@ export default () => {
                     text="Sign Up"
                     onPress={_signUpHandler}
                     disabled={!enableSubmit()}
+                    
                     style={{ width: "90%", alignSelf: "center", marginBottom: 20, backgroundColor: !enableSubmit() ? "#D3D3D3" : "#7359BE" }}
                 />
             </KeyboardAwareScrollView >
