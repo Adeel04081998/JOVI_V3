@@ -1,8 +1,20 @@
 import TYPES from "../TYPES";
 const userReducer = (state = {}, action) => {
     switch (action.type) {
-        case TYPES.USER_ACTION:
+        case TYPES.SET_USER_ACTION:
             return { ...state, ...action.payload };
+        case TYPES.CLEAR_USER_ACTION:
+            return action.payload;
+        default:
+            return { ...state };
+    }
+}
+const cartReducer = (state = {}, action) => {
+    switch (action.type) {
+        case TYPES.SET_CART_ACTION:
+            return { ...state, ...action.payload };
+        case TYPES.CLEAR_CART_ACTION:
+            return action.payload;
         default:
             return { ...state };
     }
@@ -11,6 +23,7 @@ const userReducer = (state = {}, action) => {
 
 
 export default {
-    userReducer
+    userReducer,
+    cartReducer
     //...
 }
