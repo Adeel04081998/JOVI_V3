@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { View, Appearance, Keyboard, Alert, } from "react-native"
-import { sharedGetDeviceInfo, sharedExceptionHandler, navigation_listener } from "../../helpers/SharedActions"
+import SharedActions, { sharedGetDeviceInfo, sharedExceptionHandler, navigation_listener } from "../../helpers/SharedActions"
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
 import TextInput from "../../components/atoms/TextInput";
 import Regex from "../../utils/Regex";
@@ -103,7 +103,7 @@ export default () => {
         const { statusCode, loginResult } = res.data;
         if (statusCode === 200) {
             dispatch(ReduxActions.setUserAction({ ...res.data.loginResult }))
-            navigation_listener.auth_handler(true)
+            SharedActions.navigation_listener.auth_handler(true)
 
 
 
@@ -122,7 +122,7 @@ export default () => {
     const _signUpHandler = async () => {
 
         let deviceInformation = await sharedGetDeviceInfo()
-        let formData = new FormData;
+        let formData = new FormData();
         for (let index = 0; index < inputsArr.length; index++) {
             formData.append(inputsArr[index].field, inputsArr[index].value)
         }

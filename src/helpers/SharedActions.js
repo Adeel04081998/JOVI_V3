@@ -7,13 +7,15 @@ import BackgroundTimer from 'react-native-background-timer';
 import { postRequest } from '../manager/ApiManager';
 import Endpoints from '../manager/Endpoints';
 import Toast from "../components/atoms/Toast";
+export default {
+    navigation_listener : null,
+}
 export const sharedGetDeviceInfo = async () => {
     let model = DeviceInfo.getModel();
     let deviceID = Platform.OS === "ios" ? DeviceInfo.getUniqueId() : await DeviceInfo.getAndroidId();
     let systemVersion = DeviceInfo.getSystemVersion();
     return { deviceID, model, systemVersion }
 }
-export let navigation_listener = null;
 export const sharedExceptionHandler = (err) => {
     if (err) {
         if (err.errors && typeof err.errors === "object") {
@@ -25,7 +27,7 @@ export const sharedExceptionHandler = (err) => {
             }
             Toast.error(errorStr, null, 3000);
         }
-       else if (err.data && err.data.errors) {
+        else if (err.data && err.data.errors) {
             var errorKeys = Object.keys(err.data.errors),
                 errorStr = "";
             for (let index = 0; index < errorKeys.length; index++) {
@@ -70,13 +72,6 @@ export const sharedInteval = (duration = 30, delay = 1, listener = () => { }) =>
         }
     }, delay * 1000);
     return interlID;
-    export default {
-        navigation_listener: null,
-        sharedExceptionHandler: (err) => {
-
-        },
-
-    }
 }
 export const focusAwareStatusBar = (props) => {
     const isFocused = useIsFocused();
@@ -103,3 +98,4 @@ export const sendOTPToServer = (payload, onSuccess, onError, onLoader) => {
         (loader) => { onLoader(loader) }
     );
 }
+

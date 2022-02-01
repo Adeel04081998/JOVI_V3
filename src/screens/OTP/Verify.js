@@ -10,7 +10,7 @@ import otpStyles from './styles';
 import theme from '../../res/theme';
 import GV from '../../utils/GV';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
-import { sendOTPToServer, sharedGetDeviceInfo, sharedInteval, sharedExceptionHandler, navigation_listener } from '../../helpers/SharedActions';
+import SharedActions, { sendOTPToServer, sharedGetDeviceInfo, sharedInteval, sharedExceptionHandler } from '../../helpers/SharedActions';
 import Sms from "../../helpers/Sms";
 import RNOtpVerify from "react-native-otp-verify";
 import Regex from '../../utils/Regex';
@@ -111,7 +111,7 @@ export default (props) => {
                     NavigationService.NavigationActions.common_actions.navigate(ROUTES.AUTH_ROUTES.SignUp.screen_name)
                 }
                 else {
-                    navigation_listener.auth_handler(true);
+                    SharedActions.navigation_listener.auth_handler(true);
                 }
             }
             catch (error) {
