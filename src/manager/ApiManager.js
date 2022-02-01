@@ -1,14 +1,15 @@
 import Axios from './Axios';
-// import CustomToast from "../components/toast/CustomToast";
+// import Toast from "../components/atoms/Toast";
 // import NetInfo from "@react-native-community/netinfo";
 import preference_manager from "../preference_manager";
 import GV from '../utils/GV';
+import { store } from '../redux/store';
 
 const CustomToast = {
     error: () => { },
 }
 
-const dispatch = () => { }; // import from store when redux is added
+const dispatch = store.dispatch;
 
 export const refreshTokenMiddleware = async (requestCallback, params) => {
     let prevToken = preference_manager.getSetUserAsync(GV.GET_VALUE);
@@ -43,18 +44,18 @@ export const refreshTokenMiddleware = async (requestCallback, params) => {
 };
 
 export const postRequest = async (url, data, onSuccess = () => { }, onError = () => { }, headers = {}, showLoader = true, customLoader = null) => {
-    if(customLoader){
+    if (customLoader) {
         customLoader(true);
     }
     try {
         let res = await Axios.post(url, data, headers);
         onSuccess(res);
-        
+
     } catch (error) {
-        if (error?.response?.data?.StatusCode === 401) return refreshTokenMiddleware(postRequest, [url, data, onSuccess, onError, headers, false]);
+        if (error?.response?.data?.StatusCode === 401) return refreshTokenMiddleware(postRequest, [url, data, onSuccess, onError, headers, false, customLoader]);
         onError(error);
-    }finally{
-        if(customLoader){
+    } finally {
+        if (customLoader) {
             customLoader(false);
         }
     }
@@ -64,7 +65,23 @@ export const getRequest = async (url, onSuccess = () => { }, onError = () => { }
         let res = await Axios.get(url, headers);
         onSuccess(res);
     } catch (error) {
-        if (error?.response?.data?.StatusCode === 401) return refreshTokenMiddleware(postRequest, [url, data, onSuccess, onError, headers, showLoader], dispatch);
+        if (error?.response?.data?.StatusCode === 401) return refreshTokenMiddleware(postRequest, [url, data, onSuccess, onError, headers, false]);
         onError(error);
     }
 };
+export const multipartPostRequest = (url, formData, onSuccess = () => { }, onError = () => { }, showLoader = false) => {
+    // const appStorePersist = persistor.getState();
+    // const appStore = store.getState();
+    // console.log("appStore", appStore);
+    // console.log("appStorePersist", appStorePersist);
+    fetch(`${configs.BASE_URL}/${url}`, {
+        method: 'post',
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+        body: formData
+    })
+        .then((res) => res.json())
+        .then((data) => onSuccess(data))
+        .catch(err => onError(err))
+}
