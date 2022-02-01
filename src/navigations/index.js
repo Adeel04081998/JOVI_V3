@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Animated } from 'react-native';
 import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -12,6 +12,8 @@ import SignUp from '../screens/SignUp/index';
 import Home from '../screens/Home';
 import ROUTES from './ROUTES';
 import SharedActions from '../helpers/SharedActions';
+import { store } from '../redux/store';
+import { useSelector } from 'react-redux';
 const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES } = ROUTES;
 
 const AuthComponents = {
@@ -78,8 +80,11 @@ const stackOpts = () => ({
 });
 const AuthStacks = (props) => {
     // const { setIsLoggedIn } = props;
-    // console.log("[AuthStacks].props", props)
-    return <Stack.Navigator screenOptions={stackOpts} initialRouteName={AUTH_ROUTES.Introduction.screen_name}>
+    const isIntroViewed = React.useRef(false);
+    useSelector(state=>{
+        isIntroViewed.current = state.userReducer.introScreenViewed 
+    });
+    return <Stack.Navigator screenOptions={stackOpts} initialRouteName={isIntroViewed.current?AUTH_ROUTES.EnterOTP.screen_name:AUTH_ROUTES.Introduction.screen_name}>
         {(AUTH_STACKS || []).map((routeInfo, index) => (
             <Stack.Screen
                 key={`AuthStack-Screen-key-${index}-${routeInfo.id}`}
