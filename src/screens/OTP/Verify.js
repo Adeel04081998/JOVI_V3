@@ -1,5 +1,5 @@
-import React, { createRef, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Dimensions, Platform, KeyboardAvoidingView, Appearance, Keyboard, TextInput } from 'react-native';
+import React, { createRef, useEffect, useRef, useState } from 'react';
+import {Appearance, Keyboard, TextInput } from 'react-native';
 import { useDispatch } from 'react-redux';
 import Button from '../../components/molecules/Button';
 import Text from '../../components/atoms/Text';

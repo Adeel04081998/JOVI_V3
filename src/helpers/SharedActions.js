@@ -9,20 +9,14 @@ import Endpoints from '../manager/Endpoints';
 import NavigationService from '../navigations/NavigationService';
 import ROUTES from '../navigations/ROUTES';
 import Toast from "../components/atoms/Toast";
-export const sharedGetDeviceInfo = () => {
+export const sharedGetDeviceInfo = async () => {
     let model = DeviceInfo.getModel();
-    let deviceID = Platform.OS === "ios" ? DeviceInfo.getUniqueId() : DeviceInfo.getAndroidId();
+    let deviceID = Platform.OS === "ios" ? DeviceInfo.getUniqueId() : await DeviceInfo.getAndroidId();
     let systemVersion = DeviceInfo.getSystemVersion();
     return { deviceID, model, systemVersion }
 }
 export default {
     navigation_listener: null,
-    sharedGetDeviceInfo: () => {
-        let model = DeviceInfo.getModel();
-        let deviceID = Platform.OS === "ios" ? DeviceInfo.getUniqueId() : DeviceInfo.getAndroidId();
-        let systemVersion = DeviceInfo.getSystemVersion();
-        return { deviceID, model, systemVersion }
-    },
     sharedExceptionHandler: (err) => {
         if (err) {
             if (err.errors && typeof err.errors === "object") {
