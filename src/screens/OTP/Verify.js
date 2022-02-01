@@ -107,7 +107,7 @@ export default (props) => {
             if (statusCode === 417) return Toast.error(message);
             resetInterval()
             try {
-                dispatch(ReduxAction.setUserAction({ ...otpResult, ...params }))
+                dispatch(ReduxAction.setUserAction({ ...otpResult, ...params.payload }))
                 if (otpResult.newUser) {
                     NavigationService.NavigationActions.common_actions.navigate(ROUTES.AUTH_ROUTES.SignUp.screen_name)
                 }
