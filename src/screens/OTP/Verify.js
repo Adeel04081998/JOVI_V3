@@ -47,10 +47,17 @@ export default (props) => {
             setRunInterval(isItervalStoped)
         }
     };
+    const resetInterval = () =>{
+        clearInterval(intervalRef.current);
+        setRunInterval(false)
+        setMinutes("00");
+        setSeconds("00");
+    }
     React.useEffect(() => {
         if (runInterval) {
             if (intervalRef.current) {
                 clearInterval(intervalRef.current);
+                // resetInterval()
             }
             intervalRef.current = SharedActions.sharedInteval(GV.OTP_INTERVAL, 1, listerner)
         }
@@ -62,8 +69,7 @@ export default (props) => {
             })
             .catch(err => console.log("err...", err));
         return () => {
-            clearInterval(intervalRef.current);
-            setRunInterval(false)
+            resetInterval()
             RNOtpVerify.removeListener()
         };
     }, [])
@@ -73,8 +79,7 @@ export default (props) => {
         };
         return () => {
             // console.log('RNOtpVerify.removeListener------')
-            setRunInterval(false)
-            clearInterval(intervalRef.current);
+            resetInterval()
             RNOtpVerify.removeListener();
         }
     };
@@ -100,8 +105,7 @@ export default (props) => {
             console.log("[verifyOtpToServer].res...", res);
             const { statusCode, message, otpResult } = res.data;
             if (statusCode === 417) return Toast.error(message);
-            // setRunInterval(false)
-            clearInterval(intervalRef.current);
+            resetInterval()
             try {
                 dispatch(ReduxAction.setUserAction({ ...otpResult, ...params }))
                 if (otpResult.newUser) {
@@ -120,8 +124,7 @@ export default (props) => {
                 console.log("err...", err.response);
                 setInputs(["", "", "", ""])
                 SharedActions.sharedExceptionHandler(err)
-                setRunInterval(false)
-                clearInterval(intervalRef.current);
+                resetInterval()
             },
             {},
             true,
@@ -130,7 +133,6 @@ export default (props) => {
     };
     const resendOtp = () => {
         setInputs(["", "", "", ""])
-        setRunInterval(true)
         const { appHash, isNewVersion, isWhatsapp, mobileNetwork, otpType, userType, phoneNumber } = params.payload;
         const payload = {
             'phoneNumber': phoneNumber,
@@ -143,13 +145,12 @@ export default (props) => {
         };
         const onSuccess = (res) => {
             console.log("res...", res);
+            setRunInterval(true)
             const { statusCode, message } = res.data;
             if (statusCode === 417) return Toast.error(message);
-            setRunInterval(false)
-
         }
         const onError = (err) => {
-            setRunInterval(false)
+            resetInterval()
             console.log("err...", err.response);
         }
         const onLoader = (loader) => {
@@ -262,7 +263,7 @@ export default (props) => {
         </View>
         <Text style={{ textAlign: "center", paddingVertical: SPACING - 5 }}>{`${minutes}:${seconds}`}</Text>
         <Text style={{ textAlign: "center", fontSize: 16 }}>{`Didn't recieve code?`}</Text>
-        <TouchableOpacity onPress={resendOtp} disabled={parseInt(seconds) !== 0}>
+        <TouchableOpacity onPress={resendOtp} disabled={parseInt(seconds) !== 0} wait={1} >
             <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 10, color: parseInt(seconds) !== 0 ? 'grey' : "#7359BE", marginTop: 3 }}>{`Request again Get Via SMS`}</Text>
         </TouchableOpacity>
         <View style={styles.buttonView}>

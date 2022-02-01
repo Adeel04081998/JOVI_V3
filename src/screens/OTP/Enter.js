@@ -62,18 +62,18 @@ export default () => {
         const appHash = Platform.OS === "android" && (await RNOtpVerify.getHash())[0]
         const phoneNumber = __DEV__ ? cellNo : country + cellNo
         if (network.value <= 0) return Toast.info("Please select your mobile network.");
-        
-        const onSuccess = (res) =>{
+
+        const onSuccess = (res) => {
             console.log("res...", res);
             const { statusCode, message } = res.data;
             if (statusCode === 417) return Toast.error(message);
             NavigationService.NavigationActions.common_actions.navigate(ROUTES.AUTH_ROUTES.VerifyOTP.screen_name, { payload })
         }
-        const onError = (err) =>{
+        const onError = (err) => {
             console.log("err...", err.response);
             SharedActions.sharedExceptionHandler(err)
         }
-        const onLoader = (loader) =>{
+        const onLoader = (loader) => {
             setIsLoading(loader)
         }
         const payload = {
@@ -87,7 +87,7 @@ export default () => {
         };
         sendOTPToServer(payload, onSuccess, onError, onLoader)
     }
- 
+
     const disbleContinueButton = network.value <= 0 || cellNo === '';
     return <SafeAreaView style={styles.otpSafeArea}>
         <KeyboardAwareScrollView>
@@ -136,10 +136,10 @@ export default () => {
             </View>
 
             <View style={styles.termsAndConditionView}>
-                <Text fontFamily={'PoppinsBold'} style={{ alignSelf: 'center', paddingVertical: 5, fontSize: 12 }}>By tapping send OTP I am agreeing to </Text>
+                <Text fontFamily={'PoppinsBold'} style={{ alignSelf: 'center', paddingVertical: 5, fontSize: 12 }}>By tapping Continue I am agreeing to </Text>
                 <TouchableOpacity onPress={() => alert('c')}>
                     <Text fontFamily={'PoppinsLight'} style={{ color: "#6D51BB", fontSize: 14 }}>
-                        terms & conditions and privacy & policy
+                        terms & conditions <Text style={{ color: 'black' }} onPress={()=>{}} >and</Text> privacy & policy
                     </Text>
                 </TouchableOpacity>
             </View>

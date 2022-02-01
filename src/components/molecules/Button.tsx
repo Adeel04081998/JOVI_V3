@@ -62,7 +62,7 @@ const Button = (props: Props, textProps: TextProps) => {
             style={[{
                 backgroundColor: props.isLoading?'grey':'#7359BE',
                 width: "100%",
-                height: 70,
+                height: 55,
                 borderRadius: 12,
             }, props.style, {
                 alignItems: "center",

@@ -18,7 +18,7 @@ export default {
             inputView: {
                 backgroundColor: "#fff", flexDirection: "row", alignItems: "center", paddingBottom: 20,borderBottomLeftRadius:12,borderBottomRightRadius:12,
             },
-            continueButton: { backgroundColor: "#7359BE", borderRadius: 10, },
+            continueButton: { backgroundColor: "#7359BE", borderRadius: 10 },
             buttonView: { paddingHorizontal: 20, paddingVertical: 15 },
             termsAndConditionView: { marginVertical: 5, alignSelf: "center" },
             topView: {
