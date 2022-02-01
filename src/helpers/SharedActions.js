@@ -13,7 +13,7 @@ export const sharedGetDeviceInfo = async () => {
     let systemVersion = DeviceInfo.getSystemVersion();
     return { deviceID, model, systemVersion }
 }
-export const navigation_listener = null;
+export let navigation_listener = null;
 export const sharedExceptionHandler = (err) => {
     if (err) {
         if (err.errors && typeof err.errors === "object") {

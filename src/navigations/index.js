@@ -11,7 +11,7 @@ import SignUp from '../screens/SignUp/index';
 
 import Home from '../screens/Home';
 import ROUTES from './ROUTES';
-import SharedActions from '../helpers/SharedActions';
+import { navigation_listener } from '../helpers/SharedActions';
 const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES } = ROUTES;
 
 const AuthComponents = {
@@ -108,7 +108,7 @@ const AppDrawers = (props) => {
 
 export default (props) => {
     const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-    SharedActions.navigation_listener = {
+    navigation_listener = {
         ...props,
         auth_handler: setIsLoggedIn,
     }

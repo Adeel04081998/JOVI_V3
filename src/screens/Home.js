@@ -3,10 +3,10 @@ import { View, Text, TouchableOpacity, Appearance, StyleSheet } from 'react-nati
 import GV from '../utils/GV';
 import theme from '../res/theme';
 import sampleStyles from './sampleStyles';
-import SharedActions from '../helpers/SharedActions';
+import { navigation_listener } from '../helpers/SharedActions';
 export default ({ navigation }) => {
     const onPress = () => {
-        SharedActions.navigation_listener.auth_handler(false);
+        navigation_listener.auth_handler(false);
     }
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
     const styles = sampleStyles.styles(colors);

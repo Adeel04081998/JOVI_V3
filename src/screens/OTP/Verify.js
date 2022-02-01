@@ -10,7 +10,7 @@ import otpStyles from './styles';
 import theme from '../../res/theme';
 import GV from '../../utils/GV';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
-import SharedActions, { sendOTPToServer, sharedGetDeviceInfo } from '../../helpers/SharedActions';
+import { sendOTPToServer, sharedGetDeviceInfo, sharedInteval, sharedExceptionHandler, navigation_listener } from '../../helpers/SharedActions';
 import Sms from "../../helpers/Sms";
 import RNOtpVerify from "react-native-otp-verify";
 import Regex from '../../utils/Regex';
@@ -59,7 +59,7 @@ export default (props) => {
                 clearInterval(intervalRef.current);
                 // resetInterval()
             }
-            intervalRef.current = SharedActions.sharedInteval(GV.OTP_INTERVAL, 1, listerner)
+            intervalRef.current = sharedInteval(GV.OTP_INTERVAL, 1, listerner)
         }
     }, [runInterval])
     React.useEffect(() => {
@@ -111,7 +111,7 @@ export default (props) => {
                     NavigationService.NavigationActions.common_actions.navigate(ROUTES.AUTH_ROUTES.SignUp.screen_name)
                 }
                 else {
-                    SharedActions.navigation_listener.auth_handler(true);
+                    navigation_listener.auth_handler(true);
                 }
             }
             catch (error) {
@@ -123,7 +123,7 @@ export default (props) => {
                 console.log("err...", err.response);
                 setInputs(["", "", "", ""])
                 setTypedCode('')
-                SharedActions.sharedExceptionHandler(err)
+                sharedExceptionHandler(err)
                 resetInterval()
             },
             {},
