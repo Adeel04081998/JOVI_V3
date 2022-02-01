@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { View, Appearance, Keyboard, Alert, } from "react-native"
+import { View, Appearance, Keyboard, Alert, Platform, } from "react-native"
 import SharedActions, { sharedGetDeviceInfo, sharedExceptionHandler, navigation_listener } from "../../helpers/SharedActions"
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
 import TextInput from "../../components/atoms/TextInput";
@@ -19,6 +19,7 @@ import { useSelector, useDispatch } from "react-redux";
 import NavigationService from "../../navigations/NavigationService";
 import Toast from "../../components/atoms/Toast";
 import ReduxActions from "../../redux/actions"
+import SafeAreaView from "../../components/atoms/SafeAreaView";
 
 export default () => {
     const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === 'light')
@@ -33,18 +34,19 @@ export default () => {
     }
     let initialState = {
         inputsArr: [
-            { id: 1, field: "Email", title: 'Email Address', placeholder: 'Email', pattern: Regex.email, keyboardType: "email-address", validationerror: "Invalid email address", value: '', maxLength: 56, isValid: false },
-            { id: 2, field: "FirstName", title: 'First name', placeholder: 'First name', pattern: Regex.name, keyboardType: "default", validationerror: "Invalid first name", value: '', maxLength: 15, isValid: false },
-            { id: 3, field: "LastName", title: 'Last name', placeholder: 'Last name', pattern: Regex.name, keyboardType: "default", validationerror: "Invalid last name", value: '', maxLength: 15, isValid: false },
-            { id: 4, field: "Mobile", title: 'Mobile number', placeholder: 'Mobile', pattern: Regex.numberOnly, keyboardType: "number-pad", validationerror: "Invalid mobile number", value: tempData.mobileNumber, maxLength: 15, isValid: true },
+            { id: 1, field: "Email", title: 'Email Address', placeholder: 'Email', pattern: Regex.email, keyboardType: "email-address", validationerror: "Invalid email address",backgroundColor:'white', value: '', maxLength: 56, isValid: false },
+            { id: 2, field: "FirstName", title: 'First name', placeholder: 'First name', pattern: Regex.name, keyboardType: "default", validationerror: "Invalid first name",backgroundColor:'white', value: '', maxLength: 15, isValid: false },
+            { id: 3, field: "LastName", title: 'Last name', placeholder: 'Last name', pattern: Regex.name, keyboardType: "default", validationerror: "Invalid last name",backgroundColor:'white', value: '', maxLength: 15, isValid: false },
+            { id: 4, field: "Mobile", title: 'Mobile number', placeholder: 'Mobile', pattern: Regex.numberOnly, keyboardType: "number-pad", validationerror: "Invalid mobile number",backgroundColor:'#EFEFEF', value: tempData.mobileNumber, maxLength: 15, isValid: true, },
         ],
         'isChecked': false,
         'emailAlreadyExist': null,
-        'changeColor': false,
+        'isLoading': false
     }
     const CROSS_ICON = "ios-close"
+    const VALID_ICON = 'ios-checkmark-circle'
     const [state, setState] = useState(initialState)
-    const { isChecked, emailAlreadyExist, inputsArr } = state;
+    const { isChecked, emailAlreadyExist, inputsArr, isLoading } = state;
     const emailRef = useRef("")
     const _onChangeHandler = (key, value, i) => {
         if (Regex.Space_Regex.test(value)) return
@@ -92,7 +94,7 @@ export default () => {
                 }
             },
             err => {
-                console.log("err...", err);
+                console.log("err...", err.res);
             },
             {})
 
@@ -104,23 +106,21 @@ export default () => {
         if (statusCode === 200) {
             dispatch(ReduxActions.setUserAction({ ...res.data.loginResult }))
             SharedActions.navigation_listener.auth_handler(true)
-
-
-
         }
 
     }
     const signUpErrorHandler = (err) => {
         console.log("ifsignUpErrorHandler  Error=>>", err.response);
         //   Toast.error(err)
-
         sharedExceptionHandler(err)
-
-
 
     }
     const _signUpHandler = async () => {
+        setState((pre) => ({
+            ...pre,
+            isLoading: true
 
+        }))
         let deviceInformation = await sharedGetDeviceInfo()
         let formData = new FormData();
         for (let index = 0; index < inputsArr.length; index++) {
@@ -133,20 +133,35 @@ export default () => {
             formData.append("Firmware", deviceInformation.systemVersion)
         formData.append("SmartPhone", deviceInformation.model)
         formData.append("HardwareID", deviceInformation.deviceID)
+        formData.append("isChecked", isChecked);
+
         console.log("if formData", formData);
         postRequest(
             Endpoints.CREATE_UPDATE,
             formData,
             res => {
+                setState((pre) => ({
+                    ...pre,
+                    isLoading: false
 
+                }))
                 signUpSuccessHandler(res)
 
             },
             err => {
                 signUpErrorHandler(err);
+                setState((pre) => ({
+                    ...pre,
+                    isLoading: false
+
+                }))
 
             },
             {})
+
+
+
+
 
     }
 
@@ -162,19 +177,20 @@ export default () => {
         NavigationService.NavigationActions.common_actions.goBack();
     }
     return (
-        <View style={[styles.container]}>
 
-            <View style={{ flexDirection: 'row', justifyContent: 'center', width: '100%', paddingVertical: 5 }}>
-                <TouchableOpacity style={{ flexDirection: 'column', justifyContent: 'center', marginLeft: 9, }} wait={0} onPress={onCrossHandler} >
+
+
+        <SafeAreaView style={[styles.container]}>
+
+            <View style={{ flexDirection: 'row', justifyContent: 'center', width: '100%', paddingVertical: 5, }}>
+                <TouchableOpacity style={{ flexDirection: 'column', position:'absolute',left:10,alignSelf:'center', justifyContent: 'center', }} wait={0} onPress={onCrossHandler} >
                     <VectorIcon
                         name={CROSS_ICON}
                         color={"black"}
                         size={30}
                     />
                 </TouchableOpacity>
-                <View style={{ flexDirection: 'column', width: '90%', alignItems: 'center' }}>
-                    <Text style={{ color: 'black', fontSize: 20, paddingVertical: 10, }}>{'Registration'}</Text>
-                </View>
+                <Text style={{ color: 'black', fontSize: 20 }}>{'Registration'}</Text>
 
             </View>
 
@@ -198,16 +214,18 @@ export default () => {
                                     }
                                 }}
                                 forceError={x.id === 1 ? emailAlreadyExist : false}
-                                titleStyle={{ top: -30, fontSize: 14, fontStyle: 'normal', fontWeight: '600' }}
-                                containerStyle={{ borderColor: x.isValid === false && x.value.length > 0 ? "red" : "#707070", borderWidth: 0.6 }}
+                                titleStyle={{ top: -30, color: 'black', fontSize: 15 }}
+                                containerStyle={{ borderColor: x.isValid === false && x.value.length > 0 ? "red" : "#707070",backgroundColor:x.backgroundColor, borderWidth: 0.6 }}
                                 editable={editable(x)}
                                 errorTextStyle={styles.errorText}
                                 maxLength={x.maxLength}
+                                iconName={x.id === 4 ? VALID_ICON : null}
+                                iconColor={x.id === 4 ? "green" : null}
                             />
                         </View>
                     })
                     }
-                    <View style={{ margin: 8, flexDirection: "row", alignItems: "center", width: '100%' }}>
+                    <View style={{ margin: 9, flexDirection: "row", width: '100%',  }}>
                         <CheckBox
                             boxType="square"
                             value={isChecked}
@@ -219,25 +237,31 @@ export default () => {
                                     isChecked: value
                                 }))
                             }}
+
                             onFillColor="#7359BE"
                             onTintColor="#7359BE"
                             onCheckColor="white"
-
+                            // style={{height:20,width:20,marginRight:10,
+                            // }}
+                            style={Platform.OS === 'android'?{ transform: [{ scaleX: 1.3 }, { scaleY: 1.3}] }:{height:20,width:20,marginRight:10}}
+                            //Platform checks are added for checkbox style and the text below, because checkbox height width doesnt work for android, so had to change its style through transform
                         />
-                        <Text style={{ color: 'black', fontSize: 14, marginLeft: 5, marginRight: 10 }}>{"Receive news, updates, and offers from JOVI"}</Text>
+                        <Text style={{ color: 'black', fontSize: 14, width: '90%',paddingTop:Platform.OS === 'android'?5:0, }}>{"Receive news, updates, and offers from JOVI"}</Text>
                     </View>
                 </View>
                 <Button
                     text="Sign Up"
                     onPress={_signUpHandler}
                     disabled={!enableSubmit()}
+                    isLoading={isLoading}
+
 
                     style={{ width: "90%", alignSelf: "center", marginBottom: 20, backgroundColor: !enableSubmit() ? "#D3D3D3" : "#7359BE" }}
                 />
             </KeyboardAwareScrollView >
 
 
-        </View >
+        </SafeAreaView >
 
     )
 }

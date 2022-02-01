@@ -1,6 +1,6 @@
 
 
-import { StyleSheet } from "react-native"
+import { Platform, PlatformColor, StyleSheet } from "react-native"
 export default {
     styles(colors) {
         return StyleSheet.create({
@@ -23,10 +23,10 @@ export default {
                 marginBottom: 5,
             },
             errorText: {
-                color: "#7359BE",
+                color: "red",
                 textAlign: 'center',
                 width: '100%',
-                top: 50,
+                bottom:Platform.OS === "android"? -27: -20
 
             },
             buttonView: {
