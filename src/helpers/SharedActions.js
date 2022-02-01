@@ -70,13 +70,6 @@ export const sharedInteval = (duration = 30, delay = 1, listener = () => { }) =>
         }
     }, delay * 1000);
     return interlID;
-    export default {
-        navigation_listener: null,
-        sharedExceptionHandler: (err) => {
-
-        },
-
-    }
 }
 export const focusAwareStatusBar = (props) => {
     const isFocused = useIsFocused();
