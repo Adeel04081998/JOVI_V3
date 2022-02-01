@@ -6,16 +6,14 @@ import Button from '../../components/molecules/Button';
 import { focusAwareStatusBar } from '../../helpers/SharedActions';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
-import preference_manager from '../../preference_manager';
+import ReduxAction from '../../redux/actions/index';
 import constants from '../../res/constants';
-import ReduxAction from '../../redux/actions/index'
-import GV from '../../utils/GV';
 import introStyles from './styles';
-const IntroScreen = ({ navigation }) => {
+const IntroScreen = ({ }) => {
     const { width } = constants.WINDOW_DIMENSIONS;
     const dispatch = useDispatch()
     const { AUTH_ROUTES } = ROUTES;
-    const { common_actions, stack_actions } = NavigationService.NavigationActions;
+    const {  stack_actions } = NavigationService.NavigationActions;
     React.useEffect(() => {
         const save = async () => {
             dispatch(ReduxAction.setUserAction({ introScreenViewed: true }));
