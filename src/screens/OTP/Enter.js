@@ -50,11 +50,11 @@ export default () => {
     const styles = otpStyles.styles(colors, SPACING_VERTICAL);
     const [collapsed, setCollapsed] = React.useState(true);
     const [pickerVisible, setPickerVisible] = React.useState(false);
-    const [cellNo, setCellNo] = React.useState("");
+    const [cellNo, setCellNo] = React.useState(__DEV__ ? "3039839993":"");
     const [isLoading, setIsLoading] = React.useState(false);
     const [network, setNetwork] = React.useState({
-        text: "Choose your mobile network",
-        value: 0
+        text: __DEV__ ? "Jazz": "Choose your mobile network",
+        value: __DEV__ ? 1: 0
     });
     const [country, setCountry] = React.useState("92");
     const onPress = async () => {

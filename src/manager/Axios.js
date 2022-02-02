@@ -74,7 +74,7 @@ Axios.interceptors.response.use(
     },
     async (error) => {
         try {
-            console.log("[Axios.Reponse.Error]", JSON.stringify(error))
+            console.log("[Axios.Reponse.Error]", JSON.stringify(error.response))
             // if (error?.response?.status === 400) Toast.error('Bad Request!');
             // else if (error?.response?.status === 404) Toast.error('Bad Request!');
             if (error?.response?.status === 500) Toast.error('Something went wrong!');
@@ -95,7 +95,7 @@ Axios.interceptors.response.use(
             console.log("[axios].response.error.catch.error", error)
 
         } finally {
-            return Promise.reject(error);
+            return Promise.reject(error.response);
         }
     });
 export default Axios;
