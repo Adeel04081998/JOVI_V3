@@ -12,7 +12,7 @@ export default ({ navigation }) => {
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
     const styles = sampleStyles.styles(colors);
     return (
-        <SafeAreaView style={{ flex: 1, jsutifyContent: "center", alingItems: "center" }}>
+        <SafeAreaView style={{ flex: 1, jsutifyContent: "center", alingItems: "center"}}>
             <View style={{ flex: 1, jsutifyContent: "center", alingItems: "center" }}>
                 <Text style={{ textAlign: "center" }}>WELCOME TO JOVI</Text>
                 {/* <TouchableOpacity onPress={() => navigation.openDrawer()} style={{ margin: 20, padding: 20 }}>

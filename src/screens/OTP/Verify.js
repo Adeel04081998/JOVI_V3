@@ -63,7 +63,7 @@ export default (props) => {
         }
     }, [runInterval])
     React.useEffect(() => {
-            Sms.requestReadSmsPermission()
+        Sms.requestReadSmsPermission()
             .then(async res => {
                 _onSmsListener();
             })
@@ -108,7 +108,7 @@ export default (props) => {
             try {
                 dispatch(ReduxAction.setUserAction({ ...otpResult, ...params.payload }))
                 if (otpResult.newUser) {
-                    NavigationService.NavigationActions.stack_actions.replace(ROUTES.AUTH_ROUTES.SignUp.screen_name,{},ROUTES.AUTH_ROUTES.VerifyOTP.screen_name)
+                    NavigationService.NavigationActions.stack_actions.replace(ROUTES.AUTH_ROUTES.SignUp.screen_name, {}, ROUTES.AUTH_ROUTES.VerifyOTP.screen_name)
                 }
                 else {
                     SharedActions.navigation_listener.auth_handler(true);
@@ -120,7 +120,6 @@ export default (props) => {
 
         },
             err => {
-                console.log("err...", err.response);
                 setInputs(["", "", "", ""])
                 setTypedCode('')
                 sharedExceptionHandler(err)

@@ -53,6 +53,7 @@ export const postRequest = async (url, data, onSuccess = () => { }, onError = ()
         onSuccess(res);
 
     } catch (error) {
+        console.log("[ApiManager].postRequest.error", JSON.stringify(error));
         if (error?.response?.data?.StatusCode === 401) return refreshTokenMiddleware(postRequest, [url, data, onSuccess, onError, headers, false, customLoader]);
         onError(error);
     } finally {
@@ -66,6 +67,7 @@ export const getRequest = async (url, onSuccess = () => { }, onError = () => { }
         let res = await Axios.get(url, headers);
         onSuccess(res);
     } catch (error) {
+        console.log("[ApiManager].getRequest.error", error);
         if (error?.response?.data?.StatusCode === 401) return refreshTokenMiddleware(postRequest, [url, data, onSuccess, onError, headers, false]);
         onError(error);
     }
@@ -82,7 +84,16 @@ export const multipartPostRequest = (url, formData, onSuccess = () => { }, onErr
         },
         body: formData
     })
-        .then((res) => res.json())
-        .then((data) => onSuccess(data))
-        .catch(err => onError(err))
+        .then((res) => {
+            console.log("[multipartPostRequest].res", res);
+            return res.json();
+        })
+        .then((data) => {
+            console.log("[multipartPostRequest].data", data);
+            onSuccess(data)
+        })
+        .catch(err => {
+            console.log("[multipartPostRequest].err", err);
+            onError(err)
+        })
 }
