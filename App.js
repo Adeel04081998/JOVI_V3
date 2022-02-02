@@ -54,8 +54,8 @@ export default App = () => {
   }
   useEffect(() => {
     setTimeout(() => {
-      RNSplashScreen.hide();
     }, 3000)
+    RNSplashScreen.hide();
     return () => { }
   }, []);
 
