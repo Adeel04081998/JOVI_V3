@@ -8,7 +8,7 @@ import { postRequest } from '../manager/ApiManager';
 import Endpoints from '../manager/Endpoints';
 import Toast from "../components/atoms/Toast";
 export default {
-    navigation_listener : null,
+    navigation_listener: null,
 }
 export const sharedGetDeviceInfo = async () => {
     let model = DeviceInfo.getModel();
@@ -17,39 +17,42 @@ export const sharedGetDeviceInfo = async () => {
     return { deviceID, model, systemVersion }
 }
 export const sharedExceptionHandler = (err) => {
+    console.log("[sharedExceptionHandler].err", err);
+    const TOAST_SHOW = 3000;
     if (err) {
-        if (err.errors && typeof err.errors === "object") {
-            var errorKeys = Object.keys(err.errors),
-                errorStr = "";
-            for (let index = 0; index < errorKeys.length; index++) {
-                if (index > 0) errorStr += err.errors[errorKeys[index]][0] + "\n"
-                else errorStr += err.errors[errorKeys[index]][0]
-            }
-            Toast.error(errorStr, null, 3000);
-        }
-        else if (err.data && err.data.errors) {
+        if (err.data && err.data.errors) {
             var errorKeys = Object.keys(err.data.errors),
                 errorStr = "";
             for (let index = 0; index < errorKeys.length; index++) {
                 if (index > 0) errorStr += err.data.errors[errorKeys[index]][0] + "\n"
                 else errorStr += err.data.errors[errorKeys[index]][0]
             }
-            Toast.error(errorStr, null, 3000);
+            Toast.error(errorStr, TOAST_SHOW);
         }
+        else if (err.errors && typeof err.errors === "object") {
+            var errorKeys = Object.keys(err.errors),
+                errorStr = "";
+            for (let index = 0; index < errorKeys.length; index++) {
+                if (index > 0) errorStr += err.errors[errorKeys[index]][0] + "\n"
+                else errorStr += err.errors[errorKeys[index]][0]
+            }
+            Toast.error(errorStr, TOAST_SHOW);
+        }
+
         else if (err && typeof err === "string") {
-            Toast.error(err, null, 3000);
+            Toast.error(err, TOAST_SHOW);
         }
         else if (err.message && typeof err.message === "string") {
-            Toast.error(err.message, null, 3000);
+            Toast.error(err.message, TOAST_SHOW);
         }
         else if (err.Error && typeof err.Error === "string") {
-            Toast.error(err.Error, null, 3000);
+            Toast.error(err.Error, TOAST_SHOW);
         }
         else if (err.error && typeof err.error === "string") {
-            Toast.error(err.error, null, 3000);
+            Toast.error(err.error, TOAST_SHOW);
         }
         else {
-            Toast.error('Something went wrong', null, 3000);
+            Toast.error('Something went wrong', TOAST_SHOW);
         }
     }
 }
