@@ -15,4 +15,9 @@
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
     </style>
 
+<style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
+      <!--to be removed once verified that app will run without it-->
+        <item name="android:statusBarColor">@color/splashscreen_bg</item>
+        <item name="android:background">@drawable/background_splash</item>
+    </style>
 </resources>

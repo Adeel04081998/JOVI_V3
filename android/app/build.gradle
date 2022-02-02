@@ -78,8 +78,9 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    enableHermes: false,  // clean and rebuild if changing
+    enableHermes: true,  // clean and rebuild if changing
 ]
+    //to be changed to false once verified that app will run without it-
 
 apply from: "../../node_modules/react-native/react.gradle"
 
@@ -146,6 +147,12 @@ android {
         }
     }
     signingConfigs {
+        release{
+                storeFile file("my-upload-key.keystore")
+                storePassword 'jovi123'
+                keyAlias "my-key-alias"
+                keyPassword "jovi123"
+        }
         debug {
             storeFile file('debug.keystore')
             storePassword 'android'
@@ -165,7 +172,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
@@ -194,6 +201,9 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+    implementation("com.squareup.okhttp3:okhttp:4.9.1")
+    implementation("com.squareup.okhttp3:okhttp-urlconnection:4.9.1")
+    implementation 'com.facebook.soloader:soloader:0.9.0+'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'

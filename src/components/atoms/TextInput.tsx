@@ -137,12 +137,12 @@ const TextInput = (props: Props) => {
                 }
 
                 {(icon === ERROR_ICON && VALIDATION_CHECK(props.errorText)) &&
-                    <Text style={[props.errorTextStyle, {
+                    <Text style={[{
                         color: 'red',
                         position: 'absolute',
                         bottom:  -20,
                         left: 0,
-                    }]}>{props.errorText}</Text>
+                    },props.errorTextStyle]}>{props.errorText}</Text>
                 }
             </View>
 

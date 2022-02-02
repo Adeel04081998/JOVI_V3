@@ -1,29 +1,37 @@
 import LottieView from 'lottie-react-native';
 import React from 'react';
-import { StatusBar } from 'react-native';
+import { useDispatch } from 'react-redux';
 import View from '../../components/atoms/View';
 import Button from '../../components/molecules/Button';
-import SharedActions from '../../helpers/SharedActions';
-import preference_manager from '../../preference_manager';
+import { focusAwareStatusBar } from '../../helpers/SharedActions';
+import NavigationService from '../../navigations/NavigationService';
+import ROUTES from '../../navigations/ROUTES';
+import ReduxAction from '../../redux/actions/index';
 import constants from '../../res/constants';
-import GV from '../../utils/GV';
 import introStyles from './styles';
-const IntroScreen = () => {
+const IntroScreen = ({ }) => {
     const { width } = constants.WINDOW_DIMENSIONS;
+    const dispatch = useDispatch()
+    const { AUTH_ROUTES } = ROUTES;
+    const {  stack_actions } = NavigationService.NavigationActions;
     React.useEffect(() => {
-        const save = async () => await preference_manager.getSetIntroScreenAsync(GV.SET_VALUE, true);
+        const save = async () => {
+            dispatch(ReduxAction.setUserAction({ introScreenViewed: true }));
+        };
+        // const save = async () => await preference_manager.getSetIntroScreenAsync(GV.SET_VALUE, true);
         save();
     }, [])
     const onGetStarted = () => {
-        SharedActions.navigation_listener.auth_handler(true);
+        stack_actions.replace(AUTH_ROUTES.EnterOTP.screen_name,{},AUTH_ROUTES.Introduction.screen_name);
     }
     return (
         <View style={introStyles.topView}>
-            <StatusBar
-                translucent
-                backgroundColor="#637EBF"//to be moved to theme file once that is created
-                barStyle="light-content"
-            />
+            {
+                focusAwareStatusBar({
+                    translucent: true,
+                    barStyle: "light-content"
+                })
+            }
             <LottieView style={{
                 width,
                 ...introStyles.lottieView
@@ -34,7 +42,6 @@ const IntroScreen = () => {
                 style={introStyles.buttonTopView}
                 textStyle={introStyles.buttonText}
                 text={'Get Started'}
-                wait={0}
             />
         </View>
     );
