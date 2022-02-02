@@ -27,17 +27,12 @@ export default () => {
     const userReducer = useSelector(state => state.userReducer);
     const dispatch = useDispatch()
     const { phoneNumber, hash, } = userReducer;
-    console.log("if userReducer=>>>", userReducer);
-    const tempData = {
-        hash: hash || "as1234",
-        mobileNumber: phoneNumber || '03005069491'
-    }
     let initialState = {
         inputsArr: [
             { id: 1, field: "Email", title: 'Email Address', placeholder: 'Email', pattern: Regex.email, keyboardType: "email-address", validationerror: "Invalid email address", backgroundColor: 'white', value: '', maxLength: 56, isValid: false },
             { id: 2, field: "FirstName", title: 'First name', placeholder: 'First name', pattern: Regex.name, keyboardType: "default", validationerror: "Invalid first name", backgroundColor: 'white', value: '', maxLength: 15, isValid: false },
             { id: 3, field: "LastName", title: 'Last name', placeholder: 'Last name', pattern: Regex.name, keyboardType: "default", validationerror: "Invalid last name", backgroundColor: 'white', value: '', maxLength: 15, isValid: false },
-            { id: 4, field: "Mobile", title: 'Mobile number', placeholder: 'Mobile', pattern: Regex.numberOnly, keyboardType: "number-pad", validationerror: "Invalid mobile number", backgroundColor: '#EFEFEF', value: tempData.mobileNumber, maxLength: 15, isValid: true, },
+            { id: 4, field: "Mobile", title: 'Mobile number', placeholder: 'Mobile', pattern: Regex.numberOnly, keyboardType: "number-pad", validationerror: "Invalid mobile number", backgroundColor: '#EFEFEF', value: phoneNumber, maxLength: 15, isValid: true, },
         ],
         'isChecked': false,
         'emailAlreadyExist': null,
@@ -94,17 +89,16 @@ export default () => {
                 }
             },
             err => {
-                console.log("err...", err.res);
+                sharedExceptionHandler(err)
             },
             {})
 
     }, 200);
 
     const signUpSuccessHandler = (res) => {
-        console.log("if signUpSuccessHandler res=>>", res)
         const { statusCode, loginResult, message } = res;
         if (statusCode !== 200) {
-            Toast.error(message)
+            sharedExceptionHandler(res);
         } else {
             dispatch(ReduxActions.setUserAction({ ...loginResult }))
             SharedActions.navigation_listener.auth_handler(true)
@@ -112,9 +106,7 @@ export default () => {
 
     }
     const signUpErrorHandler = (err) => {
-        console.log("ifsignUpErrorHandler  Error=>>", err);
-        //   Toast.error(err)
-        // sharedExceptionHandler(err)
+        sharedExceptionHandler(err)
 
     }
     const _signUpHandler = async () => {
@@ -130,14 +122,13 @@ export default () => {
         }
         formData.append("Gender", 0),
             formData.append("UserType", 1),
-            formData.append("Hash", tempData.hash),
+            formData.append("Hash", hash),
             formData.append("Imei", deviceInformation.deviceID),
             formData.append("Firmware", deviceInformation.systemVersion)
         formData.append("SmartPhone", deviceInformation.model)
         formData.append("HardwareID", deviceInformation.deviceID)
         formData.append("isChecked", isChecked);
 
-        console.log("if formData", formData);
         multipartPostRequest(
             Endpoints.CREATE_UPDATE,
             formData,
