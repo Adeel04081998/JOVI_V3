@@ -39,6 +39,7 @@ const Dropdown = ({ collapsed,options=[],itemUI= null,scrollViewStyles={} }) => 
         <ScrollView style={{ position:'absolute',display:!collapsed || shown === true?'flex':'none',maxHeight:250, overflow: 'hidden',width:'100%',borderBottomRightRadius:12,borderBottomLeftRadius:12,zIndex:3999,...scrollViewStyles }}>
             <Animated.View style={{
                 backgroundColor:'white',
+                marginBottom:10,
                 transform: [shown? {
                     translateY:animationDropdownCollapse.interpolate({
                         inputRange:[0,EXP_HEIGHT],

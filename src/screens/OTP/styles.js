@@ -13,7 +13,7 @@ export default {
                 // paddingTop: Platform.OS === 'android'?50:0,
             },
             textAlignCenter: { textAlign: "center" },
-            otpDropdownParentView: {elevation:4, marginHorizontal: 20, position: 'relative', borderRadius: 12, zIndex: 999, backgroundColor: "#fff" },
+            otpDropdownParentView: {elevation:4, marginHorizontal: 20,marginTop:10, position: 'relative', borderRadius: 12, zIndex: 999, backgroundColor: "#fff" },
             otpDropdownView: { backgroundColor: "#000", alignItems: "center", flexDirection: "row", justifyContent: "center",borderTopEndRadius:12,borderTopLeftRadius:12, paddingVertical: SPACING_VERTICAL },
             inputView: {
                 backgroundColor: "#fff", flexDirection: "row", alignItems: "center", paddingBottom: 20,borderBottomLeftRadius:12,borderBottomRightRadius:12,

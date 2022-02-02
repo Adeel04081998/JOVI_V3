@@ -92,7 +92,7 @@ export default () => {
     return <SafeAreaView style={styles.otpSafeArea}>
         <KeyboardAwareScrollView>
             <SvgXml xml={svgs.otp()} height={120} width={120} style={{ alignSelf: "center", marginBottom: 20, }} />
-            <Text fontFamily={'PoppinsMedium'} style={{ fontSize: 14, marginHorizontal: 20, color: 'black' }}>Enter your mobile number</Text>
+            <Text fontFamily={'PoppinsMedium'} style={{ fontSize: 14, paddingLeft:25, color: 'black' }}>Enter your mobile number</Text>
             <View style={styles.otpDropdownParentView}>
                 <TouchableOpacity activeOpacity={1} style={styles.otpDropdownView} onPress={() => setCollapsed(!collapsed)} >
                     <Text style={{ color: "#fff", ...styles.textAlignCenter }}>{network.text}</Text>
@@ -137,7 +137,7 @@ export default () => {
 
             <View style={styles.termsAndConditionView}>
                 <Text fontFamily={'PoppinsBold'} style={{ alignSelf: 'center', paddingVertical: 5, fontSize: 12 }}>By tapping Continue I am agreeing to </Text>
-                <TouchableOpacity onPress={() => alert('c')}>
+                <TouchableOpacity onPress={() => {}}>
                     <Text fontFamily={'PoppinsLight'} style={{ color: "#6D51BB", fontSize: 14 }}>
                         terms & conditions <Text style={{ color: 'black' }} onPress={() => { }} >and</Text> privacy & policy
                     </Text>
