@@ -111,7 +111,7 @@ export default (props) => {
                     NavigationService.NavigationActions.stack_actions.replace(ROUTES.AUTH_ROUTES.SignUp.screen_name, {}, ROUTES.AUTH_ROUTES.VerifyOTP.screen_name)
                 }
                 else {
-                    SharedActions.navigation_listener.auth_handler(true);
+                    dispatch(ReduxAction.setUserAction({ isLoggedIn: true }));
                 }
             }
             catch (error) {
@@ -144,14 +144,12 @@ export default (props) => {
             "mobileNetwork": mobileNetwork
         };
         const onSuccess = (res) => {
-            console.log("res...", res);
             setRunInterval(true)
             const { statusCode, message } = res.data;
             if (statusCode === 417) return Toast.error(message);
         }
         const onError = (err) => {
             resetInterval()
-            console.log("err...", err.response);
         }
         const onLoader = (loader) => {
             setIsLoading(loader)
