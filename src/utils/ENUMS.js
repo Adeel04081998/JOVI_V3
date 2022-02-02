@@ -26,26 +26,31 @@ export default {
             "text": "Super Market",
             "value": 1,
             "icon": null,
+            "isActive": true,
         },
         {
             "text": "Jovi",
             "value": 2,
             "icon": null,
+            "isActive": true,
         },
         {
             "text": "Pharmacy",
             "value": 3,
             "icon": null,
+            "isActive": true,
         },
         {
             "text": "Restaurants",
             "value": 4,
             "icon": null,
+            "isActive": true,
         },
         {
             "text": "Jovi Mart",
             "value": 5,
             "icon": null,
+            "isActive": false,
 
         }
     ],
