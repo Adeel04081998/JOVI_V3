@@ -6,23 +6,22 @@ export default {
         let initTheme = { ...colors };
         initTheme = isDarkMode ? initTheme.DarkMode : initTheme.LightMode;
         if (themeValue === THEME_VALUES.SUPER_MARKET) {
-            initTheme = initTheme.Supermarket
+            return initTheme = initTheme.Supermarket
         }
         else if (themeValue === THEME_VALUES.JOVI) {
-            initTheme = initTheme.Jovi
+            return initTheme = initTheme.Jovi
         }
         else if (themeValue === THEME_VALUES.PHARMACY) {
-            initTheme = initTheme.Pharmacy
+            return initTheme = initTheme.Pharmacy
         }
         else if (themeValue === THEME_VALUES.RESTAURANT) {
-            initTheme = initTheme.Restaurant
+            return initTheme = initTheme.Restaurant
         }
         else if (themeValue === THEME_VALUES.JOVI_MART) {
-            initTheme = initTheme.JOVI_MART
+            return initTheme = initTheme.JOVI_MART
         } else {
-            initTheme = initTheme.Default
+            return initTheme = initTheme.Default
         }
-        return initTheme;
     }
 }
 
