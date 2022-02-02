@@ -21,14 +21,13 @@ const AnimatedFlatlist = ({horizontal=false,data=[],animationType='each',itemCon
         const isAnimateable = index <= animatedValues.length -1;
         const loadEach = () => {
             setTimeout(()=>{
-                console.log('Hello',index)
                 Animated.timing(animatedValues[index],{
                     toValue:1,
                     duration:400,
                     useNativeDriver:true,
                     easing:Easing.ease 
                 }).start();
-            },index === 0? 50:((index/10)*1000)+(200*index))
+            },index === 0? 50:((index/10)*1000)+(100*index))
         }
         const loadAll = () => {
             Animated.timing(animatedValues[index],{

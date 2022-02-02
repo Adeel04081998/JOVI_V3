@@ -10,6 +10,7 @@ export default ({ navigation }) => {
         SharedActions.navigation_listener.auth_handler(false);
     }
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
+    colors.primary
     const styles = sampleStyles.styles(colors);
     return (
         <SafeAreaView style={{ flex: 1, jsutifyContent: "center", alingItems: "center"}}>

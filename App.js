@@ -21,6 +21,8 @@ import { _NavgationRef } from './src/navigations/NavigationService';
 import View from './src/components/atoms/View';
 import Toast from 'react-native-toast-message';
 import { SafeAreaProvider,SafeAreaView } from 'react-native-safe-area-context';
+import Temp from './src/screens/Home/Temp';
+import Enter from './src/screens/OTP/Enter';
 AntDesign.loadFont();
 Entypo.loadFont();
 EvilIcons.loadFont();
@@ -67,9 +69,10 @@ export default App = () => {
     <SafeAreaView style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
       <StatusBar backgroundColor={'transparent'} barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <NavigationContainer theme={theme} ref={_NavgationRef} >
-        <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
+        {/* <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
           <RootStack />
-        </View>
+        </View> */}
+        <Temp/>
       </NavigationContainer>
       <Toast />
     </SafeAreaView>

@@ -71,7 +71,7 @@ const fillDarkColorObject = (array = darkColorsArr) => {
 };
 export default {
     LightMode: {
-        Default: { ...fillLighColorObject([...lightColorsArr, { key: "lightColorKey", value: "#fff" }]) }, // Example: add key, value pair object in lightColorsArr for new colors
+        Default: { ...fillLighColorObject([...lightColorsArr, { key: "lightColorKey", value: "#fff"}]) }, // Example: add key, value pair object in lightColorsArr for new colors
         Jovi: { ...fillLighColorObject([...lightColorsArr, { key: "primay", value: "#fff" }]) }, // Example: add key, value pair object in lightColorsArr for new colors
         Supermarket: { ...fillLighColorObject() },
         Pharmacy: { ...fillLighColorObject() },
