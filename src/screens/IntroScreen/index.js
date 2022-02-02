@@ -14,15 +14,16 @@ const IntroScreen = ({ }) => {
     const dispatch = useDispatch()
     const { AUTH_ROUTES } = ROUTES;
     const {  stack_actions } = NavigationService.NavigationActions;
-    React.useEffect(() => {
-        const save = async () => {
-            dispatch(ReduxAction.setUserAction({ introScreenViewed: true }));
-        };
-        // const save = async () => await preference_manager.getSetIntroScreenAsync(GV.SET_VALUE, true);
-        save();
-    }, [])
+    const save = async () => {
+        dispatch(ReduxAction.setUserAction({ introScreenViewed: true }));
+    };
+    // React.useEffect(() => {
+    //     // const save = async () => await preference_manager.getSetIntroScreenAsync(GV.SET_VALUE, true);
+    //     // save();
+    // }, [])
     const onGetStarted = () => {
         stack_actions.replace(AUTH_ROUTES.EnterOTP.screen_name,{},AUTH_ROUTES.Introduction.screen_name);
+        save();
     }
     return (
         <View style={introStyles.topView}>

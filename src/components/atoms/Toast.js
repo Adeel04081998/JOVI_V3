@@ -1,6 +1,6 @@
 import Toast from 'react-native-toast-message';
 export default {
-    success: (message, position = "top", visibilityTime = 3000, autoHide = true, onShow = () => { }, onHide = () => { }, onPress = () => { }) => {
+    success: (message, visibilityTime = 3000, position = "top", autoHide = true, onShow = () => { }, onHide = () => { }, onPress = () => { }) => {
         Toast.show({
             type: "success",
             text1: 'Success',
@@ -13,7 +13,7 @@ export default {
             onShow,
         });
     },
-    info: (message, position = "top", visibilityTime = 3000, autoHide = true, onShow = () => { }, onHide = () => { }, onPress = () => { }) => {
+    info: (message, visibilityTime = 3000, position = "top", autoHide = true, onShow = () => { }, onHide = () => { }, onPress = () => { }) => {
         Toast.show({
             type: "info",
             text1: 'Info',
@@ -26,7 +26,7 @@ export default {
             onShow,
         });
     },
-    error: (message, position = "top", visibilityTime = 3000, autoHide = true, onShow = () => { }, onHide = () => { }, onPress = () => { }) => {
+    error: (message, visibilityTime = 3000, position = "top", autoHide = true, onShow = () => { }, onHide = () => { }, onPress = () => { }) => {
         Toast.show({
             type: "error",
             text1: 'Error',
