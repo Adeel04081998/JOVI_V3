@@ -21,6 +21,7 @@ import { _NavgationRef } from './src/navigations/NavigationService';
 import View from './src/components/atoms/View';
 import Toast from 'react-native-toast-message';
 import { SafeAreaProvider,SafeAreaView } from 'react-native-safe-area-context';
+import JoviJob from './src/screens/JoviJob';
 AntDesign.loadFont();
 Entypo.loadFont();
 EvilIcons.loadFont();
@@ -68,7 +69,8 @@ export default App = () => {
       <StatusBar backgroundColor={'transparent'} barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <NavigationContainer theme={theme} ref={_NavgationRef} >
         <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
-          <RootStack />
+          {/* <RootStack /> */}
+          <JoviJob/>
         </View>
       </NavigationContainer>
       <Toast />
