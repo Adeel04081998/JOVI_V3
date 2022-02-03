@@ -125,6 +125,19 @@ export const sharedGetUserDetailsApi = () => {
         false,
     );
 }
+export const fetchRobotJson = (url,cb = () => {}) => {
+    fetch(url, {
+        method: "GET",
+    })
+        .then((response) => response.json())
+        .then((responseData) => {
+            cb(responseData);
+        })
+        .catch((error) => {
+            cb(null);
+            console.log(error);
+        });
+}
 export const sharedGetHomeMsgsApi = () => {
     let payload = {
         "mascotScreenEnum": 0,
@@ -132,7 +145,13 @@ export const sharedGetHomeMsgsApi = () => {
     };
     postRequest(Endpoints.GET_HOME_MSGS, payload, res => {
         // console.log("[sharedGetHomeMsgsApi].res", res);
-        dispatch(ReduxActions.setHomeMessagesAction({ ...res.data }))
+        if(res.data.robotJson){
+            fetchRobotJson(res.data.robotJson,(data)=>{
+                dispatch(ReduxActions.setMessagesAction({ ...res.data,robotJson:data }));
+            });
+        }else{
+            dispatch(ReduxActions.setMessagesAction({ ...res.data}));
+        }
     },
         err => {
             sharedExceptionHandler(err)

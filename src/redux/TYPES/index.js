@@ -11,4 +11,8 @@ export default {
     "SET_HOME_MESSAGES_ACTION": "get_home_messages",
     // PROMOTIONS
     "SET_PROMOTIONS_ACTION": "set_promotions",
+    // ROBOT
+    "SET_ROBOT_JSON" : "set_robot_json",
+    "SHOW_ROBOT" : "show_robot",
+    "CLEAR_ROBOT_JSON" : "clear_robot_json",
 }

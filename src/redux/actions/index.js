@@ -30,7 +30,7 @@ const setEnumsActions = (payload = {}) => {
         payload: { ...payload }
     }
 }
-const setHomeMessagesAction = (payload = {}) => {
+const setMessagesAction = (payload = {}) => {
     return {
         type: TYPES.SET_HOME_MESSAGES_ACTION,
         payload: { ...payload }
@@ -42,6 +42,23 @@ const setPromotionsAction = (payload = {}) => {
         payload: { ...payload }
     }
 }
+const setRobotJsonAction = (payload = {}) => {
+    return {
+        type: TYPES.SET_ROBOT_JSON,
+        payload: { ...payload }
+    }
+}
+const clearRobotJsonAction = (payload = {}) => {
+    return {
+        type: TYPES.SET_ROBOT_JSON,
+        payload: { ...payload }
+    }
+}
+const showRobotAction = () => {
+    return {
+        type: TYPES.SHOW_ROBOT,
+    }
+}
 //...Rest of the actions would be here
 
 
@@ -51,7 +68,10 @@ export default {
     setCartAction,
     clearCartAction,
     setEnumsActions,
-    setHomeMessagesAction,
-    setPromotionsAction
+    setMessagesAction,
+    setPromotionsAction,
+    setRobotJsonAction,
+    clearRobotJsonAction,
+    showRobotAction,
     //...
 }
