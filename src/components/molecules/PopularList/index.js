@@ -99,13 +99,14 @@ const popularNearYouStylesFunc = (colors, width, height) => StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: 10,
-        marginVertical: 10,
     },
     tagsText: {
         fontSize: 12,
         color: colors.subText || '#212121',
         opacity: 0.6,
-        width: width * 0.9
+        width: width * 0.9,
+        // backgroundColor:'blue',
+        marginTop:-10
     },
     estTime: {
         fontSize: 12,
@@ -124,6 +125,8 @@ const popularNearYouStylesFunc = (colors, width, height) => StyleSheet.create({
     subContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent:'space-between'
+        justifyContent:'space-between',
+        marginVertical: 10,
+        // backgroundColor:'red'
     }
 })
