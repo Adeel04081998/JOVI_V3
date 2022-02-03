@@ -1,13 +1,9 @@
-import Axios from './Axios';
-// import Toast from "../components/atoms/Toast";
-// import NetInfo from "@react-native-community/netinfo";
-import preference_manager from "../preference_manager";
-import GV from '../utils/GV';
+import Toast from '../components/atoms/Toast';
+import { sharedLogoutUser } from '../helpers/SharedActions';
+import ReduxActions from '../redux/actions';
 import { store } from '../redux/store';
 import configs from '../utils/configs';
-import ReduxActions from '../redux/actions';
-import { sharedLogoutUser } from '../helpers/SharedActions';
-import Toast from '../components/atoms/Toast';
+import Axios from './Axios';
 const dispatch = store.dispatch;
 
 export const refreshTokenMiddleware = (requestCallback, params) => {
