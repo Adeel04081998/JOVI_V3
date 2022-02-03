@@ -17,13 +17,19 @@ import AnimatedFlatlist from "../../components/molecules/AnimatedScrolls/Animate
 import constants from "../../res/constants";
 import { getRequest, postRequest } from "../../manager/ApiManager";
 import Endpoints from "../../manager/Endpoints";
+import { useDispatch, useSelector } from "react-redux";
 
 const TextSectiion = () => {
+    const messagesReducer = useSelector(state => state.messagesReducer);
+    const dispatch = useDispatch()
+    console.log("messagesReducer=>",messagesReducer );
+
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
     // const styles = sampleStyles.styles(colors);
     const _categoriesCartWidth = ((constants.SCREEN_DIMENSIONS.width - 40) / 4)
     const overAllMargin = 10;
     const categoryStyles = categoryStylesFunc(colors, overAllMargin);
+
 
     let tempArray =
     {
@@ -55,22 +61,7 @@ const TextSectiion = () => {
         alert("HY");
     }
     const _getMenu = () => {
-        const payload = {
-            "mascotScreenEnum": screenEnum_Value,
-            "getPersonalizeMsgs": true,
-        };
-        postRequest(
-            Endpoints.HOME_SCREEN_MENU,
-            payload,
-            res => {
-                console.log("res=>>", res);
-                const { statusCode, message } = res.data;
-
-            },
-            err => {
-                console.log("error==>", err);
-            },
-            {})
+     
     }
     useEffect(() => {
         _getMenu()
