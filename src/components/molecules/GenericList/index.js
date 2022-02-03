@@ -10,7 +10,7 @@ import View from '../../atoms/View';
 import AnimatedFlatlist from '../AnimatedScrolls/AnimatedFlatlist';
 import constants from '../../../res/constants';
 
-export const PopularList = (props) => {
+export default (props) => {
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
 
     const SCALE_IMAGE = {

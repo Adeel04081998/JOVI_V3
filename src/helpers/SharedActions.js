@@ -9,6 +9,7 @@ import Endpoints from '../manager/Endpoints';
 import Toast from "../components/atoms/Toast";
 import { store } from '../redux/store';
 import ReduxActions from '../redux/actions';
+import configs from '../utils/configs';
 const dispatch = store.dispatch;
 export const sharedGetDeviceInfo = async () => {
     let model = DeviceInfo.getModel();
@@ -125,7 +126,7 @@ export const sharedGetUserDetailsApi = () => {
         false,
     );
 }
-export const fetchRobotJson = (url,cb = () => {}) => {
+export const fetchRobotJson = (url, cb = () => { }) => {
     fetch(url, {
         method: "GET",
     })
@@ -145,12 +146,12 @@ export const sharedGetHomeMsgsApi = () => {
     };
     postRequest(Endpoints.GET_HOME_MSGS, payload, res => {
         // console.log("[sharedGetHomeMsgsApi].res", res);
-        if(res.data.robotJson){
-            fetchRobotJson(res.data.robotJson,(data)=>{
-                dispatch(ReduxActions.setMessagesAction({ ...res.data,robotJson:data }));
+        if (res.data.robotJson) {
+            fetchRobotJson(res.data.robotJson, (data) => {
+                dispatch(ReduxActions.setMessagesAction({ ...res.data, robotJson: data }));
             });
-        }else{
-            dispatch(ReduxActions.setMessagesAction({ ...res.data}));
+        } else {
+            dispatch(ReduxActions.setMessagesAction({ ...res.data }));
         }
     },
         err => {
@@ -173,9 +174,15 @@ export const sharedGetUserAddressesApi = () => {
     );
 }
 export const sharedGetPromotions = () => {
-    getRequest(`${Endpoints.GET_PROMOTIONS}/true`, res => {
-        // console.log("[sharedGetHomeMsgsApi].res", res);
-        dispatch(ReduxActions.setUserAction({ ...res.data }))
+    postRequest(`${Endpoints.GET_PROMOTIONS}`, {
+        "isDashboard": true,
+        "isUserSpecific": false, // Need to discuss with Shakir
+        "latitude": 33.668531,
+        "longitude": 73.075001,
+        "isCitySpecific": true
+    }, res => {
+        console.log("[sharedGetPromotions].res", res);
+        dispatch(ReduxActions.setPromotionsAction({ ...res.data }))
     },
         err => {
             sharedExceptionHandler(err)
@@ -189,3 +196,7 @@ export const sharedLogoutUser = () => {
     dispatch(ReduxActions.clearUserAction({ introScreenViewed: true }));
 }
 
+export const renderFile = (picturePath) => {
+    const userReducer = store.getState().userReducer;
+    return `${configs.BASE_URL}/api/Common/S3File/${encodeURIComponent(picturePath)}?access_token=${userReducer?.token?.authToken}`
+}
