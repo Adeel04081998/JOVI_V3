@@ -962,5 +962,12 @@ export default {
         </g>
     </g>
     </svg>
-    `
+    `,
+    jovi: ()=> ``,
+    food: ()=>``,
+    grocery : ()=> '',
+    pharmacy : ()=>'',
+
+    
+
 }
