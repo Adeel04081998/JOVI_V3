@@ -105,7 +105,6 @@ export const sharedGetEnumsApi = () => {
     getRequest(Endpoints.GET_ENUMS, res => {
         // console.log("[getEnums].res", res);
         dispatch(ReduxActions.getEnumsAction(res.data.enums))
-        return res.data.enums;
     },
         err => {
             sharedExceptionHandler(err)
@@ -117,7 +116,43 @@ export const sharedGetEnumsApi = () => {
 export const sharedGetUserDetailsApi = () => {
     getRequest(Endpoints.GET_USER_DETAILS, res => {
         // console.log("[getUserDetailsApi].res", res);
-        dispatch(ReduxActions.setUserAction({ ...res.data.userDetails }))
+        dispatch(ReduxActions.setUserAction({ ...res.data.userDetails }));
+    },
+        err => {
+            sharedExceptionHandler(err)
+        },
+        {},
+        false,
+    );
+}
+export const sharedGetHomeMsgsApi = () => {
+    getRequest(Endpoints.GET_HOME_MSGS, res => {
+        // console.log("[sharedGetHomeMsgsApi].res", res);
+        dispatch(setHomeMessagesAction({ ...res.data }))
+    },
+        err => {
+            sharedExceptionHandler(err)
+        },
+        {},
+        false,
+    );
+}
+export const sharedGetUserAddressesApi = () => {
+    getRequest(Endpoints.GET_USER_ADDRESSES, res => {
+        // console.log("[sharedGetHomeMsgsApi].res", res);
+        dispatch(ReduxActions.setUserAction({ ...res.data }))
+    },
+        err => {
+            sharedExceptionHandler(err)
+        },
+        {},
+        false,
+    );
+}
+export const sharedGetPromotions = () => {
+    getRequest(Endpoints.GET_PROMOTIONS, res => {
+        // console.log("[sharedGetHomeMsgsApi].res", res);
+        dispatch(ReduxActions.setUserAction({ ...res.data }))
     },
         err => {
             sharedExceptionHandler(err)

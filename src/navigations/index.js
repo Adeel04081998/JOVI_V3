@@ -11,7 +11,7 @@ import SignUp from '../screens/SignUp/index';
 
 import Home from '../screens/Home';
 import ROUTES from './ROUTES';
-import SharedActions, { sharedGetEnumsApi, sharedGetUserDetailsApi, sharedLogoutUser } from '../helpers/SharedActions';
+import SharedActions, { sharedGetEnumsApi, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser } from '../helpers/SharedActions';
 import { store } from '../redux/store';
 import { useSelector } from 'react-redux';
 const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES } = ROUTES;
@@ -118,6 +118,9 @@ export default (props) => {
         sharedGetEnumsApi();
         if (isLoggedIn) {
             sharedGetUserDetailsApi();
+            sharedGetHomeMsgsApi();
+            sharedGetUserAddressesApi();
+            sharedGetPromotions();
         }
         // sharedLogoutUser();
     }, [])

@@ -30,6 +30,18 @@ const getEnumsAction = (payload = {}) => {
         payload: { ...payload }
     }
 }
+const setHomeMessagesAction = (payload = {}) => {
+    return {
+        type: TYPES.SET_HOME_MESSAGES_ACTION,
+        payload: { ...payload }
+    }
+}
+const setPromotionsAction = (payload = {}) => {
+    return {
+        type: TYPES.SET_PROMOTIONS_ACTION,
+        payload: { ...payload }
+    }
+}
 //...Rest of the actions would be here
 
 
@@ -38,6 +50,8 @@ export default {
     clearUserAction,
     setCartAction,
     clearCartAction,
-    getEnumsAction
+    getEnumsAction,
+    setHomeMessagesAction,
+    setPromotionsAction
     //...
 }
