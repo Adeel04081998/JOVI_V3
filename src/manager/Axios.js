@@ -3,20 +3,23 @@ import configs from '../utils/configs';
 import preference_manager from '../preference_manager';
 import GV from '../utils/GV';
 import Toast from '../components/atoms/Toast';
+import { store } from '../redux/store';
 // import perf from '@react-native-firebase/perf';
 // import { getLocalSettings } from '../utils/sharedActions';
 
 
 Axios.interceptors.request.use(
-    async config => {
+    config => {
         try {
+            // console.log(`store`, store.getState());
             config.baseURL = configs.BASE_URL;
-            let res = await preference_manager.getSetUserAsync(GV.GET_VALUE);
-            if (!res) config.headers['content-type: application/json'];
+            const userReducer = store.getState().userReducer;
+            const authToken = userReducer?.token?.authToken; // [?.] Added becuase of before login api request when we dont have auth token...
+            if (authToken) {
+                config.headers['Authorization'] = 'Bearer ' + authToken;
+            }
             else {
-                config.headers['Authorization'] = 'Bearer ' + res.token.authToken;
                 config.headers['clientInfo'] = {}; // for device and app info in future
-                config.headers['content-type: application/json'];
             }
             // if (getLocalSettings().app_perf_enabled) {
             //     const httpMetric = perf().newHttpMetric(config.url, String(config.method).toUpperCase());

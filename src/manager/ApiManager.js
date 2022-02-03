@@ -5,6 +5,8 @@ import preference_manager from "../preference_manager";
 import GV from '../utils/GV';
 import { store } from '../redux/store';
 import configs from '../utils/configs';
+import ReduxActions from '../redux/actions';
+import { sharedLogoutUser } from '../helpers/SharedActions';
 
 const CustomToast = {
     error: () => { },
@@ -12,15 +14,16 @@ const CustomToast = {
 
 const dispatch = store.dispatch;
 
-export const refreshTokenMiddleware = async (requestCallback, params) => {
-    let prevToken = preference_manager.getSetUserAsync(GV.GET_VALUE);
+export const refreshTokenMiddleware = (requestCallback, params) => {
+    const userReducer = store.getState().userReducer;
+    console.log("[refreshTokenMiddleware].userReducer", userReducer);
     postRequest(
         "/api/User/RefreshToken",
         {
-            "accessToken": JSON.parse(prevToken).token.authToken,
-            "refreshToken": JSON.parse(prevToken).refreshToken
+            "accessToken": userReducer.token.authToken,
+            "refreshToken": userReducer.refreshToken
         },
-        async res => {
+        res => {
             console.log("refreshTokenMiddleware.Res :", res);
             if (res?.data?.statusCode === 202) {
                 requestCallback.apply(this, params);
@@ -28,12 +31,11 @@ export const refreshTokenMiddleware = async (requestCallback, params) => {
             }
             else if (res?.data?.statusCode === 403) {
                 CustomToast.error("Session Expired!");
-                clearEverythingInStorageAndLogoutUser();
+                sharedLogoutUser();
                 return;
             }
             else {
-                await preference_manager.getSetUserAsync(GV.SET_VALUE, res.data);
-                requestCallback.apply(this, params);
+                dispatch(ReduxActions.setUserAction({ ...res.data }))
             }
         },
         err => {
