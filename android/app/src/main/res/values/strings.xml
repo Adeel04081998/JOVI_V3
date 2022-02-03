@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">jovi</string>
+
+    <!-- for codepush -->
+    <string name="appCenterCrashes_whenToSendCrashes" moduleConfig="true" translatable="false">DO_NOT_ASK_JAVASCRIPT</string>
+    <string name="appCenterAnalytics_whenToEnableAnalytics" moduleConfig="true" translatable="false">ALWAYS_SEND</string>
+
+    <!-- cibaksolutionspk@gmail.com; APP => JOVI-ANDROID-V3 --> 
+
+    <!-- CodePushDeploymentKey for Staging => m4zES_hlAb6Y2yTXtIcJTp4e510spUXH22iwU -->
+    <!-- CodePushDeploymentKey for Production => Tu6S8KY75pYFn0M4_sOMypfZ-5UB3oARjUiPH -->
+
+    <string moduleConfig="true" name="CodePushDeploymentKey"></string>
+<!-- for codepush -->
 </resources>

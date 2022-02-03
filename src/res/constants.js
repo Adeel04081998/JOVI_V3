@@ -1,5 +1,9 @@
 import { Dimensions } from "react-native";
 export default {
+    url_qa: "https://qa-api.jovi-app.com",
+    url_dev: "https://dev-api.jovi-app.com",
+    url_staging: "https://staging-api.jovi-app.com",
+    url_live: "https://live-api.jovi-app.com",
     screen_dimensions: Dimensions.get("screen"),
     window_dimensions: Dimensions.get("window"),
     horizontal_margin: 10,
