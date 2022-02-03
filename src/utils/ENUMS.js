@@ -1,3 +1,5 @@
+import svgs from "../assets/svgs"
+
 export default {
     "NETWORK_LIST": [
         {
@@ -23,29 +25,35 @@ export default {
     ],
     "PITSTOP_TYPES": [
         {
-            "text": "Super Market",
-            "value": 1,
-            "icon": null,
-        },
-        {
             "text": "Jovi",
             "value": 2,
-            "icon": null,
+            "icon": svgs.jovi(),
+            "isActive": true,
+        },
+        {
+            "text": "Food",
+            "value": 4,
+            "icon":svgs.food(),
+            "isActive": true,
+        },
+        {
+            "text": "Grocery",
+            "value": 1,
+            "icon":svgs.grocery(),
+            "isActive": true,
         },
         {
             "text": "Pharmacy",
             "value": 3,
-            "icon": null,
-        },
-        {
-            "text": "Restaurants",
-            "value": 4,
-            "icon": null,
+            "icon":svgs.pharmacy(),
+            "isActive": true,
         },
         {
             "text": "Jovi Mart",
             "value": 5,
-            "icon": null,
+            // "icon": null|| svgs.joviMart(),
+            "icon": null ,
+            "isActive": false,
 
         }
     ],
