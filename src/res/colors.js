@@ -1,4 +1,4 @@
-const initColors = {
+export const initColors = {
     "primary": "#7359BE",
     "card": "#047A9E",
     "text": "#343434",
