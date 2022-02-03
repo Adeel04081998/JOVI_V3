@@ -5,7 +5,7 @@ import theme from '../../res/theme';
 import GV from '../../utils/GV';
 import sampleStyles from '../sampleStyles';
 import images from '../../assets/images';
-import { PopularList } from '../../components/molecules/PopularList';
+import { PopularList } from '../../components/molecules/GenericList';
 
 export default ({ navigation }) => {
     let tempData = [

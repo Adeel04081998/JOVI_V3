@@ -1,5 +1,5 @@
 import React from 'react';
-import { Appearance, Dimensions, StyleSheet, Platform } from 'react-native';
+import { Appearance, StyleSheet, Platform } from 'react-native';
 import theme from '../../../res/theme';
 import GV from '../../../utils/GV';
 import Image from '../../atoms/Image';
