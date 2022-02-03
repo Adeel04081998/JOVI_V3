@@ -1,6 +1,7 @@
-import LottieView from 'lottie-react-native';
-import React from 'react';
+// import LottieView from 'lottie-react-native';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import {Image} from 'react-native';
 import View from '../../components/atoms/View';
 import Button from '../../components/molecules/Button';
 import { focusAwareStatusBar } from '../../helpers/SharedActions';
@@ -10,10 +11,11 @@ import ReduxAction from '../../redux/actions/index';
 import constants from '../../res/constants';
 import introStyles from './styles';
 const IntroScreen = ({ }) => {
+    const [state,setState] = useState({disabled:false});
     const { width } = constants.WINDOW_DIMENSIONS;
     const dispatch = useDispatch()
     const { AUTH_ROUTES } = ROUTES;
-    const {  stack_actions } = NavigationService.NavigationActions;
+    const {  stack_actions,common_actions } = NavigationService.NavigationActions;
     const save = async () => {
         dispatch(ReduxAction.setUserAction({ introScreenViewed: true }));
     };
@@ -22,8 +24,11 @@ const IntroScreen = ({ }) => {
     //     // save();
     // }, [])
     const onGetStarted = () => {
-        stack_actions.replace(AUTH_ROUTES.EnterOTP.screen_name,{},AUTH_ROUTES.Introduction.screen_name);
+        console.log('onGetStarted')
+        if(state.disabled === true) return;
+        setState(pre=>({...pre,disabled:true}));
         save();
+        stack_actions.replace(AUTH_ROUTES.EnterOTP.screen_name,{},AUTH_ROUTES.Introduction.screen_name);
     }
     return (
         <View style={introStyles.topView}>
@@ -33,16 +38,21 @@ const IntroScreen = ({ }) => {
                     barStyle: "light-content"
                 })
             }
-            <LottieView style={{
-                width,
-                ...introStyles.lottieView
+            <Image source={require('../../assets/gifs/onboarding.gif')} resizeMethod={'resize'} resizeMode={'cover'} style={{width:width-150, ...introStyles.lottieView}} />
+            {/* <LottieView style={{
+                // width,
+                // ...introStyles.lottieView
             }}
-                resizeMode='cover' source={require('../../assets/Onboarding.json')} autoPlay loop />
+                cacheComposition={true}
+            cacheStrategy={'strong'}
+                renderMode={'SOFTWARE'}
+                resizeMode='cover' source={require('../../assets/Onboarding.json')} autoPlay loop /> */}
             <Button
                 onPress={onGetStarted}
                 style={introStyles.buttonTopView}
                 textStyle={introStyles.buttonText}
                 text={'Get Started'}
+                wait={0.7}
             />
         </View>
     );
