@@ -15,6 +15,7 @@ import PitStopEstTime from './components/PitStopEstTime';
 import PitStopBuy from './components/PitStopBuy';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
 import Button from '../../components/molecules/Button';
+import AnimatedKeyboardAwareScroll from '../../components/molecules/KeyboardAwareScroll';
 export const PITSTOP_CARD_TYPES = Object.freeze({ "location": 0, "description": 1, "estimated-time": 2, "buy-for-me": 3 });
 
 export default ({ navigation }) => {
@@ -58,7 +59,37 @@ export default ({ navigation }) => {
     return (
         <SafeAreaView style={styles.safeArea}>
             <CustomHeader leftIconName="keyboard-backspace" leftIconType="MaterialIcons" />
-            <KeyboardAwareScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1, paddingBottom: 15 }} >
+            <AnimatedKeyboardAwareScroll 
+                data={[
+                    ...cardData.map((item, index) => {
+                        return (
+                            <View key={`jovijob card Data ${index}`} style={styles.cardView} >
+                                <CardHeader title={item.title} description={item.desc} xmlSrc={item.svg} />
+                                {item.idx === 1 ?
+                                    <PitStopLocation /> :
+                                    item.idx === 2 ?
+                                        <PitStopDetails />
+                                        : item.idx === 3 ?
+                                            <PitStopEstTime /> :
+                                            <PitStopBuy />}
+                            </View>
+                        )
+                    }),
+                    <><Button
+                    text="Save and Continue"
+                    onPress={() => { }}
+                    style={styles.locButton}
+                    textStyle={styles.btnText}
+                    fontFamily="PoppinsRegular"
+                /></>
+                ]}
+                scrollProps={{
+                    showsVerticalScrollIndicator:false,
+                    contentContainerStyle:{ flexGrow: 1, paddingBottom: 15 }
+                }}
+            />
+            {/* <KeyboardAwareScrollView showsVerticalScrollIndicator={false} contentContainerStyle={} >
+                
                 {cardData.map((item, index) => {
                     return (
                         <View key={`jovijob card Data ${index}`} style={styles.cardView} >
@@ -80,7 +111,7 @@ export default ({ navigation }) => {
                     textStyle={styles.btnText}
                     fontFamily="PoppinsRegular"
                 />
-            </KeyboardAwareScrollView>
+            </KeyboardAwareScrollView> */}
         </SafeAreaView>
     );
 }
