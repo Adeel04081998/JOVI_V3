@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { View, Appearance, Keyboard, Alert, Platform, } from "react-native"
-import SharedActions, { sharedGetDeviceInfo, sharedExceptionHandler, navigation_listener } from "../../helpers/SharedActions"
+import { sharedGetDeviceInfo, sharedExceptionHandler } from "../../helpers/SharedActions"
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
 import TextInput from "../../components/atoms/TextInput";
 import Regex from "../../utils/Regex";
@@ -25,6 +25,7 @@ export default () => {
     const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === 'light')
     const styles = style.styles(colors);
     const userReducer = useSelector(state => state.userReducer);
+    console.log("userReducer", userReducer);
     const dispatch = useDispatch()
     const { phoneNumber, hash, } = userReducer;
     let initialState = {
@@ -100,8 +101,7 @@ export default () => {
         if (statusCode !== 200) {
             sharedExceptionHandler(res);
         } else {
-            dispatch(ReduxActions.setUserAction({ ...loginResult }))
-            SharedActions.navigation_listener.auth_handler(true)
+            dispatch(ReduxActions.setUserAction({ ...loginResult, isLoggedIn: true }))
         }
 
     }

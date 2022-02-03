@@ -4,12 +4,12 @@ import { StatusBar } from "react-native";
 import { Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import BackgroundTimer from 'react-native-background-timer';
-import { postRequest } from '../manager/ApiManager';
+import { postRequest, getRequest } from '../manager/ApiManager';
 import Endpoints from '../manager/Endpoints';
 import Toast from "../components/atoms/Toast";
-export default {
-    navigation_listener: null,
-}
+import { store } from '../redux/store';
+import ReduxActions from '../redux/actions';
+const dispatch = store.dispatch;
 export const sharedGetDeviceInfo = async () => {
     let model = DeviceInfo.getModel();
     let deviceID = Platform.OS === "ios" ? DeviceInfo.getUniqueId() : await DeviceInfo.getAndroidId();
@@ -100,5 +100,69 @@ export const sendOTPToServer = (payload, onSuccess, onError, onLoader) => {
         true,
         (loader) => { onLoader(loader) }
     );
+}
+export const sharedGetEnumsApi = () => {
+    getRequest(Endpoints.GET_ENUMS, res => {
+        // console.log("[getEnums].res", res);
+        dispatch(ReduxActions.getEnumsAction(res.data.enums))
+    },
+        err => {
+            sharedExceptionHandler(err)
+        },
+        {},
+        false,
+    );
+}
+export const sharedGetUserDetailsApi = () => {
+    getRequest(Endpoints.GET_USER_DETAILS, res => {
+        // console.log("[getUserDetailsApi].res", res);
+        dispatch(ReduxActions.setUserAction({ ...res.data.userDetails }));
+    },
+        err => {
+            sharedExceptionHandler(err)
+        },
+        {},
+        false,
+    );
+}
+export const sharedGetHomeMsgsApi = () => {
+    getRequest(Endpoints.GET_HOME_MSGS, res => {
+        // console.log("[sharedGetHomeMsgsApi].res", res);
+        dispatch(setHomeMessagesAction({ ...res.data }))
+    },
+        err => {
+            sharedExceptionHandler(err)
+        },
+        {},
+        false,
+    );
+}
+export const sharedGetUserAddressesApi = () => {
+    getRequest(Endpoints.GET_USER_ADDRESSES, res => {
+        // console.log("[sharedGetHomeMsgsApi].res", res);
+        dispatch(ReduxActions.setUserAction({ ...res.data }))
+    },
+        err => {
+            sharedExceptionHandler(err)
+        },
+        {},
+        false,
+    );
+}
+export const sharedGetPromotions = () => {
+    getRequest(Endpoints.GET_PROMOTIONS, res => {
+        // console.log("[sharedGetHomeMsgsApi].res", res);
+        dispatch(ReduxActions.setUserAction({ ...res.data }))
+    },
+        err => {
+            sharedExceptionHandler(err)
+        },
+        {},
+        false,
+    );
+}
+
+export const sharedLogoutUser = () => {
+    dispatch(ReduxActions.clearUserAction({ introScreenViewed: true }));
 }
 

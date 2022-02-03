@@ -18,6 +18,9 @@ const persistCartConfig = {
 };
 
 const rootReducer = combineReducers({
+    enumsReducer: Reducers.enumsReducer,
+    messagesReducer: Reducers.messagesReducer,
+    promotionsReducer: Reducers.promotionsReducer,
     userReducer: persistReducer(persistUserConfig, Reducers.userReducer),
     cartReducer: persistReducer(persistCartConfig, Reducers.cartReducer),
 });
