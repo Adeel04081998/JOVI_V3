@@ -11,7 +11,7 @@ import constants from '../../res/constants';
 
 const { width } = Dimensions.get('window');
 
-const SPACING = constants.HORIZONTAL_MARGIN;
+const SPACING = constants.horizontal_margin;
 
 const ITEM_WIDTH = width;
 const ITEM_HEIGHT = 150;

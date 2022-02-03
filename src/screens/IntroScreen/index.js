@@ -10,7 +10,7 @@ import ReduxAction from '../../redux/actions/index';
 import constants from '../../res/constants';
 import introStyles from './styles';
 const IntroScreen = ({ }) => {
-    const { width } = constants.WINDOW_DIMENSIONS;
+    const { width } = constants.window_dimensions;
     const dispatch = useDispatch()
     const { AUTH_ROUTES } = ROUTES;
     const {  stack_actions } = NavigationService.NavigationActions;

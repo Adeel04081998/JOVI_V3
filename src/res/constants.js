@@ -1,9 +1,9 @@
 import { Dimensions } from "react-native";
 export default {
-    SCREEN_DIMENSIONS: Dimensions.get("screen"),
-    WINDOW_DIMENSIONS: Dimensions.get("window"),
-    HORIZONTAL_MARGIN: 10,
-    COLORS: {
+    screen_dimensions: Dimensions.get("screen"),
+    window_dimensions: Dimensions.get("window"),
+    horizontal_margin: 10,
+    colors: {
         "name": "Default",
         "backgroundColor": "#1D1D1D",
         "navBackgroundColor": "#343434",

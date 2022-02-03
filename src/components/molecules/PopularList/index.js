@@ -8,13 +8,14 @@ import TouchableOpacity from '../../atoms/TouchableOpacity';
 import VectorIcon from '../../atoms/VectorIcon';
 import View from '../../atoms/View';
 import AnimatedFlatlist from '../AnimatedScrolls/AnimatedFlatlist';
+import constants from '../../../res/constants';
 
 export const PopularList = (props) => {
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
 
     const SCALE_IMAGE = {
-        height: Dimensions.get('window').height / 5,
-        width: Dimensions.get('window').width * 0.8
+        height: constants.window_dimensions.height / 5,
+        width: constants.window_dimensions.width * 0.8
     }
     const { height, width } = SCALE_IMAGE;
     const popularNearYouStyles = popularNearYouStylesFunc(colors, width, height)
@@ -25,19 +26,19 @@ export const PopularList = (props) => {
         return (
             <TouchableOpacity activeOpacity={0.8} >
                 <Image source={item.image} style={[popularNearYouStyles.image, props.imageStyles]} tapToOpen={false} />
-                    <View style={popularNearYouStyles.subContainer}>
-                        <Text style={popularNearYouStyles.title} numberOfLines={1} >{item.title}</Text>
-                        {(item.distance || item.estTime) &&
-                            <View style={popularNearYouStyles.iconContainer} >
-                                <VectorIcon name={item.distance ? "map-marker" : "clock-time-four"} type={item.distance ? "FontAwesome" : "MaterialCommunityIcons"} color={colors.theme || "#6D51BB"} size={15} style={{ marginRight: 5 }} />
-                                <Text style={popularNearYouStyles.estTime} >{item.estTime || item.distance}</Text>
-                            </View>
-                        }
-                    </View>
-                    <Text style={popularNearYouStyles.tagsText} numberOfLines={1} >{item.description}</Text>
-                    {item.averagePrice &&
-                        <Text style={popularNearYouStyles.title} >Rs. {item.averagePrice}</Text>
+                <View style={popularNearYouStyles.subContainer}>
+                    <Text style={popularNearYouStyles.title} numberOfLines={1} >{item.title}</Text>
+                    {(item.distance || item.estTime) &&
+                        <View style={popularNearYouStyles.iconContainer} >
+                            <VectorIcon name={item.distance ? "map-marker" : "clock-time-four"} type={item.distance ? "FontAwesome" : "MaterialCommunityIcons"} color={colors.theme || "#6D51BB"} size={15} style={{ marginRight: 5 }} />
+                            <Text style={popularNearYouStyles.estTime} >{item.estTime || item.distance}</Text>
+                        </View>
                     }
+                </View>
+                <Text style={popularNearYouStyles.tagsText} numberOfLines={1} >{item.description}</Text>
+                {item.averagePrice &&
+                    <Text style={popularNearYouStyles.title} >Rs. {item.averagePrice}</Text>
+                }
             </TouchableOpacity>
         )
     }
@@ -106,7 +107,7 @@ const popularNearYouStylesFunc = (colors, width, height) => StyleSheet.create({
         opacity: 0.6,
         width: width * 0.9,
         // backgroundColor:'blue',
-        marginTop:-10
+        marginTop: -10
     },
     estTime: {
         fontSize: 12,
@@ -125,7 +126,7 @@ const popularNearYouStylesFunc = (colors, width, height) => StyleSheet.create({
     subContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent:'space-between',
+        justifyContent: 'space-between',
         marginVertical: 10,
         // backgroundColor:'red'
     }
