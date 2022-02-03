@@ -6,6 +6,7 @@ import sampleStyles from './sampleStyles';
 import SafeAreaView from '../components/atoms/SafeAreaView';
 export default ({ navigation }) => {
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
+    // colors.primary will recieve value from colors.js file's colors
     const styles = sampleStyles.styles(colors);
     return (
         <SafeAreaView style={{ flex: 1, jsutifyContent: "center", alingItems: "center" }}>
