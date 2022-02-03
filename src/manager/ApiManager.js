@@ -7,14 +7,15 @@ import { store } from '../redux/store';
 import configs from '../utils/configs';
 import ReduxActions from '../redux/actions';
 import { sharedLogoutUser } from '../helpers/SharedActions';
-
-const CustomToast = {
-    error: () => { },
-}
-
+import Toast from '../components/atoms/Toast';
 const dispatch = store.dispatch;
 
 export const refreshTokenMiddleware = (requestCallback, params) => {
+    Toast.error("Session Expired!");
+    sharedLogoutUser();
+    return;
+
+    // BELOW CODE COMMENTED WILL BE IMPLMEMENT LATER
     const userReducer = store.getState().userReducer;
     console.log("[refreshTokenMiddleware].userReducer", userReducer);
     postRequest(
@@ -30,7 +31,7 @@ export const refreshTokenMiddleware = (requestCallback, params) => {
                 return;
             }
             else if (res?.data?.statusCode === 403) {
-                CustomToast.error("Session Expired!");
+                Toast.error("Session Expired!");
                 sharedLogoutUser();
                 return;
             }
