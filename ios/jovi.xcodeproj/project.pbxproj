@@ -37,6 +37,7 @@
 		9F943D4527A18C3B00F74F26 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F943D4427A18C3B00F74F26 /* ViewController.swift */; };
 		9F943D4727A1909F00F74F26 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F943D4627A1909F00F74F26 /* Main.storyboard */; };
 		D389051199D75342566325AB /* libPods-jovi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E5B4C234413A32092FC84A70 /* libPods-jovi.a */; };
+		FD70708727AC130800AAF009 /* AppCenter-Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = FD70708627AC130800AAF009 /* AppCenter-Config.plist */; };
 		FEE8993AF0D75BE3BBA84C86 /* libPods-jovi-joviTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9321C510B4A5E695254FB2CF /* libPods-jovi-joviTests.a */; };
 /* End PBXBuildFile section */
 
@@ -94,6 +95,7 @@
 		DDCE02A387D5AAA058256518 /* Pods-jovi-joviTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jovi-joviTests.debug.xcconfig"; path = "Target Support Files/Pods-jovi-joviTests/Pods-jovi-joviTests.debug.xcconfig"; sourceTree = "<group>"; };
 		E5B4C234413A32092FC84A70 /* libPods-jovi.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-jovi.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		FD70708627AC130800AAF009 /* AppCenter-Config.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "AppCenter-Config.plist"; path = "jovi/AppCenter-Config.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,6 +138,7 @@
 		13B07FAE1A68108700A75B9A /* jovi */ = {
 			isa = PBXGroup;
 			children = (
+				FD70708627AC130800AAF009 /* AppCenter-Config.plist */,
 				9F943D3D27A18B1700F74F26 /* SplashGif.gif */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -333,6 +336,7 @@
 				9F18AAAC27A549740037D0EB /* PoppinsBlackItalic.ttf in Resources */,
 				9F18AAAD27A549740037D0EB /* PoppinsSemiBoldItalic.ttf in Resources */,
 				9F18AAAE27A549740037D0EB /* PoppinsItalic.ttf in Resources */,
+				FD70708727AC130800AAF009 /* AppCenter-Config.plist in Resources */,
 				9F18AAAF27A549740037D0EB /* PoppinsThin.ttf in Resources */,
 				9F18AAB027A549740037D0EB /* PoppinsBold.ttf in Resources */,
 				9F18AAB127A549740037D0EB /* PoppinsExtraBoldItalic.ttf in Resources */,

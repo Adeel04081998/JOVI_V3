@@ -106,12 +106,9 @@ export default (props) => {
             if (statusCode === 417) return Toast.error(message);
             resetInterval()
             try {
-                dispatch(ReduxAction.setUserAction({ ...otpResult, ...params.payload }))
+                dispatch(ReduxAction.setUserAction({ ...otpResult, ...params.payload, isLoggedIn:otpResult.newUser?false: true, introScreenViewed:otpResult.newUser?false: true }))
                 if (otpResult.newUser) {
                     NavigationService.NavigationActions.stack_actions.replace(ROUTES.AUTH_ROUTES.SignUp.screen_name, {}, ROUTES.AUTH_ROUTES.VerifyOTP.screen_name)
-                }
-                else {
-                    dispatch(ReduxAction.setUserAction({ isLoggedIn: true }));
                 }
             }
             catch (error) {
