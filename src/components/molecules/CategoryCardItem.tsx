@@ -77,7 +77,9 @@ const CategoryCardItem = (props: Props) => {
                 <SvgXml xml={props.xml} height={"80%"} width={"90%"} />
             </AnimatedView>
             {VALIDATION_CHECK(props.title) &&
-                <Text style={[{
+                <Text
+                numberOfLines={1}
+                style={[{
                     opacity: transFormAngle.interpolate({
                         inputRange: [0, 1],
                         outputRange: [0.2, 1]
