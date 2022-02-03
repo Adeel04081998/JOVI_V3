@@ -6,7 +6,7 @@ import Image from "../../components/atoms/Image";
 import images from "../../assets/images";
 import theme from "../../res/theme";
 import GV from "../../utils/GV";
-import { Appearance, Platform } from "react-native";
+import { Alert, Appearance, Platform, StyleSheet } from "react-native";
 import FontFamily from "../../res/FontFamily";
 import AnimatedTab from "../../components/molecules/AnimatedTab/AnimatedTab";
 import Svg, { SvgXml } from "react-native-svg";
@@ -22,7 +22,9 @@ const TextSectiion = () => {
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
     // const styles = sampleStyles.styles(colors);
     const _categoriesCartWidth = ((constants.SCREEN_DIMENSIONS.width - 40) / 4)
-    const overAllMargin = 10
+    const overAllMargin = 10;
+    const categoryStyles = categoryStylesFunc(colors, overAllMargin);
+
     let tempArray =
     {
         greetingText: "Good afternoon,",
@@ -32,13 +34,29 @@ const TextSectiion = () => {
         cartSecondaryText: "Complete the challenges and earn different rewards",
         catSvg: svgs.otp()
     }
-    let initialState = {}
+    let initialState = {
+        greetingList: [
+            {
+                "header": ""
+            },
+        ]
+
+
+    }
     const [state, setState] = useState(initialState)
     const categoriesList = ENUMS.PITSTOP_TYPES.filter((x, i) => { return x.isActive === true })
-    const screenEnum_Value = ENUMS || 1
+    const screenEnum_Value = ENUMS || 0
+
+
+
+
+
+    const cartOnPressHandler = () => {
+        alert("HY");
+    }
     const _getMenu = () => {
         const payload = {
-            "mascotScreenEnum": 1,
+            "mascotScreenEnum": screenEnum_Value,
             "getPersonalizeMsgs": true,
         };
         postRequest(
@@ -53,10 +71,7 @@ const TextSectiion = () => {
                 console.log("error==>", err);
             },
             {})
-
-
     }
-
     useEffect(() => {
         _getMenu()
         return () => {
@@ -66,37 +81,36 @@ const TextSectiion = () => {
 
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#F6F5FA' || colors.primary, }}>
+        <SafeAreaView style={categoryStyles.container}        >
 
-            <AnimatedView style={{ margin: overAllMargin, backgroundColor: colors.Whisper || "#F6F5FA", paddingLeft: 5, borderWidth: 1 }}>
-                <Text style={{ fontSize: 20, color: 'black' }}>{tempArray.greetingText}
+            <AnimatedView style={categoryStyles.greetingMainContainer} >
+                <Text style={categoryStyles.greetingHeaderText}>{tempArray.greetingText}
                     <Text style={{ color: colors.BlueVoilet || "#6D51BB" }}>
                         {` ${tempArray.userName}`}
                     </Text>
                 </Text>
-                <Text style={{ fontFamily: 'Poppins-Light', color: '#6B6B6B', fontSize: 16, bottom: 6 }}>
+                <Text style={categoryStyles.greetingBodyText}>
                     {tempArray.joviDescription}
                 </Text>
             </AnimatedView>
 
-            <AnimatedView style={{ margin: overAllMargin, borderWidth: 0 }}>
-                <AnimatedView style={{ flexDirection: 'row', justifyContent: 'space-between', borderRadius: 7, backgroundColor: colors.BlueChalk || '#EEE5FF', }}>
-                    <AnimatedView style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', padding: 10 }}>
-                        <Text style={{ fontSize: 14, color: colors.BlueVoilet || "#6D51BB" }}>{tempArray.cartPrimaryText}</Text>
-                        <Text style={{ fontSize: 11, width: '90%', color: '#453463' }}>{tempArray.cartSecondaryText}</Text>
+            <AnimatedView style={{ margin: overAllMargin, }}>
+                <AnimatedView style={categoryStyles.alertMsgPrimaryContainer}>
+                    <AnimatedView style={categoryStyles.alertMsgSecondaryContainer}>
+                        <Text style={categoryStyles.alertMsgHeaderText}>{tempArray.cartPrimaryText}</Text>
+                        <Text style={categoryStyles.alertMsgBodyText}>{tempArray.cartSecondaryText}</Text>
                     </AnimatedView>
-
-                    <AnimatedView style={{ flex: 0.6, flexDirection: 'column', alignItems: 'center', }}>
+                    <AnimatedView style={categoryStyles.alertMsgSvgView}>
                         <SvgXml xml={tempArray.catSvg}
-                            height={Platform.OS === 'android' ? 155 : 145}
+                            height={Platform.OS === 'android' ? 155 : 153}
                             width={90}
-                            style={{ position: 'absolute', right: 15, bottom: -36, borderRadius: 2 }} />
+                            style={{ position: 'absolute', right: 15, bottom: Platform.OS === 'android' ? -36 : -30, borderRadius: 2 }} />
                     </AnimatedView>
                 </AnimatedView>
             </AnimatedView>
 
-            <AnimatedView style={{ flex: 1, top: 20, margin: overAllMargin }}>
-                <Text style={{ fontSize: 16, color: colors.MineShaft || "#272727", paddingVertical: 8 }}>Categories</Text>
+            <AnimatedView style={categoryStyles.categoriesCardPrimaryContainer}>
+                <Text style={categoryStyles.categoriesCardTittleText}>Categories</Text>
                 <AnimatedView style={{ flexDirection: 'row', }}>
                     {categoriesList.map((x, i) => {
                         return <CategoryCardItem
@@ -108,15 +122,13 @@ const TextSectiion = () => {
                             width={_categoriesCartWidth}
                             textStyle={{ fontSize: 14 }}
                             imageContainerStyle={{ height: 80, width: 80, justifyContent: 'center', alignContent: 'center', alignItems: 'center', alignSelf: 'center' }}
+                            onPress={cartOnPressHandler}
 
                         />
                     })
                     }
                 </AnimatedView>
             </AnimatedView>
-
-
-
         </SafeAreaView>
     )
 }
@@ -124,3 +136,52 @@ const TextSectiion = () => {
 
 
 export default TextSectiion
+const categoryStylesFunc = (colors, overAllMargin) => StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: colors.Whisper || "#F6F5FA",
+    },
+    greetingMainContainer: {
+        margin: overAllMargin,
+        backgroundColor: colors.Whisper || "#F6F5FA",
+        paddingLeft: 5,
+    },
+    greetingHeaderText: {
+        fontSize: 20, color: 'black'
+
+    },
+    greetingBodyText: {
+        fontFamily: 'Poppins-Light', color: colors.DoveGray || '#6B6B6B', fontSize: 16, bottom: 6
+    },
+    alertMsgPrimaryContainer: {
+        flexDirection: 'row', justifyContent: 'space-between', borderRadius: 7, backgroundColor: colors.BlueChalk || '#EEE5FF',
+
+    },
+    alertMsgSecondaryContainer: {
+        flex: 1, flexDirection: 'column', justifyContent: 'center', padding: 10
+
+    },
+    alertMsgHeaderText: {
+        fontSize: 14, color: colors.BlueVoilet || "#6D51BB"
+    },
+    alertMsgBodyText: {
+        fontSize: 10, width: '90%', color: colors.Bossanova || '#453463'
+    },
+    alertMsgSvgView: {
+        flex: 0.6, flexDirection: 'column', alignItems: 'center',
+    },
+    categoriesCardPrimaryContainer: {
+        flex: 1, top: 20, margin: overAllMargin
+    },
+    categoriesCardTittleText: {
+        fontSize: 16, color: colors.MineShaft || "#272727", paddingVertical: 8
+    },
+    categoriesCardItemContainer: {
+
+    }
+
+
+
+
+
+})
