@@ -126,6 +126,7 @@ const App = () => {
             <RootStack />
           </View>
         </NavigationContainer>
+        <Robot />
         <Toast />
       </SafeAreaView>
     </SafeAreaProvider>
