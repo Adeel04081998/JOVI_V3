@@ -12,7 +12,7 @@ import constants from '../../res/constants';
 import introStyles from './styles';
 const IntroScreen = ({ }) => {
     const [state,setState] = useState({disabled:false});
-    const { width } = constants.WINDOW_DIMENSIONS;
+    const { width } = constants.window_dimensions;
     const dispatch = useDispatch()
     const { AUTH_ROUTES } = ROUTES;
     const {  stack_actions,common_actions } = NavigationService.NavigationActions;

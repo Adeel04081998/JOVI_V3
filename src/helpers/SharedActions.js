@@ -104,7 +104,7 @@ export const sendOTPToServer = (payload, onSuccess, onError, onLoader) => {
 export const sharedGetEnumsApi = () => {
     getRequest(Endpoints.GET_ENUMS, res => {
         // console.log("[getEnums].res", res);
-        dispatch(ReduxActions.getEnumsAction(res.data.enums))
+        dispatch(ReduxActions.setEnumsActions(res.data.enums))
     },
         err => {
             sharedExceptionHandler(err)
@@ -126,9 +126,13 @@ export const sharedGetUserDetailsApi = () => {
     );
 }
 export const sharedGetHomeMsgsApi = () => {
-    getRequest(Endpoints.GET_HOME_MSGS, res => {
+    let payload = {
+        "mascotScreenEnum": 0,
+        "getPersonalizeMsgs": true,
+    };
+    postRequest(Endpoints.GET_HOME_MSGS, payload, res => {
         // console.log("[sharedGetHomeMsgsApi].res", res);
-        dispatch(setHomeMessagesAction({ ...res.data }))
+        dispatch(ReduxActions.setHomeMessagesAction({ ...res.data }))
     },
         err => {
             sharedExceptionHandler(err)
@@ -150,7 +154,7 @@ export const sharedGetUserAddressesApi = () => {
     );
 }
 export const sharedGetPromotions = () => {
-    getRequest(Endpoints.GET_PROMOTIONS, res => {
+    getRequest(`${Endpoints.GET_PROMOTIONS}/true`, res => {
         // console.log("[sharedGetHomeMsgsApi].res", res);
         dispatch(ReduxActions.setUserAction({ ...res.data }))
     },
