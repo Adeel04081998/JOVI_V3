@@ -28,7 +28,7 @@ const AnimatedFlatlist = ({horizontal=false,data=[],animationType='each',itemCon
                     useNativeDriver:true,
                     easing:Easing.ease 
                 }).start();
-            },index === 0? 50:((index/10)*1000)+(80*index))
+            },index === 0? 50:((index/10)*1000)+(200*index))
         }
         const loadAll = () => {
             Animated.timing(animatedValues[index],{
