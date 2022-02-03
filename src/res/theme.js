@@ -3,29 +3,29 @@ import GV from "../utils/GV";
 const { THEME_VALUES } = GV;
 export default {
     getTheme: (themeValue = THEME_VALUES.DEFAULT, isDarkMode = false) => {
+        let initTheme = isDarkMode ? colors.dark_mode : colors.light_mode;
         if (themeValue === THEME_VALUES.DEFAULT) {
-            return isDarkMode ? colors.dark_mode.default : colors.light_mode.default
+            return initTheme.default;
         }
         else if (themeValue === THEME_VALUES.SUPER_MARKET) {
-            return isDarkMode ? colors.dark_mode.grocieries : colors.light_mode.grocieries
+            return initTheme.grocieries;
         }
         else if (themeValue === THEME_VALUES.JOVI) {
-            return isDarkMode ? colors.dark_mode.jovi : colors.light_mode.jovi
+            return initTheme.jovi;
 
         }
         else if (themeValue === THEME_VALUES.PHARMACY) {
-            return isDarkMode ? colors.dark_mode.pharamcy : colors.light_mode.pharamcy
+            return initTheme.pharamcy;
         }
         else if (themeValue === THEME_VALUES.RESTAURANT) {
-            return isDarkMode ? colors.dark_mode.restaurant : colors.light_mode.restaurant
+            return initTheme.restaurant;
 
         }
         else if (themeValue === THEME_VALUES.JOVI_MART) {
-            return isDarkMode ? colors.dark_mode.jovi_mart : colors.light_mode.jovi_mart
+            return initTheme.jovi_mart;
 
         } else {
-            return isDarkMode ? colors.dark_mode.default : colors.light_mode.default
-
+            return initTheme.default;
         }
     }
 }
