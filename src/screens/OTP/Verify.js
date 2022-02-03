@@ -100,7 +100,7 @@ export default (props) => {
             "smartPhone": sharedGetDeviceInfo().model,
             "hardwareID": sharedGetDeviceInfo().deviceID
         };
-        postRequest(Endpoints.OTPVerify, payload, res => {
+        postRequest(Endpoints.OTP_VERIFY, payload, res => {
             console.log("[verifyOtpToServer].res...", res);
             const { statusCode, message, otpResult } = res.data;
             if (statusCode === 417) return Toast.error(message);
