@@ -11,7 +11,7 @@ import SignUp from '../screens/SignUp/index';
 
 import Home from '../screens/Home';
 import ROUTES from './ROUTES';
-import SharedActions from '../helpers/SharedActions';
+import SharedActions, { sharedGetEnumsApi, sharedGetUserDetailsApi, sharedLogoutUser } from '../helpers/SharedActions';
 import { store } from '../redux/store';
 import { useSelector } from 'react-redux';
 const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES } = ROUTES;
@@ -81,10 +81,10 @@ const stackOpts = () => ({
 const AuthStacks = (props) => {
     // const { setIsLoggedIn } = props;
     const isIntroViewed = React.useRef(false);
-    useSelector(state=>{
-        isIntroViewed.current = state.userReducer.introScreenViewed 
+    useSelector(state => {
+        isIntroViewed.current = state.userReducer.introScreenViewed
     });
-    return <Stack.Navigator screenOptions={stackOpts} initialRouteName={isIntroViewed.current?AUTH_ROUTES.EnterOTP.screen_name:AUTH_ROUTES.Introduction.screen_name}>
+    return <Stack.Navigator screenOptions={stackOpts} initialRouteName={isIntroViewed.current ? AUTH_ROUTES.EnterOTP.screen_name : AUTH_ROUTES.Introduction.screen_name}>
         {(AUTH_STACKS || []).map((routeInfo, index) => (
             <Stack.Screen
                 key={`AuthStack-Screen-key-${index}-${routeInfo.id}`}
@@ -112,11 +112,15 @@ const AppDrawers = (props) => {
 }
 
 export default (props) => {
-    const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-    SharedActions.navigation_listener = {
-        ...props,
-        auth_handler: setIsLoggedIn,
-    }
+    const { isLoggedIn, refreshToken } = useSelector(state => state.userReducer);
+    console.log("[Rootstack].token", refreshToken)
+    React.useEffect(() => {
+        sharedGetEnumsApi();
+        if (isLoggedIn) {
+            sharedGetUserDetailsApi();
+        }
+        // sharedLogoutUser();
+    }, [])
     return <ContainerStack.Navigator screenOptions={stackOpts} initialRouteName={INIT_ROUTES.INIT_APP}>
         <ContainerStack.Screen
             name={INIT_ROUTES.INIT_APP}

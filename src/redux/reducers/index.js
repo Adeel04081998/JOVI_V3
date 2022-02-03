@@ -19,11 +19,20 @@ const cartReducer = (state = {}, action) => {
             return { ...state };
     }
 }
+const enumsReducer = (state = {}, action) => {
+    switch (action.type) {
+        case TYPES.GET_ENUMS_ACTION:
+            return { ...state, ...action.payload };
+        default:
+            return { ...state };
+    }
+}
 //...Rest of the reducers would be here
 
 
 export default {
     userReducer,
-    cartReducer
+    cartReducer,
+    enumsReducer
     //...
 }

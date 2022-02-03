@@ -23,6 +23,12 @@ const clearCartAction = (payload = {}) => {
         type: TYPES.CLEAR_CART_ACTION,
         payload
     }
+};
+const getEnumsAction = (payload = {}) => {
+    return {
+        type: TYPES.CLEAR_CART_ACTION,
+        payload: { ...payload }
+    }
 }
 //...Rest of the actions would be here
 
@@ -31,6 +37,7 @@ export default {
     setUserAction,
     clearUserAction,
     setCartAction,
-    clearCartAction
+    clearCartAction,
+    getEnumsAction
     //...
 }
