@@ -27,29 +27,25 @@ export default {
         {
             "text": "Jovi",
             "value": 2,
-            // "icon": null || svgs.jovi(),
-            "icon": null ,
+            "icon": svgs.jovi(),
             "isActive": true,
         },
         {
             "text": "Food",
             "value": 4,
-            // "icon": null || svgs.food(),
-            "icon": null ,
+            "icon":svgs.food(),
             "isActive": true,
         },
         {
             "text": "Grocery",
             "value": 1,
-            // "icon": null || svgs.grocery(),
-            "icon": null ,
+            "icon":svgs.grocery(),
             "isActive": true,
         },
         {
             "text": "Pharmacy",
             "value": 3,
-            // "icon": null || svgs.pharmacy(),
-            "icon": null ,
+            "icon":svgs.pharmacy(),
             "isActive": true,
         },
         {
