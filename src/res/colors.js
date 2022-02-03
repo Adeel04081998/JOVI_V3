@@ -1,5 +1,5 @@
 export const initColors = {
-    "primary": "#7359BE",
+    "primary": "#6D51BB",
     "card": "#047A9E",
     "text": "#343434",
     "border": "#1D1D1D",
