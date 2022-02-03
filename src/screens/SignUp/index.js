@@ -101,7 +101,7 @@ export default () => {
         if (statusCode !== 200) {
             sharedExceptionHandler(res);
         } else {
-            dispatch(ReduxActions.setUserAction({ ...loginResult, isLoggedIn: true }))
+            dispatch(ReduxActions.setUserAction({ ...loginResult, isLoggedIn: true, introScreenViewed:true }));
         }
 
     }

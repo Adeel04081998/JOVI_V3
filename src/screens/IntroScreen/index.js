@@ -27,7 +27,7 @@ const IntroScreen = ({ }) => {
         console.log('onGetStarted')
         if(state.disabled === true) return;
         setState(pre=>({...pre,disabled:true}));
-        save();
+        // save();
         stack_actions.replace(AUTH_ROUTES.EnterOTP.screen_name,{},AUTH_ROUTES.Introduction.screen_name);
     }
     return (
