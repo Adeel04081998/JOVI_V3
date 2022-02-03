@@ -33,9 +33,9 @@ const CategoryCardItem = (props: Props) => {
     const transFormAngle = React.useRef(new Animated.Value(0)).current;
     useEffect(() => {
         Animated.timing(transFormAngle, {
-            duration: 500,
+            duration: 600,
             toValue: 1,
-            easing: Easing.ease,
+            easing: Easing.linear,
             useNativeDriver: true
         }).start();
     }, []);

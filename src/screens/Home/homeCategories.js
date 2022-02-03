@@ -2,20 +2,19 @@ import React, { useState, useRef, useEffect } from "react";
 import AnimatedView from "../../components/atoms/AnimatedView";
 import Text from "../../components/atoms/Text";
 import SafeAreaView from "../../components/atoms/SafeAreaView";
-import Image from "../../components/atoms/Image";
-import images from "../../assets/images";
 import theme from "../../res/theme";
 import GV from "../../utils/GV";
-import { Alert, Appearance, Platform, StyleSheet } from "react-native";
+import { Alert, Animated, Easing, Appearance, Platform, StyleSheet } from "react-native";
 import FontFamily from "../../res/FontFamily";
 import AnimatedTab from "../../components/molecules/AnimatedTab/AnimatedTab";
 import Svg, { SvgXml } from "react-native-svg";
 import CategoryCardItem from "../../components/molecules/CategoryCardItem";
 import svgs from "../../assets/svgs";
 import ENUMS from "../../utils/ENUMS";
-import AnimatedFlatlist from "../../components/molecules/AnimatedScrolls/AnimatedFlatlist";
 import constants from "../../res/constants";
 import { useSelector } from "react-redux";
+import LottieView from "lottie-react-native";
+import { ScrollView } from "react-native-gesture-handler";
 
 const TextSectiion = () => {
 
@@ -32,74 +31,109 @@ const TextSectiion = () => {
 
     const messagesReducer = useSelector(state => state.messagesReducer);
     const userReducer = useSelector(state => state.userReducer);
-    console.log("Message Reducer=>", messagesReducer);
-    let firstMessage, secondMessage, tag, caption;
+    console.log("Message Reducer=>", userReducer);
+    let greetingMessage, alertMessage, tag, caption;
     if (Object.keys(messagesReducer).length) {
         const { homeScreenDataViewModel: { greetingsList, alertMsgList } } = messagesReducer;
-        firstMessage = greetingsList?.[2] ?? null // would be dynamic in future
-        secondMessage = alertMsgList?.[0] ?? null
-        let totalStr = String(firstMessage.header).split("<<")
-        console.log("totalStr", totalStr);
+        greetingMessage = greetingsList?.[0] ?? null // would be dynamic in future
+        alertMessage = alertMsgList?.[0] ?? false
+        let totalStr = String(greetingMessage.header).split("<<")
         caption = totalStr[0];
         tag = totalStr[totalStr.length - 1].replace(">>", "");
-
-        // temp = String(firstMessage.header).split(">>");
-        // console.log("temp", String(temp).replace(">>", "").split(","));
-        console.log("tag", tag);
     }
-    const CONTAINER_WIDTH = ((constants.SCREEN_DIMENSIONS.width) * 0.22);
-    const CONTAINER_HEIGHT = constants.SCREEN_DIMENSIONS.width * 0.3;
+    const CONTAINER_WIDTH = ((constants.screen_dimensions.width) * 0.22);
+    const CONTAINER_HEIGHT = constants.screen_dimensions.width * 0.3;
     const overAllMargin = 10;
     const categoriesList = ENUMS.PITSTOP_TYPES.filter((x, i) => { return x.isActive === true })
-    const catSvg = svgs.cat()
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
     const categoryStyles = categoryStylesFunc(colors, overAllMargin);
+    const greetingAnimation = React.useRef(new Animated.Value(0)).current;
 
-    const cartOnPressHandler = () => { alert("HY") }
+    const cartOnPressHandler = () => { __DEV__ ? alert("HY") : null }
 
+    useEffect(() => {
+        if (greetingMessage) {
+            Animated.timing(greetingAnimation, {
+                toValue: 1,
+                duration: 400,
+                useNativeDriver: true,
+                easing: Easing.ease
+            }).start();
+        }
+    }, [greetingMessage]);
 
-    return (
-        <SafeAreaView style={categoryStyles.container}>
-
-            {firstMessage &&
-                <AnimatedView style={[categoryStyles.greetingMainContainer,]} >
-                    <Text style={[categoryStyles.greetingHeaderText]} numberOfLines={2} >
-                        {`${caption} Good Afternoon `}
-                        <Text style={{ color: colors.BlueVoilet || "#6D51BB", alignSelf: 'center', fontSize: 20 }} numberOfLines={1} >
-                            {` ${userReducer[tag]}`}
-                        </Text>
+    const _greetingMessageUi = () => {
+        return (
+            <AnimatedView style={{
+                ...categoryStyles.greetingMainContainer, opacity: greetingAnimation,
+                transform: [{
+                    translateX: greetingAnimation.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [-100, 0]
+                    })
+                }]
+            }} >
+                <Text style={[categoryStyles.greetingHeaderText]} numberOfLines={2} >
+                    {`${caption}`}
+                    <Text style={{ color: colors.BlueVoilet || "#6D51BB", alignSelf: 'center', fontSize: 20 }} numberOfLines={1} >
+                        {/* { tag?`${userReducer["firstName"]}`: userReducer.firstName} */}
+                        {`${userReducer["firstName"]}`}
                     </Text>
-                    <Text style={categoryStyles.greetingBodyText} numberOfLines={2}>
-                        {`${firstMessage.body}`}
-                    </Text>
-                </AnimatedView>
+                </Text>
+                <Text style={categoryStyles.greetingBodyText} numberOfLines={2}>
+                    {`${greetingMessage?.body}`}
+                </Text>
+            </AnimatedView>
 
-            }
+        )
+    }
 
-            {secondMessage &&
 
-                <AnimatedView style={{ margin: overAllMargin, }}>
+    const _alertMessageUi = () => {
+        if (alertMessage) {
+            return (
+                <AnimatedView style={{ margin: overAllMargin, marginHorizontal: 10, }}>
                     <AnimatedView style={categoryStyles.alertMsgPrimaryContainer}>
                         <AnimatedView style={categoryStyles.alertMsgSecondaryContainer}>
                             <Text style={categoryStyles.alertMsgHeaderText} numberOfLines={2}>
-                                {`${secondMessage.header}`}
+                                {`${alertMessage.header}`}
                             </Text>
                             <Text style={categoryStyles.alertMsgBodyText} numberOfLines={2}>
-                                {`${secondMessage.body}`}
+                                {`${alertMessage.body}`}
                             </Text>
                         </AnimatedView>
                         <AnimatedView style={categoryStyles.alertMsgSvgView}>
-                            <SvgXml xml={catSvg}
-                                height={Platform.OS === 'android' ? 155 : 70}
-                                width={90}
-                                style={{ position: 'absolute', right: 15, bottom: Platform.OS === 'android' ? -36 : 5, borderRadius: 2 }} />
+                            <LottieView
+                                source={require('../../assets/gifs/animated_cat.json')}
+                                style={{ position: 'absolute', right: 15, height: 80, bottom: Platform.OS === 'android' ? 2 : 1, borderRadius: 2 }}
+                                hardwareAccelerationAndroid={true}
+                                autoPlay
+                                loop
+                            />
                         </AnimatedView>
                     </AnimatedView>
                 </AnimatedView>
 
-            }
+            )
 
+        }
+        else {
+            return (
+                <AnimatedView style={[{ height: 80, marginHorizontal: 10, }]}>
+                    <LottieView
+                        source={require('../../assets/gifs/alertMsgs_Skeleton.json')}
+                        hardwareAccelerationAndroid={true}
+                        autoPlay
+                        loop
+                    />
+                </AnimatedView>
+            )
 
+        }
+    }
+
+    const _categoryCardUi = () => {
+        return (
             <AnimatedView style={[categoryStyles.categoriesCardPrimaryContainer,]}>
                 <Text style={categoryStyles.categoriesCardTittleText}>Categories</Text>
                 <AnimatedView style={{ flexDirection: 'row' }}>
@@ -114,13 +148,23 @@ const TextSectiion = () => {
                             textStyle={{ fontSize: 12, padding: 2 }}
                             imageContainerStyle={{ height: CONTAINER_HEIGHT * 0.6, width: 80, justifyContent: 'center', alignContent: 'center', alignItems: 'center', alignSelf: 'center' }}
                             onPress={cartOnPressHandler}
-
                         />
                     })
                     }
                 </AnimatedView>
             </AnimatedView>
-        </SafeAreaView>
+
+        )
+
+    }
+
+
+    return (
+        <SafeAreaView style={categoryStyles.container}>
+            {_greetingMessageUi()}
+            {_alertMessageUi()}
+            {_categoryCardUi()}
+        </SafeAreaView >
     )
 }
 

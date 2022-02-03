@@ -51,7 +51,6 @@ export default {
         {
             "text": "Jovi Mart",
             "value": 5,
-            // "icon": null|| svgs.joviMart(),
             "icon": null ,
             "isActive": false,
 
