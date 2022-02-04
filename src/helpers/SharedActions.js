@@ -9,6 +9,7 @@ import Endpoints from '../manager/Endpoints';
 import Toast from "../components/atoms/Toast";
 import { store } from '../redux/store';
 import ReduxActions from '../redux/actions';
+import configs from '../utils/configs';
 const dispatch = store.dispatch;
 export const sharedGetDeviceInfo = async () => {
     let model = DeviceInfo.getModel();
@@ -126,7 +127,7 @@ export const sharedGetUserDetailsApi = () => {
     );
 }
 export const fetchRobotJson = (url,cb = () => {}) => {
-    fetch(url, {
+    fetch(`${BASE_URL}/api/Common/S3File/${encodeURIComponent(url)}` , {
         method: "GET",
     })
         .then((response) => response.json())
