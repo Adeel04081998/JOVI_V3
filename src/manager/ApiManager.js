@@ -53,7 +53,7 @@ export const postRequest = async (url, data, onSuccess = () => { }, onError = ()
 
     } catch (error) {
         console.log("[ApiManager].postRequest.error", JSON.stringify(error));
-        if (error?.response?.data?.StatusCode === 401) return refreshTokenMiddleware(postRequest, [url, data, onSuccess, onError, headers, false, customLoader]);
+        if (error?.data?.StatusCode === 401) return refreshTokenMiddleware(postRequest, [url, data, onSuccess, onError, headers, false, customLoader]);
         onError(error);
     } finally {
         if (customLoader) {
@@ -67,7 +67,7 @@ export const getRequest = async (url, onSuccess = () => { }, onError = () => { }
         onSuccess(res);
     } catch (error) {
         console.log("[ApiManager].getRequest.error", error);
-        if (error?.response?.data?.StatusCode === 401) return refreshTokenMiddleware(postRequest, [url, data, onSuccess, onError, headers, false]);
+        if (error?.data?.StatusCode === 401) return refreshTokenMiddleware(postRequest, [url, data, onSuccess, onError, headers, false]);
         onError(error);
     }
 };
