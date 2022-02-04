@@ -19,10 +19,12 @@ type Props = React.ComponentProps<typeof TouchableOpacity> & {
 const defaultProps = {
     text: 'JOVI',
     activeOpacity:0.9,
-    wait:0.3,
+    wait:1,
     isLoading:false
 };
 
+let onPressRef: NodeJS.Timeout;
+let isAssigned = false;
 const Button = (props: Props, textProps: TextProps) => {
     const buttonMargin = React.useRef(new Animated.Value(1)).current;
 
@@ -38,7 +40,7 @@ const Button = (props: Props, textProps: TextProps) => {
             }
         });
     };//end of animateIn
-    const onPressParent = debounce(props.onPress,props.wait * 1000,{ leading: true, trailing: false, });
+    // const onPressParent = debounce(props.onPress,props.wait * 1000,{ leading: true, trailing: false, });
     const animateOut = (event: GestureResponderEvent) => {
         Animated.timing(buttonMargin, {
             toValue: 1,
@@ -47,7 +49,18 @@ const Button = (props: Props, textProps: TextProps) => {
             easing: Easing.ease,
         }).start((finished) => {
             if (finished && props.onPress) {
-                onPressParent(event);
+                if(isAssigned === true){
+                    console.log('onPressRefBefores',onPressRef,props.wait * 1000)
+                    clearTimeout(onPressRef);
+                    isAssigned = false;
+                }else{
+                    onPressRef = setTimeout(()=>{
+                        if(props.onPress){
+                            props.onPress(event);
+                        }
+                    },props.wait * 1000);
+                    isAssigned = true;
+                }
             }
         });
     };//end of animateOut
