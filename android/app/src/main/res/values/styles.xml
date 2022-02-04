@@ -10,14 +10,17 @@
         <item name="android:windowFullscreen">true</item>
     </style>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <!-- CHANGING PARENT THEME FROM DAYNIGHT TO LIGHT FOR ONLY LIGHT MODE -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
+        <!-- UNCOMMENT BELOW LINE IF YOU WANT TO DISABLE FORCELY DARKMODE -->
+        <item name="android:forceDarkAllowed">false</item>
     </style>
 
 <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
       <!--to be removed once verified that app will run without it-->
         <item name="android:statusBarColor">@color/splashscreen_bg</item>
-        <item name="android:background">@drawable/background_splash</item>
+        <item name="android:background">@drawable/background_splash</item>        
     </style>
 </resources>
