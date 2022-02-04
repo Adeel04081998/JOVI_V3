@@ -23,6 +23,7 @@ import Toast from 'react-native-toast-message';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import CodePush from "react-native-code-push"; //for codepush
 import configs from './src/utils/configs';
+import Robot from './src/components/organisms/Robot';
 
 AntDesign.loadFont();
 Entypo.loadFont();
