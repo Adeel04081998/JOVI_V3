@@ -20,6 +20,7 @@ import ROUTES from '../../navigations/ROUTES';
 import { postRequest } from '../../manager/ApiManager';
 import Toast from '../../components/atoms/Toast';
 import ReduxAction from '../../redux/actions/index'
+import FontFamily from '../../res/FontFamily';
 
 
 const SPACING = 20;
@@ -106,7 +107,7 @@ export default (props) => {
             if (statusCode === 417) return Toast.error(message);
             resetInterval()
             try {
-                dispatch(ReduxAction.setUserAction({ ...otpResult, ...params.payload, isLoggedIn:otpResult.newUser?false: true, introScreenViewed:otpResult.newUser?false: true }))
+                dispatch(ReduxAction.setUserAction({ ...otpResult, ...params.payload, isLoggedIn: otpResult.newUser ? false : true, introScreenViewed: otpResult.newUser ? false : true }))
                 if (otpResult.newUser) {
                     NavigationService.NavigationActions.stack_actions.replace(ROUTES.AUTH_ROUTES.SignUp.screen_name, {}, ROUTES.AUTH_ROUTES.VerifyOTP.screen_name)
                 }
@@ -262,7 +263,7 @@ export default (props) => {
             <Button
                 style={styles.continueButton}
                 text={'Verify and Create Account'}
-                textStyle={{ color: '#fff', ...styles.textAlignCenter }}
+                textStyle={{ color: '#fff', ...styles.textAlignCenter, fontSize: 14, }}
                 onPress={() => verifyOtpToServer()}
                 isLoading={isLoading}
                 disabled={disbleContinueButton || isLoading}

@@ -422,7 +422,7 @@ PODS:
   - RNVectorIcons (9.0.0):
     - React-Core
   - SSZipArchive (2.2.3)
-  - SwiftyGif (5.4.2)
+  - SwiftyGif (5.4.3)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -693,7 +693,7 @@ SPEC CHECKSUMS:
   RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
   RNVectorIcons: 4143ba35feebab8fdbe6bc43d1e776b393d47ac8
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
-  SwiftyGif: dec758a9dd3d278e5a855dbf279bf062c923c387
+  SwiftyGif: 6c3eafd0ce693cad58bb63d2b2fb9bacb8552780
   Yoga: 3f5bfc54ce164fcd5b5d7f9f4232182d6298dd56
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 

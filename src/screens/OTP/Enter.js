@@ -19,6 +19,7 @@ import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
+import FontFamily from '../../res/FontFamily';
 import theme from '../../res/theme';
 import ENUMS from '../../utils/ENUMS';
 import GV from '../../utils/GV';
@@ -50,7 +51,7 @@ export default () => {
     const styles = otpStyles.styles(colors, SPACING_VERTICAL);
     const [collapsed, setCollapsed] = React.useState(true);
     const [pickerVisible, setPickerVisible] = React.useState(false);
-    const [cellNo, setCellNo] = React.useState(__DEV__ ? "3039839993":"");
+    const [cellNo, setCellNo] = React.useState(__DEV__ ? "3039839929":"");
     const [isLoading, setIsLoading] = React.useState(false);
     const [network, setNetwork] = React.useState({
         text: __DEV__ ? "Jazz": "Choose your mobile network",
@@ -128,7 +129,7 @@ export default () => {
                 <Button
                     style={styles.continueButton}
                     text={'Continue'}
-                    textStyle={{ color: '#fff', ...styles.textAlignCenter }}
+                    textStyle={{ color: '#fff', ...styles.textAlignCenter , fontSize:14, }}
                     onPress={onPress}
                     isLoading={isLoading}
                     disabled={disbleContinueButton || isLoading}
