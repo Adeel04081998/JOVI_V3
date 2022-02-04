@@ -8,14 +8,14 @@ import TouchableOpacity from '../../atoms/TouchableOpacity';
 import VectorIcon from '../../atoms/VectorIcon';
 import View from '../../atoms/View';
 import AnimatedFlatlist from '../AnimatedScrolls/AnimatedFlatlist';
-import CONSTANTS from '../../../res/constants';
+import constants from '../../../res/constants';
 
-export const PopularList = (props) => {
+export default (props) => {
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
 
     const SCALE_IMAGE = {
-        height: CONSTANTS.window_dimensions.height / 5,
-        width: CONSTANTS.window_dimensions.width * 0.8
+        height: constants.window_dimensions.height / 5,
+        width: constants.window_dimensions.width * 0.8
     }
     const { height, width } = SCALE_IMAGE;
     const popularNearYouStyles = popularNearYouStylesFunc(colors, width, height)

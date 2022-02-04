@@ -1,14 +1,10 @@
 import React from 'react';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import {Animated,Easing} from 'react-native';
-const View = Animated.View;
-const Flatlist = Animated.FlatList;
+const AnimatedKeyboardAwareScrollView = Animated.createAnimatedComponent(KeyboardAwareScrollView); 
 
-
-const animatedTabs = 7;
-const AnimatedFlatlist = ({horizontal=false,data=[],animationType='each',itemContainerStyle={},renderItem=()=>{},flatlistProps={}}) => {
-    // const animatedValues = Array(animatedTabs).fill(React.useRef(new Animated.Value(0)).current);
-    // const animatedValues = React.useRef([...Array(animatedTabs).fill(React.useRef(new Animated.Value(0)).current)]).current;
-     const animatedValues = [
+const AnimatedKeyboardAwareScroll = ({data,scrollProps,animatedTabs=7,animationType='each',itemContainerStyle={}}) => {
+    const animatedValues = [
         React.useRef(new Animated.Value(0)).current,
         React.useRef(new Animated.Value(0)).current,
         React.useRef(new Animated.Value(0)).current,
@@ -17,17 +13,19 @@ const AnimatedFlatlist = ({horizontal=false,data=[],animationType='each',itemCon
         React.useRef(new Animated.Value(0)).current,
         React.useRef(new Animated.Value(0)).current,
     ]//currently animated Tabs are here in array, due to some issue, dynamic animated tabs couldn't be used right now, in future it will be implemented IA
+
     const RenderItemParent = ({item,index}) => {
         const isAnimateable = index <= animatedValues.length -1;
         const loadEach = () => {
             setTimeout(()=>{
+                console.log('Hello',index)
                 Animated.timing(animatedValues[index],{
                     toValue:1,
                     duration:400,
                     useNativeDriver:true,
                     easing:Easing.ease 
                 }).start();
-            },index === 0? 50:((index/10)*1000)+(100*index))
+            },index === 0? 50:((index/10)*1000)+(200*index))
         }
         const loadAll = () => {
             Animated.timing(animatedValues[index],{
@@ -56,17 +54,16 @@ const AnimatedFlatlist = ({horizontal=false,data=[],animationType='each',itemCon
             }],
             ...itemContainerStyle
         }:{}}>
-            {renderItem(item,index)}
+            {item}
         </Animated.View>
     }
-    return(
-        <Flatlist 
-            data={data}
-            horizontal={horizontal}
-            renderItem={({item,index})=><RenderItemParent item={item} index={index}  />}
-            {...flatlistProps}
-        />
+    return (
+        <AnimatedKeyboardAwareScrollView {...scrollProps}>
+            {data&&data.map((item,index)=>{
+                return <RenderItemParent key={index} item={item} index={index} />
+            })}
+        </AnimatedKeyboardAwareScrollView>
     );
 }
 
-export default AnimatedFlatlist;
+export default AnimatedKeyboardAwareScroll;

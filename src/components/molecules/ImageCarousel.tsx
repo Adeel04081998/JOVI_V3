@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { VALIDATION_CHECK } from '../../helpers/SharedActions';
 import constants from '../../res/constants';
+import { renderFile } from "../../helpers/SharedActions";
 
 const { width } = Dimensions.get('window');
 
@@ -26,6 +27,8 @@ interface ImageCarouselProps {
   width?: number;
   height?: number;
 
+  uriKey?: String;
+
   imageStyle?: StyleProp<ImageStyle>;
   containerStyle?: StyleProp<ViewStyle>;
 
@@ -33,7 +36,6 @@ interface ImageCarouselProps {
   paginationDotStyle?: StyleProp<ViewStyle>;
 
   onActiveIndexChanged?: (index: number) => void;
-
   aspectRatio?: number | undefined;
 
 }
@@ -53,6 +55,7 @@ const defaultProps = {
   onActiveIndexChanged: undefined,
 
   aspectRatio: undefined,
+  uriKey: "",
 };
 
 let timer: any = null;
@@ -132,7 +135,6 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
   // AUTOPLAY END's FROM HERE 
 
   const onScrollToIndexFailed = () => { }
-
   return (
     <View style={styles.primaryContainer}>
       <Animated.FlatList
@@ -142,7 +144,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
 
         renderItem={({ item, index }) => {
 
-          if (VALIDATION_CHECK(item?.uri ?? '') === false) {
+          if (VALIDATION_CHECK(item?.uri ?? props?.uriKey ?? '') === false) {
             return <View />;
           }
           return (
@@ -157,7 +159,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
                 width: props.width ?? ITEM_WIDTH,
               }]}>
                 <View style={[itemStyles.secondaryContainer, props.containerStyle,]}>
-                  <Animated.Image source={{ uri: item.uri }} style={[itemStyles.image, props.imageStyle, {
+                  <Animated.Image source={{ uri: props.uriKey ? renderFile(item[`${props.uriKey}`]) : renderFile(item.uri) }} style={[itemStyles.image, props.imageStyle, {
                     height: props.height ?? ITEM_HEIGHT,
                     width: "100%",
                     ...VALIDATION_CHECK(props.aspectRatio) && {
