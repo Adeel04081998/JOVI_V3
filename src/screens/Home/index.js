@@ -1,7 +1,7 @@
 import React from 'react';
 import { Animated, Appearance, Easing, Platform, ScrollView, StyleSheet } from "react-native";
 import GenericList from '../../components/molecules/GenericList';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import ImageCarousel from '../../components/molecules/ImageCarousel';
 import LottieView from "lottie-react-native";
@@ -18,17 +18,20 @@ import CustomHeader from '../../components/molecules/CustomHeader';
 import TextInput from '../../components/atoms/TextInput';
 import View from '../../components/atoms/View';
 import VectorIcon from "../../components/atoms/VectorIcon";
+import ReduxActions from '../../redux/actions';
 import { initColors } from '../../res/colors';
 import BottomBarComponent from '../../components/organisms/BottomBarComponent';
 import Button from '../../components/molecules/Button';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 
-
+const CONTAINER_WIDTH = ((constants.screen_dimensions.width) * 0.22);
+const CONTAINER_HEIGHT = constants.screen_dimensions.width * 0.3;
 export default () => {
     // return <View />
     const promotionsReducer = useSelector(state => state.promotionsReducer);
     const messagesReducer = useSelector(state => state.messagesReducer);
     const userReducer = useSelector(state => state.userReducer);
+    const dispatch = useDispatch();
     let greetingMessage, alertMessage, tag, caption, name = userReducer.firstName;
     if (Object.keys(messagesReducer).length) {
         // if(messagesReducer.)
@@ -45,25 +48,28 @@ export default () => {
         //     name = userReducer[tag];
         // }
     }
-    const CONTAINER_WIDTH = ((constants.screen_dimensions.width) * 0.22);
-    const CONTAINER_HEIGHT = constants.screen_dimensions.width * 0.3;
+    const loaderVisible = !promotionsReducer?.statusCode || !messagesReducer.statusCode;
     const overAllMargin = 0;
     const categoriesList = ENUMS.PITSTOP_TYPES.filter((x, i) => { return x.isActive === true });
     const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark");
     const categoryStyles = stylesheet.styles(colors, overAllMargin);
     const greetingAnimation = React.useRef(new Animated.Value(0)).current;
+    const homeFadeIn = React.useRef(new Animated.Value(0)).current;
 
     React.useEffect(() => {
-        if (greetingMessage) {
-            Animated.timing(greetingAnimation, {
+        if (!loaderVisible) {
+            Animated.timing(homeFadeIn, {
                 toValue: 1,
-                duration: 400,
+                duration: 700,
                 useNativeDriver: true,
                 easing: Easing.ease
-            }).start();
+            }).start(finished=>{
+                if(finished){
+                    dispatch(ReduxActions.showRobotAction());
+                }
+            });
         }
-    }, [greetingMessage]);
-
+    }, [loaderVisible]);
     const cartOnPressHandler = () => { __DEV__ ? alert("Pressed") : null }
     const RecentOrders = () => {
         const CARD_HEIGHT = 100;
@@ -101,6 +107,16 @@ export default () => {
 
     }
     const Greetings = () => {
+        React.useLayoutEffect(() => {
+            if (greetingMessage) {
+                Animated.timing(greetingAnimation, {
+                    toValue: 1,
+                    duration: 400,
+                    useNativeDriver: true,
+                    easing: Easing.ease
+                }).start();
+            }
+        }, [greetingMessage]);
         return <AnimatedView style={
             [
                 {
@@ -113,7 +129,7 @@ export default () => {
                         })
                     }]
                 },
-                { margin: 10 }
+                { margin: 5 }
             ]} >
             <Text style={[categoryStyles.greetingHeaderText]} numberOfLines={1} fontFamily='PoppinsRegular' >
                 {`${caption}`}
@@ -176,57 +192,89 @@ export default () => {
         </View>
     )
 
-    const Categories = () => {
-        return <AnimatedView style={[categoryStyles.categoriesCardPrimaryContainer]}>
-            <Text style={categoryStyles.categoriesCardTittleText}>Categories</Text>
-            <AnimatedView style={{ flexDirection: 'row' }}>
-                {categoriesList.map((x, i) => {
-                    return <CategoryCardItem
-                        key={`category card item${i}`}
-                        xml={x.icon}
-                        title={x.text}
-                        containerStyle={{ marginHorizontal: 3, justifyContent: 'center', borderRadius: 10 }}
-                        height={CONTAINER_HEIGHT}
-                        width={CONTAINER_WIDTH}
-                        textStyle={{ fontSize: 12, padding: 2 }}
-                        imageContainerStyle={{ height: CONTAINER_HEIGHT * 0.6, width: 80, justifyContent: 'center', alignContent: 'center', alignItems: 'center', alignSelf: 'center' }}
-                        onPress={cartOnPressHandler}
-                    />
-                })
-                }
-            </AnimatedView>
-        </AnimatedView>
-    }
+
     const SPACING_VERTICAL = 10;
     const SPACING_BOTTOM = 0;
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <CustomHeader />
-            <KeyboardAwareScrollView style={{}} showsVerticalScrollIndicator={false}>
-                <Greetings />
-                <ImageCarousel
-                    // aspectRatio={16 / 7}
-                    // width={150}
-                    data={promotionsReducer?.dashboardContentListViewModel?.dashboardPromoListVM ?? [{ promoImg: `Dev/DashboardBanner/2021/5/20/Jov_banner_350x220 (1)_12173.jpg` }]} // Hardcoded url added for QA testing only if there is no data in db => Mudassir
-                    uriKey="promoImg"
-                    containerStyle={{
-                        marginHorizontal: 10,
-                        alignItems: 'center',
-                        borderRadius: 12,
-                        // backgroundColor: "red",
-                        // resizeMode: "contain"
-                    }}
-                    height={170}
-                />
-                <View style={{ margin: SPACING_VERTICAL }}>
-                    <Search />
-                    <Categories />
-                    <AvatarAlert />
-                    <RecentOrders />
-                    <GenericList />
-                </View>
-            </KeyboardAwareScrollView>
-            <BottomBarComponent />
+            {
+                loaderVisible?
+                    <View
+                        style={{ height: '93%', paddingTop: 5, paddingHorizontal: 5, display: 'flex', justifyContent: 'center', alignContent: 'center',}}
+                    >
+                        <LottieView
+                            autoSize={true}
+                            resizeMode={'contain'}
+                            style={{ height:Platform.OS === 'android'?'100%':'97%', width: '100%' }}
+                            source={require('../../assets/gifs/Homeloading.json')}
+                            autoPlay
+                            loop
+                        />
+                    </View>
+                    :
+                    <Animated.View style={{
+                        opacity: homeFadeIn.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [0.6, 1]
+                        }), transform: [{
+                            scale: homeFadeIn.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: [0.9, 1]
+                            })
+                        }]
+                    }}>
+                        <KeyboardAwareScrollView style={{}} showsVerticalScrollIndicator={false}>
+                            <Greetings />
+                            <ImageCarousel
+                                // aspectRatio={16 / 7}
+                                // width={150}
+                                data={promotionsReducer?.dashboardContentListViewModel?.dashboardPromoListVM ?? [{ promoImg: `Dev/DashboardBanner/2021/5/20/Jov_banner_350x220 (1)_12173.jpg` }]} // Hardcoded url added for QA testing only if there is no data in db => Mudassir
+                                uriKey="promoImg"
+                                containerStyle={{
+                                    marginHorizontal: 10,
+                                    alignItems: 'center',
+                                    borderRadius: 12,
+                                    // backgroundColor: "red",
+                                    // resizeMode: "contain"
+                                }}
+                                height={170}
+                            />
+                            <View style={{ margin: SPACING_VERTICAL }}>
+                                <Search />
+                                <Categories cartOnPressHandler={cartOnPressHandler} categoriesList={categoriesList} categoryStyles={categoryStyles} />
+                                <AvatarAlert />
+                                <RecentOrders />
+                                <GenericList />
+                            </View>
+                        </KeyboardAwareScrollView>
+                    </Animated.View>
+            }
+
         </SafeAreaView>
     );
 };
+
+const Categories = React.memo(({ cartOnPressHandler, categoriesList, categoryStyles }) => {
+    return <AnimatedView style={[categoryStyles.categoriesCardPrimaryContainer]}>
+        <Text style={categoryStyles.categoriesCardTittleText}>Categories</Text>
+        <AnimatedView style={{ flexDirection: 'row' }}>
+            {categoriesList.map((x, i) => {
+                return <CategoryCardItem
+                    key={`category card item${i}`}
+                    xml={x.icon}
+                    title={x.text}
+                    containerStyle={{ marginHorizontal: 3, justifyContent: 'center', borderRadius: 10 }}
+                    height={CONTAINER_HEIGHT}
+                    width={CONTAINER_WIDTH}
+                    textStyle={{ fontSize: 12, padding: 2 }}
+                    imageContainerStyle={{ height: CONTAINER_HEIGHT * 0.6, width: 80, justifyContent: 'center', alignContent: 'center', alignItems: 'center', alignSelf: 'center' }}
+                    onPress={cartOnPressHandler}
+                />
+            })
+            }
+        </AnimatedView>
+    </AnimatedView>
+}, (prevProps, nextProps) => {
+    return prevProps !== nextProps
+})
