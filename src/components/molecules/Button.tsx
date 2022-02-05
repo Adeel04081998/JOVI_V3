@@ -50,7 +50,7 @@ const Button = (props: Props, textProps: TextProps) => {
         }).start((finished) => {
             if (finished && props.onPress) {
                 if(isAssigned === true){
-                    console.log('onPressRefBefores',onPressRef,props.wait * 1000)
+                    // console.log('onPressRefBefores',onPressRef,props.wait * 1000)
                     clearTimeout(onPressRef);
                     isAssigned = false;
                 }else{

@@ -18,7 +18,7 @@ const AnimatedKeyboardAwareScroll = ({data,scrollProps,animatedTabs=7,animationT
         const isAnimateable = index <= animatedValues.length -1;
         const loadEach = () => {
             setTimeout(()=>{
-                console.log('Hello',index)
+                // console.log('Hello',index)
                 Animated.timing(animatedValues[index],{
                     toValue:1,
                     duration:400,

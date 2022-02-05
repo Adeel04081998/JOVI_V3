@@ -119,7 +119,7 @@ export default (props) => {
                 }
             }
             catch (error) {
-                console.log('error', error);
+                console.log('[verifyOtpToServer].error', error);
             }
 
         },
@@ -206,14 +206,14 @@ export default (props) => {
             if (inputs[currentIndex] !== "") return;
             else if (inputs[currentIndex] === "") return inputRef.current[prevField].current.focus();
         } else {
-            arrRef.current = [...arrRef.current,...e.nativeEvent.key] 
-            if(arrRef.current.length === 4){
+            arrRef.current = [...arrRef.current, ...e.nativeEvent.key]
+            if (arrRef.current.length === 4) {
                 setInputs(arrRef.current)
                 let tempArr = arrRef.current.toString()
                 let tempStr = tempArr.replace(/,/g, '')
                 verifyOtpToServer(tempStr);
             }
-        
+
         }
 
     };
@@ -285,7 +285,7 @@ export default (props) => {
             <Button
                 style={styles.continueButton}
                 text={'Verify'}
-                textStyle={{ color: '#fff', ...styles.textAlignCenter, fontSize:14 }}
+                textStyle={{ color: '#fff', ...styles.textAlignCenter, fontSize: 14 }}
                 onPress={() => verifyOtpToServer()}
                 isLoading={isLoading}
                 disabled={disbleContinueButton || isLoading}

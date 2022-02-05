@@ -32,7 +32,6 @@ const defaultProps = {
 const CategoryCardItem = (props: Props) => {
     const transFormAngle = React.useRef(new Animated.Value(0)).current;
     useEffect(() => {
-        console.log("[useEffect]...ran")
         Animated.timing(transFormAngle, {
             duration: 600,
             toValue: 1,

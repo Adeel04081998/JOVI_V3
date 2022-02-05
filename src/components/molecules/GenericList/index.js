@@ -23,7 +23,7 @@ export default ({ vendorType = 0, imageStyles = {}, showMoreBtnText = "", }) => 
                 "vendorType": vendorType
             },
             res => {
-                console.log("GENERIC_LIST.RESPONSE", res);
+                // console.log("GENERIC_LIST.RESPONSE", res);
                 if (res.data.statusCode !== 200) return;
                 setData(res.data.vendorCategoriesViewModel.vendorList);
             },

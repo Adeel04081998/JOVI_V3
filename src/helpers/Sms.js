@@ -7,8 +7,8 @@ export default {
                 const result = await PermissionsAndroid.request(
                     PermissionsAndroid.PERMISSIONS.READ_SMS,
                     {
-                        title: "(title)",
-                        message: "Why you're asking for..."
+                        title: "SMS Permission",
+                        message: "Allow JOVI to read SMS messages?"
                     }
                 );
                 return result;

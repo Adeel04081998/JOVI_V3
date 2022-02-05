@@ -18,7 +18,7 @@ export const sharedGetDeviceInfo = async () => {
     return { deviceID, model, systemVersion }
 }
 export const sharedExceptionHandler = (err) => {
-    console.log("[sharedExceptionHandler].err", err);
+    // console.log("[sharedExceptionHandler].err", err);
     const TOAST_SHOW = 3000;
     if (err) {
         if (err.data && err.data.errors) {
@@ -60,20 +60,20 @@ export const sharedExceptionHandler = (err) => {
 export const sharedInteval = (duration = 30, delay = 1, listener = () => { }) => {
     // DURATION MUST BE IS SECONDS
     var timer = duration, minutes, seconds;
-        let interlID = BackgroundTimer.setInterval(function () {
-            // console.log('Interval Ran----');
-            minutes = parseInt(timer / 60, 10)
-            seconds = parseInt(timer % 60, 10);
-            minutes = minutes < 10 ? "0" + minutes : minutes;
-            seconds = seconds < 10 ? "0" + seconds : seconds;
-            listener({ minutes, seconds, intervalStoped: false });
-            if (--timer < 0) {
-                listener({ minutes, seconds, intervalStoped: true });
-                BackgroundTimer.clearInterval(interlID)
-                console.log("Interval Stopped---", interlID);
-                return;
-            }
-        }, 1000);
+    let interlID = BackgroundTimer.setInterval(function () {
+        // console.log('Interval Ran----');
+        minutes = parseInt(timer / 60, 10)
+        seconds = parseInt(timer % 60, 10);
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+        listener({ minutes, seconds, intervalStoped: false });
+        if (--timer < 0) {
+            listener({ minutes, seconds, intervalStoped: true });
+            BackgroundTimer.clearInterval(interlID)
+            // console.log("Interval Stopped---", interlID);
+            return;
+        }
+    }, 1000);
 }
 export const focusAwareStatusBar = (props) => {
     const isFocused = useIsFocused();
@@ -135,8 +135,8 @@ export const fetchRobotJson = (url, cb = () => { }) => {
             // cb(theBlob);
         })
         .catch((error) => {
+            // console.log(error);
             cb(null);
-            console.log(error);
         });
 }
 export const sharedGetHomeMsgsApi = () => {
@@ -145,7 +145,7 @@ export const sharedGetHomeMsgsApi = () => {
         "getPersonalizeMsgs": true,
     };
     postRequest(Endpoints.GET_HOME_MSGS, payload, res => {
-        console.log("[sharedGetHomeMsgsApi].res", res);
+        // console.log("[sharedGetHomeMsgsApi].res", res);
         if (res.data.homeScreenDataViewModel.robotJson) {
             fetchRobotJson(res.data.homeScreenDataViewModel.robotJson, (data) => {
                 // console.log('data robotJson',data)
