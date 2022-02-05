@@ -43,7 +43,7 @@ type Props = React.ComponentProps<typeof View> & {
 };
 
 const defaultProps = {
-    width: constants.WINDOW_DIMENSIONS.width,
+    width: constants.window_dimensions.width,
     height: 65,
     circleWidth: 55,
     borderTopLeftRight: false,
@@ -133,29 +133,29 @@ const BottomBarComponent = (props: Props) => {
     // #region :: CENTER BUTTON START's FROM HERE 
     const _renderButtonCenter = () => {
         return (
-             <AnimatedView style={{
-                 //@ts-ignore
-                    backgroundColor: colors?.primary ??'red',
-                    alignSelf: 'center',
-                    height: centerButtonSize,
-                    width: centerButtonSize,
-                    borderRadius: centerButtonSize,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    transform: [{
-                        rotate: transFormAngle.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: ['180deg', '360deg']
-                        })
-                    },
-                    {
-                        scale: transFormAngle
-                    }
-                    ],
-                }}>
-                    {isCloseIcon ? _renderClose() : _renderCircle()}
+            <AnimatedView style={{
+                //@ts-ignore
+                backgroundColor: colors?.primary ?? 'red',
+                alignSelf: 'center',
+                height: centerButtonSize,
+                width: centerButtonSize,
+                borderRadius: centerButtonSize,
+                alignItems: "center",
+                justifyContent: "center",
+                transform: [{
+                    rotate: transFormAngle.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: ['180deg', '360deg']
+                    })
+                },
+                {
+                    scale: transFormAngle
+                }
+                ],
+            }}>
+                {isCloseIcon ? _renderClose() : _renderCircle()}
 
-                </AnimatedView>
+            </AnimatedView>
         )
     };//end of _renderButtonCenter
 
@@ -287,10 +287,10 @@ const BottomBarComponent = (props: Props) => {
                     </View>
 
                     {/* ****************** End of LEFT SIDE ****************** */}
- 
-<View style={styles.btnCircle}>
-{_renderButtonCenter()}
-</View>
+
+                    <View style={styles.btnCircle}>
+                        {_renderButtonCenter()}
+                    </View>
                     {/* ****************** Start of RIGHT SIDE ****************** */}
                     <View style={[styles.rowRight, { height: height }]}>
                         {(props.rightData ?? []).map((item: BottomBarItem, index) => _renderSideItem(item, index))}
@@ -317,15 +317,15 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
 
-        shadowColor: "#ac3232",
-shadowOffset: {
-    width: 0,
-    height: -12,
-},
-shadowOpacity: 0.58,
-shadowRadius: 16.00,
+        // shadowColor: "#ac3232",
+        // shadowOffset: {
+        //     width: 0,
+        //     height: -12,
+        // },
+        // shadowOpacity: 0.58,
+        // shadowRadius: 16.00,
 
-elevation: 24,
+        // elevation: 24,
     },
     main: {
         position: 'absolute',

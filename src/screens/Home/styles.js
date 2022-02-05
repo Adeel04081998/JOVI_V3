@@ -20,7 +20,7 @@ export default {
 
             },
             greetingBodyText: {
-                fontFamily: 'Poppins-Light', color: colors.DoveGray || '#6B6B6B', fontSize: 16, bottom: 0
+                fontFamily: 'Poppins-Light', color: colors.DoveGray || '#6B6B6B', fontSize: 16, bottom: 5
             },
             alertMsgPrimaryContainer: {
                 flexDirection: 'row',
