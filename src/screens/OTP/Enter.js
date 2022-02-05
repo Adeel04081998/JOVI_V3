@@ -49,7 +49,7 @@ export default () => {
     const [collapsed, setCollapsed] = React.useState(true);
     const [pickerVisible, setPickerVisible] = React.useState(false);
     const [forcePattern, setForcePattern] = React.useState(false);
-    const [cellNo, setCellNo] = React.useState(__DEV__ ? "" : "");
+    const [cellNo, setCellNo] = React.useState(__DEV__ ? "3175106769" : "");
     const [isLoading, setIsLoading] = React.useState(false);
     const [network, setNetwork] = React.useState({
         text: __DEV__ ? "Jazz" : "Choose your Mobile Network",

@@ -27,17 +27,18 @@ export default (props) => {
     const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark");
     const styles = otpStyles.styles(colors);
     const [inputs, setInputs] = React.useState(["", "", "", ""]);
+    const [tempArr, setTempArr] = React.useState(["", "", "", ""]);
     const [typedCode, setTypedCode] = useState('')
     const [minutes, setMinutes] = React.useState("00");
     const [seconds, setSeconds] = React.useState("00");
     const [isLoading, setIsLoading] = React.useState(false);
     const [runInterval, setRunInterval] = React.useState(true);
     const intervalRef = React.useRef(null);
+    const arrRef = React.useRef([]);
     const [disableOnchange, setDisableOnChange] = useState(false)
-    const disbleContinueButton = inputs.includes('');
+    const disbleContinueButton = inputs?.includes('');
     const params = props.route.params;
     const cellNo = params.payload.phoneNumber; // should be redux value
-    console.log('params.payload.appHash', params.payload.appHash);
     const inputRef = useRef([]);
     const dispatch = useDispatch()
     const listerner = (info) => {
@@ -66,7 +67,7 @@ export default (props) => {
     React.useEffect(() => {
         Sms.requestReadSmsPermission()
             .then(async res => {
-                console.log('res',res);
+                console.log('res', res);
                 _onSmsListener();
             })
             .catch(err => console.log("err...", err));
@@ -195,12 +196,22 @@ export default (props) => {
         };
     };
     const _focusNextField = (e, nextField, currentIndex) => {
-        console.log('e', e, 'nextField', nextField, 'currentIndex', currentIndex);
+        console.log('e', e.nativeEvent);
         if (e.nativeEvent.key === "Backspace") {
             let prevField = nextField >= 2 ? nextField - 2 : 0;
             if (inputs[currentIndex] !== "") return;
             else if (inputs[currentIndex] === "") return inputRef.current[prevField].current.focus();
+        } else {
+            arrRef.current = [...arrRef.current,...e.nativeEvent.key] 
+            if(arrRef.current.length === 4){
+                setInputs(arrRef.current)
+                let tempArr = arrRef.current.toString()
+                let tempStr = tempArr.replace(/,/g, '')
+                verifyOtpToServer(tempStr);
+            }
+        
         }
+
     };
     const onChangeHandler = (val, index) => {
         if (isNaN(val)) return;
@@ -229,10 +240,9 @@ export default (props) => {
             }
         }
     };
-
     return <SafeAreaView style={{ flex: 1, backgroundColor: "#F6F5FA" }}>
-        <Text style={{ textAlign: "center", color: '#000', fontWeight: '500',paddingVertical:30 }}  >Verify Phone Number</Text>
-        <Text style={{ textAlign: "center", paddingVertical: SPACING -15 }}>{`Code is sent to ${cellNo}`}</Text>
+        <Text style={{ textAlign: "center", color: '#000', fontWeight: '500', paddingVertical: 30 }}  >Verify Phone Number</Text>
+        <Text style={{ textAlign: "center", paddingVertical: SPACING - 15 }}>{`Code is sent to ${cellNo}`}</Text>
         <View style={{ flexDirection: "row", justifyContent: "center" }}>
             {
                 inputs.map((input, index) => (
