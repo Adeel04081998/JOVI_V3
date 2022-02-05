@@ -17,6 +17,7 @@ import Dropdown from '../../components/molecules/Dropdown/Index';
 import { sendOTPToServer, sharedExceptionHandler } from '../../helpers/SharedActions';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
+import FontFamily from '../../res/FontFamily';
 import theme from '../../res/theme';
 import ENUMS from '../../utils/ENUMS';
 import GV from '../../utils/GV';
@@ -158,7 +159,7 @@ export default () => {
                 <Button
                     style={styles.continueButton}
                     text={'Continue'}
-                    textStyle={{ color: '#fff', ...styles.textAlignCenter }}
+                    textStyle={{ color: '#fff', ...styles.textAlignCenter , fontSize:14, }}
                     onPress={onPress}
                     isLoading={isLoading}
                     disabled={disbleContinueButton || isLoading}

@@ -38,7 +38,7 @@ const IntroScreen = ({ }) => {
                     barStyle: "light-content"
                 })
             }
-            <Image source={require('../../assets/gifs/onboarding.gif')} resizeMethod={'resize'} resizeMode={'cover'} style={{width:width-150, ...introStyles.lottieView}} />
+            <Image source={require('../../assets/gifs/onboarding.gif')} resizeMethod={'resize'} resizeMode={'cover'} style={{width:width-120, ...introStyles.lottieView}} />
             {/* <LottieView style={{
                 // width,
                 // ...introStyles.lottieView

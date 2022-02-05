@@ -105,7 +105,7 @@ const Button = (props: Props, textProps: TextProps) => {
 
             <Text {...textProps} style={[{
                 fontSize: 18,
-                fontWeight: "bold",
+                fontWeight: '500',
                 color: "#fff",
                 textAlign: "center",
             }, props.textStyle]}>{props.isLoading?<ActivityIndicator color="white"  size="large" /> : props.text}</Text>
