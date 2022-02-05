@@ -1,6 +1,8 @@
+import React from "react";
 export default {
     SET_VALUE: 1,
     GET_VALUE: 2,
+    NET_INFO_REF: React.createRef(null),
     OTP_INTERVAL: 30, // SECONDS
     THEME_VALUES: {
         DEFAULT: 0,

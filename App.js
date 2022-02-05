@@ -15,7 +15,7 @@ import RNSplashScreen from './NativeModules/RNSplashScreen';
 import { NavigationContainer, DefaultTheme, DarkTheme } from "@react-navigation/native";
 import RootStack from "./src/navigations";
 import AppTheme from './src/res/theme';
-// import useNetInfo from './src/hooks/useNetInfo';
+import useNetInfo from './src/hooks/useNetInfo';
 import GV from './src/utils/GV';
 import { _NavgationRef } from './src/navigations/NavigationService';
 import View from './src/components/atoms/View';
@@ -52,7 +52,8 @@ const CODE_PUSH_OPTIONS = {
 };
 
 const App = () => {
-  // const netInfo = useNetInfo();
+  const netInfo = useNetInfo();
+  GV.NET_INFO_REF.current = netInfo;
   // console.log("netInfo", netInfo)
   const isDarkMode = useColorScheme() === "dark";
   const theme = isDarkMode ? {
