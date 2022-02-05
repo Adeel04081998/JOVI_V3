@@ -136,7 +136,7 @@ export default () => {
             ]} >
             <Text style={[categoryStyles.greetingHeaderText]} numberOfLines={1} fontFamily='PoppinsRegular' >
                 {`${caption}`}
-                <Text style={{ color: colors.BlueVoilet || "#6D51BB", alignSelf: 'center', fontSize: 20 }} numberOfLines={1} >
+                <Text style={{ color: colors.BlueVoilet || "#6D51BB", alignSelf: 'center', fontSize: 16 }} numberOfLines={1} >
                     {name}
                 </Text>
             </Text>
@@ -148,7 +148,7 @@ export default () => {
     const AvatarAlert = () => {
         if (alertMessage) {
             return (
-                <AnimatedView style={{ marginVertical: 30 }}>
+                <AnimatedView style={{ marginTop:30  }}>
                     <AnimatedView style={categoryStyles.alertMsgPrimaryContainer}>
                         <AnimatedView style={categoryStyles.alertMsgSecondaryContainer}>
                             <Text style={categoryStyles.alertMsgHeaderText} numberOfLines={2}>
@@ -189,9 +189,9 @@ export default () => {
         }
     }
     const Search = () => (
-        <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: "#fff", borderRadius: 10, height: 60, justifyContent: "space-between", overflow: 'hidden', }}>
+        <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: "#fff", borderRadius: 10, height: 50, justifyContent: "space-between", overflow: 'hidden', }}>
             <VectorIcon name='search' style={{ left: 10 }} color={initColors.primary} />
-            <TextInput textAlign="left" placeholder='Search for shops and restaurants or pharmacy' style={{ backgroundColor: "#fff" }} />
+            <TextInput textAlign="left" placeholder='Search for shops and restaurants or pharmacy' style={{ alignSelf:'center',backgroundColor: "#fff" }} />
         </View>
     )
 
@@ -205,7 +205,7 @@ export default () => {
                 {
                     loaderVisible ?
                         <View
-                            style={{ height: '93%', width: '99%', paddingLeft: 10, paddingTop: 4, paddingHorizontal: 5, display: 'flex', justifyContent: 'center', alignContent: 'center', }}
+                            style={{ height: '93%', width: '101%', paddingLeft: 10, paddingTop: 4, paddingHorizontal: 5, display: 'flex', justifyContent: 'center', alignContent: 'center', }}
                         >
                             <LottieView
                                 autoSize={true}

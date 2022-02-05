@@ -15,12 +15,12 @@ export default {
                 marginVertical: 5
             },
             greetingHeaderText: {
-                fontSize: 16,
+                fontSize: 14,
                 color: '#272727'
 
             },
             greetingBodyText: {
-                fontFamily: 'Poppins-Light', color: colors.DoveGray || '#6B6B6B', fontSize: 16, bottom: 5
+                fontFamily: 'Poppins-Light', color: colors.DoveGray || '#6B6B6B', fontSize: 14, bottom: 5
             },
             alertMsgPrimaryContainer: {
                 flexDirection: 'row',
