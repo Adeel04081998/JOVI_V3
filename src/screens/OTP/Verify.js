@@ -39,11 +39,16 @@ export default (props) => {
     const params = props.route.params;
     const cellNo = params.payload.phoneNumber; // should be redux value
     const inputRef = useRef([]);
+    const _requestAgainSmsRef = useRef(true)
+    const [requestAgain, setRequestAgain] = React.useState(true);
+
+
     const dispatch = useDispatch()
     const listerner = (info) => {
         const { minutes, seconds, isItervalStoped } = info;
         setMinutes(minutes);
         setSeconds(seconds);
+        if (info.intervalStoped === true) return setRequestAgain(false)
         if (!isItervalStoped) {
             setRunInterval(isItervalStoped)
         }
@@ -88,8 +93,8 @@ export default (props) => {
         typedCode.length === 4 && Keyboard.dismiss();
     }, [typedCode]);
 
-
     useEffect(_customEffect, []);
+
 
 
     const verifyOtpToServer = async (otpCode = inputs.join('')) => {
@@ -129,6 +134,7 @@ export default (props) => {
         );
     };
     const resendOtp = () => {
+        setRequestAgain(true)
         setInputs(["", "", "", ""])
         setTypedCode('')
         const { appHash, isNewVersion, isWhatsapp, mobileNetwork, otpType, userType, phoneNumber } = params.payload;
@@ -152,7 +158,7 @@ export default (props) => {
         const onLoader = (loader) => {
             setIsLoading(loader)
         }
-
+        if (requestAgain) return
         sendOTPToServer(payload, onSuccess, onError, onLoader)
 
     };
@@ -224,7 +230,6 @@ export default (props) => {
             }
         }
     };
-
     return <SafeAreaView style={{ flex: 1, backgroundColor: "#F6F5FA" }}>
         <Text style={{ textAlign: "center" }}>Verify Phone</Text>
         <Text style={{ textAlign: "center", paddingVertical: SPACING }}>{`Code is sent to ${cellNo}`}</Text>
@@ -256,8 +261,11 @@ export default (props) => {
         </View>
         <Text style={{ textAlign: "center", paddingVertical: SPACING - 5 }}>{`${minutes}:${seconds}`}</Text>
         <Text style={{ textAlign: "center", fontSize: 16 }}>{`Didn't recieve code?`}</Text>
-        <TouchableOpacity onPress={resendOtp} disabled={parseInt(seconds) !== 0} wait={1} >
-            <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 10, color: parseInt(seconds) !== 0 ? 'grey' : "#7359BE", marginTop: 3 }}>{`Request again Get Via SMS`}</Text>
+        <TouchableOpacity onPress={resendOtp}
+            // disabled={parseInt(seconds) !== 0}
+            disabled={requestAgain}
+            wait={1} >
+            <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 10, color: requestAgain ? 'grey' : "#7359BE", marginTop: 3 }}>{`Request again Get Via SMS`}</Text>
         </TouchableOpacity>
         <View style={styles.buttonView}>
             <Button
