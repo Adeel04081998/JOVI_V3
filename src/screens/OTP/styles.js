@@ -21,8 +21,13 @@ export default {
                 },
                 shadowOpacity: 0.25,
                 shadowRadius: 3.84,
-
-                elevation: 5, marginHorizontal: 20, marginTop: 10, position: 'relative', borderRadius: 12, zIndex: 999, backgroundColor: "#fff"
+                elevation: 5,
+                marginHorizontal: 20,
+                marginTop: 10,
+                position: 'relative',
+                borderRadius: 12,
+                zIndex: 999,
+                backgroundColor: "#fff"
             },
             otpDropdownView: { backgroundColor: "#000", alignItems: "center", flexDirection: "row", justifyContent: "center", borderTopEndRadius: 12, borderTopLeftRadius: 12, paddingVertical: SPACING_VERTICAL },
             inputView: {
@@ -33,7 +38,7 @@ export default {
                 justifyContent: 'center',
                 borderBottomLeftRadius: 12,
                 borderBottomRightRadius: 12,
-                width:'100%'
+                width: '100%'
             },
             continueButton: { backgroundColor: "#7359BE", borderRadius: 10 },
             buttonView: { paddingHorizontal: 20, paddingVertical: 15, zIndex: 0 },
@@ -72,7 +77,7 @@ export default {
                 },
                 shadowOpacity: 0.20,
                 shadowRadius: 1.41,
-                
+
                 elevation: 2,
                 backgroundColor: 'white',
             },

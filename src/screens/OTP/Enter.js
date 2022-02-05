@@ -15,15 +15,12 @@ import View from '../../components/atoms/View';
 import Button from '../../components/molecules/Button';
 import Dropdown from '../../components/molecules/Dropdown/Index';
 import { sendOTPToServer, sharedExceptionHandler } from '../../helpers/SharedActions';
-import { postRequest } from '../../manager/ApiManager';
-import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import theme from '../../res/theme';
 import ENUMS from '../../utils/ENUMS';
 import GV from '../../utils/GV';
 import Regex from '../../utils/Regex';
-import debounce from 'lodash.debounce'; // 4.0.8
 import otpStyles from './styles';
 
 
@@ -52,18 +49,23 @@ export default () => {
     const [collapsed, setCollapsed] = React.useState(true);
     const [pickerVisible, setPickerVisible] = React.useState(false);
     const [forcePattern, setForcePattern] = React.useState(false);
-    const [cellNo, setCellNo] = React.useState(__DEV__ ? "3456277222" : "");
+    const [cellNo, setCellNo] = React.useState(__DEV__ ? "" : "");
     const [isLoading, setIsLoading] = React.useState(false);
     const [network, setNetwork] = React.useState({
         text: __DEV__ ? "Jazz" : "Choose your Mobile Network",
         value: __DEV__ ? 1 : 0
     });
+    let regexp = new RegExp(Regex.pkCellNo);
+
+
     const [country, setCountry] = React.useState("92");
     const onPress = async () => {
         const appHash = Platform.OS === "android" && (await RNOtpVerify.getHash())[0]
         const phoneNumber = country + cellNo
-        if (network.value <= 0 ) return Toast.info("Please select your mobile network.");
-
+        if (network.value <= 0) return Toast.info("Please select your mobile network.");
+        else if (!regexp.test(phoneNumber)) {
+            return setForcePattern(true)
+        }
         const onSuccess = (res) => {
             console.log("res...", res);
             const { statusCode, message } = res.data;
@@ -86,12 +88,10 @@ export default () => {
             "isNewVersion": true,
             "mobileNetwork": network.value
         };
-
         sendOTPToServer(payload, onSuccess, onError, onLoader)
     }
 
     const disbleContinueButton = network.value <= 0 || cellNo.length < 10;
-
     return <SafeAreaView style={styles.otpSafeArea}>
         <KeyboardAwareScrollView>
             <SvgXml xml={svgs.otp()} height={120} width={120} style={{ alignSelf: "center", marginBottom: 20, }} />
@@ -115,29 +115,43 @@ export default () => {
                     <View style={{}} />
                 </TouchableOpacity>} />
                 <AnimatedView style={styles.inputView}>
-                    <TouchableOpacity style={{ marginLeft:10,flexDirection: "row", width: '15%', justifyContent: 'flex-end', backgroundColor: '#fff', alignItems: 'center' }} onPress={() => setPickerVisible(true)}>
-                        <Text style={{ color: '#000' }} >{`+${country}`}</Text>
-                        <VectorIcon type='AntDesign' name="caretdown" color={"#000"} style={{ margin: 5 }} size={12} onPress={() => setPickerVisible(true)} />
+                    <TouchableOpacity style={{ marginLeft: 10, flexDirection: "row", width: '15%', justifyContent: 'flex-end', backgroundColor: '#fff', alignItems: 'center' }} onPress={() => setPickerVisible(true)}>
+                        <Text style={{ color: '#000', paddingRight: 2 }} >{`+${country}`}</Text>
+                        <VectorIcon type='AntDesign' name="caretdown" color={"#000"} style={{ marginRight: 2, marginTop: -3 }} size={12} onPress={() => setPickerVisible(true)} />
                     </TouchableOpacity>
 
                     <TextInput value={cellNo.toString()}
                         keyboardType="numeric"
                         placeholder='3xxxxxxxxx'
-                        // pattern={Regex.pkCellNo}
-                        errorText='Invalid Number!'
-                        // forcePattern={forcePattern}
                         maxLength={10}
-                        iconName={null}
+                        iconName={''}
                         onChangeText={text => {
                             let number = parseInt(text);
                             if (!isNaN(number)) {
                                 setCellNo(number.toString())
                             } else setCellNo("")
                         }}
-                        errorTextStyle={{ bottom: -25, fontSize: 12 }}
-                        containerStyle={{  width: '60%', marginRight: 10 }}
+                        errorTextStyle={{ fontSize: 12 }}
+                        containerStyle={{
+                            width: '60%', borderColor: forcePattern ? 'red' : null,
+                            borderWidth: forcePattern ? 0.5 : 0,
+                        }}
+                        onFocus={() => setForcePattern(false)}
                     />
                 </AnimatedView>
+                {forcePattern &&
+                    <View style={{ flexDirection: 'row' }}>
+                        <View style={{ width: '30%' }}>
+                        </View>
+                        <View style={{ width: '60%' }} >
+                            <Text style={[{
+                                color: 'red',
+                                bottom: 5,
+                                // alignSelf: 'center'
+                            }]}>Invalid Number!</Text>
+                        </View>
+                    </View>
+                }
             </View>
             <View style={styles.buttonView}>
 
