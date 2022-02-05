@@ -57,9 +57,9 @@ const App = () => {
   // console.log("netInfo", netInfo)
   const isDarkMode = useColorScheme() === "dark";
   const theme = isDarkMode ? {
-    ...DarkTheme,
+    ...DefaultTheme,
     colors: {
-      ...DarkTheme.colors,
+      ...DefaultTheme.colors,
       ...AppTheme.getTheme(GV.THEME_VALUES.JOVI)
     }
 
@@ -124,7 +124,13 @@ const App = () => {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
-        <StatusBar backgroundColor={'transparent'} barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+        <StatusBar backgroundColor={'#fff'} barStyle={"dark-content"} />
+        {/* {
+          Platform.OS === "ios" ?
+            <StatusBar backgroundColor={'transparent'} barStyle={isDarkMode ? "light-content" : "dark-content"} />
+            :
+            <StatusBar backgroundColor={'#fff'} barStyle={"dark-content"} />
+        } */}
         <NavigationContainer theme={theme} ref={_NavgationRef} >
           <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
             <RootStack />

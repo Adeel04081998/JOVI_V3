@@ -77,6 +77,7 @@ const forSlide = ({ current, next, inverted, layouts: { screen } }) => {
 };
 const stackOpts = () => ({
     headerShown: false,
+    swipeEnabled: false
 });
 const AuthStacks = (props) => {
     // const { setIsLoggedIn } = props;

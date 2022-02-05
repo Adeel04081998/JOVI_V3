@@ -23,6 +23,7 @@ import { initColors } from '../../res/colors';
 import BottomBarComponent from '../../components/organisms/BottomBarComponent';
 import Button from '../../components/molecules/Button';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
+import { sharedLogoutUser } from '../../helpers/SharedActions';
 
 const CONTAINER_WIDTH = ((constants.screen_dimensions.width) * 0.22);
 const CONTAINER_HEIGHT = constants.screen_dimensions.width * 0.3;
@@ -70,7 +71,9 @@ export default () => {
             });
         }
     }, [loaderVisible]);
-    const cartOnPressHandler = () => { __DEV__ ? alert("Pressed") : null }
+    const cartOnPressHandler = (index) => {
+        if (index === 3) sharedLogoutUser();
+    }
     const RecentOrders = () => {
         const CARD_HEIGHT = 100;
         const SPACING = 10;
@@ -202,12 +205,12 @@ export default () => {
                 {
                     loaderVisible ?
                         <View
-                            style={{ height: '93%',width:'99%',paddingLeft:10, paddingTop: 4, paddingHorizontal: 5, display: 'flex', justifyContent: 'center', alignContent: 'center', }}
+                            style={{ height: '93%', width: '99%', paddingLeft: 10, paddingTop: 4, paddingHorizontal: 5, display: 'flex', justifyContent: 'center', alignContent: 'center', }}
                         >
                             <LottieView
                                 autoSize={true}
                                 resizeMode={'contain'}
-                                style={{  width: '100%' }}
+                                style={{ width: '100%' }}
                                 source={require('../../assets/gifs/Homeloading.json')}
                                 autoPlay
                                 loop
@@ -295,7 +298,7 @@ const Categories = React.memo(({ cartOnPressHandler, categoriesList, categorySty
                     width={CONTAINER_WIDTH}
                     textStyle={{ fontSize: 12, padding: 2 }}
                     imageContainerStyle={{ height: CONTAINER_HEIGHT * 0.6, width: 80, justifyContent: 'center', alignContent: 'center', alignItems: 'center', alignSelf: 'center' }}
-                    onPress={cartOnPressHandler}
+                    onPress={()=>cartOnPressHandler(i)}
                 />
             })
             }
