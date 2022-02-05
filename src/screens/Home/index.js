@@ -202,12 +202,12 @@ export default () => {
                 {
                     loaderVisible ?
                         <View
-                            style={{ height: '93%', paddingTop: 5, paddingHorizontal: 5, display: 'flex', justifyContent: 'center', alignContent: 'center', }}
+                            style={{ height: '93%',width:'99%',paddingLeft:10, paddingTop: 4, paddingHorizontal: 5, display: 'flex', justifyContent: 'center', alignContent: 'center', }}
                         >
                             <LottieView
                                 autoSize={true}
                                 resizeMode={'contain'}
-                                style={{ height: Platform.OS === 'android' ? '100%' : '97%', width: '100%' }}
+                                style={{  width: '100%' }}
                                 source={require('../../assets/gifs/Homeloading.json')}
                                 autoPlay
                                 loop
