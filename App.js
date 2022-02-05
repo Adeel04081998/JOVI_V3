@@ -136,7 +136,7 @@ const App = () => {
             <RootStack />
           </View>
         </NavigationContainer>
-        {/* <Robot /> */}
+        <Robot />
         <Toast />
       </SafeAreaView>
       <SharedGetApis />
