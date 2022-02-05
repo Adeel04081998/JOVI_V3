@@ -2,15 +2,14 @@ import * as React from 'react';
 import { SvgXml } from "react-native-svg"
 import svgs from '../../assets/svgs';
 
-const BearSVG=svgs.otp();
+const SVG=svgs.otp();
 
-const FlowerSVG=svgs.test();
 
 // Generate an arbitrary number of items in mock data
 const generateMockData = elementCount => {
     const _calc = (data, count) => {
         const newCount = count + 1
-        const sv=count % 2 ? BearSVG : FlowerSVG;
+        const sv=SVG;
         const newData = data.concat({
             id: count,
             value: count,
