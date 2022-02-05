@@ -35,6 +35,7 @@ const IntroScreen = ({ }) => {
             {
                 focusAwareStatusBar({
                     translucent: true,
+                    backgroundColor:'transparent',
                     barStyle: "light-content"
                 })
             }
