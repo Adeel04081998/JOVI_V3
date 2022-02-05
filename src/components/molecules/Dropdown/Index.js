@@ -36,10 +36,24 @@ const Dropdown = ({ collapsed,options=[],itemUI= null,scrollViewStyles={} }) => 
         }
     }, [collapsed]);
     return (
-        <ScrollView style={{ position:'absolute',display:!collapsed || shown === true?'flex':'none',maxHeight:250, overflow: 'hidden',width:'100%',borderBottomRightRadius:12,borderBottomLeftRadius:12,zIndex:3999,...scrollViewStyles }}>
+        <ScrollView style={{ position:'absolute',display:!collapsed || shown === true?'flex':'none',maxHeight:250,overflowY: 'hidden',width:'100%',borderBottomRightRadius:12,borderBottomLeftRadius:12,zIndex:3999,...scrollViewStyles }}>
             <Animated.View style={{
                 backgroundColor:'white',
+                borderBottomRightRadius:12,
+                borderBottomLeftRadius:12,
                 marginBottom:10,
+                shadowColor: "#000",
+                // margin:2,
+                // marginTop:0,
+                shadowColor: "#000",
+                shadowOffset: {
+                    width: 0,
+                    height: 3,
+                },
+                shadowOpacity: 0.29,
+                shadowRadius: 4.65,
+                
+                elevation: 4,
                 transform: [shown? {
                     translateY:animationDropdownCollapse.interpolate({
                         inputRange:[0,EXP_HEIGHT],

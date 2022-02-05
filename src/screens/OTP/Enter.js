@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Appearance, Platform, SafeAreaView } from 'react-native';
 import CountryPicker from 'react-native-country-picker-modal';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
@@ -23,6 +23,7 @@ import theme from '../../res/theme';
 import ENUMS from '../../utils/ENUMS';
 import GV from '../../utils/GV';
 import Regex from '../../utils/Regex';
+import debounce from 'lodash.debounce'; // 4.0.8
 import otpStyles from './styles';
 
 
@@ -50,18 +51,19 @@ export default () => {
     const styles = otpStyles.styles(colors, SPACING_VERTICAL);
     const [collapsed, setCollapsed] = React.useState(true);
     const [pickerVisible, setPickerVisible] = React.useState(false);
-    const [cellNo, setCellNo] = React.useState(__DEV__ ? "3039839993":"");
+    const [forcePattern, setForcePattern] = React.useState(false);
+    const [cellNo, setCellNo] = React.useState(__DEV__ ? "3456277222" : "");
     const [isLoading, setIsLoading] = React.useState(false);
     const [network, setNetwork] = React.useState({
-        text: __DEV__ ? "Jazz": "Choose your mobile network",
-        value: __DEV__ ? 1: 0
+        text: __DEV__ ? "Jazz" : "Choose your Mobile Network",
+        value: __DEV__ ? 1 : 0
     });
+    const colapsible = useRef(false)
     const [country, setCountry] = React.useState("92");
     const onPress = async () => {
-
         const appHash = Platform.OS === "android" && (await RNOtpVerify.getHash())[0]
         const phoneNumber = country + cellNo
-        if (network.value <= 0) return Toast.info("Please select your mobile network.");
+        if (network.value <= 0 ) return Toast.info("Please select your mobile network.");
 
         const onSuccess = (res) => {
             console.log("res...", res);
@@ -85,17 +87,29 @@ export default () => {
             "isNewVersion": true,
             "mobileNetwork": network.value
         };
+
         sendOTPToServer(payload, onSuccess, onError, onLoader)
     }
 
-    const disbleContinueButton = network.value <= 0 || cellNo === '';
+    const disbleContinueButton = network.value <= 0 || cellNo.length < 10;
     return <SafeAreaView style={styles.otpSafeArea}>
         <KeyboardAwareScrollView>
             <SvgXml xml={svgs.otp()} height={120} width={120} style={{ alignSelf: "center", marginBottom: 20, }} />
-            <Text fontFamily={'PoppinsMedium'} style={{ fontSize: 14, paddingLeft:25, color: 'black' }}>Enter your mobile number</Text>
+            <Text fontFamily={'PoppinsMedium'} style={{ fontSize: 14, paddingLeft: 25, color: 'black' }}>Enter your mobile number</Text>
             <View style={styles.otpDropdownParentView}>
-                <TouchableOpacity activeOpacity={1} style={styles.otpDropdownView} onPress={() => setCollapsed(!collapsed)} >
-                    <Text style={{ color: "#fff", ...styles.textAlignCenter }}>{network.text}</Text>
+                <TouchableOpacity activeOpacity={1} style={styles.otpDropdownView}
+                    wait={500}
+                    onPress={
+                        debounce(
+                            () => {
+                                colapsible.current = !colapsible.current
+                                console.log('colapsible', colapsible);
+                                if (!colapsible) setCollapsed(true);
+                                else setCollapsed(false)
+                            }
+                            , 500)
+                    } >
+                    <Text fontFamily="PoppinsRegular" style={{ color: "#fff", ...styles.textAlignCenter }}>{network.text}</Text>
                     <VectorIcon type='AntDesign' name={collapsed ? "down" : "up"} style={{ paddingLeft: 5, }} size={12} color={"#fff"} onPress={() => setCollapsed(!collapsed)} />
                 </TouchableOpacity>
                 {/* Networks list */}
@@ -107,20 +121,28 @@ export default () => {
                     <View style={{}} />
                 </TouchableOpacity>} />
                 <AnimatedView style={styles.inputView}>
-                    <TouchableOpacity style={{ flexDirection: "row", left: 10 }} onPress={() => setPickerVisible(true)}>
-                        <Text>{`+${country}`}</Text>
+                    <TouchableOpacity style={{ flexDirection: "row", width: '40%', justifyContent: 'flex-end', backgroundColor: '#fff', alignItems: 'center' }} onPress={() => setPickerVisible(true)}>
+                        <Text style={{ color: '#000' }} >{`+${country}`}</Text>
                         <VectorIcon type='AntDesign' name="down" color={"#000"} style={{ margin: 5 }} size={12} onPress={() => setPickerVisible(true)} />
                     </TouchableOpacity>
 
-                    <View style={{ flex: 1 }}>
-                        <TextInput value={cellNo.toString()} keyboardType="numeric" placeholder='3xxxxxxxxx' pattern={Regex.pkCellNo} errorText='Please enter a valid number!' forcePattern={true} maxLength={10}
-                            onChangeText={text => {
-                                let number = parseInt(text);
-                                if (!isNaN(number)) {
-                                    setCellNo(number.toString())
-                                } else setCellNo("")
-                            }} />
-                    </View>
+                    <TextInput value={cellNo.toString()}
+                        keyboardType="numeric"
+                        placeholder='3xxxxxxxxx'
+                        // pattern={Regex.pkCellNo}
+                        errorText='Invalid Number!'
+                        // forcePattern={forcePattern}
+                        maxLength={10}
+                        iconName={null}
+                        onChangeText={text => {
+                            let number = parseInt(text);
+                            if (!isNaN(number)) {
+                                setCellNo(number.toString())
+                            } else setCellNo("")
+                        }}
+                        errorTextStyle={{ bottom: -25, fontSize: 12 }}
+                        containerStyle={{ backgroundColor: '#fff', width: '40%', marginRight: 10 }}
+                    />
                 </AnimatedView>
             </View>
             <View style={styles.buttonView}>
@@ -137,7 +159,7 @@ export default () => {
 
             <View style={styles.termsAndConditionView}>
                 <Text fontFamily={'PoppinsBold'} style={{ alignSelf: 'center', paddingVertical: 5, fontSize: 12 }}>By tapping Continue I am agreeing to </Text>
-                <TouchableOpacity onPress={() => {}}>
+                <TouchableOpacity onPress={() => { }}>
                     <Text fontFamily={'PoppinsLight'} style={{ color: "#6D51BB", fontSize: 14 }}>
                         terms & conditions <Text style={{ color: 'black' }} onPress={() => { }} >and</Text> privacy & policy
                     </Text>

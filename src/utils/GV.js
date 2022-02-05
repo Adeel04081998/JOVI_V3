@@ -1,4 +1,6 @@
+import React,{  } from "react";
 export default {
+    netInfoRef: React.createRef(null),
     SET_VALUE: 1,
     GET_VALUE: 2,
     OTP_INTERVAL: 30, // SECONDS
@@ -10,4 +12,5 @@ export default {
         RESTAURANT: 4,
         JOVI_MART: 5,
     },
+
 } 

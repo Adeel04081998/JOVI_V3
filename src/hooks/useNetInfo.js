@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import NetInfo from '@react-native-community/netinfo';
 let currentNetwork = {};
 NetInfo.fetch()

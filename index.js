@@ -12,7 +12,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 Text.defaultProps = Text.defaultProps || {};
 Text.defaultProps.allowFontScaling = false;
 
-Animated.Text.defaultProps = Text.defaultProps || {};
+Animated.Text.defaultProps = Animated.Text.defaultProps || {};
 Animated.Text.defaultProps.allowFontScaling = false;
 
 TextInput.defaultProps = TextInput.defaultProps || {};

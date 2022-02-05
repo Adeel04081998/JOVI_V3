@@ -1,11 +1,16 @@
 import Toast from '../components/atoms/Toast';
 import { sharedLogoutUser } from '../helpers/SharedActions';
+import { currentNetworkRef } from '../hooks/useNetInfo';
 import ReduxActions from '../redux/actions';
 import { store } from '../redux/store';
 import configs from '../utils/configs';
+import GV from '../utils/GV';
 import Axios from './Axios';
 const dispatch = store.dispatch;
 
+const networkMiddleWare = () => {
+    return GV.netInfoRef.current
+}
 export const refreshTokenMiddleware = (requestCallback, params) => {
     Toast.error("Session Expired!");
     sharedLogoutUser();
@@ -44,6 +49,8 @@ export const refreshTokenMiddleware = (requestCallback, params) => {
 };
 
 export const postRequest = async (url, data, onSuccess = () => { }, onError = () => { }, headers = {}, showLoader = true, customLoader = null) => {
+    if (!networkMiddleWare()?.isConnected) return Toast.error('No Internet Connection')
+    
     if (customLoader) {
         customLoader(true);
     }
@@ -62,6 +69,7 @@ export const postRequest = async (url, data, onSuccess = () => { }, onError = ()
     }
 };
 export const getRequest = async (url, onSuccess = () => { }, onError = () => { }, headers = {}, showLoader = true) => {
+    if (!networkMiddleWare()?.isConnected) return Toast.error('No Internet Connection')
     try {
         let res = await Axios.get(url, headers);
         onSuccess(res);

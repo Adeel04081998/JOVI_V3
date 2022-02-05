@@ -64,12 +64,25 @@ const Button = (props: Props, textProps: TextProps) => {
             }
         });
     };//end of animateOut
+    const animateOutOnTouchOut = (event: GestureResponderEvent) => {
+        Animated.timing(buttonMargin, {
+            toValue: 1,
+            duration: 100,
+            useNativeDriver: true,
+            easing: Easing.ease,
+        }).start((finished) => {
+            if (finished && props.onPressOut) {
+                props.onPressOut(event);
+            }
+        });
+    };//end of animateOut
 
     return (
         <AnimatedTouchable 
         {...props}
         disabled={props.disabled !== undefined && props.disabled !== null?props.disabled:props.isLoading}
         onPressIn={animateIn}
+        onPressOut={animateOutOnTouchOut}
             onPress={animateOut}
             activeOpacity={props.activeOpacity}
             style={[{

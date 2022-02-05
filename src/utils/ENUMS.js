@@ -1,19 +1,19 @@
 export default {
     "NETWORK_LIST": [
         {
-            "text": "Ufone",
+            "text": "Jazz",
             "value": 1
         },
         {
-            "text": "Jazz",
+            "text": "Telenor",
             "value": 2
         },
         {
-            "text": "Warid",
+            "text": "Ufone",
             "value": 3
         },
         {
-            "text": "Telenor",
+            "text": "Warid",
             "value": 4
         },
         {

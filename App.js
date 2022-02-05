@@ -15,7 +15,7 @@ import RNSplashScreen from './NativeModules/RNSplashScreen';
 import { NavigationContainer, DefaultTheme, DarkTheme } from "@react-navigation/native";
 import RootStack from "./src/navigations";
 import AppTheme from './src/res/theme';
-// import useNetInfo from './src/hooks/useNetInfo';
+import useNetInfo from './src/hooks/useNetInfo';
 import GV from './src/utils/GV';
 import { _NavgationRef } from './src/navigations/NavigationService';
 import View from './src/components/atoms/View';
@@ -23,7 +23,7 @@ import Toast from 'react-native-toast-message';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import CodePush from "react-native-code-push"; //for codepush
 import configs from './src/utils/configs';
-import Robot from './src/components/organisms/Robot';
+// import Robot from './src/components/organisms/Robot';
 
 AntDesign.loadFont();
 Entypo.loadFont();
@@ -50,7 +50,8 @@ const CODE_PUSH_OPTIONS = {
 };
 
 const App = () => {
-  // const netInfo = useNetInfo();
+  const netInfo = useNetInfo();
+  GV.netInfoRef.current = netInfo;
   // console.log("netInfo", netInfo)
   const isDarkMode = useColorScheme() === "dark";
   const theme = isDarkMode ? {
@@ -127,7 +128,7 @@ const App = () => {
             <RootStack />
           </View>
         </NavigationContainer>
-        <Robot />
+        {/* <Robot /> */}
         <Toast />
       </SafeAreaView>
     </SafeAreaProvider>

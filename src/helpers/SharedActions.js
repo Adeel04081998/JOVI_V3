@@ -60,22 +60,20 @@ export const sharedExceptionHandler = (err) => {
 export const sharedInteval = (duration = 30, delay = 1, listener = () => { }) => {
     // DURATION MUST BE IS SECONDS
     var timer = duration, minutes, seconds;
-    BackgroundTimer.start();
-    let interlID = setInterval(() => {
-        minutes = parseInt(timer / 60, 10)
-        seconds = parseInt(timer % 60, 10);
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-        listener({ minutes, seconds, intervalStoped: false });
-        if (--timer < 0) {
-            BackgroundTimer.stop();
-            listener({ minutes, seconds, intervalStoped: true });
-            clearInterval(interlID)
-            console.log("Interval Stopped---");
-            return;
-        }
-    }, delay * 1000);
-    return interlID;
+        let interlID = BackgroundTimer.setInterval(function () {
+            // console.log('Interval Ran----');
+            minutes = parseInt(timer / 60, 10)
+            seconds = parseInt(timer % 60, 10);
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+            listener({ minutes, seconds, intervalStoped: false });
+            if (--timer < 0) {
+                listener({ minutes, seconds, intervalStoped: true });
+                BackgroundTimer.clearInterval(interlID)
+                console.log("Interval Stopped---", interlID);
+                return;
+            }
+        }, 1000);
 }
 export const focusAwareStatusBar = (props) => {
     const isFocused = useIsFocused();
@@ -146,12 +144,12 @@ export const sharedGetHomeMsgsApi = () => {
     };
     postRequest(Endpoints.GET_HOME_MSGS, payload, res => {
         // console.log("[sharedGetHomeMsgsApi].res", res);
-        if(res.data.robotJson){
-            fetchRobotJson(res.data.robotJson,(data)=>{
-                dispatch(ReduxActions.setMessagesAction({ ...res.data,robotJson:data }));
+        if (res.data.robotJson) {
+            fetchRobotJson(res.data.robotJson, (data) => {
+                dispatch(ReduxActions.setMessagesAction({ ...res.data, robotJson: data }));
             });
-        }else{
-            dispatch(ReduxActions.setMessagesAction({ ...res.data}));
+        } else {
+            dispatch(ReduxActions.setMessagesAction({ ...res.data }));
         }
     },
         err => {
