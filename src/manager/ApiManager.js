@@ -1,6 +1,5 @@
 import Toast from '../components/atoms/Toast';
-import { sharedLogoutUser } from '../helpers/SharedActions';
-import { currentNetworkRef } from '../hooks/useNetInfo';
+import { sharedExceptionHandler, sharedLogoutUser } from '../helpers/SharedActions';
 import ReduxActions from '../redux/actions';
 import { store } from '../redux/store';
 import configs from '../utils/configs';
@@ -12,50 +11,51 @@ const networkMiddleWare = () => {
     return GV.netInfoRef.current
 }
 export const refreshTokenMiddleware = (requestCallback, params) => {
-    Toast.error("Session Expired!");
+    Toast.info("Session Expired!");
     sharedLogoutUser();
     return;
-
     // BELOW CODE COMMENTED WILL BE IMPLMEMENT LATER
-    const userReducer = store.getState().userReducer;
-    console.log("[refreshTokenMiddleware].userReducer", userReducer);
-    postRequest(
-        "/api/User/RefreshToken",
-        {
-            "accessToken": userReducer.token.authToken,
-            "refreshToken": userReducer.refreshToken
-        },
-        res => {
-            console.log("refreshTokenMiddleware.Res :", res);
-            if (res?.data?.statusCode === 202) {
-                requestCallback.apply(this, params);
-                return;
-            }
-            else if (res?.data?.statusCode === 403) {
-                Toast.error("Session Expired!");
-                sharedLogoutUser();
-                return;
-            }
-            else {
-                dispatch(ReduxActions.setUserAction({ ...res.data }))
-            }
-        },
-        err => {
-            console.log("refreshTokenMiddleware.err", err)
-        },
-    )
+    // const userReducer = store.getState().userReducer;
+    // console.log("[refreshTokenMiddleware].userReducer", userReducer);
+    // postRequest(
+    //     "/api/User/RefreshToken",
+    //     {
+    //         "accessToken": userReducer.token.authToken,
+    //         "refreshToken": userReducer.refreshToken
+    //     },
+    //     res => {
+    //         console.log("refreshTokenMiddleware.Res :", res);
+    //         if (res?.data?.statusCode === 202) {
+    //             requestCallback.apply(this, params);
+    //             if (__DEV__) Toast.success("Its only for DEV => User session refreshed....")
+    //             return;
+    //         }
+    //         else if (res?.data?.statusCode === 403) {
+    //             Toast.error("Session Expired!");
+    //             sharedLogoutUser();
+    //             return;
+    //         }
+    //         else {
+    //             dispatch(ReduxActions.setUserAction({ ...res.data }))
+    //         }
+    //     },
+    //     err => {
+    //         console.log("refreshTokenMiddleware.err", err)
+    //         sharedExceptionHandler(err)
+    //     },
+    // )
 
 
 };
 
 export const postRequest = async (url, data, onSuccess = () => { }, onError = () => { }, headers = {}, showLoader = true, customLoader = null) => {
-    if (!networkMiddleWare()?.isConnected) return Toast.error('No Internet Connection')
+    // if (!networkMiddleWare()?.isConnected) return Toast.error('No Internet Connection')
     
     if (customLoader) {
         customLoader(true);
     }
     try {
-        let res = await Axios.post(url, data, headers);
+        let res = await Axios.post(url, data, headers,);
         onSuccess(res);
 
     } catch (error) {
@@ -69,7 +69,7 @@ export const postRequest = async (url, data, onSuccess = () => { }, onError = ()
     }
 };
 export const getRequest = async (url, onSuccess = () => { }, onError = () => { }, headers = {}, showLoader = true) => {
-    if (!networkMiddleWare()?.isConnected) return Toast.error('No Internet Connection')
+    // if (!networkMiddleWare()?.isConnected) return Toast.error('No Internet Connection')
     try {
         let res = await Axios.get(url, headers);
         onSuccess(res);

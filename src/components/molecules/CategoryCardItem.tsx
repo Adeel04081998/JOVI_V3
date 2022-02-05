@@ -32,10 +32,11 @@ const defaultProps = {
 const CategoryCardItem = (props: Props) => {
     const transFormAngle = React.useRef(new Animated.Value(0)).current;
     useEffect(() => {
+        console.log("[useEffect]...ran")
         Animated.timing(transFormAngle, {
-            duration: 500,
+            duration: 600,
             toValue: 1,
-            easing: Easing.ease,
+            easing: Easing.linear,
             useNativeDriver: true
         }).start();
     }, []);
@@ -77,15 +78,17 @@ const CategoryCardItem = (props: Props) => {
                 <SvgXml xml={props.xml} height={"80%"} width={"90%"} />
             </AnimatedView>
             {VALIDATION_CHECK(props.title) &&
-                <Text style={[{
-                    opacity: transFormAngle.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [0.2, 1]
-                    }),
-                    color: "#272727",
-                    textAlign: "center",
-                    fontSize: 16,
-                }, props.textStyle]}
+                <Text
+                    numberOfLines={1}
+                    style={[{
+                        opacity: transFormAngle.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [0.2, 1]
+                        }),
+                        color: "#272727",
+                        textAlign: "center",
+                        fontSize: 16,
+                    }, props.textStyle]}
                     fontFamily={"PoppinsMedium"} >{props.title}</Text>
             }
         </TouchableOpacity>

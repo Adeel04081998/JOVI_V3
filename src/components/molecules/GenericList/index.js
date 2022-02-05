@@ -8,14 +8,40 @@ import TouchableOpacity from '../../atoms/TouchableOpacity';
 import VectorIcon from '../../atoms/VectorIcon';
 import View from '../../atoms/View';
 import AnimatedFlatlist from '../AnimatedScrolls/AnimatedFlatlist';
-import CONSTANTS from '../../../res/constants';
+import constants from '../../../res/constants';
+import { renderFile, sharedExceptionHandler } from '../../../helpers/SharedActions';
+import { postRequest } from '../../../manager/ApiManager';
+import Endpoints from '../../../manager/Endpoints';
 
-export const PopularList = (props) => {
+export default ({ vendorType = 0, imageStyles = {}, showMoreBtnText = "", }) => {
+    const SPACING_BOTTOM = 0;
+    const [data, setData] = React.useState([]);
+    const [isLoading, setIsLoading] = React.useState(true);
+    const fetchData = () => {
+        postRequest(Endpoints.GET_VENDORS_GENERIC_LIST,
+            {
+                "vendorType": vendorType
+            },
+            res => {
+                console.log("GENERIC_LIST.RESPONSE", res);
+                if (res.data.statusCode !== 200) return;
+                setData(res.data.vendorCategoriesViewModel.vendorList);
+            },
+            err => {
+                sharedExceptionHandler(err)
+            },
+            {},
+            false,
+        );
+    };
+    React.useEffect(() => {
+        fetchData();
+    }, [vendorType])
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
 
     const SCALE_IMAGE = {
-        height: CONSTANTS.window_dimensions.height / 5,
-        width: CONSTANTS.window_dimensions.width * 0.8
+        height: constants.window_dimensions.height / 5,
+        width: constants.window_dimensions.width * 0.8
     }
     const { height, width } = SCALE_IMAGE;
     const popularNearYouStyles = popularNearYouStylesFunc(colors, width, height)
@@ -23,41 +49,54 @@ export const PopularList = (props) => {
 
 
     const renderItem = (item, index) => {
+        const { title, description, estTime, distance, image, averagePrice } = item;
         return (
             <TouchableOpacity activeOpacity={0.8} >
-                <Image source={item.image} style={[popularNearYouStyles.image, props.imageStyles]} tapToOpen={false} />
+                <Image source={{ uri: renderFile(image) }} style={[popularNearYouStyles.image, imageStyles]} tapToOpen={false} />
                 <View style={popularNearYouStyles.subContainer}>
-                    <Text style={popularNearYouStyles.title} numberOfLines={1} >{item.title}</Text>
-                    {(item.distance || item.estTime) &&
+                    <Text style={popularNearYouStyles.title} numberOfLines={1} >{title}</Text>
+                    {(distance || estTime) &&
                         <View style={popularNearYouStyles.iconContainer} >
                             <VectorIcon name={item.distance ? "map-marker" : "clock-time-four"} type={item.distance ? "FontAwesome" : "MaterialCommunityIcons"} color={colors.theme || "#6D51BB"} size={15} style={{ marginRight: 5 }} />
-                            <Text style={popularNearYouStyles.estTime} >{item.estTime || item.distance}</Text>
+                            <Text style={popularNearYouStyles.estTime} >{estTime || distance}</Text>
                         </View>
                     }
                 </View>
-                <Text style={popularNearYouStyles.tagsText} numberOfLines={1} >{item.description}</Text>
-                {item.averagePrice &&
-                    <Text style={popularNearYouStyles.title} >Rs. {item.averagePrice}</Text>
+                <Text style={popularNearYouStyles.tagsText} numberOfLines={1} >{description}</Text>
+                {averagePrice &&
+                    <Text style={popularNearYouStyles.title} >Rs. {averagePrice}</Text>
                 }
             </TouchableOpacity>
         )
     }
 
     return (
-        <View>
-            <View style={popularNearYouStyles.container} >
-                <Text style={popularNearYouStyles.mainText} >{props.mainText}</Text>
-                <TouchableOpacity>
-                    <Text style={popularNearYouStyles.viewMoreBtn} >{props.showMoreBtnText}</Text>
-                </TouchableOpacity>
-            </View>
-            <AnimatedFlatlist
-                data={props.data}
-                renderItem={renderItem}
-                itemContainerStyle={{ ...popularNearYouStyles.itemContainer }}
-                horizontal={true}
-                flatlistProps={{ ...props, showsHorizontalScrollIndicator: false }}
-            />
+        <View style={{ paddingBottom: SPACING_BOTTOM }}>
+            {
+                data.map((item, index) => (
+                    <React.Fragment key={`generic-item-key-${index}`}>
+                        <View style={popularNearYouStyles.container} >
+                            <Text style={popularNearYouStyles.mainText} >{item.header}</Text>
+                            <TouchableOpacity>
+                                <Text style={popularNearYouStyles.viewMoreBtn} >{showMoreBtnText || `View More`}</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <AnimatedFlatlist
+
+                            data={item.vendorList}
+                            renderItem={renderItem}
+                            itemContainerStyle={{ ...popularNearYouStyles.itemContainer }}
+                            horizontal={true}
+                            flatlistProps={{
+                                showsHorizontalScrollIndicator: false,
+                                // contentContainerStyle: { paddingBottom: 40 }
+                            }}
+                        />
+                    </React.Fragment>
+                ))
+            }
+
         </View>
     );
 }

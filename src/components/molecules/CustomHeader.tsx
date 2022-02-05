@@ -96,7 +96,7 @@ const defaultProps = {
 const CustomHeader = (props: Props) => {
     const DEFAULT_COLOR = '#6D51BB';//REDUX.THEME.background;
     const styles = headerStyles(DEFAULT_COLOR);
-    const finalDestination = 'Final Destination '.repeat(100);
+    const finalDestination = 'Set your location';
 
 
     const _renderFinalDestination = () => {

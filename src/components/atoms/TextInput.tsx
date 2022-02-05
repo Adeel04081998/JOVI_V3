@@ -103,7 +103,7 @@ const TextInput = (props: Props) => {
                 }
                 <RNTextInput
                     {...props}
-                    {...props.pattern && {
+                    {...VALIDATION_CHECK(props.pattern) && {
                         onChangeText: (text: string) => {
                             if(props.spaceFree){
                                 text=text.trim();

@@ -9,4 +9,5 @@ export default {
     "GET_HOME_MSGS": "api/Menu/HomeScreen/GetData",
     "GET_USER_ADDRESSES": "api/Order/GetAddress",
     "GET_PROMOTIONS": "api/Dashboard/DashboardContent/List",
+    "GET_VENDORS_GENERIC_LIST": "api/Menu/Vendor/Categorization"
 }

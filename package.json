@@ -5,6 +5,7 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
+    "android-ios":"npx react-native run-android && npx react-native run-ios",
     "start": "react-native start",
     "branch_change_new_packages": "yarn && npx react-native run-android && cd ios && pod install && cd .. && npx react-native run-ios",
     "dev_ios": "cd ios && pod install && cd .. && react-native run-ios",
@@ -36,6 +37,7 @@
     "appcenter-analytics": "^4.4.3",
     "appcenter-crashes": "^4.4.3",
     "axios": "^0.25.0",
+    "d3-shape": "^3.1.0",
     "lodash.debounce": "^4.0.8",
     "lottie-ios": "3.2.3",
     "lottie-react-native": "^5.0.1",

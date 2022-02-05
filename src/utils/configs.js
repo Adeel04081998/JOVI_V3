@@ -1,5 +1,5 @@
 import constants from "../res/constants"
-let baseUrl = constants.url_qa;
+let baseUrl = __DEV__ ? constants.url_dev : constants.url_qa;
 
 export default {
     BASE_URL: baseUrl,

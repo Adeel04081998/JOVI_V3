@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { VALIDATION_CHECK } from '../../helpers/SharedActions';
 import constants from '../../res/constants';
+import { renderFile } from "../../helpers/SharedActions";
 
 const { width } = Dimensions.get('window');
 
@@ -26,6 +27,8 @@ interface ImageCarouselProps {
   width?: number;
   height?: number;
 
+  uriKey?: String;
+
   imageStyle?: StyleProp<ImageStyle>;
   containerStyle?: StyleProp<ViewStyle>;
 
@@ -33,7 +36,6 @@ interface ImageCarouselProps {
   paginationDotStyle?: StyleProp<ViewStyle>;
 
   onActiveIndexChanged?: (index: number) => void;
-
   aspectRatio?: number | undefined;
 
 }
@@ -53,6 +55,7 @@ const defaultProps = {
   onActiveIndexChanged: undefined,
 
   aspectRatio: undefined,
+  uriKey: "",
 };
 
 let timer: any = null;
@@ -65,7 +68,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
   //  VIEW ABILITY START's FROM HERE 
   const handleOnViewableItemsChanged = useCallback(({ viewableItems }) => {
 
-    const itemsInView = viewableItems.filter(({ item }: { item: any }) => VALIDATION_CHECK(item?.uri ?? ''));
+    const itemsInView = viewableItems.filter(({ item }: { item: any }) => VALIDATION_CHECK(item?.uri ?? props?.uriKey ?? ''));
     if (itemsInView.length === 0) {
       return;
     }
@@ -132,7 +135,6 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
   // AUTOPLAY END's FROM HERE 
 
   const onScrollToIndexFailed = () => { }
-
   return (
     <View style={styles.primaryContainer}>
       <Animated.FlatList
@@ -142,7 +144,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
 
         renderItem={({ item, index }) => {
 
-          if (VALIDATION_CHECK(item?.uri ?? '') === false) {
+          if (VALIDATION_CHECK(item?.uri ?? props?.uriKey ?? '') === false) {
             return <View />;
           }
           return (
@@ -155,9 +157,11 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
               }}>
               <View style={[{
                 width: props.width ?? ITEM_WIDTH,
+                // backgroundColor: "blue"
               }]}>
-                <View style={[itemStyles.secondaryContainer, props.containerStyle,]}>
-                  <Animated.Image source={{ uri: item.uri }} style={[itemStyles.image, props.imageStyle, {
+                {/* aspectRatio={16 / 7} */}
+                <View style={[itemStyles.secondaryContainer, props.containerStyle]}>
+                  <Animated.Image source={{ uri: props.uriKey ? renderFile(item[`${props.uriKey}`]) : renderFile(item.uri) }} style={[itemStyles.image, props.imageStyle, {
                     height: props.height ?? ITEM_HEIGHT,
                     width: "100%",
                     ...VALIDATION_CHECK(props.aspectRatio) && {
@@ -179,7 +183,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
         automaticallyAdjustContentInsets={false}
         horizontal
         showsHorizontalScrollIndicator={false}
-        keyExtractor={(item, index) => `${index}`}
+        keyExtractor={(_, index) => `Image-Carousal-key-${index}-${new Date().getTime()}`}
         bounces={false}
         decelerationRate={0}
         renderToHardwareTextureAndroid
@@ -201,7 +205,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
           {props.data.map((item, index) => {
             return (
               <View style={[footerStyles.dot, {
-                backgroundColor: index === currentIndex ? theme.primary : theme.primary,
+                backgroundColor: theme.primary,
                 opacity: index === currentIndex ? 1 : 0.5,
               }, props.paginationDotStyle]} key={index} />
             )

@@ -10,6 +10,7 @@ import { store } from '../redux/store';
 
 Axios.interceptors.request.use(
     config => {
+        if (!GV.NET_INFO_REF?.current?.isConnected) return Toast.info("No Internet connection!", 5000);
         try {
             // console.log(`store`, store.getState());
             config.baseURL = configs.BASE_URL;
