@@ -58,7 +58,6 @@ export default () => {
         text: __DEV__ ? "Jazz" : "Choose your Mobile Network",
         value: __DEV__ ? 1 : 0
     });
-    const colapsible = useRef(false)
     const [country, setCountry] = React.useState("92");
     const onPress = async () => {
         const appHash = Platform.OS === "android" && (await RNOtpVerify.getHash())[0]
@@ -92,25 +91,20 @@ export default () => {
     }
 
     const disbleContinueButton = network.value <= 0 || cellNo.length < 10;
+
     return <SafeAreaView style={styles.otpSafeArea}>
         <KeyboardAwareScrollView>
             <SvgXml xml={svgs.otp()} height={120} width={120} style={{ alignSelf: "center", marginBottom: 20, }} />
             <Text fontFamily={'PoppinsMedium'} style={{ fontSize: 14, paddingLeft: 25, color: 'black' }}>Enter your mobile number</Text>
             <View style={styles.otpDropdownParentView}>
-                <TouchableOpacity activeOpacity={1} style={styles.otpDropdownView}
-                    wait={500}
-                    onPress={
-                        debounce(
-                            () => {
-                                colapsible.current = !colapsible.current
-                                console.log('colapsible', colapsible);
-                                if (!colapsible) setCollapsed(true);
-                                else setCollapsed(false)
-                            }
-                            , 500)
-                    } >
+                <TouchableOpacity style={styles.otpDropdownView}
+                    wait={0.55}//greater than the animation time of dropdown rendered below
+                    activeOpacity={1}
+                    onPress={() => {
+                        setCollapsed(!collapsed);
+                    }} >
                     <Text fontFamily="PoppinsRegular" style={{ color: "#fff", ...styles.textAlignCenter }}>{network.text}</Text>
-                    <VectorIcon type='AntDesign' name={collapsed ? "down" : "up"} style={{ paddingLeft: 5, }} size={12} color={"#fff"} onPress={() => setCollapsed(!collapsed)} />
+                    <VectorIcon type='AntDesign' name={collapsed ? "down" : "up"} style={{ paddingLeft: 5, }} size={12} color={"#fff"} />
                 </TouchableOpacity>
                 {/* Networks list */}
                 <Dropdown collapsed={collapsed} scrollViewStyles={{ top: 42 }} options={ENUMS.NETWORK_LIST} itemUI={(item, index, collapsed) => <TouchableOpacity key={`network-key-${index}`} style={{ paddingVertical: 4, borderWidth: 0.5, borderTopWidth: 0, borderColor: 'rgba(0,0,0,0.3)', borderBottomRightRadius: index === ENUMS.NETWORK_LIST.length - 1 ? 12 : 0, borderBottomLeftRadius: index === ENUMS.NETWORK_LIST.length - 1 ? 12 : 0 }} onPress={() => {
