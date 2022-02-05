@@ -73,7 +73,6 @@ export default (props) => {
     React.useEffect(() => {
         Sms.requestReadSmsPermission()
             .then(async res => {
-                console.log('res', res);
                 _onSmsListener();
             })
             .catch(err => console.log("err...", err));
@@ -110,7 +109,6 @@ export default (props) => {
             "hardwareID": sharedGetDeviceInfo().deviceID
         };
         postRequest(Endpoints.OTP_VERIFY, payload, res => {
-            console.log("[verifyOtpToServer].res...", res);
             const { statusCode, message, otpResult } = res.data;
             if (statusCode === 417) return Toast.error(message);
             resetInterval()
@@ -203,7 +201,6 @@ export default (props) => {
         };
     };
     const _focusNextField = (e, nextField, currentIndex) => {
-        console.log('e', e.nativeEvent);
         if (e.nativeEvent.key === "Backspace") {
             let prevField = nextField >= 2 ? nextField - 2 : 0;
             if (inputs[currentIndex] !== "") return;
@@ -288,7 +285,7 @@ export default (props) => {
             <Button
                 style={styles.continueButton}
                 text={'Verify'}
-                textStyle={{ color: '#fff', ...styles.textAlignCenter }}
+                textStyle={{ color: '#fff', ...styles.textAlignCenter, fontSize:14 }}
                 onPress={() => verifyOtpToServer()}
                 isLoading={isLoading}
                 disabled={disbleContinueButton || isLoading}
