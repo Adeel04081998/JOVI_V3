@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Alert, Animated, Appearance, ColorValue, Dimensions, Easing, StyleSheet, TouchableOpacity as TC, View } from "react-native";
+import { Animated, Appearance, ColorValue, Dimensions, Easing, StyleSheet, TouchableOpacity as TC, View } from "react-native";
 import Svg, { Color, Path } from 'react-native-svg';
 import { VALIDATION_CHECK } from "../../helpers/SharedActions";
 import { useDeviceOrientation } from "../../hooks/useDeviceOrientation";
@@ -11,10 +11,11 @@ import AnimatedView from "../atoms/AnimatedView";
 import Text from "../atoms/Text";
 import TouchableOpacity from "../atoms/TouchableOpacity";
 import VectorIcon from "../atoms/VectorIcon";
+import CategoryCircular from "../molecules/CategoryCircular";
+import { mockData } from "../molecules/mockData";
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TC);
 
-
-
+// #region :: INTERFACE START's FROM HERE 
 interface BottomBarItem {
     id: number;
     iconName: string;
@@ -48,13 +49,15 @@ const defaultProps = {
     circleWidth: 55,
     borderTopLeftRight: false,
     backgroundColor: "#fff",
-    strokeWidth: 0,
+    strokeWidth: 1,
 
     leftData: [],
     rightData: [],
 
     buttonSize: 60,
 };
+
+// #endregion :: INTERFACE END's FROM HERE 
 
 const BottomBarComponent = (props: Props) => {
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
@@ -76,11 +79,28 @@ const BottomBarComponent = (props: Props) => {
     const orientation = useDeviceOrientation();
     const transFormAngle = React.useRef(new Animated.Value(0)).current;
     const crossIconAnimation = React.useRef(new Animated.Value(0)).current;
+    const fullScreenAnimation = React.useRef(new Animated.Value(0)).current;
     const [maxWidth, setMaxWidth] = React.useState<any>(width);
     const [activeRoute, updateActiveRoute] = React.useState<any>(null);
     const [isCloseIcon, toggleCloseIcon] = React.useState(false);
 
     // #endregion :: STATE & REF's END's FROM HERE 
+
+    const startFullScreenAnimation=()=>{
+        Animated.timing(fullScreenAnimation,{
+            toValue:1,
+            duration:300,
+            useNativeDriver:true,
+        }).start();
+    }
+
+    const revertFullScreenAnimation=()=>{
+        Animated.timing(fullScreenAnimation,{
+            toValue:0,
+            duration:300,
+            useNativeDriver:true,
+        }).start();
+    }
 
     const animateCenterButtonPress = () => {
         const revertAnimation = () => {
@@ -94,6 +114,12 @@ const BottomBarComponent = (props: Props) => {
                 }
             });
         }
+
+        if(!isCloseIcon)
+        startFullScreenAnimation();
+        else
+        revertFullScreenAnimation();
+
         Animated.timing(crossIconAnimation, {
             toValue: 1,
             duration: 300,
@@ -266,44 +292,66 @@ const BottomBarComponent = (props: Props) => {
 
 
     const reald = getPath(maxWidth, height, circleWidth >= 50 ? circleWidth : 50, borderTopLeftRight);
+
     return (
-        <View style={{ flex: 1 }}>
+        <>
+            <AnimatedView style={{
+                ...StyleSheet.absoluteFillObject,
+                position: "absolute",
+                top: 0,
+                bottom: 0,
+                flex: 1,
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                display: isCloseIcon ? "flex" : "none",
+                opacity:fullScreenAnimation
+            }} />
 
-            <View style={[styles.container, {}]}>
+            <View style={{ flex: 1, zIndex: 999 }}>
+                <View style={[styles.container, {}]}>
 
-                {/* ****************** Start of BACKGROUND WITH CURVE ****************** */}
-                <Svg width={maxWidth} height={height + (0)}>
-                    <Path fill={bgColor} stroke="#DDDDDD" strokeWidth={strokeWidth} d={reald} />
-                </Svg>
+                    {/* ****************** Start of BACKGROUND WITH CURVE ****************** */}
+                    <Svg width={maxWidth} height={height + (0)}>
+                        <Path fill={bgColor} stroke="#DDDDDD" strokeWidth={strokeWidth} d={reald} />
+                    </Svg>
 
-                {/* ****************** End of BACKGROUND WITH CURVE ****************** */}
+                    {/* ****************** End of BACKGROUND WITH CURVE ****************** */}
 
 
-                <View style={[styles.main, { width: maxWidth, }]}>
+                    <View style={[styles.main, { width: maxWidth, }]}>
 
-                    {/* ****************** Start of LEFT SIDE ****************** */}
-                    <View style={[styles.rowLeft, { height: height }]}>
-                        {(props.leftData ?? []).map((item: BottomBarItem, index) => _renderSideItem(item, index))}
+                        {/* ****************** Start of LEFT SIDE ****************** */}
+                        <View style={[styles.rowLeft, { height: height }]}>
+                            {(props.leftData ?? []).map((item: BottomBarItem, index) => _renderSideItem(item, index))}
+                        </View>
+
+                        {/* ****************** End of LEFT SIDE ****************** */}
+
+                        <View style={styles.btnCircle}>
+                            {_renderButtonCenter()}
+                        </View>
+
+                        {/* ****************** Start of RIGHT SIDE ****************** */}
+                        <View style={[styles.rowRight, { height: height }]}>
+                            {(props.rightData ?? []).map((item: BottomBarItem, index) => _renderSideItem(item, index))}
+                        </View>
+
+                        {/* ****************** End of RIGHT SIDE ****************** */}
+
                     </View>
-
-                    {/* ****************** End of LEFT SIDE ****************** */}
-
-                    <View style={styles.btnCircle}>
-                        {_renderButtonCenter()}
-                    </View>
-                    {/* ****************** Start of RIGHT SIDE ****************** */}
-                    <View style={[styles.rowRight, { height: height }]}>
-                        {(props.rightData ?? []).map((item: BottomBarItem, index) => _renderSideItem(item, index))}
-                    </View>
-
-                    {/* ****************** End of RIGHT SIDE ****************** */}
 
                 </View>
 
 
 
+
+                {/* ****************** Start of CIRCULAR CATEGORIES ****************** */}
+                {isCloseIcon &&
+                    <CategoryCircular data={mockData} />
+                }
+
+                {/* ****************** End of CIRCULAR CATEGORIES ****************** */}
             </View>
-        </View>
+        </>
     );
 }
 
@@ -316,16 +364,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
-
-        // shadowColor: "#ac3232",
-        // shadowOffset: {
-        //     width: 0,
-        //     height: -12,
-        // },
-        // shadowOpacity: 0.58,
-        // shadowRadius: 16.00,
-
-        // elevation: 24,
+        zIndex: 9999,
     },
     main: {
         position: 'absolute',
@@ -348,5 +387,6 @@ const styles = StyleSheet.create({
     },
     btnCircle: {
         bottom: 30,
+        zIndex: 99,
     },
 });
