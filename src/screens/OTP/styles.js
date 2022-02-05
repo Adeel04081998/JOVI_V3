@@ -33,7 +33,7 @@ export default {
                 justifyContent: 'center',
                 borderBottomLeftRadius: 12,
                 borderBottomRightRadius: 12,
-                width:'80%'
+                width:'100%'
             },
             continueButton: { backgroundColor: "#7359BE", borderRadius: 10 },
             buttonView: { paddingHorizontal: 20, paddingVertical: 15, zIndex: 0 },

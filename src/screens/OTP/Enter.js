@@ -121,9 +121,9 @@ export default () => {
                     <View style={{}} />
                 </TouchableOpacity>} />
                 <AnimatedView style={styles.inputView}>
-                    <TouchableOpacity style={{ flexDirection: "row", width: '40%', justifyContent: 'flex-end', backgroundColor: '#fff', alignItems: 'center' }} onPress={() => setPickerVisible(true)}>
+                    <TouchableOpacity style={{ marginLeft:10,flexDirection: "row", width: '15%', justifyContent: 'flex-end', backgroundColor: '#fff', alignItems: 'center' }} onPress={() => setPickerVisible(true)}>
                         <Text style={{ color: '#000' }} >{`+${country}`}</Text>
-                        <VectorIcon type='AntDesign' name="down" color={"#000"} style={{ margin: 5 }} size={12} onPress={() => setPickerVisible(true)} />
+                        <VectorIcon type='AntDesign' name="caretdown" color={"#000"} style={{ margin: 5 }} size={12} onPress={() => setPickerVisible(true)} />
                     </TouchableOpacity>
 
                     <TextInput value={cellNo.toString()}
@@ -141,7 +141,7 @@ export default () => {
                             } else setCellNo("")
                         }}
                         errorTextStyle={{ bottom: -25, fontSize: 12 }}
-                        containerStyle={{ backgroundColor: '#fff', width: '40%', marginRight: 10 }}
+                        containerStyle={{  width: '60%', marginRight: 10 }}
                     />
                 </AnimatedView>
             </View>

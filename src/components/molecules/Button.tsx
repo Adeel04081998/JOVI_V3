@@ -19,13 +19,13 @@ type Props = React.ComponentProps<typeof TouchableOpacity> & {
 const defaultProps = {
     text: 'JOVI',
     activeOpacity:0.9,
-    wait:1,
+    wait:0.3,
     isLoading:false
 };
 
-let onPressRef: NodeJS.Timeout;
-let isAssigned = false;
 const Button = (props: Props, textProps: TextProps) => {
+    let onPressRef: NodeJS.Timeout;
+    let isAssigned = false;
     const buttonMargin = React.useRef(new Animated.Value(1)).current;
 
     const animateIn = (event: GestureResponderEvent) => {
