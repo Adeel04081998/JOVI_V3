@@ -3,14 +3,15 @@ import LottieView from 'lottie-react-native';
 import constants from '../../res/constants';
 import { Animated, TouchableOpacity, Easing } from 'react-native';
 import { connect } from 'react-redux';
+import { renderFile } from '../../helpers/SharedActions';
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
-const Robot = ({messagesReducer}) => {
+const Robot = ({ messagesReducer }) => {
     const [state, setState] = useState({
         showRobot: false,
         lottieAnim: null
     });
-    
+
     // RobotJson.p.toString().replace('')
     // RobotJson = JSON.parse(JSON.stringify(RobotJson)).toString().replace('&&&Text1&&&','Hello');
     // console.log('robot',RobotJson);
@@ -30,9 +31,9 @@ const Robot = ({messagesReducer}) => {
         });
     }
     useEffect(() => {
-        console.log('messageReducer',messagesReducer)
-        if(messagesReducer?.robotJson &&messagesReducer?.showRobotFlag ){
-            setState(pre => ({ ...pre, lottieAnim: messagesReducer?.robotJson, showRobot:true }));
+        console.log('messageReducer', messagesReducer)
+        if (messagesReducer?.robotJson && messagesReducer?.showRobotFlag) {
+            setState(pre => ({ ...pre, lottieAnim: messagesReducer?.robotJson, showRobot: true }));
             // fetch(messagesReducer.robotJson, {
             //     method: "GET",
             // })
@@ -45,7 +46,8 @@ const Robot = ({messagesReducer}) => {
             //         console.log(error);
             //     });
         }
-    }, [messagesReducer?.showRobotFlag,messagesReducer?.showRobotFlag]);
+    }, [messagesReducer?.showRobotFlag, messagesReducer?.showRobotFlag]);
+    console.log("state.lottieAnim", state.lottieAnim)
     if (state.showRobot === false) return null;
     return (
         <AnimatedTouchable onPress={() => hideRobot()} activeOpacity={1} style={{
@@ -62,7 +64,7 @@ const Robot = ({messagesReducer}) => {
             }}
                 resizeMode={'contain'}
                 onAnimationFinish={() => { setState(pre => ({ ...pre, showRobot: false })) }}
-                source={state.lottieAnim}
+                source={renderFile(state.lottieAnim)}
                 autoPlay loop={false} /> : null}
         </AnimatedTouchable>
     );

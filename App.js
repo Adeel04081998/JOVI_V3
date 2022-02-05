@@ -24,6 +24,8 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import CodePush from "react-native-code-push"; //for codepush
 import configs from './src/utils/configs';
 import Robot from './src/components/organisms/Robot';
+import { useSelector } from 'react-redux';
+import { sharedGetEnumsApi, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser } from './src/helpers/SharedActions';
 
 AntDesign.loadFont();
 Entypo.loadFont();
@@ -130,7 +132,24 @@ const App = () => {
         <Robot />
         <Toast />
       </SafeAreaView>
+      <SharedGetApis />
     </SafeAreaProvider>
   );
 };
 export default App;
+const SharedGetApis = ({ }) => {
+  const { isLoggedIn } = useSelector(state => state.userReducer);
+  React.useEffect(() => {
+    sharedGetEnumsApi();
+    // sharedLogoutUser();
+  }, [])
+  React.useEffect(() => {
+    if (isLoggedIn) {
+      sharedGetUserDetailsApi();
+      sharedGetHomeMsgsApi();
+      sharedGetUserAddressesApi();
+      sharedGetPromotions();
+    }
+  }, [isLoggedIn])
+  return (<></>);
+}

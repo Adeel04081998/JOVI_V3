@@ -113,17 +113,18 @@ const AppDrawers = (props) => {
 
 export default (props) => {
     const { isLoggedIn, refreshToken } = useSelector(state => state.userReducer);
-    console.log("[Rootstack].token", refreshToken)
-    React.useEffect(() => {
-        sharedGetEnumsApi();
-        if (isLoggedIn) {
-            sharedGetUserDetailsApi();
-            sharedGetHomeMsgsApi();
-            sharedGetUserAddressesApi();
-            sharedGetPromotions();
-        }
-        // sharedLogoutUser();
-    }, [])
+    // React.useEffect(() => {
+    //     sharedGetEnumsApi();
+    //     // sharedLogoutUser();
+    // }, [])
+    // React.useEffect(() => {
+    //     if (isLoggedIn) {
+    //         sharedGetUserDetailsApi();
+    //         sharedGetHomeMsgsApi();
+    //         sharedGetUserAddressesApi();
+    //         sharedGetPromotions();
+    //     }
+    // }, [isLoggedIn])
     return <ContainerStack.Navigator screenOptions={stackOpts} initialRouteName={INIT_ROUTES.INIT_APP}>
         <ContainerStack.Screen
             name={INIT_ROUTES.INIT_APP}

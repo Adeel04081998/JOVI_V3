@@ -1,5 +1,5 @@
 import Toast from '../components/atoms/Toast';
-import { sharedLogoutUser } from '../helpers/SharedActions';
+import { sharedExceptionHandler, sharedLogoutUser } from '../helpers/SharedActions';
 import ReduxActions from '../redux/actions';
 import { store } from '../redux/store';
 import configs from '../utils/configs';
@@ -7,9 +7,9 @@ import Axios from './Axios';
 const dispatch = store.dispatch;
 
 export const refreshTokenMiddleware = (requestCallback, params) => {
-    Toast.error("Session Expired!");
-    sharedLogoutUser();
-    return;
+    // Toast.info("Session Expired!");
+    // sharedLogoutUser();
+    // return;
 
     // BELOW CODE COMMENTED WILL BE IMPLMEMENT LATER
     const userReducer = store.getState().userReducer;
@@ -24,6 +24,7 @@ export const refreshTokenMiddleware = (requestCallback, params) => {
             console.log("refreshTokenMiddleware.Res :", res);
             if (res?.data?.statusCode === 202) {
                 requestCallback.apply(this, params);
+                if (__DEV__) Toast.success("Its only for DEV => User session refreshed....")
                 return;
             }
             else if (res?.data?.statusCode === 403) {
@@ -37,6 +38,7 @@ export const refreshTokenMiddleware = (requestCallback, params) => {
         },
         err => {
             console.log("refreshTokenMiddleware.err", err)
+            sharedExceptionHandler(err)
         },
     )
 

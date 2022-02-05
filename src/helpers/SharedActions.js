@@ -145,7 +145,7 @@ export const sharedGetHomeMsgsApi = () => {
         "getPersonalizeMsgs": true,
     };
     postRequest(Endpoints.GET_HOME_MSGS, payload, res => {
-        // console.log("[sharedGetHomeMsgsApi].res", res);
+        console.log("[sharedGetHomeMsgsApi].res", res);
         if (res.data.robotJson) {
             fetchRobotJson(res.data.robotJson, (data) => {
                 dispatch(ReduxActions.setMessagesAction({ ...res.data, robotJson: data }));
@@ -177,8 +177,8 @@ export const sharedGetPromotions = () => {
     postRequest(`${Endpoints.GET_PROMOTIONS}`, {
         "isDashboard": true,
         "isUserSpecific": false, // Need to discuss with Shakir
-        "latitude": 33.668531,
-        "longitude": 73.075001,
+        "latitude": 33.668531, // should be replace with user's final destination
+        "longitude": 73.075001,// should be replace with user's final destination
         "isCitySpecific": true
     }, res => {
         console.log("[sharedGetPromotions].res", res);
@@ -191,6 +191,7 @@ export const sharedGetPromotions = () => {
         false,
     );
 }
+
 
 export const sharedLogoutUser = () => {
     dispatch(ReduxActions.clearUserAction({ introScreenViewed: true }));

@@ -68,7 +68,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
   //  VIEW ABILITY START's FROM HERE 
   const handleOnViewableItemsChanged = useCallback(({ viewableItems }) => {
 
-    const itemsInView = viewableItems.filter(({ item }: { item: any }) => VALIDATION_CHECK(item?.uri ?? ''));
+    const itemsInView = viewableItems.filter(({ item }: { item: any }) => VALIDATION_CHECK(item?.uri ?? props?.uriKey ?? ''));
     if (itemsInView.length === 0) {
       return;
     }
@@ -157,8 +157,10 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
               }}>
               <View style={[{
                 width: props.width ?? ITEM_WIDTH,
+                // backgroundColor: "blue"
               }]}>
-                <View style={[itemStyles.secondaryContainer, props.containerStyle,]}>
+                {/* aspectRatio={16 / 7} */}
+                <View style={[itemStyles.secondaryContainer, props.containerStyle]}>
                   <Animated.Image source={{ uri: props.uriKey ? renderFile(item[`${props.uriKey}`]) : renderFile(item.uri) }} style={[itemStyles.image, props.imageStyle, {
                     height: props.height ?? ITEM_HEIGHT,
                     width: "100%",
@@ -181,7 +183,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
         automaticallyAdjustContentInsets={false}
         horizontal
         showsHorizontalScrollIndicator={false}
-        keyExtractor={(item, index) => `${index}`}
+        keyExtractor={(_, index) => `Image-Carousal-key-${index}-${new Date().getTime()}`}
         bounces={false}
         decelerationRate={0}
         renderToHardwareTextureAndroid
@@ -203,7 +205,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
           {props.data.map((item, index) => {
             return (
               <View style={[footerStyles.dot, {
-                backgroundColor: index === currentIndex ? theme.primary : theme.primary,
+                backgroundColor: theme.primary,
                 opacity: index === currentIndex ? 1 : 0.5,
               }, props.paginationDotStyle]} key={index} />
             )

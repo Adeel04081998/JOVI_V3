@@ -32,6 +32,7 @@ const defaultProps = {
 const CategoryCardItem = (props: Props) => {
     const transFormAngle = React.useRef(new Animated.Value(0)).current;
     useEffect(() => {
+        console.log("[useEffect]...ran")
         Animated.timing(transFormAngle, {
             duration: 600,
             toValue: 1,
@@ -78,16 +79,16 @@ const CategoryCardItem = (props: Props) => {
             </AnimatedView>
             {VALIDATION_CHECK(props.title) &&
                 <Text
-                numberOfLines={1}
-                style={[{
-                    opacity: transFormAngle.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [0.2, 1]
-                    }),
-                    color: "#272727",
-                    textAlign: "center",
-                    fontSize: 16,
-                }, props.textStyle]}
+                    numberOfLines={1}
+                    style={[{
+                        opacity: transFormAngle.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [0.2, 1]
+                        }),
+                        color: "#272727",
+                        textAlign: "center",
+                        fontSize: 16,
+                    }, props.textStyle]}
                     fontFamily={"PoppinsMedium"} >{props.title}</Text>
             }
         </TouchableOpacity>
