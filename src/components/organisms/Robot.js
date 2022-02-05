@@ -5,7 +5,8 @@ import { Animated, TouchableOpacity, Easing } from 'react-native';
 import { connect } from 'react-redux';
 import { renderFile } from '../../helpers/SharedActions';
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
-
+const HEIGHT = 170;
+const BOTTOM = 30;
 const Robot = ({ messagesReducer }) => {
     const [state, setState] = useState({
         showRobot: false,
@@ -52,9 +53,9 @@ const Robot = ({ messagesReducer }) => {
     return (
         <AnimatedTouchable onPress={() => hideRobot()} activeOpacity={1} style={{
             width: width,
-            height: 150,
+            height: HEIGHT,
             position: 'absolute',
-            bottom: 60,
+            bottom: BOTTOM,
             opacity: animatedTouchableValue.interpolate({
                 inputRange: [0, 1],
                 outputRange: [1, 0]
@@ -64,7 +65,7 @@ const Robot = ({ messagesReducer }) => {
             }}
                 resizeMode={'contain'}
                 onAnimationFinish={() => { setState(pre => ({ ...pre, showRobot: false })) }}
-                source={renderFile(state.lottieAnim)}
+                source={state.lottieAnim}
                 autoPlay loop={false} /> : null}
         </AnimatedTouchable>
     );

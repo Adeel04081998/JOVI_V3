@@ -127,12 +127,14 @@ export const sharedGetUserDetailsApi = () => {
     );
 }
 export const fetchRobotJson = (url, cb = () => { }) => {
-    fetch(url, {
+    fetch('https://cloud-ex42.usaupload.com/5OSX/Robot_-_With_Shape_Layer_Text.json?download_token=5c263b7ebfac80573376d00e6ee5ce29f3d822a4d3addb5209b2e6f4cfa3a8ed', {
+    // fetch(renderFile(url), {
         method: "GET",
     })
         .then((response) => response.json())
         .then((responseData) => {
-            cb(responseData);
+            cb(responseData)
+            // cb(theBlob);
         })
         .catch((error) => {
             cb(null);
@@ -141,13 +143,14 @@ export const fetchRobotJson = (url, cb = () => { }) => {
 }
 export const sharedGetHomeMsgsApi = () => {
     let payload = {
-        "mascotScreenEnum": 0,
+        "mascotScreenEnum": 1,
         "getPersonalizeMsgs": true,
     };
     postRequest(Endpoints.GET_HOME_MSGS, payload, res => {
         console.log("[sharedGetHomeMsgsApi].res", res);
-        if (res.data.robotJson) {
-            fetchRobotJson(res.data.robotJson, (data) => {
+        if (res.data.homeScreenDataViewModel.robotJson) {
+            fetchRobotJson(res.data.homeScreenDataViewModel.robotJson, (data) => {
+                // console.log('data robotJson',data)
                 dispatch(ReduxActions.setMessagesAction({ ...res.data, robotJson: data }));
             });
         } else {
