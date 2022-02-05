@@ -1,5 +1,5 @@
 import React from 'react';
-import { Animated, Appearance, Easing, Platform, StyleSheet } from "react-native";
+import { Animated, Appearance, Easing, Platform, ScrollView, StyleSheet } from "react-native";
 import GenericList from '../../components/molecules/GenericList';
 import { useDispatch, useSelector } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
@@ -20,6 +20,9 @@ import View from '../../components/atoms/View';
 import VectorIcon from "../../components/atoms/VectorIcon";
 import ReduxActions from '../../redux/actions';
 import { initColors } from '../../res/colors';
+import BottomBarComponent from '../../components/organisms/BottomBarComponent';
+import Button from '../../components/molecules/Button';
+import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 
 const CONTAINER_WIDTH = ((constants.screen_dimensions.width) * 0.22);
 const CONTAINER_HEIGHT = constants.screen_dimensions.width * 0.3;
@@ -68,6 +71,41 @@ export default () => {
         }
     }, [loaderVisible]);
     const cartOnPressHandler = () => { __DEV__ ? alert("Pressed") : null }
+    const RecentOrders = () => {
+        const CARD_HEIGHT = 100;
+        const SPACING = 10;
+        const DATA = Array(6).fill();
+        return <View style={{ marginVertical: SPACING_VERTICAL, }}>
+            <Text numberOfLines={1} fontFamily='PoppinsSemiBold' style={{ fontSize: 15, color: "#272727", paddingVertical: SPACING_VERTICAL }}>
+                Recent Orders
+            </Text>
+            <ScrollView style={{ flexDirection: "row" }} horizontal showsHorizontalScrollIndicator={false}>
+                {
+                    DATA.map((order, index) => (
+                        <View key={`recent-order-${index}`} style={{ height: CARD_HEIGHT, backgroundColor: "#fff", marginHorizontal: index > 0 ? 10 : 0, borderRadius: 10, justifyContent: "space-between" }}>
+                            <View style={{ paddingHorizontal: SPACING, padding: 5 }}>
+                                <Text fontFamily='PoppinsMedium' numberOfLines={1} style={{ fontSize: 14, color: "#272727" }}>
+                                    Beef patty Burger
+                                </Text>
+                                <Text numberOfLines={1} fontFamily='PoppinsRegular' style={{ fontSize: 10, color: "#C1C1C1" }}>
+                                    2 More Products
+                                </Text>
+                            </View>
+                            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", padding: SPACING }}>
+                                <Text fontFamily='PoppinsMedium' style={{ fontSize: 10, color: "#F94E41" }}>
+                                    Rs. 750
+                                </Text>
+                                <TouchableOpacity style={{ borderColor: "#F94E41", borderRadius: 13, borderWidth: 0.5 }} activeOpacity={.7}>
+                                    <Text fontFamily='PoppinsMedium' style={{ fontSize: 10, color: "#F94E41", paddingHorizontal: 10, textAlign: "center", paddingVertical: 5 }}>Reorder</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    ))
+                }
+            </ScrollView>
+        </View>
+
+    }
     const Greetings = () => {
         React.useLayoutEffect(() => {
             if (greetingMessage) {
@@ -148,7 +186,7 @@ export default () => {
         }
     }
     const Search = () => (
-        <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: "#fff", borderRadius: 10, justifyContent: "space-between", overflow: 'hidden', }}>
+        <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: "#fff", borderRadius: 10, height: 60, justifyContent: "space-between", overflow: 'hidden', }}>
             <VectorIcon name='search' style={{ left: 10 }} color={initColors.primary} />
             <TextInput textAlign="left" placeholder='Search for shops and restaurants or pharmacy' style={{ backgroundColor: "#fff" }} />
         </View>
@@ -191,7 +229,7 @@ export default () => {
                             <ImageCarousel
                                 // aspectRatio={16 / 7}
                                 // width={150}
-                                data={promotionsReducer?.dashboardContentListViewModel?.dashboardPromoListVM ?? []} // Hardcoded url added for QA testing only if there is no data in db => Mudassir
+                                data={promotionsReducer?.dashboardContentListViewModel?.dashboardPromoListVM ?? [{ promoImg: `Dev/DashboardBanner/2021/5/20/Jov_banner_350x220 (1)_12173.jpg` }]} // Hardcoded url added for QA testing only if there is no data in db => Mudassir
                                 uriKey="promoImg"
                                 containerStyle={{
                                     marginHorizontal: 10,
@@ -200,11 +238,13 @@ export default () => {
                                     // backgroundColor: "red",
                                     // resizeMode: "contain"
                                 }}
+                                height={170}
                             />
-                            <View style={{ margin: SPACING_VERTICAL, paddingBottom: SPACING_BOTTOM }}>
+                            <View style={{ margin: SPACING_VERTICAL }}>
                                 <Search />
                                 <Categories cartOnPressHandler={cartOnPressHandler} categoriesList={categoriesList} categoryStyles={categoryStyles} />
                                 <AvatarAlert />
+                                <RecentOrders />
                                 <GenericList />
                             </View>
                         </KeyboardAwareScrollView>

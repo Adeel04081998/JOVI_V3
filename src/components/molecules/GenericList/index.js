@@ -14,6 +14,7 @@ import { postRequest } from '../../../manager/ApiManager';
 import Endpoints from '../../../manager/Endpoints';
 
 export default ({ vendorType = 0, imageStyles = {}, showMoreBtnText = "", }) => {
+    const SPACING_BOTTOM = 50;
     const [data, setData] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(true);
     const fetchData = () => {
@@ -70,7 +71,7 @@ export default ({ vendorType = 0, imageStyles = {}, showMoreBtnText = "", }) => 
     }
 
     return (
-        <View>
+        <View style={{ paddingBottom: SPACING_BOTTOM }}>
             {
                 data.map((item, index) => (
                     <React.Fragment key={`generic-item-key-${index}`}>
@@ -82,12 +83,14 @@ export default ({ vendorType = 0, imageStyles = {}, showMoreBtnText = "", }) => 
                         </View>
 
                         <AnimatedFlatlist
+
                             data={item.vendorList}
                             renderItem={renderItem}
                             itemContainerStyle={{ ...popularNearYouStyles.itemContainer }}
                             horizontal={true}
                             flatlistProps={{
                                 showsHorizontalScrollIndicator: false,
+                                // contentContainerStyle: { paddingBottom: 40 }
                             }}
                         />
                     </React.Fragment>
