@@ -148,7 +148,7 @@ export default () => {
     const AvatarAlert = () => {
         if (alertMessage) {
             return (
-                <AnimatedView style={{ marginTop:30  }}>
+                <AnimatedView style={{ marginTop: 30 }}>
                     <AnimatedView style={categoryStyles.alertMsgPrimaryContainer}>
                         <AnimatedView style={categoryStyles.alertMsgSecondaryContainer}>
                             <Text style={categoryStyles.alertMsgHeaderText} numberOfLines={2}>
@@ -189,9 +189,9 @@ export default () => {
         }
     }
     const Search = () => (
-        <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: "#fff", borderRadius: 10, height: 50, justifyContent: "space-between", overflow: 'hidden', }}>
+        <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: "#fff", borderRadius: 10, height: 55, justifyContent: "space-between", overflow: 'hidden', }}>
             <VectorIcon name='search' style={{ left: 10 }} color={initColors.primary} />
-            <TextInput textAlign="left" placeholder='Search for shops and restaurants or pharmacy' style={{ alignSelf:'center',backgroundColor: "#fff" }} />
+            <TextInput textAlign="left" placeholder='Search for shops and restaurants or pharmacy' style={{ alignSelf: 'center', backgroundColor: "#fff" }} />
         </View>
     )
 
@@ -298,7 +298,7 @@ const Categories = React.memo(({ cartOnPressHandler, categoriesList, categorySty
                     width={CONTAINER_WIDTH}
                     textStyle={{ fontSize: 12, padding: 2 }}
                     imageContainerStyle={{ height: CONTAINER_HEIGHT * 0.6, width: 80, justifyContent: 'center', alignContent: 'center', alignItems: 'center', alignSelf: 'center' }}
-                    onPress={()=>cartOnPressHandler(i)}
+                    onPress={() => cartOnPressHandler(i)}
                 />
             })
             }
