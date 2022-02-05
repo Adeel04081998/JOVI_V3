@@ -86,19 +86,19 @@ const BottomBarComponent = (props: Props) => {
 
     // #endregion :: STATE & REF's END's FROM HERE 
 
-    const startFullScreenAnimation=()=>{
-        Animated.timing(fullScreenAnimation,{
-            toValue:1,
-            duration:300,
-            useNativeDriver:true,
+    const startFullScreenAnimation = () => {
+        Animated.timing(fullScreenAnimation, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
         }).start();
     }
 
-    const revertFullScreenAnimation=()=>{
-        Animated.timing(fullScreenAnimation,{
-            toValue:0,
-            duration:300,
-            useNativeDriver:true,
+    const revertFullScreenAnimation = () => {
+        Animated.timing(fullScreenAnimation, {
+            toValue: 0,
+            duration: 300,
+            useNativeDriver: true,
         }).start();
     }
 
@@ -115,10 +115,10 @@ const BottomBarComponent = (props: Props) => {
             });
         }
 
-        if(!isCloseIcon)
-        startFullScreenAnimation();
+        if (!isCloseIcon)
+            startFullScreenAnimation();
         else
-        revertFullScreenAnimation();
+            revertFullScreenAnimation();
 
         Animated.timing(crossIconAnimation, {
             toValue: 1,
@@ -261,9 +261,9 @@ const BottomBarComponent = (props: Props) => {
     const _renderSideItem = (item: BottomBarItem, index: number) => {
         const iconType = VALIDATION_CHECK(item?.iconType ?? '') ? item.iconType : 'Ionicons';
         const iconSize = VALIDATION_CHECK(item?.iconSize ?? '') ? item.iconSize : 22;
-        const iconColor = VALIDATION_CHECK(item?.iconColor ?? '') ? item.iconType : '#A3ABB4';
-
-        const isActive = (item?.key ?? '') === activeRoute;
+        // const isActive = (item?.key ?? '') === activeRoute;
+        const isActive = item.id === 1 ? true : false;
+        const iconColor = isActive ? colors.primary : VALIDATION_CHECK(item?.iconColor ?? '') ? item.iconType : '#A3ABB4';
 
         return (
             <TouchableOpacity style={{
@@ -281,7 +281,10 @@ const BottomBarComponent = (props: Props) => {
                     :
                     <VectorIcon name={item.iconName} type={iconType} size={iconSize} color={iconColor} />
                 }
-                <Text style={{ fontSize: 11, }}
+                <Text style={{
+                    fontSize: 11,
+                    color: iconColor
+                }}
                     fontFamily="PoppinsRegular">{item.title}</Text>
             </TouchableOpacity>
         )
@@ -294,7 +297,7 @@ const BottomBarComponent = (props: Props) => {
     const reald = getPath(maxWidth, height, circleWidth >= 50 ? circleWidth : 50, borderTopLeftRight);
 
     return (
-        <>
+        <View style={isCloseIcon ? { flex: 1, flexGrow: 1, ...StyleSheet.absoluteFillObject } : { flexGrow: 0, flex: 0 }}>
             <AnimatedView style={{
                 ...StyleSheet.absoluteFillObject,
                 position: "absolute",
@@ -303,7 +306,7 @@ const BottomBarComponent = (props: Props) => {
                 flex: 1,
                 backgroundColor: 'rgba(0,0,0,0.5)',
                 display: isCloseIcon ? "flex" : "none",
-                opacity:fullScreenAnimation
+                opacity: fullScreenAnimation
             }} />
 
             <View style={{ flex: 1, zIndex: 999 }}>
@@ -351,7 +354,7 @@ const BottomBarComponent = (props: Props) => {
 
                 {/* ****************** End of CIRCULAR CATEGORIES ****************** */}
             </View>
-        </>
+        </View >
     );
 }
 

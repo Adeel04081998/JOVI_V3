@@ -7,9 +7,9 @@ import Axios from './Axios';
 const dispatch = store.dispatch;
 
 export const refreshTokenMiddleware = (requestCallback, params) => {
-    // Toast.info("Session Expired!");
-    // sharedLogoutUser();
-    // return;
+    Toast.info("Session Expired!");
+    sharedLogoutUser();
+    return;
 
     // BELOW CODE COMMENTED WILL BE IMPLMEMENT LATER
     const userReducer = store.getState().userReducer;

@@ -39,7 +39,7 @@ export default () => {
         const { greetingsList, alertMsgList } = homeScreenDataViewModel ?? {};
         greetingMessage = greetingsList?.[0] ?? null; // would be dynamic in future for schedule messages
         alertMessage = alertMsgList?.[0] ?? false;// would be dynamic in future for schedule messages
-        caption = String(greetingMessage?.header).replace(/<<firstName>>/g, "");
+        caption = String(greetingMessage?.header).replace(/[<<Name>>, <<phoneNumber>>]/g, "");
         name = userReducer["firstName"];
         // let totalStr = String(greetingMessage?.header).split("<<")
         // caption = totalStr[0];
@@ -63,8 +63,8 @@ export default () => {
                 duration: 700,
                 useNativeDriver: true,
                 easing: Easing.ease
-            }).start(finished=>{
-                if(finished){
+            }).start(finished => {
+                if (finished) {
                     dispatch(ReduxActions.showRobotAction());
                 }
             });
@@ -82,7 +82,7 @@ export default () => {
             <ScrollView style={{ flexDirection: "row" }} horizontal showsHorizontalScrollIndicator={false}>
                 {
                     DATA.map((order, index) => (
-                        <View key={`recent-order-${index}`} style={{ height: CARD_HEIGHT, backgroundColor: "#fff", marginHorizontal: index > 0 ? 10 : 0, borderRadius: 10, justifyContent: "space-between" }}>
+                        <View key={`recent-order-${index}`} style={{ height: CARD_HEIGHT, backgroundColor: "#fff", marginRight: 10, borderRadius: 10, justifyContent: "space-between" }}>
                             <View style={{ paddingHorizontal: SPACING, padding: 5 }}>
                                 <Text fontFamily='PoppinsMedium' numberOfLines={1} style={{ fontSize: 14, color: "#272727" }}>
                                     Beef patty Burger
@@ -138,7 +138,7 @@ export default () => {
                 </Text>
             </Text>
             <Text style={categoryStyles.greetingBodyText} numberOfLines={2}>
-                {`${greetingMessage?.body}`}
+                {`${greetingMessage?.body?.replace(/[<<Name>>, <<phoneNumber>>]/g, "")}`}
             </Text>
         </AnimatedView>
     }
@@ -196,62 +196,88 @@ export default () => {
     const SPACING_VERTICAL = 10;
     const SPACING_BOTTOM = 0;
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <CustomHeader />
-            {
-                loaderVisible?
-                    <View
-                        style={{ height: '93%', paddingTop: 5, paddingHorizontal: 5, display: 'flex', justifyContent: 'center', alignContent: 'center',}}
-                    >
-                        <LottieView
-                            autoSize={true}
-                            resizeMode={'contain'}
-                            style={{ height:Platform.OS === 'android'?'100%':'97%', width: '100%' }}
-                            source={require('../../assets/gifs/Homeloading.json')}
-                            autoPlay
-                            loop
-                        />
-                    </View>
-                    :
-                    <Animated.View style={{
-                        opacity: homeFadeIn.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: [0.6, 1]
-                        }), transform: [{
-                            scale: homeFadeIn.interpolate({
-                                inputRange: [0, 1],
-                                outputRange: [0.9, 1]
-                            })
-                        }]
-                    }}>
-                        <KeyboardAwareScrollView style={{}} showsVerticalScrollIndicator={false}>
-                            <Greetings />
-                            <ImageCarousel
-                                // aspectRatio={16 / 7}
-                                // width={150}
-                                data={promotionsReducer?.dashboardContentListViewModel?.dashboardPromoListVM ?? [{ promoImg: `Dev/DashboardBanner/2021/5/20/Jov_banner_350x220 (1)_12173.jpg` }]} // Hardcoded url added for QA testing only if there is no data in db => Mudassir
-                                uriKey="promoImg"
-                                containerStyle={{
-                                    marginHorizontal: 10,
-                                    alignItems: 'center',
-                                    borderRadius: 12,
-                                    // backgroundColor: "red",
-                                    // resizeMode: "contain"
-                                }}
-                                height={170}
+        <View style={{ flex: 1, flexGrow: 1 }}>
+            <SafeAreaView style={{ flex: 1 }}>
+                <CustomHeader />
+                {
+                    loaderVisible ?
+                        <View
+                            style={{ height: '93%', paddingTop: 5, paddingHorizontal: 5, display: 'flex', justifyContent: 'center', alignContent: 'center', }}
+                        >
+                            <LottieView
+                                autoSize={true}
+                                resizeMode={'contain'}
+                                style={{ height: Platform.OS === 'android' ? '100%' : '97%', width: '100%' }}
+                                source={require('../../assets/gifs/Homeloading.json')}
+                                autoPlay
+                                loop
                             />
-                            <View style={{ margin: SPACING_VERTICAL }}>
-                                <Search />
-                                <Categories cartOnPressHandler={cartOnPressHandler} categoriesList={categoriesList} categoryStyles={categoryStyles} />
-                                <AvatarAlert />
-                                <RecentOrders />
-                                <GenericList />
-                            </View>
-                        </KeyboardAwareScrollView>
-                    </Animated.View>
-            }
+                        </View>
+                        :
+                        <Animated.View style={{
+                            opacity: homeFadeIn.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: [0.6, 1]
+                            }), transform: [{
+                                scale: homeFadeIn.interpolate({
+                                    inputRange: [0, 1],
+                                    outputRange: [0.9, 1]
+                                })
+                            }]
+                        }}>
+                            <KeyboardAwareScrollView style={{}} showsVerticalScrollIndicator={false}>
+                                <Greetings />
+                                <ImageCarousel
+                                    // aspectRatio={16 / 7}
+                                    // width={150}
+                                    data={promotionsReducer?.dashboardContentListViewModel?.dashboardPromoListVM ?? [{ promoImg: `Dev/DashboardBanner/2021/5/20/Jov_banner_350x220 (1)_12173.jpg` }]} // Hardcoded url added for QA testing only if there is no data in db => Mudassir
+                                    uriKey="promoImg"
+                                    containerStyle={{
+                                        marginHorizontal: 10,
+                                        alignItems: 'center',
+                                        borderRadius: 12,
+                                        // backgroundColor: "red",
+                                        // resizeMode: "contain"
+                                    }}
+                                    height={170}
+                                />
+                                <View style={{ margin: SPACING_VERTICAL, paddingBottom: Platform.select({ android: 160, ios: 140 }) }}>
+                                    <Search />
+                                    <Categories cartOnPressHandler={cartOnPressHandler} categoriesList={categoriesList} categoryStyles={categoryStyles} />
+                                    <AvatarAlert />
+                                    <RecentOrders />
+                                    <GenericList />
+                                </View>
+                            </KeyboardAwareScrollView>
+                        </Animated.View>
+                }
 
-        </SafeAreaView>
+            </SafeAreaView>
+            <BottomBarComponent
+                leftData={[{
+                    id: 1,
+                    iconName: "home",
+                    title: "Home",
+                },
+                {
+                    id: 2,
+                    iconName: "person",
+                    title: "Profile",
+                }
+                ]}
+                rightData={[{
+                    id: 3,
+                    iconName: "wallet",
+                    title: "Wallet",
+                },
+                {
+                    id: 4,
+                    iconName: "pin",
+                    title: "Location",
+                }
+                ]}
+            />
+        </View>
     );
 };
 

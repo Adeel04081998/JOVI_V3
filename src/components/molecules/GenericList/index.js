@@ -14,7 +14,7 @@ import { postRequest } from '../../../manager/ApiManager';
 import Endpoints from '../../../manager/Endpoints';
 
 export default ({ vendorType = 0, imageStyles = {}, showMoreBtnText = "", }) => {
-    const SPACING_BOTTOM = 50;
+    const SPACING_BOTTOM = 0;
     const [data, setData] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(true);
     const fetchData = () => {
