@@ -1,4 +1,5 @@
 import React, { lazy } from 'react';
+import { ColorValue } from 'react-native';
 import { GestureResponderEvent, StyleProp, ViewStyle } from "react-native";
 import View from './View';
 
@@ -7,7 +8,7 @@ interface Props{
     style?: StyleProp<ViewStyle>;
     name?: string;
     size?: number;
-    color?: any;
+    color?: ColorValue;
     onPress?: (event: GestureResponderEvent) => void;
 
     brand?: boolean;//ONLY FOR FontAwesome5
