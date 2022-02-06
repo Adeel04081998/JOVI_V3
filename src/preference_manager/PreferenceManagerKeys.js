@@ -7,4 +7,5 @@ export default {
     "PERSIST_CART": "@PERSIST_CART",
     "USER_WHITE_LIST": "USER",
     "CART_WHITE_LIST": "CART",
+    "BASE_URL": "@BASE_URL",
 }

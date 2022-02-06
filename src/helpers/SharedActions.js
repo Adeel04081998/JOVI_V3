@@ -1,6 +1,6 @@
 import React from 'react';
 import { useIsFocused } from '@react-navigation/native';
-import { StatusBar } from "react-native";
+import { Alert, StatusBar } from "react-native";
 import { Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import BackgroundTimer from 'react-native-background-timer';
@@ -145,7 +145,7 @@ export const sharedGetHomeMsgsApi = () => {
         "getPersonalizeMsgs": true,
     };
     postRequest(Endpoints.GET_HOME_MSGS, payload, res => {
-        // console.log("[sharedGetHomeMsgsApi].res", res);
+        // console.log("[sharedGetHomeMsgsApi].res", res.data);
         if (res.data.homeScreenDataViewModel.robotJson) {
             fetchRobotJson(res.data.homeScreenDataViewModel.robotJson, (data) => {
                 // console.log('data robotJson',data)
@@ -182,7 +182,7 @@ export const sharedGetPromotions = () => {
         "longitude": 73.075001,// should be replace with user's final destination
         "isCitySpecific": true
     }, res => {
-        console.log("[sharedGetPromotions].res", res);
+        // console.log("[sharedGetPromotions].res", res);
         dispatch(ReduxActions.setPromotionsAction({ ...res.data }))
     },
         err => {
@@ -201,4 +201,8 @@ export const sharedLogoutUser = () => {
 export const renderFile = (picturePath) => {
     const userReducer = store.getState().userReducer;
     return `${configs.BASE_URL}/api/Common/S3File/${encodeURIComponent(picturePath)}?access_token=${userReducer?.token?.authToken}`
+}
+
+export const sharedConfirmationAlert = (title, message, buttons = [], options = { cancelable: true, onDismiss: () => { } }) => {
+    Alert.alert(title, message, buttons, options)
 }

@@ -17,6 +17,7 @@ import Dropdown from '../../components/molecules/Dropdown/Index';
 import { sendOTPToServer, sharedExceptionHandler } from '../../helpers/SharedActions';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
+import preference_manager from '../../preference_manager';
 import FontFamily from '../../res/FontFamily';
 import theme from '../../res/theme';
 import ENUMS from '../../utils/ENUMS';

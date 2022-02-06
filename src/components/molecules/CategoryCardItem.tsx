@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Animated, Easing, StyleProp, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
 import { NumberProp, SvgXml } from 'react-native-svg';
 import { VALIDATION_CHECK } from '../../helpers/SharedActions';
+import sharedStyles from '../../res/sharedStyles';
 import AnimatedView from '../atoms/AnimatedView';
 import Text from '../atoms/Text';
 
@@ -42,15 +43,7 @@ const CategoryCardItem = (props: Props) => {
 
     return (
         <TouchableOpacity {...props} style={[{
-            shadowColor: "#000",
-            shadowOffset: {
-                width: 0,
-                height: 2,
-            },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
-
+            ...sharedStyles._styles().shadow,
             backgroundColor: '#fff',
             borderRadius: 10,
 
