@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native"
 
 export default {
-    _styles(colors) {
+    _styles(colors = {}) {
         return StyleSheet.create({
             shadow: {
                 shadowColor: colors.black || "#000",
