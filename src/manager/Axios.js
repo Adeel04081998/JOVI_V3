@@ -1,7 +1,6 @@
 import Axios from 'axios';
 import Toast from '../components/atoms/Toast';
 import { store } from '../redux/store';
-import configs from '../utils/configs';
 import GV from '../utils/GV';
 // import perf from '@react-native-firebase/perf';
 
@@ -10,7 +9,7 @@ Axios.interceptors.request.use(
     config => {
         try {
             if (!GV.NET_INFO_REF?.current?.isConnected) return Toast.info("No Internet connection!", 5000);
-            config.baseURL = configs.BASE_URL;
+            config.baseURL = GV.BASE_URL.current;
             config.timeout = 15000;
             config.timeoutErrorMessage = "Request Timeout..."
             config.headers['clientInfo'] = {}; // for device and app info in future

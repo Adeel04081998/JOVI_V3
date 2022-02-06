@@ -2,7 +2,6 @@ import Toast from '../components/atoms/Toast';
 import { sharedExceptionHandler, sharedLogoutUser } from '../helpers/SharedActions';
 import ReduxActions from '../redux/actions';
 import { store } from '../redux/store';
-import configs from '../utils/configs';
 import GV from '../utils/GV';
 import Axios from './Axios';
 const dispatch = store.dispatch;
@@ -50,7 +49,7 @@ export const refreshTokenMiddleware = (requestCallback, params) => {
 
 export const postRequest = async (url, data, onSuccess = () => { }, onError = () => { }, headers = {}, showLoader = true, customLoader = null) => {
     // if (!networkMiddleWare()?.isConnected) return Toast.error('No Internet Connection')
-    
+
     if (customLoader) {
         customLoader(true);
     }
@@ -84,7 +83,7 @@ export const multipartPostRequest = (url, formData, onSuccess = () => { }, onErr
     // const appStore = store.getState();
     // console.log("appStore", appStore);
     // console.log("appStorePersist", appStorePersist);
-    fetch(`${configs.BASE_URL}/${url}`, {
+    fetch(`${GV.BASE_URL.current}/${url}`, {
         method: 'post',
         headers: {
             'Content-Type': 'multipart/form-data',

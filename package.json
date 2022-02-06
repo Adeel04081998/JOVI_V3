@@ -5,23 +5,36 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "android-ios":"npx react-native run-android && npx react-native run-ios",
+    "android-ios": "npx react-native run-android && npx react-native run-ios",
     "start": "react-native start",
-    "branch_change_new_packages": "yarn && npx react-native run-android && cd ios && pod install && cd .. && npx react-native run-ios",
     "dev_ios": "cd ios && pod install && cd .. && react-native run-ios",
     "dev_android": "cd android&&./gradlew clean&&./gradlew --stop&&cd - &&npx react-native run-android",
+    "branch_change_new_packages": "yarn && npx react-native run-android && cd ios && pod install && cd .. && npx react-native run-ios",
     "build_android": "cd android&&./gradlew clean&&./gradlew --stop&& ./gradlew bundleRelease &&cd - &&npx react-native run-android --variant=release",
-
+    
     "qa_codepush_ios_v2_staging": "appcenter codepush release-react -a cibaksolutionspk-gmail.com/JOVI-IOS-V3 -d Staging",
     "qa_codepush_ios_v2_production": "appcenter codepush release-react -a cibaksolutionspk-gmail.com/JOVI-IOS-V3 -d Production",
     
-    "_comment": "[qa_codepush_ios_v2_staging, qa_codepush_ios_v2_production] As we have update the app name from v3 to v2 so don't be confused with `cibaksolutionspk-gmail.com/JOVI-IOS-V3` in ios v2 commands",
-
+    "_comment": "[qa_codepush_ios_v2_staging, qa_codepush_ios_v2_production] As we have updated the app name from v3 to v2 so don't be confused with `cibaksolutionspk-gmail.com/JOVI-IOS-V3` in ios v2 commands",
+    
     "qa_codepush_android_v2_staging": "appcenter codepush release-react -a cibaksolutionspk-gmail.com/JOVI-ANDROID-V2-QA -d Staging",
     "qa_codepush_android_v2_production": "appcenter codepush release-react -a cibaksolutionspk-gmail.com/JOVI-ANDROID-V2-QA -d Production",
 
     "live_codepush_android_v3_staging": "appcenter codepush release-react -a cibaksolutionspk-gmail.com/JOVI-ANDROID-V3 -d Staging",
     "live_codepush_android_v3_production": "appcenter codepush release-react -a cibaksolutionspk-gmail.com/JOVI-ANDROID-V3 -d Production",
+
+    "set:env:debug": "node ./scripts/set-env.js --env debug",
+    "set:env:staging": "node ./scripts/set-env.js --env staging",
+    "set:env:release": "node ./scripts/set-env.js --env release",
+
+    "run:android:debug": "yarn set:env:debug && yarn android --variant debug",
+    "run:android:staging": "yarn set:env:staging && yarn android --variant staging",
+    "run:android:release": "yarn set:env:release && yarn android --variant release",
+
+    "run:ios:debug": "yarn set:env:debug && yarn ios --configuration Debug",
+    "run:ios:staging": "yarn set:env:staging && yarn ios --configuration Staging",
+    "run:ios:release": "yarn set:env:release && yarn ios --configuration Release",
+
     "test": "jest",
     "lint": "eslint ."
   },
@@ -76,7 +89,8 @@
     "jest": "^26.6.3",
     "metro-react-native-babel-preset": "^0.66.2",
     "react-test-renderer": "17.0.2",
-    "typescript": "^4.5.5"
+    "typescript": "^4.5.5",
+    "yargs": "^17.3.1"
   },
   "jest": {
     "preset": "react-native"

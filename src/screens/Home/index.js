@@ -10,6 +10,8 @@ import CustomHeader from '../../components/molecules/CustomHeader';
 import GenericList from '../../components/molecules/GenericList';
 import ImageCarousel from '../../components/molecules/ImageCarousel';
 import BottomBarComponent from '../../components/organisms/BottomBarComponent';
+import { sharedConfirmationAlert, sharedLogoutUser } from "../../helpers/SharedActions";
+import preference_manager from "../../preference_manager";
 import ReduxActions from '../../redux/actions';
 import theme from "../../res/theme";
 import GV from "../../utils/GV";
@@ -55,7 +57,16 @@ export default () => {
     return (
         <View style={homeStyles.container}>
             <SafeAreaView style={{ flex: 1 }}>
-                <CustomHeader />
+                <CustomHeader onRightIconPress={() => {
+                    sharedConfirmationAlert("Alert", "Log me out and remove all the cache?",
+                        [
+                            { text: "No", onPress: () => { } },
+                            {
+                                text: "Yes", onPress: () => preference_manager.clearAllCacheAsync().then(() => sharedLogoutUser())
+                            },
+                        ]
+                    )
+                }} />
                 <Animated.View style={{
                     opacity: homeFadeIn.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1] }),
                     transform: [{ scale: homeFadeIn.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] }) }]
