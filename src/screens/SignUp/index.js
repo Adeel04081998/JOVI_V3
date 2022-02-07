@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { View, Appearance, Keyboard,  Platform, } from "react-native"
+import { View, Appearance, Keyboard, Platform, } from "react-native"
 import { sharedGetDeviceInfo, sharedExceptionHandler } from "../../helpers/SharedActions"
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
 import TextInput from "../../components/atoms/TextInput";
@@ -28,10 +28,10 @@ export default () => {
     const { phoneNumber, hash, } = userReducer;
     let initialState = {
         inputsArr: [
-            { id: 1, field: "Email", title: 'Email address', placeholder: 'Email', pattern: Regex.email, keyboardType: "email-address", validationerror: "Invalid email address", backgroundColor: 'white', value: '', maxLength: 56, isValid: false },
-            { id: 2, field: "FirstName", title: 'First name', placeholder: 'First name', pattern: Regex.name, keyboardType: "default", validationerror: "Invalid first name", backgroundColor: 'white', value: '', maxLength: 15, isValid: false },
-            { id: 3, field: "LastName", title: 'Last name', placeholder: 'Last name', pattern: Regex.name, keyboardType: "default", validationerror: "Invalid last name", backgroundColor: 'white', value: '', maxLength: 15, isValid: false },
-            { id: 4, field: "Mobile", title: 'Mobile number', placeholder: 'Mobile', pattern: Regex.numberOnly, keyboardType: "number-pad", validationerror: "Invalid mobile number", backgroundColor: '#EFEFEF', value: phoneNumber, maxLength: 15, isValid: true, },
+            { id: 1, field: "Email", title: 'Email address', placeholder: 'Email', pattern: Regex.email, keyboardType: "email-address", validationerror: "Invalid email address", backgroundColor: 'white', value: "", maxLength: 56, isValid: true, showError: false },
+            { id: 2, field: "FirstName", title: 'First name', placeholder: 'First name', pattern: Regex.name, keyboardType: "default", validationerror: "Invalid first name", backgroundColor: 'white', value: "", maxLength: 15, isValid: true, showError: false },
+            { id: 3, field: "LastName", title: 'Last name', placeholder: 'Last name', pattern: Regex.name, keyboardType: "default", validationerror: "Invalid last name", backgroundColor: 'white', value: "", maxLength: 15, isValid: true, showError: false },
+            { id: 4, field: "Mobile", title: 'Mobile number', placeholder: 'Mobile', pattern: Regex.numberOnly, keyboardType: "number-pad", validationerror: "", backgroundColor: '#EFEFEF', value: phoneNumber, maxLength: 15, isValid: true, showError: false },
         ],
         'isChecked': false,
         'emailAlreadyExist': null,
@@ -108,6 +108,9 @@ export default () => {
 
     }
     const _signUpHandler = async () => {
+        let arr = state.inputsArr.map(x => ({ ...x, showError: (!String(x.value).length || !x.isValid) ? true : false }))
+        setState(pre => ({ ...pre, inputsArr: arr }))
+        return;
         setState((pre) => ({
             ...pre,
             isLoading: true
@@ -157,6 +160,7 @@ export default () => {
     const onCrossHandler = () => {
         NavigationService.NavigationActions.common_actions.goBack();
     }
+    // console.log(`inputsArr`, state.inputsArr[1]);
     return (
 
 
@@ -175,9 +179,10 @@ export default () => {
 
             </View>
 
-            <KeyboardAwareScrollView style={{}} contentContainerStyle={{ flexGrow: 1, marginTop: 30 }}>
+            <KeyboardAwareScrollView contentContainerStyle={{ flexGrow: 1, marginTop: 30 }}>
                 <View style={{ flex: 1, }}>
                     {inputsArr.map((x, i) => {
+                        const isError = x.id !== 4 && x.showError;
                         return <View style={{ marginTop: 25 }} key={`key-${i}`}>
                             <TextInput
                                 title={x.title}
@@ -186,7 +191,7 @@ export default () => {
                                 value={x.value}
                                 onChangeText={(value) => (_onChangeHandler(x.field, value, i))}
                                 pattern={x.pattern}
-                                errorText={x.validationerror}
+                                errorText={isError ? x.validationerror : ""}
                                 keyboardType={x.keyboardType}
                                 isValid={(value) => {
                                     inputsArr[i].isValid = value;
@@ -195,14 +200,20 @@ export default () => {
                                         checkEmailAlreadyExist(i)
                                     }
                                 }}
-                                forceError={x.id === 1 ? emailAlreadyExist : false}
+                                forceError={isError}
                                 titleStyle={{ top: -30, color: 'black', fontSize: 17 }}
-                                containerStyle={{ borderColor: x.isValid === false && x.value.length > 0 ? "red" : "#E2E2E2", backgroundColor: x.backgroundColor, borderWidth: 1 }}
-                                editable={editable(x)}
+                                containerStyle={{ borderColor: isError ? "red" : "#E2E2E2", backgroundColor: x.backgroundColor, borderWidth: 1 }}
+                                // editable={editable(x)}
                                 errorTextStyle={[styles.errorText, { fontSize: 12 }]}
                                 maxLength={x.maxLength}
-                                iconName={x.id === 4 ? VALID_ICON : null}
+                                iconName={""}
                                 iconColor={x.id === 4 ? "green" : null}
+                                onFocus={() => {
+                                    state.inputsArr[i].showError = false;
+                                    setState(pre => ({ ...pre, inputsArr, activeIndex: i }))
+                                }}
+                                showIcon={false}
+
                             />
                         </View>
                     })
@@ -232,10 +243,10 @@ export default () => {
                 <Button
                     text="Sign Up"
                     onPress={_signUpHandler}
-                    disabled={!enableSubmit()}
+                    disabled={__DEV__ ? false : !enableSubmit()}
                     isLoading={isLoading}
                     textStyle={{ fontSize: 16, color: '#fff', }}
-                    style={{ width: "90%", alignSelf: "center", marginBottom: 10, backgroundColor: !enableSubmit() ? "#D3D3D3" : "#7359BE", borderRadius: 10 }}
+                    style={{ width: "90%", alignSelf: "center", marginBottom: 10, backgroundColor: __DEV__ ? "#7359BE" : !enableSubmit() ? "#D3D3D3" : "#7359BE", borderRadius: 10 }}
                 />
             </KeyboardAwareScrollView >
 
