@@ -18,6 +18,7 @@ type Props = React.ComponentProps<typeof TouchableOpacity> & {
     height?: NumberProp;
 
     title?: string;
+    containerStyleOverride: boolean;
 };
 
 const defaultProps = {
@@ -28,6 +29,7 @@ const defaultProps = {
     width: 95,
     height: 130,
     title: '',
+    containerStyleOverride: false
 }
 
 const CategoryCardItem = (props: Props) => {
@@ -42,7 +44,10 @@ const CategoryCardItem = (props: Props) => {
     }, []);
 
     return (
-        <TouchableOpacity {...props} style={[{
+        <TouchableOpacity {...props} style={props.containerStyleOverride ? {
+            backgroundColor: '#fff',
+            borderRadius: 10,
+        } : [{
             ...sharedStyles._styles().shadow,
             backgroundColor: '#fff',
             borderRadius: 10,

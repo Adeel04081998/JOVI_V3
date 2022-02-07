@@ -14,7 +14,7 @@ import { postRequest } from '../../../manager/ApiManager';
 import Endpoints from '../../../manager/Endpoints';
 import sharedStyles from '../../../res/sharedStyles';
 
-export default ({ vendorType = 0, imageStyles = {}, showMoreBtnText = "", }) => {
+export default ({ vendorType = 0, imageStyles = {}, themeColors = null, showMoreBtnText = "", }) => {
     const SPACING_BOTTOM = 0;
     const [data, setData] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(true);
@@ -24,7 +24,7 @@ export default ({ vendorType = 0, imageStyles = {}, showMoreBtnText = "", }) => 
                 "vendorType": vendorType
             },
             res => {
-                // console.log("GENERIC_LIST.RESPONSE", res);
+                console.log("GENERIC_LIST.RESPONSE", res);
                 if (res.data.statusCode !== 200) return;
                 setData(res.data.vendorCategoriesViewModel.vendorList);
             },
@@ -38,7 +38,7 @@ export default ({ vendorType = 0, imageStyles = {}, showMoreBtnText = "", }) => 
     React.useEffect(() => {
         fetchData();
     }, [vendorType])
-    const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
+    const colors = themeColors ?? theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
 
     const SCALE_IMAGE = {
         height: constants.window_dimensions.height / 5,
@@ -58,7 +58,7 @@ export default ({ vendorType = 0, imageStyles = {}, showMoreBtnText = "", }) => 
                     <Text style={styles.title} numberOfLines={1} >{title}</Text>
                     {(distance || estTime) &&
                         <View style={styles.iconContainer} >
-                            <VectorIcon name={item.distance ? "map-marker" : "clock-time-four"} type={item.distance ? "FontAwesome" : "MaterialCommunityIcons"} color={colors.theme || "#6D51BB"} size={15} style={{ marginRight: 5 }} />
+                            <VectorIcon name={item.distance ? "map-marker" : "clock-time-four"} type={item.distance ? "FontAwesome" : "MaterialCommunityIcons"} color={colors.primary || "#6D51BB"} size={15} style={{ marginRight: 5 }} />
                             <Text style={styles.estTime} >{estTime || distance}</Text>
                         </View>
                     }
@@ -117,7 +117,7 @@ const _styles = (colors, width, height) => StyleSheet.create({
         fontSize: 16
     },
     viewMoreBtn: {
-        color: colors.theme || '#6D51BB', // colors.theme here should be the theme color of specific category
+        color: colors.primary || '#6D51BB', // colors.primary here should be the theme color of specific category
         fontSize: 12
     },
     itemContainer: {
@@ -153,7 +153,7 @@ const _styles = (colors, width, height) => StyleSheet.create({
     },
     estTime: {
         fontSize: 12,
-        color: colors.theme || '#6D51BB', // colors.theme here should be the theme color of specific category
+        color: colors.primary || '#6D51BB', // colors.primary here should be the theme color of specific category
         marginTop: Platform.OS === "android" ? 3 : 0
     },
     title: {

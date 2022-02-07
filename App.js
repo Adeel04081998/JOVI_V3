@@ -26,6 +26,7 @@ import configs from './src/utils/configs';
 import Robot from './src/components/organisms/Robot';
 import { useSelector } from 'react-redux';
 import { sharedGetEnumsApi, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser } from './src/helpers/SharedActions';
+import PistopListing from './src/screens/PitstopListing';
 
 AntDesign.loadFont();
 Entypo.loadFont();
@@ -133,7 +134,8 @@ const App = () => {
         } */}
         <NavigationContainer theme={theme} ref={_NavgationRef} >
           <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
-            <RootStack />
+            {/* <RootStack /> */}
+            <PistopListing />
           </View>
         </NavigationContainer>
         <Robot />

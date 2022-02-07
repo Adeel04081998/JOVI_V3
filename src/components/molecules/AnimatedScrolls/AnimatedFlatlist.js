@@ -55,7 +55,7 @@ const AnimatedFlatlist = ({ horizontal = false, data = [], animationType = 'each
                 })
             }],
             ...itemContainerStyle
-        } : {}}>
+        } : {...itemContainerStyle}}>
             {renderItem(item, index)}
         </Animated.View>
     }

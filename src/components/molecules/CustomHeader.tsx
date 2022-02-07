@@ -47,6 +47,7 @@ type Props = React.ComponentProps<typeof RNView> & {
     onTitlePress?: (event: GestureResponderEvent) => void;
     titleStyle?: StyleProp<TextStyle>;
     hideFinalDestination?:boolean;
+    defaultColor:String;
     //CENTER PROP's ENDING
 };
 
@@ -88,13 +89,14 @@ const defaultProps = {
     onTitlePress: undefined,
     titleStyle: {},
     hideFinalDestination:false,
+    defaultColor:'#6D51BB',
     //CENTER PROP's ENDING
 
 
 };//end of defaultProps
 
 const CustomHeader = (props: Props) => {
-    const DEFAULT_COLOR = '#6D51BB';//REDUX.THEME.background;
+    const DEFAULT_COLOR =props.defaultColor;//REDUX.THEME.background;
     const styles = headerStyles(DEFAULT_COLOR);
     const finalDestination = 'Set your location';
 
