@@ -219,7 +219,7 @@ export default (props) => {
     };
     const onChangeHandler = (val, index) => {
         if (isNaN(val)) return;
-        if (val?.length === 4) {
+        if (val?.length === 4 && inputs.length === 4) {
             let arr = []
             for (let index = 0; index < val.length; index++) {
                 arr.push(val[index])
