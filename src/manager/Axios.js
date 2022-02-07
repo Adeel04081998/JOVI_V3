@@ -1,26 +1,23 @@
 import Axios from 'axios';
-import configs from '../utils/configs';
-import preference_manager from '../preference_manager';
-import GV from '../utils/GV';
 import Toast from '../components/atoms/Toast';
 import { store } from '../redux/store';
+import configs from '../utils/configs';
+import GV from '../utils/GV';
 // import perf from '@react-native-firebase/perf';
-// import { getLocalSettings } from '../utils/sharedActions';
 
 
 Axios.interceptors.request.use(
     config => {
-        if (!GV.NET_INFO_REF?.current?.isConnected) return Toast.info("No Internet connection!", 5000);
         try {
-            // console.log(`store`, store.getState());
+            if (!GV.NET_INFO_REF?.current?.isConnected) return Toast.info("No Internet connection!", 5000);
             config.baseURL = configs.BASE_URL;
+            config.timeout = 15000;
+            config.timeoutErrorMessage = "Request Timeout..."
+            config.headers['clientInfo'] = {}; // for device and app info in future
             const userReducer = store.getState().userReducer;
             const authToken = userReducer?.token?.authToken; // [?.] Added becuase of before login api request when we dont have auth token...
             if (authToken) {
                 config.headers['Authorization'] = 'Bearer ' + authToken;
-            }
-            else {
-                config.headers['clientInfo'] = {}; // for device and app info in future
             }
             // if (getLocalSettings().app_perf_enabled) {
             //     const httpMetric = perf().newHttpMetric(config.url, String(config.method).toUpperCase());
@@ -78,7 +75,7 @@ Axios.interceptors.response.use(
     },
     async (error) => {
         try {
-            console.log("[Axios.Reponse.Error]", JSON.stringify(error.response))
+            console.log("[Axios.Reponse.Error]", JSON.stringify(error))
             // if (error?.response?.status === 400) Toast.error('Bad Request!');
             // else if (error?.response?.status === 404) Toast.error('Bad Request!');
             if (error?.response?.status === 500) Toast.error('Something went wrong!');

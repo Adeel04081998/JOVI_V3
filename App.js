@@ -71,7 +71,7 @@ const App = () => {
     }
   }
   function message(msg) {
-    console.log("Codepush message", msg);
+    // console.log("Codepush message", msg);
   }
   function codePushStatusDidChange(syncStatus) {
     switch (syncStatus) {
@@ -102,14 +102,14 @@ const App = () => {
     }
   }
   function codePushDownloadDidProgress(progress) {
-    console.log("progress", progress);
+    // console.log("progress", progress);
   }
   useEffect(() => {
     CodePush.sync(CODE_PUSH_OPTIONS, syncStatus => {
-      console.log("[CodePush.sync].syncStatus", syncStatus)
+      // console.log("[CodePush.sync].syncStatus", syncStatus)
       codePushStatusDidChange(syncStatus)
     }, progress => {
-      console.log("[CodePush.sync].progress", progress)
+      // console.log("[CodePush.sync].progress", progress)
       codePushDownloadDidProgress(progress)
     })
     setTimeout(() => {

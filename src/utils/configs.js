@@ -1,6 +1,25 @@
+import { Alert } from "react-native";
+import preference_manager from "../preference_manager";
 import constants from "../res/constants"
-let baseUrl = __DEV__ ? constants.url_dev : constants.url_qasprint_v1;
-
+import GV from "./GV";
+let baseUrl = __DEV__ ? constants.url_dev : constants.url_live;
+// SOLUTIN FOR QA BASE URL CHANGEABLE
+// preference_manager.getSetBaseUrlAsync(GV.GET_VALUE)
+//     .then(url => {
+//         if (url) {
+//             baseUrl = url;
+//             Alert.alert(`Your base url is \n ${baseUrl}`);
+//         }
+//         else {
+//             if (!__DEV__) {
+//                 Alert.prompt("Base url!", "Write your base url.", async (text) => {
+//                     await preference_manager.getSetBaseUrlAsync(GV.SET_VALUE, text)
+//                     Alert.alert(`Your base url is saved as ${text}. Please reload your App.`);
+//                 })
+//             }
+//         }
+//     })
+//     .catch(err => console.log("[getSetBaseUrlAsync].catch", err))
 export default {
     BASE_URL: baseUrl,
     CODE_PUSH_DEP_KEYS: {

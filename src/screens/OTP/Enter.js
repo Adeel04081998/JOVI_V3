@@ -17,6 +17,7 @@ import Dropdown from '../../components/molecules/Dropdown/Index';
 import { sendOTPToServer, sharedExceptionHandler } from '../../helpers/SharedActions';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
+import preference_manager from '../../preference_manager';
 import FontFamily from '../../res/FontFamily';
 import theme from '../../res/theme';
 import ENUMS from '../../utils/ENUMS';
@@ -68,13 +69,13 @@ export default () => {
             return setForcePattern(true)
         }
         const onSuccess = (res) => {
-            console.log("res...", res);
+            // console.log("res...", res);
             const { statusCode, message } = res.data;
             if (statusCode === 417) return Toast.error(message);
             NavigationService.NavigationActions.common_actions.navigate(ROUTES.AUTH_ROUTES.VerifyOTP.screen_name, { payload })
         }
         const onError = (err) => {
-            console.log("err...", err.response);
+            // console.log("err...", err.response);
             sharedExceptionHandler(err)
         }
         const onLoader = (loader) => {
@@ -159,7 +160,7 @@ export default () => {
                 <Button
                     style={styles.continueButton}
                     text={'Continue'}
-                    textStyle={{ color: '#fff', ...styles.textAlignCenter , fontSize:14, }}
+                    textStyle={{ color: '#fff', ...styles.textAlignCenter, fontSize: 14, }}
                     onPress={onPress}
                     isLoading={isLoading}
                     disabled={disbleContinueButton || isLoading}
