@@ -69,7 +69,7 @@ export default () => {
                         ]
                     )
                 }} />
-                <Animated.View style={{
+                {loaderVisible ? renderLoader() : <Animated.View style={{
                     opacity: homeFadeIn.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1] }),
                     transform: [{ scale: homeFadeIn.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] }) }]
                 }}>
