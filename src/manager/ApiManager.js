@@ -7,39 +7,35 @@ import Axios from './Axios';
 const dispatch = store.dispatch;
 
 export const refreshTokenMiddleware = (requestCallback, params) => {
-    Toast.info("Session Expired!");
-    sharedLogoutUser();
-    return;
-    // BELOW CODE COMMENTED WILL BE IMPLMEMENT LATER
-    // const userReducer = store.getState().userReducer;
-    // console.log("[refreshTokenMiddleware].userReducer", userReducer);
-    // postRequest(
-    //     "/api/User/RefreshToken",
-    //     {
-    //         "accessToken": userReducer.token.authToken,
-    //         "refreshToken": userReducer.refreshToken
-    //     },
-    //     res => {
-    //         console.log("refreshTokenMiddleware.Res :", res);
-    //         if (res?.data?.statusCode === 202) {
-    //             requestCallback.apply(this, params);
-    //             if (__DEV__) Toast.success("Its only for DEV => User session refreshed....")
-    //             return;
-    //         }
-    //         else if (res?.data?.statusCode === 403) {
-    //             Toast.error("Session Expired!");
-    //             sharedLogoutUser();
-    //             return;
-    //         }
-    //         else {
-    //             dispatch(ReduxActions.setUserAction({ ...res.data }))
-    //         }
-    //     },
-    //     err => {
-    //         console.log("refreshTokenMiddleware.err", err)
-    //         sharedExceptionHandler(err)
-    //     },
-    // )
+    const userReducer = store.getState().userReducer;
+    console.log("[refreshTokenMiddleware].userReducer", userReducer);
+    postRequest(
+        "/api/User/RefreshToken",
+        {
+            "accessToken": userReducer.token.authToken,
+            "refreshToken": userReducer.refreshToken
+        },
+        res => {
+            console.log("refreshTokenMiddleware.Res :", res);
+            if (res?.data?.statusCode === 202) {
+                requestCallback.apply(this, params);
+                if (__DEV__) Toast.success("Its only for DEV => User session refreshed....", 10000)
+                return;
+            }
+            else if (res?.data?.statusCode === 403) {
+                Toast.error("Session Expired!");
+                sharedLogoutUser();
+                return;
+            }
+            else {
+                dispatch(ReduxActions.setUserAction({ ...res.data }))
+            }
+        },
+        err => {
+            console.log("refreshTokenMiddleware.err", err)
+            sharedExceptionHandler(err)
+        },
+    )
 
 
 };
@@ -68,7 +64,7 @@ export const getRequest = async (url, onSuccess = () => { }, onError = () => { }
         onSuccess(res);
     } catch (error) {
         console.log("[ApiManager].getRequest.error", error);
-        if (error?.data?.StatusCode === 401) return refreshTokenMiddleware(postRequest, [url, data, onSuccess, onError, headers, false]);
+        if (error?.data?.StatusCode === 401) return refreshTokenMiddleware(postRequest, [url, onSuccess, onError, headers, false]);
         onError(error);
     }
 };
