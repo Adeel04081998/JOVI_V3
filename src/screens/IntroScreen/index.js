@@ -39,7 +39,7 @@ const IntroScreen = ({ }) => {
                     barStyle: "light-content"
                 })
             }
-            <Image source={require('../../assets/gifs/onboarding.gif')} resizeMethod={'resize'} resizeMode={'cover'} style={{width:width-120, ...introStyles.lottieView}} />
+            <Image source={require('../../assets/gifs/onboarding.gif')} resizeMethod={'scale'} resizeMode={'stretch'} style={{width:width,maxHeight:'100%', ...introStyles.lottieView}} />
             {/* <LottieView style={{
                 // width,
                 // ...introStyles.lottieView
@@ -53,7 +53,7 @@ const IntroScreen = ({ }) => {
                 style={introStyles.buttonTopView}
                 textStyle={introStyles.buttonText}
                 text={'Get Started'}
-                wait={0.7}
+                wait={0.4}
             />
         </View>
     );

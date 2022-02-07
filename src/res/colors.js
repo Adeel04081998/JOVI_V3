@@ -1,8 +1,16 @@
 export const initColors = {
+    // XD Colors Start Mudassir
     "primary": "#6D51BB",
-    "card": "#047A9E",
+    "black": "#272727",
+    "grey": "#7D7D7D",
+    "white": "#FFFFFF",
+    "input_background": "#EFEFEF",
+    "screen_background": "#F6F5FA",
+    "gradient_array": ["#FFFFFF00", "#FFFFFFB3"],
+    "disabled_button": "#707070",
+    // XD Colors End Mudassir
     "text": "#343434",
-    "border": "#1D1D1D",
+    "border": "#707070",
     "notification": "#7359BE",
     "backgroundColor": "#1D1D1D",
     "navBackgroundColor": "#343434",
@@ -20,19 +28,33 @@ export const initColors = {
 export default {
 
     "light_mode": {
-        "default": initColors,
-        "jovi": { ...initColors },
+        "default": {
+            ...initColors,
+            "primary": "#6D51BB",
+        },
+        "jovi": {
+            ...initColors,
+            "primary": "#6D51BB",
+        },
         "grocieries": {
-            ...initColors
+            ...initColors,
+            "primary": "#27C787",
+            "grey": "#6B6B6B"
         },
         "pharamcy": {
-            ...initColors
+            ...initColors,
+            "primary": "#1945BE",
+            "grey": "#6B6B6B"
         },
         "restaurant": {
-            ...initColors
+            ...initColors,
+            "primary": "#F94E41",
+            "black": "#0D0D0D",
         },
         "jovi_mart": {
-            ...initColors
+            ...initColors,
+            "primary": "#27C787",
+            "grey": "#6B6B6B"
         }
     },
     "dark_mode": {

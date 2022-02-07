@@ -9,7 +9,7 @@ export default {
                 backgroundColor: colors.Whisper || "#F6F5FA",
             },
             gifLoader: {
-                height: '93%', width: '101%', paddingLeft: 10, paddingTop: 4, paddingHorizontal: 5, display: 'flex', justifyContent: 'center', alignContent: 'center',
+                height: '93%', width: '101%', paddingLeft: 10, paddingTop: 8, paddingHorizontal: 5, display: 'flex', justifyContent: 'center', alignContent: 'center',
             },
             imageCarousal: {
                 marginHorizontal: 10,

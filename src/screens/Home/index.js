@@ -44,16 +44,18 @@ export default () => {
         }
     }, [loaderVisible]);
 
-    if (loaderVisible) return <View style={homeStyles.gifLoader}>
-        <LottieView
-            autoSize={true}
-            resizeMode={'contain'}
-            style={{ width: '100%' }}
-            source={require('../../assets/gifs/Homeloading.json')}
-            autoPlay
-            loop
-        />
-    </View>
+    const renderLoader = () => {
+        return <View style={homeStyles.gifLoader}>
+            <LottieView
+                autoSize={true}
+                resizeMode={'contain'}
+                style={{ width: '100%' }}
+                source={require('../../assets/gifs/Homeloading.json')}
+                autoPlay
+                loop
+            />
+        </View>
+    }
     return (
         <View style={homeStyles.container}>
             <SafeAreaView style={{ flex: 1 }}>
@@ -92,7 +94,7 @@ export default () => {
                             <GenericList />
                         </View>
                     </KeyboardAwareScrollView>
-                </Animated.View>
+                </Animated.View>}
             </SafeAreaView>
             <BottomBarComponent leftData={[{ id: 1, iconName: "home", title: "Home" }, { id: 2, iconName: "person", title: "Profile" }]} rightData={[{ id: 3, iconName: "wallet", title: "Wallet" }, { id: 4, iconName: "pin", title: "Location" }]} />
         </View>
