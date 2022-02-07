@@ -53,7 +53,7 @@ export default () => {
     const [cellNo, setCellNo] = React.useState(__DEV__ ? "3175106769" : "");
     const [isLoading, setIsLoading] = React.useState(false);
     const [network, setNetwork] = React.useState({
-        text: __DEV__ ? "Jazz" : "Choose your Mobile Network",
+        text: __DEV__ ? "Choose your Mobile Network" : "Choose your Mobile Network",
         value: __DEV__ ? 1 : 0
     });
     let regexp = new RegExp(Regex.pkCellNo);
@@ -96,7 +96,7 @@ export default () => {
     return <SafeAreaView style={styles.otpSafeArea}>
         <KeyboardAwareScrollView>
             <SvgXml xml={svgs.otp()} height={120} width={120} style={{ alignSelf: "center", marginBottom: 20, }} />
-            <Text fontFamily={'PoppinsMedium'} style={{ fontSize: 14, paddingLeft: 25, color: 'black' }}>Enter your mobile number</Text>
+            <Text fontFamily={'PoppinsMedium'} style={{ fontSize: 14, paddingLeft: 25, color: 'black', marginBottom:-3 }}>Enter your Mobile Number</Text>
             <View style={styles.otpDropdownParentView}>
                 <TouchableOpacity style={styles.otpDropdownView}
                     wait={0.55}//greater than the animation time of dropdown rendered below
@@ -112,11 +112,11 @@ export default () => {
                     setNetwork(item);
                     setCollapsed(!collapsed);
                 }}>
-                    <Text style={{ textAlign: "center", paddingVertical: 3 }}>{item.text}</Text>
+                    <Text style={{ textAlign: "center", paddingVertical: 3, color: colors.black }}>{item.text}</Text>
                     <View style={{}} />
                 </TouchableOpacity>} />
                 <AnimatedView style={styles.inputView}>
-                    <TouchableOpacity style={{ marginLeft: 10, flexDirection: "row", width: '15%', justifyContent: 'flex-end', backgroundColor: '#fff', alignItems: 'center' }} onPress={() => setPickerVisible(true)}>
+                    <TouchableOpacity style={{ marginLeft: 15, flexDirection: "row", width: '15%', justifyContent: 'flex-end', backgroundColor: '#fff', alignItems: 'center' }} onPress={() => setPickerVisible(true)}>
                         <Text style={{ color: '#000', paddingRight: 2 }} >{`+${country}`}</Text>
                         <VectorIcon type='AntDesign' name="caretdown" color={"#000"} style={{ marginRight: 2, marginTop: -3 }} size={12} onPress={() => setPickerVisible(true)} />
                     </TouchableOpacity>
@@ -134,17 +134,19 @@ export default () => {
                         }}
                         errorTextStyle={{ fontSize: 12 }}
                         containerStyle={{
-                            width: '60%', borderColor: forcePattern ? 'red' : null,
+                            width: '50%', borderColor: forcePattern ? 'red' : null,
                             borderWidth: forcePattern ? 0.5 : 0,
+                            marginLeft:5
                         }}
                         onFocus={() => setForcePattern(false)}
                     />
                 </AnimatedView>
                 {forcePattern &&
                     <View style={{ flexDirection: 'row' }}>
-                        <View style={{ width: '30%' }}>
-                        </View>
-                        <View style={{ width: '60%' }} >
+                        <View style={{ width: '35%' }} 
+                         /** Will remove it soon */
+                        />
+                        <View style={{ width: '50%' }} >
                             <Text style={[{
                                 color: 'red',
                                 bottom: 5,
