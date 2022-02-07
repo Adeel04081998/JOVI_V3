@@ -163,6 +163,7 @@ export default () => {
                     onPress={onPress}
                     isLoading={isLoading}
                     disabled={disbleContinueButton || isLoading}
+                    wait={0.6}
                 />
             </View>
 
