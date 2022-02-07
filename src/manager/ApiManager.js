@@ -6,9 +6,6 @@ import GV from '../utils/GV';
 import Axios from './Axios';
 const dispatch = store.dispatch;
 
-const networkMiddleWare = () => {
-    return GV.netInfoRef.current
-}
 export const refreshTokenMiddleware = (requestCallback, params) => {
     Toast.info("Session Expired!");
     sharedLogoutUser();
@@ -48,8 +45,6 @@ export const refreshTokenMiddleware = (requestCallback, params) => {
 };
 
 export const postRequest = async (url, data, onSuccess = () => { }, onError = () => { }, headers = {}, showLoader = true, customLoader = null) => {
-    // if (!networkMiddleWare()?.isConnected) return Toast.error('No Internet Connection')
-
     if (customLoader) {
         customLoader(true);
     }
@@ -68,7 +63,6 @@ export const postRequest = async (url, data, onSuccess = () => { }, onError = ()
     }
 };
 export const getRequest = async (url, onSuccess = () => { }, onError = () => { }, headers = {}, showLoader = true) => {
-    // if (!networkMiddleWare()?.isConnected) return Toast.error('No Internet Connection')
     try {
         let res = await Axios.get(url, headers);
         onSuccess(res);
@@ -79,10 +73,6 @@ export const getRequest = async (url, onSuccess = () => { }, onError = () => { }
     }
 };
 export const multipartPostRequest = (url, formData, onSuccess = () => { }, onError = () => { }, showLoader = false) => {
-    // const appStorePersist = persistor.getState();
-    // const appStore = store.getState();
-    // console.log("appStore", appStore);
-    // console.log("appStorePersist", appStorePersist);
     fetch(`${GV.BASE_URL.current}/${url}`, {
         method: 'post',
         headers: {
