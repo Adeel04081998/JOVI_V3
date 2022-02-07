@@ -12,6 +12,7 @@ import constants from '../../../res/constants';
 import { renderFile, sharedExceptionHandler } from '../../../helpers/SharedActions';
 import { postRequest } from '../../../manager/ApiManager';
 import Endpoints from '../../../manager/Endpoints';
+import sharedStyles from '../../../res/sharedStyles';
 
 export default ({ vendorType = 0, imageStyles = {}, showMoreBtnText = "", }) => {
     const SPACING_BOTTOM = 0;
@@ -23,7 +24,7 @@ export default ({ vendorType = 0, imageStyles = {}, showMoreBtnText = "", }) => 
                 "vendorType": vendorType
             },
             res => {
-                console.log("GENERIC_LIST.RESPONSE", res);
+                // console.log("GENERIC_LIST.RESPONSE", res);
                 if (res.data.statusCode !== 200) return;
                 setData(res.data.vendorCategoriesViewModel.vendorList);
             },
@@ -44,7 +45,7 @@ export default ({ vendorType = 0, imageStyles = {}, showMoreBtnText = "", }) => 
         width: constants.window_dimensions.width * 0.8
     }
     const { height, width } = SCALE_IMAGE;
-    const popularNearYouStyles = popularNearYouStylesFunc(colors, width, height)
+    const styles = _styles(colors, width, height)
 
 
 
@@ -52,19 +53,19 @@ export default ({ vendorType = 0, imageStyles = {}, showMoreBtnText = "", }) => 
         const { title, description, estTime, distance, image, averagePrice } = item;
         return (
             <TouchableOpacity activeOpacity={0.8} >
-                <Image source={{ uri: renderFile(image) }} style={[popularNearYouStyles.image, imageStyles]} tapToOpen={false} />
-                <View style={popularNearYouStyles.subContainer}>
-                    <Text style={popularNearYouStyles.title} numberOfLines={1} >{title}</Text>
+                <Image source={{ uri: renderFile(image) }} style={[styles.image, imageStyles]} tapToOpen={false} />
+                <View style={styles.subContainer}>
+                    <Text style={styles.title} numberOfLines={1} >{title}</Text>
                     {(distance || estTime) &&
-                        <View style={popularNearYouStyles.iconContainer} >
+                        <View style={styles.iconContainer} >
                             <VectorIcon name={item.distance ? "map-marker" : "clock-time-four"} type={item.distance ? "FontAwesome" : "MaterialCommunityIcons"} color={colors.theme || "#6D51BB"} size={15} style={{ marginRight: 5 }} />
-                            <Text style={popularNearYouStyles.estTime} >{estTime || distance}</Text>
+                            <Text style={styles.estTime} >{estTime || distance}</Text>
                         </View>
                     }
                 </View>
-                <Text style={popularNearYouStyles.tagsText} numberOfLines={1} >{description}</Text>
+                <Text style={styles.tagsText} numberOfLines={1} >{description}</Text>
                 {averagePrice &&
-                    <Text style={popularNearYouStyles.title} >Rs. {averagePrice}</Text>
+                    <Text style={styles.title} >Rs. {averagePrice}</Text>
                 }
             </TouchableOpacity>
         )
@@ -75,10 +76,10 @@ export default ({ vendorType = 0, imageStyles = {}, showMoreBtnText = "", }) => 
             {
                 data.map((item, index) => (
                     <React.Fragment key={`generic-item-key-${index}`}>
-                        <View style={popularNearYouStyles.container} >
-                            <Text style={popularNearYouStyles.mainText} >{item.header}</Text>
+                        <View style={styles.container} >
+                            <Text style={styles.mainText} >{item.header}</Text>
                             <TouchableOpacity>
-                                <Text style={popularNearYouStyles.viewMoreBtn} >{showMoreBtnText || `View More`}</Text>
+                                <Text style={styles.viewMoreBtn} >{showMoreBtnText || `View More`}</Text>
                             </TouchableOpacity>
                         </View>
 
@@ -86,7 +87,7 @@ export default ({ vendorType = 0, imageStyles = {}, showMoreBtnText = "", }) => 
 
                             data={item.vendorList}
                             renderItem={renderItem}
-                            itemContainerStyle={{ ...popularNearYouStyles.itemContainer }}
+                            itemContainerStyle={{ ...styles.itemContainer }}
                             horizontal={true}
                             flatlistProps={{
                                 showsHorizontalScrollIndicator: false,
@@ -102,9 +103,9 @@ export default ({ vendorType = 0, imageStyles = {}, showMoreBtnText = "", }) => 
 }
 
 
-//styles declararation
+//_styles declararation
 
-const popularNearYouStylesFunc = (colors, width, height) => StyleSheet.create({
+const _styles = (colors, width, height) => StyleSheet.create({
     container: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -120,12 +121,14 @@ const popularNearYouStylesFunc = (colors, width, height) => StyleSheet.create({
         fontSize: 12
     },
     itemContainer: {
+        ...sharedStyles._styles(colors).shadow,
         backgroundColor: colors.white || '#fff',
         borderRadius: 10,
         marginHorizontal: 5,
         flex: 1,
         paddingHorizontal: 10,
-        paddingVertical: 10
+        paddingVertical: 10,
+        marginVertical: 5
     },
     image: {
         height: height,

@@ -119,7 +119,7 @@ export default (props) => {
                 }
             }
             catch (error) {
-                console.log('error', error);
+                console.log('[verifyOtpToServer].error', error);
             }
 
         },
