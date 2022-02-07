@@ -14,7 +14,7 @@ const generateMockData = elementCount => {
             id: count,
             value: count,
             key: count,
-            customComponent: <SvgXml xml={sv} height={40} width={40} />
+            // customComponent: <SvgXml xml={sv} height={40} width={40} />
         })
 
         if (count < elementCount) {
