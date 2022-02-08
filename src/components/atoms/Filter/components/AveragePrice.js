@@ -8,7 +8,7 @@ import AnimatedView from '../../AnimatedView';
 import Text from '../../Text';
 import TouchableOpacity from '../../TouchableOpacity';
 import View from '../../View';
-export default ({ data = {}, filterType = "", filterTypeStyle, styles, colors, onPress = () => { } }) => {
+export default ({ data = {}, filterType = "", filterTypeStyle, priceStyles, colors, onPress ,selectedFilter={}}) => {
     console.log("filterTypeStyle=>", filterTypeStyle);
     const renderFilterByUi = (x, i) => {
         return (
@@ -18,8 +18,8 @@ export default ({ data = {}, filterType = "", filterTypeStyle, styles, colors, o
                     backgroundColor: "#FFFFFF",
                     paddingHorizontal: 5,
                 }}
-                    onPress={(x) => {
-                        console.log("herre");
+                    onPress={() => {
+                        console.log("herre", x);
                         onPress(x)
                     }}
                 >

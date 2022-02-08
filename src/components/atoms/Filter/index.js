@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Alert, Appearance, ScrollView, StyleSheet, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import AnimatedKeyboardAwareScroll from '../../molecules/AnimatedKeyboardAwareScroll';
@@ -27,7 +27,16 @@ export default () => {
     const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark")
     // const [isLoading, setIsLoading] = React.useState(false);
 
-    const [filterBy, SetFilterBy] = React.useState([]);
+    // const [filterBy, SetFilterBy] = React.useState([]);
+    const initState={
+        AveragePrice:[
+        ],
+        filterBy:[
+        ],
+        Cuisine:[
+        ]
+    }
+    const [state, setState] =useState(initState)
 
     const _renderHeaderRightButton = () => {
         return (
@@ -40,6 +49,8 @@ export default () => {
             </TouchableOpacity>
         )
     }
+    console.log("state",state);
+    
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.DrWhite }}>
             <CustomHeader
@@ -68,28 +79,34 @@ export default () => {
                     filterTypeStyle={{ paddingBottom: 10, color: 'black', fontSize: 16, FontFamily: FontFamily.Poppins.Regular }}
                     onPress={(x) => {
                         console.log("value=>>", x)
+                        setState((pre)=>({
+                            ...pre,
+                            filterBy:x
+                        }))
 
                     }}
+                    selectedFilter ={state.filterBy}
+
                 />
                 <AveragePrice
                     data={ENUMS.AVERAGE_PRICE_FILTERS}
                     styles={{ borderWidth: 2, top: 20 }}
                     filterType='Average Price'
                     colors={colors}
-                    filterTypeStyle={{ paddingBottom: 10, color: 'black', fontSize: 16, FontFamily: FontFamily.Poppins.Regular }}
+                    filterTypeStyle={{ paddingBottom: 10, color: "black", fontSize: 16, FontFamily: FontFamily.Poppins.Regular }}
+                    onPress={(x) => {setState((pre)=>({ ...pre, AveragePrice:x }))}}
+                    selectedFilter ={state.AveragePrice}
                 />
                 <Cuisine
                     filterReducer={categoriesList}
-                    filterType='Crusine'
+                    filterType='Cuisine'
                     filterTypeStyle={{ paddingVertical: 10, color: 'black', fontSize: 16, FontFamily: FontFamily.Poppins.Regular }}
                     colors={colors}
-
+                    nPress={(x) => { setState((pre)=>({ ...pre, Cuisine:x}))}}
                 />
             </ScrollView>
             <Button
-                onPress={() => {
-
-                }}
+                onPress={() => { }}
                 text='Apply'
                 style={{ width: "90%", alignSelf: "center", marginBottom: 10, backgroundColor: "#F94E41", borderRadius: 10 }}
 

@@ -71,7 +71,7 @@ export default {
 
         }, {
             "text": "Discounts",
-            "value": 1,
+            "value": 2,
             "icon": svgs.discount()
         },
     ],
@@ -84,7 +84,7 @@ export default {
 
         }, {
             "text": "$$",
-            "value": 1,
+            "value": 2,
             "icon": null,
             "price": "500 - 100"
 
@@ -92,7 +92,7 @@ export default {
         }
         , {
             "text": "$$",
-            "value": 1,
+            "value": 2,
             "icon": null,
             "price": "1000 - 2000"
 
