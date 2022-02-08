@@ -64,7 +64,7 @@ export const getRequest = async (url, onSuccess = () => { }, onError = () => { }
         onSuccess(res);
     } catch (error) {
         console.log("[ApiManager].getRequest.error", error);
-        if (error?.data?.StatusCode === 401) return refreshTokenMiddleware(postRequest, [url, onSuccess, onError, headers, false]);
+        if (error?.data?.StatusCode === 401) return refreshTokenMiddleware(getRequest, [url, onSuccess, onError, headers, false]);
         onError(error);
     }
 };
