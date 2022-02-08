@@ -49,6 +49,14 @@ const promotionsReducer = (state = {}, action) => {
             return { ...state };
     }
 }
+const categoriesTagsReducer = (state = {}, action) => {
+    switch (action.type) {
+        case TYPES.SET_CATEGORIES_TAGS:
+            return { ...state, ...action.payload };
+        default:
+            return { ...state };
+    }
+}
 //...Rest of the reducers would be here
 
 
@@ -58,5 +66,6 @@ export default {
     enumsReducer,
     messagesReducer,
     promotionsReducer,
+    categoriesTagsReducer,
     //...
 }

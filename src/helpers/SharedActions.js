@@ -206,3 +206,21 @@ export const renderFile = (picturePath) => {
 export const sharedConfirmationAlert = (title, message, buttons = [], options = { cancelable: true, onDismiss: () => { } }) => {
     Alert.alert(title, message, buttons, options)
 }
+
+export const sharedGetFilters = () => {
+    getRequest(Endpoints.GET_CATEGORIES_TAGS_LIST, res => {
+        console.log("[sharedGetHomeMsgsApi].res ====>>", res);
+        // dispatch(ReduxActions.setMessagesAction({ ...res.data, robotJson: data }));
+        dispatch(ReduxActions.setCategoriesTagsAction({...res.data}))
+
+  
+    },
+        err => {
+            console.log("error", err);
+            // sharedExceptionHandler(err)
+        },
+        {},
+    )
+      
+   
+}
