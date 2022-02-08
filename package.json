@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
+    "android": "npx react-native run-android",
+    "ios": "npx react-native run-ios",
     "android-ios": "npx react-native run-android && npx react-native run-ios",
     "start": "react-native start",
     "branch_change_new_packages": "yarn && npx react-native run-android && cd ios && pod install && cd .. && npx react-native run-ios",

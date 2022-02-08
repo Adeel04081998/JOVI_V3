@@ -1,50 +1,50 @@
 import React, { useState, useRef } from 'react';
 import { Easing, ScrollView, TouchableWithoutFeedback, StatusBar, View, StyleSheet, Text, Animated, Platform } from 'react-native'
+import { uniqueKeyExtractor } from '../../../helpers/SharedActions';
 
 
 const ScrollSpy = (props) => {
+    const HEADER_HEIGHT = props?.headerHeight ?? 0;
 
-    const animScroll = useRef(new Animated.Value(0)).current
     const value = useRef(new Animated.Value(0)).current;
     const scrollRef = useRef("");
     const tabScrollRef = useRef("");
     const widthValue = useRef(new Animated.Value(0)).current;
-    const [activeTab, setActiveTab] = useState({})
-    // const [tabs, setTabs] = useState([])
-    let tabs = useRef(props.data ? props.data.map((item) => { return { name: item.categoryName } }) : [])
+
+    let tabs = useRef(props.data ? props.data : []);
+
+    const currentTab = useRef(0);
 
     const [scrollBarScroll, setScrollBarScroll] = useState(true)
-
-
 
     const handleTab = (tabName, layout) => {
         layout.name = tabName;
         layout.anim = false;
-        layout.id = new Date().getTime()
+        layout.id = new Date().getTime();
 
-        tabs.current = [...tabs.current, layout];
-        // setTabs([...tabs, layout])
+        if (widthValue._value === 0) {
+            widthValue.setValue(layout.width);
+        }
+
+        let index = tabs.current.findIndex(stab => stab.name === tabName);
+        let arr = tabs.current;
+        if (index !== -1) {
+            arr[index] = { ...arr[index], ...layout };
+            tabs.current = arr;
+        } else {
+            tabs.current = [...tabs.current, layout];
+        }
     }
 
-    console.log('tab-global--- ', tabs.current);
-
-
     const handleTabContent = (name, layout) => {
-        const index = tabs.current.findIndex(stab => stab.name === name)
-        const allTab = tabs.current
+        const index = tabs.current.findIndex(stab => `${stab.name}`.toLowerCase().trim() === `${name}`.toLowerCase().trim())
+        if (index === -1) return
 
-        const tab = allTab[index]
-        if (tab && layout) {
-            console.log('tab---- ', tab);
-            console.log('layout---- ', layout);
+        const allTab = tabs.current;
 
-            tab.y = layout.y
-            tab.height = layout.height
-            tabs.current = [...allTab];
-
-            // setTabs([...allTab])
-
-        }
+        allTab[index].y = layout.y + HEADER_HEIGHT;
+        allTab[index].height = layout.height;
+        tabs.current = [...allTab];
     }
 
     const handleScroll = (name) => {
@@ -54,22 +54,28 @@ const ScrollSpy = (props) => {
     }
 
     const handleOnScroll = e => {
-        
+
         const scrollY = e.nativeEvent.contentOffset.y
 
         tabs.current.forEach((tab, i) => {
 
             if (scrollY > (tab.y + tab.height)) {
-
-                const updatedTap = tabs.current
-                updatedTap[i].anim = false
+                const updatedTap = tabs.current;
+                updatedTap[i].anim = false;
             }
 
+            if (scrollY < 10) {
+                tabScrollRef.current.scrollTo({ x: 0 });
+                currentTab.current = 0;
+            }
 
             if (scrollY > tab.y && scrollY < (tab.y + tab.height)) {
+
                 if (tab.anim) return
 
-                const scrollTo = tabs.current[i - 1] ? tabs.current[i - 1].x - 10 : 0
+                const scrollTo = tabs.current[i - 1] ? tabs.current[i - 1].x + tab.x : 0
+
+                currentTab.current = i;
 
                 Animated.timing(value, {
                     toValue: tab.x,
@@ -80,7 +86,8 @@ const ScrollSpy = (props) => {
                     const updatedTap = tabs.current
                     updatedTap[i].anim = true
 
-                    if (scrollBarScroll) setTimeout(() => tabScrollRef.current.scrollTo({ x: scrollTo }), 200)
+                    if (scrollBarScroll)
+                        setTimeout(() => tabScrollRef.current.scrollTo({ x: scrollTo }), 200)
                 });
 
                 Animated.timing(widthValue, {
@@ -101,10 +108,9 @@ const ScrollSpy = (props) => {
 
     }
 
+
     return (
         <>
-            {/* <StatusBar backgroundColor={`rgb(186, 11, 86)`} /> */}
-
 
             <Animated.View style={[style.topHeaderStyle, props.topHeaderStyle && props.topHeaderStyle]}>
                 <ScrollView
@@ -115,18 +121,17 @@ const ScrollSpy = (props) => {
 
                     <View>
                         <View style={[style.row]}>
-                            {props.tabs && props.tabs.map((food, i) => (
+                            {props.data && props.data.map((food, i) => (
                                 <TouchableWithoutFeedback
-                                    key={i}
+                                    key={uniqueKeyExtractor()}
                                     onPress={e => handleScroll(food.catagory)}
-                                    onLayout={e => handleTab(food.catagory, e.nativeEvent.layout)}
-                                >
+                                    onLayout={e => handleTab(food.catagory, e.nativeEvent.layout)}>
                                     <Text style={[style.tab]} >{food.catagory}</Text>
                                 </TouchableWithoutFeedback>
                             ))}
                         </View>
 
-                        <Animated.View style={[{ translateX: value }]}>
+                        <Animated.View style={[{ transform: [{ translateX: value }] }]}>
                             <Animated.View style={[style.indicator, { width: widthValue }]}></Animated.View>
                         </Animated.View>
                     </View>
@@ -149,18 +154,23 @@ const ScrollSpy = (props) => {
                 {props.renderAboveItems && props.renderAboveItems()}
 
                 <View style={{ paddingHorizontal: 15, backgroundColor: "white" }}>
-                    {props.tabs && props.tabs.map(food => (
-                        <View
-                            onLayout={e => handleTabContent(food.catagory, e.nativeEvent.layout)}
-                        >
-                            <Text style={style.sectionTitle}>{food.catagory}</Text>
-                            <View style={props.itemsContainerStyle || {}}>
-                                {food[props.itemListPropertyName].map(singleFood => {
-                                    return props.renderItem && props.renderItem(singleFood)
-                                })}
+                    {props.data && props.data.map(food => {
+                        return (
+                            <View
+                                onLayout={e => handleTabContent(food.catagory, e.nativeEvent.layout)}
+                                key={uniqueKeyExtractor()}
+                            >
+                                <Text style={style.sectionTitle}>{food.catagory}</Text>
+                                <View style={props.itemsContainerStyle || {}}>
+                                    {food[props.itemListPropertyName].map(singleFood => {
+                                        return <View key={uniqueKeyExtractor()}>
+                                            {props.renderItem && props.renderItem(singleFood)}
+                                        </View>
+                                    })}
+                                </View>
                             </View>
-                        </View>
-                    ))}
+                        )
+                    })}
                 </View>
             </Animated.ScrollView>
 

@@ -60,20 +60,20 @@ export const sharedExceptionHandler = (err) => {
 export const sharedInteval = (duration = 30, delay = 1, listener = () => { }) => {
     // DURATION MUST BE IS SECONDS
     var timer = duration, minutes, seconds;
-        let interlID = BackgroundTimer.setInterval(function () {
-            // console.log('Interval Ran----');
-            minutes = parseInt(timer / 60, 10)
-            seconds = parseInt(timer % 60, 10);
-            minutes = minutes < 10 ? "0" + minutes : minutes;
-            seconds = seconds < 10 ? "0" + seconds : seconds;
-            listener({ minutes, seconds, intervalStoped: false });
-            if (--timer < 0) {
-                listener({ minutes, seconds, intervalStoped: true });
-                BackgroundTimer.clearInterval(interlID)
-                console.log("Interval Stopped---", interlID);
-                return;
-            }
-        }, 1000);
+    let interlID = BackgroundTimer.setInterval(function () {
+        // console.log('Interval Ran----');
+        minutes = parseInt(timer / 60, 10)
+        seconds = parseInt(timer % 60, 10);
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+        listener({ minutes, seconds, intervalStoped: false });
+        if (--timer < 0) {
+            listener({ minutes, seconds, intervalStoped: true });
+            BackgroundTimer.clearInterval(interlID)
+            console.log("Interval Stopped---", interlID);
+            return;
+        }
+    }, 1000);
 }
 export const focusAwareStatusBar = (props) => {
     const isFocused = useIsFocused();
@@ -202,3 +202,5 @@ export const renderFile = (picturePath) => {
     const userReducer = store.getState().userReducer;
     return `${configs.BASE_URL}/api/Common/S3File/${encodeURIComponent(picturePath)}?access_token=${userReducer?.token?.authToken}`
 }
+
+export const uniqueKeyExtractor = () => new Date().getTime().toString() + (Math.floor(Math.random() * Math.floor(new Date().getTime()))).toString();

@@ -48,15 +48,15 @@ export default () => {
 
     const headerTop = animScroll.interpolate({
         inputRange: [0, headerHeight],
-        outputRange: [0, -50],
+        outputRange: [0, -(headerHeight + 20)],
         extrapolate: "clamp",
         useNativeDriver: true
     })
 
     const tabTop = animScroll.interpolate({
-        inputRange: [0, headerHeight],
+        inputRange: [0, headerHeight + 20],
         // outputRange: [305, 0],
-        outputRange: [headerHeight, 0],
+        outputRange: [headerHeight + 20, 0],
         extrapolate: "clamp",
         useNativeDriver: true
     })
@@ -67,26 +67,33 @@ export default () => {
         extrapolate: "clamp",
         useNativeDriver: true
     })
-    console.log(headerHeight);
     return (
         <>
+            <StatusBar backgroundColor={"#fff"} />
             <View style={styles.primaryContainer}>
-                <Animated.View style={{ ...StyleSheet.absoluteFill, transform:[{
-                    translateY:headerTop
-                }], zIndex: 9999, flex: 1 }}>
+                <Animated.View style={{
+                    ...StyleSheet.absoluteFill, transform: [{
+                        translateY: headerTop
+                    }], zIndex: 9999, flex: 1
+                }}>
                     <ProductMenuHeader colors={colors}
                         onLayout={(e) => {
-                            setHeaderHeight(e.nativeEvent.layout.height +20);
+                            setHeaderHeight(e.nativeEvent.layout.height + 20);
                         }}
                     />
                 </Animated.View>
 
                 <ScrollSpy
-                    tabs={ProductDummyData1}
+                    data={[...ProductDummyData1,]}
+                    headerHeight={headerHeight}
                     ÄnimatedScrollValue={animScroll}
-                    topHeaderStyle={{ ...StyleSheet.absoluteFill, zIndex: 9999999999999999, height: 43, transform:[{
-                        translateY: tabTop
-                    }], backgroundColor: "white", elevation: 2, }}
+                    topHeaderStyle={{
+                        ...StyleSheet.absoluteFill, zIndex: 9999999999999999,
+                        height: 50,
+                        transform: [{
+                            translateY: tabTop
+                        }], backgroundColor: "white", elevation: 2,
+                    }}
                     itemsScrollViewStyle={{ ...StyleSheet.absoluteFill, top: 0, zIndex: 9999, backgroundColor: "transparent" }}
                     itemListPropertyName="dishes"
                     renderItem={dish => {
@@ -98,7 +105,7 @@ export default () => {
                         )
                     }}
                     renderAboveItems={() => (
-                        <View style={{ marginTop: headerHeight, paddingHorizontal: 15, backgroundColor: "white", elevation: 2, paddingTop: 0 }}></View>
+                        <View style={{ marginTop: headerHeight + 50, paddingHorizontal: 15, backgroundColor: "white", elevation: 2, paddingTop: 0 }}></View>
                     )}
                 />
 
