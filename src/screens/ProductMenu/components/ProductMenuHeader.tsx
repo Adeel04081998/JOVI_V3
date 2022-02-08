@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Alert, Animated, StyleSheet, StatusBar, ScrollView } from "react-native";
+import { Alert, Animated, StyleSheet, StatusBar, ScrollView, LayoutChangeEvent } from "react-native";
 import Image from "../../../components/atoms/Image";
 import ImageBackground from "../../../components/atoms/ImageBackground";
 import Text from "../../../components/atoms/Text";
@@ -16,11 +16,14 @@ import SafeAreaView from '../../../components/atoms/SafeAreaView';
 type Props = React.ComponentProps<typeof Animated.View> & {
     children?: any;
     colors: typeof initColors;
+
+    onLayout?: (event: LayoutChangeEvent) => void;
 };
 
 const defaultProps = {
-
+    onLayout: undefined,
 };
+
 const WINDOW_WIDTH = constants.window_dimensions.width;
 const WINDOW_HEIGHT = constants.window_dimensions.height;
 // #endregion :: INTERFACE END's FROM HERE 
@@ -43,13 +46,17 @@ const ProductMenuHeader = (props: Props) => {
 
     // #endregion :: RENDER BOTTOM DETAIL END's FROM HERE 
 
-    return (<View style={{flex:1}}>
+    return (<View style={{}}
+        onLayout={(e) => {
+            props.onLayout && props.onLayout(e);
+        }}>
         <StatusBar translucent backgroundColor='transparent' />
         <ImageBackground
             source={{ uri: `https://media.istockphoto.com/photos/selection-of-american-food-picture-id931308812?k=20&m=931308812&s=612x612&w=0&h=Tudia4RSCvfpWZhli0ehScrzeCtbwvTqB9BZaCta_qA=` }}
             style={{ ...styles.image }}
 
             tapToOpen={false}>
+
             <CustomHeader containerStyle={styles.headerContainer}
                 hideFinalDestination
                 leftIconName="chevron-back"
@@ -60,9 +67,9 @@ const ProductMenuHeader = (props: Props) => {
 
             />
 
-        </ImageBackground>
 
-        <View style={styles.detailPrimaryContainer}>
+        </ImageBackground>
+        <View style={[styles.detailPrimaryContainer]}>
 
             <View style={styles.detailNamePrimaryContainer}>
                 <Text fontFamily="PoppinsBold"
@@ -93,11 +100,17 @@ const ProductMenuHeader = (props: Props) => {
 
         </View>
 
+
         <Text fontFamily="PoppinsMedium" style={recentOrderStyles.heading}>{`Recent orders`}</Text>
 
         <ScrollView
             horizontal
-            style={recentOrderStyles.scrollView}
+            style={{
+                // ...recentOrderStyles.scrollView,
+                maxHeight: "auto",
+                flexGrow: 0,
+                // flex: 0,
+            }}
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}>
             {new Array(10).fill({}).map((item, index) => {

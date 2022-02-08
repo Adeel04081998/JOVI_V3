@@ -20,6 +20,7 @@ export default () => {
             StatusBar.setTranslucent(false)
     }, [])
     const animScroll = React.useRef(new Animated.Value(0)).current
+    const [headerHeight, setHeaderHeight] = React.useState(380);
 
 
     const headerTextOpacity = animScroll.interpolate({
@@ -46,16 +47,16 @@ export default () => {
 
 
     const headerTop = animScroll.interpolate({
-        inputRange: [0, 150],
+        inputRange: [0, headerHeight],
         outputRange: [0, -50],
         extrapolate: "clamp",
         useNativeDriver: true
     })
 
     const tabTop = animScroll.interpolate({
-        inputRange: [0, 245],
+        inputRange: [0, headerHeight],
         // outputRange: [305, 0],
-        outputRange: [485, 0],
+        outputRange: [headerHeight, 0],
         extrapolate: "clamp",
         useNativeDriver: true
     })
@@ -66,12 +67,18 @@ export default () => {
         extrapolate: "clamp",
         useNativeDriver: true
     })
-
+    console.log(headerHeight);
     return (
         <>
             <View style={styles.primaryContainer}>
-                <Animated.View style={{ ...StyleSheet.absoluteFill, translateY: headerTop, zIndex: 9999, flex: 1 }}>
-                    <ProductMenuHeader colors={colors} />
+                <Animated.View style={{ ...StyleSheet.absoluteFill, transform:[{
+                    translateY:headerTop
+                }], zIndex: 9999, flex: 1 }}>
+                    <ProductMenuHeader colors={colors}
+                        onLayout={(e) => {
+                            setHeaderHeight(e.nativeEvent.layout.height +20);
+                        }}
+                    />
                 </Animated.View>
 
                 <ScrollSpy
@@ -89,7 +96,7 @@ export default () => {
                         )
                     }}
                     renderAboveItems={() => (
-                        <View style={{ marginTop: 480, paddingHorizontal: 15, backgroundColor: "white", elevation: 2, paddingTop: 0 }}></View>
+                        <View style={{ marginTop: headerHeight, paddingHorizontal: 15, backgroundColor: "white", elevation: 2, paddingTop: 0 }}></View>
                     )}
                 />
 
