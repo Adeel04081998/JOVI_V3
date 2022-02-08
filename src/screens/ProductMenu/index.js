@@ -84,8 +84,10 @@ export default () => {
                 <ScrollSpy
                     tabs={ProductDummyData1}
                     ÄnimatedScrollValue={animScroll}
-                    topHeaderStyle={{ ...StyleSheet.absoluteFill, zIndex: 9999999999999999, height: 43, translateY: tabTop, backgroundColor: "white", elevation: 2, }}
-                    itemsScrollViewStyle={{ ...StyleSheet.absoluteFill, top: -10, zIndex: 9999, backgroundColor: "transparent" }}
+                    topHeaderStyle={{ ...StyleSheet.absoluteFill, zIndex: 9999999999999999, height: 43, transform:[{
+                        translateY: tabTop
+                    }], backgroundColor: "white", elevation: 2, }}
+                    itemsScrollViewStyle={{ ...StyleSheet.absoluteFill, top: 0, zIndex: 9999, backgroundColor: "transparent" }}
                     itemListPropertyName="dishes"
                     renderItem={dish => {
                         // const CART = findItemInCart(dish.id) || {}
