@@ -10,6 +10,6 @@ export default {
     "GET_USER_ADDRESSES": "api/Order/GetAddress",
     "GET_PROMOTIONS": "api/Dashboard/DashboardContent/List",
     "GET_VENDORS_GENERIC_LIST": "api/Menu/Vendor/Categorization",
-    "GET_CATEGORIES_TAGS_LIST" : "api/Restaurant/Tags/Categories/List"
+    "GET_FILTERS" : "api/Menu/Vendor/GetFilters"
     
 }

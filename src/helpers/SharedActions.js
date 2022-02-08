@@ -208,7 +208,10 @@ export const sharedConfirmationAlert = (title, message, buttons = [], options = 
 }
 
 export const sharedGetFilters = () => {
-    getRequest(Endpoints.GET_CATEGORIES_TAGS_LIST, res => {
+    postRequest(Endpoints.GET_FILTERS,{
+        "vendorType":4
+
+    }, res => {
         console.log("[sharedGetHomeMsgsApi].res ====>>", res);
         // dispatch(ReduxActions.setMessagesAction({ ...res.data, robotJson: data }));
         dispatch(ReduxActions.setCategoriesTagsAction({...res.data}))
