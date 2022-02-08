@@ -22,7 +22,7 @@ import View from './src/components/atoms/View';
 import Toast from 'react-native-toast-message';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import CodePush from "react-native-code-push"; //for codepush
-import configs from './src/utils/configs';
+import { env } from './src/utils/configs';
 import Robot from './src/components/organisms/Robot';
 import { useSelector } from 'react-redux';
 import { sharedGetEnumsApi, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser } from './src/helpers/SharedActions';
@@ -43,8 +43,8 @@ const CODE_PUSH_OPTIONS = {
   // `deploymentKey` should be dynamic according to environment like QA, STAGING, PRODUCTION before publish to staging and master
   //Currently QA Environment setup done 
   deploymentKey: Platform.select({
-    ios: configs.CODE_PUSH_DEP_KEYS.JOVI_IOS_V2_QA.STAGING,
-    android: configs.CODE_PUSH_DEP_KEYS.JOVI_ANDROID_V2_QA.STAGING
+    ios: env.CODE_PUSH_DEP_KEYS.JOVI_IOS.STAGING,
+    android: env.CODE_PUSH_DEP_KEYS.JOVI_ANDROID.STAGING
   }),
   checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
   installMode: CodePush.InstallMode.IMMEDIATE,

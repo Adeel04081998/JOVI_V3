@@ -31,8 +31,16 @@ export default {
             if (url) result = url;
         };
         return result;
+    },
+    clearAllCacheAsync: async () => {
+        try {
+            const keys = Object.keys(PreferenceManagerKeys).map(key => PreferenceManagerKeys[key])
+            await AsyncStorage.multiRemove(keys);
+            console.log('Cache cleaned successfully...');
+        } catch (error) {
+            console.log(`An error occured during cache cleanup..`, error)
+        }
     }
-
 }
 
 

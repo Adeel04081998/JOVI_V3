@@ -2,55 +2,45 @@ import Toast from '../components/atoms/Toast';
 import { sharedExceptionHandler, sharedLogoutUser } from '../helpers/SharedActions';
 import ReduxActions from '../redux/actions';
 import { store } from '../redux/store';
-import configs from '../utils/configs';
 import GV from '../utils/GV';
 import Axios from './Axios';
 const dispatch = store.dispatch;
 
-const networkMiddleWare = () => {
-    return GV.netInfoRef.current
-}
 export const refreshTokenMiddleware = (requestCallback, params) => {
-    Toast.info("Session Expired!");
-    sharedLogoutUser();
-    return;
-    // BELOW CODE COMMENTED WILL BE IMPLMEMENT LATER
-    // const userReducer = store.getState().userReducer;
-    // console.log("[refreshTokenMiddleware].userReducer", userReducer);
-    // postRequest(
-    //     "/api/User/RefreshToken",
-    //     {
-    //         "accessToken": userReducer.token.authToken,
-    //         "refreshToken": userReducer.refreshToken
-    //     },
-    //     res => {
-    //         console.log("refreshTokenMiddleware.Res :", res);
-    //         if (res?.data?.statusCode === 202) {
-    //             requestCallback.apply(this, params);
-    //             if (__DEV__) Toast.success("Its only for DEV => User session refreshed....")
-    //             return;
-    //         }
-    //         else if (res?.data?.statusCode === 403) {
-    //             Toast.error("Session Expired!");
-    //             sharedLogoutUser();
-    //             return;
-    //         }
-    //         else {
-    //             dispatch(ReduxActions.setUserAction({ ...res.data }))
-    //         }
-    //     },
-    //     err => {
-    //         console.log("refreshTokenMiddleware.err", err)
-    //         sharedExceptionHandler(err)
-    //     },
-    // )
+    const userReducer = store.getState().userReducer;
+    console.log("[refreshTokenMiddleware].userReducer", userReducer);
+    postRequest(
+        "/api/User/RefreshToken",
+        {
+            "accessToken": userReducer.token.authToken,
+            "refreshToken": userReducer.refreshToken
+        },
+        res => {
+            console.log("refreshTokenMiddleware.Res :", res);
+            if (res?.data?.statusCode === 202) {
+                requestCallback.apply(this, params);
+                if (__DEV__) Toast.success("Its only for DEV => User session refreshed....", 10000)
+                return;
+            }
+            else if (res?.data?.statusCode === 403) {
+                Toast.error("Session Expired!");
+                sharedLogoutUser();
+                return;
+            }
+            else {
+                dispatch(ReduxActions.setUserAction({ ...res.data }))
+            }
+        },
+        err => {
+            console.log("refreshTokenMiddleware.err", err)
+            sharedExceptionHandler(err)
+        },
+    )
 
 
 };
 
 export const postRequest = async (url, data, onSuccess = () => { }, onError = () => { }, headers = {}, showLoader = true, customLoader = null) => {
-    // if (!networkMiddleWare()?.isConnected) return Toast.error('No Internet Connection')
-    
     if (customLoader) {
         customLoader(true);
     }
@@ -69,22 +59,17 @@ export const postRequest = async (url, data, onSuccess = () => { }, onError = ()
     }
 };
 export const getRequest = async (url, onSuccess = () => { }, onError = () => { }, headers = {}, showLoader = true) => {
-    // if (!networkMiddleWare()?.isConnected) return Toast.error('No Internet Connection')
     try {
         let res = await Axios.get(url, headers);
         onSuccess(res);
     } catch (error) {
         console.log("[ApiManager].getRequest.error", error);
-        if (error?.data?.StatusCode === 401) return refreshTokenMiddleware(postRequest, [url, data, onSuccess, onError, headers, false]);
+        if (error?.data?.StatusCode === 401) return refreshTokenMiddleware(getRequest, [url, onSuccess, onError, headers, false]);
         onError(error);
     }
 };
 export const multipartPostRequest = (url, formData, onSuccess = () => { }, onError = () => { }, showLoader = false) => {
-    // const appStorePersist = persistor.getState();
-    // const appStore = store.getState();
-    // console.log("appStore", appStore);
-    // console.log("appStorePersist", appStorePersist);
-    fetch(`${configs.BASE_URL}/${url}`, {
+    fetch(`${GV.BASE_URL.current}/${url}`, {
         method: 'post',
         headers: {
             'Content-Type': 'multipart/form-data',
