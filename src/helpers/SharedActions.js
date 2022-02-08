@@ -9,7 +9,7 @@ import Endpoints from '../manager/Endpoints';
 import Toast from "../components/atoms/Toast";
 import { store } from '../redux/store';
 import ReduxActions from '../redux/actions';
-import configs from '../utils/configs';
+import GV from '../utils/GV';
 const dispatch = store.dispatch;
 export const sharedGetDeviceInfo = async () => {
     let model = DeviceInfo.getModel();
@@ -200,7 +200,7 @@ export const sharedLogoutUser = () => {
 
 export const renderFile = (picturePath) => {
     const userReducer = store.getState().userReducer;
-    return `${configs.BASE_URL}/api/Common/S3File/${encodeURIComponent(picturePath)}?access_token=${userReducer?.token?.authToken}`
+    return `${GV.BASE_URL.current}/api/Common/S3File/${encodeURIComponent(picturePath)}?access_token=${userReducer?.token?.authToken}`
 }
 
 export const sharedConfirmationAlert = (title, message, buttons = [], options = { cancelable: true, onDismiss: () => { } }) => {
