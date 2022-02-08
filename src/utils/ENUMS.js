@@ -62,65 +62,30 @@ export default {
         0: { "text": "distance", "value": 0 },
         1: { "text": "delivery", "value": 1 }
     },
-    // "FILTERS_TYPES": {
-    //     "Filter by": {
-    //         0: {
-    //             "text": "New on Jovi",
-    //             "value": 1,
-    //             "icon": null,
-
-    //         },
-    //         1: {
-    //             "text": "New on Jovi",
-    //             "value": 2,
-    //             "icon": null,
-
-    //         },
-
-    //     },
-    //     "Average price": {
-    //         "text": "New on Jovi",
-    //         "value": 1,
-    //         "icon": null,
-    //     }
-    // },
-
-
-    "FILTERS_TYPES": [
+    "FILTER_BY": [
         {
-            "filterTitle": "Filter by",
+           
             "text": "New on Jovi",
             "value": 1,
             "icon": null,
 
         }, {
-            "filterTitle": "Filter by",
             "text": "Discount",
             "value": 1,
             "icon": null
-
-
         },
-        {
-            "filterTitle": "Average price",
+    ],
+    "AVERAGE_PRICE_FILTERS": [
+        {        
             "text": "$",
             "value": 1,
             "icon": null
 
         }, {
-            "filterTitle": "Average price",
             "text": "$$",
             "value": 1,
             "icon": null
-
-
         }
-
     ]
-
-
-
-
-
 
 }

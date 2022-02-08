@@ -2091,6 +2091,19 @@ export default {
   </svg>
   `,
 
+  cross : ()=>`
+  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
+  <g id="Group_14734" data-name="Group 14734" transform="translate(-15 -30)">
+    <circle id="Ellipse_582" data-name="Ellipse 582" cx="15" cy="15" r="15" transform="translate(15 30)" fill="#dcdcdc"/>
+    <g id="Group_14733" data-name="Group 14733" transform="translate(-55.225 67.822) rotate(-45)">
+      <path id="Path_18864" data-name="Path 18864" d="M1706.848,46.737h11.8" transform="translate(-1636.348 -2.437)" fill="none" stroke="#272727" stroke-linecap="round" stroke-width="1.5"/>
+      <path id="Path_18865" data-name="Path 18865" d="M0,0H11.8" transform="translate(76.299 38.5) rotate(90)" fill="none" stroke="#272727" stroke-linecap="round" stroke-width="1.5"/>
+    </g>
+  </g>
+</svg>
+
+  `
+
 
 
 }
