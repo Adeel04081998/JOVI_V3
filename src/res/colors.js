@@ -25,7 +25,8 @@ export const initColors = {
     "navTextColor": "#C1C1C1",
     "navActiveTextColor": "white",
     "black": '#000',
-    "oldFlame" :"#F3B8B4"
+    "oldFlame" :"#F3B8B4",
+    "drWhite":"#FAFAFA"
 }
 export default {
 
