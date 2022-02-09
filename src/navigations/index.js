@@ -8,7 +8,7 @@ import Introduction from '../screens/IntroScreen';
 import EnterOTP from '../screens/OTP/Enter';
 import VerifyOTP from '../screens/OTP/Verify';
 import SignUp from '../screens/SignUp/index';
-
+import ProductDetails from '../screens/ProductDetails';
 import Home from '../screens/Home';
 import ROUTES from './ROUTES';
 import SharedActions, { sharedGetEnumsApi, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser } from '../helpers/SharedActions';
@@ -24,7 +24,8 @@ const AuthComponents = {
 
 }
 const AppComponents = {
-    Home
+    Home,
+    ProductDetails    
 }
 const ContainerStack = createStackNavigator();
 const Stack = createSharedElementStackNavigator();
