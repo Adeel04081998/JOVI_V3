@@ -10,13 +10,14 @@ import View from "../atoms/View";
 type Props = React.ComponentProps<typeof RNView> & {
     children?: any;
 
-    containerStyle?:StyleProp<ViewStyle>;
+    containerStyle?: StyleProp<ViewStyle>;
 
 
     //LEFT SIDE PROP's
+    leftCustom?: React.Component;
     leftDot?: boolean | number;
     leftDotStyle?: StyleProp<ViewStyle>;
-    leftDotTextStyle?:StyleProp<TextStyle>;
+    leftDotTextStyle?: StyleProp<TextStyle>;
     leftContainerStyle?: StyleProp<ViewStyle>;
 
     leftIconName?: string;
@@ -29,10 +30,11 @@ type Props = React.ComponentProps<typeof RNView> & {
     //LEFT SIDE PROP's ENDING 
 
     //RIGHT SIDE PROP's
+    rightCustom?: React.Component;
     rightDot?: boolean | number;
     rightDotStyle?: StyleProp<ViewStyle>;
     rightDotTextStyle?: StyleProp<TextStyle>;
-    rightContainerStyle?:StyleProp<ViewStyle>;
+    rightContainerStyle?: StyleProp<ViewStyle>;
 
     rightIconName?: string;
     rightIconType?: 'Ionicons' | 'AntDesign' | 'Entypo' | 'EvilIcons' | 'Feather' | 'FontAwesome' | 'FontAwesome5' | 'Fontisto' | 'MaterialCommunityIcons' | 'MaterialIcons' | "Foundation" | "SimpleLineIcons" | 'Zocial' | 'Octicons';
@@ -47,17 +49,18 @@ type Props = React.ComponentProps<typeof RNView> & {
     onTitlePress?: (event: GestureResponderEvent) => void;
     titleStyle?: StyleProp<TextStyle>;
     hideFinalDestination?:boolean;
-    defaultColor:String;
+    defaultColor:string;
     //CENTER PROP's ENDING
 };
 
 const defaultProps = {
-    containerStyle:{},
+    containerStyle: {},
     //LEFT SIDE PROP's
+    leftCustom: undefined,
     leftDot: false,
     leftDotStyle: {},
-    leftDotTextStyle:{},
-    leftContainerStyle:{},
+    leftDotTextStyle: {},
+    leftContainerStyle: {},
 
     leftIconName: "ios-menu",
     leftIconType: 'Ionicons',
@@ -70,10 +73,11 @@ const defaultProps = {
 
 
     //RIGHT SIDE PROP's
+    rightCustom: undefined,
     rightDot: false,
     rightDotStyle: {},
-    rightDotTextStyle:{},
-    rightContainerStyle:{},
+    rightDotTextStyle: {},
+    rightContainerStyle: {},
 
     rightIconName: "lock",
     rightIconType: 'FontAwesome',
@@ -89,7 +93,7 @@ const defaultProps = {
     onTitlePress: undefined,
     titleStyle: {},
     hideFinalDestination:false,
-    defaultColor:'#6D51BB',
+    defaultColor:"#6D51BB",
     //CENTER PROP's ENDING
 
 
@@ -116,7 +120,6 @@ const CustomHeader = (props: Props) => {
                     </Text>
                     <VectorIcon name={"chevron-down"} type={"EvilIcons"} />
                 </View>
-
                 <Text style={styles.finalDestinationText} numberOfLines={1}>
                     {VALIDATION_CHECK(finalDestination) ? finalDestination : `Set your location`}
                 </Text>
@@ -124,28 +127,31 @@ const CustomHeader = (props: Props) => {
         )
     };//end of _renderFinalDestination
 
-    const _renderDot=(value:boolean | number = false,styleForParent:StyleProp<ViewStyle>={},numberStyleForParent:StyleProp<TextStyle>={})=>{
-        console.log('value ',value);
-        
-        if(typeof value==="number"){
-            return(
+    const _renderDot = (value: boolean | number = false, styleForParent: StyleProp<ViewStyle> = {}, numberStyleForParent: StyleProp<TextStyle> = {}) => {
+        console.log('value ', value);
+
+        if (typeof value === "number") {
+            return (
                 <View style={[styles.numberDot, styleForParent,]} >
-                    <Text style={[styles.numberDotText,numberStyleForParent]}>{value>99 ? `99+` : value}</Text>
-                    </View>    
+                    <Text style={[styles.numberDotText, numberStyleForParent]}>{value > 99 ? `99+` : value}</Text>
+                </View>
             )
         }
-        return(
+        return (
             <View style={[styles.dot, styleForParent,]} />
         )
 
     };//end of _renderDot
     return (
-        <View style={[styles.primaryContainer,props.containerStyle]}>
+        <View style={[styles.primaryContainer, props.containerStyle]}>
 
             {/* ****************** Start of LEFT SIDE ICON ****************** */}
             <View style={styles.sideContainer}>
-                {(VALIDATION_CHECK(props.leftIconName) || props.leftDot) &&
-                    <TouchableScale style={[styles.iconContainer,props.leftContainerStyle]}
+
+                {VALIDATION_CHECK(props.leftCustom) ?
+                    props.leftCustom
+                    : (VALIDATION_CHECK(props.leftIconName) || props.leftDot) &&
+                    <TouchableScale style={[styles.iconContainer, props.leftContainerStyle]}
                         {...props.onLeftIconPress ? {
                             onPress: (event) => props.onLeftIconPress && props.onLeftIconPress(event)
                         } : {
@@ -158,7 +164,7 @@ const CustomHeader = (props: Props) => {
                                 color={props.leftIconColor}
                                 size={props.leftIconSize} />
                         }
-                        {props.leftDot && _renderDot(props.leftDot,props.leftDotStyle,props.leftDotTextStyle)}
+                        {props.leftDot && _renderDot(props.leftDot, props.leftDotStyle, props.leftDotTextStyle)}
                     </TouchableScale>
                 }
             </View>
@@ -168,7 +174,7 @@ const CustomHeader = (props: Props) => {
             {/* ****************** Start of CENTER ****************** */}
             <View style={styles.middleContainer}>
                 {VALIDATION_CHECK(props.title) ?
-                    <Text numberOfLines={1} style={[styles.title,props.titleStyle]} fontFamily={"PoppinsBold"}>{props.title}</Text> :
+                    <Text numberOfLines={1} style={[styles.title, props.titleStyle]} fontFamily={"PoppinsBold"}>{props.title}</Text> :
                     _renderFinalDestination()
                 }
             </View>
@@ -179,8 +185,8 @@ const CustomHeader = (props: Props) => {
             <View style={[styles.sideContainer, {
                 alignItems: "flex-end",
             }]}>
-                {(VALIDATION_CHECK(props.rightIconName) || props.rightDot) &&
-                    <TouchableScale style={[styles.iconContainer,props.rightContainerStyle]}
+                {VALIDATION_CHECK(props.rightCustom) ? props.rightCustom : (VALIDATION_CHECK(props.rightIconName) || props.rightDot) &&
+                    <TouchableScale style={[styles.iconContainer, props.rightContainerStyle]}
                         {...props.onRightIconPress ? {
                             onPress: (event) => props.onRightIconPress && props.onRightIconPress(event)
                         } : {
@@ -193,7 +199,7 @@ const CustomHeader = (props: Props) => {
                                 color={props.rightIconColor}
                                 size={props.rightIconSize} />
                         }
-                        {props.rightDot && _renderDot(props.rightDot,props.rightDotStyle,props.rightDotTextStyle)}
+                        {props.rightDot && _renderDot(props.rightDot, props.rightDotStyle, props.rightDotTextStyle)}
                     </TouchableScale>
                 }
             </View>
@@ -267,23 +273,23 @@ const headerStyles = (primaryColor = "#FA3E3E") => StyleSheet.create({
     },
     numberDot: {
         position: 'absolute',
-        
+
         // bottom: 0,
         // left: 0,
         top: -5,
         right: -5,
         backgroundColor: DOT.color,
-        width: DOT.size*2,
-        height: DOT.size*2,
-        
-        borderRadius: DOT.size*2,
-        alignItems:"center",
-        justifyContent:"center",
+        width: DOT.size * 2,
+        height: DOT.size * 2,
+
+        borderRadius: DOT.size * 2,
+        alignItems: "center",
+        justifyContent: "center",
     },
-    numberDotText:{
-        fontSize:7,
-        color:"#fff",
-        paddingTop:(DOT.size*2)/6
+    numberDotText: {
+        fontSize: 7,
+        color: "#fff",
+        paddingTop: (DOT.size * 2) / 6
     },
     deliverToText: {
         color: "#272727",
@@ -294,7 +300,7 @@ const headerStyles = (primaryColor = "#FA3E3E") => StyleSheet.create({
         fontSize: 14,
         marginTop: Platform.OS === "ios" ? -4 : -8,
     },
-    title:{
+    title: {
         color: primaryColor,
         fontSize: 18,
     },

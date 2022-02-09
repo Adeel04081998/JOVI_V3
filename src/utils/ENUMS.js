@@ -67,24 +67,36 @@ export default {
            
             "text": "New on Jovi",
             "value": 1,
-            "icon": null,
+            "icon": svgs.newOnJovi(),
 
         }, {
-            "text": "Discount",
-            "value": 1,
-            "icon": null
+            "text": "Discounts",
+            "value": 2,
+            "icon": svgs.discount()
         },
     ],
     "AVERAGE_PRICE_FILTERS": [
         {        
             "text": "$",
             "value": 1,
-            "icon": null
+            "icon": null,
+            "price": "under 500"
 
         }, {
             "text": "$$",
-            "value": 1,
-            "icon": null
+            "value": 2,
+            "icon": null,
+            "price": "500 - 100"
+
+
+        }
+        , {
+            "text": "$$",
+            "value": 2,
+            "icon": null,
+            "price": "1000 - 2000"
+
+
         }
     ]
 

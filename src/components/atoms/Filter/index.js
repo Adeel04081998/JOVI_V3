@@ -1,5 +1,5 @@
-import React from 'react';
-import { Appearance, ScrollView, StyleSheet, View } from 'react-native';
+import React, { useState } from 'react';
+import { Alert, Appearance, ScrollView, StyleSheet, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import AnimatedKeyboardAwareScroll from '../../molecules/AnimatedKeyboardAwareScroll';
 import Text from '../Text';
@@ -12,73 +12,105 @@ import colors from '../../../res/colors';
 import theme from '../../../res/theme';
 import GV from '../../../utils/GV';
 import SafeAreaView from "../../atoms/SafeAreaView";
-import AveragePice from './components/AveragePice';
-
-
-
-
-
+import AveragePrice from './components/AveragePrice';
+import { Header } from 'react-native/Libraries/NewAppScreen';
+import CustomHeader from '../../molecules/CustomHeader';
+import Cuisine from './components/Cuisine';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
+import Button from '../../molecules/Button';
+import FontFamily from '../../../res/FontFamily';
 export default () => {
-    const tagswithCategory = useSelector(state => state.categoriesTagsReducer);
-    console.log("tagswithCategory", tagswithCategory);
-    const { tagsList } = tagswithCategory.tagsWithCategories ?? {}
-    console.log("tagsList", tagsList)
-    console.log("Enums", ENUMS.FILTER_BY)
-    // const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark");
-    // const homeStyles = stylesheet.styles(colors);
+    const { vendorFilterViewModel } = useSelector(state => state.categoriesTagsReducer);
+    console.log("vendorFilterViewModel", vendorFilterViewModel);
+    const categoriesList = vendorFilterViewModel?.cuisine?.categoriesList ?? []
+    console.log("categoriesList===>>>", categoriesList);
     const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark")
-    const renderFilterByUi = () => {
-        return (
-            ENUMS.FILTER_BY.map((x, i) => {
-                console.log("x==>", x);
-                return <AnimatedView style={{ backgroundColor: 'red' }}>
-                    <Text>{x.filterTitle}</Text>
-                </AnimatedView>
-            })
+    // const [isLoading, setIsLoading] = React.useState(false);
 
+    // const [filterBy, SetFilterBy] = React.useState([]);
+    const initState={
+        AveragePrice:[
+        ],
+        filterBy:[
+        ],
+        Cuisine:[
+        ]
+    }
+    const [state, setState] =useState(initState)
+
+    const _renderHeaderRightButton = () => {
+        return (
+            <TouchableOpacity style={{}}
+                onPress={() => {
+                    Alert.alert("ClearButton")
+                }}
+            >
+                <Text style={{ color: colors.STOONE }}>Clear</Text>
+            </TouchableOpacity>
         )
     }
-    const renderAveragePriceFilterByUi = () => {
-        return (
-            ENUMS.AVERAGE_PRICE_FILTERS.map((x, i) => {
-                console.log("x==>", x);
-                return <AnimatedView style={{ backgroundColor: 'green', top: 20 }}>
-                    <Text>{x.filterTitle}</Text>
-                </AnimatedView>
-            })
-
-        )
-    }
+    console.log("state",state);
+    
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <ScrollView style={{ borderWidth: 1 }} contentContainerStyle={{ flex: 1, }} >
-                <AnimatedView style={{
-                    flexDirection: 'row', justifyContent: "space-between", alignItems: 'center',
-                    borderBottomWidth: 1, borderBottomColor: colors.navTextColor,
-                    marginHorizontal: 15,
-                    paddingVertical: 15
+        <SafeAreaView style={{ flex: 1, backgroundColor: colors.DrWhite }}>
+            <CustomHeader
+                leftIconName='ios-close'
+                leftContainerStyle={{
+                    height: 30,
+                    width: 30,
+                    borderRadius: 20,
+                    backgroundColor: colors.navTextColor,
+                    right: 9,
 
-                }}>
-                    <TouchableOpacity style={{}}  >
-                        <SvgXml xml={svgs.cross()} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={{}}  >
-                        <Text style={{ color: colors.navTextColor }}>Clear</Text>
-                    </TouchableOpacity>
+                }}
+                leftIconSize={20}
+                onLeftIconPress={() => { Alert.alert("Left crosss") }}
+                rightCustom={_renderHeaderRightButton()}
+                hideFinalDestination={true}
+                containerStyle={{ borderBottomWidth: 1, borderBottomColor: colors.navTextColor, marginHorizontal: 15, backgroundColor: colors.DrWhite, }}
 
-                </AnimatedView>
-                <AveragePice
+            />
+            <ScrollView >
+                <AveragePrice
                     data={ENUMS.FILTER_BY}
                     styles={{ borderWidth: 2, top: 20 }}
-                    filterType='Salary Dy Do'
+                    filterType='Filter by'
+                    colors={colors}
+                    filterTypeStyle={{ paddingBottom: 10, color: 'black', fontSize: 16, FontFamily: FontFamily.Poppins.Regular }}
+                    onPress={(x) => {
+                        console.log("value=>>", x)
+                        setState((pre)=>({
+                            ...pre,
+                            filterBy:x
+                        }))
+
+                    }}
+                    selectedFilter ={state.filterBy}
+
                 />
-                <AveragePice
+                <AveragePrice
                     data={ENUMS.AVERAGE_PRICE_FILTERS}
                     styles={{ borderWidth: 2, top: 20 }}
-                    filterType='Average price'
+                    filterType='Average Price'
+                    colors={colors}
+                    filterTypeStyle={{ paddingBottom: 10, color: "black", fontSize: 16, FontFamily: FontFamily.Poppins.Regular }}
+                    onPress={(x) => {setState((pre)=>({ ...pre, AveragePrice:x }))}}
+                    selectedFilter ={state.AveragePrice}
                 />
-
+                <Cuisine
+                    filterReducer={categoriesList}
+                    filterType='Cuisine'
+                    filterTypeStyle={{ paddingVertical: 10, color: 'black', fontSize: 16, FontFamily: FontFamily.Poppins.Regular }}
+                    colors={colors}
+                    nPress={(x) => { setState((pre)=>({ ...pre, Cuisine:x}))}}
+                />
             </ScrollView>
+            <Button
+                onPress={() => { }}
+                text='Apply'
+                style={{ width: "90%", alignSelf: "center", marginBottom: 10, backgroundColor: "#F94E41", borderRadius: 10 }}
+
+            />
 
 
         </SafeAreaView>

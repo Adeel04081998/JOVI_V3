@@ -1,5 +1,5 @@
 export default {
-    otp: () => `<?xml version="1.0" encoding="utf-8"?>
+  otp: () => `<?xml version="1.0" encoding="utf-8"?>
     <!-- Generator: Adobe Illustrator 26.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
          viewBox="0 0 499.6 499.6" style="enable-background:new 0 0 499.6 499.6;" xml:space="preserve">
@@ -33,7 +33,7 @@ export default {
     <path style="fill:#B1AAE0;" d="M236.1,132.2c-4.5,0-9,0-13.4,0c-4.9,0-8.2,2.9-8.3,7s3.1,7.3,7.9,7.4c9.2,0.1,18.3,0.1,27.5,0
         c4.7-0.1,7.8-3.1,7.8-7.2s-3.3-7.2-8.1-7.2C245,132.2,240.6,132.2,236.1,132.2z"/>
     </svg>`,
-    cat: () => `<?xml version="1.0" encoding="utf-8"?>
+  cat: () => `<?xml version="1.0" encoding="utf-8"?>
     <!-- Generator: Adobe Illustrator 26.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
          viewBox="0 0 72.4 83" style="enable-background:new 0 0 72.4 83;" xml:space="preserve">
@@ -922,7 +922,7 @@ export default {
     </g>
     </svg>
     `,
-    food: () => `<svg id="Group_14924" data-name="Group 14924" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="68.393" height="61.111" viewBox="0 0 68.393 61.111">
+  food: () => `<svg id="Group_14924" data-name="Group 14924" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="68.393" height="61.111" viewBox="0 0 68.393 61.111">
   <defs>
     <clipPath id="clip-path">
       <rect id="Rectangle_20551" data-name="Rectangle 20551" width="68.393" height="61.111" fill="none"/>
@@ -1276,7 +1276,7 @@ export default {
   </g>
 </svg>
 `,
-    grocery: () => `<svg id="Group_15059" data-name="Group 15059" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="68.467" height="70.685" viewBox="0 0 68.467 70.685">
+  grocery: () => `<svg id="Group_15059" data-name="Group 15059" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="68.467" height="70.685" viewBox="0 0 68.467 70.685">
     <defs>
       <clipPath id="clip-path">
         <rect id="Rectangle_20599" data-name="Rectangle 20599" width="68.467" height="70.685" fill="none"/>
@@ -1874,7 +1874,7 @@ export default {
     </g>
   </svg>
   `,
-    pharmacy: () => `<svg id="Group_14956" data-name="Group 14956" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="41.415" height="58.85" viewBox="0 0 41.415 58.85">
+  pharmacy: () => `<svg id="Group_14956" data-name="Group 14956" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="41.415" height="58.85" viewBox="0 0 41.415 58.85">
     <defs>
       <clipPath id="clip-path">
         <rect id="Rectangle_20563" data-name="Rectangle 20563" width="41.415" height="58.85" fill="none"/>
@@ -1991,7 +1991,7 @@ export default {
     </g>
   </svg>
   `,
-    jovi: () => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="67.003" height="71.198" viewBox="0 0 67.003 71.198">
+  jovi: () => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="67.003" height="71.198" viewBox="0 0 67.003 71.198">
     <defs>
       <clipPath id="clip-path">
         <rect id="Rectangle_20601" data-name="Rectangle 20601" width="67.003" height="71.198" transform="translate(0 0)" fill="none"/>
@@ -2091,7 +2091,7 @@ export default {
   </svg>
   `,
 
-  cross : ()=>`
+  cross: () => `
   <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
   <g id="Group_14734" data-name="Group 14734" transform="translate(-15 -30)">
     <circle id="Ellipse_582" data-name="Ellipse 582" cx="15" cy="15" r="15" transform="translate(15 30)" fill="#dcdcdc"/>
@@ -2101,8 +2101,29 @@ export default {
     </g>
   </g>
 </svg>
+  `,
 
-  `
+  newOnJovi: () => `<svg xmlns="http://www.w3.org/2000/svg" width="16.875" height="14.028" viewBox="0 0 16.875 14.028">
+  <path id="Icon_awesome-store" data-name="Icon awesome-store" d="M16.5,3.249,14.718.411A.877.877,0,0,0,13.975,0H2.907a.877.877,0,0,0-.742.411L.386,3.249A2.444,2.444,0,0,0,2,6.986a2.847,2.847,0,0,0,.375.025A2.705,2.705,0,0,0,4.394,6.1a2.708,2.708,0,0,0,4.044,0,2.708,2.708,0,0,0,4.044,0,2.714,2.714,0,0,0,2.022.907,2.817,2.817,0,0,0,.375-.025A2.442,2.442,0,0,0,16.5,3.249ZM14.51,7.891a3.476,3.476,0,0,1-.808-.1v2.734H3.181V7.786a3.63,3.63,0,0,1-.808.1,3.7,3.7,0,0,1-.493-.033,3.446,3.446,0,0,1-.449-.1v5.392a.876.876,0,0,0,.877.877H14.581a.876.876,0,0,0,.877-.877V7.759a2.8,2.8,0,0,1-.449.1A3.81,3.81,0,0,1,14.51,7.891Z" transform="translate(-0.004)" fill="#6b6b6b"/>
+</svg>
+`,
+  discount: () => `
+<svg id="Group_14736" data-name="Group 14736" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="17.264" height="12.952" viewBox="0 0 17.264 12.952">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_19871" data-name="Rectangle 19871" width="17.264" height="12.952" fill="#6b6b6b" stroke="#6b6b6b" stroke-width="0.2"/>
+    </clipPath>
+  </defs>
+  <g id="Group_14735" data-name="Group 14735" clip-path="url(#clip-path)">
+    <path id="Path_18866" data-name="Path 18866" d="M0,11.568V8.5a.653.653,0,0,1,.643-.414A1.613,1.613,0,0,0,.66,4.867.668.668,0,0,1,0,4.453V1.384c.007-.008.019-.015.021-.025A1.626,1.626,0,0,1,1.781,0h12.4c.5,0,1-.006,1.5,0a1.616,1.616,0,0,1,1.5,1.127c.027.084.051.169.076.253V4.453a.669.669,0,0,1-.66.415,1.612,1.612,0,0,0,0,3.217.67.67,0,0,1,.66.415v3.069c-.007.008-.019.015-.021.025a1.624,1.624,0,0,1-1.76,1.358H2.826c-.41,0-.82,0-1.23,0A1.621,1.621,0,0,1,.082,11.837c-.03-.089-.054-.18-.082-.269m16.184-2.44a2.729,2.729,0,0,1-2.152-2.475,2.62,2.62,0,0,1,.382-1.562,2.728,2.728,0,0,1,1.771-1.263c0-.728,0-1.441,0-2.154a.545.545,0,0,0-.6-.592H1.679a.548.548,0,0,0-.6.609q0,.986,0,1.972v.161A2.729,2.729,0,0,1,3.232,6.3,2.614,2.614,0,0,1,2.85,7.861,2.719,2.719,0,0,1,1.079,9.124c0,.705,0,1.4,0,2.087,0,.468.2.66.668.66h13.77c.051,0,.1,0,.152,0a.528.528,0,0,0,.512-.508c.008-.741,0-1.482,0-2.234" transform="translate(0 0)" fill="#6b6b6b" stroke="#6b6b6b" stroke-width="0.2"/>
+    <path id="Path_18867" data-name="Path 18867" d="M148.016,43.74l1.01.378-3.235,8.629-1.011-.378,3.236-8.629" transform="translate(-138.271 -41.774)" fill="#6b6b6b" stroke="#6b6b6b" stroke-width="0.2"/>
+    <path id="Path_18868" data-name="Path 18868" d="M100.794,79.309a1.617,1.617,0,1,1,1.635-1.576,1.621,1.621,0,0,1-1.635,1.576m.557-1.621a.538.538,0,0,0-.538-.533.55.55,0,0,0-.538.538.543.543,0,0,0,.552.537.53.53,0,0,0,.524-.543" transform="translate(-94.735 -72.656)" fill="#6b6b6b" stroke="#6b6b6b" stroke-width="0.2"/>
+    <path id="Path_18869" data-name="Path 18869" d="M224.983,150.607a1.617,1.617,0,1,1-1.623,1.606,1.62,1.62,0,0,1,1.623-1.606m-.544,1.619a.539.539,0,0,0,.535.536.55.55,0,0,0,.541-.536.542.542,0,0,0-.549-.54.528.528,0,0,0-.527.54" transform="translate(-213.319 -143.836)" fill="#6b6b6b" stroke="#6b6b6b" stroke-width="0.2"/>
+  </g>
+</svg>
+
+`
+
 
 
 
