@@ -62,7 +62,6 @@ const ProductMenuHeader = (props: Props) => {
             onLayout={(e) => {
                 props.onLayout && props.onLayout(e);
             }}>
-            <StatusBar translucent backgroundColor='transparent' />
 
             {/* ****************** Start of IMAGE BACKGROUND ****************** */}
             <ImageBackground
@@ -122,7 +121,9 @@ const ProductMenuHeader = (props: Props) => {
             {/* ****************** End of DETAIL CARD ****************** */}
 
             {/* ****************** Start of RECENT ORDERS ****************** */}
+            
             <RecentOrder colors={colors} />
+            
 
             {/* ****************** End of RECENT ORDERS ****************** */}
 

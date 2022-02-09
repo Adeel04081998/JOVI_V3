@@ -6,7 +6,7 @@ import Text from "../atoms/Text";
 import TouchableScale from "../atoms/TouchableScale";
 import View from "../atoms/View";
 
-interface Props{
+interface Props {
     children?: any;
     colors: typeof initColors;
 }
@@ -21,15 +21,18 @@ const RecentOrder = (props: Props) => {
     const recentOrderStyles = recentOrderStylesFunc(colors);
 
     return (
-        <>
+        <View style={{
+            zIndex: 9999999999999999,
+        }}>
             <Text fontFamily="PoppinsMedium" style={recentOrderStyles.heading}>{`Recent orders`}</Text>
 
             <ScrollView
                 horizontal
                 style={{
                     // ...recentOrderStyles.scrollView,
-                    maxHeight: "auto",
-                    flexGrow: 0,
+                    // maxHeight: "auto",
+                    // flexGrow: 0,
+                    zIndex: 99999999,
                 }}
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}>
@@ -53,7 +56,7 @@ const RecentOrder = (props: Props) => {
                     )
                 })}
             </ScrollView>
-        </>
+        </View>
     );
 }//end of FUNCTION
 

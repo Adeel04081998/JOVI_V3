@@ -160,7 +160,7 @@ const ProductMenuScrollable = (props: Props) => {
 
     return (
         <>
-            <Animated.View style={[style.topHeaderStyle, props.topHeaderStyle && props.topHeaderStyle]}>
+            <Animated.View style={[style.topHeaderStyle, props.topHeaderStyle]}>
                 <ScrollView
                     ref={tabScrollRef}
                     horizontal={true}
