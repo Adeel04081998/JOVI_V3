@@ -79,20 +79,23 @@ export default {
         {        
             "text": "$",
             "value": 1,
+            "id":1,
             "icon": null,
             "price": "under 500"
 
         }, {
             "text": "$$",
             "value": 2,
+            "id":2,
             "icon": null,
             "price": "500 - 100"
 
 
         }
         , {
-            "text": "$$",
-            "value": 2,
+            "text": "$$$",
+            "value": 3,
+            "id":3,
             "icon": null,
             "price": "1000 - 2000"
 

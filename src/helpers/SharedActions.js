@@ -212,7 +212,7 @@ export const sharedGetFilters = () => {
         "vendorType":4
 
     }, res => {
-        console.log("[sharedGetHomeMsgsApi].res ====>>", res);
+        console.log("[sharedGetFiltersApi].res ====>>", res);
         // dispatch(ReduxActions.setMessagesAction({ ...res.data, robotJson: data }));
         dispatch(ReduxActions.setCategoriesTagsAction({...res.data}))
 

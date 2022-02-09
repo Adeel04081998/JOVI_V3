@@ -1,7 +1,7 @@
 import React from "react";
 import constants from "../res/constants";
 let initUrlRef = React.createRef(null);
-initUrlRef.current = __DEV__ ? constants.url_dev : constants.url_live;
+initUrlRef.current = __DEV__ ? constants.url_qasprint_v1 : constants.url_live;
 export default {
     BASE_URL: initUrlRef,
     netInfoRef: React.createRef(null),

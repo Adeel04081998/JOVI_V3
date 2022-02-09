@@ -14,6 +14,7 @@ import PitstopListing from '../screens/PitstopListing';
 import ROUTES from './ROUTES';
 import SharedActions, { sharedGetEnumsApi, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser } from '../helpers/SharedActions';
 import { store } from '../redux/store';
+import Filter from '../components/atoms/Filter';
 import { useSelector } from 'react-redux';
 const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES,APP_DRAWER_ROUTES,APP_DRAWER_STACK } = ROUTES;
 const AppDrawerStack = (props) => {
@@ -42,7 +43,8 @@ const AppComponents = {
 };//will open without Slide Animation
 const AppDrawerComponents = {
     Home,
-    PitstopListing
+    PitstopListing,
+    Filter,
 }//will open with Slide Animation
 const ContainerStack = createStackNavigator();
 const Stack = createSharedElementStackNavigator();
@@ -119,7 +121,7 @@ const AuthStacks = (props) => {
 
 const AppDrawers = (props) => {
         // console.log("[AppDrawers].props", props)
-    return <Drawer.Navigator screenOptions={stackOpts()} initialRouteName={APP_ROUTES.AppDrawerStack.screen_name}>
+    return <Drawer.Navigator screenOptions={stackOpts} initialRouteName={APP_ROUTES.AppDrawerStack.screen_name}>
         {(APP_STACKS || []).map((routeInfo, index) => {
             console.log('routeInfo',AppComponents);
             return <Drawer.Screen

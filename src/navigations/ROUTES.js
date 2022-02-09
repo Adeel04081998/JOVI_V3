@@ -29,6 +29,10 @@ const APP_DRAWER_ROUTES = {
         screen_name: "VENDORS",
         options: null,
     },
+    "Filter": {
+        screen_name: "FILTER",
+        options: null,
+    }
 }
 const APP_ROUTES = {
     "AppDrawerStack": {

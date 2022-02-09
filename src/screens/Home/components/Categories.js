@@ -9,8 +9,10 @@ const CONTAINER_WIDTH = ((constants.screen_dimensions.width) * 0.22);
 const CONTAINER_HEIGHT = constants.screen_dimensions.width * 0.3;
 export default React.memo(({ homeStyles }) => {
     const cartOnPressHandler = (index) => {
-        if(index === 2){
-            NavigationService.NavigationActions.common_actions.navigate('VENDORS');
+        if(index === 1){
+            NavigationService.NavigationActions.common_actions.navigate('VENDORS',{pitstopType:4});
+        }else if(index ===2){
+            NavigationService.NavigationActions.common_actions.navigate('VENDORS',{pitstopType:1});
         }
      }
     return <AnimatedView style={[homeStyles.categoriesCardPrimaryContainer]}>

@@ -9,6 +9,7 @@ export default ({ data = {}, filterType = "", filterTypeStyle, styles, colors, o
     let categoriesData = data.categoriesList ?? []
     const cuisineAnimation = React.useRef(new Animated.Value(0)).current;
     React.useLayoutEffect(() => {
+        console.log('Categories',categoriesData)
         if (categoriesData.length > 0) {
             setTimeout(() => {
                 Animated.timing(cuisineAnimation, {
@@ -28,11 +29,11 @@ export default ({ data = {}, filterType = "", filterTypeStyle, styles, colors, o
             <View style={{ flexWrap: 'wrap', flexDirection: 'row', width: '100%', }}>
                 {
                     categoriesData.map((x, i) => {
-                        const isActive = activeCusine === i;
+                        const isActive = activeCusine === x.categoryID;
                         let borderColor = isActive ? "#F3B8B4" : "#C1C1C1"
                         let color = isActive ? "#F94E41" : "black"
                         return <TouchableOpacity style={{
-                            justifyContent: 'center', height: 25, paddingHorizontal: 5, borderWidth: 0.8, borderColor, borderRadius: 5, margin: 7, alignItems: 'center', backgroundColor: '#FFFFFF',
+                            justifyContent: 'center', height: 25, paddingHorizontal: 5, borderWidth: 0.8, borderColor, borderRadius: 5,marginRight:10,marginBottom:10, alignItems: 'center', backgroundColor: '#FFFFFF',
                             transform: [{
                                 scale: cuisineAnimation.interpolate({
                                     inputRange: [0, 1],
@@ -42,7 +43,7 @@ export default ({ data = {}, filterType = "", filterTypeStyle, styles, colors, o
                             }]
                         }}
                             key={i}
-                            onPress={() => { onPress(i) }}
+                            onPress={() => { onPress(x,i) }}
                         >
 
                             <Text style={{ fontSize: 12, color, }} fontFamily='PoppinsMedium'>{x.categoryName}</Text>

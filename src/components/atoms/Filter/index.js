@@ -11,8 +11,11 @@ import AveragePrice from './components/AveragePrice';
 import CustomHeader from '../../molecules/CustomHeader';
 import Cuisine from './components/Cuisine';
 import Button from '../../molecules/Button';
+import NavigationService from '../../../navigations/NavigationService';
 
 export default (props) => {
+    const {route} = props;
+    console.log('route',route.params);
     const { vendorFilterViewModel } = useSelector(state => state.categoriesTagsReducer);
     const cuisineList = vendorFilterViewModel?.cuisine ?? {}
     const filterList = vendorFilterViewModel?.filtersList ?? {}
@@ -23,7 +26,9 @@ export default (props) => {
         averagePrice: {},
         filterBy: {},
         cuisine: {},
-
+        activeCusine: route.params.activeCusine??null,
+        activeAvergePrice:route.params.activeAvergePrice??null,
+        activeFilterBy: route.params.activeFilterBy??null
     }
     const [state, setState] = useState(initState)
     const CUSINE_ACTIVE_INDEX = "activeCusine";
@@ -32,27 +37,32 @@ export default (props) => {
     const enableDisableButton = (state[CUSINE_ACTIVE_INDEX] != null || state[Filter_ACTIVE_INDEX] != null || state[AV_PRICE_ACTIVE_INDEX] != null) ? false : true
     const _renderHeaderRightButton = () => {
         return (
-            <TouchableOpacity onPress={() => { Alert.alert("ClearButton") }} >
+            <TouchableOpacity onPress={onPress} >
                 <Text style={{ color: "#C1C1C1" }} fontFamily='PoppinsRegular' >Clear</Text>
             </TouchableOpacity>
         )
     }
 
     const handleOnPress = (index, key) => {
-        if (index === state[key]) {
-            setState((pre) => ({ ...pre, [key]: null, }))
-        } else {
-            setState((pre) => ({ ...pre, [key]: index, loading: true }))
-        }
+        // if (index === state[key]) {
+        //     setState((pre) => ({ ...pre, [key]: null, }))
+        // } else {
+        //     setState((pre) => ({ ...pre, [key]: index }))
+        // }
+        setState((pre) => ({ ...pre, [key]:pre[key] === index? null : index, }))
     }
-
     const onPress = () => {
         const dataToSend = {
-            filterBy: filterList[state[Filter_ACTIVE_INDEX]],
-            averagePrice: averagePriceList[state[AV_PRICE_ACTIVE_INDEX]],
-            cuisineInfo: cuisineList.categoriesList[state[CUSINE_ACTIVE_INDEX]],
+            [Filter_ACTIVE_INDEX]: state[Filter_ACTIVE_INDEX],
+            [AV_PRICE_ACTIVE_INDEX]:state[AV_PRICE_ACTIVE_INDEX],
+            [CUSINE_ACTIVE_INDEX]: state[CUSINE_ACTIVE_INDEX],
 
         }
+        NavigationService.NavigationActions.common_actions.goBack();
+        if(route.params.backCB){
+            route.params.backCB(dataToSend);
+        }
+        // console.log(dataToSend)
     }
 
     return (
@@ -61,7 +71,7 @@ export default (props) => {
                 leftIconName='ios-close'
                 leftContainerStyle={{ height: 30, width: 30, borderRadius: 20, backgroundColor: colors.navTextColor, right: 9, }}
                 leftIconSize={20}
-                onLeftIconPress={() => { Alert.alert("Left crosss") }}
+                onLeftIconPress={onPress}
                 rightCustom={_renderHeaderRightButton()}
                 hideFinalDestination={true}
                 containerStyle={{ borderBottomWidth: 1, borderBottomColor: colors.navTextColor, marginHorizontal: 15, backgroundColor: "#FAFAFA", }}
@@ -71,9 +81,10 @@ export default (props) => {
                     data={filterList}
                     styles={{ borderWidth: 2, top: 20 }}
                     filterType={'Filter by' || filterType}
+                    idKey={'vendorDashboardCatID'}
                     colors={colors}
                     filterTypeStyle={{ paddingBottom: 10, color: 'black', fontSize: 17, }}
-                    onPress={(index) => { handleOnPress(index, Filter_ACTIVE_INDEX) }}
+                    onPress={(index) => { handleOnPress(index.vendorDashboardCatID, Filter_ACTIVE_INDEX) }}
                     scrollEnabled={true}
                     activeFilterBy={state.activeFilterBy}
                 />
@@ -83,7 +94,7 @@ export default (props) => {
                     filterType={'Average Price' || filterType}
                     colors={colors}
                     filterTypeStyle={{ paddingBottom: 10, color: "black", fontSize: 17, }}
-                    onPress={(index) => { handleOnPress(index, AV_PRICE_ACTIVE_INDEX) }}
+                    onPress={(item,index) => { handleOnPress(item.id, AV_PRICE_ACTIVE_INDEX) }}
                     scrollEnabled={false}
                     activeFilterBy={state.activeAvergePrice}
                 />
@@ -91,7 +102,7 @@ export default (props) => {
                     data={cuisineList}
                     filterTypeStyle={{ paddingVertical: 10, color: 'black', fontSize: 17, }}
                     colors={colors}
-                    onPress={(index) => { handleOnPress(index, CUSINE_ACTIVE_INDEX) }}
+                    onPress={(item,index) => { handleOnPress(item.categoryID, CUSINE_ACTIVE_INDEX) }}
                     activeCusine={state.activeCusine}
                 />
             </ScrollView>
