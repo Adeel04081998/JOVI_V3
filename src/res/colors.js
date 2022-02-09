@@ -24,7 +24,8 @@ export const initColors = {
     "iconActiveColor": "#05B7ED",
     "navTextColor": "#C1C1C1",
     "navActiveTextColor": "white",
-    "black": '#000'
+    "black": '#000',
+    "oldFlame" :"#F3B8B4"
 }
 export default {
 

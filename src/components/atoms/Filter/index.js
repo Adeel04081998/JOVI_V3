@@ -19,108 +19,93 @@ import Cuisine from './components/Cuisine';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import Button from '../../molecules/Button';
 import FontFamily from '../../../res/FontFamily';
-export default () => {
+import NavigationService from '../../../navigations/NavigationService';
+export default (props) => {
     const { vendorFilterViewModel } = useSelector(state => state.categoriesTagsReducer);
-    console.log("vendorFilterViewModel", vendorFilterViewModel);
-    const categoriesList = vendorFilterViewModel?.cuisine?.categoriesList ?? []
-    console.log("categoriesList===>>>", categoriesList);
+    const cuisine = vendorFilterViewModel?.cuisine ?? {}
+    const filterList = vendorFilterViewModel?.filtersList ?? {}
     const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark")
-    // const [isLoading, setIsLoading] = React.useState(false);
-
-    // const [filterBy, SetFilterBy] = React.useState([]);
-    const initState={
-        AveragePrice:[
-        ],
-        filterBy:[
-        ],
-        Cuisine:[
-        ]
+    const filterType = null
+    const initState = {
+        averagePrice: {},
+        filterBy: {} ,
+        cuisine: {}
     }
-    const [state, setState] =useState(initState)
+    const [state, setState] = useState(initState)
 
     const _renderHeaderRightButton = () => {
         return (
-            <TouchableOpacity style={{}}
-                onPress={() => {
-                    Alert.alert("ClearButton")
-                }}
-            >
-                <Text style={{ color: colors.STOONE }}>Clear</Text>
+            <TouchableOpacity onPress={() => { Alert.alert("ClearButton") }} >
+                <Text style={{ color: colors.navTextColor }} fontFamily='PoppinsRegular' >Clear</Text>
             </TouchableOpacity>
         )
     }
-    console.log("state",state);
-    
+    const applyFilterHandler = () => {
+        // NavigationService.NavigationActions.common_actions.goBack()
+        Alert.alert("Apply")
+    }
+
+
+    const handleOnPress = (item, index, key) => {
+        const activeIndex = "activeIndex" in state[key] ? state[key].activeIndex : -1;
+        if (activeIndex === index) {
+            setState((pre) => ({ ...pre, [key]: {} }))
+        } else {
+            setState((pre) => ({ ...pre, [key]: { ...item, activeIndex: index } }))
+        }
+
+    }
+
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.DrWhite }}>
             <CustomHeader
                 leftIconName='ios-close'
-                leftContainerStyle={{
-                    height: 30,
-                    width: 30,
-                    borderRadius: 20,
-                    backgroundColor: colors.navTextColor,
-                    right: 9,
-
-                }}
+                leftContainerStyle={{ height: 30, width: 30, borderRadius: 20, backgroundColor: colors.navTextColor, right: 9, }}
                 leftIconSize={20}
                 onLeftIconPress={() => { Alert.alert("Left crosss") }}
                 rightCustom={_renderHeaderRightButton()}
                 hideFinalDestination={true}
-                containerStyle={{ borderBottomWidth: 1, borderBottomColor: colors.navTextColor, marginHorizontal: 15, backgroundColor: colors.DrWhite, }}
+                containerStyle={{ borderBottomWidth: 1, borderBottomColor: colors.navTextColor, marginHorizontal: 15, backgroundColor: "#FAFAFA", }}
 
             />
-            <ScrollView >
+            <ScrollView showsVerticalScrollIndicator={false}>
                 <AveragePrice
-                    data={ENUMS.FILTER_BY}
+                    data={filterList}
                     styles={{ borderWidth: 2, top: 20 }}
-                    filterType='Filter by'
+                    filterType={'Filter by' || filterType}
                     colors={colors}
-                    filterTypeStyle={{ paddingBottom: 10, color: 'black', fontSize: 16, FontFamily: FontFamily.Poppins.Regular }}
-                    onPress={(x) => {
-                        console.log("value=>>", x)
-                        setState((pre)=>({
-                            ...pre,
-                            filterBy:x
-                        }))
-
-                    }}
-                    selectedFilter ={state.filterBy}
+                    filterTypeStyle={{ paddingBottom: 10, color: 'black', fontSize: 17,  }}
+                    onPress={(value, index) => { handleOnPress(value, index, "filterBy") }}
+                    selectedFilter={state.filterBy}
+                    scrollEnabled={true}
 
                 />
                 <AveragePrice
                     data={ENUMS.AVERAGE_PRICE_FILTERS}
                     styles={{ borderWidth: 2, top: 20 }}
-                    filterType='Average Price'
+                    filterType={'Average Price' || filterType}
                     colors={colors}
-                    filterTypeStyle={{ paddingBottom: 10, color: "black", fontSize: 16, FontFamily: FontFamily.Poppins.Regular }}
-                    onPress={(x) => {setState((pre)=>({ ...pre, AveragePrice:x }))}}
-                    selectedFilter ={state.AveragePrice}
+                    filterTypeStyle={{ paddingBottom: 10, color: "black", fontSize: 17, }}
+                    onPress={(value, index) => { handleOnPress(value, index, "averagePrice") }}
+                    selectedFilter={state.averagePrice}
+                    scrollEnabled={false}
                 />
                 <Cuisine
-                    filterReducer={categoriesList}
-                    filterType='Cuisine'
-                    filterTypeStyle={{ paddingVertical: 10, color: 'black', fontSize: 16, FontFamily: FontFamily.Poppins.Regular }}
+                    data={cuisine}
+                    filterTypeStyle={{ paddingVertical: 10, color: 'black', fontSize: 17,  }}
                     colors={colors}
-                    nPress={(x) => { setState((pre)=>({ ...pre, Cuisine:x}))}}
+                    onPress={(value, index) => { handleOnPress(value, index, "cuisine") }}
+                    selectedFilter={state.cuisine}
+
                 />
             </ScrollView>
             <Button
-                onPress={() => { }}
+                onPress={applyFilterHandler}
                 text='Apply'
                 style={{ width: "90%", alignSelf: "center", marginBottom: 10, backgroundColor: "#F94E41", borderRadius: 10 }}
 
             />
-
-
         </SafeAreaView>
-
-
-
-
-
-
-
-
     )
 }
