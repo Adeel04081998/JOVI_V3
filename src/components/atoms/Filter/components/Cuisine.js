@@ -1,79 +1,55 @@
 import React from 'react';
-import { Animated, Appearance, FlatList, } from 'react-native';
-import { Easing } from 'react-native-reanimated';
-import { SvgXml } from 'react-native-svg';
-import svgs from '../../../../assets/svgs';
-import FontFamily from '../../../../res/FontFamily';
-import ENUMS from '../../../../utils/ENUMS';
-import AnimatedFlatlist from '../../../molecules/AnimatedScrolls/AnimatedFlatlist';
-import Button from '../../../molecules/Button';
+import { Animated, Appearance, Easing, FlatList, } from 'react-native';
 import AnimatedView from '../../AnimatedView';
 import Text from '../../Text';
 import TouchableOpacity from '../../TouchableOpacity';
 import View from '../../View';
-export default ({ filterReducer = [], filterType = "", filterTypeStyle, styles, colors, }) => {
-    console.log("colors=>", colors);
-
-    console.log('filterReducer1233333 ', filterReducer);
+export default ({ data = {}, filterType = "", filterTypeStyle, styles, colors, onPress, selectedFilter = {}, activeCusine = null }) => {
+    let tagName = data.tagName ?? ""
+    let categoriesData = data.categoriesList ?? []
     const cuisineAnimation = React.useRef(new Animated.Value(0)).current;
+    React.useLayoutEffect(() => {
+        if (categoriesData.length > 0) {
+            setTimeout(() => {
+                Animated.timing(cuisineAnimation, {
+                    toValue: 1,
+                    duration: 300,
+                    useNativeDriver: true,
+                    easing: Easing.ease
+                }).start();
+            }, 500);
+        }
 
-    React.useEffect(() => {
-        Animated.timing(cuisineAnimation, {
-            toValue: 1,
-            duration: 1000,
-            useNativeDriver: true,
-            easing: Easing.ease
-        }).start();
-      
-    }, []);
-   
+    }, [categoriesData]);
+
     return (
-        <AnimatedView style={{ marginHorizontal: 15,    }}>
-            <Text style={filterTypeStyle}>{filterType}</Text>
-           {/* <Button 
-           text='click'
-           onPress={()=>{ start()}}
-           style={{bottom:120}}
-           /> */}
-            <View style={{ flexWrap: 'wrap', flexDirection: 'row', width: '100%', 
-            
-        }}>
+        <AnimatedView style={{ marginHorizontal: 15, }}>
+            <Text style={filterTypeStyle} fontFamily='PoppinsRegular'>{tagName}</Text>
+            <View style={{ flexWrap: 'wrap', flexDirection: 'row', width: '100%', }}>
                 {
-
-                    [...filterReducer, ...filterReducer, ...filterReducer, ...filterReducer, ...filterReducer, ...filterReducer, ...filterReducer, ...filterReducer, ...filterReducer,
-                    ...filterReducer, ...filterReducer, ...filterReducer, ...filterReducer, ...filterReducer, ...filterReducer, ...filterReducer, ...filterReducer, ...filterReducer, ...filterReducer,
-                    ].map((x, i) => {
-                        return <TouchableOpacity style={{  justifyContent:'center',
-                            height:25, paddingHorizontal: 5, borderWidth: 1, borderColor: "#C1C1C1", borderRadius: 5, margin: 7, alignItems: 'center', backgroundColor: '#FFFFFF',
-                            opacity:cuisineAnimation,
-                            transform : [
-                                {
-                                    scale : cuisineAnimation.interpolate({
-                                        inputRange: [0, 1],
-                                        outputRange: [0.6, 1]
-                                    })
-                                    // scale:cuisineAnimation
-                                }
-                            ] 
+                    categoriesData.map((x, i) => {
+                        const isActive = activeCusine === i;
+                        let borderColor = isActive ? "#F3B8B4" : "#C1C1C1"
+                        let color = isActive ? "#F94E41" : "black"
+                        return <TouchableOpacity style={{
+                            justifyContent: 'center', height: 25, paddingHorizontal: 5, borderWidth: 0.8, borderColor, borderRadius: 5, margin: 7, alignItems: 'center', backgroundColor: '#FFFFFF',
+                            transform: [{
+                                scale: cuisineAnimation.interpolate({
+                                    inputRange: [0, 1],
+                                    outputRange: [0.6, 1]
+                                })
+                                // scaleX: cuisineAnimation
+                            }]
                         }}
-                            key={i} 
-                            
-                            >
+                            key={i}
+                            onPress={() => { onPress(i) }}
+                        >
 
-                            <Text style={{ fontSize: 12, color: 'black', fontFamily: FontFamily.Poppins.Medium }}>
-                                {/* {'Fast Food'} */}
-                                {x.categoryName}
-                            </Text>
+                            <Text style={{ fontSize: 12, color, }} fontFamily='PoppinsMedium'>{x.categoryName}</Text>
                         </TouchableOpacity>
                     })
                 }
             </View>
-
-
-
-
-
-
         </AnimatedView>
 
 

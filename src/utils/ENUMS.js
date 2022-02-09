@@ -67,12 +67,12 @@ export default {
            
             "text": "New on Jovi",
             "value": 1,
-            "icon": svgs.newOnJovi(),
+            // "icon": svgs.newOnJovi(),
 
         }, {
             "text": "Discounts",
             "value": 2,
-            "icon": svgs.discount()
+            // "icon": svgs.discount()
         },
     ],
     "AVERAGE_PRICE_FILTERS": [
