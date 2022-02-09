@@ -1,8 +1,9 @@
 import { Platform, StyleSheet } from "react-native";
 import { initColors } from "../../res/colors";
+import sharedStyles from "../../res/sharedStyles";
 const SPACING_VERTICAL = 10;
 export default {
-    styles(colors = initColors) {
+    styles(colors = initColors,width,height) {
         return StyleSheet.create({
             container: {
                 flexGrow: 1,
@@ -82,6 +83,85 @@ export default {
             },
             cat_img_container: {
                 width: 80, justifyContent: 'center', alignContent: 'center', alignItems: 'center', alignSelf: 'center'
+            },
+            allPitstopListing:{
+                container: {
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    paddingHorizontal: 10,
+                    paddingVertical: 10
+                },
+                itemContainer: {
+                    ...sharedStyles._styles(colors).shadow,
+                    backgroundColor: colors.white || '#fff',
+                    borderRadius: 10,
+                    marginHorizontal: 5,
+                    flex: 1,
+                    paddingHorizontal: 10,
+                    paddingVertical: 10,
+                    marginVertical: 5
+                },
+                mainText: {
+                    color: colors.text,
+                    fontSize: 18,
+                    fontWeight:'bold'
+                },
+                viewMoreBtn: {
+                    color: colors.primary || '#6D51BB', // colors.theme here should be the theme color of specific category
+                    fontSize: 12
+                },
+                itemContainer: {
+                    ...sharedStyles._styles(colors).shadow,
+                    backgroundColor: colors.white || '#fff',
+                    borderRadius: 10,
+                    marginHorizontal: 5,
+                    flex: 1,
+                    paddingHorizontal: 10,
+                    paddingVertical: 10,
+                    marginVertical: 5
+                },
+                image: {
+                    height: height,
+                    width: width,
+                    borderRadius: 10
+                },
+                iconContainer: {
+                    borderRadius: 15,
+                    backgroundColor: colors.iconContainer || '#F6F5FA',
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    paddingHorizontal: 10,
+                },
+                tagsText: {
+                    fontSize: 12,
+                    color: colors.subText || '#212121',
+                    opacity: 0.6,
+                    width: width * 0.9,
+                    // backgroundColor:'blue',
+                    marginTop: -10
+                },
+                estTime: {
+                    fontSize: 12,
+                    color: colors.primary || '#6D51BB', // colors.theme here should be the theme color of specific category
+                    marginTop: Platform.OS === "android" ? 3 : 0
+                },
+                title: {
+                    fontSize: 14,
+                    // paddingVertical: 5,
+                    color: '#000',
+                    width: width * 0.7
+                },
+                bodyContainer: {
+                    width: width * 0.8
+                },
+                subContainer: {
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginVertical: 10,
+                    // backgroundColor:'red'
+                }
             }
         })
     }

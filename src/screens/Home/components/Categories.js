@@ -4,10 +4,15 @@ import AnimatedView from '../../../components/atoms/AnimatedView';
 import ENUMS from '../../../utils/ENUMS';
 import constants from '../../../res/constants';
 import Text from '../../../components/atoms/Text';
+import NavigationService from '../../../navigations/NavigationService';
 const CONTAINER_WIDTH = ((constants.screen_dimensions.width) * 0.22);
 const CONTAINER_HEIGHT = constants.screen_dimensions.width * 0.3;
 export default React.memo(({ homeStyles }) => {
-    const cartOnPressHandler = (index) => { }
+    const cartOnPressHandler = (index) => {
+        if(index === 2){
+            NavigationService.NavigationActions.common_actions.navigate('VENDORS');
+        }
+     }
     return <AnimatedView style={[homeStyles.categoriesCardPrimaryContainer]}>
         <Text style={homeStyles.categoriesCardTittleText}>Categories</Text>
         <AnimatedView style={{ flexDirection: 'row' }}>
@@ -28,3 +33,4 @@ export default React.memo(({ homeStyles }) => {
         </AnimatedView>
     </AnimatedView>
 }, (prevProps, nextProps) => prevProps !== nextProps)
+// }, (prevProps, nextProps) => prevProps !== nextProps)

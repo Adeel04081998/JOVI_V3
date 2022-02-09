@@ -14,7 +14,7 @@ import { postRequest } from '../../../manager/ApiManager';
 import Endpoints from '../../../manager/Endpoints';
 import sharedStyles from '../../../res/sharedStyles';
 
-export default ({ vendorType = 0, imageStyles = {}, themeColors = null, showMoreBtnText = "", }) => {
+export default React.memo(({ vendorType = 0, imageStyles = {}, themeColors = null, showMoreBtnText = "", }) => {
     const SPACING_BOTTOM = 0;
     const [data, setData] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(true);
@@ -100,7 +100,7 @@ export default ({ vendorType = 0, imageStyles = {}, themeColors = null, showMore
 
         </View>
     );
-}
+},(n,p)=>n!==p)
 
 
 //_styles declararation
@@ -110,7 +110,7 @@ const _styles = (colors, width, height) => StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingHorizontal: 10,
-        paddingVertical: 10
+        paddingVertical: 5
     },
     mainText: {
         color: colors.text,

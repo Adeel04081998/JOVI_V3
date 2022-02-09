@@ -134,8 +134,8 @@ const App = () => {
         } */}
         <NavigationContainer theme={theme} ref={_NavgationRef} >
           <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
-            {/* <RootStack /> */}
-            <PistopListing />
+            <RootStack />
+            {/* <PistopListing /> */}
           </View>
         </NavigationContainer>
         <Robot />

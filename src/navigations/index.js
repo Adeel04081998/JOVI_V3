@@ -10,22 +10,40 @@ import VerifyOTP from '../screens/OTP/Verify';
 import SignUp from '../screens/SignUp/index';
 
 import Home from '../screens/Home';
+import PitstopListing from '../screens/PitstopListing';
 import ROUTES from './ROUTES';
 import SharedActions, { sharedGetEnumsApi, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser } from '../helpers/SharedActions';
 import { store } from '../redux/store';
 import { useSelector } from 'react-redux';
-const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES } = ROUTES;
+const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES,APP_DRAWER_ROUTES,APP_DRAWER_STACK } = ROUTES;
+const AppDrawerStack = (props) => {
+    return <Stack.Navigator screenOptions={stackOpts} initialRouteName={APP_DRAWER_ROUTES.Home.screen_name}>
+        {(APP_DRAWER_STACK || []).map((routeInfo, index) => (
+            <Stack.Screen
+                key={`AppDrawerss-Screen-key-${index}-${routeInfo.id}`}
+                name={routeInfo.screen_name}
+                component={AppDrawerComponents[routeInfo.componenet]}
+                options={routeInfo.options ? routeInfo.options : options}
 
+            />
+        ))}
+    </Stack.Navigator >
+}
 const AuthComponents = {
     Introduction,
     EnterOTP,
     VerifyOTP,
     SignUp
 
-}
+}//will open with Slide Animation
 const AppComponents = {
-    Home
-}
+    AppDrawerStack,
+   
+};//will open without Slide Animation
+const AppDrawerComponents = {
+    Home,
+    PitstopListing
+}//will open with Slide Animation
 const ContainerStack = createStackNavigator();
 const Stack = createSharedElementStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -77,6 +95,7 @@ const forSlide = ({ current, next, inverted, layouts: { screen } }) => {
 };
 const stackOpts = () => ({
     headerShown: false,
+    unmountOnBlur:true,
     swipeEnabled: false
 });
 const AuthStacks = (props) => {
@@ -99,16 +118,18 @@ const AuthStacks = (props) => {
 }
 
 const AppDrawers = (props) => {
-    // console.log("[AppDrawers].props", props)
-    return <Drawer.Navigator screenOptions={stackOpts} initialRouteName={APP_ROUTES.Home.screen_name}>
-        {(APP_STACKS || []).map((routeInfo, index) => (
-            <Drawer.Screen
+        // console.log("[AppDrawers].props", props)
+    return <Drawer.Navigator screenOptions={stackOpts()} initialRouteName={APP_ROUTES.AppDrawerStack.screen_name}>
+        {(APP_STACKS || []).map((routeInfo, index) => {
+            console.log('routeInfo',AppComponents);
+            return <Drawer.Screen
                 key={`AppDrawers-Screen-key-${index}-${routeInfo.id}`}
                 name={routeInfo.screen_name}
                 component={AppComponents[routeInfo.componenet]}
-                options={routeInfo.options ? routeInfo.options : options}
+                options={{
+                }}
             />
-        ))}
+            })}
     </Drawer.Navigator >
 }
 

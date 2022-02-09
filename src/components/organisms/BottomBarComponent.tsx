@@ -40,6 +40,7 @@ type Props = React.ComponentProps<typeof View> & {
     leftData?: BottomBarItem[];
     rightData?: BottomBarItem[];
 
+    colors: Object;
     buttonSize?: number;
 };
 
@@ -55,12 +56,13 @@ const defaultProps = {
     rightData: [],
 
     buttonSize: 60,
+    colors: null,
 };
 
 // #endregion :: INTERFACE END's FROM HERE 
 
 const BottomBarComponent = (props: Props) => {
-    const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
+    const colors = props.colors ?? theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
 
     // #region :: PROP VAIABLE START's FROM HERE 
     const width = props.width ?? defaultProps.width;

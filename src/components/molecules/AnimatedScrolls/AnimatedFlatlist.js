@@ -5,7 +5,7 @@ const Flatlist = Animated.FlatList;
 
 
 const animatedTabs = 7;
-const AnimatedFlatlist = ({ horizontal = false, data = [], animationType = 'each', itemContainerStyle = {}, renderItem = () => { }, flatlistProps = {} }) => {
+const AnimatedFlatlist = ({ horizontal = false, data = [],delay=100, animationType = 'each', itemContainerStyle = {},itemContainerStyleCb=()=>{}, renderItem = () => { }, flatlistProps = {} }) => {
     // const animatedValues = Array(animatedTabs).fill(React.useRef(new Animated.Value(0)).current);
     // const animatedValues = React.useRef([...Array(animatedTabs).fill(React.useRef(new Animated.Value(0)).current)]).current;
     const animatedValues = [
@@ -27,7 +27,7 @@ const AnimatedFlatlist = ({ horizontal = false, data = [], animationType = 'each
                     useNativeDriver: true,
                     easing: Easing.ease
                 }).start();
-            }, index === 0 ? 50 : ((index / 10) * 1000) + (100 * index))
+            }, index === 0 ? 50 : ((index / 10) * 1000) + (delay * index))
         }
         const loadAll = () => {
             Animated.timing(animatedValues[index], {
@@ -54,8 +54,8 @@ const AnimatedFlatlist = ({ horizontal = false, data = [], animationType = 'each
                     outputRange: [0.6, 1]
                 })
             }],
-            ...itemContainerStyle
-        } : {...itemContainerStyle}}>
+            ...itemContainerStyle,...itemContainerStyleCb(item)//cb was added, because every item had different style and itemContainerStyle was already used in some places
+        } : {...itemContainerStyle,...itemContainerStyleCb(item)}}>
             {renderItem(item, index)}
         </Animated.View>
     }
@@ -65,6 +65,8 @@ const AnimatedFlatlist = ({ horizontal = false, data = [], animationType = 'each
             horizontal={horizontal}
             renderItem={({ item, index }) => <RenderItemParent item={item} index={index} />}
             keyExtractor={(_, index) => `FlatList-key-${index}-${new Date().getTime()}`}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
             {...flatlistProps}
         />
     );

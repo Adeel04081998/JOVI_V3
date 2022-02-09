@@ -5,6 +5,7 @@ import { VALIDATION_CHECK } from '../../helpers/SharedActions';
 import sharedStyles from '../../res/sharedStyles';
 import AnimatedView from '../atoms/AnimatedView';
 import Text from '../atoms/Text';
+import View from '../atoms/View';
 
 
 type Props = React.ComponentProps<typeof TouchableOpacity> & {
@@ -19,6 +20,7 @@ type Props = React.ComponentProps<typeof TouchableOpacity> & {
 
     title?: string;
     containerStyleOverride: boolean;
+    containerOverrideStyle: Object;
 };
 
 const defaultProps = {
@@ -29,7 +31,8 @@ const defaultProps = {
     width: 95,
     height: 130,
     title: '',
-    containerStyleOverride: false
+    containerStyleOverride: false,
+    containerOverrideStyle: {},
 }
 
 const CategoryCardItem = (props: Props) => {
@@ -47,6 +50,7 @@ const CategoryCardItem = (props: Props) => {
         <TouchableOpacity {...props} style={props.containerStyleOverride ? {
             backgroundColor: '#fff',
             borderRadius: 10,
+            ...props.containerOverrideStyle
         } : [{
             ...sharedStyles._styles().shadow,
             backgroundColor: '#fff',
@@ -91,6 +95,44 @@ const CategoryCardItem = (props: Props) => {
         </TouchableOpacity>
     );
 }
+export const CategoryCardItemSimple = (props: Props) => {
+
+
+    return (
+        <TouchableOpacity {...props} style={props.containerStyleOverride ? {
+            backgroundColor: '#fff',
+            borderRadius: 10,
+            ...props.containerOverrideStyle
+        } : [{
+            ...sharedStyles._styles().shadow,
+            backgroundColor: '#fff',
+            borderRadius: 10,
+
+        }, props.containerStyle, {
+            height: props.height,
+            width: props.width,
+
+        }]}>
+            <View style={[props.imageContainerStyle, {
+                justifyContent: 'center',
+                alignItems: "center",
+            }]}>
+                <SvgXml xml={props.xml} height={"80%"} width={"90%"} />
+            </View>
+            {VALIDATION_CHECK(props.title) &&
+                <Text
+                    numberOfLines={1}
+                    style={[{
+                        color: "#272727",
+                        textAlign: "center",
+                        fontSize: 16,
+                    }, props.textStyle]}
+                    fontFamily={"PoppinsMedium"} >{props.title}</Text>
+            }
+        </TouchableOpacity>
+    );
+}
 
 CategoryCardItem.defaultProps = defaultProps;
+CategoryCardItemSimple.defaultProps = defaultProps;
 export default CategoryCardItem;
