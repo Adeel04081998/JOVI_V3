@@ -38,7 +38,7 @@ const WINDOW_WIDTH = constants.window_dimensions.width;
 const WINDOW_HEIGHT = constants.window_dimensions.height;
 // #endregion :: INTERFACE END's FROM HERE 
 
-const ProductMenuHeader = (props: Props) => {
+const RestaurantProductMenuHeader = (props: Props) => {
     const propItem: ProductMenuHeaderItem = props?.item ?? defaultProps.item;
 
     const colors = props.colors;
@@ -133,8 +133,8 @@ const ProductMenuHeader = (props: Props) => {
     );
 }
 
-ProductMenuHeader.defaultProps = defaultProps;
-export default ProductMenuHeader;
+RestaurantProductMenuHeader.defaultProps = defaultProps;
+export default RestaurantProductMenuHeader;
 
 
 // #region :: STYLES START's FROM HERE 

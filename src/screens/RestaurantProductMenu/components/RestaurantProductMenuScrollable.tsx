@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Animated, Easing, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleProp, StyleSheet, ViewStyle } from "react-native";
+import { Animated, Easing, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StatusBar, StyleProp, StyleSheet, ViewStyle } from "react-native";
 import Text from "../../../components/atoms/Text";
 import TouchableScale from "../../../components/atoms/TouchableScale";
 import View from "../../../components/atoms/View";
@@ -35,7 +35,7 @@ const defaultProps = {
 
 const INDICATOR_WIDTH_MINUS = 0;
 
-const ProductMenuScrollable = (props: Props) => {
+const RestaurantProductMenuScrollable = (props: Props) => {
     const HEADER_HEIGHT = props?.headerHeight ?? defaultProps.headerHeight;
     const style = stylesFunc(props.colors);
 
@@ -211,7 +211,8 @@ const ProductMenuScrollable = (props: Props) => {
                     [{ nativeEvent: { contentOffset: { y: props.animatedScrollValue } } }],
                     //@ts-ignore
                     { listener: handleOnScroll, },
-                )}>
+                )}
+                contentContainerStyle={{ paddingBottom: 60 }}>
 
                 {props.renderAboveItems && props.renderAboveItems()}
 
@@ -227,10 +228,12 @@ const ProductMenuScrollable = (props: Props) => {
                                     <Text style={style.sectionTitle}>{food.categoryName}</Text>
                                 }
                                 <View style={props.itemsContainerStyle || {}}>
-                                    {parentIndex === 0 ?
+                                    {(food?.isTopDeal ?? false) ?
                                         <AnimatedFlatlist
                                             horizontal
-                                            showsHorizontalScrollIndicator={false}
+                                            flatlistProps={{
+                                                showsHorizontalScrollIndicator: false,
+                                            }}
                                             data={food[props.itemListPropertyName]}
                                             //@ts-ignore
                                             renderItem={(singleFood: any, index: number) => {
@@ -255,8 +258,8 @@ const ProductMenuScrollable = (props: Props) => {
     )
 }
 
-ProductMenuScrollable.defaultProps = defaultProps;
-export default React.memo(ProductMenuScrollable);
+RestaurantProductMenuScrollable.defaultProps = defaultProps;
+export default React.memo(RestaurantProductMenuScrollable);
 
 // #region :: STYLES START's FROM HERE 
 const stylesFunc = (colors: typeof initColors) => StyleSheet.create({

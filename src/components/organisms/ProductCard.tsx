@@ -1,14 +1,14 @@
 import * as React from "react";
 import { Animated, Dimensions, ImageStyle, StyleProp, StyleSheet, Image as RNImage, ImageSourcePropType } from "react-native";
-import Image from "../../atoms/Image";
-import TouchableScale from "../../atoms/TouchableScale";
-import View from "../../atoms/View";
-import { initColors } from '../../../res/colors';
-import constants from "../../../res/constants";
-import AppStyles from "../../../res/AppStyles";
-import Text from "../../atoms/Text";
-import FontFamily from "../../../res/FontFamily";
-import { VALIDATION_CHECK } from "../../../helpers/SharedActions";
+import Image from "../atoms/Image";
+import TouchableScale from "../atoms/TouchableScale";
+import View from "../atoms/View";
+import { initColors } from '../../res/colors';
+import constants from "../../res/constants";
+import AppStyles from "../../res/AppStyles";
+import Text from "../atoms/Text";
+import FontFamily from "../../res/FontFamily";
+import { VALIDATION_CHECK } from "../../helpers/SharedActions";
 
 // #region :: INTERFACE START's FROM HERE 
 const WINDOW_WIDTH = Dimensions.get('window').width;

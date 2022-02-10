@@ -12,13 +12,14 @@ export const refreshTokenMiddleware = (requestCallback, params) => {
     postRequest(
         "/api/User/RefreshToken",
         {
-            "accessToken": userReducer.token.authToken,
-            "refreshToken": userReducer.refreshToken
+            "accessToken": userReducer?.token?.authToken,
+            "refreshToken": userReducer?.refreshToken
         },
         res => {
             console.log("refreshTokenMiddleware.Res :", res);
             if (res?.data?.statusCode === 202) {
                 requestCallback.apply(this, params);
+                dispatch(ReduxActions.setUserAction({ ...res.data }))
                 if (__DEV__) Toast.success("Its only for DEV => User session refreshed....", 10000)
                 return;
             }

@@ -13,7 +13,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import RNSplashScreen from './NativeModules/RNSplashScreen';
-import ProductMenu from './src/screens/ProductMenu';
+import RestaurantProductMenu from './src/screens/RestaurantProductMenu';
 
 AntDesign.loadFont();
 Entypo.loadFont();
@@ -45,7 +45,7 @@ export default () => {
                 <StatusBar backgroundColor={'#fff'} barStyle={"dark-content"} />
 
 
-                <ProductMenu />
+                <RestaurantProductMenu />
 
             </SafeAreaView>
         </SafeAreaProvider>

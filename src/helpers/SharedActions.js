@@ -9,6 +9,8 @@ import Endpoints from '../manager/Endpoints';
 import Toast from "../components/atoms/Toast";
 import { store } from '../redux/store';
 import ReduxActions from '../redux/actions';
+import configs from '../utils/configs';
+import Regex from '../utils/Regex';
 import GV from '../utils/GV';
 const dispatch = store.dispatch;
 export const sharedGetDeviceInfo = async () => {
@@ -29,6 +31,7 @@ export const sharedExceptionHandler = (err) => {
                 else errorStr += err.data.errors[errorKeys[index]][0]
             }
             Toast.error(errorStr, TOAST_SHOW);
+            return errorStr;
         }
         else if (err.errors && typeof err.errors === "object") {
             var errorKeys = Object.keys(err.errors),
@@ -38,22 +41,28 @@ export const sharedExceptionHandler = (err) => {
                 else errorStr += err.errors[errorKeys[index]][0]
             }
             Toast.error(errorStr, TOAST_SHOW);
+            return errorStr;
         }
 
         else if (err && typeof err === "string") {
             Toast.error(err, TOAST_SHOW);
+            return err;
         }
         else if (err.message && typeof err.message === "string") {
             Toast.error(err.message, TOAST_SHOW);
+            return err.message;
         }
         else if (err.Error && typeof err.Error === "string") {
             Toast.error(err.Error, TOAST_SHOW);
+            return err.Error;
         }
         else if (err.error && typeof err.error === "string") {
             Toast.error(err.error, TOAST_SHOW);
+            return err.error;
         }
         else {
             Toast.error('Something went wrong', TOAST_SHOW);
+            return 'Something went wrong';
         }
     }
 }
@@ -102,7 +111,7 @@ export const sendOTPToServer = (payload, onSuccess, onError, onLoader) => {
 }
 export const sharedGetEnumsApi = () => {
     getRequest(Endpoints.GET_ENUMS, res => {
-        // console.log("[getEnums].res", res);
+        console.log("[getEnums].res", res);
         dispatch(ReduxActions.setEnumsActions(res.data.enums))
     },
         err => {
@@ -229,3 +238,10 @@ export const sharedGetFilters = () => {
 }
 
 export const uniqueKeyExtractor = () => new Date().getTime().toString() + (Math.floor(Math.random() * Math.floor(new Date().getTime()))).toString();
+
+export const renderPrice=(price,prefix="Rs. ",suffix="",)=>{
+    prefix=`${prefix}`.trim();
+    suffix=`${suffix}`.trim();
+    price=`${price}`.trim().replace(Regex.price,'').trim();
+    return suffix.length>0 ? `${prefix} ${price} ${suffix}` : `${prefix} ${price}`;
+}
