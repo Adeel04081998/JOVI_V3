@@ -4,6 +4,7 @@ export const initColors = {
     "black": "#272727",
     "grey": "#7D7D7D",
     "white": "#FFFFFF",
+    "card": "#047A9E",
     "input_background": "#EFEFEF",
     "screen_background": "#F6F5FA",
     "gradient_array": ["#FFFFFF00", "#FFFFFFB3"],

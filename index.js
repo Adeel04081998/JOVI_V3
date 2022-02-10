@@ -2,7 +2,7 @@
  * @format
  */
 import * as React from "react";
-import { AppRegistry, Text, TextInput, Animated, ScrollView, FlatList } from 'react-native';
+import { AppRegistry, Text, TextInput, Animated,LogBox,  ScrollView, FlatList } from 'react-native';
 import App from './App';
 import { name as appName } from './app.json';
 import { Provider } from 'react-redux';
@@ -23,6 +23,7 @@ Animated.Text.defaultProps.allowFontScaling = false;
 TextInput.defaultProps = TextInput.defaultProps || {};
 TextInput.defaultProps.allowFontScaling = false;
 
+LogBox.ignoreAllLogs();
 const RNRedux = () => (
     <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>

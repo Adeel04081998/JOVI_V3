@@ -3,6 +3,7 @@ import { Animated, Easing, TouchableOpacity, ActivityIndicator, GestureResponder
 import Text from "../atoms/Text";
 // import TouchableOpacity from "../atoms/TouchableOpacity";
 import debounce from 'lodash.debounce'; // 4.0.8
+import View from "../atoms/View";
 
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
@@ -14,13 +15,19 @@ type Props = React.ComponentProps<typeof TouchableOpacity> & {
     isLoading?: boolean,
     activeOpacity?: number;
 
+    leftComponent?: () => React.Component;
+    rightComponent?: () => React.Component;
+
 };
 
 const defaultProps = {
     text: 'JOVI',
     activeOpacity: 0.9,
     wait: 0.3,
-    isLoading: false
+    isLoading: false,
+
+    leftComponent: undefined,
+    rightComponent: undefined,
 };
 
 const Button = (props: Props, textProps: TextProps) => {
@@ -96,9 +103,9 @@ const Button = (props: Props, textProps: TextProps) => {
                 width: "100%",
                 height: 55,
                 borderRadius: 12,
-            }, props.style, {
                 alignItems: "center",
                 justifyContent: "center",
+            }, props.style, {
                 transform: [{
                     scale: buttonMargin.interpolate({
                         inputRange: [1, 10],
@@ -108,13 +115,18 @@ const Button = (props: Props, textProps: TextProps) => {
             }, props.isLoading || props.disabled ? {
                 backgroundColor: 'grey',
             } : {}]}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+                {props.leftComponent && props.leftComponent()}
 
-            <Text {...textProps} style={[{
-                fontSize: 18,
-                fontWeight: '500',
-                color: "#fff",
-                textAlign: "center",
-            }, props.textStyle]}>{props.isLoading ? <ActivityIndicator color="white" size="large" /> : props.text}</Text>
+                <Text {...textProps} style={[{
+                    fontSize: 18,
+                    fontWeight: '500',
+                    color: "#fff",
+                    textAlign: "center",
+                }, props.textStyle]}>{props.isLoading ? <ActivityIndicator color="white" size="large" /> : props.text}</Text>
+
+                {props.rightComponent && props.rightComponent()}
+            </View>
         </AnimatedTouchable>
     );
 }

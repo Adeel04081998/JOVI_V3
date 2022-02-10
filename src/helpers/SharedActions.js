@@ -227,3 +227,5 @@ export const sharedGetFilters = () => {
       
    
 }
+
+export const uniqueKeyExtractor = () => new Date().getTime().toString() + (Math.floor(Math.random() * Math.floor(new Date().getTime()))).toString();

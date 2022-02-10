@@ -6,17 +6,17 @@ import debounce from 'lodash.debounce'; // 4.0.8
 const AnimatedTouchable = Animated.createAnimatedComponent(RNTouchableOpacity);
 
 type Props = React.ComponentProps<typeof RNTouchableOpacity> & {
-  children?: any;
-  wait: number,
-  activeOpacity?:number;
+    children?: any;
+    wait: number,
+    activeOpacity?: number;
 };
 
-const defaultProps={
-        wait: 0.3,
-    activeOpacity:0.9,
+const defaultProps = {
+    wait: 0.3,
+    activeOpacity: 0.9,
 };
 
-const TouchableScale =(props: Props) =>{
+const TouchableScale = (props: Props) => {
     const buttonMargin = React.useRef(new Animated.Value(1)).current;
 
     const animateIn = (event: GestureResponderEvent) => {
@@ -39,35 +39,35 @@ const TouchableScale =(props: Props) =>{
             useNativeDriver: true,
             easing: Easing.ease,
         }).start((finished) => {
-            if (finished && props.onPress) {
+            if (finished && props.onPressOut) {
                 onPressHandling();
             }
         });
     };//end of animateOut
 
     const mycallback = (event: GestureResponderEvent) => {
-        props.onPress && props.onPress(event);
-      };
+        props.onPressOut && props.onPressOut(event);
+    };
 
     const onPressHandling = debounce(mycallback, props.wait * 1000, { leading: true, trailing: false, });
     return (
-        <AnimatedTouchable {...props} 
-        activeOpacity={props.activeOpacity}
-        style={[props.style, {
-            transform: [{
-                scale: buttonMargin.interpolate({
-                    inputRange: [1, 10],
-                    outputRange: [1, 0.8]
-                }),
-            }]
-        }]}
-        onPressIn={animateIn}
-        onPress={animateOut} />
+        <AnimatedTouchable {...props}
+            activeOpacity={props.activeOpacity}
+            style={[props.style, {
+                transform: [{
+                    scale: buttonMargin.interpolate({
+                        inputRange: [1, 10],
+                        outputRange: [1, 0.8]
+                    }),
+                }]
+            }]}
+            onPressIn={animateIn}
+            onPressOut={animateOut} />
     );
-  }
-  
-  TouchableScale.defaultProps=defaultProps;
-  export default TouchableScale;
+}
+
+TouchableScale.defaultProps = defaultProps;
+export default TouchableScale;
 
 
 

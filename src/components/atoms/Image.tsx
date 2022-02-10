@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Animated, Image as RNImage, Modal, StyleSheet } from "react-native";
+import { Animated, Image as RNImage, Modal, StyleProp, StyleSheet, ViewStyle } from "react-native";
 import AnimatedView from "./AnimatedView";
 import FullImage from "./FullImage";
 import TouchableScale from "./TouchableScale";
@@ -8,6 +8,7 @@ type Props = React.ComponentProps<typeof RNImage> & {
   children?: any;
   parentRef?: any;
   defaultIconSize?: number,
+  containerStyle?: StyleProp<ViewStyle>;
   onPress?: () => void;
 
   tapToOpen?: boolean;
@@ -17,6 +18,7 @@ const defaultProps = {
   parentRef: null,
   defaultIconSize: 100,
   onPress: undefined,
+  containerStyle: {},
 
   tapToOpen: true,
 }
@@ -65,6 +67,7 @@ const Image = (props: Props) => {
         startFullAnimate(1);
         toggleFullImage(true);
       }}
+        style={[props.containerStyle]}
         disabled={loader || !props.tapToOpen}>
 
         <Animated.Image
@@ -76,7 +79,7 @@ const Image = (props: Props) => {
             props.style]}
 
           onLoadStart={() => toggleLoading(true)}
-          onLoadEnd={() => {toggleLoading(false); toggleError(false)}}
+          onLoadEnd={() => { toggleLoading(false); toggleError(false) }}
           onError={() => toggleError(true)}
 
           defaultSource={DEFAULT_IMAGE}
@@ -109,7 +112,7 @@ const Image = (props: Props) => {
         />
       }
 
-{fullImage && 
+      {fullImage && 
     <FullImage
       source={props.source}
       toggleFullImage={() => {
