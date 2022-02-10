@@ -16,7 +16,6 @@ export const itemStylesFunc = (colors) => StyleSheet.create({
     price: {
         color: colors.primary,
         fontSize: 14,
-        marginBottom: 16,
     },
     description: {
         color: "#6B6B6B",
@@ -38,6 +37,7 @@ export const itemStylesFunc = (colors) => StyleSheet.create({
         height: 2,
         width: "100%",
         borderRadius: 5,
+        marginVertical: 16,
     },
     primaryContainer2: {
         paddingHorizontal: 10,
