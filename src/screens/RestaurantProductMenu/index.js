@@ -1,6 +1,6 @@
 import AnimatedLottieView from 'lottie-react-native';
 import React from 'react';
-import { Animated, Appearance, Image as RNImage, StyleSheet } from 'react-native';
+import { Animated, Appearance, Image as RNImage, LogBox, SafeAreaView, StatusBar, StyleSheet } from 'react-native';
 import Text from '../../components/atoms/Text';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
@@ -20,17 +20,22 @@ import { itemStylesFunc, sectionHeaderStylesFunc, stylesFunc } from './styles';
 
 const WINDOW_HEIGHT = constants.window_dimensions.height;
 
-export default () => {
+LogBox.ignoreLogs([
+    "Animated: `useNativeDriver` was not specified.",
+]);
+
+export default ({ navigation, route }) => {
     const colors = theme.getTheme(GV.THEME_VALUES.RESTAURANT, Appearance.getColorScheme() === "dark");
     const styles = stylesFunc(colors);
-
+    const pitstopID = route?.params?.pitstopID ?? (__DEV__ ? 3738 : -1);
     const sectionHeaderStyles = sectionHeaderStylesFunc(colors);
     const itemStyles = itemStylesFunc(colors);
 
+    const [data, updateData] = React.useState({});
     const [query, updateQuery] = React.useState({
         isLoading: true,
         error: false,
-        errorText:'',
+        errorText: '',
     });
 
     // #region :: ANIMATION START's FROM HERE 
@@ -55,33 +60,43 @@ export default () => {
 
     // #region :: API IMPLEMENTATION START's FROM HERE 
 
-    React.useEffect(()=>{
+    React.useEffect(() => {
         loadData();
-        return()=>{};
-    },[])
+        return () => { };
+    }, [])
     const loadData = () => {
         updateQuery({
-            errorText:'',
+            errorText: '',
             isLoading: true,
             error: false,
         });
         const params = {
-            "pitstopID": 4024,
+            "pitstopID": pitstopID,//3738   4024,
             "latitude": 33.654227,
             "longitude": 73.044831
         };
         postRequest(Endpoints.GET_RESTAURANT_PRODUCT_MENU_LIST, params, (res) => {
-            console.log('response ',res);
+            console.log('response ', res);
+            if (res.data.statusCode === 404) {
+                updateQuery({
+                    errorText: res.data.message,
+                    isLoading: false,
+                    error: true,
+                });
+                updateData({});
+                return
+            }
             updateQuery({
-                errorText:'',
+                errorText: '',
                 isLoading: false,
                 error: false,
-            })
+            });
+            updateData(res.data?.productsAndDealsV2 ?? {});
         }, (err) => {
-            console.log('errror ',err);
+            console.log('errror api  ', err);
             sharedExceptionHandler(err)
             updateQuery({
-                errorText:sharedExceptionHandler(err),
+                errorText: sharedExceptionHandler(err),
                 isLoading: false,
                 error: true,
             })
@@ -94,9 +109,9 @@ export default () => {
             <>
                 <CustomHeader />
                 <NoRecord
-                title={query.errorText}
-                buttonText={`Retry`}
-                onButtonPress={loadData}/>
+                    title={query.errorText}
+                    buttonText={`Retry`}
+                    onButtonPress={loadData} />
             </>
         )
     }
@@ -105,23 +120,24 @@ export default () => {
             <>
                 <CustomHeader />
                 <View
-                            style={{ height: '93%', width: '101%', paddingLeft: 10, paddingTop: 4, paddingHorizontal: 5, display: 'flex', justifyContent: 'center', alignContent: 'center', }}
-                        >
-                            <AnimatedLottieView
-                                autoSize={true}
-                                resizeMode={'contain'}
-                                style={{ width: '100%' }}
-                                source={require('../../assets/gifs/Homeloading.json')}
-                                autoPlay
-                                loop
-                            />
-                        </View>
+                    style={{ height: '93%', width: '101%', paddingLeft: 10, paddingTop: 4, paddingHorizontal: 5, display: 'flex', justifyContent: 'center', alignContent: 'center', }}
+                >
+                    <AnimatedLottieView
+                        autoSize={true}
+                        resizeMode={'contain'}
+                        style={{ width: '100%' }}
+                        source={require('../../assets/gifs/Homeloading.json')}
+                        autoPlay
+                        loop
+                    />
+                </View>
             </>
         )
     }
-    return (
-        <View style={styles.primaryContainer}>
 
+    return (
+        <View style={{flex:1,backgroundColor:'red'}}>
+            <StatusBar backgroundColor={colors.white} />
             {/* ****************** Start of UPPER HEADER TILL RECENT ORDER ****************** */}
             <Animated.View style={{
                 ...StyleSheet.absoluteFill,
@@ -135,11 +151,11 @@ export default () => {
                         setHeaderHeight(e.nativeEvent.layout.height);
                     }}
                     item={{
-                        image: { uri: renderFile(ProductDummyData2.productsAndDealsV2.pitstopImage) },
-                        distance: ProductDummyData2.productsAndDealsV2.distance,
-                        time: ProductDummyData2.productsAndDealsV2.time,
-                        title: ProductDummyData2.productsAndDealsV2.pitstopName,
-                        description: ProductDummyData2.productsAndDealsV2.pitstopTag,
+                        image: { uri: renderFile(data?.pitstopImage ?? '') },
+                        distance: data?.distance ?? '',
+                        time: data?.time ?? '',
+                        title: data?.pitstopName ?? '',
+                        description: data?.pitstopTag ?? '',
                     }}
                 />
             </Animated.View>
@@ -148,7 +164,7 @@ export default () => {
 
             <RestaurantProductMenuScrollable
                 colors={colors}
-                data={ProductDummyData2.productsAndDealsV2.productsDealsCategories}
+                data={data?.productsDealsCategories ?? []}
                 animatedScrollValue={animScroll}
                 headerHeight={headerHeight}
                 topHeaderStyle={{
@@ -161,7 +177,7 @@ export default () => {
                 }}
                 itemListPropertyName="restaurantItems"
                 renderSectionHeader={(item, index) => {
-                    if (index === 0) return null;
+                    if (item?.isTopDeal ?? false) return null;
                     return (
                         <View style={sectionHeaderStyles.primaryContainer}>
                             <Text
@@ -172,7 +188,7 @@ export default () => {
                     )
                 }}
                 renderItem={(parentItem, item, parentIndex, index) => {
-                    if (parentIndex === 0) {
+                    if (parentItem?.isTopDeal ?? false) {
                         return (
                             <ProductCard color={colors}
                                 containerStyle={{

@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Animated, Easing, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleProp, StyleSheet, ViewStyle } from "react-native";
+import { Animated, Easing, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StatusBar, StyleProp, StyleSheet, ViewStyle } from "react-native";
 import Text from "../../../components/atoms/Text";
 import TouchableScale from "../../../components/atoms/TouchableScale";
 import View from "../../../components/atoms/View";
@@ -211,7 +211,8 @@ const RestaurantProductMenuScrollable = (props: Props) => {
                     [{ nativeEvent: { contentOffset: { y: props.animatedScrollValue } } }],
                     //@ts-ignore
                     { listener: handleOnScroll, },
-                )}>
+                )}
+                contentContainerStyle={{ paddingBottom: 60 }}>
 
                 {props.renderAboveItems && props.renderAboveItems()}
 
@@ -227,7 +228,7 @@ const RestaurantProductMenuScrollable = (props: Props) => {
                                     <Text style={style.sectionTitle}>{food.categoryName}</Text>
                                 }
                                 <View style={props.itemsContainerStyle || {}}>
-                                    {parentIndex === 0 ?
+                                    {(food?.isTopDeal ?? false) ?
                                         <AnimatedFlatlist
                                             horizontal
                                             flatlistProps={{
