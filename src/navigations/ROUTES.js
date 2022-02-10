@@ -32,7 +32,11 @@ const APP_DRAWER_ROUTES = {
     "Filter": {
         screen_name: "FILTER",
         options: null,
-    }
+    },
+    "PitstopsVerticalList": {
+        screen_name: "PitstopsVerticalList",
+        options: null,
+    },
 }
 const APP_ROUTES = {
     "AppDrawerStack": {

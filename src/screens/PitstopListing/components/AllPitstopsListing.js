@@ -17,7 +17,7 @@ const renderLoader = (styles) => {
             autoSize={true}
             resizeMode={'contain'}
             style={{ width: '100%' }}
-            source={require('../../../assets/gifs/RestaurantMenuLoading.json')}
+            source={require('../../../assets/gifs/RestaurantCardsLoading.json')}
             autoPlay
             loop
         />

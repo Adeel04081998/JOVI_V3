@@ -1,7 +1,7 @@
 import lodash from 'lodash'; // 4.0.8
 import LottieView from "lottie-react-native";
 import React from 'react';
-import { Animated, Appearance, SafeAreaView, ScrollView } from 'react-native';
+import { Animated, Appearance, Easing, SafeAreaView, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
@@ -100,22 +100,22 @@ const PistopListing = React.memo(({ route, }) => {
         // const isDisselect = filtersRef.current[key] !== null && filtersRef.current[key].length > 0 && filtersRef.current[key][0] === item[idKey];
         setState(pre => ({ ...pre, filters: { ...pre.filters, [key]: isDisSelect ? emptyVal : [item[idKey]] } }));
         filtersRef.current[key] = isDisSelect ? emptyVal : [item[idKey]];
-        // const isAllDisSelected = filtersRef.current.averagePrice === null && filtersRef.current.cuisines.length === 0 && filtersRef.current.filter.length === 0;
-        // if(isAllDisSelected){
-        //     Animated.timing(scaleAnimation,{
-        //         toValue:1,
-        //         duration:600,
-        //         useNativeDriver:true,
-        //         easing:Easing.ease
-        //     }).start();
-        // }else{
-        //     Animated.timing(scaleAnimation,{
-        //         toValue:0,
-        //         duration:600,
-        //         useNativeDriver:true,
-        //         easing:Easing.ease
-        //     }).start();
-        // }
+        const isAllDisSelected = filtersRef.current.averagePrice === null && filtersRef.current.cuisines.length === 0 && filtersRef.current.filter.length === 0;
+        if(isAllDisSelected){
+            Animated.timing(scaleAnimation,{
+                toValue:1,
+                duration:600,
+                useNativeDriver:true,
+                easing:Easing.ease
+            }).start();
+        }else{
+            Animated.timing(scaleAnimation,{
+                toValue:0,
+                duration:600,
+                useNativeDriver:true,
+                easing:Easing.ease
+            }).start();
+        }
     }
     const backFromFiltersHandler = (updatedFilters) => {
         filtersRef.current.cuisines = [updatedFilters.activeCusine];
@@ -202,7 +202,7 @@ const PistopListing = React.memo(({ route, }) => {
         transform: [{
             translateY: scaleAnimation.interpolate({
                 inputRange: [0, 1],
-                outputRange: [-850, 0]
+                outputRange: [-690, 0]
             })
         }]
     }}>
