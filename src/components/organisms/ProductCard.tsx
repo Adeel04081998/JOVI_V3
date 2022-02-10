@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Animated, Dimensions, ImageStyle, StyleProp, StyleSheet, Image as RNImage, ImageSourcePropType } from "react-native";
+import { Animated, Dimensions, ImageStyle, StyleProp, StyleSheet, Image as RNImage, ImageSourcePropType, Alert } from "react-native";
 import Image from "../atoms/Image";
 import TouchableScale from "../atoms/TouchableScale";
 import View from "../atoms/View";
@@ -9,6 +9,8 @@ import AppStyles from "../../res/AppStyles";
 import Text from "../atoms/Text";
 import FontFamily from "../../res/FontFamily";
 import { VALIDATION_CHECK } from "../../helpers/SharedActions";
+import NavigationService from "../../navigations/NavigationService";
+import ROUTES from "../../navigations/ROUTES";
 
 // #region :: INTERFACE START's FROM HERE 
 const WINDOW_WIDTH = Dimensions.get('window').width;
@@ -56,7 +58,13 @@ const ProductCard = (props: Props) => {
                 minHeight: cardHeight,
                 width: cardWidth,
                 ...styles.primaryContainer,
-            }, props.containerStyle]}>
+            }, props.containerStyle]}
+            onPress={()=>{
+                NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, { propItem })
+                
+                // Alert.alert('hy')
+            }}
+            >
 
             {VALIDATION_CHECK(props.customItem) ?
                 props.customItem && props.customItem()
