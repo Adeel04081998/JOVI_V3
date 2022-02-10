@@ -25,7 +25,9 @@ import CodePush from "react-native-code-push"; //for codepush
 import { env } from './src/utils/configs';
 import Robot from './src/components/organisms/Robot';
 import { useSelector } from 'react-redux';
-import { sharedGetEnumsApi, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser } from './src/helpers/SharedActions';
+import { sharedGetEnumsApi, sharedGetFilters, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser } from './src/helpers/SharedActions';
+import PistopListing from './src/screens/PitstopListing';
+import Filter from './src/components/atoms/Filter';
 AntDesign.loadFont();
 Entypo.loadFont();
 EvilIcons.loadFont();
@@ -133,6 +135,7 @@ const App = () => {
         <NavigationContainer theme={theme} ref={_NavgationRef} >
           <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
             <RootStack />
+            {/* <PistopListing /> */}
           </View>
         </NavigationContainer>
         <Robot />
@@ -155,6 +158,7 @@ const SharedGetApis = ({ }) => {
       sharedGetHomeMsgsApi();
       sharedGetUserAddressesApi();
       sharedGetPromotions();
+      sharedGetFilters()
     }
   }, [isLoggedIn])
   return (<></>);

@@ -42,6 +42,7 @@ const setPromotionsAction = (payload = {}) => {
         payload: { ...payload }
     }
 }
+
 const setRobotJsonAction = (payload = {}) => {
     return {
         type: TYPES.SET_ROBOT_JSON,
@@ -59,6 +60,12 @@ const showRobotAction = () => {
         type: TYPES.SHOW_ROBOT,
     }
 }
+const setCategoriesTagsAction = (payload = {}) => {
+    return {
+        type: TYPES.SET_CATEGORIES_TAGS,
+        payload: { ...payload }
+    }
+}
 //...Rest of the actions would be here
 
 
@@ -73,5 +80,6 @@ export default {
     setRobotJsonAction,
     clearRobotJsonAction,
     showRobotAction,
+    setCategoriesTagsAction
     //...
 }

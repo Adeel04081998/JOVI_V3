@@ -10,9 +10,12 @@ const CONTAINER_WIDTH = ((constants.screen_dimensions.width) * 0.22);
 const CONTAINER_HEIGHT = constants.screen_dimensions.width * 0.3;
 export default React.memo(({ homeStyles }) => {
     const cartOnPressHandler = (index) => {
-        __DEV__ ? NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_ROUTES.ProductDetails.screen_name) : null
-
-    }
+        if(index === 1){
+            NavigationService.NavigationActions.common_actions.navigate('VENDORS',{pitstopType:4});
+        }else if(index ===2){
+            NavigationService.NavigationActions.common_actions.navigate('VENDORS',{pitstopType:1});
+        }
+     }
     return <AnimatedView style={[homeStyles.categoriesCardPrimaryContainer]}>
         <Text style={homeStyles.categoriesCardTittleText}>Categories</Text>
         <AnimatedView style={{ flexDirection: 'row' }}>
@@ -33,3 +36,4 @@ export default React.memo(({ homeStyles }) => {
         </AnimatedView>
     </AnimatedView>
 }, (prevProps, nextProps) => prevProps !== nextProps)
+// }, (prevProps, nextProps) => prevProps !== nextProps)

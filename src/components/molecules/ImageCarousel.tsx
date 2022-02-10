@@ -37,7 +37,7 @@ interface ImageCarouselProps {
 
   onActiveIndexChanged?: (index: number) => void;
   aspectRatio?: number | undefined;
-
+  theme: Object;
 }
 const defaultProps = {
   autoPlay: false,
@@ -56,13 +56,15 @@ const defaultProps = {
 
   aspectRatio: undefined,
   uriKey: "",
+  theme:{},
 };
 
 let timer: any = null;
 
 const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
   const theme = {
-    primary: '#775EC3'
+    primary: '#775EC3',
+    ...props.theme
   };
 
   //  VIEW ABILITY START's FROM HERE 
@@ -224,7 +226,6 @@ export default ImageCarousel;
 
 const styles = StyleSheet.create({
   primaryContainer: {
-
   },
 });//end of styles
 
