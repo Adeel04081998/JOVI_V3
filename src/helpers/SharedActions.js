@@ -170,3 +170,29 @@ export const sharedLogoutUser = () => {
     dispatch(ReduxActions.clearUserAction({ introScreenViewed: true }));
 }
 
+export const sharedStartingRegionPK = {
+    latitude: 25.96146850382255,
+    latitudeDelta: 24.20619842968337,
+    longitude: 69.89856876432896,
+    longitudeDelta: 15.910217463970177
+};
+
+export const secToHourMinSec = (sec = 1,) => {
+    let totalSeconds = parseInt(sec);
+    let hours = Math.floor(totalSeconds / 3600);
+    totalSeconds %= 3600;
+    let minutes = Math.floor(totalSeconds / 60);
+    let seconds = totalSeconds % 60;
+
+    // If you want strings with leading zeroes:
+    minutes = String(minutes).padStart(2, "0");
+    hours = String(hours).padStart(2, "0");
+    seconds = String(seconds).padStart(2, "0");
+    if (hours > 0) {
+        return hours + ":" + minutes + ":" + seconds;
+    }
+
+    return minutes + ":" + seconds;
+
+}//end of secToHourMinSec
+

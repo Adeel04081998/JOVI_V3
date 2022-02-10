@@ -10,4 +10,5 @@ export default {
         RESTAURANT: 4,
         JOVI_MART: 5,
     },
-} 
+    MAX_PITSTOP_IMAGE_LIMIT: 3
+}

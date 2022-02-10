@@ -8,8 +8,10 @@ import Introduction from '../screens/IntroScreen';
 import EnterOTP from '../screens/OTP/Enter';
 import VerifyOTP from '../screens/OTP/Verify';
 import SignUp from '../screens/SignUp/index';
+import JoviJob from '../screens/JoviJob';
 
 import Home from '../screens/Home';
+import Map from '../screens/Map';
 import ROUTES from './ROUTES';
 import SharedActions, { sharedGetEnumsApi, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser } from '../helpers/SharedActions';
 import { store } from '../redux/store';
@@ -24,7 +26,9 @@ const AuthComponents = {
 
 }
 const AppComponents = {
-    Home
+    Home,
+    JoviJob,
+    Map
 }
 const ContainerStack = createStackNavigator();
 const Stack = createSharedElementStackNavigator();
@@ -96,10 +100,9 @@ const AuthStacks = (props) => {
         ))}
     </Stack.Navigator >
 }
-
 const AppDrawers = (props) => {
     // console.log("[AppDrawers].props", props)
-    return <Drawer.Navigator screenOptions={stackOpts} initialRouteName={APP_ROUTES.Home.screen_name}>
+    return <Drawer.Navigator screenOptions={stackOpts} initialRouteName={APP_ROUTES.JoviJob.screen_name}>
         {(APP_STACKS || []).map((routeInfo, index) => (
             <Drawer.Screen
                 key={`AppDrawers-Screen-key-${index}-${routeInfo.id}`}
@@ -127,7 +130,7 @@ export default (props) => {
     return <ContainerStack.Navigator screenOptions={stackOpts} initialRouteName={INIT_ROUTES.INIT_APP}>
         <ContainerStack.Screen
             name={INIT_ROUTES.INIT_APP}
-            component={isLoggedIn ? AppDrawers : AuthStacks}
+            component={!isLoggedIn ? AppDrawers : AuthStacks}
         />
     </ContainerStack.Navigator >
 }

@@ -16,6 +16,8 @@ export const initColors = {
     "iconActiveColor": "#05B7ED",
     "navTextColor": "#C1C1C1",
     "navActiveTextColor": "white",
+    "black": "#000",
+    "lightGreyBorder": '#BBBBBB'
 }
 export default {
 

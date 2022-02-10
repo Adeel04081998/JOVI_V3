@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import {  StatusBar, useColorScheme, LogBox, StyleSheet } from 'react-native';
+import { StatusBar, useColorScheme, LogBox, StyleSheet } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
@@ -20,8 +20,11 @@ import GV from './src/utils/GV';
 import { _NavgationRef } from './src/navigations/NavigationService';
 import View from './src/components/atoms/View';
 import Toast from 'react-native-toast-message';
-import { SafeAreaProvider,SafeAreaView } from 'react-native-safe-area-context';
-import JoviJob from './src/screens/JoviJob';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import Modal from './src/components/atoms/Modal';
+
+
+
 AntDesign.loadFont();
 Entypo.loadFont();
 EvilIcons.loadFont();
@@ -63,18 +66,19 @@ export default App = () => {
   LogBox.ignoreLogs([
     "[react-native-gesture-handler] Seems like you\'re using an old API with gesture components, check out new Gestures system!",
   ]);
+  navigator.geolocation = require('react-native-geolocation-service');
+
   return (
     <SafeAreaProvider>
-    <SafeAreaView style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
-      <StatusBar backgroundColor={'transparent'} barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <NavigationContainer theme={theme} ref={_NavgationRef} >
-        <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
-          {/* <RootStack /> */}
-          <JoviJob/>
-        </View>
-      </NavigationContainer>
-      <Toast />
-    </SafeAreaView>
+      <SafeAreaView style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
+        <StatusBar backgroundColor={'transparent'} barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+        <NavigationContainer theme={theme} ref={_NavgationRef} >
+          <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
+            <RootStack />
+          </View>
+        </NavigationContainer>
+        <Toast />
+      </SafeAreaView>
     </SafeAreaProvider>
   );
 };

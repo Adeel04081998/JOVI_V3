@@ -9,4 +9,7 @@ export default {
     "GET_HOME_MSGS": "api/Menu/HomeScreen/GetData",
     "GET_USER_ADDRESSES": "api/Order/GetAddress",
     "GET_PROMOTIONS": "api/Dashboard/DashboardContent/List",
+    "ADD_PITSTOPIMAGE": "api/Common/Image/AddOrUpdate",
+    "DELETE_PITSTOPIMAGE": 'api/Common/Image/DeleteJoviImage/'
+
 }
