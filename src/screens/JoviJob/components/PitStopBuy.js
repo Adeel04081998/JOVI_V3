@@ -30,7 +30,7 @@ const PitStopBuy = (props) => {
                     <View style={styles.buyForMeContainer}>
                         <Text style={[styles.pitstopText, { fontWeight: 'bold', fontSize: 16 }]} >{props.switchVal ? 'Yes' : 'No' }</Text>
                         <View>
-                            <Switch onToggleSwitch={(bool) => {props.onToggleSwitch(bool)}} />
+                            <Switch switchVal={props.switchVal} onToggleSwitch={(bool) => {props.onToggleSwitch(bool)}} />
                         </View>
                     </View>
                 </View>

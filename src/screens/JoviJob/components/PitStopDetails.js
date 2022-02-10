@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Appearance, TextInput as RNTextInput, StyleSheet, Image } from 'react-native';
+import { Appearance,  StyleSheet, Image } from 'react-native';
 import constants from '../../../res/constants';
 import RNMediaMeta from "../../../../RNMediaMeta";
 import AudioPlayerMultiple from "../../../components/atoms/AudioplayerMultiple";
@@ -64,24 +64,19 @@ const PitStopDetails = (props) => {
             })
         } else {
             setMicPress(!micPress);
-
             if (recorderRef.current !== null) {
                 recorderRef.current.stop((error) => {
                     if (!error) {
                         const path = recorderRef.current._fsPath;
-
                         RNMediaMeta.get(`${path}`)
                             .then(metadata => {
                                 if (`${metadata.duration}` > `0`) {
 
                                     const obj = {
-
                                         id: Math.floor(Math.random() * 100000),
-
                                         uri: Platform.OS === "android" ? `file://${path}` : path,
                                         name: path.split('/').pop(),
                                         type: "audio/mp4",
-
                                     }
 
                                     setIsRecord(true);
@@ -159,101 +154,7 @@ const PitStopDetails = (props) => {
                 onChangeText={props.onChangeDescription}
             />
             <Text style={styles.attachment} >Attachments</Text>
-            <Button
-                onPress={props.onBrowsePress}
-                text="Browse"
-                textStyle={styles.btnText}
-                fontFamily="PoppinsRegular"
-                style={styles.locButton} />
-            <View style={styles.galleryIcon} >
-                <VectorIcon name="image" type="Ionicons" color={colors.primary} size={25} style={{ marginRight: 5 }} />
-                <VectorIcon name="image" type="Ionicons" color={colors.text} size={25} style={{ marginRight: 5 }} />
-                <VectorIcon name="image" type="Ionicons" color={colors.text} size={25} style={{ marginRight: 5 }} />
-            </View>
-            <Text style={styles.attachment} >Voice Notes</Text>
-            <View style={styles.voiceNoteContainer} >
-                {recordingUploading ?
-                    <View style={descriptionStyles.progress}>
-                        <View style={{
-                            ...descriptionStyles.progressActive,
-                            backgroundColor: colors.primary,
-                            maxWidth: `${progress}%`,
-                        }} />
-                    </View>
-                    : isRecord ?
-                        <View style={{ ...styles.rowContainer, maxWidth: "90%", marginRight: 12, }}>
-                            <AudioPlayerMultiple
-                                activeTheme={colors}
-                                audioURL={recorderRef.current?._fsPath}
-                                forceStopAll={isDeleted}
-                                width={Platform.OS === "ios" ? "90%" : "95%"}
-                            />
-
-                            <TouchableOpacity onPress={deleteRecording} style={{ marginTop: -20 }}>
-                                <VectorIcon
-                                    name={"delete-outline"}
-                                    iconType="MaterialIcons"
-                                    color={"red"}
-                                    size={30} />
-                            </TouchableOpacity>
-
-                        </View>
-                        :
-                        <>
-                            <TouchableOpacity style={{
-                                ...descriptionStyles.micIconContainer,
-                                ...!micPress && {
-                                    height: 40,
-                                    width: 40,
-                                    backgroundColor: colors.primary,
-                                }
-
-                            }}
-                                activeOpacity={1}
-                                onPressIn={recordingPress}>
-                                {micPress ?
-                                    <Image
-                                        source={require('../../../assets/gifs/Record.gif')}
-                                        style={{ height: 50, width: 50, }} />
-                                    :
-                                    <View style={{ height: 30, width: 30, borderRadius: 30 / 2, backgroundColor: colors.primary, justifyContent: "center", alignItems: 'center' }} >
-                                        <VectorIcon name="keyboard-voice" type="MaterialIcons" color={colors.textColor} size={20} />
-                                    </View>
-                                }
-                            </TouchableOpacity>
-
-                            {micPress ?
-                                <>
-                                    <RNTextInput
-                                        ref={recordTimeRef}
-                                        multiline={false}
-                                        showSoftInputOnFocus={false}
-                                        editable={false}
-                                        caretHidden={true}
-                                        placeholder={""}
-                                        style={{ width: 65, color: 'red', fontSize: 15, borderRadius: 20, height: 40, paddingRight: 15, borderColor: "transparent", borderWidth: 0, paddingTop: 8, paddingBottom: 9 }}
-                                    />
-                                    <StopWatch
-                                        start={true}
-                                        reset={false}
-                                        getTime={(time) => {
-                                            console.log('time    ', time);
-                                            recordTimeRef.current?.setNativeProps({ text: time.substring(time.indexOf(":") + 1, time.length) })
-                                        }}
-                                        options={{
-                                            container: { backgroundColor: '#fff', display: "none" },
-                                            text: { fontSize: 14, color: colors.primary, display: "none" }
-                                        }}
-                                    />
-                                </>
-                                :
-                                <Text style={{
-                                    ...descriptionStyles.recordVoiceText,
-                                }}>{'Record your voice note'}</Text>
-                            }
-                        </>
-                }
-            </View>
+            {props.children}
         </View>
         //     }
         // </View>

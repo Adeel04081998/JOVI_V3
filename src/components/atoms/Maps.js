@@ -103,6 +103,8 @@ export default (props) => {
         onMapReady={onMapReady}
         onRegionChange={onRegionChange}
         onRegionChangeComplete={onRegionChangeComplete}
+        showsUserLocation={true}
+        showsMyLocationButton={true}
       >
       </MapView>
       <Button

@@ -4,8 +4,8 @@ import Slider from '@react-native-community/slider';
 import { SvgXml } from "react-native-svg";
 import svgs, { pauseIcon, playIcon } from "../../assets/svgs/index";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { Player, Recorder } from "@react-native-community/audio-toolkit";
 import { secToHourMinSec } from "../../helpers/SharedActions";
+import Sound from "react-native-sound";
 
 
 let timer = null;
@@ -52,7 +52,7 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
     const setupSoundPlayer = async () => {
 
 
-        const chatAudioplayer = new Player(audioURL, error => {
+        const chatAudioplayer = new Sound(audioURL,'', error => {
             if (error) {
                 console.log("failed to load the sound", error);
 

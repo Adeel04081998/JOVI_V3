@@ -30,6 +30,7 @@ const PitStopEstPrice = (props) => {
                 <Slider
                     style={{ width: constants.window_dimensions.width - 25, height: Platform.OS === "ios" ? 35 : 20, marginLeft: 10 }}
                     thumbImage={images.circle()}
+                    value={0}
                     minimumValue={0}
                     onValueChange={props.onSliderChange}
                     maximumValue={10000}
@@ -37,7 +38,7 @@ const PitStopEstPrice = (props) => {
                     maximumTrackTintColor={colors.trackClr || '#00000029'}
                 />
                 <View style={{ justifyContent: 'flex-end' }} >
-                    <TextInput style={{ justifyContent: 'flex-end', width: '30%' }} value={props.estVal} onChangeText={props.onChangeSliderText} />
+                    <TextInput placeholder={"Enter Estimated Price"} containerStyle={{width: WIDTH * 0.4, alignSelf:'flex-end' }} value={props.estVal} onChangeText={props.onChangeSliderText} />
                 </View>
             </View>
         </View>

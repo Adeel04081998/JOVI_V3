@@ -82,7 +82,7 @@ export const sharedLaunchCameraorGallery = async (pressType, cb, next) => {
                 height: 400,
                 cropping: true,
             }).then(image => {
-                cameraResponseHandler(image, cb, next)
+                cameraResponseHandler([{...image}], cb, next)
             });
         } else {
             ImagePicker.openPicker({

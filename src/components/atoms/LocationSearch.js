@@ -34,9 +34,7 @@ export default LocationSearch = React.forwardRef(({ dispatch,locationVal, handle
             }}
             textInputProps={{
                 onFocus: () => {
-                    if (mode === "pitstops" || mode === "pitstopDetails" || mode === "orderPitstopDetails" || mode === "destPitstopDetails") {
-                        handleInputFocused(index);
-                    }
+                    //  
                 },
                 onChangeText: (value) => {
                     handleOnInputChange(value);
@@ -46,11 +44,11 @@ export default LocationSearch = React.forwardRef(({ dispatch,locationVal, handle
                 clearButtonMode: "never",
                 // onSubmitEditing: () => {
                 // },
-                autoFocus: true ,
-                showSoftInputOnFocus: true ,
+                // autoFocus: true , 
+                // showSoftInputOnFocus: true , d
                 editable: true,
                 selectTextOnFocus:  true,
-                caretHidden: true,
+                // caretHidden: true,
                 autoCapitalize: "none",
                 autoCorrect: false,
                 blurOnSubmit: true,
