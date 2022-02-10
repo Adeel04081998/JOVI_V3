@@ -1,6 +1,6 @@
 import React from 'react';
 import { useIsFocused } from '@react-navigation/native';
-import { StatusBar } from "react-native";
+import { Alert, StatusBar } from "react-native";
 import { Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import BackgroundTimer from 'react-native-background-timer';
@@ -11,6 +11,7 @@ import { store } from '../redux/store';
 import ReduxActions from '../redux/actions';
 import configs from '../utils/configs';
 import Regex from '../utils/Regex';
+import GV from '../utils/GV';
 const dispatch = store.dispatch;
 export const sharedGetDeviceInfo = async () => {
     let model = DeviceInfo.getModel();
@@ -19,7 +20,7 @@ export const sharedGetDeviceInfo = async () => {
     return { deviceID, model, systemVersion }
 }
 export const sharedExceptionHandler = (err) => {
-    console.log("[sharedExceptionHandler].err", err);
+    // console.log("[sharedExceptionHandler].err", err);
     const TOAST_SHOW = 3000;
     if (err) {
         if (err.data && err.data.errors) {
@@ -79,6 +80,7 @@ export const sharedInteval = (duration = 30, delay = 1, listener = () => { }) =>
             listener({ minutes, seconds, intervalStoped: true });
             BackgroundTimer.clearInterval(interlID)
             console.log("Interval Stopped---", interlID);
+            // console.log("Interval Stopped---", interlID);
             return;
         }
     }, 1000);
@@ -143,8 +145,8 @@ export const fetchRobotJson = (url, cb = () => { }) => {
             // cb(theBlob);
         })
         .catch((error) => {
+            // console.log(error);
             cb(null);
-            console.log(error);
         });
 }
 export const sharedGetHomeMsgsApi = () => {
@@ -153,7 +155,7 @@ export const sharedGetHomeMsgsApi = () => {
         "getPersonalizeMsgs": true,
     };
     postRequest(Endpoints.GET_HOME_MSGS, payload, res => {
-        console.log("[sharedGetHomeMsgsApi].res", res);
+        // console.log("[sharedGetHomeMsgsApi].res", res.data);
         if (res.data.homeScreenDataViewModel.robotJson) {
             fetchRobotJson(res.data.homeScreenDataViewModel.robotJson, (data) => {
                 // console.log('data robotJson',data)
@@ -190,7 +192,7 @@ export const sharedGetPromotions = () => {
         "longitude": 73.075001,// should be replace with user's final destination
         "isCitySpecific": true
     }, res => {
-        console.log("[sharedGetPromotions].res", res);
+        // console.log("[sharedGetPromotions].res", res);
         dispatch(ReduxActions.setPromotionsAction({ ...res.data }))
     },
         err => {
@@ -208,7 +210,11 @@ export const sharedLogoutUser = () => {
 
 export const renderFile = (picturePath) => {
     const userReducer = store.getState().userReducer;
-    return `${configs.BASE_URL}/api/Common/S3File/${encodeURIComponent(picturePath)}?access_token=${userReducer?.token?.authToken}`
+    return `${GV.BASE_URL.current}/api/Common/S3File/${encodeURIComponent(picturePath)}?access_token=${userReducer?.token?.authToken}`
+}
+
+export const sharedConfirmationAlert = (title, message, buttons = [], options = { cancelable: true, onDismiss: () => { } }) => {
+    Alert.alert(title, message, buttons, options)
 }
 
 export const uniqueKeyExtractor = () => new Date().getTime().toString() + (Math.floor(Math.random() * Math.floor(new Date().getTime()))).toString();

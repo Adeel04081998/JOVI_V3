@@ -15,12 +15,12 @@ export default (duration = 30, delay = 1000) => {
             seconds = parseInt(timer % 60, 10);
             minutes = minutes < 10 ? "0" + minutes : minutes;
             seconds = seconds < 10 ? "0" + seconds : seconds;
-            console.log("timer", timer);
+            // console.log("timer", timer);
             setInfo(prevState => ({ ...prevState, intervalStoped: false, mins: minutes, sec: seconds }));
             if (--timer <= 0) {
                 BackgroundTimer.stopBackgroundTimer();
                 setInfo(prevState => ({ ...prevState, intervalStoped: true }));
-                console.log("Interval Stopped---");
+                // console.log("Interval Stopped---");
                 return;
             }
         }, delay);

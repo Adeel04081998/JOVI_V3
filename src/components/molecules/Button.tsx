@@ -30,10 +30,11 @@ const defaultProps = {
     rightComponent: undefined,
 };
 
-
 const Button = (props: ButtonProps, textProps: TextProps) => {
-    let onPressRef: NodeJS.Timeout;
-    let isAssigned = false;
+    // let onPressRef: NodeJS.Timeout;
+    // let isAssigned = false;
+    // const isAssignedRef = React.useRef(false);
+    // const onPressTimoutRef = React.useRef(onPressTimout);
     const buttonMargin = React.useRef(new Animated.Value(1)).current;
 
     const animateIn = (event: GestureResponderEvent) => {
@@ -48,7 +49,7 @@ const Button = (props: ButtonProps, textProps: TextProps) => {
             }
         });
     };//end of animateIn
-    // const onPressParent = debounce(props.onPress,props.wait * 1000,{ leading: true, trailing: false, });
+    const onPressParent = debounce(props.onPress,props.wait * 1000,{ leading: false, trailing: true, });
     const animateOut = (event: GestureResponderEvent) => {
         Animated.timing(buttonMargin, {
             toValue: 1,
@@ -57,18 +58,22 @@ const Button = (props: ButtonProps, textProps: TextProps) => {
             easing: Easing.ease,
         }).start((finished) => {
             if (finished && props.onPress) {
-                if (isAssigned === true) {
-                    console.log('onPressRefBefores', onPressRef, props.wait * 1000)
-                    clearTimeout(onPressRef);
-                    isAssigned = false;
-                } else {
-                    onPressRef = setTimeout(() => {
-                        if (props.onPress) {
-                            props.onPress(event);
-                        }
-                    }, props.wait * 1000);
-                    isAssigned = true;
-                }
+                onPressParent(event);
+                //Dont Remove The code below, might be used in future.
+                // if (isAssignedRef.current === true) {
+                //     clearTimeout(onPressRef);
+                //     // isAssignedRef.current = false;
+                // } else {
+                //     let abc = setTimeout(() => {
+                //         if (props.onPress) {
+                //             props.onPress(event);
+                //         }
+                //         // isAssignedRef.current = false;
+                //     }, props.wait * 1000);
+                //     parseInt(abc);
+                //     isAssignedRef.current = true;
+                //     // console.log('onPressRefBefores', isAssignedRef.current, onPressRef, props.wait * 1000)
+                // }
             }
         });
     };//end of animateOut

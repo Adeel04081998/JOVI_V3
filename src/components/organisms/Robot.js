@@ -32,7 +32,7 @@ const Robot = ({ messagesReducer }) => {
         });
     }
     useEffect(() => {
-        console.log('messageReducer', messagesReducer)
+        // console.log('messageReducer', messagesReducer)
         if (messagesReducer?.robotJson && messagesReducer?.showRobotFlag) {
             setState(pre => ({ ...pre, lottieAnim: messagesReducer?.robotJson, showRobot: true }));
             // fetch(messagesReducer.robotJson, {
@@ -48,7 +48,7 @@ const Robot = ({ messagesReducer }) => {
             //     });
         }
     }, [messagesReducer?.showRobotFlag, messagesReducer?.showRobotFlag]);
-    console.log("state.lottieAnim", state.lottieAnim)
+    // console.log("state.lottieAnim", state.lottieAnim)
     if (state.showRobot === false) return null;
     return (
         <AnimatedTouchable onPress={() => hideRobot()} activeOpacity={1} style={{

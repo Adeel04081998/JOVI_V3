@@ -305,7 +305,7 @@ const BottomBarComponent = (props: Props) => {
                 bottom: 0,
                 flex: 1,
                 backgroundColor: 'rgba(0,0,0,0.5)',
-                display: isCloseIcon ? "flex" : "none",
+                // display: isCloseIcon ? "flex" : "none",
                 opacity: fullScreenAnimation
             }} />
 
@@ -348,9 +348,9 @@ const BottomBarComponent = (props: Props) => {
 
 
                 {/* ****************** Start of CIRCULAR CATEGORIES ****************** */}
-                {isCloseIcon &&
-                    <CategoryCircular data={mockData} />
-                }
+                {/* {isCloseIcon && */}
+                    <CategoryCircular data={mockData} isShown={isCloseIcon} />
+                {/* } */}
 
                 {/* ****************** End of CIRCULAR CATEGORIES ****************** */}
             </View>

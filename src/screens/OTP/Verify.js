@@ -119,7 +119,7 @@ export default (props) => {
                 }
             }
             catch (error) {
-                console.log('error', error);
+                console.log('[verifyOtpToServer].error', error);
             }
 
         },
@@ -206,20 +206,20 @@ export default (props) => {
             if (inputs[currentIndex] !== "") return;
             else if (inputs[currentIndex] === "") return inputRef.current[prevField].current.focus();
         } else {
-            arrRef.current = [...arrRef.current,...e.nativeEvent.key] 
-            if(arrRef.current.length === 4){
+            arrRef.current = [...arrRef.current, ...e.nativeEvent.key]
+            if (arrRef.current.length === 4) {
                 setInputs(arrRef.current)
                 let tempArr = arrRef.current.toString()
                 let tempStr = tempArr.replace(/,/g, '')
                 verifyOtpToServer(tempStr);
             }
-        
+
         }
 
     };
     const onChangeHandler = (val, index) => {
         if (isNaN(val)) return;
-        if (val?.length === 4) {
+        if (val?.length === 4 && inputs.length === 4) {
             let arr = []
             for (let index = 0; index < val.length; index++) {
                 arr.push(val[index])
@@ -245,8 +245,10 @@ export default (props) => {
         }
     };
     return <SafeAreaView style={{ flex: 1, backgroundColor: "#F6F5FA" }}>
-        <Text style={{ textAlign: "center", color: '#000', fontWeight: '500', paddingVertical: 30 }}  >Verify Phone Number</Text>
-        <Text style={{ textAlign: "center", paddingVertical: SPACING - 15 }}>{`Code is sent to ${cellNo}`}</Text>
+        <View style={{marginVertical:30}} >
+            <Text style={{ textAlign: "center", color: '#000', fontWeight: 'bold', paddingVertical: 10 }}  >Verify Phone Number</Text>
+            <Text style={{ textAlign: "center", color: '#7D7D7D' }}>{`Code is sent to ${cellNo}`}</Text>
+        </View>
         <View style={{ flexDirection: "row", justifyContent: "center" }}>
             {
                 inputs.map((input, index) => (
@@ -274,25 +276,25 @@ export default (props) => {
             }
         </View>
         <Text style={{ textAlign: "center", paddingVertical: SPACING - 5 }}>{`${minutes}:${seconds}`}</Text>
-        <Text style={{ textAlign: "center", fontSize: 16 }}>{`Didn't recieve code?`}</Text>
+        <Text style={{ textAlign: "center", fontSize: 16 }}>{`Didn't receive code?`}</Text>
         <TouchableOpacity onPress={resendOtp}
             // disabled={parseInt(seconds) !== 0}
             disabled={requestAgain}
             wait={1} >
-            <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 10, color: requestAgain ? 'grey' : "#7359BE", marginTop: 3 }}>{`Request again Get Via SMS`}</Text>
+            <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 12, color: requestAgain ? 'grey' : "#7359BE", marginTop: 3 }}>{`Request again Get Via SMS`}</Text>
         </TouchableOpacity>
         <View style={styles.buttonView}>
             <Button
                 style={styles.continueButton}
                 text={'Verify'}
-                textStyle={{ color: '#fff', ...styles.textAlignCenter, fontSize:14 }}
+                textStyle={{ color: '#fff', ...styles.textAlignCenter, fontSize: 14 }}
                 onPress={() => verifyOtpToServer()}
                 isLoading={isLoading}
                 disabled={disbleContinueButton || isLoading}
             />
         </View>
         <TouchableOpacity onPress={onChangeNumber}>
-            <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 10, color: "#7359BE" }}>{`Change number`}</Text>
+            <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 12, color: "#7359BE" }}>{`Change phone number`}</Text>
         </TouchableOpacity>
     </SafeAreaView>
 }
