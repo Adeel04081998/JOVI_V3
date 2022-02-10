@@ -137,11 +137,12 @@ const PITSTOPS = {
 const SPACING_VERTICAL = 10;
 const ITEMS_PER_PAGE = 10;
 const renderLoader = (styles) => {
-    return <View style={styles.gifLoader}>
+    return <View style={{...styles}}>
+    {/* return <View style={styles.gifLoader}> */}
         <LottieView
             autoSize={true}
             resizeMode={'contain'}
-            style={{ width: '100%' }}
+            style={{ width: '100%',marginTop:-19 }}
             source={require('../../assets/gifs/RestaurantCardsLoading.json')}
             autoPlay
             loop

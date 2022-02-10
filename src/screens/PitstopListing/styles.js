@@ -12,6 +12,9 @@ export default {
             gifLoader: {
                 height: '93%', width: '101%', paddingLeft: 10, paddingTop: 8, paddingHorizontal: 5, display: 'flex', justifyContent: 'center', alignContent: 'center',
             },
+            restaurantLoader: {
+                paddingTop:-19, display: 'flex', justifyContent: 'center', alignContent: 'center',
+            },
             imageCarousal: {
                 marginHorizontal: 10,
                 alignItems: 'center',

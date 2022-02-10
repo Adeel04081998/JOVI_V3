@@ -17,7 +17,7 @@ const renderLoader = (styles) => {
         <LottieView
             autoSize={true}
             resizeMode={'contain'}
-            style={{ width: '100%' }}
+            style={{ width: '95%',marginTop:-19,marginLeft:5 }}
             source={require('../../../assets/gifs/RestaurantCardsLoading.json')}
             autoPlay
             loop

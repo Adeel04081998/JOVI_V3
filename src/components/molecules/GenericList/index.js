@@ -15,7 +15,7 @@ import Endpoints from '../../../manager/Endpoints';
 import sharedStyles from '../../../res/sharedStyles';
 import NavigationService from '../../../navigations/NavigationService';
 
-export default React.memo(({ vendorType = 0, imageStyles = {}, themeColors = null, showMoreBtnText = "", }) => {
+export default React.memo(({ vendorType = 0,pitstopType = 2, imageStyles = {}, themeColors = null, showMoreBtnText = "", }) => {
     const SPACING_BOTTOM = 0;
     const [data, setData] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(true);
@@ -95,7 +95,7 @@ export default React.memo(({ vendorType = 0, imageStyles = {}, themeColors = nul
         }
     }
     const onPressViewMore = (item) => {
-        NavigationService.NavigationActions.common_actions.navigate('PitstopsVerticalList',{pitstopType:4,listingObj:{...item}});
+        NavigationService.NavigationActions.common_actions.navigate('PitstopsVerticalList',{pitstopType:pitstopType,listingObj:{...item}});
     }
     return (
         <View style={{ paddingBottom: SPACING_BOTTOM }}>

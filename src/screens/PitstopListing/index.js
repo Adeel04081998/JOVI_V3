@@ -194,7 +194,7 @@ const PistopListing = React.memo(({ route, }) => {
             theme={colors}
         />
         <View style={{ ...listingStyles.wrapper, paddingBottom: SPACING_VERTICAL }}>
-            <GenericList themeColors={colors} />
+            <GenericList themeColors={colors} pitstopType={pitstopType} />
         </View>
     </Animated.View>);
     const renderAllRestaurantsListing = () => (<Animated.View style={{
