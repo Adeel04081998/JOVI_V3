@@ -10,8 +10,8 @@ import FontFamily from '../../res/FontFamily';
 import theme from '../../res/theme';
 import GV from '../../utils/GV';
 import { ProductDummyData2 } from './components/ProductDummyData';
-import ProductMenuHeader from './components/ProductMenuHeader';
-import ProductMenuScrollable from './components/ProductMenuScrollable';
+import RestaurantProductMenuHeader from './components/RestaurantProductMenuHeader';
+import RestaurantProductMenuScrollable from './components/RestaurantProductMenuScrollable';
 import { itemStylesFunc, sectionHeaderStylesFunc, stylesFunc } from './styles';
 
 const WINDOW_HEIGHT = constants.window_dimensions.height;
@@ -55,7 +55,7 @@ export default () => {
                 }],
             }}>
                 {/* RECENT ORDER IS ALSO IN PRODUCT MENU HEADER */}
-                <ProductMenuHeader colors={colors}
+                <RestaurantProductMenuHeader colors={colors}
                     onLayout={(e) => {
                         setHeaderHeight(e.nativeEvent.layout.height);
                     }}
@@ -71,7 +71,7 @@ export default () => {
 
             {/* ****************** End of UPPER HEADER TILL RECENT ORDER ****************** */}
 
-            <ProductMenuScrollable
+            <RestaurantProductMenuScrollable
                 colors={colors}
                 data={ProductDummyData2.productsAndDealsV2.productsDealsCategories}
                 animatedScrollValue={animScroll}
