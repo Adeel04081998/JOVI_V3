@@ -7,7 +7,7 @@ import View from "../atoms/View";
 
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
-type Props = React.ComponentProps<typeof TouchableOpacity> & {
+export type ButtonProps = React.ComponentProps<typeof TouchableOpacity> & {
     children?: any;
     text?: string;
     textStyle?: TextStyle;
@@ -15,8 +15,8 @@ type Props = React.ComponentProps<typeof TouchableOpacity> & {
     isLoading?: boolean,
     activeOpacity?: number;
 
-    leftComponent?: () => React.Component;
-    rightComponent?: () => React.Component;
+    leftComponent?: () => React.ReactNode;
+    rightComponent?: () => React.ReactNode;
 
 };
 
@@ -30,7 +30,8 @@ const defaultProps = {
     rightComponent: undefined,
 };
 
-const Button = (props: Props, textProps: TextProps) => {
+
+const Button = (props: ButtonProps, textProps: TextProps) => {
     let onPressRef: NodeJS.Timeout;
     let isAssigned = false;
     const buttonMargin = React.useRef(new Animated.Value(1)).current;

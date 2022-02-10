@@ -1,14 +1,18 @@
+import AnimatedLottieView from 'lottie-react-native';
 import React from 'react';
-import { Animated, Appearance, Image as RNImage, Platform, StatusBar, StyleSheet } from 'react-native';
+import { Animated, Appearance, Image as RNImage, StyleSheet } from 'react-native';
 import Text from '../../components/atoms/Text';
 import View from '../../components/atoms/View';
-import Button from '../../components/molecules/Button';
-import ProductCard from '../../components/molecules/GenericList/ProductCard';
-import { renderFile, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import CustomHeader from '../../components/molecules/CustomHeader';
+import NoRecord from '../../components/organisms/NoRecord';
+import ProductCard from '../../components/organisms/ProductCard';
+import { renderFile, renderPrice, sharedExceptionHandler, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { postRequest } from '../../manager/ApiManager';
+import Endpoints from '../../manager/Endpoints';
 import constants from '../../res/constants';
-import FontFamily from '../../res/FontFamily';
 import theme from '../../res/theme';
 import GV from '../../utils/GV';
+import GotoCartButton from './components/GotoCartButton';
 import { ProductDummyData2 } from './components/ProductDummyData';
 import RestaurantProductMenuHeader from './components/RestaurantProductMenuHeader';
 import RestaurantProductMenuScrollable from './components/RestaurantProductMenuScrollable';
@@ -22,6 +26,12 @@ export default () => {
 
     const sectionHeaderStyles = sectionHeaderStylesFunc(colors);
     const itemStyles = itemStylesFunc(colors);
+
+    const [query, updateQuery] = React.useState({
+        isLoading: true,
+        error: false,
+        errorText:'',
+    });
 
     // #region :: ANIMATION START's FROM HERE 
     const animScroll = React.useRef(new Animated.Value(0)).current
@@ -43,7 +53,72 @@ export default () => {
 
     // #endregion :: ANIMATION END's FROM HERE 
 
+    // #region :: API IMPLEMENTATION START's FROM HERE 
 
+    React.useEffect(()=>{
+        loadData();
+        return()=>{};
+    },[])
+    const loadData = () => {
+        updateQuery({
+            errorText:'',
+            isLoading: true,
+            error: false,
+        });
+        const params = {
+            "pitstopID": 4024,
+            "latitude": 33.654227,
+            "longitude": 73.044831
+        };
+        postRequest(Endpoints.GET_RESTAURANT_PRODUCT_MENU_LIST, params, (res) => {
+            console.log('response ',res);
+            updateQuery({
+                errorText:'',
+                isLoading: false,
+                error: false,
+            })
+        }, (err) => {
+            console.log('errror ',err);
+            sharedExceptionHandler(err)
+            updateQuery({
+                errorText:sharedExceptionHandler(err),
+                isLoading: false,
+                error: true,
+            })
+        })
+    };
+
+    // #endregion :: API IMPLEMENTATION END's FROM HERE 
+    if (query.error) {
+        return (
+            <>
+                <CustomHeader />
+                <NoRecord
+                title={query.errorText}
+                buttonText={`Retry`}
+                onButtonPress={loadData}/>
+            </>
+        )
+    }
+    if (query.isLoading) {
+        return (
+            <>
+                <CustomHeader />
+                <View
+                            style={{ height: '93%', width: '101%', paddingLeft: 10, paddingTop: 4, paddingHorizontal: 5, display: 'flex', justifyContent: 'center', alignContent: 'center', }}
+                        >
+                            <AnimatedLottieView
+                                autoSize={true}
+                                resizeMode={'contain'}
+                                style={{ width: '100%' }}
+                                source={require('../../assets/gifs/Homeloading.json')}
+                                autoPlay
+                                loop
+                            />
+                        </View>
+            </>
+        )
+    }
     return (
         <View style={styles.primaryContainer}>
 
@@ -108,7 +183,7 @@ export default () => {
                                     image: { uri: renderFile(item.image) },
                                     description: item.description,
                                     title: item.name,
-                                    price: `Rs. ${item.price}`
+                                    price: renderPrice(`${item.price}`)
                                 }} />
                         )
                     }
@@ -130,7 +205,7 @@ export default () => {
                                     }
 
                                     {VALIDATION_CHECK(item.price) &&
-                                        <Text fontFamily='PoppinsMedium' style={itemStyles.price}>{`from Rs. ${item.price}`}</Text>
+                                        <Text fontFamily='PoppinsMedium' style={itemStyles.price}>{renderPrice(item.price, 'from Rs.')}</Text>
                                     }
                                 </View>
 
@@ -151,60 +226,7 @@ export default () => {
                 )}
             />
 
-
-            <Button
-                style={{
-                    flex: 1,
-                    position: 'absolute',
-                    bottom: 10,
-                    width: "90%",
-                    alignSelf: "center",
-                    borderRadius: 10,
-                    backgroundColor: colors.primary,
-                    alignItems: "flex-start",
-                }}
-                textStyle={{
-                    color: colors.white,
-                    fontSize: 16,
-                    fontFamily: FontFamily.Poppins.Medium,
-                    textAlign: "center",
-                    flex: 1,
-                }}
-                text="Go to cart"
-                leftComponent={() => (
-                    <View style={{
-                        paddingHorizontal: 14,
-                        paddingVertical: 4,
-                        backgroundColor: "#fff",
-                        borderRadius: 6,
-                        marginLeft: 16,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        alignContent: "center",
-                        alignSelf: "center",
-                    }}>
-                        <Text style={{
-                            color: colors.primary,
-                            fontSize: 16,
-                            textAlign: 'center',
-                        }}>{'1'}</Text>
-                    </View>
-                )}
-
-                rightComponent={() => (
-                    <View style={{
-                        padding: 10,
-                        paddingRight: 0,
-                        marginRight: 16,
-                    }}>
-                        <Text style={{
-                            color: colors.white,
-                            fontSize: 16,
-                            textAlign: 'center',
-                        }}>{'Rs. 500'}</Text>
-                    </View>
-                )}
-            />
+            <GotoCartButton colors={colors} onPress={() => { alert('bsdk') }} />
 
         </View>
     )

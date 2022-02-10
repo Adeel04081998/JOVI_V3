@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Animated, ScrollView, StyleSheet } from "react-native";
+import { renderPrice } from "../../helpers/SharedActions";
 import AppStyles from "../../res/AppStyles";
 import { initColors } from "../../res/colors";
 import Text from "../atoms/Text";
@@ -46,7 +47,7 @@ const RecentOrder = (props: Props) => {
                             <Text style={recentOrderStyles.description}>{`2 More Products`}</Text>
 
                             <View style={recentOrderStyles.priceReorderContainer}>
-                                <Text fontFamily="PoppinsMedium" style={recentOrderStyles.price}>{`Rs. 750`}</Text>
+                                <Text fontFamily="PoppinsMedium" style={recentOrderStyles.price}>{renderPrice(`Rs. 750`)}</Text>
 
                                 <TouchableScale style={recentOrderStyles.reorderContainer}>
                                     <Text style={recentOrderStyles.reorderText}>{`Reorder`}</Text>

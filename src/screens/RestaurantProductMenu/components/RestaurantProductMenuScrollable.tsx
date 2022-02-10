@@ -35,7 +35,7 @@ const defaultProps = {
 
 const INDICATOR_WIDTH_MINUS = 0;
 
-const ProductMenuScrollable = (props: Props) => {
+const RestaurantProductMenuScrollable = (props: Props) => {
     const HEADER_HEIGHT = props?.headerHeight ?? defaultProps.headerHeight;
     const style = stylesFunc(props.colors);
 
@@ -257,8 +257,8 @@ const ProductMenuScrollable = (props: Props) => {
     )
 }
 
-ProductMenuScrollable.defaultProps = defaultProps;
-export default React.memo(ProductMenuScrollable);
+RestaurantProductMenuScrollable.defaultProps = defaultProps;
+export default React.memo(RestaurantProductMenuScrollable);
 
 // #region :: STYLES START's FROM HERE 
 const stylesFunc = (colors: typeof initColors) => StyleSheet.create({
