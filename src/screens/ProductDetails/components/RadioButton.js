@@ -5,8 +5,36 @@ import Text from "../../../components/atoms/Text";
 import TouchableOpacity from "../../../components/atoms/TouchableOpacity";
 import View from "../../../components/atoms/View";
 
-export default ({ data = [], onPressCb, selectionTittle = "", requiredTittle = "" }) => {
+export default ({ data = [], onPressCb, selectionTittle = "", requiredTittle = "", isMultipleSelection = false, selectedItem = [] }) => {
     console.log("data=>>", data);
+    console.log("selectedItem=>>", selectedItem);
+
+
+
+    const onPress = (item) => {
+        if (isMultipleSelection) {
+            const isExist = selectedItem.findIndex(i => i.id === item.id);
+            console.log('isExist ', isExist);
+            if (isExist === -1) {
+                selectedItem.push(item); // adding item
+            } else {
+                selectedItem.splice(isExist, 1); // deleting same item from
+            }
+
+            onPressCb && onPressCb(selectedItem, isMultipleSelection);
+
+        } else {
+            //SIGNLE SELECTION
+
+            selectedItem = [];
+            selectedItem.push(item); // adding item
+
+            onPressCb && onPressCb(selectedItem, isMultipleSelection);
+
+        }
+
+    };
+
     return (
         <View>
             <Text style={{ fontSize: 14, color: 'black' }}>{selectionTittle}</Text>
@@ -14,16 +42,19 @@ export default ({ data = [], onPressCb, selectionTittle = "", requiredTittle = "
             <AnimatedView style={styles.primaryContainer}>
                 {
                     data.map((x, i) => {
-                        return <AnimatedView style={styles.container}>
-
+                        const selectedIndex = selectedItem.findIndex(k => k.id === x.id);
+                        let isActive = selectedIndex === -1 ? false : x.id === selectedItem[selectedIndex].id;
+                        console.log("isActive=>>", isActive);
+                        return <AnimatedView style={styles.container} key={i}  >
                             <TouchableOpacity style={styles.radioCircle}
-                                onPress={() => { onPressCb(x) }}
+                                onPress={() => { onPress(x) }}
                             >
-                                <View style={styles.filledCircle(true)}>
-                                </View>
-                            </TouchableOpacity>
-                            <Text style={{}}>{x.field}</Text>
+                                {isActive &&
+                                    <View style={styles.filledCircle(true)} />
+                                }
 
+                            </TouchableOpacity>
+                            <Text style={{ color: 'black' }}>{x.title}</Text>
 
                         </AnimatedView>
 
@@ -46,16 +77,17 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         padding: 10,
         marginVertical: 5,
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 8,
-        },
-        shadowOpacity: 0.9,
-        shadowRadius: 20,
+        // shadowColor: "#000",
+        // shadowOffset: {
+        //     width: 0,
+        //     height: 8,
+        // },
+        // shadowOpacity: 0.9,
+        // shadowRadius: 20,
 
-        elevation: 12,
-        borderRadius: 10
+        // elevation: 5,
+        borderRadius: 10,
+        // borderWidth:1
 
 
 
@@ -65,8 +97,8 @@ const styles = StyleSheet.create({
 
     },
     radioCircle: {
-        height: 25, width: 25,
-        borderRadius: 90,
+        height: 18, width: 18,
+        borderRadius: 10,
         marginRight: 12,
         borderWidth: 1.5,
         // borderColor: '#D3D3D3',
