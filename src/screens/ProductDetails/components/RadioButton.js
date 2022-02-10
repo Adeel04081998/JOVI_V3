@@ -5,51 +5,21 @@ import Text from "../../../components/atoms/Text";
 import TouchableOpacity from "../../../components/atoms/TouchableOpacity";
 import View from "../../../components/atoms/View";
 
-export default () => {
-    // let inputsArr = [
-    //     { id: 1, field: "Email", title: 'Email address', },
-    //     { id: 2, field: "FirstName", title: 'First name', },
-    //     { id: 3, field: "LastName", title: 'Last name', },
-    //     { id: 4, field: "Mobile", title: 'Mobile number', },
-    //     { id: 4, field: "Mobile", title: 'Mobile number', },
-    //     { id: 4, field: "Mobile", title: 'Mobile number', },
-
-    // ]
-    let initialState = {
-        inputsArr: [
-            { id: 1, field: "Email", title: 'Email address', },
-            { id: 2, field: "FirstName", title: 'First name', },
-            { id: 3, field: "LastName", title: 'Last name', },
-            { id: 4, field: "Mobile", title: 'Mobile number', },
-            { id: 4, field: "Mobile", title: 'Mobile number', },
-            { id: 4, field: "Mobile", title: 'Mobile number', },
-
-        ],
-        'isSelected': false,
-
-    }
-    const [state, setState] = useState(initialState)
-    console.log("state=>>", state);
+export default ({ data = [], onPressCb, selectionTittle = "", requiredTittle = "" }) => {
+    console.log("data=>>", data);
     return (
         <View>
-            <Text style={{ fontSize: 14, color: '#F94E41' }}>Choose addition</Text>
-            <Text>Required</Text>
+            <Text style={{ fontSize: 14, color: 'black' }}>{selectionTittle}</Text>
+            <Text>{requiredTittle}</Text>
             <AnimatedView style={styles.primaryContainer}>
                 {
-                    state.inputsArr.map((x, i) => {
+                    data.map((x, i) => {
                         return <AnimatedView style={styles.container}>
 
                             <TouchableOpacity style={styles.radioCircle}
-                                onPress={(x) => {
-                                    setState(pre => ({
-                                        ...pre,
-                                        isSelected: true
-                                    }));
-
-
-                                }}
+                                onPress={() => { onPressCb(x) }}
                             >
-                                <View style={styles.filledCircle(state.isSelected)}>
+                                <View style={styles.filledCircle(true)}>
                                 </View>
                             </TouchableOpacity>
                             <Text style={{}}>{x.field}</Text>
@@ -74,13 +44,19 @@ export default () => {
 const styles = StyleSheet.create({
     primaryContainer: {
         backgroundColor: 'white',
-        // flex:1
         padding: 10,
-        borderWidth: 1,
         marginVertical: 5,
-        // paddingVertical:10,
-        // paddingHorizontal:8,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 8,
+        },
+        shadowOpacity: 0.9,
+        shadowRadius: 20,
+
+        elevation: 12,
         borderRadius: 10
+
 
 
     },
@@ -92,7 +68,7 @@ const styles = StyleSheet.create({
         height: 25, width: 25,
         borderRadius: 90,
         marginRight: 12,
-        borderWidth: 3,
+        borderWidth: 1.5,
         // borderColor: '#D3D3D3',
         borderColor: 'grey',
         alignItems: 'center',
