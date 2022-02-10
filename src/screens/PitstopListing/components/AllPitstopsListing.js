@@ -9,6 +9,7 @@ import View from '../../../components/atoms/View';
 import { renderFile, sharedExceptionHandler } from '../../../helpers/SharedActions';
 import { postRequest } from '../../../manager/ApiManager';
 import Endpoints from '../../../manager/Endpoints';
+import NavigationService from "../../../navigations/NavigationService";
 
 const ITEMS_PER_PAGE = 40;
 const renderLoader = (styles) => {
@@ -122,10 +123,13 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
         fetchDataWithUpdatedPageNumber();
         componentLoaded.current = true;
     }, [])
+    const onPressPitstop = (item) => {
+        NavigationService.NavigationActions.common_actions.navigate('RESTAURANTMENU',{...item,pitstopType});
+    }
     const renderItem = (item, index) => {
         const { title, description, estTime, distanceFromLocation, image, averagePrice } = item;
         return (
-            <TouchableOpacity key={index} activeOpacity={0.8} style={{ ...styles.itemContainer }}>
+            <TouchableOpacity onPress={()=>onPressPitstop(item)} key={index} activeOpacity={0.8} style={{ ...styles.itemContainer }}>
                 <Image source={{ uri: renderFile(image) }} style={[styles.image, imageStyles]} tapToOpen={false} />
                 <View style={styles.subContainer}>
                     <Text style={styles.title} numberOfLines={1} >{title}</Text>

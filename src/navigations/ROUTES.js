@@ -37,6 +37,10 @@ const APP_DRAWER_ROUTES = {
         screen_name: "PitstopsVerticalList",
         options: null,
     },
+    "RestaurantProductMenu":{
+        screen_name: "RESTAURANTMENU",
+        options: null,
+    },
 }
 const APP_ROUTES = {
     "AppDrawerStack": {
