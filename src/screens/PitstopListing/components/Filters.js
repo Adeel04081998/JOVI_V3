@@ -15,8 +15,8 @@ const FILTER_ICON_SIZE = 17;
 export default ({ filterConfig, selectedFilters, parentFilterHandler = () => { }, colors, goToFilters, filtersData = [] }) => {
     const [state,setState] = React.useState({activeTab:null});
     const checkSelectedFilter = (item) => {
-        return state.activeTab === item.vendorDashboardCatID;
-        // return (selectedFilters ?? []).find(x => x === item.vendorDashboardCatID);
+        // return state.activeTab === item.vendorDashboardCatID;
+        return (selectedFilters ?? []).find(x => x === item.vendorDashboardCatID);
     }
     const _styles = styles(colors,checkSelectedFilter);
     return (<View style={_styles.parentContainer}>

@@ -14,8 +14,8 @@ export default ({ CategoriesTabConfig, selectedCategories, parentCategoryHandler
     const isRendered = React.useRef(false);
     const [state,setState] = React.useState({activeTab:null});
     const checkSelectedTab = (item) => {
-        return state.activeTab === item.categoryID;
-        // return (selectedCategories ?? []).find(x => x === item.categoryID);
+        // return state.activeTab === item.categoryID;
+        return (selectedCategories ?? []).find(x => x === item.categoryID);
     }
     const selectedStyle = (item) => {
         const style = {
