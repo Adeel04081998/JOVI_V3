@@ -17,7 +17,7 @@ import { itemStylesFunc, sectionHeaderStylesFunc, stylesFunc } from './styles';
 const WINDOW_HEIGHT = constants.window_dimensions.height;
 
 export default () => {
-    const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
+    const colors = theme.getTheme(GV.THEME_VALUES.RESTAURANT, Appearance.getColorScheme() === "dark");
     const styles = stylesFunc(colors);
 
     const sectionHeaderStyles = sectionHeaderStylesFunc(colors);

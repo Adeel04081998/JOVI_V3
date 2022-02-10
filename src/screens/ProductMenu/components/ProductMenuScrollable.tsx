@@ -230,7 +230,9 @@ const ProductMenuScrollable = (props: Props) => {
                                     {parentIndex === 0 ?
                                         <AnimatedFlatlist
                                             horizontal
-                                            showsHorizontalScrollIndicator={false}
+                                            flatlistProps={{
+                                                showsHorizontalScrollIndicator: false,
+                                            }}
                                             data={food[props.itemListPropertyName]}
                                             //@ts-ignore
                                             renderItem={(singleFood: any, index: number) => {
