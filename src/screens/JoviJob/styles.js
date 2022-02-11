@@ -42,7 +42,6 @@ export default (colors = initColors, width, height) => StyleSheet.create({
         borderColor: '#BBBBBB',
         borderRadius: 5,
         marginVertical: 5,
-        flexGrow: 1,
         backgroundColor: colors.textColor,
     },
     /**  start of Card Header Component Styles */

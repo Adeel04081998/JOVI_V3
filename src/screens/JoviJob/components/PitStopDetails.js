@@ -9,7 +9,6 @@ import GV from '../../../utils/GV';
 import TextInput from '../../../components/atoms/TextInput';
 import FontFamily from '../../../res/FontFamily';
 
-
 const PitStopDetails = (props) => {
     // colors.primary will recieve value from colors.js file's colors
     const WIDTH = constants.window_dimensions.width

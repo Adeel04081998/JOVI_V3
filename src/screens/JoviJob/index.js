@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, Animated, Appearance, Easing, Image as RNImage, ScrollView, Platform, Alert, TextInput as RNTextInput, } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Animated, Appearance, Easing, Image as RNImage, ScrollView, Platform, Alert, TextInput as RNTextInput, Keyboard, } from 'react-native';
 import { Transition, Transitioning } from 'react-native-reanimated';
 import svgs from '../../assets/svgs';
 import VectorIcon from '../../components/atoms/VectorIcon';
@@ -24,13 +24,14 @@ import constants from '../../res/constants';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import { askForAudioRecordPermission, sharedLaunchCameraorGallery } from '../../helpers/Camera';
-import { addressInfo } from '../../helpers/Location';
+import { addressInfo, logGoogleApiHit } from '../../helpers/Location';
 import Modal from '../../components/atoms/Modal';
 import FontFamily from '../../res/FontFamily';
-import { multipartPostRequest } from '../../manager/ApiManager';
+import { multipartPostRequest, postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import AudioplayerMultiple from '../../components/atoms/AudioplayerMultiple';
 import Image from '../../components/atoms/Image';
+import Toast from '../../components/atoms/Toast';
 
 
 export const PITSTOP_CARD_TYPES = Object.freeze({ "location": 0, "description": 1, "estimated-time": 2, "buy-for-me": 3, "estimated-price": 4, });
@@ -113,11 +114,11 @@ export default ({ navigation, route }) => {
             "title": "Estimated Price",
             "desc": "What is the Estimated Price?",
             "svg": svgs.pitStopEstTime(),
-            "isOpened": false,
+            "isOpened": true,
             "headerColor": colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["estimated-price"],
-            "showSubCard": false,
-            "disabled": true,
+            "showSubCard": true,
+            "disabled": false,
 
         },
     ])
@@ -143,6 +144,7 @@ export default ({ navigation, route }) => {
     const [cityVal, setCityVal] = useState('')
     const [placeName, setPlaceName] = useState('')
     const [locationVal, setLocationVal] = useState('')
+    const [scrollEnabled, setScrollEnabled] = useState(true)
 
     /******** End of pitsTop Location variables *******/
 
@@ -191,7 +193,9 @@ export default ({ navigation, route }) => {
 
 
     useEffect(() => {
+        console.log('here');
         if (route.params !== undefined && route.params !== null) {
+            console.log('route.params', route.params);
             setLocationVal(route.params)
         }
     }, [route])
@@ -214,36 +218,49 @@ export default ({ navigation, route }) => {
 
     /************   Start of functions of Pitstop location Component Funcs    **************/
 
-    const handleLocationSelected = async (data, geometry, index) => {
-        console.log('data', data);
+
+    const handleLocationSelected = (data, geometry, index, pinData, modifyPitstops = true, forceMode) => {
+        Keyboard.dismiss();
         let city = "";
-        const addressObj = data;
-        let adrInfo = await addressInfo(geometry.location.lat, geometry.location.lng)
-        if (addressObj?.terms && Array.isArray(addressObj?.terms) && addressObj?.terms?.length >= 2) {
-            city = addressObj.terms[addressObj.terms.length - 2]?.value;
+        if (data) {
+            const addressObj = data;
+            if (addressObj?.terms && Array.isArray(addressObj?.terms) && addressObj?.terms?.length >= 2) {
+                city = addressObj.terms[addressObj.terms.length - 2]?.value;
+            }
+            else if (addressObj?.plus_code?.compound_code) {
+                city = addressObj.plus_code.compound_code.replace(/\,/gi, "")?.split(/\s/gi)?.[1];
+            }
         }
-        else if (addressObj?.plus_code?.compound_code) {
-            city = addressObj.plus_code.compound_code.replace(/\,/gi, "")?.split(/\s/gi)?.[1];
+        else if (pinData) {
+            const addressObj = pinData?.addressObj;
+            if (addressObj?.plus_code?.compound_code) {
+                city = addressObj.plus_code.compound_code.replace(/\,/gi, "")?.split(/\s/gi)?.[1];
+            }
         }
         setCityVal(city)
-        setPlaceName(adrInfo)
-        setLocationVal(addressObj.description)
+        setLocationVal(data && (data.name ? data.name : data.description))
         toggleCardData(PITSTOP_CARD_TYPES["description"]);
-    }
-    const onLocationSearchInputChange = (text) => {
-        setLocationVal(text)
-        toggleCardData(PITSTOP_CARD_TYPES["description"]);
+    };
+
+    const onLocationSearchInputChange = (value) => {
+        if ((value && value !== '') || value === false) {
+            setLocationVal(value)
+        }
     }
     const handleSetFavClicked = () => { }
 
 
-
+    const onLocationPress = () => {
+        common_actions.navigate(ROUTES.APP_ROUTES.Map.screen_name)
+    }
 
     /************   End of functions of Pitstop location Component Funcs    **************/
 
 
-
-
+    const getRemainingAmount = () => {
+        let RA = GV.MAX_JOVI_AMOUNT - estVal
+        return RA
+    }
 
 
 
@@ -450,10 +467,6 @@ export default ({ navigation, route }) => {
     /************   End of functions of Pitstop Details Component  Funcs   **************/
 
 
-    const onSliderChange = () => {
-
-    }
-
 
 
     // /************   Start of Shared Card Header function     **************/
@@ -469,7 +482,7 @@ export default ({ navigation, route }) => {
             if (index === 3 && estTime.text.includes('mins' || 'hour')) {
                 isDisable = false;
             }
-            if (index === 4 && estTime.text.includes('mins'  || 'hour' ) && switchVal) {
+            if (index === 4 && estTime.text.includes('mins' || 'hour') && switchVal) {
                 isDisable = false;
             }
 
@@ -554,13 +567,15 @@ export default ({ navigation, route }) => {
                 locationVal={locationVal}
                 isOpened={isOpened}
                 onChangeName={(text) => { setNameVal(text) }}
-                onLocationPress={() => {
-                    navigation.navigate(ROUTES.APP_ROUTES.Map.screen_name)
-                }}
+                onLocationPress={onLocationPress}
                 handleLocationSelected={handleLocationSelected}
                 onLocationSearchInputChange={onLocationSearchInputChange}
                 onNearbyLocationPress={() => onLocationSearchInputChange(false)}
-                // handleInputFocused={(index) => { }}
+                clearInputField={() => setLocationVal('')}
+                handleInputFocused={(index, isFocus) => {
+                    console.log('index', index)
+                    setScrollEnabled(isFocus)
+                }}
                 handleSetFavClicked={handleSetFavClicked}
             />
         )
@@ -730,7 +745,6 @@ export default ({ navigation, route }) => {
                     setCollapsed(!collapsed)
 
                 }}
-                onSliderChange={onSliderChange}
             />
         )
     }
@@ -760,8 +774,8 @@ export default ({ navigation, route }) => {
     const onChangeSlider = (value, num) => {
         let stringVal = value.toString()
         console.log("handleValueChange=>", stringVal)
-        if (num) setEstVal(stringVal)
-        else setEstVal(value)
+        // if (num) setEstVal(stringVal)
+        // else setEstVal(value)
         // setState((prevState) => {
 
         //     let updatedDftDetails = { ...(prevState.dftDetails || {}) };
@@ -790,8 +804,21 @@ export default ({ navigation, route }) => {
             <PitStopEstPrice
                 estVal={estVal}
                 isOpened={isDisabled ? false : isOpened}
-                onChangeSliderText={(text) => { onChangeSlider(text, true) }}
-                onSliderChange={(text) => { onChangeSlider(text, false) }} />
+                onChangeSliderText={
+                    newsliderValue => {
+                        if (!isNaN(parseInt(newsliderValue))) {
+                            setEstVal(parseInt(newsliderValue))
+                        }
+                    }
+                }
+                getRemainingAmount={()=>getRemainingAmount()}
+                onSliderChange={
+                    newsliderValue => {
+                        if (!isNaN(parseInt(newsliderValue))) {
+                            setEstVal(parseInt(newsliderValue))
+                        }
+                    }
+                } />
         )
     } //End of Pitstop est Price
 
@@ -827,25 +854,20 @@ export default ({ navigation, route }) => {
     /***************************** END of modal **************************/
 
 
-
     return (
         <SafeAreaView style={{ flex: 1 }} >
             <CustomHeader leftIconName="keyboard-backspace" leftIconType="MaterialCommunityIcons" leftIconSize={30} />
-            <Transitioning.View
-                ref={ref}
-                transition={transition}
-                style={styles.container}>
-                <KeyboardAwareScrollView 
-                nestedScrollEnabled 
-                keyboardShouldPersistTaps="always"
-                 contentContainerStyle={{ flexGrow: 1 }}
-                  scrollEventThrottle={200}>
+            <ScrollView nestedScrollEnabled={true} scrollEnabled={scrollEnabled} style={{ backgroundColor: 'white' }} contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="always" >
+                <Transitioning.View
+                    ref={ref}
+                    transition={transition}
+                    style={styles.container}>
                     {cardData.map(({ idx, title, desc, svg, isOpened, key, headerColor, showSubCard, disabled }, index) => {
                         return (
                             showSubCard &&
                             <View
                                 key={`card mapping ${idx}`}
-                                style={[{...styles.cardView, zIndex: idx === 3 ? 99 : 9}]}>
+                                style={[{ ...styles.cardView, zIndex: idx === 3 ? 99 : 9 }]}>
                                 {renderHeader(idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled)}
                                 {renderBody(idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled)}
                             </View >
@@ -875,9 +897,9 @@ export default ({ navigation, route }) => {
                             fontFamily="PoppinsRegular"
                         />
                     </>
-                </KeyboardAwareScrollView>
-                {renderModal()}
-            </Transitioning.View>
+                    {renderModal()}
+                </Transitioning.View>
+            </ScrollView>
         </SafeAreaView >
     );
 }

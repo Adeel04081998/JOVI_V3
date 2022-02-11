@@ -4,6 +4,7 @@ import { check, request, PERMISSIONS, RESULTS, openSettings } from 'react-native
 import Toast from '../components/atoms/Toast';
 import configs from '../utils/configs';
 import { handleDeniedPermission } from './Camera';
+import { sharedGetDeviceInfo } from './SharedActions';
 
 
 export const hybridLocationPermission = async (cb) => {
@@ -54,3 +55,21 @@ export const addressInfo = async (latitude, longitude) => {
         console.log('exp',exp);
     }
 };
+
+export const logGoogleApiHit = async (postRequest, apiKey) => {
+    postRequest('api/Common/GoogleAPIHit/AddLog',
+        {
+            "userType": 1,
+            "hardwareID": (await sharedGetDeviceInfo()).deviceID,
+            "apiKey": apiKey,
+            "orderID": null
+        },
+        (res) => {
+            console.log('Google Api Log Success: ----- ', apiKey, res);
+        },
+        (err) => {
+            console.log('Google Api Log Error: ----- ', apiKey, err);
+        },
+
+    );
+}

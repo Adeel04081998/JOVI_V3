@@ -10,7 +10,6 @@ export default () => {
   const { common_actions } = NavigationService.NavigationActions
 
   const onConfirmLoc = (placeName) => {
-    console.log('placename',placeName);
     common_actions.navigate(ROUTES.APP_ROUTES.JoviJob.screen_name, placeName)
   }
 

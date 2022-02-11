@@ -19,19 +19,19 @@ const PitStopLocation = (props) => {
 
     return (
         props.isOpened &&
-        <View style={{ marginVertical: 10 }} >
+        <View style={{ marginVertical: 10, flexGrow:1 }} >
             <LocationSearch
-                locationVal={props.locationVal}
+                index={0}
                 onLocationSelected={props.handleLocationSelected}
                 handleOnInputChange={props.onLocationSearchInputChange}
-                onNearbyLocationPress={() => props.onLocationSearchInputChange(false)}
-                handleInputFocused={(index) => { }}
+                onNearbyLocationPress={() => props.onNearbyLocationPress}
+                handleInputFocused={(index, isFocus) => props.handleInputFocused(index, isFocus)}
                 onSetFavClicked={props.handleSetFavClicked}
-                // isFavourite={state.pitstops[state.focusedFieldIndex].isFavourite}
-                locationVal={props.locationVal}
+                isFavourite={''}
                 marginBottom={0}
+                locationVal={props.locationVal}
+                clearInputField={props.clearInputField}
             />
-
             <Button
                 onPress={props.onLocationPress}
                 text="Select location from map"

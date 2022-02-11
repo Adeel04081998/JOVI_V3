@@ -30,15 +30,22 @@ const PitStopEstPrice = (props) => {
                 <Slider
                     style={{ width: constants.window_dimensions.width - 25, height: Platform.OS === "ios" ? 35 : 20, marginLeft: 10 }}
                     thumbImage={images.circle()}
-                    value={0}
+                    value={Number(props.estVal)}
                     minimumValue={0}
                     onValueChange={props.onSliderChange}
                     maximumValue={10000}
                     minimumTrackTintColor={colors.primary}
                     maximumTrackTintColor={colors.trackClr || '#00000029'}
                 />
-                <View style={{ justifyContent: 'flex-end' }} >
-                    <TextInput placeholder={"Enter Estimated Price"} containerStyle={{width: WIDTH * 0.4, alignSelf:'flex-end' }} value={props.estVal} onChangeText={props.onChangeSliderText} />
+                <View style={{ flexDirection:'row', justifyContent:'space-between' }} >
+                    <View style={{flexDirection: 'column', justifyContent:'center', marginLeft:20}}>
+                        <Text fontFamily="PoppinsRegular" style={{fontSize:14, color: colors.black}}>Remaining Amount</Text>
+                        <Text fontFamily="PoppinsBold" style={{fontSize:14, color: colors.primary}} >Rs {`${props.getRemainingAmount()}`}</Text>
+                    </View>
+                    <TextInput 
+                    maxLength={4} 
+                    placeholder={"Type your amount"} 
+                    containerStyle={{width: WIDTH * 0.4, alignSelf:'flex-end' }} value={`${props.estVal}`} onChangeText={props.onChangeSliderText} keyboardType="number-pad" />
                 </View>
             </View>
         </View>
