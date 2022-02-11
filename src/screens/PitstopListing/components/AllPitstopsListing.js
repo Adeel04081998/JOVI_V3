@@ -64,6 +64,9 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
                     totalItems: res.data.pitstopListViewModel?.paginationInfo?.totalItems
                 }
             }
+            else if(res.data.statusCode === 404){
+                setState(pre => ({ ...pre, isLoading: false, pitstopListViewModel: { list: [] } }));
+            }
             console.log('GET_PITSTOPS', res);
         }, err => {
             sharedExceptionHandler(err);
