@@ -35,9 +35,11 @@ export const hybridLocationPermission = async (cb) => {
 };
 
 export const addressInfo = async (latitude, longitude) => {
+    console.log('latitude ==>>>>',latitude, 'longitude ===>>>>>',longitude);
     try {
         let addressResponse = await fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&rankby=distance&key=${configs.GOOGLE_API_KEY}`);
         addressResponse = await addressResponse.json();
+        console.log('addressResponse',addressResponse);
         if (addressResponse.error_message) {
             console.log('error_message', addressResponse.error_message)
             // CustomToast.error("Error while Fetching Address!", null, "long")

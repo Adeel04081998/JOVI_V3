@@ -19,8 +19,8 @@ const CardHeader = (props) => {
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
     const styles = joviJobStyles(colors, WIDTH, HEIGHT);
     return (
-            <View style={styles.header} >
-                <View style={styles.svg} >
+         <View style={[styles.header]} >
+                <View style={styles.svg} > 
                     <SvgXml xml={props.xmlSrc || svgs.pitstopPin()} height={HEIGHT * 0.07} width={WIDTH * 0.14} />
                 </View>
                 <View style={styles.pitstopTextContainer} >

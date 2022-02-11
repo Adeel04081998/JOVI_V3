@@ -20,10 +20,8 @@ const PitStopBuy = (props) => {
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
     const styles = joviJobStyles(colors, WIDTH, HEIGHT);
     return (
-        // <View style={styles.pitStopLocationContainer} >
-        //     {
             props.isOpened &&
-                <View style={{zIndex:0}} >
+                <>
                     <Text style={[styles.attachment,{paddingVertical:0}]} >
                         Buy For Me
                     </Text>
@@ -33,9 +31,8 @@ const PitStopBuy = (props) => {
                             <Switch switchVal={props.switchVal} onToggleSwitch={(bool) => {props.onToggleSwitch(bool)}} />
                         </View>
                     </View>
-                </View>
-        //     }
-        // </View>
+                </>
+
     );
 }
 export default PitStopBuy;

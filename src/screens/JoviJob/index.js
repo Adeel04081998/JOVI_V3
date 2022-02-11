@@ -160,7 +160,7 @@ export default ({ navigation, route }) => {
     const [micPress, setMicPress] = useState(false);
     const [isDeleted, setIsDeleted] = useState(false);
     const [voiceNote, setVoiceNote] = useState({})
-    
+
     /******** End of Pitstop Details variables *******/
 
 
@@ -171,7 +171,7 @@ export default ({ navigation, route }) => {
     const [estVal, setEstVal] = useState('')
     const [switchVal, setSwitch] = useState(false);
     const [estTime, setEstTime] = React.useState({
-        text: __DEV__ ? "00-15 mins" : "Estimated Time",
+        text: __DEV__ ? "Estimated Time" : "Estimated Time",
         value: __DEV__ ? 1 : 0
     });
     const [collapsed, setCollapsed] = React.useState(true);
@@ -466,10 +466,10 @@ export default ({ navigation, route }) => {
             if (index === 2 && description.length) {
                 isDisable = false;
             }
-            if (index === 3 && estTime.text.length) {
+            if (index === 3 && estTime.text.includes('mins' || 'hour')) {
                 isDisable = false;
             }
-            if (index === 4 && estTime.text.length && switchVal) {
+            if (index === 4 && estTime.text.includes('mins'  || 'hour' ) && switchVal) {
                 isDisable = false;
             }
 
@@ -485,7 +485,7 @@ export default ({ navigation, route }) => {
                 title={title}
                 description={desc}
                 xmlSrc={svg}
-                isOpened={isDisabled ? !isOpened : isOpened}
+                isOpened={isOpened}
                 style={styles.cardContainer}
                 headerBackgroundColor={isDisabled ? colors.lightGreyBorder : headerColor}
                 activeOpacity={0.9}
@@ -496,7 +496,7 @@ export default ({ navigation, route }) => {
                             return {
                                 ...object,
                                 isOpened: !object.isOpened,
-                                headerColor: isDisabled ? colors.lightGreyBorder: colors.primary,
+                                headerColor: isDisabled ? colors.lightGreyBorder : colors.primary,
                                 showSubCard: (
                                     idx === 5 ?
                                         switchVal ?
@@ -521,18 +521,18 @@ export default ({ navigation, route }) => {
 
 
     /************   Start of Body function     **************/
-    const renderBody = (idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index) => {
+    const renderBody = (idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled) => {
 
         if (idx === 1) {
-            return renderPitStopLocation(idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index)
+            return renderPitStopLocation(idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled)
         } else if (idx === 2) {
-            return renderPitStopDetails(idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index)
+            return renderPitStopDetails(idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled)
         } else if (idx === 3) {
-            return renderPitStopEstTime(idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index)
+            return renderPitStopEstTime(idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled)
         } else if (idx === 4) {
-            return renderPitStopBuy(idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index)
+            return renderPitStopBuy(idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled)
         } else if (idx === 5) {
-            return renderPitStopEstPrice(idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index)
+            return renderPitStopEstPrice(idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled)
         }
         else {
             return <View />
@@ -546,7 +546,8 @@ export default ({ navigation, route }) => {
 
     /************   Start of pitstopLocation component     **************/
 
-    const renderPitStopLocation = (idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index) => {
+    const renderPitStopLocation = (idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled) => {
+
         return (
             <PitStopLocation
                 nameVal={nameval}
@@ -571,11 +572,13 @@ export default ({ navigation, route }) => {
     /************   Start of render pitstop details  function     **************/
 
 
-    const renderPitStopDetails = (idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index) => {
+    const renderPitStopDetails = (idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled) => {
+        const isDisabled = disabledHandler(index, disabled);
+
         return (
             <PitStopDetails
                 description={description}
-                isOpened={isOpened}
+                isOpened={isDisabled ? false : isOpened}
                 onChangeDescription={(t) => {
                     setDescription(t)
                     toggleCardData(PITSTOP_CARD_TYPES["estimated-time"]);
@@ -710,12 +713,14 @@ export default ({ navigation, route }) => {
 
     /************   Start of render pitstop est time  function     **************/
 
-    const renderPitStopEstTime = (idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index) => {
+    const renderPitStopEstTime = (idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled) => {
+        const isDisabled = disabledHandler(index, disabled);
+
         return (
             <PitStopEstTime
                 collapsed={collapsed}
                 estTime={estTime}
-                isOpened={isOpened}
+                isOpened={isDisabled ? false : isOpened}
                 onEstTimePress={(item) => {
                     setEstTime(item);
                     setCollapsed(!collapsed);
@@ -723,6 +728,7 @@ export default ({ navigation, route }) => {
                 }}
                 onPressDropDown={() => {
                     setCollapsed(!collapsed)
+
                 }}
                 onSliderChange={onSliderChange}
             />
@@ -733,11 +739,13 @@ export default ({ navigation, route }) => {
 
 
 
-    const renderPitStopBuy = (idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index) => {
+    const renderPitStopBuy = (idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled) => {
+        const isDisabled = disabledHandler(index, disabled);
+
         return (
             <PitStopBuy
                 switchVal={switchVal}
-                isOpened={isOpened}
+                isOpened={isDisabled ? false : isOpened}
                 onToggleSwitch={(bool) => {
                     if (switchVal) cardData[index + 1].showSubCard = false
                     else cardData[index + 1].showSubCard = true
@@ -752,7 +760,7 @@ export default ({ navigation, route }) => {
     const onChangeSlider = (value, num) => {
         let stringVal = value.toString()
         console.log("handleValueChange=>", stringVal)
-        if(num) setEstVal(stringVal)
+        if (num) setEstVal(stringVal)
         else setEstVal(value)
         // setState((prevState) => {
 
@@ -771,15 +779,17 @@ export default ({ navigation, route }) => {
         //         isChanged_pitstopDetails: true
         //     }
         // });
-        
+
 
 
     }
-    const renderPitStopEstPrice = (idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index) => {
+    const renderPitStopEstPrice = (idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled) => {
+        const isDisabled = disabledHandler(index, disabled);
+
         return (
             <PitStopEstPrice
                 estVal={estVal}
-                isOpened={isOpened}
+                isOpened={isDisabled ? false : isOpened}
                 onChangeSliderText={(text) => { onChangeSlider(text, true) }}
                 onSliderChange={(text) => { onChangeSlider(text, false) }} />
         )
@@ -825,15 +835,19 @@ export default ({ navigation, route }) => {
                 ref={ref}
                 transition={transition}
                 style={styles.container}>
-                <KeyboardAwareScrollView nestedScrollEnabled keyboardShouldPersistTaps="always" contentContainerStyle={{ flexGrow: 1 }} scrollEventThrottle={200}>
+                <KeyboardAwareScrollView 
+                nestedScrollEnabled 
+                keyboardShouldPersistTaps="always"
+                 contentContainerStyle={{ flexGrow: 1 }}
+                  scrollEventThrottle={200}>
                     {cardData.map(({ idx, title, desc, svg, isOpened, key, headerColor, showSubCard, disabled }, index) => {
                         return (
                             showSubCard &&
                             <View
                                 key={`card mapping ${idx}`}
-                                style={[styles.cardView]}>
+                                style={[{...styles.cardView, zIndex: idx === 3 ? 99 : 9}]}>
                                 {renderHeader(idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled)}
-                                {renderBody(idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index)}
+                                {renderBody(idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled)}
                             </View >
 
                         );
@@ -843,7 +857,18 @@ export default ({ navigation, route }) => {
                         <Button
                             text="Save and Continue"
                             onPress={() => {
-                                console.log('nameval', nameval, 'locationVal', locationVal, 'imageData ==>>>', imageData, 'voiceNote ==>>>', voiceNote, 'description ==>>>', description, 'estTime', estTime, 'estVal', estVal);
+                                let pitstopData = {
+                                    pitstopID: 123, // on update will got from params, 
+                                    pitstopType: 2,
+                                    nameval,
+                                    locationVal,
+                                    imageData,
+                                    voiceNote,
+                                    description,
+                                    estTime,
+                                    estVal
+                                }
+                                console.log('pitstopData', pitstopData);
                             }}
                             style={[styles.locButton, { height: 45, marginVertical: 10 }]}
                             textStyle={styles.btnText}

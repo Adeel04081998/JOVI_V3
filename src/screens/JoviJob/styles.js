@@ -42,7 +42,7 @@ export default (colors = initColors, width, height) => StyleSheet.create({
         borderColor: '#BBBBBB',
         borderRadius: 5,
         marginVertical: 5,
-        flexGrow:1,
+        flexGrow: 1,
         backgroundColor: colors.textColor,
     },
     /**  start of Card Header Component Styles */
@@ -52,7 +52,8 @@ export default (colors = initColors, width, height) => StyleSheet.create({
         marginHorizontal: 5,
         marginVertical: 10,
         alignItems: 'center',
-        backgroundColor: colors.textColor
+        backgroundColor: colors.textColor,
+        // zIndex:999,
     },
 
     svg: {
@@ -220,7 +221,7 @@ export default (colors = initColors, width, height) => StyleSheet.create({
         alignItems: 'center',
         width: width - 40,
         alignSelf: 'center',
-        marginVertical:10
+        marginVertical: 10
     },
 
     //end of buy for me styles

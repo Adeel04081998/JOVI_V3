@@ -16,6 +16,7 @@ export default (props) => {
   const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
   const mapView = useRef(null)
   const [placeName, setPlaceName] = useState('')
+  const placeNameRef = useRef(null)
   const [ready, setMapReady] = useState(true)
   const [currentPos, setCurrentPos] = useState({})
 
@@ -67,13 +68,14 @@ export default (props) => {
   };
 
   const onRegionChange = (region) => {
-    console.log('onRegionChange', region);
   };
 
 
   const onRegionChangeComplete = async (region) => {
     const { latitude, longitude } = region
     let adrInfo = await addressInfo(latitude, longitude)
+    console.log('adrInfo ==>>>',adrInfo);
+    placeNameRef.current = adrInfo
     setPlaceName(adrInfo)
   };
 
@@ -85,8 +87,7 @@ export default (props) => {
     }
     locationHandler();
     getCurrentPosition()
-  }, []);
-  console.log('currentPos', currentPos);
+  }, [ready]);
   return (
     <View style={styles.container}>
       <VectorIcon name="map-marker"
@@ -108,7 +109,7 @@ export default (props) => {
       >
       </MapView>
       <Button
-        onPress={() => props.onConfirmLoc(placeName)}
+        onPress={() => props.onConfirmLoc(placeNameRef.current)}
         text="Confirm Location" style={styles.confirmBtn} />
     </View>
   )
