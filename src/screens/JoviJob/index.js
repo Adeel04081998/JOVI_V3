@@ -4,7 +4,6 @@ import { Transition, Transitioning } from 'react-native-reanimated';
 import svgs from '../../assets/svgs';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import CustomHeader from '../../components/molecules/CustomHeader';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import RNMediaMeta from "../../../RNMediaMeta";
 import StopWatch from "react-native-stopwatch-timer/lib/stopwatch";
@@ -31,7 +30,6 @@ import { multipartPostRequest, postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import AudioplayerMultiple from '../../components/atoms/AudioplayerMultiple';
 import Image from '../../components/atoms/Image';
-import Toast from '../../components/atoms/Toast';
 
 
 export const PITSTOP_CARD_TYPES = Object.freeze({ "location": 0, "description": 1, "estimated-time": 2, "buy-for-me": 3, "estimated-price": 4, });
@@ -117,8 +115,8 @@ export default ({ navigation, route }) => {
             "isOpened": true,
             "headerColor": colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["estimated-price"],
-            "showSubCard": true,
-            "disabled": false,
+            "showSubCard": false,
+            "disabled": true,
 
         },
     ])
@@ -193,9 +191,7 @@ export default ({ navigation, route }) => {
 
 
     useEffect(() => {
-        console.log('here');
         if (route.params !== undefined && route.params !== null) {
-            console.log('route.params', route.params);
             setLocationVal(route.params)
         }
     }, [route])
@@ -771,32 +767,6 @@ export default ({ navigation, route }) => {
 
 
 
-    const onChangeSlider = (value, num) => {
-        let stringVal = value.toString()
-        console.log("handleValueChange=>", stringVal)
-        // if (num) setEstVal(stringVal)
-        // else setEstVal(value)
-        // setState((prevState) => {
-
-        //     let updatedDftDetails = { ...(prevState.dftDetails || {}) };
-        //     if (value) {
-        //         updatedDftDetails[key] = parseInt(value)
-
-        //     } else {
-        //         delete updatedDftDetails.estCost;
-        //     }
-        //     if (key === "buyForMe" && !value) delete updatedDftDetails.estCost;
-
-        //     return {
-        //         ...prevState,
-        //         dftDetails: updatedDftDetails,
-        //         isChanged_pitstopDetails: true
-        //     }
-        // });
-
-
-
-    }
     const renderPitStopEstPrice = (idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled) => {
         const isDisabled = disabledHandler(index, disabled);
 
