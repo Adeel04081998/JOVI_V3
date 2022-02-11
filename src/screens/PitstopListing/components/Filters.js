@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { SvgXml } from 'react-native-svg';
+import { useSelector } from 'react-redux';
 import Text from '../../../components/atoms/Text';
 import TouchableScale from '../../../components/atoms/TouchableScale';
 import VectorIcon from '../../../components/atoms/VectorIcon';
@@ -12,8 +13,10 @@ const SPACING_VERTICAL = 10;
 const FILTER_ICON_HEIGHT = 35;
 const FILTER_ICON_SIZE = 17;
 
-export default ({ filterConfig, selectedFilters, parentFilterHandler = () => { }, colors, goToFilters, filtersData = [] }) => {
+export default ({ filterConfig, selectedFilters, parentFilterHandler = () => { }, colors, goToFilters, }) => {
     const [state,setState] = React.useState({activeTab:null});
+    const categoriesTagsReducer = useSelector(state => state.categoriesTagsReducer);
+    const filtersData = categoriesTagsReducer?.vendorFilterViewModel?.filtersList??[];
     const checkSelectedFilter = (item) => {
         // return state.activeTab === item.vendorDashboardCatID;
         return (selectedFilters ?? []).find(x => x === item.vendorDashboardCatID);

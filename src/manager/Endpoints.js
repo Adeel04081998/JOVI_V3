@@ -12,6 +12,7 @@ export default {
     "GET_VENDORS_GENERIC_LIST": "api/Menu/Vendor/Categorization",
     "GET_CATEGORIES_TAGS_LIST" : "api/Restaurant/Tags/Categories/List",
     "GET_PITSTOPS" : "api/Restaurant/Pitstop/ListOrSearch/V2",
+    "GET_PITSTOPS_PROMOTIONS":"api/Menu/Vendor/CategorizationByID",
     "GET_FILTERS" : "api/Menu/Vendor/GetFilters",
     
 

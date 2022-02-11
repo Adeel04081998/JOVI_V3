@@ -55,6 +55,7 @@ const CODE_PUSH_OPTIONS = {
 const App = () => {
   const netInfo = useNetInfo();
   GV.NET_INFO_REF.current = netInfo;
+  const [state,setState] = React.useState({appLoaded:false});
   // console.log("netInfo", netInfo)
   const isDarkMode = useColorScheme() === "dark";
   const theme = isDarkMode ? {
@@ -114,14 +115,16 @@ const App = () => {
       codePushDownloadDidProgress(progress)
     })
     setTimeout(() => {
-    }, 3000)
-    RNSplashScreen.hide();
+        RNSplashScreen.hide();
+        setState(pre=>({...pre,appLoaded:true}));//if we run splash screen forcefully for 3 seconds, then the home page gets loaded without animation, this will stop that.
+    }, 2000)
     return () => { }
   }, []);
 
   LogBox.ignoreLogs([
     "[react-native-gesture-handler] Seems like you\'re using an old API with gesture components, check out new Gestures system!",
   ]);
+  if(!state.appLoaded) return null;
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>

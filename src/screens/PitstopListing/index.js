@@ -9,11 +9,13 @@ import GenericList from '../../components/molecules/GenericList';
 import ImageCarousel from '../../components/molecules/ImageCarousel';
 import BottomBarComponent from '../../components/organisms/BottomBarComponent';
 import NavigationService from '../../navigations/NavigationService';
+import ROUTES from '../../navigations/ROUTES';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
 import GV from '../../utils/GV';
 import Search from '../Home/components/Search';
 import AllPitstopsListing from './components/AllPitstopsListing';
+import CardLoader from './components/CardLoader';
 import Categories from './components/Categories';
 import Filters from './components/Filters';
 import stylesheet from './styles';
@@ -24,18 +26,18 @@ const PITSTOPS = {
     RESTAURANT: 4,
 }
 const SPACING_VERTICAL = 10;
-const renderLoader = (styles) => {
-    return <View style={styles.gifLoader}>
-        <LottieView
-            autoSize={true}
-            resizeMode={'contain'}
-            style={{ width: '100%' }}
-            source={require('../../assets/gifs/RestaurantMenuLoading.json')}
-            autoPlay
-            loop
-        />
-    </View>
-}
+// const renderLoader = (styles) => {
+//     return <View style={styles.gifLoader}>
+//         <LottieView
+//             autoSize={true}
+//             resizeMode={'contain'}
+//             style={{ width: '100%' }}
+//             source={require('../../assets/gifs/RestaurantMenuLoading.json')}
+//             autoPlay
+//             loop
+//         />
+//     </View>
+// }
 const PistopListing = React.memo(({ route, }) => {
     const { pitstopType } = route.params;
     const [state, setState] = React.useState({
@@ -95,6 +97,9 @@ const PistopListing = React.memo(({ route, }) => {
         setState(pre => ({ ...pre, filters: { ...pre.filters, search: isDisSelect ? '' : val } }));
         filtersRef.current.search = isDisSelect ? '' : val;
     };
+    const onPressFilter = (item,updatedFiltes = {}) => {
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.PitstopsVerticalList.screen_name,{pitstopType:pitstopType,updatedFiltes,listingObj:{...item}});
+    }
     const onFilterChange = (item, idKey, key, emptyVal = []) => {
         const isDisSelect = filterValidations[key](filtersRef.current[key], item[idKey]);
         // const isDisselect = filtersRef.current[key] !== null && filtersRef.current[key].length > 0 && filtersRef.current[key][0] === item[idKey];
@@ -118,6 +123,11 @@ const PistopListing = React.memo(({ route, }) => {
         }
     }
     const backFromFiltersHandler = (updatedFilters) => {
+        if(updatedFilters.activeFilterBy){
+            const listing = (categoriesTagsReducer?.vendorFilterViewModel?.filtersList??[]).filter(item=>item.vendorDashboardCatID === updatedFilters.activeFilterBy)[0];
+            onPressFilter(listing,{cuisines:updatedFilters.activeCusine});
+            return;
+        }
         filtersRef.current.cuisines = [updatedFilters.activeCusine];
         filtersRef.current.activeFilterBy = [updatedFilters.activeFilterBy];
         filtersRef.current.averagePrice = updatedFilters.activeAvergePrice;
@@ -132,9 +142,8 @@ const PistopListing = React.memo(({ route, }) => {
         }));
         console.log('updatedFilters',updatedFilters);
     }
-    console.log('state',state);
     const goToFilters = () => {
-        NavigationService.NavigationActions.common_actions.navigate('FILTER', { activeAvergePrice: filtersRef.current.averagePrice, activeCusine: filtersRef.current.cuisines[0], activeFilterBy: filtersRef.current.filter[0], backCB: backFromFiltersHandler });
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Filter.screen_name, { activeAvergePrice: filtersRef.current.averagePrice, activeCusine: filtersRef.current.cuisines[0], activeFilterBy: filtersRef.current.filter[0], backCB: backFromFiltersHandler });
     }
     const onBackPress = () => {
         NavigationService.NavigationActions.common_actions.goBack();
@@ -158,13 +167,12 @@ const PistopListing = React.memo(({ route, }) => {
             colors={colors}
             filterConfig={currentPitstopType}
             selectedFilters={state.filters.filter}
-            parentFilterHandler={onFilterChange}
+            parentFilterHandler={onPressFilter}
             filtersData={categoriesTagsReducer?.vendorFilterViewModel?.filtersList}
             goToFilters={goToFilters} />
         {currentPitstopType.categorySection &&
             <Categories
                 parentCategoryHandler={onFilterChange}
-                listingStyles={listingStyles} categoriesList={categoriesTagsReducer?.vendorFilterViewModel?.cuisine?.categoriesList}
                 selectedCategories={state.filters.cuisines}
                 CategoriesTabConfig={currentPitstopType}
                 colors={colors}
@@ -220,7 +228,7 @@ const PistopListing = React.memo(({ route, }) => {
         <View style={listingStyles.container}>
             <SafeAreaView style={{ flex: 1 }}>
                 <CustomHeader defaultColor={colors.primary} onLeftIconPress={onBackPress} leftIconType={'AntDesign'} leftIconName={'arrowleft'} />
-                {isLoading ? renderLoader(listingStyles) : <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false} onScroll={(event) => {
+                {isLoading ? <CardLoader styles={listingStyles} /> : <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false} onScroll={(event) => {
                     if (handleInfinityScroll(event)) {
                         setFetchDataUseEffect(Math.random());
                     }
