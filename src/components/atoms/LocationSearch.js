@@ -7,18 +7,16 @@ import images from "../../assets/images";
 import svgs from "../../assets/svgs";
 import configs, { env } from "../../utils/configs";
 
-export default LocationSearch = ({  handleOnInputChange,locationVal, index,clearInputField, textToShow, onLocationSelected, /* handleAddPitstop, */ handleDeletePitstop, isLast, handleInputFocused, totalPitstops, onSetFavClicked, isFavourite, marginBottom = 5, }) => {
+export default LocationSearch = ({ handleOnInputChange, locationVal, index, clearInputField, textToShow, onLocationSelected, /* handleAddPitstop, */ handleDeletePitstop, isLast, handleInputFocused, totalPitstops, onSetFavClicked, isFavourite, marginBottom = 5, }) => {
 
     const locTextRef = React.createRef();
 
     const [state, setState] = useState({ searchFocused: false });
     const { searchFocused } = state;
 
-    const [placesState, setPlacesState] = useState({ show:  true, predefinedPlaces: [] });
+    const [placesState, setPlacesState] = useState({ show: true, predefinedPlaces: [] });
     const { show, predefinedPlaces } = placesState;
 
-    useEffect(() => {
-    });
 
     useEffect(() => {
         const loadPredefinedPlaces = async () => {
@@ -34,38 +32,46 @@ export default LocationSearch = ({  handleOnInputChange,locationVal, index,clear
         }
         // loadPredefinedPlaces();
     }, []);
-
     const clearField = () => {
         clearInputField()
         handleInputFocused(null, true);
     }
-
+    console.log('locTextRef ==>>>> ', locTextRef);
     return (
         show &&
 
+        // <GooglePlacesAutocomplete
+        //     c       
+        // />
         <GooglePlacesAutocomplete
-        // isRowScrollable
-        
-        disableScroll={false}
+            // isRowScrollable
+
+            disableScroll={false}
             placeholder={"Enter a pitstop location"}
             placeholderTextColor="rgba(0, 0, 0, 0.5)"
             ref={locTextRef}
+            autoFocus
             onPress={(data, { geometry }) => onLocationSelected(data, geometry, index, null)}
             query={{
                 key: env.GOOGLE_API_KEY,
                 language: "en",
                 components: "country:pk",
+                location: {
+                    latitude: "",
+                    longitude: ""
+                }
                 // radius: 100
             }}
             predefinedPlaces={predefinedPlaces.map((place, i) => ({ ...place, description: (place.description + Array(i).join(" ")) }))}
             currentLocation={true}
-            currentLocationLabel="Nearby Locations..."
+                predefinedPlacesAlwaysVisible={false}
+                currentLocationLabel="Nearby Locations..."
             nearbyPlacesAPI="GooglePlacesSearch"
             GooglePlacesSearchQuery={{
                 rankby: "distance", // "prominence" | "distance"
                 type: "cafe"
             }}
-
+            
             renderRow={(data) => {
                 return (
                     <View style={{ display: "flex", flexDirection: "row" }}>
@@ -77,13 +83,13 @@ export default LocationSearch = ({  handleOnInputChange,locationVal, index,clear
                                         svgs.favHomeIcon("#7359be")
                                         :
                                         data.addressType === 2 ?
-                                        svgs.favWorkIcon("#7359be")
+                                            svgs.favWorkIcon("#7359be")
                                             :
                                             data.addressType === 3 ?
-                                            svgs.favFriendsIcon("#7359be")
+                                                svgs.favFriendsIcon("#7359be")
                                                 :
                                                 data.addressType === 4 ?
-                                                svgs.favFamilyIcon("#7359be")
+                                                    svgs.favFamilyIcon("#7359be")
                                                     :
                                                     null
                                 } />
@@ -97,41 +103,43 @@ export default LocationSearch = ({  handleOnInputChange,locationVal, index,clear
                 );
             }}
             renderRightButton={
-                        () => {
-                            return (
-                                <View>
-                                    <TouchableOpacity style={styles.iconStyleRight} onPress={clearField}>
-                                        <Image style={{ ...styles.IcoImg, transform: [{ rotate: '45deg' }] }} source={images.addIcon()} />
-                                    </TouchableOpacity>
-                                </View>
-                            )
-                        }
-                  
+                () => {
+                    return (
+                        <View>
+                            <TouchableOpacity style={styles.iconStyleRight} onPress={clearField}>
+                                <Image style={{ ...styles.IcoImg, transform: [{ rotate: '45deg' }] }} source={images.addIcon()} />
+                            </TouchableOpacity>
+                        </View>
+                    )
+                }
+
             }
             textInputProps={{
                 onFocus: () => {
-                        handleInputFocused(index, false);
+                    handleInputFocused(index, false);
                 },
                 onChangeText: (value) => {
                     handleOnInputChange(value);
+                    console.log('locTextRef.current',locTextRef.current);
                 },
                 onBlur: () => {
                     handleInputFocused(index, true);
                 },
                 clearButtonMode: "never",
-                autoFocus: false ,
+                autoFocus: false,
                 showSoftInputOnFocus: true,
                 editable: true,
-                selectTextOnFocus:  true,
-                caretHidden: false ,
+                selectTextOnFocus: true,
+                caretHidden: false,
                 autoCapitalize: "none",
                 autoCorrect: false,
                 blurOnSubmit: true,
-                selection:  null,
+                selection: null,
                 value: locationVal
             }}
             listViewDisplayed={searchFocused}
             fetchDetails
+            enableHighAccuracyLocation
             enablePoweredByContainer={false}
             styles={{
                 container: {
@@ -149,7 +157,7 @@ export default LocationSearch = ({  handleOnInputChange,locationVal, index,clear
                     borderTopWidth: 0,
                     borderBottomWidth: 0,
                     width: '90%',
-                    alignSelf:'center'
+                    alignSelf: 'center'
                 },
                 textInput: {
                     display: 'flex',
@@ -175,10 +183,10 @@ export default LocationSearch = ({  handleOnInputChange,locationVal, index,clear
                     shadowRadius: 15,
                     marginTop: -10,
                     width: '90%',
-                    alignSelf:'center',
+                    alignSelf: 'center',
                     maxHeight: Dimensions.get("window").height * 0.2,
-                    overflow:'scroll'
-                   
+                    overflow: 'scroll'
+
                 },
                 description: {
                     fontSize: 16,

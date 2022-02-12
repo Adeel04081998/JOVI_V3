@@ -30,6 +30,8 @@ import { multipartPostRequest, postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import AudioplayerMultiple from '../../components/atoms/AudioplayerMultiple';
 import Image from '../../components/atoms/Image';
+import { sharedAddUpdatePitstop, sharedConfirmationAlert } from '../../helpers/SharedActions';
+import { useSelector } from 'react-redux';
 
 
 export const PITSTOP_CARD_TYPES = Object.freeze({ "location": 0, "description": 1, "estimated-time": 2, "buy-for-me": 3, "estimated-price": 4, });
@@ -78,11 +80,11 @@ export default ({ navigation, route }) => {
             "title": "Pitstop Details",
             "desc": "What Would You Like Your Jovi To Do ?",
             "svg": svgs.pitstopPin(),
-            "isOpened": true,
+            "isOpened": false,
             "headerColor": colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["description"],
             "showSubCard": true,
-            "disabled": false,
+            "disabled": true,
         },
         {
             "idx": 3,
@@ -189,18 +191,15 @@ export default ({ navigation, route }) => {
 
 
 
-
     useEffect(() => {
         if (route.params !== undefined && route.params !== null) {
             setLocationVal(route.params)
         }
     }, [route])
 
-
-    // const locationHandler = async () => {
-    //     console.log('hello');
-    //     await hybridLocationPermission();
-    // }
+    const locationHandler = async () => {
+        await hybridLocationPermission();
+    }
     /*****************************     End of useEffect            ***********************************/
 
 
@@ -220,7 +219,7 @@ export default ({ navigation, route }) => {
 
 
     const handleLocationSelected = (data, geometry, index, pinData, modifyPitstops = true, forceMode) => {
-        // locationHandler()
+        locationHandler()
         Keyboard.dismiss();
         let city = "";
         if (data) {
@@ -268,28 +267,20 @@ export default ({ navigation, route }) => {
     /************   Start of functions of Pitstop Details Component  Funcs   **************/
 
     const pitStopImage = (obj = null) => {
-        // if (deleteIndex !== null) {
-        //     pitStopArr[index].imagesArr.splice(deleteIndex, 1);
-        // } else {
-        //     if (!("imagesArr" in pitStopArr[index])) {
-        //         pitStopArr[index].imagesArr = [];
-        //     }
-
-        //     pitStopArr[index].imagesArr.push(obj);
-        // }
-
         // setState((prevState) => ({
         //     ...prevState,
         //     pitstops: pitStopArr
         // }));
         imageData.push(obj)
         updateImagesData(imageData)
-
     };
 
     const getPicture = picData => {
         if (picData.length > 1) {
-            for (let i = 0; i < 3; i++) {
+            let maxLength = 3;
+            // At position 2, add 2 elements: 
+            picData.splice(0, picData.length - maxLength);
+            for (let i = 0; i < picData.length; i++) {
                 pitStopImage({
                     id: Math.floor(Math.random() * 100000),
                     fileName: picData[i].path.split('/').pop(),
@@ -385,11 +376,9 @@ export default ({ navigation, route }) => {
     const recordingPress = async () => {
         if (!micPress) {
             askForAudioRecordPermission((allowRecording) => {
-                console.log('allowRecording ', allowRecording);
                 const fileName = "record-" + new Date().getTime() + ".mp4";
                 recorderRef.current = new Recorder(fileName).record();
                 setMicPress(!micPress);
-                console.log('recorderRef.current ', recorderRef.current);
             })
         } else {
             setMicPress(!micPress);
@@ -480,10 +469,10 @@ export default ({ navigation, route }) => {
             if (index === 2 && description.length) {
                 isDisable = false;
             }
-            if (index === 3 && estTime.text.includes('mins' || 'hour')) {
+            if (index === 3 && estTime.text.includes('mins') ||  estTime.text.includes('hour')) {
                 isDisable = false;
             }
-            if (index === 4 && estTime.text.includes('mins' || 'hour') && switchVal) {
+            if (index === 4 && estTime.text.includes('mins') || estTime.text.includes('hour') && switchVal) {
                 isDisable = false;
             }
 
@@ -574,7 +563,6 @@ export default ({ navigation, route }) => {
                 onNearbyLocationPress={() => locationHandler()}
                 clearInputField={() => setLocationVal('')}
                 handleInputFocused={(index, isFocus) => {
-                    console.log('index', index)
                     setScrollEnabled(isFocus)
                 }}
                 handleSetFavClicked={handleSetFavClicked}
@@ -605,7 +593,26 @@ export default ({ navigation, route }) => {
                         onPress={() => {
                             if (imageData.length < GV.MAX_PITSTOP_IMAGE_LIMIT)
                                 // onBrowsePress
-                                setModalVisible(true)
+                                sharedConfirmationAlert("Alert", "Pick Option!",
+                                    [
+                                        {
+                                            text: "Choose from Gallery", onPress: () => {
+                                                sharedLaunchCameraorGallery(0, (error) => {
+                                                }, picData => {
+                                                    getPicture(picData);
+                                                });
+                                            }
+                                        },
+                                        {
+                                            text: "Open Camera", onPress: () => {
+                                                sharedLaunchCameraorGallery(1, (error) => {
+                                                }, picData => {
+                                                    getPicture(picData);
+                                                });
+                                            }
+                                        },
+                                    ]
+                                )
 
                         }}
                         text="Browse"
@@ -621,9 +628,17 @@ export default ({ navigation, route }) => {
                                         borderColor: colors.black,
                                         borderRadius: 5,
                                         borderWidth: 1,
-                                        padding:15
+                                        padding: 5,
+                                        height: 50,
+                                        width: 60,
+                                        justifyContent: 'center',
+                                        alignItems: 'center'
+
                                     }]}>
-                                        <VectorIcon name="closecircleo" type="AntDesign" size={15} style={{ position: 'absolute', top: 0, right: 0 }} />
+                                        <VectorIcon name="closecircleo" type="AntDesign" size={15} style={{ position: 'absolute', top: 0, right: 0 }} onPress={() => {
+                                            let tempArr = imageData.filter((item, _indx) => _indx !== index)
+                                            updateImagesData(tempArr)
+                                        }} />
                                         <Image source={{ uri: item.path }} style={{ height: 30, width: 30, resizeMode: "cover", borderRadius: 6 }} />
                                     </View>
                                 )
@@ -708,7 +723,6 @@ export default ({ navigation, route }) => {
                                             start={true}
                                             reset={false}
                                             getTime={(time) => {
-                                                console.log('time    ', time);
                                                 recordTimeRef.current?.setNativeProps({ text: time.substring(time.indexOf(":") + 1, time.length) })
                                             }}
                                             options={{
@@ -806,37 +820,6 @@ export default ({ navigation, route }) => {
     } //End of Pitstop est Price
 
 
-
-
-
-    /***************************** Start of modal **************************/
-    const renderModal = () => {
-        return (
-            <Modal
-                modalVisible={modalVisible}
-                onRequestClose={() => { setModalVisible(!modalVisible) }}
-                modalViewStyles={{}}
-            >
-                <Text style={{ paddingVertical: 20 }} >Pick an Option!</Text>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
-                    <Button onPress={() => {
-                        sharedLaunchCameraorGallery(1, () => { }, picData => {
-                            getPicture(picData);
-                            setModalVisible(false)
-                        });
-                    }} style={{ width: '30%', marginRight: 10 }} textStyle={{ fontFamily: FontFamily.Poppins.Medium, fontWeight: 'normal', fontSize: 9 }} text="Take Photo" />
-                    <Button onPress={() => {
-                        sharedLaunchCameraorGallery(0, () => { }, picData => {
-                            getPicture(picData);
-                            setModalVisible(false)
-                        });
-                    }} style={{ width: '30%' }} textStyle={{ fontFamily: FontFamily.Poppins.Medium, fontWeight: 'normal', fontSize: 9 }} text="Choose Image from Gallery" />
-                </View>
-            </Modal>)
-    }
-    /***************************** END of modal **************************/
-
-
     return (
         <SafeAreaView style={{ flex: 1 }} >
             <CustomHeader leftIconName="keyboard-backspace" leftIconType="MaterialCommunityIcons" leftIconSize={30} />
@@ -863,7 +846,7 @@ export default ({ navigation, route }) => {
                             text="Save and Continue"
                             onPress={() => {
                                 let pitstopData = {
-                                    pitstopID: 123, // on update will got from params, 
+                                    // pitstopID: 123, // on update will get from params, 
                                     pitstopType: 2,
                                     nameval,
                                     locationVal,
@@ -874,13 +857,13 @@ export default ({ navigation, route }) => {
                                     estVal
                                 }
                                 console.log('pitstopData', pitstopData);
+                                sharedAddUpdatePitstop(pitstopData)
                             }}
                             style={[styles.locButton, { height: 45, marginVertical: 10 }]}
-                            textStyle={[styles.btnText,{fontSize:16}]}
+                            textStyle={[styles.btnText, { fontSize: 16 }]}
                             fontFamily="PoppinsRegular"
                         />
                     </>
-                    {renderModal()}
                 </ScrollView>
 
             </Transitioning.View>

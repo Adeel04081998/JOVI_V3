@@ -4,16 +4,17 @@ import { check, request, PERMISSIONS, RESULTS, openSettings } from 'react-native
 import ImagePicker from 'react-native-image-crop-picker';
 
 const cameraResponseHandler = (response, cb, next) => {
+    console.log('response ==>>>', response);
     // debugger;
     if (response.didCancel) {
+        console.log('User cancelled image picker', response.didCancel);
         cb();
-        console.log('User cancelled image picker');
     } else if (response.error) {
-        cb();
         console.log('ImagePicker Error: ', response.error);
-    } else if (response.customButton) {
         cb();
+    } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
+        cb();
     } else {
         console.log(response);
         next(response);
@@ -82,8 +83,10 @@ export const sharedLaunchCameraorGallery = async (pressType, cb, next) => {
                 height: 400,
                 cropping: true,
             }).then(image => {
-                cameraResponseHandler([{...image}], cb, next)
-            });
+                cameraResponseHandler([{ ...image }], cb, next)
+            }).catch((e) => {
+                console.log('e ==>>>', e);
+            })
         } else {
             ImagePicker.openPicker({
                 width: 300,
@@ -92,7 +95,9 @@ export const sharedLaunchCameraorGallery = async (pressType, cb, next) => {
                 multiple: true
             }).then(image => {
                 cameraResponseHandler(image, cb, next)
-            });
+            }).catch((e) => {
+                console.log('e ==>>>', e);
+            })
         }
     } catch (error) {
         console.log('Catch error :', error)

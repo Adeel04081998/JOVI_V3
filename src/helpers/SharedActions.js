@@ -297,7 +297,7 @@ export const sharedAddUpdatePitstop = (pitstopDetails = {},isDeletePitstop = fal
             pitstops.push({ pitstopID: sharedUniqueIdGenerator(), ...pitstopDetails, })
         }
         console.log("[PITSTOPS]", pitstops)
-        joviRemainingAmount = sharedJoviRemainingAmountCalculator(pitstops, cartReducer);
+        // joviRemainingAmount = sharedJoviRemainingAmountCalculator(pitstops, cartReducer);
     } 
     else {
         // VENDOR PITSTOPS HANDLING

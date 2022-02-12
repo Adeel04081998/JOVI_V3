@@ -91,6 +91,7 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
     const playAudio = () => {
         pauseAll();
         setIsPlaying(true);
+        console.log('here in playAudio');
         soundPlayerRef.current?.play(() => { stopAudio(); });
         timer = setInterval(() => {
             soundPlayerRef.current?.getCurrentTime(sec => {

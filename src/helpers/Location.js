@@ -22,6 +22,7 @@ export const hybridLocationPermission = async (cb) => {
     else if (Platform.OS === 'ios') {
         const resultAlways = await request(PERMISSIONS.IOS.LOCATION_ALWAYS);
         const resultWhenInUse = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+        console.log('resultAlways',resultAlways, 'resultWhenInUse',resultWhenInUse);
         if (resultAlways !== RESULTS.GRANTED && resultWhenInUse !== RESULTS.GRANTED) {
             handleDeniedPermission('Location permission is not granted!', 'Please allow Location permission by visiting the Settings.');
             return;
