@@ -36,7 +36,6 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
         clearInputField()
         handleInputFocused(null, true);
     }
-    console.log('locTextRef ==>>>> ', locTextRef);
     return (
         show &&
 
@@ -49,7 +48,6 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
             disableScroll={false}
             placeholder={"Enter a pitstop location"}
             placeholderTextColor="rgba(0, 0, 0, 0.5)"
-            ref={locTextRef}
             autoFocus
             onPress={(data, { geometry }) => onLocationSelected(data, geometry, index, null)}
             query={{
@@ -64,14 +62,14 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
             }}
             predefinedPlaces={predefinedPlaces.map((place, i) => ({ ...place, description: (place.description + Array(i).join(" ")) }))}
             currentLocation={true}
-                predefinedPlacesAlwaysVisible={false}
-                currentLocationLabel="Nearby Locations..."
+            predefinedPlacesAlwaysVisible={false}
+            currentLocationLabel="Nearby Locations..."
             nearbyPlacesAPI="GooglePlacesSearch"
             GooglePlacesSearchQuery={{
                 rankby: "distance", // "prominence" | "distance"
                 type: "cafe"
             }}
-            
+
             renderRow={(data) => {
                 return (
                     <View style={{ display: "flex", flexDirection: "row" }}>
@@ -120,7 +118,7 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
                 },
                 onChangeText: (value) => {
                     handleOnInputChange(value);
-                    console.log('locTextRef.current',locTextRef.current);
+                    console.log('locTextRef.current', locTextRef.current);
                 },
                 onBlur: () => {
                     handleInputFocused(index, true);
@@ -156,12 +154,12 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
                     marginHorizontal: 0,
                     borderTopWidth: 0,
                     borderBottomWidth: 0,
-                    width: '90%',
+                    width: '95%',
                     alignSelf: 'center'
                 },
                 textInput: {
                     display: 'flex',
-                    width: '90%',
+                    width: '50%',
                     borderWidth: 1,
                     borderColor: "#BBBB",
                     borderRadius: 5,

@@ -33,7 +33,7 @@ const CardHeader = (props) => {
                     disabled={props.disabled}
                 >
                     <View style={{}}>
-                        <VectorIcon name="keyboard-arrow-down" type="MaterialIcons" color={colors.textColor} />
+                        <VectorIcon name= {props.isOpened ? "keyboard-arrow-up" : "keyboard-arrow-down"} type="MaterialIcons" color={colors.textColor} />
                     </View>
                 </TouchableOpacity>
             </View>

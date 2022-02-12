@@ -31,8 +31,6 @@ import Endpoints from '../../manager/Endpoints';
 import AudioplayerMultiple from '../../components/atoms/AudioplayerMultiple';
 import Image from '../../components/atoms/Image';
 import { sharedAddUpdatePitstop, sharedConfirmationAlert } from '../../helpers/SharedActions';
-import { useSelector } from 'react-redux';
-
 
 export const PITSTOP_CARD_TYPES = Object.freeze({ "location": 0, "description": 1, "estimated-time": 2, "buy-for-me": 3, "estimated-price": 4, });
 
@@ -154,6 +152,12 @@ export default ({ navigation, route }) => {
 
     const [description, setDescription] = useState('')
     const [imageData, updateImagesData] = useState([]);
+
+    const [, updateStateaaa] = React.useState();
+    const forceUpdate = React.useCallback(() => updateStateaaa({}), []);
+
+
+
     const [progress, updateProgress] = useState(0);
     const [recordingUploading, setRecordingUploading] = useState(false);
     const [isRecord, setIsRecord] = useState(false);
@@ -196,6 +200,7 @@ export default ({ navigation, route }) => {
             setLocationVal(route.params)
         }
     }, [route])
+
 
     const locationHandler = async () => {
         await hybridLocationPermission();
@@ -240,6 +245,7 @@ export default ({ navigation, route }) => {
         setCityVal(city)
         setLocationVal(data && (data.name ? data.name : data.description))
         toggleCardData(PITSTOP_CARD_TYPES["description"]);
+        forceUpdate();
     };
 
     const onLocationSearchInputChange = (value) => {
@@ -271,8 +277,10 @@ export default ({ navigation, route }) => {
         //     ...prevState,
         //     pitstops: pitStopArr
         // }));
-        imageData.push(obj)
-        updateImagesData(imageData)
+        const newImageData=imageData;
+         newImageData.push(obj)
+        updateImagesData(newImageData)
+        forceUpdate();
     };
 
     const getPicture = picData => {
@@ -295,7 +303,7 @@ export default ({ navigation, route }) => {
                 fileName: picData[0].path.split('/').pop(),
                 path: picData[0].path,
                 isUploading: true,
-            }, null);
+            });
         }
 
 
@@ -469,10 +477,10 @@ export default ({ navigation, route }) => {
             if (index === 2 && description.length) {
                 isDisable = false;
             }
-            if (index === 3 && estTime.text.includes('mins') ||  estTime.text.includes('hour')) {
+            if (index === 3 && estTime.text.includes('mins') || estTime.text.includes('hour')) {
                 isDisable = false;
             }
-            if (index === 4 && estTime.text.includes('mins') || estTime.text.includes('hour') && switchVal) {
+            if (index === 4 && estTime.text.includes('mins') || estTime.text.includes('hour')) {
                 isDisable = false;
             }
 
@@ -574,11 +582,11 @@ export default ({ navigation, route }) => {
 
 
     /************   Start of render pitstop details  function     **************/
+    console.log('imageData',imageData);
 
 
     const renderPitStopDetails = (idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled) => {
         const isDisabled = disabledHandler(index, disabled);
-
         return (
             <PitStopDetails
                 description={description}
@@ -621,13 +629,14 @@ export default ({ navigation, route }) => {
                         style={styles.locButton} />
                     <ScrollView horizontal={true} style={styles.galleryIcon} >
                         {(imageData.length > 0 ? imageData : new Array(1).fill({ index: 1 })).map((item, index) => {
+
                             const itemSize = Object.keys(item).length;
+
                             if (itemSize > 1) {
+
                                 return (
                                     <View key={`item path ${item.path}`} style={[styles.galleryIcon, {
-                                        borderColor: colors.black,
                                         borderRadius: 5,
-                                        borderWidth: 1,
                                         padding: 5,
                                         height: 50,
                                         width: 60,
@@ -846,19 +855,20 @@ export default ({ navigation, route }) => {
                             text="Save and Continue"
                             onPress={() => {
                                 let pitstopData = {
-                                    // pitstopID: 123, // on update will get from params, 
+                                    pitstopID: 0, // on update will get from params, 
+                                    title: locationVal,
+                                    description,
+                                    pitstopName: 'Jovi Job',
                                     pitstopType: 2,
                                     nameval,
-                                    locationVal,
                                     imageData,
                                     voiceNote,
-                                    description,
                                     estTime,
                                     estVal
                                 }
-                                console.log('pitstopData', pitstopData);
                                 sharedAddUpdatePitstop(pitstopData)
                             }}
+                            // disabled={}
                             style={[styles.locButton, { height: 45, marginVertical: 10 }]}
                             textStyle={[styles.btnText, { fontSize: 16 }]}
                             fontFamily="PoppinsRegular"

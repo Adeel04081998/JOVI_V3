@@ -42,7 +42,7 @@ const PitStopLocation = (props) => {
                 iconType="MaterialCommunityIcons"
                 iconSize={20}
                 iconColor={colors.textColor}
-                style={styles.locButton} />
+                style={[styles.locButton,{width: WIDTH - 30}]} />
             <TextInput
                 title="Name (Optional)"
                 placeholder="Please Add Your Name"
