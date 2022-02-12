@@ -28,9 +28,7 @@ export const refreshTokenMiddleware = (requestCallback, params) => {
                 sharedLogoutUser();
                 return;
             }
-            else {
-                dispatch(ReduxActions.setUserAction({ ...res.data }))
-            }
+            else dispatch(ReduxActions.setUserAction({ ...res.data }))
         },
         err => {
             console.log("refreshTokenMiddleware.err", err)

@@ -12,6 +12,8 @@ import ReduxActions from '../redux/actions';
 import configs from '../utils/configs';
 import Regex from '../utils/Regex';
 import GV from '../utils/GV';
+import GV, { PITSTOP_TYPES } from '../utils/GV';
+
 const dispatch = store.dispatch;
 export const sharedGetDeviceInfo = async () => {
     let model = DeviceInfo.getModel();
@@ -231,3 +233,123 @@ export const isNextPage = (totalItem, itemPerRequest, currentRequestCount) => {
 
     return totalItem - total > 0 ? true : false;
 };//end of isNextPage
+
+export const sharedCalculateCartTotals = (pitstops = []) => {
+    let subTotal = 0,
+    discount = 0,
+    serviceCharges = 0,
+    total = 0;
+
+
+}
+export const sharedDiscountsCalculator = (originalPrice = 0, discount = 0, discountDivider = 100) => {
+    let afterDiscount = Math.round(originalPrice - (originalPrice * (discount / discountDivider)));
+    return afterDiscount;
+};
+export const sharedJoviRemainingAmountCalculator = (pitstops, cartReducer) => {
+    let joviPitstops = pitstops.filter(p => p.pitstopType === PITSTOP_TYPES.JOVI),
+        openOrdersList = cartReducer.openOrdersList,
+        joviPrevOrderesPitstopsAmount = 0,
+        joviRemainingAmount = 0;
+    if (joviPitstops.length) {
+        if (openOrdersList.length) {
+            joviPrevOrderesPitstopsAmount = openOrdersList.map((orderInfo, index) => orderInfo?.estimatePrice ?? 0).reduce((a, b) => a + b);
+        }
+        joviRemainingAmount = joviPrevOrderesPitstopsAmount - joviPitstops.map((orderInfo, index) => orderInfo?.estimatePrice ?? 0).reduce((a, b) => a + b);
+        return joviRemainingAmount;
+    } else console.log("[JOVI PITSTOP NOT FOUND TO CALCULATE REMAINING AMOUNT..]")
+}
+export const sharedUniqueIdGenerator = (randomNum = 1000) => {
+    return Math.floor(Math.random() * randomNum) + new Date().getTime();
+}
+export const sharedAddUpdatePitstop = (pitstopDetails = {},isDeletePitstop = false, isDeleteItem = false, swappedArray = []) => {
+    if (false) return dispatch(ReduxActions.clearCartAction({}))
+    // FOR JOVI PITSTOPS
+    // {
+    //      GIVE ONLY ITEM OBJECT TO ADD NEW PITSTOP
+    //      GIVE ITEM AND INDEX TO UPDATE
+    //      GIVE INDEX >= 0 AND ISDELETE AS TRUE TO DELETE PITSTOP
+    // }
+    // **********
+    // FOR VENDOR PITSTOP
+
+    const cartReducer = store.getState().cartReducer;
+    const pitstopIndex = pitstopDetails.pitstopIndex || null;
+    let pitstops = cartReducer.pitstops;
+    let joviRemainingAmount = cartReducer.joviRemainingAmount;
+    
+    if (pitstopDetails.pitstopType === PITSTOP_TYPES.JOVI) {
+        console.log("[JOVI PITSTOP]")
+        // JOVI PITSTOPS HANDLING
+        if (pitstopIndex !== null) {
+            console.log("[INDEX] EXIST")
+            if (isDeletePitstop) {
+                // DELETE CASE
+                console.log("[DELETE PITSTOP CASE]")
+                pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIndex)
+            } else {
+                // EDIT CASE
+                console.log("[UPDATE]")
+                pitstops[pitstopIndex] = { ...pitstopDetails }; // TO RETAIN OLD PROPERTIES AS IT IS WITH UPDATED VAUES YOU NEED TO PASS SPREADED (...) OLD ITEM'S FULL DATA WITH UPDATED FIELDS 
+                // pitstops[index] = { ...pitstops[index], ...pitstopDetails }; // ...pitstops[index] IF YOU DON'T HAVE ITEM'S PREVIOUS DATA (VERY RARE CASE)
+            }
+        } else {
+            // ADD NEW PITSTOP
+            console.log("[NEW CREATE]")
+            pitstops.push({ pitstopID: sharedUniqueIdGenerator(), ...pitstopDetails, })
+        }
+        console.log("[PITSTOPS]", pitstops)
+        joviRemainingAmount = sharedJoviRemainingAmountCalculator(pitstops, cartReducer);
+    } 
+    else {
+        // VENDOR PITSTOPS HANDLING
+        const upcomingVendorDetails = pitstopDetails.vendorDetails
+        const upcomingItemDetails = pitstopDetails.item;
+        const checkoutItemID = upcomingItemDetails.checkoutItemID // 
+        console.log("upcomingItemDetails",upcomingItemDetails)
+        if (pitstopIndex !== null) {
+            console.log("[UPDATE CASE]");
+            if (isDeletePitstop) {
+                console.log("[DELETE PITSTOP CASE]")
+                pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIndex)
+            } else {
+                if(upcomingItemDetails.quantity <=0){
+                    // TO REMOVE/DELETE SPECIFIC ITEM FROM CHECKOUT ITEM LIST
+                let filteredCheckOutItemsListVM = pitstops[pitstopIndex].checkOutItemsListVM.filter((_prevItem, itemIndex) => _prevItem.checkoutItemID !== checkoutItemID);
+                console.log("[REMOVE/DELETE ITEM CASE LOGIC]", filteredCheckOutItemsListVM);
+               pitstops[pitstopIndex].checkOutItemsListVM = filteredCheckOutItemsListVM;
+                
+            } else {
+                console.log("[TO UPDATE EXISTING ITEM CASE]");
+                    pitstops[pitstopIndex].checkOutItemsListVM.map((_prevItem, itemIndex) => {
+                                if (_prevItem.checkoutItemID === checkoutItemID) {
+                                   return { ...upcomingItemDetails}
+                                }
+                                return _prevItem;
+                        });
+                }
+            }
+        } else {
+            console.log("[ADD ITEM TO EXISTING CHECKOUTITEMS LIST CASE]")
+            const pitstopFound = pitstops.length && pitstops.find(x => (x.pitstopID === pitstopDetails.pitstopID)) //(x.pitstopID === pitstopDetails.pitstopID || x.smid === pitstopDetails.smid))
+            if (pitstopFound) {
+                console.log("[PITSTOP FOUND]")
+                pitstops = pitstops.map((_pitstop, pitstopIndex) => {
+                    // WHY WE DON'T USE pitstops[pitstopIndex]
+                    // KUN K YE DYNAMIC HO GA KISI B PITSTOPS K LIYE AUR ISS TIME HMARY PASS EXISTING PITSTOP KA INDEX NAHI HO GA
+                    if (_pitstop.pitstopID === pitstopFound.pitstopID) {
+                        _pitstop.checkOutItemsListVM.push({ checkoutItemID: sharedUniqueIdGenerator(), ...upcomingItemDetails })
+                    }
+                    return _pitstop;
+                })
+            } 
+            else {
+                // ADD NEW PITSTOP (DONE)
+                console.log("[PITSTOP NOT FOUND AND ADD NEW PITSTOP]")
+                pitstops.push({ ...pitstopDetails.vendorDetails, pitstopID: sharedUniqueIdGenerator(), checkOutItemsListVM: [{ ...upcomingItemDetails,checkoutItemID: sharedUniqueIdGenerator(), }], })
+            }
+        }
+    }
+    dispatch(ReduxActions.setCartAction({ pitstops, joviRemainingAmount }))
+
+}
