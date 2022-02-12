@@ -11,7 +11,6 @@ import {store} from '../redux/store';
 import ReduxActions from '../redux/actions';
 import configs from '../utils/configs';
 import Regex from '../utils/Regex';
-import GV from '../utils/GV';
 import GV, { PITSTOP_TYPES } from '../utils/GV';
 
 const dispatch = store.dispatch;
