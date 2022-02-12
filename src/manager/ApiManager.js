@@ -1,17 +1,9 @@
-import Axios from './Axios';
-// import Toast from "../components/atoms/Toast";
-// import NetInfo from "@react-native-community/netinfo";
-import preference_manager from "../preference_manager";
-import GV from '../utils/GV';
-import { store } from '../redux/store';
-import configs from '../utils/configs';
+import Toast from '../components/atoms/Toast';
+import { sharedExceptionHandler, sharedLogoutUser } from '../helpers/SharedActions';
 import ReduxActions from '../redux/actions';
-import { sharedLogoutUser } from '../helpers/SharedActions';
-
-const CustomToast = {
-    error: () => { },
-}
-
+import { store } from '../redux/store';
+import GV from '../utils/GV';
+import Axios from './Axios';
 const dispatch = store.dispatch;
 
 export const refreshTokenMiddleware = (requestCallback, params) => {
@@ -27,19 +19,20 @@ export const refreshTokenMiddleware = (requestCallback, params) => {
             console.log("refreshTokenMiddleware.Res :", res);
             if (res?.data?.statusCode === 202) {
                 requestCallback.apply(this, params);
+                dispatch(ReduxActions.setUserAction({ ...res.data }))
+                if (__DEV__) Toast.success("Its only for DEV => User session refreshed....", 10000)
                 return;
             }
             else if (res?.data?.statusCode === 403) {
-                CustomToast.error("Session Expired!");
+                Toast.error("Session Expired!");
                 sharedLogoutUser();
                 return;
             }
-            else {
-                dispatch(ReduxActions.setUserAction({ ...res.data }))
-            }
+            else dispatch(ReduxActions.setUserAction({ ...res.data }))
         },
         err => {
             console.log("refreshTokenMiddleware.err", err)
+            sharedExceptionHandler(err)
         },
     )
 
@@ -51,12 +44,12 @@ export const postRequest = async (url, data, onSuccess = () => { }, onError = ()
         customLoader(true);
     }
     try {
-        let res = await Axios.post(url, data, headers);
+        let res = await Axios.post(url, data, headers,);
         onSuccess(res);
 
     } catch (error) {
         console.log("[ApiManager].postRequest.error", JSON.stringify(error));
-        if (error?.response?.data?.StatusCode === 401) return refreshTokenMiddleware(postRequest, [url, data, onSuccess, onError, headers, false, customLoader]);
+        if (error?.data?.StatusCode === 401) return refreshTokenMiddleware(postRequest, [url, data, onSuccess, onError, headers, false, customLoader]);
         onError(error);
     } finally {
         if (customLoader) {
@@ -70,16 +63,12 @@ export const getRequest = async (url, onSuccess = () => { }, onError = () => { }
         onSuccess(res);
     } catch (error) {
         console.log("[ApiManager].getRequest.error", error);
-        if (error?.response?.data?.StatusCode === 401) return refreshTokenMiddleware(postRequest, [url, data, onSuccess, onError, headers, false]);
+        if (error?.data?.StatusCode === 401) return refreshTokenMiddleware(getRequest, [url, onSuccess, onError, headers, false]);
         onError(error);
     }
 };
 export const multipartPostRequest = (url, formData, onSuccess = () => { }, onError = () => { }, showLoader = false) => {
-    // const appStorePersist = persistor.getState();
-    // const appStore = store.getState();
-    // console.log("appStore", appStore);
-    // console.log("appStorePersist", appStorePersist);
-    fetch(`${configs.BASE_URL}/${url}`, {
+    fetch(`${GV.BASE_URL.current}/${url}`, {
         method: 'post',
         headers: {
             'Content-Type': 'multipart/form-data',

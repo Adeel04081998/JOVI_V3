@@ -19,6 +19,7 @@ type Props = React.ComponentProps<typeof TouchableOpacity> & {
     iconSize?: number,
     iconColor?: string,
     icon?: boolean,
+
 };
 type VectorProps = React.ComponentProps<typeof VectorIcon> & {
     children?: any;
@@ -46,7 +47,7 @@ const Button = (props: Props, textProps: TextProps, vectorProps: VectorProps) =>
             }
         });
     };//end of animateIn
-    const onPressParent = debounce(props.onPress, props.wait * 1000, { leading: true, trailing: false, });
+    const onPressParent = debounce(props.onPress,props.wait * 1000,{ leading: false, trailing: true, });
     const animateOut = (event: GestureResponderEvent) => {
         Animated.timing(buttonMargin, {
             toValue: 1,
@@ -56,6 +57,33 @@ const Button = (props: Props, textProps: TextProps, vectorProps: VectorProps) =>
         }).start((finished) => {
             if (finished && props.onPress) {
                 onPressParent(event);
+                //Dont Remove The code below, might be used in future.
+                // if (isAssignedRef.current === true) {
+                //     clearTimeout(onPressRef);
+                //     // isAssignedRef.current = false;
+                // } else {
+                //     let abc = setTimeout(() => {
+                //         if (props.onPress) {
+                //             props.onPress(event);
+                //         }
+                //         // isAssignedRef.current = false;
+                //     }, props.wait * 1000);
+                //     parseInt(abc);
+                //     isAssignedRef.current = true;
+                //     // console.log('onPressRefBefores', isAssignedRef.current, onPressRef, props.wait * 1000)
+                // }
+            }
+        });
+    };//end of animateOut
+    const animateOutOnTouchOut = (event: GestureResponderEvent) => {
+        Animated.timing(buttonMargin, {
+            toValue: 1,
+            duration: 100,
+            useNativeDriver: true,
+            easing: Easing.ease,
+        }).start((finished) => {
+            if (finished && props.onPressOut) {
+                props.onPressOut(event);
             }
         });
     };//end of animateOut
@@ -65,6 +93,7 @@ const Button = (props: Props, textProps: TextProps, vectorProps: VectorProps) =>
             {...props}
             disabled={props.disabled !== undefined && props.disabled !== null ? props.disabled : props.isLoading}
             onPressIn={animateIn}
+            onPressOut={animateOutOnTouchOut}
             onPress={animateOut}
             activeOpacity={props.activeOpacity}
             style={[{
@@ -87,9 +116,10 @@ const Button = (props: Props, textProps: TextProps, vectorProps: VectorProps) =>
             } : {}]}>
             {props.icon &&
                 <VectorIcon name={props.iconName} type={props.iconType} size={props.iconSize} color={props.iconColor} style={{ marginRight: 5 }} />}
+
             <Text {...textProps} style={[{
                 fontSize: 18,
-                fontWeight: "bold",
+                fontWeight: '500',
                 color: "#fff",
                 textAlign: "center",
             }, props.textStyle]}>{props.isLoading ? <ActivityIndicator color="white" size="large" /> : props.text}</Text>

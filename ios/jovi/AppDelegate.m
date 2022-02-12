@@ -5,6 +5,12 @@
 #import <React/RCTRootView.h>
 #import <GoogleMaps/GoogleMaps.h>
 
+// for codepush
+#import <AppCenterReactNative.h>
+#import <AppCenterReactNativeAnalytics.h>
+#import <AppCenterReactNativeCrashes.h>
+// for codepush
+
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
 #import <FlipperKitLayoutPlugin/FlipperKitLayoutPlugin.h>
@@ -63,6 +69,11 @@ UIView *launchScreenView;
   [rootView addSubview:launchScreenView];
   //SPLASH SCREEN END
 
+//  for codepush
+   [AppCenterReactNative register];
+   [AppCenterReactNativeAnalytics registerWithInitiallyEnabled:true];
+   [AppCenterReactNativeCrashes registerWithAutomaticProcessing];
+  //  for codepush
   return YES;
 }
 

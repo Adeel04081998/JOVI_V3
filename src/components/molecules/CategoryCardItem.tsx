@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Animated, Easing, StyleProp, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
 import { NumberProp, SvgXml } from 'react-native-svg';
 import { VALIDATION_CHECK } from '../../helpers/SharedActions';
+import sharedStyles from '../../res/sharedStyles';
 import AnimatedView from '../atoms/AnimatedView';
 import Text from '../atoms/Text';
 
@@ -33,24 +34,16 @@ const CategoryCardItem = (props: Props) => {
     const transFormAngle = React.useRef(new Animated.Value(0)).current;
     useEffect(() => {
         Animated.timing(transFormAngle, {
-            duration: 500,
+            duration: 600,
             toValue: 1,
-            easing: Easing.ease,
+            easing: Easing.linear,
             useNativeDriver: true
         }).start();
     }, []);
 
     return (
         <TouchableOpacity {...props} style={[{
-            shadowColor: "#000",
-            shadowOffset: {
-                width: 0,
-                height: 2,
-            },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
-
+            ...sharedStyles._styles().shadow,
             backgroundColor: '#fff',
             borderRadius: 10,
 
@@ -77,15 +70,17 @@ const CategoryCardItem = (props: Props) => {
                 <SvgXml xml={props.xml} height={"80%"} width={"90%"} />
             </AnimatedView>
             {VALIDATION_CHECK(props.title) &&
-                <Text style={[{
-                    opacity: transFormAngle.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [0.2, 1]
-                    }),
-                    color: "#272727",
-                    textAlign: "center",
-                    fontSize: 16,
-                }, props.textStyle]}
+                <Text
+                    numberOfLines={1}
+                    style={[{
+                        opacity: transFormAngle.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [0.2, 1]
+                        }),
+                        color: "#272727",
+                        textAlign: "center",
+                        fontSize: 16,
+                    }, props.textStyle]}
                     fontFamily={"PoppinsMedium"} >{props.title}</Text>
             }
         </TouchableOpacity>

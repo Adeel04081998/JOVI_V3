@@ -20,6 +20,7 @@ import ROUTES from '../../navigations/ROUTES';
 import { postRequest } from '../../manager/ApiManager';
 import Toast from '../../components/atoms/Toast';
 import ReduxAction from '../../redux/actions/index'
+import FontFamily from '../../res/FontFamily';
 
 
 const SPACING = 20;
@@ -27,22 +28,29 @@ export default (props) => {
     const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark");
     const styles = otpStyles.styles(colors);
     const [inputs, setInputs] = React.useState(["", "", "", ""]);
+    const [tempArr, setTempArr] = React.useState(["", "", "", ""]);
     const [typedCode, setTypedCode] = useState('')
     const [minutes, setMinutes] = React.useState("00");
     const [seconds, setSeconds] = React.useState("00");
     const [isLoading, setIsLoading] = React.useState(false);
     const [runInterval, setRunInterval] = React.useState(true);
     const intervalRef = React.useRef(null);
+    const arrRef = React.useRef([]);
     const [disableOnchange, setDisableOnChange] = useState(false)
-    const disbleContinueButton = inputs.includes('');
+    const disbleContinueButton = inputs?.includes('');
     const params = props.route.params;
     const cellNo = params.payload.phoneNumber; // should be redux value
     const inputRef = useRef([]);
+    const _requestAgainSmsRef = useRef(true)
+    const [requestAgain, setRequestAgain] = React.useState(true);
+
+
     const dispatch = useDispatch()
     const listerner = (info) => {
         const { minutes, seconds, isItervalStoped } = info;
         setMinutes(minutes);
         setSeconds(seconds);
+        if (info.intervalStoped === true) return setRequestAgain(false)
         if (!isItervalStoped) {
             setRunInterval(isItervalStoped)
         }
@@ -87,8 +95,8 @@ export default (props) => {
         typedCode.length === 4 && Keyboard.dismiss();
     }, [typedCode]);
 
-
     useEffect(_customEffect, []);
+
 
 
     const verifyOtpToServer = async (otpCode = inputs.join('')) => {
@@ -101,21 +109,17 @@ export default (props) => {
             "hardwareID": sharedGetDeviceInfo().deviceID
         };
         postRequest(Endpoints.OTP_VERIFY, payload, res => {
-            console.log("[verifyOtpToServer].res...", res);
             const { statusCode, message, otpResult } = res.data;
             if (statusCode === 417) return Toast.error(message);
             resetInterval()
             try {
-                dispatch(ReduxAction.setUserAction({ ...otpResult, ...params.payload }))
+                dispatch(ReduxAction.setUserAction({ ...otpResult, ...params.payload, isLoggedIn: otpResult.newUser ? false : true, introScreenViewed: otpResult.newUser ? false : true }))
                 if (otpResult.newUser) {
                     NavigationService.NavigationActions.stack_actions.replace(ROUTES.AUTH_ROUTES.SignUp.screen_name, {}, ROUTES.AUTH_ROUTES.VerifyOTP.screen_name)
                 }
-                else {
-                    dispatch(ReduxAction.setUserAction({ isLoggedIn: true }));
-                }
             }
             catch (error) {
-                console.log('error', error);
+                console.log('[verifyOtpToServer].error', error);
             }
 
         },
@@ -123,7 +127,7 @@ export default (props) => {
                 setInputs(["", "", "", ""])
                 setTypedCode('')
                 sharedExceptionHandler(err)
-                resetInterval()
+                // resetInterval()
             },
             {},
             true,
@@ -131,6 +135,7 @@ export default (props) => {
         );
     };
     const resendOtp = () => {
+        setRequestAgain(true)
         setInputs(["", "", "", ""])
         setTypedCode('')
         const { appHash, isNewVersion, isWhatsapp, mobileNetwork, otpType, userType, phoneNumber } = params.payload;
@@ -144,9 +149,12 @@ export default (props) => {
             "mobileNetwork": mobileNetwork
         };
         const onSuccess = (res) => {
-            setRunInterval(true)
             const { statusCode, message } = res.data;
             if (statusCode === 417) return Toast.error(message);
+            else {
+                setRunInterval(true)
+                _onSmsListener()
+            }
         }
         const onError = (err) => {
             resetInterval()
@@ -154,7 +162,7 @@ export default (props) => {
         const onLoader = (loader) => {
             setIsLoading(loader)
         }
-
+        if (requestAgain) return
         sendOTPToServer(payload, onSuccess, onError, onLoader)
 
     };
@@ -197,11 +205,21 @@ export default (props) => {
             let prevField = nextField >= 2 ? nextField - 2 : 0;
             if (inputs[currentIndex] !== "") return;
             else if (inputs[currentIndex] === "") return inputRef.current[prevField].current.focus();
+        } else {
+            arrRef.current = [...arrRef.current, ...e.nativeEvent.key]
+            if (arrRef.current.length === 4) {
+                setInputs(arrRef.current)
+                let tempArr = arrRef.current.toString()
+                let tempStr = tempArr.replace(/,/g, '')
+                verifyOtpToServer(tempStr);
+            }
+
         }
+
     };
     const onChangeHandler = (val, index) => {
         if (isNaN(val)) return;
-        if (val?.length === 4) {
+        if (val?.length === 4 && inputs.length === 4) {
             let arr = []
             for (let index = 0; index < val.length; index++) {
                 arr.push(val[index])
@@ -226,10 +244,11 @@ export default (props) => {
             }
         }
     };
-
     return <SafeAreaView style={{ flex: 1, backgroundColor: "#F6F5FA" }}>
-        <Text style={{ textAlign: "center" }}>Verify Phone</Text>
-        <Text style={{ textAlign: "center", paddingVertical: SPACING }}>{`Code is sent to ${cellNo}`}</Text>
+        <View style={{marginVertical:30}} >
+            <Text style={{ textAlign: "center", color: '#000', fontWeight: 'bold', paddingVertical: 10 }}  >Verify Phone Number</Text>
+            <Text style={{ textAlign: "center", color: '#7D7D7D' }}>{`Code is sent to ${cellNo}`}</Text>
+        </View>
         <View style={{ flexDirection: "row", justifyContent: "center" }}>
             {
                 inputs.map((input, index) => (
@@ -242,7 +261,7 @@ export default (props) => {
                         value={input}
                         style={[styles.otpCode]}
                         keyboardType="numeric"
-                        maxLength={4}
+                        maxLength={1}
                         autoFocus={index === 0 ? true : false}
                         underlineColorAndroid="transparent"
                         autoCompleteType="tel"
@@ -257,22 +276,25 @@ export default (props) => {
             }
         </View>
         <Text style={{ textAlign: "center", paddingVertical: SPACING - 5 }}>{`${minutes}:${seconds}`}</Text>
-        <Text style={{ textAlign: "center", fontSize: 16 }}>{`Didn't recieve code?`}</Text>
-        <TouchableOpacity onPress={resendOtp} disabled={parseInt(seconds) !== 0} wait={1} >
-            <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 10, color: parseInt(seconds) !== 0 ? 'grey' : "#7359BE", marginTop: 3 }}>{`Request again Get Via SMS`}</Text>
+        <Text style={{ textAlign: "center", fontSize: 16 }}>{`Didn't receive code?`}</Text>
+        <TouchableOpacity onPress={resendOtp}
+            // disabled={parseInt(seconds) !== 0}
+            disabled={requestAgain}
+            wait={1} >
+            <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 12, color: requestAgain ? 'grey' : "#7359BE", marginTop: 3 }}>{`Request again Get Via SMS`}</Text>
         </TouchableOpacity>
         <View style={styles.buttonView}>
             <Button
                 style={styles.continueButton}
-                text={'Verify and Create Account'}
-                textStyle={{ color: '#fff', ...styles.textAlignCenter }}
+                text={'Verify'}
+                textStyle={{ color: '#fff', ...styles.textAlignCenter, fontSize: 14 }}
                 onPress={() => verifyOtpToServer()}
                 isLoading={isLoading}
                 disabled={disbleContinueButton || isLoading}
             />
         </View>
         <TouchableOpacity onPress={onChangeNumber}>
-            <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 10, color: "#7359BE" }}>{`Change number`}</Text>
+            <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 12, color: "#7359BE" }}>{`Change phone number`}</Text>
         </TouchableOpacity>
     </SafeAreaView>
 }

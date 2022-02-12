@@ -8,6 +8,8 @@ type Props = React.ComponentProps<typeof RNTextInput> & React.ComponentProps<typ
     children?: any;
     pattern?: any;
     forcePattern?: boolean;
+    spaceFree?: boolean;
+
     forceError?:boolean;
     isValid?: ((value: boolean) => void) | undefined;
     placeholderTextColor?: ColorValue;
@@ -32,6 +34,7 @@ let defaultProps = {
     pattern: null,
     forcePattern: false,
     forceError:false,
+    spaceFree:false,
     placeholderTextColor: "#7F7F7F",
     placeholder: 'Jovi',
     isValid: () => { },
@@ -94,13 +97,17 @@ const TextInput = (props: Props) => {
                         top:  -25,
                         left: 0,
                         fontSize:14,
-                        marginBottom:50
+                        marginBottom:50,
+                    
                     },props.titleStyle,]}>{props.title}</Text>
                 }
                 <RNTextInput
                     {...props}
-                    {...props.pattern && {
+                    {...VALIDATION_CHECK(props.pattern) && {
                         onChangeText: (text: string) => {
+                            if(props.spaceFree){
+                                text=text.trim();
+                            }
                             const regexp = new RegExp(props.pattern);
 
                             if (regexp.test(text)) {
@@ -127,6 +134,7 @@ const TextInput = (props: Props) => {
                     style={[{
                         flex: 1,
                         padding: 10,
+                        
                     },props.style]}
                 />
                 {(VALIDATION_CHECK(props.iconName) || VALIDATION_CHECK(icon)) &&

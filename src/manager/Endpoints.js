@@ -10,6 +10,6 @@ export default {
     "GET_USER_ADDRESSES": "api/Order/GetAddress",
     "GET_PROMOTIONS": "api/Dashboard/DashboardContent/List",
     "ADD_PITSTOPIMAGE": "api/Common/Image/AddOrUpdate",
-    "DELETE_PITSTOPIMAGE": 'api/Common/Image/DeleteJoviImage/'
-
+    "DELETE_PITSTOPIMAGE": 'api/Common/Image/DeleteJoviImage/',
+    "GET_VENDORS_GENERIC_LIST": "api/Menu/Vendor/Categorization"
 }

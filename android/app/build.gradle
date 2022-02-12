@@ -212,6 +212,7 @@ dependencies {
    }
    implementation 'com.google.android.gms:play-services-base:17.2.1'
    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation 'com.facebook.fresco:animated-gif:2.5.0'
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'
     }

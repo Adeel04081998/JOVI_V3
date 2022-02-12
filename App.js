@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StatusBar, useColorScheme, LogBox, StyleSheet } from 'react-native';
+import { StatusBar, useColorScheme, LogBox, StyleSheet, Platform } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
@@ -15,7 +15,7 @@ import RNSplashScreen from './NativeModules/RNSplashScreen';
 import { NavigationContainer, DefaultTheme, DarkTheme } from "@react-navigation/native";
 import RootStack from "./src/navigations";
 import AppTheme from './src/res/theme';
-// import useNetInfo from './src/hooks/useNetInfo';
+import useNetInfo from './src/hooks/useNetInfo';
 import GV from './src/utils/GV';
 import { _NavgationRef } from './src/navigations/NavigationService';
 import View from './src/components/atoms/View';
@@ -25,6 +25,11 @@ import Modal from './src/components/atoms/Modal';
 
 
 
+import CodePush from "react-native-code-push"; //for codepush
+import { env } from './src/utils/configs';
+import Robot from './src/components/organisms/Robot';
+import { useSelector } from 'react-redux';
+import { sharedGetEnumsApi, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser } from './src/helpers/SharedActions';
 AntDesign.loadFont();
 Entypo.loadFont();
 EvilIcons.loadFont();
@@ -36,16 +41,28 @@ MaterialCommunityIcons.loadFont();
 MaterialIcons.loadFont();
 Foundation.loadFont();
 SimpleLineIcons.loadFont();
+const CODE_PUSH_OPTIONS = {
+  // `deploymentKey` should be dynamic according to environment like QA, STAGING, PRODUCTION before publish to staging and master
+  //Currently QA Environment setup done 
+  deploymentKey: Platform.select({
+    ios: env.CODE_PUSH_DEP_KEYS.JOVI_IOS.STAGING,
+    android: env.CODE_PUSH_DEP_KEYS.JOVI_ANDROID.STAGING
+  }),
+  checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
+  installMode: CodePush.InstallMode.IMMEDIATE,
+  mandatoryInstallMode: CodePush.InstallMode.IMMEDIATE,
+  updateDialog: false
+};
 
-
-export default App = () => {
-  // const netInfo = useNetInfo();
+const App = () => {
+  const netInfo = useNetInfo();
+  GV.NET_INFO_REF.current = netInfo;
   // console.log("netInfo", netInfo)
   const isDarkMode = useColorScheme() === "dark";
   const theme = isDarkMode ? {
-    ...DarkTheme,
+    ...DefaultTheme,
     colors: {
-      ...DarkTheme.colors,
+      ...DefaultTheme.colors,
       ...AppTheme.getTheme(GV.THEME_VALUES.JOVI)
     }
 
@@ -56,7 +73,48 @@ export default App = () => {
       ...AppTheme.getTheme(GV.THEME_VALUES.JOVI)
     }
   }
+  function message(msg) {
+    // console.log("Codepush message", msg);
+  }
+  function codePushStatusDidChange(syncStatus) {
+    switch (syncStatus) {
+      case CodePush.SyncStatus.CHECKING_FOR_UPDATE:
+        // message("Checking for update.");
+        break;
+      case CodePush.SyncStatus.DOWNLOADING_PACKAGE:
+        message("Downloading package.");
+        break;
+      case CodePush.SyncStatus.AWAITING_USER_ACTION:
+        // message("Awaiting user action.");
+        break;
+      case CodePush.SyncStatus.INSTALLING_UPDATE:
+        message("Installing update...");
+        break;
+      case CodePush.SyncStatus.UP_TO_DATE:
+        // message("App up to date.");
+        break;
+      case CodePush.SyncStatus.UPDATE_IGNORED:
+        message("Update cancelled by user.");
+        break;
+      case CodePush.SyncStatus.UPDATE_INSTALLED:
+        message("Update installed and app will be restart shortly");
+        break;
+      case CodePush.SyncStatus.UNKNOWN_ERROR:
+        message("An unknown error occurred.");
+        break;
+    }
+  }
+  function codePushDownloadDidProgress(progress) {
+    // console.log("progress", progress);
+  }
   useEffect(() => {
+    CodePush.sync(CODE_PUSH_OPTIONS, syncStatus => {
+      // console.log("[CodePush.sync].syncStatus", syncStatus)
+      codePushStatusDidChange(syncStatus)
+    }, progress => {
+      // console.log("[CodePush.sync].progress", progress)
+      codePushDownloadDidProgress(progress)
+    })
     setTimeout(() => {
     }, 3000)
     RNSplashScreen.hide();
@@ -71,14 +129,39 @@ export default App = () => {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
-        <StatusBar backgroundColor={'transparent'} barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+        <StatusBar backgroundColor={'#fff'} barStyle={"dark-content"} />
+        {/* {
+          Platform.OS === "ios" ?
+            <StatusBar backgroundColor={'transparent'} barStyle={isDarkMode ? "light-content" : "dark-content"} />
+            :
+            <StatusBar backgroundColor={'#fff'} barStyle={"dark-content"} />
+        } */}
         <NavigationContainer theme={theme} ref={_NavgationRef} >
           <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
             <RootStack />
           </View>
         </NavigationContainer>
+        <Robot />
         <Toast />
       </SafeAreaView>
+      <SharedGetApis />
     </SafeAreaProvider>
   );
 };
+export default App;
+const SharedGetApis = ({ }) => {
+  const { isLoggedIn } = useSelector(state => state.userReducer);
+  React.useEffect(() => {
+    sharedGetEnumsApi();
+    // sharedLogoutUser();
+  }, [])
+  React.useEffect(() => {
+    if (isLoggedIn) {
+      sharedGetUserDetailsApi();
+      sharedGetHomeMsgsApi();
+      sharedGetUserAddressesApi();
+      sharedGetPromotions();
+    }
+  }, [isLoggedIn])
+  return (<></>);
+}

@@ -1,6 +1,7 @@
 
 
-import { Platform, PlatformColor, StyleSheet } from "react-native"
+import { Platform, StyleSheet } from "react-native"
+import FontFamily from "../../res/FontFamily"
 export default {
     styles(colors) {
         return StyleSheet.create({
@@ -9,29 +10,27 @@ export default {
                 backgroundColor: 'white',
             }
             ,
-            textInput: {
-                width: '100%',
-                borderWidth: 1.5,
-                borderRadius: 5,
-                borderColor: 'rgba(0,0,0,0.1)',
-                opacity: 0.9,
-                height: 50,
-                paddingHorizontal: 10,
-                marginVertical: 10
-            },
-            view: {
-                marginBottom: 5,
-            },
             errorText: {
                 color: "red",
                 textAlign: 'center',
                 width: '100%',
-                bottom:Platform.OS === "android"? -27: -20
+                bottom:Platform.OS === "android"? -25: -20,
+                
 
             },
-            buttonView: {
-                marginBottom: 14,
-            }
+            headerPrimarycontainer:{
+                flexDirection: 'row', justifyContent: 'center', width: '100%', marginTop: 15,
+
+            },
+            headerCrossiconContainer :{
+                flexDirection: 'column', position: 'absolute', left: 7, alignSelf: 'center', justifyContent: 'center',
+            },
+            headerTittle: {
+                color: 'black', fontSize: 18, fontWeight: '700', fontFamily: FontFamily.Poppins.Medium
+
+            },
+            
+            
         })
     }
 }

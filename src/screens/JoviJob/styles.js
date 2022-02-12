@@ -35,15 +35,18 @@ export default (colors = initColors, width, height) => StyleSheet.create({
     },
     subCategoriesList: {
         marginTop: 20,
+        justifyContent: "center",
+        alignItems: "center"
     },
     cardView: {
         marginHorizontal: 5,
         borderWidth: 1,
-        borderColor: '#BBBBBB',
+        borderColor: colors.cardBorder || '#BBBBBB',
         borderRadius: 5,
         marginVertical: 5,
         backgroundColor: colors.textColor,
     },
+
     /**  start of Card Header Component Styles */
 
     header: {
@@ -92,6 +95,7 @@ export default (colors = initColors, width, height) => StyleSheet.create({
     },
     arrow: {
         borderRadius: 5,
+        backgroundColor: colors.primary,
         padding: 5,
         justifyContent: "center",
         alignItems: 'center',

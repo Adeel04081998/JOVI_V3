@@ -22,6 +22,8 @@
 
    <!-- You will also only need to add this uses-library tag -->
    <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+      <!-- Add line below for Toolkit enable for QA testing -->
+      <!--  android:networkSecurityConfig="@xml/network_security_config" -->
       <!--to be removed once verified that app will run without it-->
       <activity
           android:name=".SplashActivity"
