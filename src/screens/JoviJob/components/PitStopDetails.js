@@ -21,6 +21,7 @@ const PitStopDetails = (props) => {
         <View style={{ marginVertical: 10 }} >
             <TextInput title="Pitstop Description"
                 placeholder="Please Add Your Description"
+                returnKeyType="next"
                 style={{
                     height: 120,
                     textAlignVertical: 'top',

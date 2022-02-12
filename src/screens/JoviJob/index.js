@@ -23,7 +23,7 @@ import constants from '../../res/constants';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import { askForAudioRecordPermission, sharedLaunchCameraorGallery } from '../../helpers/Camera';
-import { addressInfo, logGoogleApiHit } from '../../helpers/Location';
+import { addressInfo, hybridLocationPermission, logGoogleApiHit } from '../../helpers/Location';
 import Modal from '../../components/atoms/Modal';
 import FontFamily from '../../res/FontFamily';
 import { multipartPostRequest, postRequest } from '../../manager/ApiManager';
@@ -78,11 +78,11 @@ export default ({ navigation, route }) => {
             "title": "Pitstop Details",
             "desc": "What Would You Like Your Jovi To Do ?",
             "svg": svgs.pitstopPin(),
-            "isOpened": false,
+            "isOpened": true,
             "headerColor": colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["description"],
             "showSubCard": true,
-            "disabled": true,
+            "disabled": false,
         },
         {
             "idx": 3,
@@ -197,6 +197,10 @@ export default ({ navigation, route }) => {
     }, [route])
 
 
+    // const locationHandler = async () => {
+    //     console.log('hello');
+    //     await hybridLocationPermission();
+    // }
     /*****************************     End of useEffect            ***********************************/
 
 
@@ -216,6 +220,7 @@ export default ({ navigation, route }) => {
 
 
     const handleLocationSelected = (data, geometry, index, pinData, modifyPitstops = true, forceMode) => {
+        // locationHandler()
         Keyboard.dismiss();
         let city = "";
         if (data) {
@@ -566,7 +571,7 @@ export default ({ navigation, route }) => {
                 onLocationPress={onLocationPress}
                 handleLocationSelected={handleLocationSelected}
                 onLocationSearchInputChange={onLocationSearchInputChange}
-                onNearbyLocationPress={() => onLocationSearchInputChange(false)}
+                onNearbyLocationPress={() => locationHandler()}
                 clearInputField={() => setLocationVal('')}
                 handleInputFocused={(index, isFocus) => {
                     console.log('index', index)
@@ -607,23 +612,31 @@ export default ({ navigation, route }) => {
                         textStyle={styles.btnText}
                         fontFamily="PoppinsRegular"
                         style={styles.locButton} />
-                    {(imageData.length > 0 ? imageData : new Array(1).fill({ index: 1 })).map((item, index) => {
-                        const itemSize = Object.keys(item).length;
-                        if (itemSize > 1) {
+                    <ScrollView horizontal={true} style={styles.galleryIcon} >
+                        {(imageData.length > 0 ? imageData : new Array(1).fill({ index: 1 })).map((item, index) => {
+                            const itemSize = Object.keys(item).length;
+                            if (itemSize > 1) {
+                                return (
+                                    <View key={`item path ${item.path}`} style={[styles.galleryIcon, {
+                                        borderColor: colors.black,
+                                        borderRadius: 5,
+                                        borderWidth: 1,
+                                        padding:15
+                                    }]}>
+                                        <VectorIcon name="closecircleo" type="AntDesign" size={15} style={{ position: 'absolute', top: 0, right: 0 }} />
+                                        <Image source={{ uri: item.path }} style={{ height: 30, width: 30, resizeMode: "cover", borderRadius: 6 }} />
+                                    </View>
+                                )
+                            }
                             return (
-                                <View key={`item path ${item.path}`} style={styles.galleryIcon}>
-                                    <Image source={{ uri: item.path }} style={{ height: 25, width: 25, resizeMode: "cover", borderRadius: 6 }} />
+                                <View key={`item path ${item.index}`} style={styles.galleryIcon} >
+                                    <VectorIcon name="image" type="Ionicons" color={colors.primary} size={25} style={{ marginRight: 5 }} />
+                                    <VectorIcon name="image" type="Ionicons" color={colors.text} size={25} style={{ marginRight: 5 }} />
+                                    <VectorIcon name="image" type="Ionicons" color={colors.text} size={25} style={{ marginRight: 5 }} />
                                 </View>
                             )
-                        }
-                        return (
-                            <View key={`item path ${item.index}`} style={styles.galleryIcon} >
-                                <VectorIcon name="image" type="Ionicons" color={colors.primary} size={25} style={{ marginRight: 5 }} />
-                                <VectorIcon name="image" type="Ionicons" color={colors.text} size={25} style={{ marginRight: 5 }} />
-                                <VectorIcon name="image" type="Ionicons" color={colors.text} size={25} style={{ marginRight: 5 }} />
-                            </View>
-                        )
-                    })}
+                        })}
+                    </ScrollView>
                 </View>
 
 
@@ -781,7 +794,7 @@ export default ({ navigation, route }) => {
                         }
                     }
                 }
-                getRemainingAmount={()=>getRemainingAmount()}
+                getRemainingAmount={() => getRemainingAmount()}
                 onSliderChange={
                     newsliderValue => {
                         if (!isNaN(parseInt(newsliderValue))) {
@@ -827,11 +840,11 @@ export default ({ navigation, route }) => {
     return (
         <SafeAreaView style={{ flex: 1 }} >
             <CustomHeader leftIconName="keyboard-backspace" leftIconType="MaterialCommunityIcons" leftIconSize={30} />
-            <ScrollView nestedScrollEnabled={true} scrollEnabled={scrollEnabled} style={{ backgroundColor: 'white' }} contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="always" >
-                <Transitioning.View
-                    ref={ref}
-                    transition={transition}
-                    style={styles.container}>
+            <Transitioning.View
+                ref={ref}
+                transition={transition}
+                style={styles.container}>
+                <ScrollView nestedScrollEnabled={true} scrollEnabled={scrollEnabled} style={{ backgroundColor: 'white' }} contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="always" >
                     {cardData.map(({ idx, title, desc, svg, isOpened, key, headerColor, showSubCard, disabled }, index) => {
                         return (
                             showSubCard &&
@@ -863,13 +876,14 @@ export default ({ navigation, route }) => {
                                 console.log('pitstopData', pitstopData);
                             }}
                             style={[styles.locButton, { height: 45, marginVertical: 10 }]}
-                            textStyle={styles.btnText}
+                            textStyle={[styles.btnText,{fontSize:16}]}
                             fontFamily="PoppinsRegular"
                         />
                     </>
                     {renderModal()}
-                </Transitioning.View>
-            </ScrollView>
+                </ScrollView>
+
+            </Transitioning.View>
         </SafeAreaView >
     );
 }

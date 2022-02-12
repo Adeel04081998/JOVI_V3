@@ -25,7 +25,7 @@ const CardHeader = (props) => {
                 </View>
                 <View style={styles.pitstopTextContainer} >
                     <Text style={styles.pitstopText} fontFamily={"PoppinsMedium"} >{props.title}</Text>
-                    <Text style={styles.pitStopLoc} fontFamily={"PoppinsRegular"} >{props.description}</Text>
+                    <Text style={styles.pitStopLoc} fontFamily={"PoppinsRegular"} numberOfLines={1} >{props.description}</Text>
                 </View>
                 <TouchableOpacity
                     style={[styles.arrow, { backgroundColor: props.headerBackgroundColor ? props.headerBackgroundColor : colors.lightGreyBorder }]}

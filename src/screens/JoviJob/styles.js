@@ -85,11 +85,11 @@ export default (colors = initColors, width, height) => StyleSheet.create({
     },
 
     pitstopText: {
-        fontSize: 14,
+        // fontSize: 14,
         color: colors.black || '#000'
     },
     pitStopLoc: {
-        fontSize: 10,
+        // fontSize: 10,
         color: colors.subTextColor || '#272727',
         opacity: 0.8
     },
@@ -138,7 +138,8 @@ export default (colors = initColors, width, height) => StyleSheet.create({
     galleryIcon: {
         flexDirection: 'row',
         marginLeft: 10,
-        paddingVertical: 5
+        paddingVertical: 5,
+
     },
     voiceNoteContainer: {
         flexDirection: 'row',

@@ -37,6 +37,7 @@
 		9F943D4327A18BD700F74F26 /* UIView+Constraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F943D4227A18BD700F74F26 /* UIView+Constraints.swift */; };
 		9F943D4527A18C3B00F74F26 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F943D4427A18C3B00F74F26 /* ViewController.swift */; };
 		9F943D4727A1909F00F74F26 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F943D4627A1909F00F74F26 /* Main.storyboard */; };
+		9FE5365927B7A5EA00AEBFD4 /* RNMediaMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE5365727B7A5EA00AEBFD4 /* RNMediaMeta.m */; };
 		D389051199D75342566325AB /* libPods-jovi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E5B4C234413A32092FC84A70 /* libPods-jovi.a */; };
 		FD70708727AC130800AAF009 /* AppCenter-Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = FD70708627AC130800AAF009 /* AppCenter-Config.plist */; };
 		FEE8993AF0D75BE3BBA84C86 /* libPods-jovi-joviTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9321C510B4A5E695254FB2CF /* libPods-jovi-joviTests.a */; };
@@ -93,6 +94,8 @@
 		9F943D4227A18BD700F74F26 /* UIView+Constraints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UIView+Constraints.swift"; path = "jovi/UIView+Constraints.swift"; sourceTree = "<group>"; };
 		9F943D4427A18C3B00F74F26 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = jovi/ViewController.swift; sourceTree = "<group>"; };
 		9F943D4627A1909F00F74F26 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Main.storyboard; path = jovi/Main.storyboard; sourceTree = "<group>"; };
+		9FE5365727B7A5EA00AEBFD4 /* RNMediaMeta.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RNMediaMeta.m; path = jovi/RNMediaMeta.m; sourceTree = "<group>"; };
+		9FE5365827B7A5EA00AEBFD4 /* RNMediaMeta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RNMediaMeta.h; path = jovi/RNMediaMeta.h; sourceTree = "<group>"; };
 		D99429C104C0F3C83B09D772 /* Pods-jovi.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jovi.release.xcconfig"; path = "Target Support Files/Pods-jovi/Pods-jovi.release.xcconfig"; sourceTree = "<group>"; };
 		DDCE02A387D5AAA058256518 /* Pods-jovi-joviTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jovi-joviTests.debug.xcconfig"; path = "Target Support Files/Pods-jovi-joviTests/Pods-jovi-joviTests.debug.xcconfig"; sourceTree = "<group>"; };
 		E5B4C234413A32092FC84A70 /* libPods-jovi.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-jovi.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -141,6 +144,8 @@
 			isa = PBXGroup;
 			children = (
 				FD70708627AC130800AAF009 /* AppCenter-Config.plist */,
+				9FE5365827B7A5EA00AEBFD4 /* RNMediaMeta.h */,
+				9FE5365727B7A5EA00AEBFD4 /* RNMediaMeta.m */,
 				9F943D3D27A18B1700F74F26 /* SplashGif.gif */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -520,6 +525,7 @@
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				9F943D4127A18BB600F74F26 /* LogoAnimationView.swift in Sources */,
 				9F943D4327A18BD700F74F26 /* UIView+Constraints.swift in Sources */,
+				9FE5365927B7A5EA00AEBFD4 /* RNMediaMeta.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
