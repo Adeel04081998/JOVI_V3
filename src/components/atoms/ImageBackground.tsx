@@ -93,27 +93,7 @@ const ImageBackground = (props: Props) => {
 
 
 
-            {/* //WHEN ERROR OR LOADING */}
-            {loader &&
-                <RNImageBackground
-                    {...props}
-                    style={[
-                        loader ? {
-                            ...styles.defaultImage,
-                            height: props.defaultIconSize,
-                            width: props.defaultIconSize,
-                            position: 'absolute',
-
-                            borderColor: '#140c0c19',
-                            borderWidth: 0.5,
-                            borderRadius: 6,
-                        } : {
-                            opacity: 0,
-                            overflow: 'hidden',
-                        }, props.style]}
-                    source={DEFAULT_IMAGE}
-                />
-            }
+    
 
             {fullImage &&
                 <FullImage

@@ -5,6 +5,10 @@ const userReducer = (state = {}, action) => {
             return { ...state, ...action.payload };
         case TYPES.CLEAR_USER_ACTION:
             return action.payload;
+        case TYPES.USER_FINAL_DESTINATION:
+            return {
+                ...state, ...action.payload
+            };
         default:
             return { ...state };
     }
@@ -27,16 +31,16 @@ const enumsReducer = (state = {}, action) => {
             return { ...state };
     }
 }
-const messagesReducer = (state = {robotJson:null,showRobotFlag:null}, action) => {
+const messagesReducer = (state = { robotJson: null, showRobotFlag: null }, action) => {
     switch (action.type) {
         case TYPES.SET_HOME_MESSAGES_ACTION:
             return { ...state, ...action.payload };
         case TYPES.SET_ROBOT_JSON:
             return { ...state, ...action.payload };
         case TYPES.SHOW_ROBOT:
-            return { ...state, showRobotFlag:state.showRobotFlag? state.showRobotFlag+1:1 };
+            return { ...state, showRobotFlag: state.showRobotFlag ? state.showRobotFlag + 1 : 1 };
         case TYPES.CLEAR_ROBOT_JSON:
-            return {...state,robotJson:null}
+            return { ...state, robotJson: null }
         default:
             return { ...state };
     }

@@ -18,6 +18,9 @@ Animated.Text.defaultProps.allowFontScaling = false;
 TextInput.defaultProps = TextInput.defaultProps || {};
 TextInput.defaultProps.allowFontScaling = false;
 
+LogBox.ignoreLogs([
+    'Please report: Excessive number of pending callbacks: 501.',//BECAUSE OF LISTHEADERCOMPONENT IN FLATLIST
+])
 LogBox.ignoreAllLogs();
 const RNRedux = () => (
     <Provider store={store}>

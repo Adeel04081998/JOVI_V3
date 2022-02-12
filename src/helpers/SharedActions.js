@@ -219,9 +219,15 @@ export const sharedConfirmationAlert = (title, message, buttons = [], options = 
 
 export const uniqueKeyExtractor = () => new Date().getTime().toString() + (Math.floor(Math.random() * Math.floor(new Date().getTime()))).toString();
 
-export const renderPrice=(price,prefix="Rs. ",suffix="",)=>{
-    prefix=`${prefix}`.trim();
-    suffix=`${suffix}`.trim();
-    price=`${price}`.trim().replace(Regex.price,'').trim();
-    return suffix.length>0 ? `${prefix} ${price} ${suffix}` : `${prefix} ${price}`;
+export const renderPrice = (price, prefix = "Rs. ", suffix = "", reg = Regex.price,) => {
+    prefix = `${prefix}`.trim();
+    suffix = `${suffix}`.trim();
+    price = `${price}`.trim().replace(reg, '').trim();
+    return suffix.length > 0 ? `${prefix} ${price}${suffix}` : `${prefix} ${price}`;
 }
+
+export const isNextPage = (totalItem, itemPerRequest, currentRequestCount) => {
+    const total = itemPerRequest * currentRequestCount;
+
+    return totalItem - total > 0 ? true : false;
+};//end of isNextPage

@@ -12,7 +12,7 @@ import { initColors } from '../../../res/colors';
 import constants from "../../../res/constants";
 
 // #region :: INTERFACE START's FROM HERE 
-interface ProductMenuHeaderItem {
+export interface ProductMenuHeaderItem {
     image: ImageSourcePropType;
     title?: string;
     description?: string;
@@ -20,6 +20,7 @@ interface ProductMenuHeaderItem {
     time?: string;
 }
 
+export const ProductMenuHeaderItemDefaultValue=  { title: '', description: '', distance: '', time: '', image: constants.DEFAULT_JOVI_IMAGE };
 type Props = React.ComponentProps<typeof Animated.View> & {
     children?: any;
     colors: typeof initColors;
@@ -30,7 +31,7 @@ type Props = React.ComponentProps<typeof Animated.View> & {
 
 const defaultProps = {
     onLayout: undefined,
-    item: { title: '', description: '', distance: '', time: '', image: constants.DEFAULT_JOVI_IMAGE },
+    item: ProductMenuHeaderItemDefaultValue,
 
 };
 
@@ -119,15 +120,6 @@ const RestaurantProductMenuHeader = (props: Props) => {
 
 
             {/* ****************** End of DETAIL CARD ****************** */}
-
-            {/* ****************** Start of RECENT ORDERS ****************** */}
-            
-            <RecentOrder colors={colors} />
-            
-
-            {/* ****************** End of RECENT ORDERS ****************** */}
-
-
 
         </View>
     );

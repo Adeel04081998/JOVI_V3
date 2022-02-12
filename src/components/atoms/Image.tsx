@@ -67,6 +67,7 @@ const Image = (props: Props) => {
         startFullAnimate(1);
         toggleFullImage(true);
       }}
+      wait={0}
         style={[props.containerStyle]}
         disabled={loader || !props.tapToOpen}>
 

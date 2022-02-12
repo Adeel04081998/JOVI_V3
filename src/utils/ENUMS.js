@@ -33,25 +33,25 @@ export default {
         {
             "text": "Food",
             "value": 4,
-            "icon":svgs.food(),
+            "icon": svgs.food(),
             "isActive": true,
         },
         {
             "text": "Grocery",
             "value": 1,
-            "icon":svgs.grocery(),
+            "icon": svgs.grocery(),
             "isActive": true,
         },
         {
             "text": "Pharmacy",
             "value": 3,
-            "icon":svgs.pharmacy(),
+            "icon": svgs.pharmacy(),
             "isActive": true,
         },
         {
             "text": "Jovi Mart",
             "value": 5,
-            "icon": null ,
+            "icon": null,
             "isActive": false,
 
         }
@@ -60,5 +60,19 @@ export default {
     "ICON_TYPES": {
         0: { "text": "distance", "value": 0 },
         1: { "text": "delivery", "value": 1 }
+    },
+    "PROMO_VALUE_TYPE": {
+        Empty: {
+            "text": "Fixed",
+            "value": 0
+        },
+        Fixed: {
+            "text": "Fixed",
+            "value": 1
+        },
+        Percentage: {
+            "text": "Percentage",
+            "value": 2
+        }
     }
 }

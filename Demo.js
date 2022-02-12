@@ -12,8 +12,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import { useDispatch } from 'react-redux';
 import RNSplashScreen from './NativeModules/RNSplashScreen';
-import RestaurantProductMenu from './src/screens/RestaurantProductMenu';
+import RestaurantProductMenu from './src/screens/ProductMenu';
+import ReduxActions from "./src/redux/actions";
 
 AntDesign.loadFont();
 Entypo.loadFont();
@@ -29,7 +31,13 @@ SimpleLineIcons.loadFont();
 
 
 export default () => {
-
+    const dispatch = useDispatch();
+    dispatch(ReduxActions.setUserAction({
+        finalDestination: {
+            "latitude": 33.654227,
+            "longitude": 73.044831
+        }
+    }))
     useEffect(() => {
         RNSplashScreen.hide();
         return () => { }

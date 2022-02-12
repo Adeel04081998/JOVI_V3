@@ -1,76 +1,380 @@
+import AnimatedLottieView from 'lottie-react-native';
 import React from 'react';
-import { Animated, Appearance, StyleSheet } from 'react-native';
+import { ActivityIndicator, Appearance, FlatList, ScrollView } from 'react-native';
+import { SvgXml } from 'react-native-svg';
+import svgs from '../../assets/svgs';
+import ImageBackground from '../../components/atoms/ImageBackground';
+import Text from '../../components/atoms/Text';
+import TouchableScale from '../../components/atoms/TouchableScale';
 import View from '../../components/atoms/View';
-import { renderFile } from '../../helpers/SharedActions';
+import CustomHeader from '../../components/molecules/CustomHeader';
+import NoRecord from '../../components/organisms/NoRecord';
+import { isNextPage, renderFile, renderPrice, sharedExceptionHandler, uniqueKeyExtractor, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { postRequest } from '../../manager/ApiManager';
+import Endpoints from '../../manager/Endpoints';
+import { store } from '../../redux/store';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
+import ENUMS from '../../utils/ENUMS';
 import GV from '../../utils/GV';
 import GotoCartButton from '../RestaurantProductMenu/components/GotoCartButton';
-import { ProductDummyData2 } from '../RestaurantProductMenu/components/ProductDummyData';
-import RestaurantProductMenuHeader from '../RestaurantProductMenu/components/RestaurantProductMenuHeader';
+import ProductMenuHeader from './components/ProductMenuHeader';
+import ProductQuantityCard from './components/ProductQuantityCard';
+import { itemStylesFunc, stylesFunc } from './styles';
 
-import { itemStylesFunc, sectionHeaderStylesFunc, stylesFunc } from './styles';
+const WINDOW_WIDTH = constants.window_dimensions.width;
 
-const WINDOW_HEIGHT = constants.window_dimensions.height;
+const ITEM_IMAGE_SIZE = WINDOW_WIDTH / 2.5;
+const VERTICAL_MAX_ITEM_PER_REQUEST = 10;
+const HORIZONTAL_MAX_ITEM_PER_REQUEST = 2;
+const SHELVE_MAX_COUNT = 7;
+const DEFAULT_PAGINATION_INFO = { totalItem: 0, itemPerRequest: VERTICAL_MAX_ITEM_PER_REQUEST, currentRequestCount: 1 };
 
 export default () => {
+    // #region :: STYLES & THEME START's FROM HERE 
     const colors = theme.getTheme(GV.THEME_VALUES.RESTAURANT, Appearance.getColorScheme() === "dark");
     const styles = stylesFunc(colors);
+    const itemStyles = itemStylesFunc(colors, ITEM_IMAGE_SIZE);
 
-    const sectionHeaderStyles = sectionHeaderStylesFunc(colors);
-    const itemStyles = itemStylesFunc(colors);
+    // #endregion :: STYLES & THEME END's FROM HERE 
 
-    // #region :: ANIMATION START's FROM HERE 
-    const animScroll = React.useRef(new Animated.Value(0)).current
-    const [headerHeight, setHeaderHeight] = React.useState(WINDOW_HEIGHT * 0.7);
+    const marketID = 4609;// 4613,4609, 4521;
+    const headerTitle = 'SM';
 
-    const headerTop = animScroll.interpolate({
-        inputRange: [0, headerHeight],
-        outputRange: [0, -(headerHeight + 20)],
-        extrapolate: "clamp",
-        useNativeDriver: true
+    // #region :: STATE's & REF's START's FROM HERE 
+    const flatlistRef = React.useRef(null);
+
+    const [allData, updateALlData] = React.useState({});
+    const [data, updateData] = React.useState([]);
+    const [metaData, toggleMetaData] = React.useState(false);
+
+    const [finalDestination, updateFinalDestination] = React.useState(store.getState().userReducer?.finalDestination ?? {});
+    const [paginationInfo, updatePaginationInfo] = React.useState(DEFAULT_PAGINATION_INFO);
+    const [query, updateQuery] = React.useState({
+        isLoading: true,
+        error: false,
+        errorText: '',
+        refreshing: false,
     });
+    // #endregion :: STATE's & REF's END's FROM HERE 
 
-    const tabTop = animScroll.interpolate({
-        inputRange: [0, headerHeight + 20],
-        outputRange: [headerHeight + 20, 0],
-        extrapolate: "clamp",
-        useNativeDriver: true
-    });
+    // #region :: API IMPLEMENTATION START's FROM HERE 
 
-    // #endregion :: ANIMATION END's FROM HERE 
+    React.useEffect(() => {
+        loadData(paginationInfo.currentRequestCount);
+        return () => { };
+    }, []);
 
+    const getQuantity = () => {
+        return 0;
+    };
+
+    const loadData = (currentRequestNumber, append = false) => {
+        updateQuery({
+            errorText: '',
+            isLoading: !append,
+            error: false,
+            refreshing: append,
+        });
+        const params = {
+            "latitude": finalDestination.latitude,
+            "longitude": finalDestination.longitude,
+            "searchItem": "",
+            "categoryID": 0,
+            "catPageNumber": currentRequestNumber,
+            "catItemsPerPage": paginationInfo.itemPerRequest,
+            "productPageNumber": 1,
+            "productItemsPerPage": HORIZONTAL_MAX_ITEM_PER_REQUEST,
+            "marketID": marketID
+        };
+
+        postRequest(Endpoints.GET_PRODUCT_MENU_LIST, params, (res) => {
+            console.log('response ', res);
+            if (res.data.statusCode === 404) {
+                updateQuery({
+                    errorText: res.data.message,
+                    isLoading: false,
+                    error: true,
+                    refreshing: false,
+                });
+                updateData({});
+                return
+            }
+
+            const pitstopStockView = res.data?.pitstopStockViewModel ?? {};
+
+            const newData = (pitstopStockView?.categoryWithItems ?? []).map(pitem => {
+                const newpitstopItemListArr = pitem.pitstopItemList.map(item => {
+                    return {
+                        ...item,
+                        quantity: getQuantity(),
+                    }
+                })
+                return {
+                    ...pitem,
+                    pitstopItemList: newpitstopItemListArr
+                };
+            })
+
+            if (!append) {
+                const shelveSlicedArray = (pitstopStockView?.shelves ?? []).slice(0, SHELVE_MAX_COUNT);
+                updateALlData({ ...pitstopStockView, shelveSlicedArray });
+                const totalItem = res.data?.pitstopStockViewModel.categoryPaginationInfo.totalItems ?? DEFAULT_PAGINATION_INFO.totalItem;
+
+                updatePaginationInfo(pre => ({
+                    ...pre,
+                    totalItem,
+                }))
+            }
+
+
+            updateData([...data, ...newData]);
+            toggleMetaData(!metaData);
+            updateQuery({
+                errorText: '',
+                isLoading: false,
+                error: false,
+                refreshing: false,
+            });
+
+        }, (err) => {
+            console.log('errror api  ', err);
+            sharedExceptionHandler(err)
+            updateQuery({
+                errorText: sharedExceptionHandler(err),
+                isLoading: false,
+                error: true,
+                refreshing: false,
+            })
+        })
+    };//end of loadData
+
+    // #endregion :: API IMPLEMENTATION END's FROM HERE 
+
+    // #region :: RENDER HEADER START's FROM HERE 
+    const _renderHeader = () => {
+        return (
+            <CustomHeader
+                containerStyle={{
+                    borderBottomWidth: 0,
+                    backgroundColor: colors.white,
+                }}
+                title={headerTitle}
+                titleStyle={{
+                    color: colors.primary,
+                }}
+                hideFinalDestination
+                leftIconName="chevron-back"
+                leftContainerStyle={{ backgroundColor: colors.white, }}
+                rightContainerStyle={{ backgroundColor: colors.white, }}
+                leftIconColor={colors.primary}
+                rightIconColor={colors.primary}
+
+            />
+        )
+    }
+
+    // #endregion :: RENDER HEADER END's FROM HERE 
+
+    // #region :: RENDER VERTICAL & HORIZONTAL SCROLL ITEM START's FROM HERE 
+    const _renderParentItem = ({ item: parentItem, index: parentIndex }) => {
+        const productTotalItem = parentItem?.productsPaginationInfo?.totalItems ?? 0;
+
+        return (
+            <React.Fragment>
+
+                {/* ****************** Start of TITLE & VIEW MORE ****************** */}
+                <View style={itemStyles.titlePrimaryContainer}>
+                    <Text style={styles.title}>{`${parentItem.categoryName}`}</Text>
+
+                    {isNextPage(productTotalItem, HORIZONTAL_MAX_ITEM_PER_REQUEST, 1) &&
+                        <TouchableScale>
+                            <Text style={itemStyles.titleViewmoreText}>{`View More`}</Text>
+                        </TouchableScale>
+                    }
+                </View>
+
+
+                {/* ****************** End of TITLE & VIEW MORE ****************** */}
+
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    {(parentItem?.pitstopItemList ?? []).map((item, index) => {
+
+                        return (
+                            <View style={{
+                                marginLeft: index === 0 ? 10 : 0,
+                                ...itemStyles.primaryContainer,
+                            }} key={uniqueKeyExtractor()}>
+
+                                {/* ****************** Start of IMAGE & QUANTITY ****************** */}
+                                <View style={itemStyles.imageContainer}>
+                                    <ImageBackground
+                                        source={{ uri: renderFile(`${item.image}`) }}
+                                        style={itemStyles.image}
+                                        borderRadius={8}
+                                        tapToOpen={false}>
+
+                                        <ProductQuantityCard
+                                            colors={colors}
+                                            size={ITEM_IMAGE_SIZE}
+                                            updateQuantity={(quantity) => {
+                                                updateQuantity(parentIndex, index, quantity);
+                                            }}
+                                        />
+
+                                    </ImageBackground>
+                                </View>
+
+                                {/* ****************** End of IMAGE & QUANTITY ****************** */}
+
+
+                                {/* ****************** Start of PRICE & DISCOUNT ****************** */}
+                                <View style={itemStyles.priceDiscountContainer}>
+                                    <Text fontFamily='PoppinsBold' style={itemStyles.price}>{renderPrice(item.price)}</Text>
+
+                                    {(VALIDATION_CHECK(item.discountPrice) && parseInt(`${item.discountPrice}`) > 0) &&
+                                        <Text style={itemStyles.discountPrice}>{renderPrice(item.discountPrice)}</Text>
+                                    }
+
+                                </View>
+
+                                {/* ****************** End of PRICE & DISCOUNT ****************** */}
+
+
+                                {/* ****************** Start of NAME/TITLE ****************** */}
+                                <Text style={itemStyles.name}>{item.name}</Text>
+
+                                {/* ****************** End of NAME/TITLE ****************** */}
+
+                                {/* ****************** Start of DISCOUNT TYPE ****************** */}
+                                {parseInt(`${item.discountType}`) !== parseInt(`${ENUMS.PROMO_VALUE_TYPE.Empty.value}`) &&
+                                    <View style={itemStyles.discountTypeContainer}>
+                                        {parseInt(`${item.discountType}`) === parseInt(`${ENUMS.PROMO_VALUE_TYPE.Percentage.value}`) &&
+                                            <SvgXml xml={svgs.discount(colors.primary)} height={15} width={15} style={itemStyles.discountTypeIcon} />
+                                        }
+                                        <Text style={itemStyles.discountTypeText}>{`${renderPrice(item.discount, '-', '%', /[^\d.]/g)}`}</Text>
+                                    </View>
+                                }
+
+                                {/* ****************** End of DISCOUNT TYPE ****************** */}
+
+
+                            </View>
+                        )
+                    })}
+                </ScrollView>
+
+
+            </React.Fragment>
+        )
+    }
+
+    // #endregion :: RENDER VERTICAL & HORIZONTAL SCROLL ITEM END's FROM HERE 
+
+    // #region :: QUANTITY HANDLER START's FROM HERE 
+    const updateQuantity = (parentIndex, index, quantity) => {
+        data[parentIndex].pitstopItemList[index].quantity = quantity;
+    };
+
+    // #endregion :: QUANTITY HANDLER END's FROM HERE 
+
+    // #region :: ON END REACHED START's FROM HERE 
+    const onEndReached = () => {
+        if (isNextPage(paginationInfo.totalItem, paginationInfo.itemPerRequest, paginationInfo.currentRequestCount)) {
+            updateQuery(pre => ({
+                ...pre,
+                refreshing: true
+            }))
+
+            updatePaginationInfo(pre => ({
+                ...pre,
+                currentRequestCount: pre.currentRequestCount + 1,
+            }))
+
+
+            loadData(paginationInfo.currentRequestCount + 1, true);
+
+            return
+        }
+    };//end of onEndReached
+
+    // #endregion :: ON END REACHED END's FROM HERE 
+
+    if (query.error) {
+        return (
+            <>
+                {_renderHeader()}
+                <NoRecord
+                    title={query.errorText}
+                    buttonText={`Retry`}
+                    onButtonPress={loadData} />
+            </>
+        )
+    }
+    if (query.isLoading) {
+        return (
+            <>
+                {_renderHeader()}
+                <View style={{ height: '93%', width: '101%', paddingLeft: 10, paddingTop: 4, paddingHorizontal: 5, display: 'flex', justifyContent: 'center', alignContent: 'center', }}>
+                    <AnimatedLottieView
+                        autoSize={true}
+                        resizeMode={'contain'}
+                        style={{ width: '100%' }}
+                        source={require('../../assets/LoadingView/SupermarketMenu.json')}
+                        autoPlay
+                        loop
+                    />
+                </View>
+            </>
+        )
+    }
 
     return (
         <View style={styles.primaryContainer}>
 
-            {/* ****************** Start of UPPER HEADER TILL RECENT ORDER ****************** */}
-            <Animated.View style={{
-                ...StyleSheet.absoluteFill,
-                transform: [{
-                    translateY: headerTop
-                }],
-            }}>
-                {/* RECENT ORDER IS ALSO IN PRODUCT MENU HEADER */}
-                <RestaurantProductMenuHeader colors={colors}
-                    onLayout={(e) => {
-                        setHeaderHeight(e.nativeEvent.layout.height);
-                    }}
-                    item={{
-                        image: { uri: renderFile(ProductDummyData2.productsAndDealsV2.pitstopImage) },
-                        distance: ProductDummyData2.productsAndDealsV2.distance,
-                        time: ProductDummyData2.productsAndDealsV2.time,
-                        title: ProductDummyData2.productsAndDealsV2.pitstopName,
-                        description: ProductDummyData2.productsAndDealsV2.pitstopTag,
-                    }}
-                />
-            </Animated.View>
+            <FlatList
+                ref={flatlistRef}
+                data={(data)}
+                extraData={metaData}
+                scrollEnabled={true}
+                nestedScrollEnabled
+                contentContainerStyle={{
+                    paddingBottom: 85,
+                }}
+                onEndReachedThreshold={0.6}
+                onEndReached={onEndReached}
+                ListHeaderComponent={(
+                    <ProductMenuHeader
+                        colors={colors}
+                        shelveData={allData?.shelveSlicedArray ?? []}
+                        headerItem={{
+                            image: { uri: renderFile(allData?.pitstopImage ?? '') },
+                            distance: allData?.distance ?? '',
+                            time: allData?.time ?? '',
+                            title: allData?.pitstopName ?? '',
+                            description: allData?.pitstopTag ?? '',
+                        }}
+                    />
+                )}
 
-            {/* ****************** End of UPPER HEADER TILL RECENT ORDER ****************** */}
+                renderItem={_renderParentItem}
+                initialNumToRender={3}
+                maxToRenderPerBatch={10}
+                ListFooterComponent={
+                    <ActivityIndicator size="large" color={colors.primary}
+                        style={{
+                            opacity: query.refreshing ? 1 : 0,
+                            marginTop: 10
+                        }} />
+                }
+            />
 
 
+            <GotoCartButton colors={colors} onPress={() => {
 
-            <GotoCartButton colors={colors}/>
+            }} />
+
+
 
         </View>
     )
