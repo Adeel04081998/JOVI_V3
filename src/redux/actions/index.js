@@ -26,7 +26,7 @@ const clearCartAction = (payload = {}) => {
 };
 const setEnumsActions = (payload = {}) => {
     return {
-        type: TYPES.CLEAR_CART_ACTION,
+        type: TYPES.SET_ENUMS_ACTION,
         payload: { ...payload }
     }
 }

@@ -8,6 +8,7 @@ export default {
     screen_dimensions: Dimensions.get("screen"),
     window_dimensions: Dimensions.get("window"),
     horizontal_margin: 10,
+    max_jovi_order_amount: 10000,
     colors: {
         "name": "Default",
         "backgroundColor": "#1D1D1D",
