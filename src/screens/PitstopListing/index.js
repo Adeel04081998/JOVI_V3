@@ -97,8 +97,8 @@ const PistopListing = React.memo(({ route, }) => {
         setState(pre => ({ ...pre, filters: { ...pre.filters, search: isDisSelect ? '' : val } }));
         filtersRef.current.search = isDisSelect ? '' : val;
     };
-    const onPressFilter = (item,updatedFiltes = {}) => {
-        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.PitstopsVerticalList.screen_name,{pitstopType:pitstopType,updatedFiltes,listingObj:{...item}});
+    const onPressFilter = (item,updatedFilters = {}) => {
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.PitstopsVerticalList.screen_name,{pitstopType:pitstopType,updatedFilters,listingObj:{...item}});
     }
     const onFilterChange = (item, idKey, key, emptyVal = []) => {
         const isDisSelect = filterValidations[key](filtersRef.current[key], item[idKey]);

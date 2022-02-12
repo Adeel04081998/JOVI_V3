@@ -12,12 +12,12 @@ import CustomHeader from '../../molecules/CustomHeader';
 import Cuisine from './components/Cuisine';
 import Button from '../../molecules/Button';
 import NavigationService from '../../../navigations/NavigationService';
+import ROUTES from '../../../navigations/ROUTES';
 const CUSINE_ACTIVE_INDEX = "activeCusine";
 const Filter_ACTIVE_INDEX = "activeFilterBy";
 const AV_PRICE_ACTIVE_INDEX = "activeAvergePrice";
 export default (props) => {
     const { route } = props;
-    console.log('route', route.params);
     const { vendorFilterViewModel } = useSelector(state => state.categoriesTagsReducer);
     const cuisineList = vendorFilterViewModel?.cuisine ?? {}
     const filterList = vendorFilterViewModel?.filtersList ?? {}
@@ -66,7 +66,11 @@ export default (props) => {
             [CUSINE_ACTIVE_INDEX]: state[CUSINE_ACTIVE_INDEX],
 
         }
-
+        if (state[Filter_ACTIVE_INDEX]) {
+            const listing = (vendorFilterViewModel?.filtersList ?? []).filter(item => item.vendorDashboardCatID === state[Filter_ACTIVE_INDEX])[0];
+            NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.PitstopsVerticalList.screen_name, { pitstopType: route.params.pitstopType??4, updatedFilters:{cuisines:state[CUSINE_ACTIVE_INDEX]}, listingObj: { ...listing } },ROUTES.APP_DRAWER_ROUTES.Filter.screen_name);
+            return;
+        }
         NavigationService.NavigationActions.common_actions.goBack();
         if (route.params.backCB) {
             route.params.backCB(dataToSend);

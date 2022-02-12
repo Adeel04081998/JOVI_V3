@@ -39,7 +39,7 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
         isLoading: false,
         filters: {
             filter: route.params.listingObj?.vendorDashboardCatID ? [route.params.listingObj?.vendorDashboardCatID] : [],
-            cuisines: route.params.updatedFiltes?.cuisines ? [route.params.updatedFiltes?.cuisines] : [],
+            cuisines: route.params.updatedFilters?.cuisines ? [route.params.updatedFilters?.cuisines] : [],
             averagePrice: null,
             search: '',
         },
@@ -50,7 +50,7 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
     });
     const filtersRef = React.useRef({
         filter: route.params.listingObj?.vendorDashboardCatID ? [route.params.listingObj?.vendorDashboardCatID] : [],
-        cuisines: route.params.updatedFiltes?.cuisines ? [route.params.updatedFiltes?.cuisines] : [],
+        cuisines: route.params.updatedFilters?.cuisines ? [route.params.updatedFilters?.cuisines] : [],
         averagePrice: null,
         search: '',
     });
