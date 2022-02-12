@@ -5,7 +5,7 @@ import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplet
 import { SvgXml } from "react-native-svg";
 import images from "../../assets/images";
 import svgs from "../../assets/svgs";
-import configs from "../../utils/configs";
+import configs, { env } from "../../utils/configs";
 
 export default LocationSearch = ({  handleOnInputChange,locationVal, index,clearInputField, textToShow, onLocationSelected, /* handleAddPitstop, */ handleDeletePitstop, isLast, handleInputFocused, totalPitstops, onSetFavClicked, isFavourite, marginBottom = 5, }) => {
 
@@ -52,7 +52,7 @@ export default LocationSearch = ({  handleOnInputChange,locationVal, index,clear
             ref={locTextRef}
             onPress={(data, { geometry }) => onLocationSelected(data, geometry, index, null)}
             query={{
-                key: configs.GOOGLE_API_KEY,
+                key: env.GOOGLE_API_KEY,
                 language: "en",
                 components: "country:pk",
                 // radius: 100

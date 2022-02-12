@@ -2,7 +2,7 @@ import React from 'react'
 import { PermissionsAndroid, Platform, Alert } from 'react-native';
 import { check, request, PERMISSIONS, RESULTS, openSettings } from 'react-native-permissions';
 import Toast from '../components/atoms/Toast';
-import configs from '../utils/configs';
+import configs, { env } from '../utils/configs';
 import { handleDeniedPermission } from './Camera';
 import { sharedGetDeviceInfo } from './SharedActions';
 
@@ -38,7 +38,7 @@ export const hybridLocationPermission = async (cb) => {
 export const addressInfo = async (latitude, longitude) => {
     console.log('latitude ==>>>>',latitude, 'longitude ===>>>>>',longitude);
     try {
-        let addressResponse = await fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&rankby=distance&key=${configs.GOOGLE_API_KEY}`);
+        let addressResponse = await fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&rankby=distance&key=${env.GOOGLE_API_KEY}`);
         addressResponse = await addressResponse.json();
         console.log('addressResponse',addressResponse);
         if (addressResponse.error_message) {
