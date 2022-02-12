@@ -2,6 +2,7 @@ export const initColors = {
     // XD Colors Start Mudassir
     "primary": "#6D51BB",
     "black": "#272727",
+    "lightBlack": "#212121",
     "card": "#047A9E",
     "grey": "#7D7D7D",
     "white": "#FFFFFF",
@@ -27,8 +28,9 @@ export const initColors = {
     "navTextColor": "#C1C1C1",
     "navActiveTextColor": "white",
     "black": '#000',
-    "oldFlame" :"#F3B8B4",
-    "drWhite":"#FAFAFA"
+    "oldFlame": "#F3B8B4",
+    "drWhite": "#FAFAFA",
+    "pinBall": "#D3D3D3"
 }
 export default {
 

@@ -38,7 +38,9 @@ export default () => {
                 easing: Easing.ease
             }).start(finished => {
                 if (finished) {
-                    dispatch(ReduxActions.showRobotAction());
+                    if(!__DEV__){
+                        dispatch(ReduxActions.showRobotAction());
+                    }
                 }
             });
         }

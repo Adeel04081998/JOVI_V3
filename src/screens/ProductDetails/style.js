@@ -5,94 +5,59 @@ export default {
     styles(colors = initColors) {
         return StyleSheet.create({
 
-            container: {
-                // flexGrow: 1,
-                // backgroundColor: colors.Whisper || "#F6F5FA",
-                flex: 1, flexDirection: 'column', backgroundColor: '#F6F5FA'
+            mainContainer: {
+                
+                flex: 1, flexDirection: 'column', backgroundColor: colors.screen_background
             },
             customHeaderMainContainer: {
                 position: 'absolute', zIndex: 2, backgroundColor: 'transparent', borderBottomWidth: 0, borderBottomColor: 'white'
             },
             customHeaderLeftRightContainer: {
-                backgroundColor: "white"
-            }, 
-            customHeaderLeftRightIconColor: "red",
-        
-            gifLoader: {
-            height: '93%', width: '101%', paddingLeft: 10, paddingTop: 8, paddingHorizontal: 5, display: 'flex', justifyContent: 'center', alignContent: 'center',
-        },
-            imageCarousal: {
-            marginHorizontal: 10,
-            alignItems: 'center',
-            borderRadius: 12,
-            // backgroundColor: "red",
-            // resizeMode: "contain"
-        },
-            wrapper: {
-            margin: SPACING_VERTICAL, paddingBottom: Platform.select({ android: 160, ios: 140 })
-        },
-            greetingMainContainer: {
-            margin: 0,
-            backgroundColor: colors.Whisper || "#F6F5FA",
-            paddingLeft: 5,
-            marginVertical: 5
-        },
-            greetingHeaderText: {
-            fontSize: 14,
-            color: '#272727'
+                backgroundColor: colors.white
+            },
+            customHeaderLeftRightIconColor: colors.primary,
+            primaryContainer: {
+                marginHorizontal: 10, marginVertical: 15,
+            },
+            productNametxt: {
+                fontSize: 20, color: colors.black
+            },
+            productDescriptionTxt: {
+                paddingVertical: 10, width: '100%', color: colors.grey, fontSize: 14
 
-        },
-            greetingBodyText: {
-            fontFamily: 'Poppins-Light', color: colors.DoveGray || '#6B6B6B', fontSize: 14, bottom: 2
-        },
-            alertMsgPrimaryContainer: {
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            borderRadius: 7,
-            backgroundColor: colors.BlueChalk || '#EEE5FF',
-        },
-            alertMsgSecondaryContainer: {
-            flex: 1, flexDirection: 'column', justifyContent: 'center', padding: 10
-        },
-            alertMsgHeaderText: {
-            fontSize: 14,
-            color: colors.BlueVoilet || "#6D51BB",
+            },
+            productPriceContainer: {
+                flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center'
+            },
+            productPricelabel: {
+                fontSize: 16, color: colors.grey, textAlign: 'center',
+            },
+            productPricetxt: {
+                fontSize: 16, left: 5, color: colors.primary
+            },
+            radioButtonSelectionTittle: {
+                fontSize: 16, color: colors.lightBlack
+            },
+            requiredTxt:{
+                fontSize:12,color: colors.grey
 
-        },
-            alertMsgBodyText: {
-            fontSize: 10,
-            width: '90%',
-            color: colors.Bossanova || '#453463'
-        },
-            alertMsgSvgView: {
-            flex: 0.5,
-            flexDirection: 'column',
-            alignItems: 'center',
-        },
-            categoriesCardPrimaryContainer: {
-            flex: 0.8,
-            margin: 0
-        },
-            categoriesCardTittleText: {
-            fontSize: 16,
-            color: colors.MineShaft || "#272727",
-            paddingVertical: 8
-        },
-            categoriesCardItemContainer: {
+            },
+            radioButtonPrimaryContainer: {
+                backgroundColor: 'white', 
+                padding: 10, 
+                marginVertical: 5, 
+                borderRadius: 10,
+            },
+            radioButtonSecondaryContainer: {
+                flexDirection: 'row', width: "100%", alignItems: 'center', paddingVertical: 3
+            },
+            radioButtonCircle: {
+                height: 20, width: 20, borderRadius: 20, marginRight: 12, borderWidth: 3, borderColor: colors.pinBall, alignItems: 'center', justifyContent: 'center'
+            },
+            filledCircle: (val) => ({
+                width: 10, height: 10, borderRadius: 30, backgroundColor: val ? colors.primary : "blue"
+            }),
 
-        },
-            search_container: {
-            flexDirection: "row", alignItems: "center", backgroundColor: "#fff", borderRadius: 10, height: 55, justifyContent: "space-between", overflow: 'hidden',
-        },
-            search_input: {
-            alignSelf: 'center', backgroundColor: "#fff"
-        },
-            cat_item_container: {
-            marginHorizontal: 3, justifyContent: 'center', borderRadius: 10
-        },
-            cat_img_container: {
-            width: 80, justifyContent: 'center', alignContent: 'center', alignItems: 'center', alignSelf: 'center'
-        }
         })
-}
+    }
 } 

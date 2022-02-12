@@ -10,12 +10,15 @@ export default {
     "GET_USER_ADDRESSES": "api/Order/GetAddress",
     "GET_PROMOTIONS": "api/Dashboard/DashboardContent/List",
     "GET_VENDORS_GENERIC_LIST": "api/Menu/Vendor/Categorization",
-    "GET_CATEGORIES_TAGS_LIST" : "api/Restaurant/Tags/Categories/List",
-    "GET_PITSTOPS" : "api/Restaurant/Pitstop/ListOrSearch/V2",
-    "GET_FILTERS" : "api/Menu/Vendor/GetFilters",
-    
-
+    "GET_CATEGORIES_TAGS_LIST": "api/Restaurant/Tags/Categories/List",
+    "GET_PITSTOPS": "api/Restaurant/Pitstop/ListOrSearch/V2",
+    "GET_FILTERS": "api/Menu/Vendor/GetFilters",
     //RESTAURANT
-    "GET_RESTAURANT_PRODUCT_MENU_LIST":"api/Restaurant/ProductsAndDeals/List/V2",// SCREEN_NAME: RestaurantProductMenu
+    "GET_RESTAURANT_PRODUCT_MENU_LIST": "api/Restaurant/ProductsAndDeals/List/V2",// SCREEN_NAME: RestaurantProductMenu
+    //PRODUCT DETAILS
+    "PRODUCT_DETAILS": "api/Restaurant/ProductOrDeal/DetailsV1"
+
+
+
 
 }

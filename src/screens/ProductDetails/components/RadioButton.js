@@ -1,75 +1,142 @@
 import React, { useState, useRef } from "react";
-import { StyleSheet } from "react-native";
+import { Alert, SectionList, StyleSheet } from "react-native";
+import { boolean } from "yargs";
 import AnimatedView from "../../../components/atoms/AnimatedView";
 import Text from "../../../components/atoms/Text";
 import TouchableOpacity from "../../../components/atoms/TouchableOpacity";
 import View from "../../../components/atoms/View";
 
-export default ({ data = [], onPressCb, selectionTittle = "", requiredTittle = "", isMultipleSelection = false, selectedItem = [] }) => {
-    console.log("data=>>", data);
-    console.log("selectedItem=>>", selectedItem);
+export default ({ data = [], selectedOptions = [], onPressCb, selectionTittle = "", requiredTittle = "", isMultipleSelection = false, selectedItem = [], selectCOndition = null, productDetailsStyles }) => {
 
-
-
-    const onPress = (item) => {
-        if (isMultipleSelection) {
-            const isExist = selectedItem.findIndex(i => i.id === item.id);
-            console.log('isExist ', isExist);
+    console.log("selectedItem", selectedItem);
+    const checkSelected = (x) => {
+        const check = selectedOptions.filter(item=>item.itemOptionID === x.itemOptionID)[0];
+        if(check){
+            return true;
+        }
+        return false;
+    }
+    const onPress = (item, isMany, i) => {
+        console.log("isMany, i", isMany, i);
+        if (isMany === true) {
+            const isExist = selectedItem.findIndex(i => i.itemOptionID === item.itemOptionID);
+            // console.log('isExist ', isExist);
             if (isExist === -1) {
+                // if (selectedItem.length === selectCOndition) return
                 selectedItem.push(item); // adding item
             } else {
                 selectedItem.splice(isExist, 1); // deleting same item from
             }
 
-            onPressCb && onPressCb(selectedItem, isMultipleSelection);
+            onPressCb && onPressCb(selectedItem, isMany);
 
         } else {
-            //SIGNLE SELECTION
+            //SINGLE SELECTION
 
             selectedItem = [];
             selectedItem.push(item); // adding item
+            onPressCb && onPressCb(selectedItem, isMany);
 
+        }
+
+
+        return
+        if (isMultipleSelection) {
+            const isExist = selectedItem.findIndex(i => i.id === item.id);
+            console.log('isExist ', isExist);
+            if (isExist === -1) {
+                if (selectedItem.length === selectCOndition) return
+                selectedItem.push(item); // adding item
+            } else {
+                selectedItem.splice(isExist, 1); // deleting same item from
+            }
+
+            onPressCb && onPressCb(selectedItem, isMultipleSelection,);
+
+        } else {
+            //SINGLE SELECTION
+
+            selectedItem = [];
+            selectedItem.push(item); // adding item
             onPressCb && onPressCb(selectedItem, isMultipleSelection);
 
         }
 
     };
 
-    return (
-        <View>
-            <Text style={{ fontSize: 14, color: 'black' }}>{selectionTittle}</Text>
-            <Text>{requiredTittle}</Text>
-            <AnimatedView style={styles.primaryContainer}>
+    const RenderUi = ({ pitstopItemsOptionList,choosedQuantity, isMany, parentIndex }) => {
+        console.log(`pitstopItemsOptionList`, pitstopItemsOptionList,choosedQuantity)
+
+        return (
+            <View style={{
+                backgroundColor: 'white',
+                padding: 10,
+                marginVertical: 5,
+                borderRadius: 10,
+                flexDirection: 'column',
+                // height: 90,
+
+            }}>
                 {
-                    data.map((x, i) => {
-                        const selectedIndex = selectedItem.findIndex(k => k.id === x.id);
-                        let isActive = selectedIndex === -1 ? false : x.id === selectedItem[selectedIndex].id;
-                        console.log("isActive=>>", isActive);
-                        return <AnimatedView style={styles.container} key={i}  >
-                            <TouchableOpacity style={styles.radioCircle}
-                                onPress={() => { onPress(x) }}
-                            >
+                    pitstopItemsOptionList.map((x, i) => {
+                        const attributeName = x.tittle
+                        const attributeOptionPrice = x.optionPrice
+                        const selectedIndex = selectedItem.findIndex(k => k.itemOptionID === x.itemOptionID);
+                        // let isActive = selectedIndex === -1 ? false : x.itemOptionID === selectedItem[selectedIndex].itemOptionID;
+                        let isActive = checkSelected(x);
+                        // return <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1, paddingVertical:5 }} onPress={() => { onPress(x, isMany,i) }} >
+                        return <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1, paddingVertical: 5 }} onPress={() => onPressCb(x, isMany, parentIndex,choosedQuantity??null)} >
+                            <View style={productDetailsStyles.radioButtonCircle}>
                                 {isActive &&
-                                    <View style={styles.filledCircle(true)} />
+                                    <View style={productDetailsStyles.filledCircle(true)} />
                                 }
-
-                            </TouchableOpacity>
-                            <Text style={{ color: 'black' }}>{x.title}</Text>
-
-                        </AnimatedView>
-
+                            </View>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1 }}>
+                                <Text style={{ color: '#212121', fontSize: 14 }} fontFamily="PoppinsRegular">{`${attributeName}`}</Text>
+                                <Text style={{ color: '#212121', fontSize: 14 }} fontFamily="PoppinsRegular">{`${attributeOptionPrice}`}</Text>
+                            </View>
+                        </TouchableOpacity>
                     })
-
                 }
+            </View>
+
+        )
 
 
-            </AnimatedView>
+    }
+
+    return (
+
+        <View>
+            {
+                data.map((x, i) => {
+                    const isMany = (__DEV__ && i === 0) ? true : x.isMany ?? false
+                    // const isMany = true
+
+                    const isRequired = x.isRequired ?? false
+                    const mainTitle = x.mainTittle ?? ""
+                    const choosedQuantity = 2
+                    const pitstopItemsOptionList = x.pitStopItemsOptionList ?? []
+                    // const selectedIndex = selectedItem.findIndex(k => k.id === x.id);
+                    // let isActive = selectedIndex === -1 ? false : x.id === selectedItem[selectedIndex].id;
+                    return <AnimatedView style={{}}>
+                        <Text style={productDetailsStyles.radioButtonSelectionTittle}
+                            fontFamily="PoppinsRegular"
+                        >{`${mainTitle},(Select${choosedQuantity})`}</Text>
+                        <Text style={productDetailsStyles.requiredTxt} fontFamily="PoppinsRegular">{isRequired && "Required"}</Text>
+                        <RenderUi pitstopItemsOptionList={pitstopItemsOptionList} isMany={isMany} parentIndex={i} choosedQuantity={choosedQuantity} />
+
+                    </AnimatedView>
+
+
+                })
+
+            }
 
         </View>
-
-
-
     )
+
+
 
 }
 const styles = StyleSheet.create({

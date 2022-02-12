@@ -1,16 +1,13 @@
 import * as React from "react";
-import { Animated, Dimensions, ImageStyle, StyleProp, StyleSheet, Image as RNImage, ImageSourcePropType, Alert } from "react-native";
-import Image from "../atoms/Image";
-import TouchableScale from "../atoms/TouchableScale";
-import View from "../atoms/View";
+import { Animated, Dimensions, ImageSourcePropType, ImageStyle, StyleProp, StyleSheet } from "react-native";
+import { VALIDATION_CHECK } from "../../helpers/SharedActions";
+import AppStyles from "../../res/AppStyles";
 import { initColors } from '../../res/colors';
 import constants from "../../res/constants";
-import AppStyles from "../../res/AppStyles";
-import Text from "../atoms/Text";
 import FontFamily from "../../res/FontFamily";
-import { VALIDATION_CHECK } from "../../helpers/SharedActions";
-import NavigationService from "../../navigations/NavigationService";
-import ROUTES from "../../navigations/ROUTES";
+import Image from "../atoms/Image";
+import Text from "../atoms/Text";
+import TouchableScale from "../atoms/TouchableScale";
 
 // #region :: INTERFACE START's FROM HERE 
 const WINDOW_WIDTH = Dimensions.get('window').width;
@@ -33,6 +30,7 @@ type Props = React.ComponentProps<typeof Animated.View> & {
     customItem?: () => React.Component;
 
     item?: ProductCardItem;
+    onItemPress?:(item:ProductCardItem)=>void;
 };
 
 const defaultProps = {
@@ -42,6 +40,7 @@ const defaultProps = {
     containerStyle: {},
     item: { title: '', description: '', price: '', image: constants.DEFAULT_JOVI_IMAGE },
     customItem: undefined,
+    onItemPress:undefined,
 };
 // #endregion :: INTERFACE END's FROM HERE 
 
@@ -60,7 +59,7 @@ const ProductCard = (props: Props) => {
                 ...styles.primaryContainer,
             }, props.containerStyle]}
             onPress={()=>{
-                NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, { propItem })
+                props.onItemPress && props.onItemPress(propItem);
                 
                 // Alert.alert('hy')
             }}
