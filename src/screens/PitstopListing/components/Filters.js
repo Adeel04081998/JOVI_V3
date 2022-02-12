@@ -49,13 +49,13 @@ const styles = (colors,checkSelectedFilter)=>{
         filterContainer:(x)=> ({
             height: FILTER_ICON_HEIGHT,
             borderColor: 'rgba(0,0,0,0.4)',
-            borderRadius: 4,
             justifyContent: 'center',
             paddingHorizontal: 5,
             marginHorizontal: 5,
+            borderRadius: checkSelectedFilter(x) ? 4:1,
             backgroundColor: checkSelectedFilter(x) ? colors.primary + '20' : '#fff',
             borderColor: checkSelectedFilter(x) ? colors.primary : '',
-            borderWidth: checkSelectedFilter(x) ? 1 : 0.2,
+            borderWidth: checkSelectedFilter(x) ? 1 : 0.1,
         }),
         filterTouchable:{
             display: 'flex',

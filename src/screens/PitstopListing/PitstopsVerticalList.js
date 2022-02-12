@@ -267,7 +267,7 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
                         parentCategoryHandler={onCategoryChange}
                         selectedCategories={state.filters.cuisines}
                     />}
-                    <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: SPACING_VERTICAL, marginBottom: pitstopType === 4 ? 100 : 0 }} onScroll={(event) => {
+                    <ScrollView showsVerticalScrollIndicator={false} scrollEventThrottle={16} style={{ marginTop: SPACING_VERTICAL, marginBottom: pitstopType === 4 ? 100 : 0 }} onScroll={(event) => {
                         if (handleInfinityScroll(event)) {
                             setFetchDataFlag(Math.random());
                         }
