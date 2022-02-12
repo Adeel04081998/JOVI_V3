@@ -9,6 +9,7 @@ const CONTAINER_WIDTH = ((constants.screen_dimensions.width) * 0.22);
 const CONTAINER_HEIGHT = constants.screen_dimensions.width * 0.3;
 export default React.memo(({ homeStyles }) => {
     const cartOnPressHandler = (index) => {
+        return;
         if(index === 1){
             NavigationService.NavigationActions.common_actions.navigate('VENDORS',{pitstopType:4});
         }else if(index ===2){
@@ -26,6 +27,7 @@ export default React.memo(({ homeStyles }) => {
                     containerStyle={homeStyles.cat_item_container}
                     height={CONTAINER_HEIGHT}
                     width={CONTAINER_WIDTH}
+                    pressBackgroundColor={x.color}
                     textStyle={{ fontSize: 12, padding: 2 }}
                     imageContainerStyle={[{ height: CONTAINER_HEIGHT * 0.6 }, homeStyles.cat_img_container]}
                     onPress={() => cartOnPressHandler(i)}

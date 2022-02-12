@@ -29,30 +29,35 @@ export default {
             "value": 2,
             "icon": svgs.jovi(),
             "isActive": true,
+            "color":"#6D51BB",
         },
         {
             "text": "Food",
             "value": 4,
             "icon": svgs.food(),
             "isActive": true,
+            "color":"#F94E41",
         },
         {
             "text": "Grocery",
             "value": 1,
             "icon": svgs.grocery(),
             "isActive": true,
+            "color":"#27C787",
         },
         {
             "text": "Pharmacy",
             "value": 3,
             "icon": svgs.pharmacy(),
             "isActive": true,
+            "color":"#1945BE",
         },
         {
             "text": "Jovi Mart",
             "value": 5,
             "icon": null,
             "isActive": false,
+            "color":"#6B6B6B",
 
         }
     ],
