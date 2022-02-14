@@ -2,6 +2,7 @@ import GV from "../../../GV";
 export const env = {
     name: "RELEASE",
     BASE_URL: GV.BASE_URL.current,
+    GOOGLE_API_KEY: "AIzaSyDjL10bWGX7XL65Np6izZTFagOlz2vzgOA",
     CODE_PUSH_DEP_KEYS: {
         // JOVI V3 FOR RELEASE
         JOVI_ANDROID: {

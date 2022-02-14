@@ -263,6 +263,7 @@ export default ({ navigation, route }) => {
         common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { onNavigateBack: cb })
     }
     const cb = (resp) => {
+        console.log('resp ==>>',resp);
         setLocationVal(resp)
     }
     /************   End of functions of Pitstop location Component Funcs    **************/
