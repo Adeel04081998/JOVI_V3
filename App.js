@@ -154,7 +154,7 @@ const App = () => {
     </SafeAreaProvider>
   );
 };
-export default App;
+export default CodePush(CODE_PUSH_OPTIONS)(App);
 const SharedGetApis = ({ }) => {
   const { isLoggedIn } = useSelector(state => state.userReducer);
   React.useEffect(() => {

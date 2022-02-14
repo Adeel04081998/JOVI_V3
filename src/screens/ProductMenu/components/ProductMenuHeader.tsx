@@ -19,6 +19,7 @@ interface Props {
 
     hideHeader?: boolean;
     data:any;
+    pitstopType?:any;
 }
 
 const defaultProps = {
@@ -26,6 +27,7 @@ const defaultProps = {
     shelveData: [],
     hideHeader: false,
     data:[],
+    pitstopType:1,
 };
 
 // #endregion :: INTERFACE END's FROM HERE 
@@ -87,7 +89,7 @@ const ProductMenuHeader = (props: Props) => {
                                             color={colors}
                                             seeAll
                                             onItemPress={()=>{
-                                                NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Shelves.screen_name,{shelveData:props.shelveData})
+                                                NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Shelves.screen_name,{shelveData:props.shelveData,pitstopType:props.pitstopType})
                                             }}
                                         />
                                     }

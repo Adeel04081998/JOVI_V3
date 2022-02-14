@@ -1,6 +1,7 @@
 import * as React from "react";
 import { GestureResponderEvent, Platform, StyleProp, StyleSheet, TextStyle, View as RNView, ViewStyle } from "react-native";
 import { VALIDATION_CHECK } from "../../helpers/SharedActions";
+import NavigationService from "../../navigations/NavigationService";
 import Text from "../atoms/Text";
 import TouchableOpacity from "../atoms/TouchableOpacity";
 import TouchableScale from "../atoms/TouchableScale";
@@ -62,12 +63,12 @@ const defaultProps = {
     leftDotTextStyle: {},
     leftContainerStyle: {},
 
-    leftIconName: "ios-menu",
+    leftIconName: "chevron-back",//"ios-menu",
     leftIconType: 'Ionicons',
     leftIconStyle: {},
     leftIconSize: 25,
     leftIconColor: "#272727",
-    onLeftIconPress: undefined,
+    onLeftIconPress: ()=>{NavigationService.NavigationActions.common_actions.goBack()},
 
     //LEFT SIDE PROP's ENDING 
 
@@ -80,7 +81,7 @@ const defaultProps = {
     rightContainerStyle: {},
 
     rightIconName: "shopping-bag",
-    rightIconType: 'FontAwesome5',
+    rightIconType: Platform.OS === 'android'? 'FontAwesome5':'FontAwesome',
     rightIconStyle: {},
     rightIconSize: 25,
     rightIconColor: "#272727",
@@ -121,7 +122,8 @@ const CustomHeader = (props: Props) => {
                     <VectorIcon name={"chevron-down"} type={"EvilIcons"} />
                 </View>
                 <Text style={styles.finalDestinationText} numberOfLines={1}>
-                    {VALIDATION_CHECK(finalDestination) ? finalDestination : `Set your location`}
+                    {/* {VALIDATION_CHECK(finalDestination) ? finalDestination : `Set your location`} */}
+                    {"version-2.1"}
                 </Text>
             </TouchableOpacity>
         )

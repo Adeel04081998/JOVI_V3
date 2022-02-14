@@ -1,6 +1,6 @@
 import AnimatedLottieView from 'lottie-react-native';
 import React from 'react';
-import { ActivityIndicator, Appearance, FlatList, ScrollView } from 'react-native';
+import { ActivityIndicator, Appearance, FlatList, SafeAreaView, ScrollView } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import svgs from '../../assets/svgs';
 import ImageBackground from '../../components/atoms/ImageBackground';
@@ -24,6 +24,7 @@ import ProductQuantityCard from './components/ProductQuantityCard';
 import { itemStylesFunc, stylesFunc } from './styles';
 import { useSelector } from 'react-redux';
 import lodash from 'lodash'; // 4.0.8
+import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 
 const WINDOW_WIDTH = constants.window_dimensions.width;
 
@@ -162,7 +163,6 @@ export default ({ navigation, route }) => {
     };//end of loadData
 
     // #endregion :: API IMPLEMENTATION END's FROM HERE 
-
     // #region :: RENDER HEADER START's FROM HERE 
     const _renderHeader = (title = headerTitle) => {
         return (
@@ -173,7 +173,9 @@ export default ({ navigation, route }) => {
                     ...!VALIDATION_CHECK(title) && {
                         position: "absolute",
                         zIndex: 999,
+                       
                     },
+                    top:getStatusBarHeight(true),
                 }}
                 title={title}
                 titleStyle={{
@@ -367,7 +369,7 @@ export default ({ navigation, route }) => {
     }
 
     return (
-        <View style={styles.primaryContainer}>
+        <SafeAreaView style={styles.primaryContainer}>
             {_renderHeader('')}
             <FlatList
                 ref={flatlistRef}
@@ -382,6 +384,7 @@ export default ({ navigation, route }) => {
                 onEndReached={onEndReached}
                 ListHeaderComponent={(
                     <ProductMenuHeader
+                    pitstopType={pitstopType}
                         hideHeader
                         colors={colors}
                         shelveData={allData?.shelveSlicedArray ?? []}
@@ -416,7 +419,7 @@ export default ({ navigation, route }) => {
 
 
 
-        </View>
+        </SafeAreaView>
     )
 };//end of EXPORT DEFAULT
 
