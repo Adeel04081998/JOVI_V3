@@ -23,6 +23,7 @@ import { postRequest } from "../../manager/ApiManager";
 import Endpoints from "../../manager/Endpoints";
 import { sharedExceptionHandler } from "../../helpers/SharedActions";
 import AnimatedLottieView from "lottie-react-native";
+import Regex from "../../utils/Regex";
 
 
 export default (props) => {
@@ -57,7 +58,7 @@ export default (props) => {
         postRequest(Endpoints.PRODUCT_DETAILS, {
             "pitstopProductID": propItem?.pitStopItemID ?? 55278,
             "pitstopDealID": propItem?.pitstopDealID ?? 0,
-            "pitstopType":pitstopType
+            "pitstopType": pitstopType
         }, (res) => {
             console.log('if GET_PRODUCTDETAIL  res', res);
             setState((pre) => ({
@@ -151,7 +152,7 @@ export default (props) => {
 
     const renderButtonsUi = () => {
         return (
-            <AnimatedView style={{ flexDirection: 'row', justifyContent: 'space-between',paddingHorizontal:10, alignItems: 'center', marginHorizontal: 12, height: 80 }}>
+            <AnimatedView style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, alignItems: 'center', marginHorizontal: 12, height: 80 }}>
                 <View style={{
                     flexDirection: 'row', alignSelf: 'center', backgroundColor: 'white', borderRadius: 30, alignItems: 'center', paddingHorizontal: Platform.OS === "android" ? 6 : 20, paddingVertical: 5,
                     shadowColor: "#000",
@@ -159,7 +160,7 @@ export default (props) => {
                     shadowOpacity: 0.25,
                     shadowRadius: 3.84,
                     elevation: 5,
-                    width:'35%'
+                    width: '35%'
                 }}>
 
                     <TouchableScale
@@ -186,8 +187,9 @@ export default (props) => {
                         />
                     </TouchableScale>
                 </View>
-                <View style={{ marginLeft: 9,
-                    width:'65%'
+                <View style={{
+                    marginLeft: 9,
+                    width: '65%'
                 }}>
                     <Button
                         onPress={() => addToCartHandler()}
@@ -220,21 +222,21 @@ export default (props) => {
 
     }, [])
     return (
-        <View style={{ flex: 1}} >
+        <View style={{ flex: 1 }} >
             {
 
                 loading ? renderLoader() :
                     <SafeAreaView style={productDetailsStyles.mainContainer}>
-                         <CustomHeader
-                                leftIconName={"chevron-back"}
-                                onLeftIconPress={() => { goBack() }}
-                                containerStyle={[productDetailsStyles.customHeaderMainContainer,]}
-                                hideFinalDestination={true}
-                                leftContainerStyle={productDetailsStyles.customHeaderLeftRightContainer}
-                                leftIconColor={productDetailsStyles.customHeaderLeftRightIconColor}
-                                rightContainerStyle={productDetailsStyles.customHeaderLeftRightContainer}
-                                rightIconColor={productDetailsStyles.customHeaderLeftRightIconColor}
-                            />
+                        <CustomHeader
+                            leftIconName={"chevron-back"}
+                            onLeftIconPress={() => { goBack() }}
+                            containerStyle={[productDetailsStyles.customHeaderMainContainer,]}
+                            hideFinalDestination={true}
+                            leftContainerStyle={productDetailsStyles.customHeaderLeftRightContainer}
+                            leftIconColor={productDetailsStyles.customHeaderLeftRightIconColor}
+                            rightContainerStyle={productDetailsStyles.customHeaderLeftRightContainer}
+                            rightIconColor={productDetailsStyles.customHeaderLeftRightIconColor}
+                        />
                         <ScrollView showsVerticalScrollIndicator={false}>
                             <View>
                                 <ImageCarousel
@@ -256,7 +258,7 @@ export default (props) => {
                                 style={{ top: 150, width: '100%', height: 40, position: 'absolute', }}
                             >
                             </LinearGradient>
-                            <AnimatedView style={productDetailsStyles.primaryContainer}>
+                            <AnimatedView style={[productDetailsStyles.primaryContainer]}>
                                 <Text style={productDetailsStyles.productNametxt} numberOfLines={1} fontFamily="PoppinsMedium">{productName}</Text>
                                 {productDetails ? <Text style={productDetailsStyles.productDescriptionTxt} fontFamily="PoppinsRegular">{productDetails}</Text> : null}
                                 <AnimatedView style={productDetailsStyles.productPriceContainer}>
@@ -281,7 +283,10 @@ export default (props) => {
                                     textAlignVertical='top'
                                     style={{ textAlign: "left", backgroundColor: '#0000002E', borderColor: '#0000002E', opacity: 0.3, margin: 10, borderRadius: 10, minHeight: minHeight, }}
                                     placeholder="Types your notes"
-                                    onChangeText={(text) => { setState((pre) => ({ ...pre, notes: text })) }}
+                                    onChangeText={(text) => {
+                                        if (Regex.Space_Regex.test(text)) return
+                                        setState((pre) => ({ ...pre, notes: text }))
+                                    }}
                                     multiline={true} // ios fix for centering it at the top-left corner 
                                     numberOfLines={Platform.OS === "ios" ? null : numberOfLines}
                                 />
