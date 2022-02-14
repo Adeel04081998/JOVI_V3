@@ -20,6 +20,7 @@ import Filter from '../components/atoms/Filter';
 import { useSelector } from 'react-redux';
 import PitstopsVerticalList from '../screens/PitstopListing/PitstopsVerticalList';
 import RestaurantProductMenu from '../screens/RestaurantProductMenu';
+import ProductMenu from '../screens/ProductMenu';
 const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES,APP_DRAWER_ROUTES,APP_DRAWER_STACK } = ROUTES;
 const AppDrawerStack = (props) => {
     return <Stack.Navigator screenOptions={stackOpts} initialRouteName={APP_DRAWER_ROUTES.Home.screen_name}>

@@ -21,5 +21,6 @@ export default {
 
     //RESTAURANT
     "GET_RESTAURANT_PRODUCT_MENU_LIST":"api/Restaurant/ProductsAndDeals/List/V2",// SCREEN_NAME: RestaurantProductMenu
+    "GET_PRODUCT_MENU_LIST":"api/SuperMarket/Stock/List", //SCREEN_NAME: ProductMenu
 
 }

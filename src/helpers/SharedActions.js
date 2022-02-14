@@ -1,13 +1,13 @@
 import React from 'react';
-import {useIsFocused} from '@react-navigation/native';
-import {Alert, StatusBar} from 'react-native';
-import {Platform} from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
+import { Alert, StatusBar } from 'react-native';
+import { Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import BackgroundTimer from 'react-native-background-timer';
-import {postRequest, getRequest} from '../manager/ApiManager';
+import { postRequest, getRequest } from '../manager/ApiManager';
 import Endpoints from '../manager/Endpoints';
 import Toast from '../components/atoms/Toast';
-import {store} from '../redux/store';
+import { store } from '../redux/store';
 import ReduxActions from '../redux/actions';
 import configs from '../utils/configs';
 import Regex from '../utils/Regex';
@@ -15,11 +15,14 @@ import GV, { PITSTOP_TYPES } from '../utils/GV';
 const dispatch = store.dispatch;
 export const sharedGetDeviceInfo = async () => {
     let model = DeviceInfo.getModel();
-    let deviceID = Platform.OS === "ios" ? DeviceInfo.getUniqueId() : await DeviceInfo.getAndroidId();
+    let deviceID =
+        Platform.OS === 'ios'
+            ? DeviceInfo.getUniqueId()
+            : await DeviceInfo.getAndroidId();
     let systemVersion = DeviceInfo.getSystemVersion();
-    return { deviceID, model, systemVersion }
-}
-export const sharedExceptionHandler = (err) => {
+    return { deviceID, model, systemVersion };
+};
+export const sharedExceptionHandler = err => {
     // console.log("[sharedExceptionHandler].err", err);
     const TOAST_SHOW = 3000;
     if (err) {
@@ -64,175 +67,177 @@ export const sharedExceptionHandler = (err) => {
             Toast.error('Something went wrong', TOAST_SHOW);
             return 'Something went wrong';
         }
+    } else {
+        Toast.error('Something went wrong', TOAST_SHOW);
+        return 'Something went wrong';
     }
-  
-};
-export const sharedInteval = (
-  duration = 30,
-  delay = 1,
-  listener = () => {},
-) => {
-  // DURATION MUST BE IS SECONDS
-  var timer = duration,
-    minutes,
-    seconds;
-  let interlID = BackgroundTimer.setInterval(function () {
-    // console.log('Interval Ran----');
-    minutes = parseInt(timer / 60, 10);
-    seconds = parseInt(timer % 60, 10);
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    seconds = seconds < 10 ? '0' + seconds : seconds;
-    listener({minutes, seconds, intervalStoped: false});
-    if (--timer < 0) {
-      listener({minutes, seconds, intervalStoped: true});
-      BackgroundTimer.clearInterval(interlID);
-      // console.log("Interval Stopped---", interlID);
-      return;
-    }
-  }, 1000);
+}
+
+export const sharedInteval = (duration = 30, delay = 1, listener = () => { }) => {
+    // DURATION MUST BE IS SECONDS
+    var timer = duration,
+        minutes,
+        seconds;
+    let interlID = BackgroundTimer.setInterval(function () {
+        // console.log('Interval Ran----');
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+        listener({ minutes, seconds, intervalStoped: false });
+        if (--timer < 0) {
+            listener({ minutes, seconds, intervalStoped: true });
+            BackgroundTimer.clearInterval(interlID);
+            // console.log("Interval Stopped---", interlID);
+            return;
+        }
+    }, 1000);
 };
 export const focusAwareStatusBar = props => {
-  const isFocused = useIsFocused();
+    const isFocused = useIsFocused();
 
-  return isFocused ? <StatusBar {...props} /> : null;
+    return isFocused ? <StatusBar {...props} /> : null;
 };
 export const VALIDATION_CHECK = text => {
-  text = `${text}`.toLowerCase().trim();
-  if (
-    text === '' ||
-    text === ' ' ||
-    text === 'null' ||
-    text === 'undefined' ||
-    text === 'false'
-  ) {
-    return false;
-  }
-  return true;
+    text = `${text}`.toLowerCase().trim();
+    if (
+        text === '' ||
+        text === ' ' ||
+        text === 'null' ||
+        text === 'undefined' ||
+        text === 'false'
+    ) {
+        return false;
+    }
+    return true;
 };
+
 export const sendOTPToServer = (payload, onSuccess, onError, onLoader) => {
-  postRequest(
-    Endpoints.SEND_OTP,
-    payload,
-    res => {
-      onSuccess(res);
-    },
-    err => {
-      onError(err);
-    },
-    {},
-    true,
-    loader => {
-      onLoader(loader);
-    },
-  );
+    postRequest(
+        Endpoints.SEND_OTP,
+        payload,
+        res => {
+            onSuccess(res);
+        },
+        err => {
+            onError(err);
+        },
+        {},
+        true,
+        loader => {
+            onLoader(loader);
+        },
+    );
 };
 export const sharedGetEnumsApi = () => {
-    getRequest(Endpoints.GET_ENUMS, res => {
-        console.log("[getEnums].res", res);
-        dispatch(ReduxActions.setEnumsActions(res.data.enums))
-    },
-    err => {
-      sharedExceptionHandler(err);
-    },
-    {},
-    false,
-  );
+    getRequest(
+        Endpoints.GET_ENUMS,
+        res => {
+            // console.log("[getEnums].res", res);
+            dispatch(ReduxActions.setEnumsActions(res.data.enums));
+        },
+        err => {
+            sharedExceptionHandler(err);
+        },
+        {},
+        false,
+    );
 };
 export const sharedGetUserDetailsApi = () => {
-  getRequest(
-    Endpoints.GET_USER_DETAILS,
-    res => {
-      // console.log("[getUserDetailsApi].res", res);
-      dispatch(ReduxActions.setUserAction({...res.data.userDetails}));
-    },
-    err => {
-      sharedExceptionHandler(err);
-    },
-    {},
-    false,
-  );
+    getRequest(
+        Endpoints.GET_USER_DETAILS,
+        res => {
+            // console.log("[getUserDetailsApi].res", res);
+            dispatch(ReduxActions.setUserAction({ ...res.data.userDetails }));
+        },
+        err => {
+            sharedExceptionHandler(err);
+        },
+        {},
+        false,
+    );
 };
-export const fetchRobotJson = (url, cb = () => {}) => {
-  // fetch('https://cloud-ex42.usaupload.com/5OSX/Robot_-_With_Shape_Layer_Text.json?download_token=5c263b7ebfac80573376d00e6ee5ce29f3d822a4d3addb5209b2e6f4cfa3a8ed', {
-  fetch(renderFile(url), {
-    method: 'GET',
-  })
-    .then(response => response.json())
-    .then(responseData => {
-      cb(responseData);
-      // cb(theBlob);
+export const fetchRobotJson = (url, cb = () => { }) => {
+    // fetch('https://cloud-ex42.usaupload.com/5OSX/Robot_-_With_Shape_Layer_Text.json?download_token=5c263b7ebfac80573376d00e6ee5ce29f3d822a4d3addb5209b2e6f4cfa3a8ed', {
+    fetch(renderFile(url), {
+        method: 'GET',
     })
-    .catch(error => {
-      // console.log(error);
-      cb(null);
-    });
+        .then(response => response.json())
+        .then(responseData => {
+            cb(responseData);
+            // cb(theBlob);
+        })
+        .catch(error => {
+            // console.log(error);
+            cb(null);
+        });
 };
 export const sharedGetHomeMsgsApi = () => {
-  let payload = {
-    mascotScreenEnum: 1,
-    getPersonalizeMsgs: true,
-  };
-  postRequest(
-    Endpoints.GET_HOME_MSGS,
-    payload,
-    res => {
-      // console.log("[sharedGetHomeMsgsApi].res", res.data);
-      if (res.data.homeScreenDataViewModel.robotJson) {
-        fetchRobotJson(res.data.homeScreenDataViewModel.robotJson, data => {
-          // console.log('data robotJson',data)
-          dispatch(
-            ReduxActions.setMessagesAction({...res.data, robotJson: data}),
-          );
-        });
-      } else {
-        dispatch(ReduxActions.setMessagesAction({...res.data}));
-      }
-    },
-    err => {
-      sharedExceptionHandler(err);
-    },
-    {},
-    false,
-  );
+    let payload = {
+        mascotScreenEnum: 1,
+        getPersonalizeMsgs: true,
+    };
+    postRequest(
+        Endpoints.GET_HOME_MSGS,
+        payload,
+        res => {
+            // console.log("[sharedGetHomeMsgsApi].res", res.data);
+            if (res.data.homeScreenDataViewModel.robotJson) {
+                fetchRobotJson(res.data.homeScreenDataViewModel.robotJson, data => {
+                    // console.log('data robotJson',data)
+                    dispatch(
+                        ReduxActions.setMessagesAction({ ...res.data, robotJson: data }),
+                    );
+                });
+            } else {
+                dispatch(ReduxActions.setMessagesAction({ ...res.data }));
+            }
+        },
+        err => {
+            sharedExceptionHandler(err);
+        },
+        {},
+        false,
+    );
 };
 export const sharedGetUserAddressesApi = () => {
-  getRequest(
-    Endpoints.GET_USER_ADDRESSES,
-    res => {
-      // console.log("[sharedGetHomeMsgsApi].res", res);
-      dispatch(ReduxActions.setUserAction({...res.data}));
-    },
-    err => {
-      sharedExceptionHandler(err);
-    },
-    {},
-    false,
-  );
+    getRequest(
+        Endpoints.GET_USER_ADDRESSES,
+        res => {
+            // console.log("[sharedGetHomeMsgsApi].res", res);
+            dispatch(ReduxActions.setUserAction({ ...res.data }));
+        },
+        err => {
+            sharedExceptionHandler(err);
+        },
+        {},
+        false,
+    );
 };
 export const sharedGetPromotions = () => {
-  postRequest(
-    `${Endpoints.GET_PROMOTIONS}`,
-    {
-      isDashboard: true,
-      isUserSpecific: false, // Need to discuss with Shakir
-      latitude: 33.668531, // should be replace with user's final destination
-      longitude: 73.075001, // should be replace with user's final destination
-      isCitySpecific: true,
-    },
-    res => {
-      // console.log("[sharedGetPromotions].res", res);
-      dispatch(ReduxActions.setPromotionsAction({...res.data}));
-    },
-    err => {
-      sharedExceptionHandler(err);
-    },
-    {},
-    false,
-  );
+    postRequest(
+        `${Endpoints.GET_PROMOTIONS}`,
+        {
+            isDashboard: true,
+            isUserSpecific: false, // Need to discuss with Shakir
+            latitude: 33.668531, // should be replace with user's final destination
+            longitude: 73.075001, // should be replace with user's final destination
+            isCitySpecific: true,
+        },
+        res => {
+            // console.log("[sharedGetPromotions].res", res);
+            dispatch(ReduxActions.setPromotionsAction({ ...res.data }));
+        },
+        err => {
+            sharedExceptionHandler(err);
+        },
+        {},
+        false,
+    );
 };
 
 export const sharedLogoutUser = () => {
-  dispatch(ReduxActions.clearUserAction({introScreenViewed: true}));
+    dispatch(ReduxActions.clearUserAction({ introScreenViewed: true }));
 };
 
 export const sharedStartingRegionPK = {
@@ -242,6 +247,9 @@ export const sharedStartingRegionPK = {
     longitudeDelta: 15.910217463970177
 };
 
+export const sharedConfirmationAlert = (title, message, buttons = [], options = { cancelable: true, onDismiss: () => { } }) => {
+    Alert.alert(title, message, buttons, options)
+}
 export const secToHourMinSec = (sec = 1,) => {
     let totalSeconds = parseInt(sec);
     let hours = Math.floor(totalSeconds / 3600);
@@ -262,186 +270,206 @@ export const secToHourMinSec = (sec = 1,) => {
 }//end of secToHourMinSec
 
 export const renderFile = picturePath => {
-  const userReducer = store.getState().userReducer;
-  return `${GV.BASE_URL.current}/api/Common/S3File/${encodeURIComponent(
-    picturePath,
-  )}?access_token=${userReducer?.token?.authToken}`;
+    const userReducer = store.getState().userReducer;
+    return `${GV.BASE_URL.current}/api/Common/S3File/${encodeURIComponent(
+        picturePath,
+    )}?access_token=${userReducer?.token?.authToken}`;
 };
 
-export const sharedConfirmationAlert = (
-  title,
-  message,
-  buttons = [],
-  options = {cancelable: true, onDismiss: () => {}},
-) => {
-  Alert.alert(title, message, buttons, options);
-};
+export const renderPrice = (price, prefix = "Rs. ", suffix = "", reg = Regex.price,) => {
+    prefix = `${prefix}`.trim();
+    suffix = `${suffix}`.trim();
+    price = `${price}`.trim().replace(reg, '').trim();
+    return suffix.length > 0 ? `${prefix} ${price}${suffix}` : `${prefix} ${price}`;
+}
+
+export const isNextPage = (totalItem, itemPerRequest, currentRequestCount) => {
+    const total = itemPerRequest * currentRequestCount;
+
+    return totalItem - total > 0 ? true : false;
+};//end of isNextPage
+
+
 export const sharedCalculateCartTotals = (pitstops = []) => {
-  let subTotal = 0,
-    discount = 0,
-    serviceCharges = 0,
-    total = 0;
+    console.log("[sharedCalculateCartTotals]", pitstops);
+    let subTotal = 0,
+        discount = 0,
+        serviceCharges = 0,
+        total = 0;
+    pitstops.map((_pitstop, index) => {
+        if (_pitstop.pitstopType !== PITSTOP_TYPES.JOVI) {
+            _pitstop.checkOutItemsListVM.map((product, j) => {
+                subTotal += (product.gstAddedPrice * product.quantity);
+            })
+        }
+    })
+    total = subTotal;
+    dispatch(ReduxActions.setCartAction({ subTotal, discount, serviceCharges, total }));
+
 };
 export const sharedDiscountsCalculator = (
-  originalPrice = 0,
-  discount = 0,
-  discountDivider = 100,
+    originalPrice = 0,
+    discount = 0,
+    discountDivider = 100,
 ) => {
-  let afterDiscount = Math.round(
-    originalPrice - originalPrice * (discount / discountDivider),
-  );
-  return afterDiscount;
+    let afterDiscount = Math.round(
+        originalPrice - originalPrice * (discount / discountDivider),
+    );
+    return afterDiscount;
 };
 export const sharedJoviRemainingAmountCalculator = (pitstops, cartReducer) => {
-  let joviPitstops = pitstops.filter(p => p.pitstopType === PITSTOP_TYPES.JOVI),
-    openOrdersList = cartReducer.openOrdersList,
-    joviPrevOrderesPitstopsAmount = 0,
-    joviRemainingAmount = 0;
-  if (joviPitstops.length) {
-    if (openOrdersList.length) {
-      joviPrevOrderesPitstopsAmount = openOrdersList
-        .map((orderInfo, index) => orderInfo?.estimatePrice ?? 0)
-        .reduce((a, b) => a + b);
-    }
-    joviRemainingAmount =
-      joviPrevOrderesPitstopsAmount -
-      joviPitstops
-        .map((orderInfo, index) => orderInfo?.estimatePrice ?? 0)
-        .reduce((a, b) => a + b);
-    return joviRemainingAmount;
-  } else
-    console.log('[JOVI PITSTOP NOT FOUND TO CALCULATE REMAINING AMOUNT..]');
+    let joviPitstops = pitstops.filter(p => p.pitstopType === PITSTOP_TYPES.JOVI),
+        openOrdersList = cartReducer.openOrdersList,
+        joviPrevOrderesPitstopsAmount = 0,
+        joviRemainingAmount = 0;
+    if (joviPitstops.length) {
+        if (openOrdersList.length) {
+            joviPrevOrderesPitstopsAmount = openOrdersList
+                .map((orderInfo, index) => orderInfo?.estimatePrice ?? 0)
+                .reduce((a, b) => a + b);
+        }
+        joviRemainingAmount =
+            joviPrevOrderesPitstopsAmount -
+            joviPitstops
+                .map((orderInfo, index) => orderInfo?.estimatePrice ?? 0)
+                .reduce((a, b) => a + b);
+        return joviRemainingAmount;
+    } else
+        console.log('[JOVI PITSTOP NOT FOUND TO CALCULATE REMAINING AMOUNT..]');
 };
 export const sharedUniqueIdGenerator = (randomNum = 1000) => {
-  return Math.floor(Math.random() * randomNum) + new Date().getTime();
+    return Math.floor(Math.random() * randomNum) + new Date().getTime();
 };
 export const sharedAddUpdatePitstop = (
-  pitstopDetails = {},
-  isDeletePitstop = false,
-  isDeleteItem = false,
-  swappedArray = [],
+    pitstopDetails = {},
+    isDeletePitstop = false,
+    swappedArray = [],
 ) => {
-  if (false) return dispatch(ReduxActions.clearCartAction({}));
-  // FOR JOVI PITSTOPS
-  // {
-  //      GIVE ONLY ITEM OBJECT TO ADD NEW PITSTOP
-  //      GIVE ITEM AND INDEX TO UPDATE
-  //      GIVE INDEX >= 0 AND ISDELETE AS TRUE TO DELETE PITSTOP
-  // }
-  // **********
-  // FOR VENDOR PITSTOP
-  console.log('pitstopDetails', pitstopDetails);
-  const cartReducer = store.getState().cartReducer;
-  const pitstopIndex = pitstopDetails.pitstopIndex || null;
-  let pitstops = cartReducer.pitstops;
-  let joviRemainingAmount = cartReducer.joviRemainingAmount;
+    if (false) return dispatch(ReduxActions.clearCartAction({}));
+    // FOR JOVI PITSTOPS
+    // {
+    //      GIVE ONLY ITEM OBJECT TO ADD NEW PITSTOP
+    //      GIVE ITEM AND INDEX TO UPDATE
+    //      GIVE INDEX >= 0 AND ISDELETE AS TRUE TO DELETE PITSTOP
+    // }
+    // **********
+    // FOR VENDOR PITSTOP
+    console.log('pitstopDetails', pitstopDetails);
+    const cartReducer = store.getState().cartReducer;
+    const pitstopIndex = pitstopDetails.pitstopIndex || null;
+    let pitstops = cartReducer.pitstops;
+    let joviRemainingAmount = cartReducer.joviRemainingAmount;
 
-  if (pitstopDetails.pitstopType === PITSTOP_TYPES.JOVI) {
-    console.log('[JOVI PITSTOP]');
-    // JOVI PITSTOPS HANDLING
-    if (pitstopIndex !== null) {
-      console.log('[INDEX] EXIST');
-      if (isDeletePitstop) {
-        // DELETE CASE
-        console.log('[DELETE PITSTOP CASE]');
-        pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIndex);
-      } else {
-        // EDIT CASE
-        console.log('[UPDATE]');
-        pitstops[pitstopIndex] = {...pitstopDetails}; // TO RETAIN OLD PROPERTIES AS IT IS WITH UPDATED VAUES YOU NEED TO PASS SPREADED (...) OLD ITEM'S FULL DATA WITH UPDATED FIELDS
-        // pitstops[index] = { ...pitstops[index], ...pitstopDetails }; // ...pitstops[index] IF YOU DON'T HAVE ITEM'S PREVIOUS DATA (VERY RARE CASE)
-      }
-    } else {
-      // ADD NEW PITSTOP
-      console.log('[NEW CREATE]');
-      pitstops.push({pitstopID: sharedUniqueIdGenerator(), ...pitstopDetails});
-    }
-    console.log('[PITSTOPS]', pitstops);
-    joviRemainingAmount = sharedJoviRemainingAmountCalculator(
-      pitstops,
-      cartReducer,
-    );
-  } else {
-    // VENDOR PITSTOPS HANDLING
-    const upcomingVendorDetails = pitstopDetails.vendorDetails;
-    const upcomingItemDetails = pitstopDetails.item;
-    const checkoutItemID = upcomingItemDetails.checkoutItemID || 0; //
-    if (pitstopIndex !== null) {
-      console.log('[UPDATE CASE]');
-      if (isDeletePitstop) {
-        console.log('[DELETE PITSTOP CASE]');
-        pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIndex);
-      } else {
-        if (upcomingItemDetails.quantity <= 0) {
-          // TO REMOVE/DELETE SPECIFIC ITEM FROM CHECKOUT ITEM LIST
-          let filteredCheckOutItemsListVM = pitstops[
-            pitstopIndex
-          ].checkOutItemsListVM.filter(
-            (_prevItem, itemIndex) =>
-              _prevItem.checkoutItemID !== checkoutItemID,
-          );
-          console.log(
-            '[REMOVE/DELETE ITEM CASE LOGIC]',
-            filteredCheckOutItemsListVM,
-          );
-          pitstops[pitstopIndex].checkOutItemsListVM =
-            filteredCheckOutItemsListVM;
+    if (pitstopDetails.pitstopType === PITSTOP_TYPES.JOVI) {
+        console.log('[JOVI PITSTOP]');
+        // JOVI PITSTOPS HANDLING
+        if (pitstopIndex !== null) {
+            console.log('[INDEX] EXIST');
+            if (isDeletePitstop) {
+                // DELETE CASE
+                console.log('[DELETE PITSTOP CASE]');
+                pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIndex);
+            } else {
+                // EDIT CASE
+                console.log('[UPDATE]');
+                pitstops[pitstopIndex] = { ...pitstopDetails }; // TO RETAIN OLD PROPERTIES AS IT IS WITH UPDATED VAUES YOU NEED TO PASS SPREADED (...) OLD ITEM'S FULL DATA WITH UPDATED FIELDS
+                // pitstops[index] = { ...pitstops[index], ...pitstopDetails }; // ...pitstops[index] IF YOU DON'T HAVE ITEM'S PREVIOUS DATA (VERY RARE CASE)
+            }
         } else {
-          console.log('[TO UPDATE EXISTING ITEM CASE]');
-          pitstops[pitstopIndex].checkOutItemsListVM.map(
-            (_prevItem, itemIndex) => {
-              if (_prevItem.checkoutItemID === checkoutItemID) {
-                return {...upcomingItemDetails};
-              }
-              return _prevItem;
-            },
-          );
+            // ADD NEW PITSTOP
+            console.log('[NEW CREATE]');
+            pitstops.push({ pitstopID: sharedUniqueIdGenerator(), ...pitstopDetails });
         }
-      }
+        console.log('[PITSTOPS]', pitstops);
+        joviRemainingAmount = sharedJoviRemainingAmountCalculator(
+            pitstops,
+            cartReducer,
+        );
     } else {
-      console.log('[ADD ITEM TO EXISTING CHECKOUTITEMS LIST CASE]');
-      const pitstopFound =
-        pitstops.length &&
-        pitstops.find(x => x.pitstopID === upcomingVendorDetails.pitstopID); //(x.pitstopID === pitstopDetails.pitstopID || x.smid === pitstopDetails.smid))
-      if (pitstopFound) {
-        console.log('[PITSTOP FOUND]');
-        pitstops = pitstops.map((_pitstop, pitstopIndex) => {
-          // WHY WE DON'T USE pitstops[pitstopIndex]
-          // KUN K YE DYNAMIC HO GA KISI B PITSTOPS K LIYE AUR ISS TIME HMARY PASS EXISTING PITSTOP KA INDEX NAHI HO GA
-          if (_pitstop.pitstopID === pitstopFound.pitstopID) {
-            _pitstop.checkOutItemsListVM.push({
-              checkoutItemID: sharedUniqueIdGenerator(),
-              ...upcomingItemDetails,
-            });
-          }
-          return _pitstop;
-        });
-      } else {
-        // ADD NEW PITSTOP (DONE)
-        console.log('[PITSTOP NOT FOUND AND ADD NEW PITSTOP]');
-        pitstops.push({
-          ...pitstopDetails.vendorDetails,
-          pitstopID: sharedUniqueIdGenerator(),
-          checkOutItemsListVM: [
-            {...upcomingItemDetails, checkoutItemID: sharedUniqueIdGenerator()},
-          ],
-        });
-      }
+        // VENDOR PITSTOPS HANDLING
+        const upcomingVendorDetails = pitstopDetails.vendorDetails;
+        const upcomingItemDetails = pitstopDetails.itemDetails;
+        const actionKey = upcomingItemDetails.actionKey || ''; //
+        const pitstopActionKey = upcomingVendorDetails.actionKey || ''; //
+        console.log('[ACTION KEY]', actionKey);
+        if (pitstopIndex !== null) {
+            console.log('[UPDATE/DELETE CASE]');
+            if (isDeletePitstop || !upcomingItemDetails.quantity) {
+                console.log('[DELETE PITSTOP CASE]');
+                pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIndex);
+            } else {
+                if (upcomingItemDetails.quantity <= 0) {
+                    // TO REMOVE/DELETE SPECIFIC ITEM FROM CHECKOUT ITEM LIST
+                    let filteredCheckOutItemsListVM = pitstops[pitstopIndex].checkOutItemsListVM.filter((_prevItem, itemIndex) => _prevItem[actionKey] !== upcomingItemDetails[actionKey]);
+                    pitstops[pitstopIndex].checkOutItemsListVM = filteredCheckOutItemsListVM;
+                    console.log('[REMOVE/DELETE ITEM CASE LOGIC]', pitstops);
+                } else {
+                    pitstops[pitstopIndex].checkOutItemsListVM.map(
+                        (_prevItem, itemIndex) => {
+                            if (_prevItem[actionKey] === upcomingItemDetails[actionKey]) {
+                                _prevItem.quantity = upcomingItemDetails.quantity;
+                            }
+                            return _prevItem;
+                        },
+                    );
+                    console.log('[TO UPDATE EXISTING ITEM CASE]', pitstops);
+                }
+            }
+        } else {
+            console.log('[ADD ITEM TO EXISTING CHECKOUTITEMS LIST CASE]');
+            const pitstopFound = pitstops.length && pitstops.find(x => x[pitstopActionKey] === upcomingVendorDetails[pitstopActionKey]); //(x.pitstopID === pitstopDetails.pitstopID || x.smid === pitstopDetails.smid))
+            if (pitstopFound) {
+                console.log('[PITSTOP FOUND]');
+                pitstops = pitstops.map((_pitstop, pitstopIndex) => {
+                    // WHY WE DON'T USE pitstops[pitstopIndex]
+                    // KUN K YE DYNAMIC HO GA KISI B PITSTOPS K LIYE AUR ISS TIME HMARY PASS EXISTING PITSTOP KA INDEX NAHI HO GA
+                    if (_pitstop[pitstopActionKey] === pitstopFound[pitstopActionKey]) {
+                        const index = _pitstop.checkOutItemsListVM.findIndex(i => i[actionKey] === upcomingItemDetails[actionKey])
+                        if (index !== -1) {
+                            console.log('upcomingItemDetails.quantity  ',upcomingItemDetails.quantity );
+                            if (upcomingItemDetails.quantity > 0) {
+                                _pitstop.checkOutItemsListVM[index] = { ...upcomingItemDetails, checkOutItemID: _pitstop.checkOutItemsListVM[index].checkOutItemID };
+                            } else {
+                                // _pitstop.checkOutItemsListVM.slice(index,index);
+                                _pitstop.checkOutItemsListVM=  _pitstop.checkOutItemsListVM.filter(y => y[actionKey] !== upcomingItemDetails[actionKey]);
+                            }
+                        } else {
+                            _pitstop.checkOutItemsListVM.push({ checkOutItemID: sharedUniqueIdGenerator(), ...upcomingItemDetails, });
+                        }
+                    }
+                    return _pitstop;
+                });
+            } else {
+                // ADD NEW PITSTOP (DONE)
+                console.log('[PITSTOP NOT FOUND AND ADD NEW PITSTOP]');
+                pitstops.push({
+                    ...pitstopDetails.vendorDetails,
+                    pitstopID: sharedUniqueIdGenerator(),
+                    checkOutItemsListVM: [{ ...upcomingItemDetails, checkOutItemID: sharedUniqueIdGenerator() }],
+                });
+            }
+        }
     }
-  }
-  dispatch(ReduxActions.setCartAction({pitstops, joviRemainingAmount}));
+    dispatch(ReduxActions.setCartAction({ pitstops, joviRemainingAmount }));
+    sharedCalculateCartTotals(pitstops)
 };
 
+export const getRandomInt = (min = 10, max = 10000) => {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 export const sharedGetFilters = () => {
-    postRequest(Endpoints.GET_FILTERS,{
-        "vendorType":4
+    postRequest(Endpoints.GET_FILTERS, {
+        "vendorType": 4
 
     }, res => {
         console.log("[sharedGetFiltersApi].res ====>>", res);
         // dispatch(ReduxActions.setMessagesAction({ ...res.data, robotJson: data }));
-        dispatch(ReduxActions.setCategoriesTagsAction({...res.data}))
+        dispatch(ReduxActions.setCategoriesTagsAction({ ...res.data }))
 
-  
+
     },
         err => {
             console.log("error", err);
@@ -449,15 +477,8 @@ export const sharedGetFilters = () => {
         },
         {},
     )
-      
-   
+
+
 }
 
 export const uniqueKeyExtractor = () => new Date().getTime().toString() + (Math.floor(Math.random() * Math.floor(new Date().getTime()))).toString();
-
-export const renderPrice=(price,prefix="Rs. ",suffix="",)=>{
-    prefix=`${prefix}`.trim();
-    suffix=`${suffix}`.trim();
-    price=`${price}`.trim().replace(Regex.price,'').trim();
-    return suffix.length>0 ? `${prefix} ${price} ${suffix}` : `${prefix} ${price}`;
-}

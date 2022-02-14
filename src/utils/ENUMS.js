@@ -89,6 +89,20 @@ export default {
         0: { "text": "distance", "value": 0 },
         1: { "text": "delivery", "value": 1 }
     },
+    "PROMO_VALUE_TYPE": {
+        Empty: {
+            "text": "Fixed",
+            "value": 0
+        },
+        Fixed: {
+            "text": "Fixed",
+            "value": 1
+        },
+        Percentage: {
+            "text": "Percentage",
+            "value": 2
+        }
+    },
     "FILTER_BY": [
         {
            

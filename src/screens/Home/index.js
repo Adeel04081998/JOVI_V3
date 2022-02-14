@@ -37,7 +37,7 @@ export default () => {
                 useNativeDriver: true,
                 easing: Easing.ease
             }).start(finished => {
-                if (finished) {
+                if (finished && !__DEV__) {
                     dispatch(ReduxActions.showRobotAction());
                 }
             });
