@@ -79,8 +79,8 @@ const defaultProps = {
     rightDotTextStyle: {},
     rightContainerStyle: {},
 
-    rightIconName: "lock",
-    rightIconType: 'FontAwesome',
+    rightIconName: "shopping-bag",
+    rightIconType: 'FontAwesome5',
     rightIconStyle: {},
     rightIconSize: 25,
     rightIconColor: "#272727",

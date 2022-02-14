@@ -23,9 +23,7 @@ import constants from '../../res/constants';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import { askForAudioRecordPermission, sharedLaunchCameraorGallery } from '../../helpers/Camera';
-import { addressInfo, hybridLocationPermission, logGoogleApiHit } from '../../helpers/Location';
-import Modal from '../../components/atoms/Modal';
-import FontFamily from '../../res/FontFamily';
+import { hybridLocationPermission } from '../../helpers/Location';
 import { multipartPostRequest, postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import AudioplayerMultiple from '../../components/atoms/AudioplayerMultiple';
@@ -60,7 +58,6 @@ export default ({ navigation, route }) => {
     const styles = joviJobStyles(colors, WIDTH, HEIGHT);
     const { stack_actions, common_actions, drawer_actions } = NavigationService.NavigationActions
     const { APP_STACKS } = ROUTES;
-    const [modalVisible, setModalVisible] = useState(false)
     const [cardData, setCardData] = useState([
         {
             "idx": 1,
@@ -138,7 +135,7 @@ export default ({ navigation, route }) => {
 
     /******** Start of pitsTop Location variables *******/
 
-    const [nameval, setNameVal] = useState(__DEV__ ? 'Ahmed' :'')
+    const [nameval, setNameVal] = useState(__DEV__ ? 'Ahmed' : '')
     const [cityVal, setCityVal] = useState('')
     const [placeName, setPlaceName] = useState('')
     const [locationVal, setLocationVal] = useState(__DEV__ ? "Islamabad" : "")
@@ -150,7 +147,7 @@ export default ({ navigation, route }) => {
 
     /******** Start of Pitstop Details variables *******/
 
-    const [description, setDescription] = useState( __DEV__ ? 'CHUTTI CHAHIYE' : '')
+    const [description, setDescription] = useState(__DEV__ ? 'CHUTTI CHAHIYE' : '')
     const [imageData, updateImagesData] = useState([]);
 
     const [, updateStateaaa] = React.useState();
@@ -174,7 +171,7 @@ export default ({ navigation, route }) => {
 
     /******** Start of other Pitstop variables *******/
 
-    const [estVal, setEstVal] = useState(__DEV__ ?  '1500' : '')
+    const [estVal, setEstVal] = useState(__DEV__ ? '1500' : '')
     const [switchVal, setSwitch] = useState(false);
     const [estTime, setEstTime] = React.useState({
         text: __DEV__ ? "0-15 mins" : "Estimated Time",
@@ -194,7 +191,7 @@ export default ({ navigation, route }) => {
     /*****************************     Start of  useEffect            ***********************************/
 
 
-// to be used for editing purposes
+    // to be used for editing purposes
     useEffect(() => {
         if (route.params !== undefined && route.params !== '') {
             if (route.params.pitstopItemObj) {
@@ -590,7 +587,6 @@ export default ({ navigation, route }) => {
 
 
     /************   Start of render pitstop details  function     **************/
-    console.log('imageData', imageData);
 
 
     const renderPitStopDetails = (idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled) => {
@@ -835,15 +831,15 @@ export default ({ navigation, route }) => {
                 } />
         )
     } //End of Pitstop est Price
-
+     
 
     const validationCheck = () => {
-        if (locationVal !== '') return false
+        if (locationVal !== '' && description !== '' ) return false
         else return true
     }
     return (
         <SafeAreaView style={{ flex: 1 }} >
-            <CustomHeader leftIconName="keyboard-backspace" leftIconType="MaterialCommunityIcons" leftIconSize={30} />
+            <CustomHeader leftIconName="keyboard-backspace" leftIconType="MaterialCommunityIcons" leftIconSize={30} onLeftIconPress={() => common_actions.goBack()} />
             <Transitioning.View
                 ref={ref}
                 transition={transition}
@@ -871,7 +867,7 @@ export default ({ navigation, route }) => {
                                     title: locationVal,
                                     description,
                                     pitstopName: 'Jovi Job',
-                                    pitstopType: 2,
+                                    pitstopType: route.params.pitstopType,
                                     nameval,
                                     imageData,
                                     voiceNote,

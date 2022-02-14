@@ -8,6 +8,7 @@ import Introduction from '../screens/IntroScreen';
 import EnterOTP from '../screens/OTP/Enter';
 import VerifyOTP from '../screens/OTP/Verify';
 import SignUp from '../screens/SignUp/index';
+import ProductDetails from '../screens/ProductDetails';
 import JoviJob from '../screens/JoviJob';
 
 import Home from '../screens/Home';
@@ -51,7 +52,8 @@ const AppDrawerComponents = {
     PitstopListing,
     Filter,
     PitstopsVerticalList,
-    RestaurantProductMenu:ProductMenu,
+    RestaurantProductMenu,
+    ProductDetails,    
     JoviJob,
     Map
 }//will open with Slide Animation

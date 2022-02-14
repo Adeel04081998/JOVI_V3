@@ -31,6 +31,7 @@ type Props = React.ComponentProps<typeof Animated.View> & {
     customItem?: () => React.Component;
 
     item?: ProductCardItem;
+    onItemPress?:(item:ProductCardItem)=>void;
 };
 
 const defaultProps = {
@@ -40,6 +41,7 @@ const defaultProps = {
     containerStyle: {},
     item: { title: '', description: '', price: '', image: constants.DEFAULT_JOVI_IMAGE },
     customItem: undefined,
+    onItemPress:undefined,
 };
 // #endregion :: INTERFACE END's FROM HERE 
 
@@ -56,7 +58,13 @@ const ProductCard = (props: Props) => {
                 minHeight: cardHeight,
                 width: cardWidth,
                 ...styles.primaryContainer,
-            }, props.containerStyle]}>
+            }, props.containerStyle]}
+            onPress={()=>{
+                props.onItemPress && props.onItemPress(propItem);
+                
+                // Alert.alert('hy')
+            }}
+            >
 
             {VALIDATION_CHECK(props.customItem) ?
                 props.customItem && props.customItem()

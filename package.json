@@ -11,30 +11,23 @@
     "dev_android": "cd android&&./gradlew clean&&./gradlew --stop&&cd - &&npx react-native run-android",
     "branch_change_new_packages": "yarn && npx react-native run-android && cd ios && pod install && cd .. && npx react-native run-ios",
     "build_android": "cd android&&./gradlew clean&&./gradlew --stop&& ./gradlew bundleRelease &&cd - &&npx react-native run-android --variant=release",
-    
     "qa_codepush_ios_v2_staging": "appcenter codepush release-react -a cibaksolutionspk-gmail.com/JOVI-IOS-V3 -d Staging",
     "qa_codepush_ios_v2_production": "appcenter codepush release-react -a cibaksolutionspk-gmail.com/JOVI-IOS-V3 -d Production",
-    
     "_comment": "[qa_codepush_ios_v2_staging, qa_codepush_ios_v2_production] As we have updated the app name from v3 to v2 so don't be confused with `cibaksolutionspk-gmail.com/JOVI-IOS-V3` in ios v2 commands",
-    
     "qa_codepush_android_v2_staging": "appcenter codepush release-react -a cibaksolutionspk-gmail.com/JOVI-ANDROID-V2-QA -d Staging",
     "qa_codepush_android_v2_production": "appcenter codepush release-react -a cibaksolutionspk-gmail.com/JOVI-ANDROID-V2-QA -d Production",
     "live_codepush_android_v3_staging": "appcenter codepush release-react -a cibaksolutionspk-gmail.com/JOVI-ANDROID-V3 -d Staging",
     "live_codepush_android_v3_production": "appcenter codepush release-react -a cibaksolutionspk-gmail.com/JOVI-ANDROID-V3 -d Production",
-
     "set:env:debug": "node ./scripts/set-env.js --env debug",
     "set:env:staging": "node ./scripts/set-env.js --env staging",
     "set:env:release": "node ./scripts/set-env.js --env release",
-
     "run:android:debug": "yarn set:env:debug && yarn android --variant debug",
-    "run:android:staging": "yarn set:env:staging && yarn android --variant release", 
+    "run:android:staging": "yarn set:env:staging && yarn android --variant release",
     "run:android:release": "yarn set:env:release && yarn android --variant release",
     "_comments": "we have added --variant release for both staging and release because we will use staging as a release for QA and actual release for Production",
-
     "run:ios:debug": "yarn set:env:debug && yarn ios --configuration Debug",
     "run:ios:staging": "yarn set:env:staging && yarn ios --configuration  Release",
     "run:ios:release": "yarn set:env:release && yarn ios --configuration Release",
-
     "test": "jest",
     "lint": "eslint ."
   },
@@ -68,6 +61,7 @@
     "react-native-google-places-autocomplete": "^2.4.1",
     "react-native-image-crop-picker": "^0.37.2",
     "react-native-keyboard-aware-scrollview": "^2.1.0",
+    "react-native-linear-gradient": "^2.5.6",
     "react-native-maps": "^0.30.1",
     "react-native-otp-verify": "^1.0.4",
     "react-native-permissions": "^3.2.0",
