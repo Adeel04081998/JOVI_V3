@@ -17,5 +17,6 @@ export default {
     NET_INFO_REF: React.createRef(null),
     OTP_INTERVAL: 30, // SECONDS
     THEME_VALUES: { ...PITSTOP_TYPES },
-
+    MAX_PITSTOP_IMAGE_LIMIT: 3,
+    MAX_JOVI_AMOUNT: 10000
 } 

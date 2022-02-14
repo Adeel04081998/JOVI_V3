@@ -7,6 +7,7 @@ import VectorIcon, { IconTypeProps } from "../../../components/atoms/VectorIcon"
 import View from "../../../components/atoms/View";
 import CustomHeader from "../../../components/molecules/CustomHeader";
 import RecentOrder from "../../../components/organisms/RecentOrder";
+import NavigationService from "../../../navigations/NavigationService";
 import AppStyles from "../../../res/AppStyles";
 import { initColors } from '../../../res/colors';
 import constants from "../../../res/constants";
@@ -78,6 +79,7 @@ const RestaurantProductMenuHeader = (props: Props) => {
                     rightContainerStyle={styles.headerIcon}
                     leftIconColor={colors.primary}
                     rightIconColor={colors.primary}
+                    onLeftIconPress={()=>{NavigationService.NavigationActions.common_actions.goBack();}}
 
                 />
 

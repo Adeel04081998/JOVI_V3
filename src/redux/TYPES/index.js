@@ -17,4 +17,7 @@ export default {
     "CLEAR_ROBOT_JSON": "clear_robot_json",
     //USER_FINAL_DESTINATION
     "USER_FINAL_DESTINATION": "user_final_destination",
+
+    // FILTERED_CATEGORIES_TAGS
+    "SET_CATEGORIES_TAGS" : "get_filtered_categories"
 }

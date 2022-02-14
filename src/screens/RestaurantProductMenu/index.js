@@ -16,16 +16,23 @@ import GotoCartButton from './components/GotoCartButton';
 import { ProductDummyData2 } from './components/ProductDummyData';
 import RestaurantProductMenuHeader from './components/RestaurantProductMenuHeader';
 import RestaurantProductMenuScrollable from './components/RestaurantProductMenuScrollable';
+import lodash from 'lodash'; // 4.0.8
 import { itemStylesFunc, sectionHeaderStylesFunc, stylesFunc } from './styles';
 
 const WINDOW_HEIGHT = constants.window_dimensions.height;
-
+const PITSTOPS = {
+    SUPER_MARKET: 1,
+    JOVI: 2,
+    PHARMACY: 3,
+    RESTAURANT: 4,
+}
 LogBox.ignoreLogs([
     "Animated: `useNativeDriver` was not specified.",
 ]);
 
 export default ({ navigation, route }) => {
-    const colors = theme.getTheme(GV.THEME_VALUES.RESTAURANT, Appearance.getColorScheme() === "dark");
+    const pitstopType = route.params.pitstopType ?? 4;
+    const colors = theme.getTheme(GV.THEME_VALUES[lodash.invert(PITSTOPS)[pitstopType]], Appearance.getColorScheme() === "dark");
     const styles = stylesFunc(colors);
     const pitstopID = route?.params?.pitstopID ?? (__DEV__ ? 3738 : -1);
     const sectionHeaderStyles = sectionHeaderStylesFunc(colors);
@@ -118,7 +125,20 @@ export default ({ navigation, route }) => {
     if (query.isLoading) {
         return (
             <>
-                <CustomHeader />
+                <CustomHeader
+                    hideFinalDestination
+                    title={route?.params?.title??''}
+                    titleStyle={{
+                        color: colors.primary
+                    }}
+                    leftIconName="chevron-back"
+                    leftIconColor={colors.primary}
+                    rightIconColor={colors.primary}
+                    containerStyle={{
+                        backgroundColor: "transparent",
+                        borderBottomWidth: 0,
+                    }}
+                />
                 <View
                     style={{ height: '93%', width: '101%', paddingLeft: 10, paddingTop: 4, paddingHorizontal: 5, display: 'flex', justifyContent: 'center', alignContent: 'center', }}
                 >
@@ -136,7 +156,7 @@ export default ({ navigation, route }) => {
     }
 
     return (
-        <View style={{flex:1,backgroundColor:'red'}}>
+        <View style={{ flex: 1, }}>
             <StatusBar backgroundColor={colors.white} />
             {/* ****************** Start of UPPER HEADER TILL RECENT ORDER ****************** */}
             <Animated.View style={{
@@ -242,7 +262,7 @@ export default ({ navigation, route }) => {
                 )}
             />
 
-            <GotoCartButton colors={colors} onPress={() => { alert('bsdk') }} />
+            <GotoCartButton colors={colors} onPress={() => { }} />
 
         </View>
     )

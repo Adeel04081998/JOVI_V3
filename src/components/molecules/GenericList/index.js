@@ -13,8 +13,10 @@ import { renderFile, sharedExceptionHandler } from '../../../helpers/SharedActio
 import { postRequest } from '../../../manager/ApiManager';
 import Endpoints from '../../../manager/Endpoints';
 import sharedStyles from '../../../res/sharedStyles';
+import NavigationService from '../../../navigations/NavigationService';
+import ROUTES from '../../../navigations/ROUTES';
 
-export default ({ vendorType = 0, imageStyles = {}, showMoreBtnText = "", }) => {
+export default React.memo(({ vendorType = 0,pitstopType = 2, imageStyles = {}, themeColors = null, showMoreBtnText = "", }) => {
     const SPACING_BOTTOM = 0;
     const [data, setData] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(true);
@@ -24,9 +26,9 @@ export default ({ vendorType = 0, imageStyles = {}, showMoreBtnText = "", }) => 
                 "vendorType": vendorType
             },
             res => {
-                // console.log("GENERIC_LIST.RESPONSE", res);
+                console.log("GENERIC_LIST.RESPONSE", res);
                 if (res.data.statusCode !== 200) return;
-                setData(res.data.vendorCategoriesViewModel.vendorList);
+                setData(res.data.vendorCategoriesViewModel.vendorList.map((item,i)=>{return {...item,cardType:!i%2===0?2:1}}));
             },
             err => {
                 sharedExceptionHandler(err)
@@ -38,39 +40,64 @@ export default ({ vendorType = 0, imageStyles = {}, showMoreBtnText = "", }) => 
     React.useEffect(() => {
         fetchData();
     }, [vendorType])
-    const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
+    const colors = themeColors ?? theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
 
     const SCALE_IMAGE = {
         height: constants.window_dimensions.height / 5,
-        width: constants.window_dimensions.width * 0.8
+        width: constants.window_dimensions.width * 0.8,
+
+    }
+    const SCALE_IMAGE_SMALL = {
+        height_sm: constants.window_dimensions.height / 7,
+        width_sm: constants.window_dimensions.width * 0.3
     }
     const { height, width } = SCALE_IMAGE;
-    const styles = _styles(colors, width, height)
+    const { height_sm, width_sm } = SCALE_IMAGE_SMALL;
+    const styles = _styles(colors, width, height, width_sm, height_sm)
 
 
 
-    const renderItem = (item, index) => {
-        const { title, description, estTime, distance, image, averagePrice } = item;
-        return (
-            <TouchableOpacity activeOpacity={0.8} >
-                <Image source={{ uri: renderFile(image) }} style={[styles.image, imageStyles]} tapToOpen={false} />
-                <View style={styles.subContainer}>
-                    <Text style={styles.title} numberOfLines={1} >{title}</Text>
-                    {(distance || estTime) &&
-                        <View style={styles.iconContainer} >
-                            <VectorIcon name={item.distance ? "map-marker" : "clock-time-four"} type={item.distance ? "FontAwesome" : "MaterialCommunityIcons"} color={colors.theme || "#6D51BB"} size={15} style={{ marginRight: 5 }} />
-                            <Text style={styles.estTime} >{estTime || distance}</Text>
-                        </View>
+    const cardTypeUI = {
+        1: (item, index) => {
+            const { title, description, image, averagePrice } = item;
+            return (
+                <TouchableOpacity activeOpacity={0.8} style={{ padding: 10, width: 210 }}>
+                    <Image source={{ uri: renderFile(image) }} style={[styles.image_Small, { aspectRatio: 16 / 9.9 }, imageStyles]} tapToOpen={false} />
+                    <View style={styles.subContainer}>
+                        <Text style={styles.title} numberOfLines={1} >{title}</Text>
+                    </View>
+                    <Text style={{ ...styles.tagsText }} numberOfLines={1} >{description}</Text>
+                    {averagePrice &&
+                        <Text style={styles.title} >Rs. {averagePrice}</Text>
                     }
-                </View>
-                <Text style={styles.tagsText} numberOfLines={1} >{description}</Text>
-                {averagePrice &&
-                    <Text style={styles.title} >Rs. {averagePrice}</Text>
-                }
-            </TouchableOpacity>
-        )
+                </TouchableOpacity>
+            )
+        },
+        2: (item, index) => {
+            const { title, description, estTime, distance, image, averagePrice } = item;
+            return (
+                <TouchableOpacity activeOpacity={0.8} >
+                    <Image source={{ uri: renderFile(image) }} style={[styles.image, imageStyles]} tapToOpen={false} />
+                    <View style={styles.subContainer}>
+                        <Text style={styles.title} numberOfLines={1} >{title}</Text>
+                        {(distance || estTime) &&
+                            <View style={styles.iconContainer} >
+                                <VectorIcon name={item.distance ? "map-marker" : "clock-time-four"} type={item.distance ? "FontAwesome" : "MaterialCommunityIcons"} color={colors.primary || "#6D51BB"} size={15} style={{ marginRight: 5 }} />
+                                <Text style={styles.estTime} >{estTime || distance}</Text>
+                            </View>
+                        }
+                    </View>
+                    <Text style={styles.tagsText} numberOfLines={1} >{description}</Text>
+                    {averagePrice &&
+                        <Text style={styles.title} >Rs. {averagePrice}</Text>
+                    }
+                </TouchableOpacity>
+            )
+        }
     }
-
+    const onPressViewMore = (item) => {
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.PitstopsVerticalList.screen_name,{pitstopType:pitstopType,listingObj:{...item}});
+    }
     return (
         <View style={{ paddingBottom: SPACING_BOTTOM }}>
             {
@@ -78,7 +105,7 @@ export default ({ vendorType = 0, imageStyles = {}, showMoreBtnText = "", }) => 
                     <React.Fragment key={`generic-item-key-${index}`}>
                         <View style={styles.container} >
                             <Text style={styles.mainText} >{item.header}</Text>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={()=>onPressViewMore(item)}>
                                 <Text style={styles.viewMoreBtn} >{showMoreBtnText || `View More`}</Text>
                             </TouchableOpacity>
                         </View>
@@ -86,8 +113,9 @@ export default ({ vendorType = 0, imageStyles = {}, showMoreBtnText = "", }) => 
                         <AnimatedFlatlist
 
                             data={item.vendorList}
-                            renderItem={renderItem}
-                            itemContainerStyle={{ ...styles.itemContainer }}
+                            renderItem={cardTypeUI[item.cardType ?? 1]}
+                            itemContainerStyle={item.cardType === 1 ? styles.itemContainerSmall : { ...styles.itemContainer }}
+                            // itemContainerStyle={item.cardType !== 1?styles.itemContainerSmall:{ ...styles.itemContainer }}
                             horizontal={true}
                             flatlistProps={{
                                 showsHorizontalScrollIndicator: false,
@@ -100,24 +128,24 @@ export default ({ vendorType = 0, imageStyles = {}, showMoreBtnText = "", }) => 
 
         </View>
     );
-}
+}, (n, p) => n !== p)
 
 
 //_styles declararation
 
-const _styles = (colors, width, height) => StyleSheet.create({
+const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.create({
     container: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingHorizontal: 10,
-        paddingVertical: 10
+        paddingVertical: 5
     },
     mainText: {
         color: colors.text,
         fontSize: 16
     },
     viewMoreBtn: {
-        color: colors.theme || '#6D51BB', // colors.theme here should be the theme color of specific category
+        color: colors.primary || '#6D51BB', // colors.primary here should be the theme color of specific category
         fontSize: 12
     },
     itemContainer: {
@@ -130,9 +158,24 @@ const _styles = (colors, width, height) => StyleSheet.create({
         paddingVertical: 10,
         marginVertical: 5
     },
+    itemContainerSmall: {
+        ...sharedStyles._styles(colors).shadow,
+        backgroundColor: colors.white || '#fff',
+        borderRadius: 10,
+        marginHorizontal: 5,
+        flex: 1,
+        // paddingHorizontal: 10,
+        // paddingVertical: 10,
+        marginVertical: 5
+    },
     image: {
         height: height,
         width: width,
+        borderRadius: 10
+    },
+    image_Small: {
+        height: height_sm,
+        width: width_sm,
         borderRadius: 10
     },
     iconContainer: {
@@ -153,7 +196,7 @@ const _styles = (colors, width, height) => StyleSheet.create({
     },
     estTime: {
         fontSize: 12,
-        color: colors.theme || '#6D51BB', // colors.theme here should be the theme color of specific category
+        color: colors.primary || '#6D51BB', // colors.primary here should be the theme color of specific category
         marginTop: Platform.OS === "android" ? 3 : 0
     },
     title: {
