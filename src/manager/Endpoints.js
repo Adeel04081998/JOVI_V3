@@ -16,6 +16,7 @@ export default {
     "GET_PITSTOPS" : "api/Restaurant/Pitstop/ListOrSearch/V2",
     "GET_PITSTOPS_PROMOTIONS":"api/Menu/Vendor/CategorizationByID",
     "GET_FILTERS" : "api/Menu/Vendor/GetFilters",
+    "GET_ADVERTISEMENTS" : "api/Advertisement/List",
     
 
     //RESTAURANT
