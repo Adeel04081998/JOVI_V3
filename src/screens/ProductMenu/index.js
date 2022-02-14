@@ -22,6 +22,8 @@ import { ProductDummyData1 } from '../RestaurantProductMenu/components/ProductDu
 import ProductMenuHeader from './components/ProductMenuHeader';
 import ProductQuantityCard from './components/ProductQuantityCard';
 import { itemStylesFunc, stylesFunc } from './styles';
+import { useSelector } from 'react-redux';
+import lodash from 'lodash'; // 4.0.8
 
 const WINDOW_WIDTH = constants.window_dimensions.width;
 
@@ -30,17 +32,24 @@ const VERTICAL_MAX_ITEM_PER_REQUEST = 10;
 const HORIZONTAL_MAX_ITEM_PER_REQUEST = 2;
 const SHELVE_MAX_COUNT = 7;
 const DEFAULT_PAGINATION_INFO = { totalItem: 0, itemPerRequest: VERTICAL_MAX_ITEM_PER_REQUEST, currentRequestCount: 1 };
-
-export default () => {
+const PITSTOPS = {
+    SUPER_MARKET: 1,
+    JOVI: 2,
+    PHARMACY: 3,
+    RESTAURANT: 4,
+}
+export default ({ navigation, route }) => {
+    const pitstopType = route?.params?.pitstopType ?? 4;
     // #region :: STYLES & THEME START's FROM HERE 
-    const colors = theme.getTheme(GV.THEME_VALUES.RESTAURANT, Appearance.getColorScheme() === "dark");
+    const colors = theme.getTheme(GV.THEME_VALUES[lodash.invert(PITSTOPS)[pitstopType]], Appearance.getColorScheme() === "dark");
     const styles = stylesFunc(colors);
     const itemStyles = itemStylesFunc(colors, ITEM_IMAGE_SIZE);
 
     // #endregion :: STYLES & THEME END's FROM HERE 
-
-    const marketID = 4609;// 4613,4609, 4521;
-    const headerTitle = 'SM';
+    const cartReducer = useSelector(store => store.cartReducer);
+    console.log("cartReducer", cartReducer);
+    const marketID = route.params?.pitstopID ?? 0;// 4613,4609, 4521;
+    const headerTitle = route.params?.title ?? '';
 
     // #region :: STATE's & REF's START's FROM HERE 
     const flatlistRef = React.useRef(null);
@@ -68,7 +77,7 @@ export default () => {
     }, []);
 
     const getQuantity = () => {
-        return Math.random() < 0.5 ? 0 : getRandomInt(1, 10);
+        return 0;
     };
 
     const loadData = (currentRequestNumber, append = false) => {
@@ -79,8 +88,8 @@ export default () => {
             refreshing: append,
         });
         const params = {
-            "latitude": finalDestination.latitude,
-            "longitude": finalDestination.longitude,
+            "latitude": finalDestination?.latitude ?? 33.654227,
+            "longitude": finalDestination?.longitude ?? 73.044831,
             "searchItem": "",
             "categoryID": 0,
             "catPageNumber": currentRequestNumber,
@@ -90,66 +99,66 @@ export default () => {
             "marketID": marketID
         };
 
-        // postRequest(Endpoints.GET_PRODUCT_MENU_LIST, params, (res) => {
-        //     console.log('response ', res);
-        //     if (res.data.statusCode === 404) {
-        //         updateQuery({
-        //             errorText: res.data.message,
-        //             isLoading: false,
-        //             error: true,
-        //             refreshing: false,
-        //         });
-        //         updateData({});
-        //         return
-        //     }
+        postRequest(Endpoints.GET_PRODUCT_MENU_LIST, params, (res) => {
+            console.log('response ', res);
+            if (res.data.statusCode === 404) {
+                updateQuery({
+                    errorText: res.data.message,
+                    isLoading: false,
+                    error: true,
+                    refreshing: false,
+                });
+                updateData({});
+                return
+            }
 
-        const pitstopStockView = ProductDummyData1?.pitstopStockViewModel ?? {};
+            const pitstopStockView = res.data?.pitstopStockViewModel ?? {};
 
-        const newData = (pitstopStockView?.categoryWithItems ?? []).map(pitem => {
-            const newpitstopItemListArr = pitem.pitstopItemList.map(item => {
+            const newData = (pitstopStockView?.categoryWithItems ?? []).map(pitem => {
+                const newpitstopItemListArr = pitem.pitstopItemList.map(item => {
+                    return {
+                        ...item,
+                        quantity: getQuantity(),
+                        isOutOfStock: false,
+                    }
+                })
                 return {
-                    ...item,
-                    quantity: getQuantity(),
-                    isOutOfStock: Math.random() < 0.1
-                }
+                    ...pitem,
+                    pitstopItemList: newpitstopItemListArr,
+                };
             })
-            return {
-                ...pitem,
-                pitstopItemList: newpitstopItemListArr,
-            };
+
+            if (!append) {
+                const shelveSlicedArray = (pitstopStockView?.shelves ?? []).slice(0, SHELVE_MAX_COUNT);
+                updateALlData({ ...pitstopStockView, shelveSlicedArray });
+                const totalItem = res.data?.pitstopStockViewModel?.categoryPaginationInfo?.totalItems ?? DEFAULT_PAGINATION_INFO.totalItem;
+
+                updatePaginationInfo(pre => ({
+                    ...pre,
+                    totalItem,
+                }))
+            }
+
+
+            updateData([...data, ...newData]);
+            toggleMetaData(!metaData);
+            updateQuery({
+                errorText: '',
+                isLoading: false,
+                error: false,
+                refreshing: false,
+            });
+
+        }, (err) => {
+            console.log('errror api  ', err);
+            sharedExceptionHandler(err);
+            updateQuery({
+                errorText: sharedExceptionHandler(err),
+                isLoading: false,
+                error: true,
+                refreshing: false,
+            })
         })
-
-        if (!append) {
-            const shelveSlicedArray = (pitstopStockView?.shelves ?? []).slice(0, SHELVE_MAX_COUNT);
-            updateALlData({ ...pitstopStockView, shelveSlicedArray });
-            const totalItem = ProductDummyData1?.pitstopStockViewModel?.categoryPaginationInfo?.totalItems ?? DEFAULT_PAGINATION_INFO.totalItem;
-
-            updatePaginationInfo(pre => ({
-                ...pre,
-                totalItem,
-            }))
-        }
-
-
-        updateData([...data, ...newData]);
-        toggleMetaData(!metaData);
-        updateQuery({
-            errorText: '',
-            isLoading: false,
-            error: false,
-            refreshing: false,
-        });
-
-        // }, (err) => {
-        //     console.log('errror api  ', err);
-        //     sharedExceptionHandler(err);
-        //     updateQuery({
-        //         errorText: sharedExceptionHandler(err),
-        //         isLoading: false,
-        //         error: true,
-        //         refreshing: false,
-        //     })
-        // })
     };//end of loadData
 
     // #endregion :: API IMPLEMENTATION END's FROM HERE 
@@ -283,10 +292,10 @@ export default () => {
         data[parentIndex].pitstopItemList[index].quantity = quantity;
         const pitstopDetails = {
             pitstopType: PITSTOP_TYPES.SUPER_MARKET,
-            vendorDetails: { ...data[parentIndex], pitstopItemList: null,actionKey:"categoryID" },
-            itemDetails: { ...data[parentIndex].pitstopItemList[index],actionKey:"pitStopItemID" },
+            vendorDetails: { ...data[parentIndex], pitstopItemList: null, marketID, actionKey: "marketID" },
+            itemDetails: { ...data[parentIndex].pitstopItemList[index], actionKey: "pitStopItemID" },
         }
-        
+
         sharedAddUpdatePitstop(pitstopDetails,)
         // if (Math.random() < 0) {
         //     undoQuantity(parentIndex, index);
@@ -396,7 +405,8 @@ export default () => {
 
             <GotoCartButton colors={colors} onPress={() => {
 
-            }} />
+            }}
+            />
 
 
 

@@ -68,9 +68,9 @@ export const sharedExceptionHandler = err => {
             return 'Something went wrong';
         }
     } else {
-      Toast.error('Something went wrong', TOAST_SHOW);
-      return 'Something went wrong';
-  }
+        Toast.error('Something went wrong', TOAST_SHOW);
+        return 'Something went wrong';
+    }
 }
 
 export const sharedInteval = (duration = 30, delay = 1, listener = () => { }) => {
@@ -130,18 +130,18 @@ export const sendOTPToServer = (payload, onSuccess, onError, onLoader) => {
     );
 };
 export const sharedGetEnumsApi = () => {
-  getRequest(
-    Endpoints.GET_ENUMS,
-    res => {
-      // console.log("[getEnums].res", res);
-      dispatch(ReduxActions.setEnumsActions(res.data.enums));
-    },
-    err => {
-      sharedExceptionHandler(err);
-    },
-    {},
-    false,
-  );
+    getRequest(
+        Endpoints.GET_ENUMS,
+        res => {
+            // console.log("[getEnums].res", res);
+            dispatch(ReduxActions.setEnumsActions(res.data.enums));
+        },
+        err => {
+            sharedExceptionHandler(err);
+        },
+        {},
+        false,
+    );
 };
 export const sharedGetUserDetailsApi = () => {
     getRequest(
@@ -390,6 +390,7 @@ export const sharedAddUpdatePitstop = (
         const upcomingVendorDetails = pitstopDetails.vendorDetails;
         const upcomingItemDetails = pitstopDetails.itemDetails;
         const actionKey = upcomingItemDetails.actionKey || ''; //
+        const pitstopActionKey = upcomingVendorDetails.actionKey || ''; //
         console.log('[ACTION KEY]', actionKey);
         if (pitstopIndex !== null) {
             console.log('[UPDATE/DELETE CASE]');
@@ -416,14 +417,25 @@ export const sharedAddUpdatePitstop = (
             }
         } else {
             console.log('[ADD ITEM TO EXISTING CHECKOUTITEMS LIST CASE]');
-            const pitstopFound = pitstops.length && pitstops.find(x => x.pitstopID === upcomingVendorDetails.pitstopID); //(x.pitstopID === pitstopDetails.pitstopID || x.smid === pitstopDetails.smid))
+            const pitstopFound = pitstops.length && pitstops.find(x => x[pitstopActionKey] === upcomingVendorDetails[pitstopActionKey]); //(x.pitstopID === pitstopDetails.pitstopID || x.smid === pitstopDetails.smid))
             if (pitstopFound) {
                 console.log('[PITSTOP FOUND]');
                 pitstops = pitstops.map((_pitstop, pitstopIndex) => {
                     // WHY WE DON'T USE pitstops[pitstopIndex]
                     // KUN K YE DYNAMIC HO GA KISI B PITSTOPS K LIYE AUR ISS TIME HMARY PASS EXISTING PITSTOP KA INDEX NAHI HO GA
-                    if (_pitstop.pitstopID === pitstopFound.pitstopID) {
-                        _pitstop.checkOutItemsListVM.push({ checkOutItemID: sharedUniqueIdGenerator(), ...upcomingItemDetails, });
+                    if (_pitstop[pitstopActionKey] === pitstopFound[pitstopActionKey]) {
+                        const index = _pitstop.checkOutItemsListVM.findIndex(i => i[actionKey] === upcomingItemDetails[actionKey])
+                        if (index !== -1) {
+                            console.log('upcomingItemDetails.quantity  ',upcomingItemDetails.quantity );
+                            if (upcomingItemDetails.quantity > 0) {
+                                _pitstop.checkOutItemsListVM[index] = { ...upcomingItemDetails, checkOutItemID: _pitstop.checkOutItemsListVM[index].checkOutItemID };
+                            } else {
+                                // _pitstop.checkOutItemsListVM.slice(index,index);
+                                _pitstop.checkOutItemsListVM=  _pitstop.checkOutItemsListVM.filter(y => y[actionKey] !== upcomingItemDetails[actionKey]);
+                            }
+                        } else {
+                            _pitstop.checkOutItemsListVM.push({ checkOutItemID: sharedUniqueIdGenerator(), ...upcomingItemDetails, });
+                        }
                     }
                     return _pitstop;
                 });
@@ -442,22 +454,22 @@ export const sharedAddUpdatePitstop = (
     sharedCalculateCartTotals(pitstops)
 };
 
-export const getRandomInt=(min=10, max=10000) =>{
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+export const getRandomInt = (min = 10, max = 10000) => {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 export const sharedGetFilters = () => {
-    postRequest(Endpoints.GET_FILTERS,{
-        "vendorType":4
+    postRequest(Endpoints.GET_FILTERS, {
+        "vendorType": 4
 
     }, res => {
         console.log("[sharedGetFiltersApi].res ====>>", res);
         // dispatch(ReduxActions.setMessagesAction({ ...res.data, robotJson: data }));
-        dispatch(ReduxActions.setCategoriesTagsAction({...res.data}))
+        dispatch(ReduxActions.setCategoriesTagsAction({ ...res.data }))
 
-  
+
     },
         err => {
             console.log("error", err);
@@ -465,8 +477,8 @@ export const sharedGetFilters = () => {
         },
         {},
     )
-      
-   
+
+
 }
 
 export const uniqueKeyExtractor = () => new Date().getTime().toString() + (Math.floor(Math.random() * Math.floor(new Date().getTime()))).toString();
