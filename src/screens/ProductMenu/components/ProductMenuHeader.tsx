@@ -14,11 +14,14 @@ interface Props {
     colors: typeof initColors;
     headerItem?: ProductMenuHeaderItem;
     shelveData?: [];
+
+    hideHeader?: boolean;
 }
 
 const defaultProps = {
     headerItem: ProductMenuHeaderItemDefaultValue,
     shelveData: [],
+    hideHeader: false,
 };
 
 // #endregion :: INTERFACE END's FROM HERE 
@@ -26,7 +29,7 @@ const defaultProps = {
 const ProductMenuHeader = (props: Props) => {
     const colors = props.colors;
     const styles = stylesFunc(colors);
-    
+
     return (
         <React.Fragment>
             {/* ****************** Start of UPPER HEADER TILL RECENT ORDER ****************** */}
@@ -35,6 +38,7 @@ const ProductMenuHeader = (props: Props) => {
             <RestaurantProductMenuHeader
                 colors={colors}
                 item={props.headerItem}
+                hideHeader={props.hideHeader}
             />
 
 

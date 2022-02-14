@@ -164,14 +164,14 @@ export default ({ navigation, route }) => {
     // #endregion :: API IMPLEMENTATION END's FROM HERE 
 
     // #region :: RENDER HEADER START's FROM HERE 
-    const _renderHeader = () => {
+    const _renderHeader = (title = headerTitle) => {
         return (
             <CustomHeader
                 containerStyle={{
                     borderBottomWidth: 0,
                     backgroundColor: colors.white,
                 }}
-                title={headerTitle}
+                title={title}
                 titleStyle={{
                     color: colors.primary,
                 }}
@@ -364,7 +364,7 @@ export default ({ navigation, route }) => {
 
     return (
         <View style={styles.primaryContainer}>
-
+            {_renderHeader('')}
             <FlatList
                 ref={flatlistRef}
                 data={(data)}
@@ -372,12 +372,14 @@ export default ({ navigation, route }) => {
                 scrollEnabled={true}
                 nestedScrollEnabled
                 contentContainerStyle={{
+                    marginTop: -10,
                     paddingBottom: 85,
                 }}
                 onEndReachedThreshold={0.6}
                 onEndReached={onEndReached}
                 ListHeaderComponent={(
                     <ProductMenuHeader
+                        hideHeader
                         colors={colors}
                         shelveData={allData?.shelveSlicedArray ?? []}
                         headerItem={{
