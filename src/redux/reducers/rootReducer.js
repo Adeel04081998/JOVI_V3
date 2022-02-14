@@ -21,8 +21,11 @@ const rootReducer = combineReducers({
     enumsReducer: Reducers.enumsReducer,
     messagesReducer: Reducers.messagesReducer,
     promotionsReducer: Reducers.promotionsReducer,
+    categoriesTagsReducer: Reducers.categoriesTagsReducer,
     userReducer: persistReducer(persistUserConfig, Reducers.userReducer),
     cartReducer: persistReducer(persistCartConfig, Reducers.cartReducer),
+
+
 });
 
 export default rootReducer;

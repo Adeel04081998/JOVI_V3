@@ -1,5 +1,5 @@
 export default {
-    otp: () => `<?xml version="1.0" encoding="utf-8"?>
+  otp: () => `<?xml version="1.0" encoding="utf-8"?>
     <!-- Generator: Adobe Illustrator 26.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
          viewBox="0 0 499.6 499.6" style="enable-background:new 0 0 499.6 499.6;" xml:space="preserve">
@@ -33,7 +33,7 @@ export default {
     <path style="fill:#B1AAE0;" d="M236.1,132.2c-4.5,0-9,0-13.4,0c-4.9,0-8.2,2.9-8.3,7s3.1,7.3,7.9,7.4c9.2,0.1,18.3,0.1,27.5,0
         c4.7-0.1,7.8-3.1,7.8-7.2s-3.3-7.2-8.1-7.2C245,132.2,240.6,132.2,236.1,132.2z"/>
     </svg>`,
-    cat: () => `<?xml version="1.0" encoding="utf-8"?>
+  cat: () => `<?xml version="1.0" encoding="utf-8"?>
     <!-- Generator: Adobe Illustrator 26.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
          viewBox="0 0 72.4 83" style="enable-background:new 0 0 72.4 83;" xml:space="preserve">
@@ -922,7 +922,7 @@ export default {
     </g>
     </svg>
     `,
-    food: () => `<svg id="Group_14924" data-name="Group 14924" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="68.393" height="61.111" viewBox="0 0 68.393 61.111">
+  food: () => `<svg id="Group_14924" data-name="Group 14924" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="68.393" height="61.111" viewBox="0 0 68.393 61.111">
   <defs>
     <clipPath id="clip-path">
       <rect id="Rectangle_20551" data-name="Rectangle 20551" width="68.393" height="61.111" fill="none"/>
@@ -1276,7 +1276,7 @@ export default {
   </g>
 </svg>
 `,
-    grocery: () => `<svg id="Group_15059" data-name="Group 15059" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="68.467" height="70.685" viewBox="0 0 68.467 70.685">
+  grocery: () => `<svg id="Group_15059" data-name="Group 15059" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="68.467" height="70.685" viewBox="0 0 68.467 70.685">
     <defs>
       <clipPath id="clip-path">
         <rect id="Rectangle_20599" data-name="Rectangle 20599" width="68.467" height="70.685" fill="none"/>
@@ -1874,7 +1874,7 @@ export default {
     </g>
   </svg>
   `,
-    pharmacy: () => `<svg id="Group_14956" data-name="Group 14956" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="41.415" height="58.85" viewBox="0 0 41.415 58.85">
+  pharmacy: () => `<svg id="Group_14956" data-name="Group 14956" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="41.415" height="58.85" viewBox="0 0 41.415 58.85">
     <defs>
       <clipPath id="clip-path">
         <rect id="Rectangle_20563" data-name="Rectangle 20563" width="41.415" height="58.85" fill="none"/>
@@ -1991,7 +1991,7 @@ export default {
     </g>
   </svg>
   `,
-    jovi: () => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="67.003" height="71.198" viewBox="0 0 67.003 71.198">
+  jovi: () => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="67.003" height="71.198" viewBox="0 0 67.003 71.198">
     <defs>
       <clipPath id="clip-path">
         <rect id="Rectangle_20601" data-name="Rectangle 20601" width="67.003" height="71.198" transform="translate(0 0)" fill="none"/>
@@ -2349,7 +2349,21 @@ export default {
   </g>
   </g>
   </svg>
-  `
+  `,
+
+  cross: () => `
+  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
+  <g id="Group_14734" data-name="Group 14734" transform="translate(-15 -30)">
+    <circle id="Ellipse_582" data-name="Ellipse 582" cx="15" cy="15" r="15" transform="translate(15 30)" fill="#dcdcdc"/>
+    <g id="Group_14733" data-name="Group 14733" transform="translate(-55.225 67.822) rotate(-45)">
+      <path id="Path_18864" data-name="Path 18864" d="M1706.848,46.737h11.8" transform="translate(-1636.348 -2.437)" fill="none" stroke="#272727" stroke-linecap="round" stroke-width="1.5"/>
+      <path id="Path_18865" data-name="Path 18865" d="M0,0H11.8" transform="translate(76.299 38.5) rotate(90)" fill="none" stroke="#272727" stroke-linecap="round" stroke-width="1.5"/>
+    </g>
+  </g>
+</svg>
+  `,
+
+
 
 
 }

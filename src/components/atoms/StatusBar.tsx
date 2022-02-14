@@ -7,14 +7,19 @@ export default (
     {
         backgroundColor = "red",
         barStyle = "dark-content",
+        height = -1,
         ...otherProps
-    }: StatusBarProps
+    }: any
 ) => {
 
-    const insets = useSafeAreaInsets();
+
+    if (height === -1) {
+        const insets = useSafeAreaInsets();
+        height = insets.top;
+    }
 
     return (
-        <View style={{ height: insets.top, backgroundColor }}>
+        <View style={{ height: height, backgroundColor }}>
             <StatusBar
                 {...otherProps}
                 animated={true}

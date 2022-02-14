@@ -9,49 +9,63 @@ import Endpoints from '../manager/Endpoints';
 import Toast from '../components/atoms/Toast';
 import {store} from '../redux/store';
 import ReduxActions from '../redux/actions';
-import GV, {PITSTOP_TYPES} from '../utils/GV';
+import configs from '../utils/configs';
+import Regex from '../utils/Regex';
+import GV from '../utils/GV';
 const dispatch = store.dispatch;
 export const sharedGetDeviceInfo = async () => {
-  let model = DeviceInfo.getModel();
-  let deviceID =
-    Platform.OS === 'ios'
-      ? DeviceInfo.getUniqueId()
-      : await DeviceInfo.getAndroidId();
-  let systemVersion = DeviceInfo.getSystemVersion();
-  return {deviceID, model, systemVersion};
-};
-export const sharedExceptionHandler = err => {
-  // console.log("[sharedExceptionHandler].err", err);
-  const TOAST_SHOW = 3000;
-  if (err) {
-    if (err.data && err.data.errors) {
-      var errorKeys = Object.keys(err.data.errors),
-        errorStr = '';
-      for (let index = 0; index < errorKeys.length; index++) {
-        if (index > 0) errorStr += err.data.errors[errorKeys[index]][0] + '\n';
-        else errorStr += err.data.errors[errorKeys[index]][0];
-      }
-      Toast.error(errorStr, TOAST_SHOW);
-    } else if (err.errors && typeof err.errors === 'object') {
-      var errorKeys = Object.keys(err.errors),
-        errorStr = '';
-      for (let index = 0; index < errorKeys.length; index++) {
-        if (index > 0) errorStr += err.errors[errorKeys[index]][0] + '\n';
-        else errorStr += err.errors[errorKeys[index]][0];
-      }
-      Toast.error(errorStr, TOAST_SHOW);
-    } else if (err && typeof err === 'string') {
-      Toast.error(err, TOAST_SHOW);
-    } else if (err.message && typeof err.message === 'string') {
-      Toast.error(err.message, TOAST_SHOW);
-    } else if (err.Error && typeof err.Error === 'string') {
-      Toast.error(err.Error, TOAST_SHOW);
-    } else if (err.error && typeof err.error === 'string') {
-      Toast.error(err.error, TOAST_SHOW);
-    } else {
-      Toast.error('Something went wrong', TOAST_SHOW);
+    let model = DeviceInfo.getModel();
+    let deviceID = Platform.OS === "ios" ? DeviceInfo.getUniqueId() : await DeviceInfo.getAndroidId();
+    let systemVersion = DeviceInfo.getSystemVersion();
+    return { deviceID, model, systemVersion }
+}
+export const sharedExceptionHandler = (err) => {
+    // console.log("[sharedExceptionHandler].err", err);
+    const TOAST_SHOW = 3000;
+    if (err) {
+        if (err.data && err.data.errors) {
+            var errorKeys = Object.keys(err.data.errors),
+                errorStr = "";
+            for (let index = 0; index < errorKeys.length; index++) {
+                if (index > 0) errorStr += err.data.errors[errorKeys[index]][0] + "\n"
+                else errorStr += err.data.errors[errorKeys[index]][0]
+            }
+            Toast.error(errorStr, TOAST_SHOW);
+            return errorStr;
+        }
+        else if (err.errors && typeof err.errors === "object") {
+            var errorKeys = Object.keys(err.errors),
+                errorStr = "";
+            for (let index = 0; index < errorKeys.length; index++) {
+                if (index > 0) errorStr += err.errors[errorKeys[index]][0] + "\n"
+                else errorStr += err.errors[errorKeys[index]][0]
+            }
+            Toast.error(errorStr, TOAST_SHOW);
+            return errorStr;
+        }
+
+        else if (err && typeof err === "string") {
+            Toast.error(err, TOAST_SHOW);
+            return err;
+        }
+        else if (err.message && typeof err.message === "string") {
+            Toast.error(err.message, TOAST_SHOW);
+            return err.message;
+        }
+        else if (err.Error && typeof err.Error === "string") {
+            Toast.error(err.Error, TOAST_SHOW);
+            return err.Error;
+        }
+        else if (err.error && typeof err.error === "string") {
+            Toast.error(err.error, TOAST_SHOW);
+            return err.error;
+        }
+        else {
+            Toast.error('Something went wrong', TOAST_SHOW);
+            return 'Something went wrong';
+        }
     }
-  }
+  
 };
 export const sharedInteval = (
   duration = 30,
@@ -113,11 +127,9 @@ export const sendOTPToServer = (payload, onSuccess, onError, onLoader) => {
   );
 };
 export const sharedGetEnumsApi = () => {
-  getRequest(
-    Endpoints.GET_ENUMS,
-    res => {
-      // console.log("[getEnums].res", res);
-      dispatch(ReduxActions.setEnumsActions(res.data.enums));
+    getRequest(Endpoints.GET_ENUMS, res => {
+        console.log("[getEnums].res", res);
+        dispatch(ReduxActions.setEnumsActions(res.data.enums))
     },
     err => {
       sharedExceptionHandler(err);
@@ -419,3 +431,33 @@ export const sharedAddUpdatePitstop = (
   }
   dispatch(ReduxActions.setCartAction({pitstops, joviRemainingAmount}));
 };
+
+export const sharedGetFilters = () => {
+    postRequest(Endpoints.GET_FILTERS,{
+        "vendorType":4
+
+    }, res => {
+        console.log("[sharedGetFiltersApi].res ====>>", res);
+        // dispatch(ReduxActions.setMessagesAction({ ...res.data, robotJson: data }));
+        dispatch(ReduxActions.setCategoriesTagsAction({...res.data}))
+
+  
+    },
+        err => {
+            console.log("error", err);
+            // sharedExceptionHandler(err)
+        },
+        {},
+    )
+      
+   
+}
+
+export const uniqueKeyExtractor = () => new Date().getTime().toString() + (Math.floor(Math.random() * Math.floor(new Date().getTime()))).toString();
+
+export const renderPrice=(price,prefix="Rs. ",suffix="",)=>{
+    prefix=`${prefix}`.trim();
+    suffix=`${suffix}`.trim();
+    price=`${price}`.trim().replace(Regex.price,'').trim();
+    return suffix.length>0 ? `${prefix} ${price} ${suffix}` : `${prefix} ${price}`;
+}

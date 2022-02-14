@@ -90,20 +90,29 @@ const messagesReducer = (
   }
 };
 const promotionsReducer = (state = {}, action) => {
-  switch (action.type) {
-    case TYPES.SET_PROMOTIONS_ACTION:
-      return {...state, ...action.payload};
-    default:
-      return {...state};
-  }
-};
+    switch (action.type) {
+        case TYPES.SET_PROMOTIONS_ACTION:
+            return { ...state, ...action.payload };
+        default:
+            return { ...state };
+    }
+}
+const categoriesTagsReducer = (state = {}, action) => {
+    switch (action.type) {
+        case TYPES.SET_CATEGORIES_TAGS:
+            return { ...state, ...action.payload };
+        default:
+            return { ...state };
+    }
+}
 //...Rest of the reducers would be here
 
 export default {
-  userReducer,
-  cartReducer,
-  enumsReducer,
-  messagesReducer,
-  promotionsReducer,
-  //...
-};
+    userReducer,
+    cartReducer,
+    enumsReducer,
+    messagesReducer,
+    promotionsReducer,
+    categoriesTagsReducer,
+    //...
+}

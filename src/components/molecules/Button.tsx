@@ -3,11 +3,11 @@ import { Animated, Easing, TouchableOpacity, ActivityIndicator, GestureResponder
 import Text from "../atoms/Text";
 // import TouchableOpacity from "../atoms/TouchableOpacity";
 import debounce from 'lodash.debounce'; // 4.0.8
-import VectorIcon from "../atoms/VectorIcon";
+import View from "../atoms/View";
 
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
-type Props = React.ComponentProps<typeof TouchableOpacity> & {
+export type ButtonProps = React.ComponentProps<typeof TouchableOpacity> & {
     children?: any;
     text?: string;
     textStyle?: TextStyle;
@@ -20,6 +20,9 @@ type Props = React.ComponentProps<typeof TouchableOpacity> & {
     iconColor?: string,
     icon?: boolean,
 
+    leftComponent?: () => React.ReactNode;
+    rightComponent?: () => React.ReactNode;
+
 };
 type VectorProps = React.ComponentProps<typeof VectorIcon> & {
     children?: any;
@@ -29,10 +32,16 @@ const defaultProps = {
     activeOpacity: 0.9,
     wait: 0.3,
     isLoading: false,
-    icon: false,
+
+    leftComponent: undefined,
+    rightComponent: undefined,
 };
 
-const Button = (props: Props, textProps: TextProps, vectorProps: VectorProps) => {
+const Button = (props: ButtonProps, textProps: TextProps) => {
+    // let onPressRef: NodeJS.Timeout;
+    // let isAssigned = false;
+    // const isAssignedRef = React.useRef(false);
+    // const onPressTimoutRef = React.useRef(onPressTimout);
     const buttonMargin = React.useRef(new Animated.Value(1)).current;
 
     const animateIn = (event: GestureResponderEvent) => {
@@ -105,6 +114,7 @@ const Button = (props: Props, textProps: TextProps, vectorProps: VectorProps) =>
             }, props.style, {
                 alignItems: "center",
                 justifyContent: "center",
+            }, props.style, {
                 transform: [{
                     scale: buttonMargin.interpolate({
                         inputRange: [1, 10],
@@ -114,15 +124,18 @@ const Button = (props: Props, textProps: TextProps, vectorProps: VectorProps) =>
             }, props.isLoading || props.disabled ? {
                 backgroundColor: 'grey',
             } : {}]}>
-            {props.icon &&
-                <VectorIcon name={props.iconName} type={props.iconType} size={props.iconSize} color={props.iconColor} style={{ marginRight: 5 }} />}
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+                {props.leftComponent && props.leftComponent()}
 
-            <Text {...textProps} style={[{
-                fontSize: 18,
-                fontWeight: '500',
-                color: "#fff",
-                textAlign: "center",
-            }, props.textStyle]}>{props.isLoading ? <ActivityIndicator color="white" size="large" /> : props.text}</Text>
+                <Text {...textProps} style={[{
+                    fontSize: 18,
+                    fontWeight: '500',
+                    color: "#fff",
+                    textAlign: "center",
+                }, props.textStyle]}>{props.isLoading ? <ActivityIndicator color="white" size="large" /> : props.text}</Text>
+
+                {props.rightComponent && props.rightComponent()}
+            </View>
         </AnimatedTouchable>
     );
 }

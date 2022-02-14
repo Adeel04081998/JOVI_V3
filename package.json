@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
+    "android": "npx react-native run-android",
+    "ios": "npx react-native run-ios",
     "android-ios": "npx react-native run-android && npx react-native run-ios",
     "start": "react-native start",
     "dev_ios": "cd ios && pod install && cd .. && react-native run-ios",
@@ -19,7 +19,6 @@
     
     "qa_codepush_android_v2_staging": "appcenter codepush release-react -a cibaksolutionspk-gmail.com/JOVI-ANDROID-V2-QA -d Staging",
     "qa_codepush_android_v2_production": "appcenter codepush release-react -a cibaksolutionspk-gmail.com/JOVI-ANDROID-V2-QA -d Production",
-
     "live_codepush_android_v3_staging": "appcenter codepush release-react -a cibaksolutionspk-gmail.com/JOVI-ANDROID-V3 -d Staging",
     "live_codepush_android_v3_production": "appcenter codepush release-react -a cibaksolutionspk-gmail.com/JOVI-ANDROID-V3 -d Production",
 
