@@ -39,6 +39,10 @@ const CART_DATA = {
   // CustomKeys
   joviRemainingAmount: constants.max_jovi_order_amount,
   openOrdersList: [{joviJobId: 123, estimatePrice: 300}],
+  subTotal: 0,
+  discount: 0,
+  serviceCharges: 0,
+  total: 0,
 };
 const userReducer = (state = {}, action) => {
   switch (action.type) {
