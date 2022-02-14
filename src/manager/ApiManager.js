@@ -19,8 +19,6 @@ export const refreshTokenMiddleware = (requestCallback, params) => {
             console.log("refreshTokenMiddleware.Res :", res);
             if (res?.data?.statusCode === 202) {
                 requestCallback.apply(this, params);
-                dispatch(ReduxActions.setUserAction({ ...res.data }))
-                if (__DEV__) Toast.success("Its only for DEV => User session refreshed....", 10000)
                 return;
             }
             else if (res?.data?.statusCode === 403) {
@@ -28,7 +26,11 @@ export const refreshTokenMiddleware = (requestCallback, params) => {
                 sharedLogoutUser();
                 return;
             }
-            else dispatch(ReduxActions.setUserAction({ ...res.data }))
+            else {
+                dispatch(ReduxActions.setUserAction({ ...res.data }))
+                requestCallback.apply(this, params);
+                if (__DEV__) Toast.success("Its only for DEV => User session refreshed....", 10000)
+            }
         },
         err => {
             console.log("refreshTokenMiddleware.err", err)

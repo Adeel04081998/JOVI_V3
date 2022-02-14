@@ -18,6 +18,9 @@ import RestaurantProductMenuHeader from './components/RestaurantProductMenuHeade
 import RestaurantProductMenuScrollable from './components/RestaurantProductMenuScrollable';
 import lodash from 'lodash'; // 4.0.8
 import { itemStylesFunc, sectionHeaderStylesFunc, stylesFunc } from './styles';
+import NavigationService from '../../navigations/NavigationService';
+import ROUTES from '../../navigations/ROUTES';
+import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 
 const WINDOW_HEIGHT = constants.window_dimensions.height;
 const PITSTOPS = {
@@ -127,7 +130,7 @@ export default ({ navigation, route }) => {
             <>
                 <CustomHeader
                     hideFinalDestination
-                    title={route?.params?.title??''}
+                    title={route?.params?.title ?? ''}
                     titleStyle={{
                         color: colors.primary
                     }}
@@ -154,6 +157,9 @@ export default ({ navigation, route }) => {
             </>
         )
     }
+    const onItemPress = (item) => {
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, { propItem: item, pitstopID, pitstopType: 4 });
+    };
 
     return (
         <View style={{ flex: 1, }}>
@@ -210,12 +216,15 @@ export default ({ navigation, route }) => {
                 renderItem={(parentItem, item, parentIndex, index) => {
                     if (parentItem?.isTopDeal ?? false) {
                         return (
-                            <ProductCard color={colors}
+                            <ProductCard
+                                onItemPress={()=>onItemPress(item)}
+                                color={colors}
                                 containerStyle={{
                                     ...itemStyles.primaryContainer,
                                     marginLeft: index === 0 ? 10 : 0,
                                 }}
                                 item={{
+                                    itemID: item.itemID,
                                     image: { uri: renderFile(item.image) },
                                     description: item.description,
                                     title: item.name,
@@ -224,7 +233,7 @@ export default ({ navigation, route }) => {
                         )
                     }
                     return (
-                        <View style={itemStyles.primaryContainer2}>
+                        <TouchableOpacity onPress={() => onItemPress(item)} style={itemStyles.primaryContainer2}>
                             {index !== 0 &&
                                 <View style={itemStyles.seperator} />
                             }
@@ -254,7 +263,7 @@ export default ({ navigation, route }) => {
 
 
 
-                        </View>
+                        </TouchableOpacity>
                     )
                 }}
                 renderAboveItems={() => (

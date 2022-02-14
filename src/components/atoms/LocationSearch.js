@@ -43,8 +43,6 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
         //     c       
         // />
         <GooglePlacesAutocomplete
-            // isRowScrollable
-
             disableScroll={false}
             placeholder={"Enter a pitstop location"}
             placeholderTextColor="rgba(0, 0, 0, 0.5)"
@@ -58,7 +56,6 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
                     latitude: "",
                     longitude: ""
                 }
-                // radius: 100
             }}
             predefinedPlaces={predefinedPlaces.map((place, i) => ({ ...place, description: (place.description + Array(i).join(" ")) }))}
             currentLocation={true}
@@ -103,8 +100,8 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
             renderRightButton={
                 () => {
                     return (
-                        <View>
-                            <TouchableOpacity style={styles.iconStyleRight} onPress={clearField}>
+                        <View style={{justifyContent:'center', alignItems:'center', height:40}} >
+                            <TouchableOpacity style={{}} onPress={clearField}>
                                 <Image style={{ ...styles.IcoImg, transform: [{ rotate: '45deg' }] }} source={images.addIcon()} />
                             </TouchableOpacity>
                         </View>
@@ -118,7 +115,6 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
                 },
                 onChangeText: (value) => {
                     handleOnInputChange(value);
-                    console.log('locTextRef.current', locTextRef.current);
                 },
                 onBlur: () => {
                     handleInputFocused(index, true);
@@ -148,7 +144,6 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
                     borderWidth: 0,
                 },
                 textInputContainer: {
-                    flex: 1,
                     backgroundColor: "transparent",
                     height: 50,
                     marginHorizontal: 0,
@@ -158,8 +153,6 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
                     alignSelf: 'center'
                 },
                 textInput: {
-                    display: 'flex',
-                    width: '50%',
                     borderWidth: 1,
                     borderColor: "#BBBB",
                     borderRadius: 5,
@@ -169,6 +162,7 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
                     paddingHorizontal: 10,
                     color: "#000",
                 },
+                
                 listView: {
                     borderWidth: 1,
                     borderColor: "#BBBB",
