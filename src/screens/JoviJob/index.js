@@ -198,8 +198,11 @@ export default ({ navigation, route }) => {
     useEffect(() => {
         if (route.params !== undefined && route.params !== '') {
             if (route.params.pitstopItemObj) {
-                // setLocationVal()
-                // setNameVal()
+                setLocationVal(pitstopItemObj.title)
+                setNameVal(pitstopItemObj.nameval)
+                updateImagesData(pitstopItemObj.imageData)
+                setVoiceNote(pitstopItemObj.voiceNote)
+                setEstTime(pitstopItemObj.estTime)
             }
         }
     }, [route])
