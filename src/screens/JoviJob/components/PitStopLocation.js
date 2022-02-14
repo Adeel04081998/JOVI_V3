@@ -9,6 +9,7 @@ import TextInput from '../../../components/atoms/TextInput';
 import Button from '../../../components/molecules/Button';
 import FontFamily from '../../../res/FontFamily';
 import LocationSearch from '../../../components/atoms/LocationSearch';
+import VectorIcon from '../../../components/atoms/VectorIcon';
 
 const PitStopLocation = (props) => {
     // colors.primary will recieve value from colors.js file's colors
@@ -19,7 +20,7 @@ const PitStopLocation = (props) => {
 
     return (
         props.isOpened &&
-        <View style={{ marginVertical: 10, flexGrow:1 }} >
+        <View style={{ marginVertical: 10, flexGrow: 1 }} >
             <LocationSearch
                 index={0}
                 onLocationSelected={props.handleLocationSelected}
@@ -37,12 +38,12 @@ const PitStopLocation = (props) => {
                 text="Select location from map"
                 textStyle={styles.btnText}
                 fontFamily="PoppinsRegular"
-                icon={true}
-                iconName="pin-outline"
-                iconType="MaterialCommunityIcons"
-                iconSize={20}
-                iconColor={colors.textColor}
-                style={[styles.locButton,{width: WIDTH - 30}]} />
+                leftComponent={() => {
+                    return (
+                        <VectorIcon name="pin-outline" type="MaterialCommunityIcons" size={20} color={colors.white} />
+                    )
+                }}
+                style={[styles.locButton, { width: WIDTH - 30, height: 40 }]} />
             <TextInput
                 title="Name (Optional)"
                 placeholder="Please Add Your Name"
