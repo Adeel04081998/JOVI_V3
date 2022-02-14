@@ -1,5 +1,4 @@
 
-import LottieView from "lottie-react-native";
 import React from 'react';
 import Image from '../../../components/atoms/Image';
 import Text from '../../../components/atoms/Text';
@@ -10,20 +9,10 @@ import { renderFile, sharedExceptionHandler } from '../../../helpers/SharedActio
 import { postRequest } from '../../../manager/ApiManager';
 import Endpoints from '../../../manager/Endpoints';
 import NavigationService from "../../../navigations/NavigationService";
+import CardLoader from "./CardLoader";
 
 const ITEMS_PER_PAGE = 40;
-const renderLoader = (styles) => {
-    return <View style={styles.gifLoader}>
-        <LottieView
-            autoSize={true}
-            resizeMode={'contain'}
-            style={{ width: '95%',marginTop:-19,marginLeft:5 }}
-            source={require('../../../assets/gifs/RestaurantCardsLoading.json')}
-            autoPlay
-            loop
-        />
-    </View>
-}
+
 export default ({ config, filters, pitstopType, styles, imageStyles = { width: '100%' }, fetchPitstopsFlagParent = null, pitstopFilters = null, colors }) => {
     const [state, setState] = React.useState({
         pitstopListViewModel: {
@@ -74,6 +63,9 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
                     ...paginationInfo.current,
                     totalItems: res.data.pitstopListViewModel?.paginationInfo?.totalItems
                 }
+            }
+            else if(res.data.statusCode === 404){
+                setState(pre => ({ ...pre, isLoading: false, pitstopListViewModel: { list: [] } }));
             }
             console.log('GET_PITSTOPS', res);
         }, err => {
@@ -157,7 +149,7 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
                     state.pitstopListViewModel.list.map((item, index) => renderItem(item, index))
                 }
                 {
-                    state.isLoading ? renderLoader(styles) : <></>
+                    state.isLoading ? <CardLoader styles={styles} type={2} loaderStyles={{marginTop:-15}} /> : <></>
                 }
             </View>
         </View>

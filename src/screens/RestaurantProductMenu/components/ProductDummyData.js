@@ -1131,3 +1131,211 @@ export const ProductDummyData2 = {
   "statusCode": 200
 };
 
+export const ProductDummyData1={
+  "pitstopStockViewModel": {
+    "pitstopName": " SJ Flowers",
+    "pitstopTag": "pitstop",
+    "distance": 0,
+    "time": "10 AM - 11 PM",
+    "pitstopImage": "staging/SupermarketItem/2021/3/24/Thumbnail_3 Mix Flowers Bokeh 3500rs_18398.jpg",
+    "isClosed": false,
+    "isAreaLock": false,
+    "isBannerPresistant": false,
+    "categoryWithItems": [
+      {
+        "categoryID": 675,
+        "isSelected": true,
+        "categoryName": "Bouquet and Flowers",
+        "pitstopItemList": [
+          {
+            "pitStopItemID": 17220,
+            "pitStopItemName": "3 Mix Flowers Bouquet",
+            "description": "",
+            "itemPrice": 3500,
+            "gstAddedPrice": 3500,
+            "gstAmount": 0,
+            "gstPercentage": 0,
+            "discountedPrice": 3465,
+            "discountAmount": 1,
+            "discountType": 2,
+            "discountTypeDescription": "Percentage",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImageThumbnail": "staging/SupermarketItem/2021/3/24/Thumbnail_3 Mix Flowers Bokeh 3500rs_18398.jpg",
+                "fileType": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 17221,
+            "pitStopItemName": "Baby's Breath Per Stem",
+            "description": "",
+            "itemPrice": 250,
+            "gstAddedPrice": 250,
+            "gstAmount": 0,
+            "gstPercentage": 0,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImageThumbnail": "staging/SupermarketItem/2021/3/24/Thumbnail_baby's breath 250rs-Per Stem_18398.jpg",
+                "fileType": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 17235,
+            "pitStopItemName": "White Flowers Bouquet",
+            "description": "",
+            "itemPrice": 3500,
+            "gstAddedPrice": 3500,
+            "gstAmount": 0,
+            "gstPercentage": 14,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImageThumbnail": "staging/SupermarketItem/2021/3/24/Thumbnail_White Flowers Bokeh 3500rs_18591.jpg",
+                "fileType": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 17236,
+            "pitStopItemName": "Mix Flowers Bouquet",
+            "description": "",
+            "itemPrice": 1650,
+            "gstAddedPrice": 1650,
+            "gstAmount": 0,
+            "gstPercentage": 14,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImageThumbnail": "staging/SupermarketItem/2021/3/24/Thumbnail_Mix Flowers Bokeh 1650rs_18590.jpg",
+                "fileType": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 17237,
+            "pitStopItemName": "Red Roses With White Tulip Bouquet",
+            "description": "",
+            "itemPrice": 1800,
+            "gstAddedPrice": 1800,
+            "gstAmount": 0,
+            "gstPercentage": 14,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImageThumbnail": "staging/SupermarketItem/2021/3/24/Thumbnail_Red Roses with White Tulip Bokeh 1800 rs_18591.jpeg",
+                "fileType": 0
+              }
+            ]
+          }
+        ],
+        "productsPaginationInfo": {
+          "totalItems": 2,
+          "itemsPerPage": 5,
+          "actualPage": 1,
+          "totalPages": 1,
+          "isNextPage": false
+        }
+      },
+      {
+        "categoryID": 541,
+        "isSelected": false,
+        "categoryName": "Spices & Herbs",
+        "pitstopItemList": [
+          {
+            "pitStopItemID": 77257,
+            "pitStopItemName": "Chicken Tikka Masala Mix 100g",
+            "description": "asdasdasdasdasdas",
+            "itemPrice": 100,
+            "gstAddedPrice": 100,
+            "gstAmount": 0,
+            "gstPercentage": 30,
+            "discountedPrice": 90,
+            "discountAmount": 10,
+            "discountType": 2,
+            "discountTypeDescription": "Percentage",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImageThumbnail": "staging/SupermarketItem/2021/4/20/Thumbnail_NATIONAL CHICKEN TIKKA MASALA MIX 100G_155242.jpg",
+                "fileType": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 77443,
+            "pitStopItemName": "test 2",
+            "description": "asdasdasdasdasd",
+            "itemPrice": 100,
+            "gstAddedPrice": 100,
+            "gstAmount": 0,
+            "gstPercentage": 20,
+            "discountedPrice": 90,
+            "discountAmount": 10,
+            "discountType": 2,
+            "discountTypeDescription": "Percentage",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImageThumbnail": "Dev/SupermarketItem/2022/2/9/Thumbnail_05 (3)_18337_162246_11021.jpg",
+                "fileType": 0
+              }
+            ]
+          }
+        ],
+        "productsPaginationInfo": {
+          "totalItems": 2,
+          "itemsPerPage": 2,
+          "actualPage": 1,
+          "totalPages": 1,
+          "isNextPage": false
+        }
+      }
+    ],
+    "categoryPaginationInfo": {
+      "totalItems": 2,
+      "itemsPerPage": 2,
+      "actualPage": 1,
+      "totalPages": 1,
+      "isNextPage": false
+    },
+    "shelves": [
+      {
+        "tagID": 11,
+        "categoryID": 541,
+        "isSelected": false,
+        "tagName": "Cooking",
+        "tagImage": "Dev/CommonImage/2022/2/12/Rectangle 20137_162619.png"
+      },
+      {
+        "tagID": 192,
+        "categoryID": 675,
+        "isSelected": false,
+        "tagName": "Flowers",
+        "tagImage": "Dev/CommonImage/2022/2/12/Rectangle 20137_162619.png"
+      }
+    ]
+  },
+  "success": true,
+  "message": "Success",
+  "statusCode": 200
+}

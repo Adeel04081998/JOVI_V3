@@ -8,12 +8,17 @@ import CustomHeader from '../../components/molecules/CustomHeader';
 import GenericList from '../../components/molecules/GenericList';
 import ImageCarousel from '../../components/molecules/ImageCarousel';
 import BottomBarComponent from '../../components/organisms/BottomBarComponent';
+import { sharedExceptionHandler } from '../../helpers/SharedActions';
+import { postRequest } from '../../manager/ApiManager';
+import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
+import ROUTES from '../../navigations/ROUTES';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
 import GV from '../../utils/GV';
 import Search from '../Home/components/Search';
 import AllPitstopsListing from './components/AllPitstopsListing';
+import CardLoader from './components/CardLoader';
 import Categories from './components/Categories';
 import Filters from './components/Filters';
 import stylesheet from './styles';
@@ -24,20 +29,21 @@ const PITSTOPS = {
     RESTAURANT: 4,
 }
 const SPACING_VERTICAL = 10;
-const renderLoader = (styles) => {
-    return <View style={styles.gifLoader}>
-        <LottieView
-            autoSize={true}
-            resizeMode={'contain'}
-            style={{ width: '100%' }}
-            source={require('../../assets/gifs/RestaurantMenuLoading.json')}
-            autoPlay
-            loop
-        />
-    </View>
-}
+// const renderLoader = (styles) => {
+//     return <View style={styles.gifLoader}>
+//         <LottieView
+//             autoSize={true}
+//             resizeMode={'contain'}
+//             style={{ width: '100%' }}
+//             source={require('../../assets/gifs/RestaurantMenuLoading.json')}
+//             autoPlay
+//             loop
+//         />
+//     </View>
+// }
 const PistopListing = React.memo(({ route, }) => {
     const { pitstopType } = route.params;
+    console.log('pitstopType',pitstopType);
     const [state, setState] = React.useState({
         filters: {
             filter: [],
@@ -91,33 +97,41 @@ const PistopListing = React.memo(({ route, }) => {
         averagePrice: (val, currentVal) => { return val !== null && val.length > 0 && val[0] === currentVal }
     }
     const onSearchHandler = (val) => {
-        const isDisSelect =  val && val === '';
+        const isDisSelect = val && val === '';
         setState(pre => ({ ...pre, filters: { ...pre.filters, search: isDisSelect ? '' : val } }));
         filtersRef.current.search = isDisSelect ? '' : val;
     };
+    const onPressFilter = (item, updatedFilters = {}) => {
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.PitstopsVerticalList.screen_name, { pitstopType: pitstopType, updatedFilters, listingObj: { ...item } });
+    }
     const onFilterChange = (item, idKey, key, emptyVal = []) => {
         const isDisSelect = filterValidations[key](filtersRef.current[key], item[idKey]);
         // const isDisselect = filtersRef.current[key] !== null && filtersRef.current[key].length > 0 && filtersRef.current[key][0] === item[idKey];
         setState(pre => ({ ...pre, filters: { ...pre.filters, [key]: isDisSelect ? emptyVal : [item[idKey]] } }));
         filtersRef.current[key] = isDisSelect ? emptyVal : [item[idKey]];
         const isAllDisSelected = filtersRef.current.averagePrice === null && filtersRef.current.cuisines.length === 0 && filtersRef.current.filter.length === 0;
-        if(isAllDisSelected){
-            Animated.timing(scaleAnimation,{
-                toValue:1,
-                duration:600,
-                useNativeDriver:true,
-                easing:Easing.ease
+        if (isAllDisSelected) {
+            Animated.timing(scaleAnimation, {
+                toValue: 1,
+                duration: 600,
+                useNativeDriver: true,
+                easing: Easing.ease
             }).start();
-        }else{
-            Animated.timing(scaleAnimation,{
-                toValue:0,
-                duration:600,
-                useNativeDriver:true,
-                easing:Easing.ease
+        } else {
+            Animated.timing(scaleAnimation, {
+                toValue: 0,
+                duration: 600,
+                useNativeDriver: true,
+                easing: Easing.ease
             }).start();
         }
     }
     const backFromFiltersHandler = (updatedFilters) => {
+        if (updatedFilters.activeFilterBy) {
+            const listing = (categoriesTagsReducer?.vendorFilterViewModel?.filtersList ?? []).filter(item => item.vendorDashboardCatID === updatedFilters.activeFilterBy)[0];
+            onPressFilter(listing, { cuisines: updatedFilters.activeCusine });
+            return;
+        }
         filtersRef.current.cuisines = [updatedFilters.activeCusine];
         filtersRef.current.activeFilterBy = [updatedFilters.activeFilterBy];
         filtersRef.current.averagePrice = updatedFilters.activeAvergePrice;
@@ -130,11 +144,10 @@ const PistopListing = React.memo(({ route, }) => {
                 averagePrice: updatedFilters.activeAvergePrice
             }
         }));
-        console.log('updatedFilters',updatedFilters);
+        console.log('updatedFilters', updatedFilters);
     }
-    console.log('state',state);
     const goToFilters = () => {
-        NavigationService.NavigationActions.common_actions.navigate('FILTER', { activeAvergePrice: filtersRef.current.averagePrice, activeCusine: filtersRef.current.cuisines[0], activeFilterBy: filtersRef.current.filter[0], backCB: backFromFiltersHandler });
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Filter.screen_name, { activeAvergePrice: filtersRef.current.averagePrice, activeCusine: filtersRef.current.cuisines[0], activeFilterBy: filtersRef.current.filter[0], backCB: backFromFiltersHandler });
     }
     const onBackPress = () => {
         NavigationService.NavigationActions.common_actions.goBack();
@@ -147,6 +160,16 @@ const PistopListing = React.memo(({ route, }) => {
         if (Math.ceil(mHeight + Y) >= cSize) return true;
         return false;
     }
+    const getAdvertisements = () => {
+        postRequest(Endpoints.GET_ADVERTISEMENTS, {
+            "adTypes": [1]
+        }, res => {
+            console.log('res --- GET_ADVERTISEMENTS',res);
+        }, err => { sharedExceptionHandler(err); });
+    }
+    React.useEffect(()=>{
+        getAdvertisements();
+    },[])
     const renderFilters = () => (<View style={{ ...listingStyles.wrapper, paddingBottom: 0, zIndex: 100, paddingTop: SPACING_VERTICAL }}>
         <Search
             placeholder={currentPitstopType.searchPlaceHolder}
@@ -158,13 +181,12 @@ const PistopListing = React.memo(({ route, }) => {
             colors={colors}
             filterConfig={currentPitstopType}
             selectedFilters={state.filters.filter}
-            parentFilterHandler={onFilterChange}
+            parentFilterHandler={onPressFilter}
             filtersData={categoriesTagsReducer?.vendorFilterViewModel?.filtersList}
             goToFilters={goToFilters} />
         {currentPitstopType.categorySection &&
             <Categories
                 parentCategoryHandler={onFilterChange}
-                listingStyles={listingStyles} categoriesList={categoriesTagsReducer?.vendorFilterViewModel?.cuisine?.categoriesList}
                 selectedCategories={state.filters.cuisines}
                 CategoriesTabConfig={currentPitstopType}
                 colors={colors}
@@ -219,8 +241,8 @@ const PistopListing = React.memo(({ route, }) => {
     return (
         <View style={listingStyles.container}>
             <SafeAreaView style={{ flex: 1 }}>
-                <CustomHeader defaultColor={colors.primary} onLeftIconPress={onBackPress} leftIconType={'AntDesign'} leftIconName={'arrowleft'} />
-                {isLoading ? renderLoader(listingStyles) : <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false} onScroll={(event) => {
+                <CustomHeader defaultColor={colors.primary} onLeftIconPress={onBackPress} leftIconColor={colors.primary} rightIconColor={colors.primary} leftIconType={'AntDesign'} leftIconName={'left'} />
+                {isLoading ? <CardLoader styles={listingStyles} /> : <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false} scrollEventThrottle={16} onScroll={(event) => {
                     if (handleInfinityScroll(event)) {
                         setFetchDataUseEffect(Math.random());
                     }

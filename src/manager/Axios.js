@@ -14,7 +14,7 @@ Axios.interceptors.request.use(
             config.timeoutErrorMessage = "Request Timeout..."
             config.headers['clientInfo'] = {}; // for device and app info in future
             const userReducer = store.getState().userReducer;
-            const authToken = userReducer?.token?.authToken; // [?.] Added becuase of before login api request when we dont have auth token...
+            const authToken =userReducer?.token?.authToken; // [?.] Added becuase of before login api request when we dont have auth token...
             if (authToken) {
                 config.headers['Authorization'] = 'Bearer ' + authToken;
             }

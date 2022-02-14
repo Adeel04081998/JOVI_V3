@@ -14,6 +14,11 @@ export type ButtonProps = React.ComponentProps<typeof TouchableOpacity> & {
     wait: number,
     isLoading?: boolean,
     activeOpacity?: number;
+    iconName?: string,
+    iconType?: any,
+    iconSize?: number,
+    iconColor?: string,
+    icon?: boolean,
 
     leftComponent?: () => React.ReactNode;
     rightComponent?: () => React.ReactNode;
@@ -103,6 +108,8 @@ const Button = (props: ButtonProps, textProps: TextProps) => {
                 width: "100%",
                 height: 55,
                 borderRadius: 12,
+                flexDirection: 'row'
+            }, props.style, {
                 alignItems: "center",
                 justifyContent: "center",
             }, props.style, {

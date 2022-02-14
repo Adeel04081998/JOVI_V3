@@ -29,6 +29,15 @@ const APP_DRAWER_ROUTES = {
         screen_name: "ProductDetails",
         options: null,
     },
+    "JoviJob": {
+        screen_name: 'JOVIJOB',
+        options: null
+    },
+    "Map": {
+        screen_name: "MAP",
+        options: null,
+    },
+  
     "PitstopListing": {
         screen_name: "VENDORS",
         options: null,

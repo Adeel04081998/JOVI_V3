@@ -9,7 +9,10 @@ import EnterOTP from '../screens/OTP/Enter';
 import VerifyOTP from '../screens/OTP/Verify';
 import SignUp from '../screens/SignUp/index';
 import ProductDetails from '../screens/ProductDetails';
+import JoviJob from '../screens/JoviJob';
+
 import Home from '../screens/Home';
+import Map from '../screens/Map';
 import PitstopListing from '../screens/PitstopListing';
 import ROUTES from './ROUTES';
 import SharedActions, { sharedGetEnumsApi, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser } from '../helpers/SharedActions';
@@ -18,6 +21,7 @@ import Filter from '../components/atoms/Filter';
 import { useSelector } from 'react-redux';
 import PitstopsVerticalList from '../screens/PitstopListing/PitstopsVerticalList';
 import RestaurantProductMenu from '../screens/RestaurantProductMenu';
+import ProductMenu from '../screens/ProductMenu';
 const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES,APP_DRAWER_ROUTES,APP_DRAWER_STACK } = ROUTES;
 const AppDrawerStack = (props) => {
     return <Stack.Navigator screenOptions={stackOpts} initialRouteName={APP_DRAWER_ROUTES.Home.screen_name}>
@@ -49,7 +53,9 @@ const AppDrawerComponents = {
     Filter,
     PitstopsVerticalList,
     RestaurantProductMenu,
-    ProductDetails    
+    ProductDetails,    
+    JoviJob,
+    Map
 }//will open with Slide Animation
 const ContainerStack = createStackNavigator();
 const Stack = createSharedElementStackNavigator();
@@ -123,7 +129,6 @@ const AuthStacks = (props) => {
         ))}
     </Stack.Navigator >
 }
-
 const AppDrawers = (props) => {
         // console.log("[AppDrawers].props", props)
     return <Drawer.Navigator screenOptions={stackOpts} initialRouteName={APP_ROUTES.AppDrawerStack.screen_name}>

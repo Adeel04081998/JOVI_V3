@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { SvgXml } from 'react-native-svg';
+import { useSelector } from 'react-redux';
 import Text from '../../../components/atoms/Text';
 import TouchableScale from '../../../components/atoms/TouchableScale';
 import VectorIcon from '../../../components/atoms/VectorIcon';
@@ -12,8 +13,10 @@ const SPACING_VERTICAL = 10;
 const FILTER_ICON_HEIGHT = 35;
 const FILTER_ICON_SIZE = 17;
 
-export default ({ filterConfig, selectedFilters, parentFilterHandler = () => { }, colors, goToFilters, filtersData = [] }) => {
+export default ({ filterConfig, selectedFilters, parentFilterHandler = () => { }, colors, goToFilters, }) => {
     const [state,setState] = React.useState({activeTab:null});
+    const categoriesTagsReducer = useSelector(state => state.categoriesTagsReducer);
+    const filtersData = categoriesTagsReducer?.vendorFilterViewModel?.filtersList??[];
     const checkSelectedFilter = (item) => {
         // return state.activeTab === item.vendorDashboardCatID;
         return (selectedFilters ?? []).find(x => x === item.vendorDashboardCatID);
@@ -46,13 +49,13 @@ const styles = (colors,checkSelectedFilter)=>{
         filterContainer:(x)=> ({
             height: FILTER_ICON_HEIGHT,
             borderColor: 'rgba(0,0,0,0.4)',
-            borderRadius: 4,
             justifyContent: 'center',
             paddingHorizontal: 5,
             marginHorizontal: 5,
+            borderRadius: checkSelectedFilter(x) ? 4:1,
             backgroundColor: checkSelectedFilter(x) ? colors.primary + '20' : '#fff',
             borderColor: checkSelectedFilter(x) ? colors.primary : '',
-            borderWidth: checkSelectedFilter(x) ? 1 : 0.2,
+            borderWidth: checkSelectedFilter(x) ? 1 : 0.1,
         }),
         filterTouchable:{
             display: 'flex',

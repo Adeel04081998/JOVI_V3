@@ -5,7 +5,7 @@ import Text from '../../components/atoms/Text';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import NoRecord from '../../components/organisms/NoRecord';
-import ProductCard from '../../components/organisms/ProductCard';
+import ProductCard from '../../components/organisms/Card/ProductCard';
 import { renderFile, renderPrice, sharedExceptionHandler, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Animated, Easing, StyleProp, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
+import { Animated, Easing, StyleProp, TextStyle, TouchableOpacity,GestureResponderEvent, ViewStyle } from 'react-native';
 import { NumberProp, SvgXml } from 'react-native-svg';
 import { VALIDATION_CHECK } from '../../helpers/SharedActions';
 import sharedStyles from '../../res/sharedStyles';
@@ -21,6 +21,7 @@ type Props = React.ComponentProps<typeof TouchableOpacity> & {
     title?: string;
     containerStyleOverride: boolean;
     containerOverrideStyle: Object;
+    pressBackgroundColor:string;
 };
 
 const defaultProps = {
@@ -33,10 +34,34 @@ const defaultProps = {
     title: '',
     containerStyleOverride: false,
     containerOverrideStyle: {},
+    pressBackgroundColor:'transparent'
 }
 
 const CategoryCardItem = (props: Props) => {
     const transFormAngle = React.useRef(new Animated.Value(0)).current;
+    const animatedBackground = React.useRef(new Animated.Value(0)).current;
+    const animateBackgroundColorPressIn = (event: GestureResponderEvent) => {
+        Animated.timing(animatedBackground,{
+            toValue:1,
+            duration:20,
+            easing: Easing.ease,
+            useNativeDriver:true,
+        }).start();
+        if(props.onPressIn){
+            props.onPressIn(event);
+        }
+    }
+    const animateBackgroundColorPressOut = (event: GestureResponderEvent) => {
+        Animated.timing(animatedBackground,{
+            toValue:0,
+            duration:20,
+            easing: Easing.ease,
+            useNativeDriver:true,
+        }).start();
+        if(props.onPressIn){
+            props.onPressIn(event);
+        }
+    }
     useEffect(() => {
         Animated.timing(transFormAngle, {
             duration: 600,
@@ -47,7 +72,11 @@ const CategoryCardItem = (props: Props) => {
     }, []);
 
     return (
-        <TouchableOpacity {...props} style={props.containerStyleOverride ? {
+        <TouchableOpacity 
+        {...props} 
+        onPressIn={animateBackgroundColorPressIn}
+        onPressOut={animateBackgroundColorPressOut}
+        style={props.containerStyleOverride ? {
             backgroundColor: '#fff',
             borderRadius: 10,
             ...props.containerOverrideStyle
@@ -61,6 +90,10 @@ const CategoryCardItem = (props: Props) => {
             width: props.width,
 
         }]}>
+            <AnimatedView style={{position:'absolute',width:'100%',height:'100%',borderRadius: 10,backgroundColor:props.pressBackgroundColor,opacity:animatedBackground.interpolate({
+                inputRange:[0,1],
+                outputRange:[0,0.7]
+            })}} />
             <AnimatedView style={[{
                 opacity: transFormAngle.interpolate({
                     inputRange: [0, 1],

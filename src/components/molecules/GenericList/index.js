@@ -14,6 +14,7 @@ import { postRequest } from '../../../manager/ApiManager';
 import Endpoints from '../../../manager/Endpoints';
 import sharedStyles from '../../../res/sharedStyles';
 import NavigationService from '../../../navigations/NavigationService';
+import ROUTES from '../../../navigations/ROUTES';
 
 export default React.memo(({ vendorType = 0,pitstopType = 2, imageStyles = {}, themeColors = null, showMoreBtnText = "", }) => {
     const SPACING_BOTTOM = 0;
@@ -95,7 +96,7 @@ export default React.memo(({ vendorType = 0,pitstopType = 2, imageStyles = {}, t
         }
     }
     const onPressViewMore = (item) => {
-        NavigationService.NavigationActions.common_actions.navigate('PitstopsVerticalList',{pitstopType:pitstopType,listingObj:{...item}});
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.PitstopsVerticalList.screen_name,{pitstopType:pitstopType,listingObj:{...item}});
     }
     return (
         <View style={{ paddingBottom: SPACING_BOTTOM }}>

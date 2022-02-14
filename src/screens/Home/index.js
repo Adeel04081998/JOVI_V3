@@ -37,10 +37,8 @@ export default () => {
                 useNativeDriver: true,
                 easing: Easing.ease
             }).start(finished => {
-                if (finished) {
-                    if(!__DEV__){
-                        dispatch(ReduxActions.showRobotAction());
-                    }
+                if (finished && !__DEV__) {
+                    dispatch(ReduxActions.showRobotAction());
                 }
             });
         }

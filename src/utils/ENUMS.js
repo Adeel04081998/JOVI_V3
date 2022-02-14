@@ -23,36 +23,63 @@ export default {
             "value": 5
         }
     ],
+    "ESTIMATED_TIME": [
+        {
+            "text": "0-15 mins",
+            "value": 1
+        },
+        {
+            "text": "15-30 mins",
+            "value": 2
+        },
+        {
+            "text": "30-45 mins",
+            "value": 3
+        },
+        {
+            "text": "45-60 mins",
+            "value": 4
+        },
+        {
+            "text": "1 hour +",
+            "value": 5
+        }
+    ],
     "PITSTOP_TYPES": [
         {
             "text": "Jovi",
             "value": 2,
             "icon": svgs.jovi(),
             "isActive": true,
+            "color":"#6D51BB",
         },
         {
             "text": "Food",
             "value": 4,
             "icon": svgs.food(),
             "isActive": true,
+            "color":"#F94E41",
         },
         {
             "text": "Grocery",
             "value": 1,
             "icon": svgs.grocery(),
             "isActive": true,
+            "color":"#27C787",
         },
         {
             "text": "Pharmacy",
             "value": 3,
             "icon": svgs.pharmacy(),
             "isActive": true,
+            "color":"#1945BE",
         },
         {
             "text": "Jovi Mart",
             "value": 5,
             "icon": null,
             "isActive": false,
+            "color":"#6B6B6B",
 
         }
     ],
@@ -61,6 +88,20 @@ export default {
     "ICON_TYPES": {
         0: { "text": "distance", "value": 0 },
         1: { "text": "delivery", "value": 1 }
+    },
+    "PROMO_VALUE_TYPE": {
+        Empty: {
+            "text": "Fixed",
+            "value": 0
+        },
+        Fixed: {
+            "text": "Fixed",
+            "value": 1
+        },
+        Percentage: {
+            "text": "Percentage",
+            "value": 2
+        }
     },
     "FILTER_BY": [
         {

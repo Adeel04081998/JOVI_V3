@@ -107,7 +107,6 @@ const stylesFunc = (colors: typeof initColors) => StyleSheet.create({
         alignSelf: "center",
         borderRadius: 10,
         backgroundColor: colors.primary,
-        alignItems: "flex-start",
     },
 
 });//end of stylesFunc
