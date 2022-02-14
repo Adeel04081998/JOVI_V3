@@ -169,7 +169,11 @@ export default ({ navigation, route }) => {
             <CustomHeader
                 containerStyle={{
                     borderBottomWidth: 0,
-                    backgroundColor: colors.white,
+                    backgroundColor: VALIDATION_CHECK(title) ? colors.white : 'transparent',
+                    ...!VALIDATION_CHECK(title) && {
+                        position: "absolute",
+                        zIndex: 999,
+                    },
                 }}
                 title={title}
                 titleStyle={{
@@ -372,7 +376,6 @@ export default ({ navigation, route }) => {
                 scrollEnabled={true}
                 nestedScrollEnabled
                 contentContainerStyle={{
-                    marginTop: -10,
                     paddingBottom: 85,
                 }}
                 onEndReachedThreshold={0.6}
