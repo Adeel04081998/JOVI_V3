@@ -7,10 +7,12 @@ export default {
 
             mainContainer: {
                 
-                flex: 1, flexDirection: 'column', backgroundColor: colors.screen_background
+                flex: 1, flexDirection: 'column', backgroundColor: colors.screen_background,
+                
             },
             customHeaderMainContainer: {
-                position: 'absolute', zIndex: 2, backgroundColor: 'transparent', borderBottomWidth: 0, borderBottomColor: 'white'
+                position: 'absolute', zIndex: 2, backgroundColor: 'transparent', borderBottomWidth: 0, borderBottomColor: 'white',
+                
             },
             customHeaderLeftRightContainer: {
                 backgroundColor: colors.white

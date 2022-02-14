@@ -130,7 +130,7 @@ export default ({ navigation, route }) => {
             <>
                 <CustomHeader
                     hideFinalDestination
-                    title={route?.params?.title??''}
+                    title={route?.params?.title ?? ''}
                     titleStyle={{
                         color: colors.primary
                     }}
@@ -157,8 +157,8 @@ export default ({ navigation, route }) => {
             </>
         )
     }
-    const onItemPress = (item)=>{
-        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, { propItem:item,pitstopID,pitstopType:4 });
+    const onItemPress = (item) => {
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, { propItem: item, pitstopID, pitstopType: 4 });
     };
 
     return (
@@ -216,9 +216,9 @@ export default ({ navigation, route }) => {
                 renderItem={(parentItem, item, parentIndex, index) => {
                     if (parentItem?.isTopDeal ?? false) {
                         return (
-                            <ProductCard 
-                            onItemPress={onItemPress}
-                            color={colors}
+                            <ProductCard
+                                onItemPress={()=>onItemPress(item)}
+                                color={colors}
                                 containerStyle={{
                                     ...itemStyles.primaryContainer,
                                     marginLeft: index === 0 ? 10 : 0,
@@ -233,7 +233,7 @@ export default ({ navigation, route }) => {
                         )
                     }
                     return (
-                        <TouchableOpacity onPress={()=>onItemPress(item)} style={itemStyles.primaryContainer2}>
+                        <TouchableOpacity onPress={() => onItemPress(item)} style={itemStyles.primaryContainer2}>
                             {index !== 0 &&
                                 <View style={itemStyles.seperator} />
                             }

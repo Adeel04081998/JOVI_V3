@@ -6,67 +6,18 @@ import Text from "../../../components/atoms/Text";
 import TouchableOpacity from "../../../components/atoms/TouchableOpacity";
 import View from "../../../components/atoms/View";
 
-export default ({ data = [], selectedOptions = [], onPressCb, selectionTittle = "", requiredTittle = "", isMultipleSelection = false, selectedItem = [], selectCOndition = null, productDetailsStyles }) => {
+export default ({ data = [], selectedOptions = [], onPressCb, productDetailsStyles }) => {
 
-    console.log("selectedItem", selectedItem);
     const checkSelected = (x) => {
-        const check = selectedOptions.filter(item=>item.itemOptionID === x.itemOptionID)[0];
-        if(check){
+        const check = selectedOptions.filter(item => item.itemOptionID === x.itemOptionID)[0];
+        if (check) {
             return true;
         }
         return false;
     }
-    const onPress = (item, isMany, i) => {
-        console.log("isMany, i", isMany, i);
-        if (isMany === true) {
-            const isExist = selectedItem.findIndex(i => i.itemOptionID === item.itemOptionID);
-            // console.log('isExist ', isExist);
-            if (isExist === -1) {
-                // if (selectedItem.length === selectCOndition) return
-                selectedItem.push(item); // adding item
-            } else {
-                selectedItem.splice(isExist, 1); // deleting same item from
-            }
-
-            onPressCb && onPressCb(selectedItem, isMany);
-
-        } else {
-            //SINGLE SELECTION
-
-            selectedItem = [];
-            selectedItem.push(item); // adding item
-            onPressCb && onPressCb(selectedItem, isMany);
-
-        }
 
 
-        return
-        if (isMultipleSelection) {
-            const isExist = selectedItem.findIndex(i => i.id === item.id);
-            console.log('isExist ', isExist);
-            if (isExist === -1) {
-                if (selectedItem.length === selectCOndition) return
-                selectedItem.push(item); // adding item
-            } else {
-                selectedItem.splice(isExist, 1); // deleting same item from
-            }
-
-            onPressCb && onPressCb(selectedItem, isMultipleSelection,);
-
-        } else {
-            //SINGLE SELECTION
-
-            selectedItem = [];
-            selectedItem.push(item); // adding item
-            onPressCb && onPressCb(selectedItem, isMultipleSelection);
-
-        }
-
-    };
-
-    const RenderUi = ({ pitstopItemsOptionList,choosedQuantity, isMany, parentIndex }) => {
-        console.log(`pitstopItemsOptionList`, pitstopItemsOptionList,choosedQuantity)
-
+    const RenderSelectionUi = ({ pitstopItemsOptionList, choosedQuantity, isMany, parentIndex }) => {
         return (
             <View style={{
                 backgroundColor: 'white',
@@ -74,18 +25,13 @@ export default ({ data = [], selectedOptions = [], onPressCb, selectionTittle = 
                 marginVertical: 5,
                 borderRadius: 10,
                 flexDirection: 'column',
-                // height: 90,
-
             }}>
                 {
                     pitstopItemsOptionList.map((x, i) => {
                         const attributeName = x.tittle
                         const attributeOptionPrice = x.optionPrice
-                        const selectedIndex = selectedItem.findIndex(k => k.itemOptionID === x.itemOptionID);
-                        // let isActive = selectedIndex === -1 ? false : x.itemOptionID === selectedItem[selectedIndex].itemOptionID;
                         let isActive = checkSelected(x);
-                        // return <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1, paddingVertical:5 }} onPress={() => { onPress(x, isMany,i) }} >
-                        return <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1, paddingVertical: 5 }} onPress={() => onPressCb(x, isMany, parentIndex,choosedQuantity??null)} >
+                        return <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1, paddingVertical: 5 }} onPress={() => onPressCb(x, isMany, parentIndex, choosedQuantity ?? null)} key={i}  >
                             <View style={productDetailsStyles.radioButtonCircle}>
                                 {isActive &&
                                     <View style={productDetailsStyles.filledCircle(true)} />
@@ -101,8 +47,6 @@ export default ({ data = [], selectedOptions = [], onPressCb, selectionTittle = 
             </View>
 
         )
-
-
     }
 
     return (
@@ -110,21 +54,23 @@ export default ({ data = [], selectedOptions = [], onPressCb, selectionTittle = 
         <View>
             {
                 data.map((x, i) => {
-                    const isMany = (__DEV__ && i === 0) ? true : x.isMany ?? false
-                    // const isMany = true
-
+                    // const isMany = (__DEV__ && i === 0) ? true : x.isMany ?? false
+                    const isMany = x.isMany ?? false
                     const isRequired = x.isRequired ?? false
                     const mainTitle = x.mainTittle ?? ""
-                    const choosedQuantity = 2
+                    const choosedQuantity = x.quantity ?? 0
                     const pitstopItemsOptionList = x.pitStopItemsOptionList ?? []
-                    // const selectedIndex = selectedItem.findIndex(k => k.id === x.id);
-                    // let isActive = selectedIndex === -1 ? false : x.id === selectedItem[selectedIndex].id;
-                    return <AnimatedView style={{}}>
+                    return <AnimatedView style={{}} key={i}>
                         <Text style={productDetailsStyles.radioButtonSelectionTittle}
                             fontFamily="PoppinsRegular"
-                        >{`${mainTitle},(Select${choosedQuantity})`}</Text>
-                        <Text style={productDetailsStyles.requiredTxt} fontFamily="PoppinsRegular">{isRequired && "Required"}</Text>
-                        <RenderUi pitstopItemsOptionList={pitstopItemsOptionList} isMany={isMany} parentIndex={i} choosedQuantity={choosedQuantity} />
+                        >{`${mainTitle}`}
+                            {choosedQuantity > 0 &&
+                                <Text>{`(Select${choosedQuantity})`}</Text>
+
+                            }
+                        </Text>
+                        {isRequired && <Text style={productDetailsStyles.requiredTxt} fontFamily="PoppinsRegular">{"Required"}</Text>}
+                        <RenderSelectionUi pitstopItemsOptionList={pitstopItemsOptionList} isMany={isMany} parentIndex={i} choosedQuantity={choosedQuantity} />
 
                     </AnimatedView>
 
