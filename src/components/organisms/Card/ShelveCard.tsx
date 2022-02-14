@@ -21,7 +21,7 @@ interface ShelveCardItem {
     image: ImageSourcePropType;
 }
 
-type Props = React.ComponentProps<typeof ImageBackground> & {
+interface Props  {
     children?: any;
     color: typeof initColors,
     cardWidth?: number,
