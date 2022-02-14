@@ -16,10 +16,11 @@ const WINDOW_WIDTH = constants.screen_dimensions.width;
 const CARD_WIDTH = WINDOW_WIDTH * 0.4;
 const CARD_HEIGHT = CARD_WIDTH * 0.4;
 
-const DATA = new Array(10).fill(ProductDummyData1.pitstopStockViewModel.shelves).flat();
+// const DATA = new Array(10).fill(ProductDummyData1.pitstopStockViewModel.shelves).flat();
 
 export default ({ navigation, route }) => {
     // #region :: ROUTE PARAM's START's FROM HERE 
+    const DATA = route?.params?.shelveData??[];
     const pitstopType = 2;
     const headerTitle = 'Shelves';
     // #endregion :: ROUTE PARAM's END's FROM HERE 

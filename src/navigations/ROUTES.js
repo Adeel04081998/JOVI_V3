@@ -54,6 +54,14 @@ const APP_DRAWER_ROUTES = {
         screen_name: "RESTAURANTMENU",
         options: null,
     },
+    "ProductMenu":{
+        screen_name: "SUPERMARKET_MENU",
+        options: null,
+    },
+    "Shelves":{
+        screen_name: "Shelves",
+        options: null,
+    }
 }
 const APP_ROUTES = {
     "AppDrawerStack": {

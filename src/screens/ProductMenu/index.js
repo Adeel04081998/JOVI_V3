@@ -385,6 +385,7 @@ export default ({ navigation, route }) => {
                         hideHeader
                         colors={colors}
                         shelveData={allData?.shelveSlicedArray ?? []}
+                        data={allData.shelves}
                         headerItem={{
                             image: { uri: renderFile(allData?.pitstopImage ?? '') },
                             distance: allData?.distance ?? '',
