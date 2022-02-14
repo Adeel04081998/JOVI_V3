@@ -24,9 +24,7 @@ export type ButtonProps = React.ComponentProps<typeof TouchableOpacity> & {
     rightComponent?: () => React.ReactNode;
 
 };
-type VectorProps = React.ComponentProps<typeof VectorIcon> & {
-    children?: any;
-}
+
 const defaultProps = {
     text: 'JOVI',
     activeOpacity: 0.9,

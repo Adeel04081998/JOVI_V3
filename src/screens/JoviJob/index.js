@@ -78,8 +78,8 @@ export default ({ navigation, route }) => {
             "title": "Pitstop Details",
             "desc": "What Would You Like Your Jovi To Do ?",
             "svg": svgs.pitstopPin(),
-            "isOpened": false,
-            "headerColor": colors.lightGreyBorder,
+            "isOpened": __DEV__ ? true : false,
+            "headerColor": __DEV__ ? colors.primary : colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["description"],
             "showSubCard": true,
             "disabled": true,
@@ -89,8 +89,8 @@ export default ({ navigation, route }) => {
             "title": "Estimated Waiting Time",
             "desc": "What Is The Estimated Time Of The Job ?",
             "svg": svgs.pitStopBuy(),
-            "isOpened": false,
-            "headerColor": colors.lightGreyBorder,
+            "isOpened": __DEV__ ? true : false,
+            "headerColor": __DEV__ ? colors.primary : colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["estimated-time"],
             "showSubCard": true,
             "disabled": true,
@@ -100,8 +100,8 @@ export default ({ navigation, route }) => {
             "title": "Buy For Me ?",
             "desc": "Do You Want Us To Buy For You ?",
             "svg": svgs.pitStopEstTime(),
-            "isOpened": false,
-            "headerColor": colors.lightGreyBorder,
+            "isOpened": __DEV__ ? true : false,
+            "headerColor": __DEV__ ? colors.primary : colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["buy-for-me"],
             "showSubCard": true,
             "disabled": true,
@@ -112,8 +112,8 @@ export default ({ navigation, route }) => {
             "title": "Estimated Price",
             "desc": "What is the Estimated Price?",
             "svg": svgs.pitStopEstTime(),
-            "isOpened": true,
-            "headerColor": colors.lightGreyBorder,
+            "isOpened": __DEV__ ? true : false,
+            "headerColor": __DEV__ ? colors.primary : colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["estimated-price"],
             "showSubCard": false,
             "disabled": true,
@@ -138,10 +138,10 @@ export default ({ navigation, route }) => {
 
     /******** Start of pitsTop Location variables *******/
 
-    const [nameval, setNameVal] = useState('')
+    const [nameval, setNameVal] = useState(__DEV__ ? 'Ahmed' :'')
     const [cityVal, setCityVal] = useState('')
     const [placeName, setPlaceName] = useState('')
-    const [locationVal, setLocationVal] = useState('')
+    const [locationVal, setLocationVal] = useState(__DEV__ ? "Islamabad" : "")
     const [scrollEnabled, setScrollEnabled] = useState(true)
 
     /******** End of pitsTop Location variables *******/
@@ -150,7 +150,7 @@ export default ({ navigation, route }) => {
 
     /******** Start of Pitstop Details variables *******/
 
-    const [description, setDescription] = useState('')
+    const [description, setDescription] = useState( __DEV__ ? 'CHUTTI CHAHIYE' : '')
     const [imageData, updateImagesData] = useState([]);
 
     const [, updateStateaaa] = React.useState();
@@ -174,10 +174,10 @@ export default ({ navigation, route }) => {
 
     /******** Start of other Pitstop variables *******/
 
-    const [estVal, setEstVal] = useState('')
+    const [estVal, setEstVal] = useState(__DEV__ ?  '1500' : '')
     const [switchVal, setSwitch] = useState(false);
     const [estTime, setEstTime] = React.useState({
-        text: __DEV__ ? "Estimated Time" : "Estimated Time",
+        text: __DEV__ ? "0-15 mins" : "Estimated Time",
         value: __DEV__ ? 1 : 0
     });
     const [collapsed, setCollapsed] = React.useState(true);
@@ -194,13 +194,12 @@ export default ({ navigation, route }) => {
     /*****************************     Start of  useEffect            ***********************************/
 
 
-
+// to be used for editing purposes
     useEffect(() => {
         if (route.params !== undefined && route.params !== '') {
             if (route.params.pitstopItemObj) {
-                setLocationVal()
-                setNameVal()
-
+                // setLocationVal()
+                // setNameVal()
             }
         }
     }, [route])
@@ -261,7 +260,7 @@ export default ({ navigation, route }) => {
 
 
     const onLocationPress = () => {
-        drawer_actions.jumpTo(ROUTES.APP_ROUTES.Map.screen_name, { onNavigateBack: cb })
+        common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { onNavigateBack: cb })
     }
     const cb = (resp) => {
         setLocationVal(resp)
