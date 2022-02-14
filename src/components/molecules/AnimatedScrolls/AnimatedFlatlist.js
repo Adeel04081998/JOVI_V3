@@ -5,7 +5,7 @@ const Flatlist = Animated.FlatList;
 
 
 const animatedTabs = 7;
-const AnimatedFlatlist = ({ horizontal = false, data = [],delay=100, animationType = 'each', itemContainerStyle = {}, renderItem = () => { }, flatlistProps = {}, ListCustomHeaderComponent = null }) => {
+const AnimatedFlatlist = ({ horizontal = false, data = [],delay=100, animationType = 'each', itemContainerStyleCb=()=>{},itemContainerStyle = {}, renderItem = () => { }, flatlistProps = {}, ListCustomHeaderComponent = null }) => {
     // const animatedValues = Array(animatedTabs).fill(React.useRef(new Animated.Value(0)).current);
     // const animatedValues = React.useRef([...Array(animatedTabs).fill(React.useRef(new Animated.Value(0)).current)]).current;
     const animatedValues = [
