@@ -9,6 +9,8 @@ import Endpoints from '../manager/Endpoints';
 import Toast from '../components/atoms/Toast';
 import { store } from '../redux/store';
 import ReduxActions from '../redux/actions';
+import configs from '../utils/configs';
+import Regex from '../utils/Regex';
 import GV, { PITSTOP_TYPES } from '../utils/GV';
 const dispatch = store.dispatch;
 export const sharedGetDeviceInfo = async () => {
@@ -26,32 +28,47 @@ export const sharedExceptionHandler = err => {
     if (err) {
         if (err.data && err.data.errors) {
             var errorKeys = Object.keys(err.data.errors),
-                errorStr = '';
+                errorStr = "";
             for (let index = 0; index < errorKeys.length; index++) {
-                if (index > 0) errorStr += err.data.errors[errorKeys[index]][0] + '\n';
-                else errorStr += err.data.errors[errorKeys[index]][0];
+                if (index > 0) errorStr += err.data.errors[errorKeys[index]][0] + "\n"
+                else errorStr += err.data.errors[errorKeys[index]][0]
             }
             Toast.error(errorStr, TOAST_SHOW);
-        } else if (err.errors && typeof err.errors === 'object') {
+            return errorStr;
+        }
+        else if (err.errors && typeof err.errors === "object") {
             var errorKeys = Object.keys(err.errors),
-                errorStr = '';
+                errorStr = "";
             for (let index = 0; index < errorKeys.length; index++) {
-                if (index > 0) errorStr += err.errors[errorKeys[index]][0] + '\n';
-                else errorStr += err.errors[errorKeys[index]][0];
+                if (index > 0) errorStr += err.errors[errorKeys[index]][0] + "\n"
+                else errorStr += err.errors[errorKeys[index]][0]
             }
             Toast.error(errorStr, TOAST_SHOW);
-        } else if (err && typeof err === 'string') {
+            return errorStr;
+        }
+
+        else if (err && typeof err === "string") {
             Toast.error(err, TOAST_SHOW);
-        } else if (err.message && typeof err.message === 'string') {
+            return err;
+        }
+        else if (err.message && typeof err.message === "string") {
             Toast.error(err.message, TOAST_SHOW);
-        } else if (err.Error && typeof err.Error === 'string') {
+            return err.message;
+        }
+        else if (err.Error && typeof err.Error === "string") {
             Toast.error(err.Error, TOAST_SHOW);
-        } else if (err.error && typeof err.error === 'string') {
+            return err.Error;
+        }
+        else if (err.error && typeof err.error === "string") {
             Toast.error(err.error, TOAST_SHOW);
-        } else {
+            return err.error;
+        }
+        else {
             Toast.error('Something went wrong', TOAST_SHOW);
+            return 'Something went wrong';
         }
     }
+  
 };
 export const sharedInteval = (
     duration = 30,
@@ -113,18 +130,16 @@ export const sendOTPToServer = (payload, onSuccess, onError, onLoader) => {
     );
 };
 export const sharedGetEnumsApi = () => {
-    getRequest(
-        Endpoints.GET_ENUMS,
-        res => {
-            // console.log("[getEnums].res", res);
-            dispatch(ReduxActions.setEnumsActions(res.data.enums));
-        },
-        err => {
-            sharedExceptionHandler(err);
-        },
-        {},
-        false,
-    );
+    getRequest(Endpoints.GET_ENUMS, res => {
+        console.log("[getEnums].res", res);
+        dispatch(ReduxActions.setEnumsActions(res.data.enums))
+    },
+    err => {
+      sharedExceptionHandler(err);
+    },
+    {},
+    false,
+  );
 };
 export const sharedGetUserDetailsApi = () => {
     getRequest(
@@ -222,6 +237,32 @@ export const sharedGetPromotions = () => {
 export const sharedLogoutUser = () => {
     dispatch(ReduxActions.clearUserAction({ introScreenViewed: true }));
 };
+
+export const sharedStartingRegionPK = {
+    latitude: 25.96146850382255,
+    latitudeDelta: 24.20619842968337,
+    longitude: 69.89856876432896,
+    longitudeDelta: 15.910217463970177
+};
+
+export const secToHourMinSec = (sec = 1,) => {
+    let totalSeconds = parseInt(sec);
+    let hours = Math.floor(totalSeconds / 3600);
+    totalSeconds %= 3600;
+    let minutes = Math.floor(totalSeconds / 60);
+    let seconds = totalSeconds % 60;
+
+    // If you want strings with leading zeroes:
+    minutes = String(minutes).padStart(2, "0");
+    hours = String(hours).padStart(2, "0");
+    seconds = String(seconds).padStart(2, "0");
+    if (hours > 0) {
+        return hours + ":" + minutes + ":" + seconds;
+    }
+
+    return minutes + ":" + seconds;
+
+}//end of secToHourMinSec
 
 export const renderFile = picturePath => {
     const userReducer = store.getState().userReducer;
@@ -389,3 +430,33 @@ export const sharedAddUpdatePitstop = (
     dispatch(ReduxActions.setCartAction({ pitstops, joviRemainingAmount }));
     sharedCalculateCartTotals(pitstops)
 };
+
+export const sharedGetFilters = () => {
+    postRequest(Endpoints.GET_FILTERS,{
+        "vendorType":4
+
+    }, res => {
+        console.log("[sharedGetFiltersApi].res ====>>", res);
+        // dispatch(ReduxActions.setMessagesAction({ ...res.data, robotJson: data }));
+        dispatch(ReduxActions.setCategoriesTagsAction({...res.data}))
+
+  
+    },
+        err => {
+            console.log("error", err);
+            // sharedExceptionHandler(err)
+        },
+        {},
+    )
+      
+   
+}
+
+export const uniqueKeyExtractor = () => new Date().getTime().toString() + (Math.floor(Math.random() * Math.floor(new Date().getTime()))).toString();
+
+export const renderPrice=(price,prefix="Rs. ",suffix="",)=>{
+    prefix=`${prefix}`.trim();
+    suffix=`${suffix}`.trim();
+    price=`${price}`.trim().replace(Regex.price,'').trim();
+    return suffix.length>0 ? `${prefix} ${price} ${suffix}` : `${prefix} ${price}`;
+}

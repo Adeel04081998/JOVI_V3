@@ -21,11 +21,17 @@ import { _NavgationRef } from './src/navigations/NavigationService';
 import View from './src/components/atoms/View';
 import Toast from 'react-native-toast-message';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import Modal from './src/components/atoms/Modal';
+
+
+
 import CodePush from "react-native-code-push"; //for codepush
 import { env } from './src/utils/configs';
 import Robot from './src/components/organisms/Robot';
 import { useSelector } from 'react-redux';
-import { sharedGetEnumsApi, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser } from './src/helpers/SharedActions';
+import { sharedGetEnumsApi, sharedGetFilters, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser } from './src/helpers/SharedActions';
+import PistopListing from './src/screens/PitstopListing';
+import Filter from './src/components/atoms/Filter';
 AntDesign.loadFont();
 Entypo.loadFont();
 EvilIcons.loadFont();
@@ -53,6 +59,7 @@ const CODE_PUSH_OPTIONS = {
 const App = () => {
   const netInfo = useNetInfo();
   GV.NET_INFO_REF.current = netInfo;
+  const [state,setState] = React.useState({appLoaded:false});
   // console.log("netInfo", netInfo)
   const isDarkMode = useColorScheme() === "dark";
   const theme = isDarkMode ? {
@@ -112,14 +119,18 @@ const App = () => {
       codePushDownloadDidProgress(progress)
     })
     setTimeout(() => {
-    }, 3000)
-    RNSplashScreen.hide();
+        RNSplashScreen.hide();
+        setState(pre=>({...pre,appLoaded:true}));//if we run splash screen forcefully for 3 seconds, then the home page gets loaded without animation, this will stop that.
+    }, 2000)
     return () => { }
   }, []);
 
   LogBox.ignoreLogs([
     "[react-native-gesture-handler] Seems like you\'re using an old API with gesture components, check out new Gestures system!",
   ]);
+  navigator.geolocation = require('react-native-geolocation-service');
+
+  if(!state.appLoaded) return null;
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
@@ -133,6 +144,7 @@ const App = () => {
         <NavigationContainer theme={theme} ref={_NavgationRef} >
           <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
             <RootStack />
+            {/* <PistopListing /> */}
           </View>
         </NavigationContainer>
         <Robot />
@@ -155,6 +167,7 @@ const SharedGetApis = ({ }) => {
       sharedGetHomeMsgsApi();
       sharedGetUserAddressesApi();
       sharedGetPromotions();
+      sharedGetFilters()
     }
   }, [isLoggedIn])
   return (<></>);

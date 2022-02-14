@@ -40,7 +40,17 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>This will allow you to take and upload pictures to be used in your profile. You will also be able to send pictures at the time of placing an order. You may also send pictures to your allocated Jovi during an order via the live chat, to ensure the accuracy of you order.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string></string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string></string>
 	<key>NSLocationWhenInUseUsageDescription</key>
+	<string></string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string></string>
+	<key>NSPhotoLibraryUsageDescription</key>
 	<string></string>
 	<key>UIAppFonts</key>
 	<array>
@@ -62,6 +72,10 @@
 		<string>PoppinsSemiBoldItalic.ttf</string>
 		<string>PoppinsThin.ttf</string>
 		<string>PoppinsThinItalic.ttf</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>Launch Screen</string>

@@ -12,8 +12,8 @@ export const refreshTokenMiddleware = (requestCallback, params) => {
     postRequest(
         "/api/User/RefreshToken",
         {
-            "accessToken": userReducer.token.authToken,
-            "refreshToken": userReducer.refreshToken
+            "accessToken": userReducer?.token?.authToken,
+            "refreshToken": userReducer?.refreshToken
         },
         res => {
             console.log("refreshTokenMiddleware.Res :", res);
