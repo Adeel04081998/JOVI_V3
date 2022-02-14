@@ -51,7 +51,7 @@ const AppDrawerComponents = {
     PitstopListing,
     Filter,
     PitstopsVerticalList,
-    RestaurantProductMenu,
+    RestaurantProductMenu:ProductMenu,
     JoviJob,
     Map
 }//will open with Slide Animation

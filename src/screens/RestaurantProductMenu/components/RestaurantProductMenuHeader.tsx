@@ -21,19 +21,23 @@ export interface ProductMenuHeaderItem {
     time?: string;
 }
 
-export const ProductMenuHeaderItemDefaultValue=  { title: '', description: '', distance: '', time: '', image: constants.DEFAULT_JOVI_IMAGE };
+export const ProductMenuHeaderItemDefaultValue = { title: '', description: '', distance: '', time: '', image: constants.DEFAULT_JOVI_IMAGE };
 type Props = React.ComponentProps<typeof Animated.View> & {
     children?: any;
     colors: typeof initColors;
 
     onLayout?: (event: LayoutChangeEvent) => void;
     item?: ProductMenuHeaderItem;
+
+    hideHeader?: boolean;
+
 };
 
 const defaultProps = {
     onLayout: undefined,
     item: ProductMenuHeaderItemDefaultValue,
 
+    hideHeader: false,
 };
 
 const WINDOW_WIDTH = constants.window_dimensions.width;
@@ -71,17 +75,18 @@ const RestaurantProductMenuHeader = (props: Props) => {
                 style={{ ...styles.image }}
 
                 tapToOpen={false}>
+                {!(props?.hideHeader ?? defaultProps.hideHeader) &&
+                    <CustomHeader containerStyle={styles.headerContainer}
+                        hideFinalDestination
+                        leftIconName="chevron-back"
+                        leftContainerStyle={styles.headerIcon}
+                        rightContainerStyle={styles.headerIcon}
+                        leftIconColor={colors.primary}
+                        rightIconColor={colors.primary}
+                        onLeftIconPress={() => { NavigationService.NavigationActions.common_actions.goBack(); }}
 
-                <CustomHeader containerStyle={styles.headerContainer}
-                    hideFinalDestination
-                    leftIconName="chevron-back"
-                    leftContainerStyle={styles.headerIcon}
-                    rightContainerStyle={styles.headerIcon}
-                    leftIconColor={colors.primary}
-                    rightIconColor={colors.primary}
-                    onLeftIconPress={()=>{NavigationService.NavigationActions.common_actions.goBack();}}
-
-                />
+                    />
+                }
 
             </ImageBackground>
 
