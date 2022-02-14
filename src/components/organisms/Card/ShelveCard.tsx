@@ -122,6 +122,7 @@ const ShelveCard = (props: Props) => {
                                 justifyContent: "flex-end",
                                 resizeMode: "cover"
                             }, props.imageStyle]}
+                            tapToOpen={false}
                             resizeMode={"cover"}
                         />
                         {/* <ImageBackground

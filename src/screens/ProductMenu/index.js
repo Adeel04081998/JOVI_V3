@@ -9,15 +9,16 @@ import TouchableScale from '../../components/atoms/TouchableScale';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import NoRecord from '../../components/organisms/NoRecord';
-import { isNextPage, renderFile, renderPrice, sharedExceptionHandler, uniqueKeyExtractor, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { getRandomInt, isNextPage, renderFile, renderPrice, sharedAddUpdatePitstop, sharedExceptionHandler, uniqueKeyExtractor, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import { store } from '../../redux/store';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
 import ENUMS from '../../utils/ENUMS';
-import GV from '../../utils/GV';
+import GV, { PITSTOP_TYPES } from '../../utils/GV';
 import GotoCartButton from '../RestaurantProductMenu/components/GotoCartButton';
+import { ProductDummyData1 } from '../RestaurantProductMenu/components/ProductDummyData';
 import ProductMenuHeader from './components/ProductMenuHeader';
 import ProductQuantityCard from './components/ProductQuantityCard';
 import { itemStylesFunc, stylesFunc } from './styles';
@@ -47,6 +48,7 @@ export default () => {
     const [allData, updateALlData] = React.useState({});
     const [data, updateData] = React.useState([]);
     const [metaData, toggleMetaData] = React.useState(false);
+    const [isClosed, toggleIsClosed] = React.useState(false);
 
     const [finalDestination, updateFinalDestination] = React.useState(store.getState().userReducer?.finalDestination ?? {});
     const [paginationInfo, updatePaginationInfo] = React.useState(DEFAULT_PAGINATION_INFO);
@@ -66,7 +68,7 @@ export default () => {
     }, []);
 
     const getQuantity = () => {
-        return 0;
+        return Math.random() < 0.5 ? 0 : getRandomInt(1, 10);
     };
 
     const loadData = (currentRequestNumber, append = false) => {
@@ -88,65 +90,66 @@ export default () => {
             "marketID": marketID
         };
 
-        postRequest(Endpoints.GET_PRODUCT_MENU_LIST, params, (res) => {
-            console.log('response ', res);
-            if (res.data.statusCode === 404) {
-                updateQuery({
-                    errorText: res.data.message,
-                    isLoading: false,
-                    error: true,
-                    refreshing: false,
-                });
-                updateData({});
-                return
-            }
+        // postRequest(Endpoints.GET_PRODUCT_MENU_LIST, params, (res) => {
+        //     console.log('response ', res);
+        //     if (res.data.statusCode === 404) {
+        //         updateQuery({
+        //             errorText: res.data.message,
+        //             isLoading: false,
+        //             error: true,
+        //             refreshing: false,
+        //         });
+        //         updateData({});
+        //         return
+        //     }
 
-            const pitstopStockView = res.data?.pitstopStockViewModel ?? {};
+        const pitstopStockView = ProductDummyData1?.pitstopStockViewModel ?? {};
 
-            const newData = (pitstopStockView?.categoryWithItems ?? []).map(pitem => {
-                const newpitstopItemListArr = pitem.pitstopItemList.map(item => {
-                    return {
-                        ...item,
-                        quantity: getQuantity(),
-                    }
-                })
+        const newData = (pitstopStockView?.categoryWithItems ?? []).map(pitem => {
+            const newpitstopItemListArr = pitem.pitstopItemList.map(item => {
                 return {
-                    ...pitem,
-                    pitstopItemList: newpitstopItemListArr
-                };
+                    ...item,
+                    quantity: getQuantity(),
+                    isOutOfStock: Math.random() < 0.1
+                }
             })
-
-            if (!append) {
-                const shelveSlicedArray = (pitstopStockView?.shelves ?? []).slice(0, SHELVE_MAX_COUNT);
-                updateALlData({ ...pitstopStockView, shelveSlicedArray });
-                const totalItem = res.data?.pitstopStockViewModel.categoryPaginationInfo.totalItems ?? DEFAULT_PAGINATION_INFO.totalItem;
-
-                updatePaginationInfo(pre => ({
-                    ...pre,
-                    totalItem,
-                }))
-            }
-
-
-            updateData([...data, ...newData]);
-            toggleMetaData(!metaData);
-            updateQuery({
-                errorText: '',
-                isLoading: false,
-                error: false,
-                refreshing: false,
-            });
-
-        }, (err) => {
-            console.log('errror api  ', err);
-            sharedExceptionHandler(err)
-            updateQuery({
-                errorText: sharedExceptionHandler(err),
-                isLoading: false,
-                error: true,
-                refreshing: false,
-            })
+            return {
+                ...pitem,
+                pitstopItemList: newpitstopItemListArr,
+            };
         })
+
+        if (!append) {
+            const shelveSlicedArray = (pitstopStockView?.shelves ?? []).slice(0, SHELVE_MAX_COUNT);
+            updateALlData({ ...pitstopStockView, shelveSlicedArray });
+            const totalItem = ProductDummyData1?.pitstopStockViewModel?.categoryPaginationInfo?.totalItems ?? DEFAULT_PAGINATION_INFO.totalItem;
+
+            updatePaginationInfo(pre => ({
+                ...pre,
+                totalItem,
+            }))
+        }
+
+
+        updateData([...data, ...newData]);
+        toggleMetaData(!metaData);
+        updateQuery({
+            errorText: '',
+            isLoading: false,
+            error: false,
+            refreshing: false,
+        });
+
+        // }, (err) => {
+        //     console.log('errror api  ', err);
+        //     sharedExceptionHandler(err);
+        //     updateQuery({
+        //         errorText: sharedExceptionHandler(err),
+        //         isLoading: false,
+        //         error: true,
+        //         refreshing: false,
+        //     })
+        // })
     };//end of loadData
 
     // #endregion :: API IMPLEMENTATION END's FROM HERE 
@@ -199,7 +202,8 @@ export default () => {
 
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     {(parentItem?.pitstopItemList ?? []).map((item, index) => {
-
+                        const image = (item?.images ?? []).length > 0 ? item.images[0].joviImageThumbnail : '';
+                        const isOutOfStock = "isOutOfStock" in item ? item.isOutOfStock : false;
                         return (
                             <View style={{
                                 marginLeft: index === 0 ? 10 : 0,
@@ -209,18 +213,21 @@ export default () => {
                                 {/* ****************** Start of IMAGE & QUANTITY ****************** */}
                                 <View style={itemStyles.imageContainer}>
                                     <ImageBackground
-                                        source={{ uri: renderFile(`${item.image}`) }}
+                                        source={{ uri: renderFile(`${image}`) }}
                                         style={itemStyles.image}
                                         borderRadius={8}
                                         tapToOpen={false}>
 
                                         <ProductQuantityCard
+                                            outOfStock={isOutOfStock}
+                                            initialQuantity={item.quantity}
                                             colors={colors}
                                             size={ITEM_IMAGE_SIZE}
                                             updateQuantity={(quantity) => {
                                                 updateQuantity(parentIndex, index, quantity);
                                             }}
                                         />
+
 
                                     </ImageBackground>
                                 </View>
@@ -230,10 +237,10 @@ export default () => {
 
                                 {/* ****************** Start of PRICE & DISCOUNT ****************** */}
                                 <View style={itemStyles.priceDiscountContainer}>
-                                    <Text fontFamily='PoppinsBold' style={itemStyles.price}>{renderPrice(item.price)}</Text>
+                                    <Text fontFamily='PoppinsBold' style={itemStyles.price}>{renderPrice(item.gstAddedPrice)}</Text>
 
-                                    {(VALIDATION_CHECK(item.discountPrice) && parseInt(`${item.discountPrice}`) > 0) &&
-                                        <Text style={itemStyles.discountPrice}>{renderPrice(item.discountPrice)}</Text>
+                                    {(VALIDATION_CHECK(item.discountedPrice) && parseInt(`${item.discountedPrice}`) > 0) &&
+                                        <Text style={itemStyles.discountPrice}>{renderPrice(item.discountedPrice)}</Text>
                                     }
 
                                 </View>
@@ -242,7 +249,7 @@ export default () => {
 
 
                                 {/* ****************** Start of NAME/TITLE ****************** */}
-                                <Text style={itemStyles.name}>{item.name}</Text>
+                                <Text style={itemStyles.name}>{item.pitStopItemName}</Text>
 
                                 {/* ****************** End of NAME/TITLE ****************** */}
 
@@ -252,7 +259,7 @@ export default () => {
                                         {parseInt(`${item.discountType}`) === parseInt(`${ENUMS.PROMO_VALUE_TYPE.Percentage.value}`) &&
                                             <SvgXml xml={svgs.discount(colors.primary)} height={15} width={15} style={itemStyles.discountTypeIcon} />
                                         }
-                                        <Text style={itemStyles.discountTypeText}>{`${renderPrice(item.discount, '-', '%', /[^\d.]/g)}`}</Text>
+                                        <Text style={itemStyles.discountTypeText}>{`${renderPrice(item.discountAmount, '-', '%', /[^\d.]/g)}`}</Text>
                                     </View>
                                 }
 
@@ -274,7 +281,23 @@ export default () => {
     // #region :: QUANTITY HANDLER START's FROM HERE 
     const updateQuantity = (parentIndex, index, quantity) => {
         data[parentIndex].pitstopItemList[index].quantity = quantity;
+        const pitstopDetails = {
+            pitstopType: PITSTOP_TYPES.SUPER_MARKET,
+            vendorDetails: { ...data[parentIndex], pitstopItemList: null,actionKey:"categoryID" },
+            itemDetails: { ...data[parentIndex].pitstopItemList[index],actionKey:"pitStopItemID" },
+        }
+        
+        sharedAddUpdatePitstop(pitstopDetails,)
+        // if (Math.random() < 0) {
+        //     undoQuantity(parentIndex, index);
+        // }
     };
+
+    const undoQuantity = (parentIndex, index) => {
+        data[parentIndex].pitstopItemList[index].isOutOfStock = !data[parentIndex].pitstopItemList[index].isOutOfStock;
+        toggleMetaData(!metaData);
+
+    };//end of undoQuantity
 
     // #endregion :: QUANTITY HANDLER END's FROM HERE 
 
@@ -301,6 +324,7 @@ export default () => {
     // #endregion :: ON END REACHED END's FROM HERE 
 
     if (query.error) {
+
         return (
             <>
                 {_renderHeader()}

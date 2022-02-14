@@ -65,7 +65,10 @@ export const sharedExceptionHandler = (err) => {
             Toast.error('Something went wrong', TOAST_SHOW);
             return 'Something went wrong';
         }
-    }
+    } else {
+      Toast.error('Something went wrong', TOAST_SHOW);
+      return 'Something went wrong';
+  }
 }
 export const sharedInteval = (duration = 30, delay = 1, listener = () => { }) => {
     // DURATION MUST BE IS SECONDS
@@ -407,3 +410,9 @@ export const sharedAddUpdatePitstop = (
   }
   dispatch(ReduxActions.setCartAction({pitstops, joviRemainingAmount}));
 };
+
+export const getRandomInt=(min=10, max=10000) =>{
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
