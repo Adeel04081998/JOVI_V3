@@ -1,8 +1,8 @@
 import React from 'react';
-import {Appearance, ScrollView} from 'react-native';
+import { Appearance, ScrollView } from 'react-native';
 import Animated from 'react-native-reanimated';
-import {SvgXml} from 'react-native-svg';
-import {useSelector} from 'react-redux';
+import { SvgXml } from 'react-native-svg';
+import { useSelector } from 'react-redux';
 import svgs from '../../assets/svgs';
 import Image from '../../components/atoms/Image';
 import SafeAreaView from '../../components/atoms/SafeAreaView';
@@ -13,11 +13,11 @@ import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import Button from '../../components/molecules/Button';
 import CustomHeader from '../../components/molecules/CustomHeader';
-import {renderFile, sharedAddUpdatePitstop} from '../../helpers/SharedActions';
+import { renderFile, sharedAddUpdatePitstop } from '../../helpers/SharedActions';
 import sharedStyles from '../../res/sharedStyles';
 import theme from '../../res/theme';
 import ENUMS from '../../utils/ENUMS';
-import GV, {PITSTOP_TYPES} from '../../utils/GV';
+import GV, { PITSTOP_TYPES } from '../../utils/GV';
 import Progress from './components/Progress';
 import stylesheet from './styles';
 import {
@@ -46,7 +46,7 @@ export default () => {
   );
   const cartStyles = stylesheet.styles(colors);
   const incDecDelHandler = pitstopDetails => {
-    sharedAddUpdatePitstop({...pitstopDetails});
+    sharedAddUpdatePitstop({ ...pitstopDetails }, false);
   };
   const Address = () => {
     const SPACING = 10;
@@ -67,7 +67,7 @@ export default () => {
             justifyContent: 'space-between',
             alignItems: 'center',
           }}>
-          <View style={{flexDirection: 'row', padding: SPACING}}>
+          <View style={{ flexDirection: 'row', padding: SPACING }}>
             <SvgXml xml={pin_icon()} height={ICON_HEIGHT} width={ICON_WIDTH} />
             <Text
               style={{
@@ -83,14 +83,14 @@ export default () => {
         </View>
 
         <BottomLine />
-        <View style={{padding: SPACING - 5, paddingLeft: SPACING + 20}}>
+        <View style={{ padding: SPACING - 5, paddingLeft: SPACING + 20 }}>
           <Text
-            style={{color: colors.primary, fontSize: 14}}
+            style={{ color: colors.primary, fontSize: 14 }}
             fontFamily="PoppinsSemiBold"
             numberOfLines={1}>
             Office
           </Text>
-          <Text style={{color: colors.black, fontSize: 11}} numberOfLines={2}>
+          <Text style={{ color: colors.black, fontSize: 11 }} numberOfLines={2}>
             2nd floor, pakland plaza, I8 Markaz, Islamabad
           </Text>
         </View>
@@ -98,7 +98,7 @@ export default () => {
     );
   };
 
-  const PitstopsCard = ({pitstop}) => {
+  const PitstopsCard = ({ pitstop }) => {
     const {
       pitstopIndex,
       pitstopID,
@@ -123,30 +123,29 @@ export default () => {
             justifyContent: 'space-between',
             padding: 5,
           }}>
-          <View style={{flexDirection: 'row'}}>
+          <View style={{ flexDirection: 'row' }}>
             <View>
               <Text
-                style={{color: dynamiColors.primary, fontSize: 17}}
+                style={{ color: dynamiColors.primary, fontSize: 17 }}
                 fontFamily="PoppinsBold">
                 {pitstopName}
               </Text>
               <Text
-                style={{color: dynamiColors.black, fontSize: 12}}
-                fontFamily="PoppinsRegular">{`Back to ${
-                isJOVI ? 'Jovi Job' : 'Store'
-              }`}</Text>
+                style={{ color: dynamiColors.black, fontSize: 12 }}
+                fontFamily="PoppinsRegular">{`Back to ${isJOVI ? 'Jovi Job' : 'Store'
+                  }`}</Text>
             </View>
             {!isJOVI && (
               <SvgXml
                 xml={percent_icon(dynamiColors.primary)}
                 height={20}
                 width={20}
-                style={{marginHorizontal: 10}}
+                style={{ marginHorizontal: 10 }}
               />
             )}
           </View>
 
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Text
               style={{
                 paddingHorizontal: 10,
@@ -191,7 +190,7 @@ export default () => {
             dynamiColors={dynamiColors}
             isJOVI={isJOVI}
             product={product}
-            incDecDelHandler={quantity =>
+            incDecDelHandler={quantity => {
               incDecDelHandler({
                 pitstopIndex,
                 vendorDetails: {
@@ -199,9 +198,9 @@ export default () => {
                   pitstopName,
                   pitstopType,
                 },
-                item: {...product, productIndex: idx, quantity},
-              })
-            }
+                itemDetails: { ...product, actionKey: "checkOutItemID", productIndex: idx, quantity },
+              });
+            }}
           />
         ))}
       </View>
@@ -213,23 +212,23 @@ export default () => {
     product,
     incDecDelHandler,
   }) => {
-    const {title, description, productImageList, price, quantity} = product;
+    const { title, description, productImageList, price, quantity } = product;
     return (
-      <View style={{flexDirection: 'row'}}>
-        <View style={{height: 70, width: 70, borderRadius: 10, margin: 5}}>
+      <View style={{ flexDirection: 'row' }}>
+        <View style={{ height: 70, width: 70, borderRadius: 10, margin: 5 }}>
           <Image
             source={
               isJOVI
                 ? require('./assets/jovi.png')
                 : {
-                    uri: renderFile(productImageList[0].joviImageThumbnail),
-                  }
+                  uri: renderFile(productImageList[0].joviImageThumbnail),
+                }
             }
-            style={{height: 70, width: 70, borderRadius: 10}}
+            style={{ height: 70, width: 70, borderRadius: 10 }}
           />
         </View>
 
-        <View style={{flex: 1, margin: 5}}>
+        <View style={{ flex: 1, margin: 5 }}>
           <View
             style={{
               flexDirection: 'row',
@@ -237,9 +236,9 @@ export default () => {
               alignItems: 'center',
               // margin: 5,
             }}>
-            <View style={{flexDirection: 'row'}}>
+            <View style={{ flexDirection: 'row' }}>
               <Text
-                style={{color: dynamiColors.black, fontSize: 14}}
+                style={{ color: dynamiColors.black, fontSize: 14 }}
                 fontFamily="PoppinsBold">
                 {title}
               </Text>
@@ -248,7 +247,7 @@ export default () => {
                   xml={percent_icon(dynamiColors.primary)}
                   height={20}
                   width={20}
-                  style={{marginHorizontal: 10}}
+                  style={{ marginHorizontal: 10 }}
                 />
               )}
             </View>
@@ -259,7 +258,7 @@ export default () => {
           <View>
             <Text
               numberOfLines={2}
-              style={{textAlign: 'left', color: '#6B6B6B', fontSize: 12}}
+              style={{ textAlign: 'left', color: '#6B6B6B', fontSize: 12 }}
               fontFamily="PoppinsLight">
               {description}
             </Text>
@@ -272,7 +271,7 @@ export default () => {
               alignItems: 'center',
             }}>
             <Text
-              style={{color: dynamiColors.primary, fontSize: 12}}
+              style={{ color: dynamiColors.primary, fontSize: 12 }}
               fontFamily="PoppinsMedium">
               {price}
             </Text>
@@ -285,7 +284,7 @@ export default () => {
       </View>
     );
   };
-  const IncDec = ({quantity, incDecDelHandler}) => (
+  const IncDec = ({ quantity, incDecDelHandler }) => (
     <View
       style={{
         flexDirection: 'row',
@@ -329,6 +328,7 @@ export default () => {
     </View>
   );
   const Totals = () => {
+    const { subTotal, discount, serviceCharges, total } = cartReducer;
     const row = (caption = '', value = '', isBold = false) => (
       <View
         style={{
@@ -347,16 +347,16 @@ export default () => {
     );
     return (
       <View style={{}}>
-        {row('Subtotal', 750, true)}
-        {row('Discount', -50)}
-        {row('Service Charges', 50)}
+        {row('Subtotal', subTotal, true)}
+        {row('Discount', discount)}
+        {row('Service Charges', serviceCharges)}
         <BottomLine />
-        {row('Total', 2, 670, true)}
+        {row('Total', total, true)}
       </View>
     );
   };
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{ flex: 1 }}>
       <CustomHeader
         rightIconName=""
         leftIconName="arrow-back"
@@ -368,14 +368,14 @@ export default () => {
         }}
       />
       <Progress styles={cartStyles} />
-      <ScrollView contentContainerStyle={{padding: 10}} style={{flex: 1}}>
-        <View style={{marginHorizontal: 0}}>
+      <ScrollView contentContainerStyle={{ padding: 10 }} style={{ flex: 1 }}>
+        <View style={{ marginHorizontal: 0 }}>
           <Address />
-          <Text style={{padding: 10}}>Hold text would be here...</Text>
+          <Text style={{ padding: 10 }}>Hold text would be here...</Text>
           {(cartReducer.pitstops || []).map((pitstop, pitstopIndex) => (
             <PitstopsCard
               key={`pit-key${pitstopIndex}`}
-              pitstop={{...pitstop, pitstopIndex}}
+              pitstop={{ ...pitstop, pitstopIndex }}
             />
           ))}
         </View>
@@ -390,7 +390,7 @@ export default () => {
             alignItems: 'center',
           }}>
           <SvgXml xml={svgs.jovi()} height={20} width={20} color="#fff" />
-          <Text style={{color: '#fff', paddingHorizontal: 5}}>
+          <Text style={{ color: '#fff', paddingHorizontal: 5 }}>
             Check route on map
           </Text>
         </TouchableScale>
@@ -406,7 +406,7 @@ export default () => {
             borderColor: colors.primary,
             borderWidth: 1,
           }}>
-          <Text style={{color: colors.primary, paddingHorizontal: 5}}>
+          <Text style={{ color: colors.primary, paddingHorizontal: 5 }}>
             Empty entire jovi cart
           </Text>
         </TouchableScale>
@@ -421,7 +421,7 @@ export default () => {
         />
         <Totals />
       </ScrollView>
-      <View style={{flexDirection: 'row'}}>
+      <View style={{ flexDirection: 'row' }}>
         {['Add Pitstop', 'Checkout'].map(title => (
           <TouchableScale
             key={title}
@@ -432,7 +432,7 @@ export default () => {
               borderRadius: 10,
               marginHorizontal: 3,
             }}>
-            <Text style={{textAlign: 'center', color: colors.white}}>
+            <Text style={{ textAlign: 'center', color: colors.white }}>
               {title}
             </Text>
           </TouchableScale>
