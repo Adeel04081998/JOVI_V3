@@ -196,8 +196,12 @@ export default ({ navigation, route }) => {
 
 
     useEffect(() => {
-        if (route.params !== undefined && route.params !== null) {
-            setLocationVal(route.params)
+        if (route.params !== undefined && route.params !== '') {
+            if (route.params.pitstopItemObj) {
+                setLocationVal()
+                setNameVal()
+
+            }
         }
     }, [route])
 
@@ -257,9 +261,11 @@ export default ({ navigation, route }) => {
 
 
     const onLocationPress = () => {
-        common_actions.navigate(ROUTES.APP_ROUTES.Map.screen_name)
+        drawer_actions.jumpTo(ROUTES.APP_ROUTES.Map.screen_name, { onNavigateBack: cb })
     }
-
+    const cb = (resp) => {
+        setLocationVal(resp)
+    }
     /************   End of functions of Pitstop location Component Funcs    **************/
 
 
@@ -277,8 +283,8 @@ export default ({ navigation, route }) => {
         //     ...prevState,
         //     pitstops: pitStopArr
         // }));
-        const newImageData=imageData;
-         newImageData.push(obj)
+        const newImageData = imageData;
+        newImageData.push(obj)
         updateImagesData(newImageData)
         forceUpdate();
     };
@@ -582,7 +588,7 @@ export default ({ navigation, route }) => {
 
 
     /************   Start of render pitstop details  function     **************/
-    console.log('imageData',imageData);
+    console.log('imageData', imageData);
 
 
     const renderPitStopDetails = (idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled) => {
@@ -829,6 +835,10 @@ export default ({ navigation, route }) => {
     } //End of Pitstop est Price
 
 
+    const validationCheck = () => {
+        if (locationVal !== '') return false
+        else return true
+    }
     return (
         <SafeAreaView style={{ flex: 1 }} >
             <CustomHeader leftIconName="keyboard-backspace" leftIconType="MaterialCommunityIcons" leftIconSize={30} />
@@ -868,7 +878,7 @@ export default ({ navigation, route }) => {
                                 }
                                 sharedAddUpdatePitstop(pitstopData)
                             }}
-                            // disabled={}
+                            disabled={validationCheck()}
                             style={[styles.locButton, { height: 45, marginVertical: 10 }]}
                             textStyle={[styles.btnText, { fontSize: 16 }]}
                             fontFamily="PoppinsRegular"

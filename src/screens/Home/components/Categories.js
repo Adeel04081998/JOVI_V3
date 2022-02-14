@@ -4,10 +4,19 @@ import AnimatedView from '../../../components/atoms/AnimatedView';
 import ENUMS from '../../../utils/ENUMS';
 import constants from '../../../res/constants';
 import Text from '../../../components/atoms/Text';
+import NavigationService from '../../../navigations/NavigationService';
+import ROUTES from '../../../navigations/ROUTES';
 const CONTAINER_WIDTH = ((constants.screen_dimensions.width) * 0.22);
 const CONTAINER_HEIGHT = constants.screen_dimensions.width * 0.3;
 export default React.memo(({ homeStyles }) => {
-    const cartOnPressHandler = (index) => { }
+    const cartOnPressHandler = (index) => {
+        if (index === 0) {
+            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_ROUTES.JoviJob.screen_name)
+        }
+        else {
+            console.log('hello');
+        }
+    }
     return <AnimatedView style={[homeStyles.categoriesCardPrimaryContainer]}>
         <Text style={homeStyles.categoriesCardTittleText}>Categories</Text>
         <AnimatedView style={{ flexDirection: 'row' }}>

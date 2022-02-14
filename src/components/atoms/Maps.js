@@ -31,7 +31,6 @@ export default (props) => {
     try {
       Geolocation.getCurrentPosition(
         (position) => {
-          console.log('position ==>>>', position);
           const region = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
@@ -74,7 +73,6 @@ export default (props) => {
   const onRegionChangeComplete = async (region) => {
     const { latitude, longitude } = region
     let adrInfo = await addressInfo(latitude, longitude)
-    console.log('adrInfo ==>>>',adrInfo);
     placeNameRef.current = adrInfo
     setPlaceName(adrInfo)
   };

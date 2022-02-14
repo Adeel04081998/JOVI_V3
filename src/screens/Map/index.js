@@ -5,19 +5,17 @@ import { addressInfo } from '../../helpers/Location';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 
-export default () => {
+export default (props) => {
 
   const { common_actions } = NavigationService.NavigationActions
-
   const onConfirmLoc = (placeName) => {
-    common_actions.navigate(ROUTES.APP_ROUTES.JoviJob.screen_name, placeName)
+    props.route.params.onNavigateBack(placeName)
+    common_actions.goBack()
   }
 
   return (
     <View style={{ flex: 1 }} >
-      <Maps
-        onConfirmLoc={onConfirmLoc}
-      />
+      <Maps onConfirmLoc={onConfirmLoc} />
     </View>
   );
 }

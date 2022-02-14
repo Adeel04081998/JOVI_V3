@@ -103,7 +103,7 @@ const AuthStacks = (props) => {
 }
 const AppDrawers = (props) => {
     // console.log("[AppDrawers].props", props)
-    return <Drawer.Navigator screenOptions={stackOpts} initialRouteName={APP_ROUTES.JoviJob.screen_name}>
+    return <Drawer.Navigator screenOptions={stackOpts} initialRouteName={APP_ROUTES.Home.screen_name}>
         {(APP_STACKS || []).map((routeInfo, index) => (
             <Drawer.Screen
                 key={`AppDrawers-Screen-key-${index}-${routeInfo.id}`}
@@ -132,7 +132,7 @@ export default (props) => {
     return <ContainerStack.Navigator screenOptions={stackOpts} initialRouteName={INIT_ROUTES.INIT_APP}>
         <ContainerStack.Screen
             name={INIT_ROUTES.INIT_APP}
-            component={!isLoggedIn ? AppDrawers : AuthStacks}
+            component={isLoggedIn ? AppDrawers : AuthStacks}
         />
     </ContainerStack.Navigator >
 }
