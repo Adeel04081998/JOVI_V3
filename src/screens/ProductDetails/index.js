@@ -211,7 +211,6 @@ export default (props) => {
                 autoSize={true}
                 resizeMode={'contain'}
                 style={{ width: '100%' }}
-                // source={require('../../assets/gifs/Homeloading.json')}
                 source={require('../../assets/gifs/ProductDetailsLoading.json')}
                 autoPlay
                 loop
@@ -223,22 +222,22 @@ export default (props) => {
 
     }, [])
     return (
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1}} >
             {
 
                 loading ? renderLoader() :
                     <SafeAreaView style={productDetailsStyles.mainContainer}>
-                        <ScrollView showsVerticalScrollIndicator={false}   >
-                            <CustomHeader
+                         <CustomHeader
                                 leftIconName={"chevron-back"}
                                 onLeftIconPress={() => { goBack() }}
-                                containerStyle={[productDetailsStyles.customHeaderMainContainer, { position: 'absolute' }]}
+                                containerStyle={[productDetailsStyles.customHeaderMainContainer,]}
                                 hideFinalDestination={true}
                                 leftContainerStyle={productDetailsStyles.customHeaderLeftRightContainer}
                                 leftIconColor={productDetailsStyles.customHeaderLeftRightIconColor}
                                 rightContainerStyle={productDetailsStyles.customHeaderLeftRightContainer}
                                 rightIconColor={productDetailsStyles.customHeaderLeftRightIconColor}
                             />
+                        <ScrollView showsVerticalScrollIndicator={false}>
                             <View>
                                 <ImageCarousel
                                     data={images}
