@@ -11,7 +11,7 @@ import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
-import GV from '../../utils/GV';
+import GV, { PITSTOP_TYPES } from '../../utils/GV';
 import GotoCartButton from './components/GotoCartButton';
 import { ProductDummyData2 } from './components/ProductDummyData';
 import RestaurantProductMenuHeader from './components/RestaurantProductMenuHeader';
@@ -158,7 +158,7 @@ export default ({ navigation, route }) => {
         )
     }
     const onItemPress = (item) => {
-        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, { propItem: item, pitstopID, pitstopType: 4 });
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, { propItem: item, pitstopID, pitstopType: PITSTOP_TYPES.RESTAURANT });
     };
 
     return (

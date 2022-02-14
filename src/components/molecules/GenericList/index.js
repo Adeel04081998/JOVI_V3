@@ -61,8 +61,8 @@ export default React.memo(({ vendorType = 0,pitstopType = 2, imageStyles = {}, t
         1: (item, index) => {
             const { title, description, image, averagePrice } = item;
             return (
-                <TouchableOpacity activeOpacity={0.8} style={{ padding: 10, width: 210 }}>
-                    <Image source={{ uri: renderFile(image) }} style={[styles.image_Small, { aspectRatio: 16 / 9.9 }, imageStyles]} tapToOpen={false} />
+                <TouchableOpacity activeOpacity={0.8} style={{ padding: 10 }}>
+                    <Image source={{ uri: renderFile(image) }} style={[styles.image_Small, imageStyles]} tapToOpen={false} />
                     <View style={styles.subContainer}>
                         <Text style={styles.title} numberOfLines={1} >{title}</Text>
                     </View>
@@ -161,6 +161,8 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
     itemContainerSmall: {
         ...sharedStyles._styles(colors).shadow,
         backgroundColor: colors.white || '#fff',
+        height:200,
+        width:180,
         borderRadius: 10,
         marginHorizontal: 5,
         flex: 1,
@@ -175,7 +177,7 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
     },
     image_Small: {
         height: height_sm,
-        width: width_sm,
+        width: 160,
         borderRadius: 10
     },
     iconContainer: {
