@@ -8,8 +8,10 @@ import Introduction from '../screens/IntroScreen';
 import EnterOTP from '../screens/OTP/Enter';
 import VerifyOTP from '../screens/OTP/Verify';
 import SignUp from '../screens/SignUp/index';
+import JoviJob from '../screens/JoviJob';
 
 import Home from '../screens/Home';
+import Map from '../screens/Map';
 import PitstopListing from '../screens/PitstopListing';
 import ROUTES from './ROUTES';
 import SharedActions, { sharedGetEnumsApi, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser } from '../helpers/SharedActions';
@@ -49,6 +51,8 @@ const AppDrawerComponents = {
     Filter,
     PitstopsVerticalList,
     RestaurantProductMenu,
+    JoviJob,
+    Map
 }//will open with Slide Animation
 const ContainerStack = createStackNavigator();
 const Stack = createSharedElementStackNavigator();
@@ -122,7 +126,6 @@ const AuthStacks = (props) => {
         ))}
     </Stack.Navigator >
 }
-
 const AppDrawers = (props) => {
         // console.log("[AppDrawers].props", props)
     return <Drawer.Navigator screenOptions={stackOpts} initialRouteName={APP_ROUTES.AppDrawerStack.screen_name}>

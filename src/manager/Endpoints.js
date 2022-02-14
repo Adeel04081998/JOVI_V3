@@ -9,6 +9,8 @@ export default {
     "GET_HOME_MSGS": "api/Menu/HomeScreen/GetData",
     "GET_USER_ADDRESSES": "api/Order/GetAddress",
     "GET_PROMOTIONS": "api/Dashboard/DashboardContent/List",
+    "ADD_PITSTOPIMAGE": "api/Common/Image/AddOrUpdate",
+    "DELETE_PITSTOPIMAGE": 'api/Common/Image/DeleteJoviImage/',
     "GET_VENDORS_GENERIC_LIST": "api/Menu/Vendor/Categorization",
     "GET_CATEGORIES_TAGS_LIST" : "api/Restaurant/Tags/Categories/List",
     "GET_PITSTOPS" : "api/Restaurant/Pitstop/ListOrSearch/V2",

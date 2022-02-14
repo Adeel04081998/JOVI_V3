@@ -21,6 +21,10 @@ import { _NavgationRef } from './src/navigations/NavigationService';
 import View from './src/components/atoms/View';
 import Toast from 'react-native-toast-message';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import Modal from './src/components/atoms/Modal';
+
+
+
 import CodePush from "react-native-code-push"; //for codepush
 import { env } from './src/utils/configs';
 import Robot from './src/components/organisms/Robot';
@@ -124,6 +128,8 @@ const App = () => {
   LogBox.ignoreLogs([
     "[react-native-gesture-handler] Seems like you\'re using an old API with gesture components, check out new Gestures system!",
   ]);
+  navigator.geolocation = require('react-native-geolocation-service');
+
   if(!state.appLoaded) return null;
   return (
     <SafeAreaProvider>

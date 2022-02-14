@@ -82,7 +82,7 @@ const NavigationActions = {
         toggleDrawer: (navigation = _NavgationRef.current) => {
             navigation.dispatch(DrawerActions.toggleDrawer())
         },
-        jumpTo: (navigation = _NavgationRef.current, routeName = "", routeParams) => {
+        jumpTo: ( routeName = "", routeParams,navigation = _NavgationRef.current,) => {
             navigation.dispatch(DrawerActions.jumpTo(routeName, { ...routeParams }))
         },
     },

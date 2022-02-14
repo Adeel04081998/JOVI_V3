@@ -23,6 +23,28 @@ export default {
             "value": 5
         }
     ],
+    "ESTIMATED_TIME": [
+        {
+            "text": "0-15 mins",
+            "value": 1
+        },
+        {
+            "text": "15-30 mins",
+            "value": 2
+        },
+        {
+            "text": "30-45 mins",
+            "value": 3
+        },
+        {
+            "text": "45-60 mins",
+            "value": 4
+        },
+        {
+            "text": "1 hour +",
+            "value": 5
+        }
+    ],
     "PITSTOP_TYPES": [
         {
             "text": "Jovi",
