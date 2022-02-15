@@ -6,6 +6,7 @@ import images from '../../assets/images';
 import Text from '../atoms/Text';
 import Button from '../molecules/Button';
 import { ImageSourcePropType } from 'react-native';
+import { initColors } from '../../res/colors';
 //END OF IMPORT's
 
 const WINDOW_WIDTH = Dimensions.get('window').width;
@@ -19,61 +20,69 @@ interface Props {
     buttonWidth?: any;
     onButtonPress?(): void;
 
+    color?: typeof initColors;
     image: ImageSourcePropType,
 }//end of INTERFACE 
 
-const defaultProps={
+const defaultProps = {
     containerStyle: {},
     title: 'No record found!',
     description: '',
     buttonText: '',
     buttonWidth: "65%",
-    onButtonPress:undefined,
+    onButtonPress: undefined,
 
     image: images.noRecord(),
+    color: initColors,
 };
 
-const NoRecord=(props:Props)=>{
-    
-    return(
+const NoRecord = (props: Props) => {
+    const colors = props?.color ?? defaultProps.color;
+    const styles = stylesFunc(colors);
+
+    return (
         <View style={[styles.containerStyle, props.containerStyle]}>
-        {VALIDATION_CHECK(props.image) &&
-            <Image
-                style={styles.image}
-                source={props.image}
-            />
-        }
+            {VALIDATION_CHECK(props.image) &&
+                <Image
+                    style={styles.image}
+                    source={props.image}
+                />
+            }
 
-        {VALIDATION_CHECK(props.title) &&
-            <Text fontFamily='PoppinsBold' style={[styles.title, {
-            }]}>{props.title}</Text>
-        }
+            {VALIDATION_CHECK(props.title) &&
+                <Text fontFamily='PoppinsBold' style={[styles.title, {
+                }]} numberOfLines={2}>{props.title}</Text>
+            }
 
 
-        {VALIDATION_CHECK(props.description) &&
-            <Text style={[styles.description, {
+            {VALIDATION_CHECK(props.description) &&
+                <Text style={[styles.description, {
 
-            }]}>{props.description}</Text>
-        }
+                }]}>{props.description}</Text>
+            }
 
-        {(VALIDATION_CHECK(props.buttonText)) &&
-            <View style={[styles.buttonContainer, {
-                width: props.buttonWidth
-            }]}>
-                <Button
-                    text={props.buttonText}
-                    onPress={props.onButtonPress} />
-            </View>
-        }
-    </View>
+            {(VALIDATION_CHECK(props.buttonText)) &&
+                <View style={[styles.buttonContainer, {
+                    width: props.buttonWidth
+                }]}>
+                    <Button
+                        style={{
+                            backgroundColor: colors.primary,
+                            borderRadius:10,
+                        }}
+                        text={props.buttonText}
+                        onPress={props.onButtonPress} />
+                </View>
+            }
+        </View>
     )
 }
 
-NoRecord.defaultProps=defaultProps;
+NoRecord.defaultProps = defaultProps;
 export default NoRecord;
 
 
-const styles = StyleSheet.create({
+const stylesFunc = (colors: typeof initColors) => StyleSheet.create({
     containerStyle: {
         flex: 1,
         alignItems: "center",
@@ -85,7 +94,8 @@ const styles = StyleSheet.create({
         height: WINDOW_WIDTH * 0.5,
     },
     title: {
-        color: "#333333",
+
+        color: colors.primary, //"#333333",
         marginTop: 20,
         marginHorizontal: 30,
         textAlign: "center",
@@ -99,6 +109,7 @@ const styles = StyleSheet.create({
         fontSize: 13,
     },
     buttonContainer: {
+        backgroundColor: colors.primary,
         marginHorizontal: 30,
         marginTop: 30,
         width: "65%",

@@ -25,6 +25,9 @@ import { itemStylesFunc, stylesFunc } from './styles';
 import { useSelector } from 'react-redux';
 import lodash from 'lodash'; // 4.0.8
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
+import ProductMenuItemCard from './components/ProductMenuItemCard';
+import NavigationService from '../../navigations/NavigationService';
+import ROUTES from '../../navigations/ROUTES';
 
 const WINDOW_WIDTH = constants.window_dimensions.width;
 
@@ -173,9 +176,9 @@ export default ({ navigation, route }) => {
                     ...!VALIDATION_CHECK(title) && {
                         position: "absolute",
                         zIndex: 999,
-                       
+
                     },
-                    top:getStatusBarHeight(true),
+                    top: getStatusBarHeight(true),
                 }}
                 title={title}
                 titleStyle={{
@@ -206,7 +209,9 @@ export default ({ navigation, route }) => {
                     <Text style={styles.title}>{`${parentItem.categoryName}`}</Text>
 
                     {isNextPage(productTotalItem, HORIZONTAL_MAX_ITEM_PER_REQUEST, 1) &&
-                        <TouchableScale>
+                        <TouchableScale onPress={() => {
+                            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductMenuItem.screen_name, { pitstopType, marketID, item: parentItem })
+                        }}>
                             <Text style={itemStyles.titleViewmoreText}>{`View More`}</Text>
                         </TouchableScale>
                     }
@@ -220,69 +225,89 @@ export default ({ navigation, route }) => {
                         const image = (item?.images ?? []).length > 0 ? item.images[0].joviImageThumbnail : '';
                         const isOutOfStock = "isOutOfStock" in item ? item.isOutOfStock : false;
                         return (
-                            <View style={{
-                                marginLeft: index === 0 ? 10 : 0,
-                                ...itemStyles.primaryContainer,
-                            }} key={uniqueKeyExtractor()}>
-
-                                {/* ****************** Start of IMAGE & QUANTITY ****************** */}
-                                <View style={itemStyles.imageContainer}>
-                                    <ImageBackground
-                                        source={{ uri: renderFile(`${image}`) }}
-                                        style={itemStyles.image}
-                                        borderRadius={8}
-                                        tapToOpen={false}>
-
-                                        <ProductQuantityCard
-                                            outOfStock={isOutOfStock}
-                                            initialQuantity={item.quantity}
-                                            colors={colors}
-                                            size={ITEM_IMAGE_SIZE}
-                                            updateQuantity={(quantity) => {
-                                                updateQuantity(parentIndex, index, quantity);
-                                            }}
-                                        />
-
-
-                                    </ImageBackground>
-                                </View>
-
-                                {/* ****************** End of IMAGE & QUANTITY ****************** */}
-
-
-                                {/* ****************** Start of PRICE & DISCOUNT ****************** */}
-                                <View style={itemStyles.priceDiscountContainer}>
-                                    <Text fontFamily='PoppinsBold' style={itemStyles.price}>{renderPrice(item.gstAddedPrice)}</Text>
-
-                                    {(VALIDATION_CHECK(item.discountedPrice) && parseInt(`${item.discountedPrice}`) > 0) &&
-                                        <Text style={itemStyles.discountPrice}>{renderPrice(item.discountedPrice)}</Text>
-                                    }
-
-                                </View>
-
-                                {/* ****************** End of PRICE & DISCOUNT ****************** */}
-
-
-                                {/* ****************** Start of NAME/TITLE ****************** */}
-                                <Text style={itemStyles.name}>{item.pitStopItemName}</Text>
-
-                                {/* ****************** End of NAME/TITLE ****************** */}
-
-                                {/* ****************** Start of DISCOUNT TYPE ****************** */}
-                                {parseInt(`${item.discountType}`) !== parseInt(`${ENUMS.PROMO_VALUE_TYPE.Empty.value}`) &&
-                                    <View style={itemStyles.discountTypeContainer}>
-                                        {parseInt(`${item.discountType}`) === parseInt(`${ENUMS.PROMO_VALUE_TYPE.Percentage.value}`) &&
-                                            <SvgXml xml={svgs.discount(colors.primary)} height={15} width={15} style={itemStyles.discountTypeIcon} />
-                                        }
-                                        <Text style={itemStyles.discountTypeText}>{`${renderPrice(item.discountAmount, '-', '%', /[^\d.]/g)}`}</Text>
-                                    </View>
-                                }
-
-                                {/* ****************** End of DISCOUNT TYPE ****************** */}
-
-
-                            </View>
+                            <ProductMenuItemCard
+                                colors={colors}
+                                index={index}
+                                itemImageSize={ITEM_IMAGE_SIZE}
+                                updateQuantity={(quantity) => {
+                                    updateQuantity(parentIndex, index, quantity);
+                                }}
+                                item={{
+                                    image: { uri: renderFile(`${image}`) },
+                                    isOutOfStock: isOutOfStock,
+                                    name: item.pitStopItemName,
+                                    price: item.gstAddedPrice,
+                                    quantity: item.quantity,
+                                    discountAmount: item.discountAmount,
+                                    discountType: item.discountType,
+                                    discountedPrice: item.discountedPrice,
+                                }}
+                            />
                         )
+                        // return (
+                        //     <View style={{
+                        //         marginLeft: index === 0 ? 10 : 0,
+                        //         ...itemStyles.primaryContainer,
+                        //     }} key={uniqueKeyExtractor()}>
+
+                        //         {/* ****************** Start of IMAGE & QUANTITY ****************** */}
+                        //         <View style={itemStyles.imageContainer}>
+                        //             <ImageBackground
+                        //                 source={{ uri: renderFile(`${image}`) }}
+                        //                 style={itemStyles.image}
+                        //                 borderRadius={8}
+                        //                 tapToOpen={false}>
+
+                        //                 <ProductQuantityCard
+                        //                     outOfStock={isOutOfStock}
+                        //                     initialQuantity={item.quantity}
+                        //                     colors={colors}
+                        //                     size={ITEM_IMAGE_SIZE}
+                        //                     updateQuantity={(quantity) => {
+                        //                         updateQuantity(parentIndex, index, quantity);
+                        //                     }}
+                        //                 />
+
+
+                        //             </ImageBackground>
+                        //         </View>
+
+                        //         {/* ****************** End of IMAGE & QUANTITY ****************** */}
+
+
+                        //         {/* ****************** Start of PRICE & DISCOUNT ****************** */}
+                        //         <View style={itemStyles.priceDiscountContainer}>
+                        //             <Text fontFamily='PoppinsBold' style={itemStyles.price}>{renderPrice(item.gstAddedPrice)}</Text>
+
+                        //             {(VALIDATION_CHECK(item.discountedPrice) && parseInt(`${item.discountedPrice}`) > 0) &&
+                        //                 <Text style={itemStyles.discountPrice}>{renderPrice(item.discountedPrice)}</Text>
+                        //             }
+
+                        //         </View>
+
+                        //         {/* ****************** End of PRICE & DISCOUNT ****************** */}
+
+
+                        //         {/* ****************** Start of NAME/TITLE ****************** */}
+                        //         <Text style={itemStyles.name}>{item.pitStopItemName}</Text>
+
+                        //         {/* ****************** End of NAME/TITLE ****************** */}
+
+                        //         {/* ****************** Start of DISCOUNT TYPE ****************** */}
+                        //         {parseInt(`${item.discountType}`) !== parseInt(`${ENUMS.PROMO_VALUE_TYPE.Empty.value}`) &&
+                        //             <View style={itemStyles.discountTypeContainer}>
+                        //                 {parseInt(`${item.discountType}`) === parseInt(`${ENUMS.PROMO_VALUE_TYPE.Percentage.value}`) &&
+                        //                     <SvgXml xml={svgs.discount(colors.primary)} height={15} width={15} style={itemStyles.discountTypeIcon} />
+                        //                 }
+                        //                 <Text style={itemStyles.discountTypeText}>{`${renderPrice(item.discountAmount, '-', '%', /[^\d.]/g)}`}</Text>
+                        //             </View>
+                        //         }
+
+                        //         {/* ****************** End of DISCOUNT TYPE ****************** */}
+
+
+                        //     </View>
+                        // )
                     })}
                 </ScrollView>
 
@@ -346,7 +371,7 @@ export default ({ navigation, route }) => {
                 <NoRecord
                     title={query.errorText}
                     buttonText={`Retry`}
-                    onButtonPress={loadData} />
+                    onButtonPress={()=>{loadData(paginationInfo.currentRequestCount,false)}}  />
             </>
         )
     }
@@ -384,7 +409,7 @@ export default ({ navigation, route }) => {
                 onEndReached={onEndReached}
                 ListHeaderComponent={(
                     <ProductMenuHeader
-                    pitstopType={pitstopType}
+                        pitstopType={pitstopType}
                         hideHeader
                         colors={colors}
                         shelveData={allData?.shelveSlicedArray ?? []}
