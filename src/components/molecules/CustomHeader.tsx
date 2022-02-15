@@ -1,5 +1,6 @@
 import * as React from "react";
 import { GestureResponderEvent, Platform, StyleProp, StyleSheet, TextStyle, View as RNView, ViewStyle } from "react-native";
+import { useSelector } from "react-redux";
 import { VALIDATION_CHECK } from "../../helpers/SharedActions";
 import NavigationService from "../../navigations/NavigationService";
 import Text from "../atoms/Text";
@@ -49,8 +50,8 @@ type Props = React.ComponentProps<typeof RNView> & {
     title?: string;
     onTitlePress?: (event: GestureResponderEvent) => void;
     titleStyle?: StyleProp<TextStyle>;
-    hideFinalDestination?:boolean;
-    defaultColor:string;
+    hideFinalDestination?: boolean;
+    defaultColor: string;
     //CENTER PROP's ENDING
 };
 
@@ -68,7 +69,7 @@ const defaultProps = {
     leftIconStyle: {},
     leftIconSize: 25,
     leftIconColor: "#272727",
-    onLeftIconPress: ()=>{NavigationService.NavigationActions.common_actions.goBack()},
+    onLeftIconPress: () => { NavigationService.NavigationActions.common_actions.goBack() },
 
     //LEFT SIDE PROP's ENDING 
 
@@ -81,7 +82,7 @@ const defaultProps = {
     rightContainerStyle: {},
 
     rightIconName: "shopping-bag",
-    rightIconType: Platform.OS === 'android'? 'FontAwesome5':'FontAwesome',
+    rightIconType: Platform.OS === 'android' ? 'FontAwesome5' : 'FontAwesome',
     rightIconStyle: {},
     rightIconSize: 25,
     rightIconColor: "#272727",
@@ -93,18 +94,25 @@ const defaultProps = {
     title: null,
     onTitlePress: undefined,
     titleStyle: {},
-    hideFinalDestination:false,
-    defaultColor:"#6D51BB",
+    hideFinalDestination: false,
+    defaultColor: "#6D51BB",
     //CENTER PROP's ENDING
 
 
 };//end of defaultProps
 
 const CustomHeader = (props: Props) => {
-    const DEFAULT_COLOR =props.defaultColor;//REDUX.THEME.background;
+    const DEFAULT_COLOR = props.defaultColor;//REDUX.THEME.background;
     const styles = headerStyles(DEFAULT_COLOR);
     const finalDestination = 'Set your location';
 
+
+
+    const cartReducer = useSelector((store: any) => store.cartReducer);
+
+    // React.useEffect(()=>{
+
+    // },[cartReducer.itemsCount])
 
     const _renderFinalDestination = () => {
         return props.hideFinalDestination ? <></> : (
@@ -201,7 +209,8 @@ const CustomHeader = (props: Props) => {
                                 color={props.rightIconColor}
                                 size={props.rightIconSize} />
                         }
-                        {props.rightDot && _renderDot(props.rightDot, props.rightDotStyle, props.rightDotTextStyle)}
+                        {VALIDATION_CHECK(cartReducer.itemsCount) && _renderDot(cartReducer.itemsCount, props.rightDotStyle, props.rightDotTextStyle)}
+                        {/* {props.rightDot && _renderDot(props.rightDot, props.rightDotStyle, props.rightDotTextStyle)} */}
                     </TouchableScale>
                 }
             </View>

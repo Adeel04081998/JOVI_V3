@@ -13,7 +13,6 @@ const CART_DATA = {
   estPrepTime: '00:10',
   totalDiscount: 0,
   actualTotal: 9876,
-  itemsCount: 3,
   totalProductGST: 0,
   showPopup: false,
   serviceTax: 0,
