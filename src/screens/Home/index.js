@@ -59,7 +59,10 @@ export default () => {
     return (
         <View style={homeStyles.container}>
             <SafeAreaView style={{ flex: 1 }}>
-                <CustomHeader onRightIconPress={() => {
+                <CustomHeader 
+                leftIconName={"ios-menu"}
+                onLeftIconPress={null}
+                onRightIconPress={() => {
                     sharedConfirmationAlert("Alert", "Log me out and remove all the cache?",
                         [
                             { text: "No", onPress: () => { } },
@@ -68,7 +71,8 @@ export default () => {
                             },
                         ]
                     )
-                }} />
+                }} 
+                />
                 {loaderVisible ? renderLoader() : <Animated.View style={{
                     opacity: homeFadeIn.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1] }),
                     transform: [{ scale: homeFadeIn.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] }) }]

@@ -87,6 +87,7 @@ const PistopListing = React.memo(({ route, }) => {
         width: constants.window_dimensions.width * 0.86
     }
     const { height, width } = SCALE_IMAGE;
+    const animationHeight = constants.window_dimensions.height*0.96 ;
     const colors = theme.getTheme(GV.THEME_VALUES[lodash.invert(PITSTOPS)[pitstopType]], Appearance.getColorScheme() === "dark");
     const listingStyles = stylesheet.styles(colors, width, height);
     const isLoading = !promotionsReducer?.dashboardContentListViewModel?.dashboardBannerImg || !categoriesTagsReducer;
@@ -170,6 +171,7 @@ const PistopListing = React.memo(({ route, }) => {
     React.useEffect(()=>{
         getAdvertisements();
     },[])
+    console.log('height',animationHeight);
     const renderFilters = () => (<View style={{ ...listingStyles.wrapper, paddingBottom: 0, zIndex: 100, paddingTop: SPACING_VERTICAL }}>
         <Search
             placeholder={currentPitstopType.searchPlaceHolder}
@@ -224,7 +226,7 @@ const PistopListing = React.memo(({ route, }) => {
         transform: [{
             translateY: scaleAnimation.interpolate({
                 inputRange: [0, 1],
-                outputRange: [-690, 0]
+                outputRange: [-animationHeight, 0]
             })
         }]
     }}>

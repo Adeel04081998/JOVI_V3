@@ -1,5 +1,5 @@
 import React from 'react';
-import { Appearance, FlatList } from 'react-native';
+import { Appearance, FlatList, SafeAreaView } from 'react-native';
 import View from '../../components/atoms/View';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES } from '../../utils/GV';
@@ -11,16 +11,18 @@ import { ProductDummyData1 } from '../RestaurantProductMenu/components/ProductDu
 import ShelveCard from '../../components/organisms/Card/ShelveCard';
 import { renderFile } from '../../helpers/SharedActions';
 import constants from '../../res/constants';
+import NavigationService from '../../navigations/NavigationService';
 
 const WINDOW_WIDTH = constants.screen_dimensions.width;
 const CARD_WIDTH = WINDOW_WIDTH * 0.4;
 const CARD_HEIGHT = CARD_WIDTH * 0.4;
 
-const DATA = new Array(10).fill(ProductDummyData1.pitstopStockViewModel.shelves).flat();
+// const DATA = new Array(10).fill(ProductDummyData1.pitstopStockViewModel.shelves).flat();
 
 export default ({ navigation, route }) => {
     // #region :: ROUTE PARAM's START's FROM HERE 
-    const pitstopType = 2;
+    const DATA = route?.params?.shelveData??[];
+    const pitstopType = route?.params?.pitstopType??PITSTOP_TYPES.JOVI;
     const headerTitle = 'Shelves';
     // #endregion :: ROUTE PARAM's END's FROM HERE 
 
@@ -39,7 +41,7 @@ export default ({ navigation, route }) => {
             }}>
                 <ShelveCard color={colors}
                     item={{
-                        image: { uri: 'https://picsum.photos/200' },//renderFile(item?.tagImage ?? '') },
+                        image: { uri:  renderFile(item?.tagImage ?? '') },//renderFile(item?.tagImage ?? '') },
                         title: item?.tagName ?? ''
                     }}
                     cardWidth={CARD_WIDTH}
@@ -50,16 +52,21 @@ export default ({ navigation, route }) => {
     };//end of _renderItem
 
     return (
-        <View style={styles.primaryContainer}>
+        <SafeAreaView style={styles.primaryContainer}>
 
             {/* ****************** Start of HEADER ****************** */}
             <CustomHeader
                 hideFinalDestination
                 rightIconName={null}
                 leftIconName="chevron-back"
+                onLeftIconPress={()=>{
+                    NavigationService.NavigationActions.common_actions.goBack();
+                }}
+                leftIconColor={colors.primary}
                 leftContainerStyle={{ backgroundColor: colors.white, }}
                 containerStyle={{
                     backgroundColor: colors.white,
+                    borderBottomColor:colors.primary,
                 }}
                 title={headerTitle}
                 titleStyle={{
@@ -86,7 +93,7 @@ export default ({ navigation, route }) => {
                     }
                 }} />
 
-        </View>
+        </SafeAreaView>
     )
 };//end of EXPORT DEFAULT
 

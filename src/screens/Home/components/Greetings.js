@@ -8,7 +8,8 @@ export default ({ messagesReducer, homeStyles, userReducer, colors }) => {
     if (!greetingsList?.length) return <View style={{ paddingVertical: 10 }} />
     else {
         const greetingMessage = greetingsList[0];
-        const REGEX = /[<<Name>>, <<phoneNumber>>]/g
+        // const REGEX = /[<<Name>>, , <<phoneNumber>>]/g
+        const REGEX = "<<Name>>"
         const greetingAnimation = React.useRef(new Animated.Value(0)).current;
         React.useLayoutEffect(() => {
             Animated.timing(greetingAnimation, {

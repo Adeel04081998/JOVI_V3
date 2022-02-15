@@ -5,6 +5,8 @@ import View from '../../../components/atoms/View';
 import AnimatedFlatlist from '../../../components/molecules/AnimatedScrolls/AnimatedFlatlist';
 import ShelveCard from '../../../components/organisms/Card/ShelveCard';
 import { renderFile } from '../../../helpers/SharedActions';
+import NavigationService from '../../../navigations/NavigationService';
+import ROUTES from '../../../navigations/ROUTES';
 import { initColors } from '../../../res/colors';
 import FontFamily from '../../../res/FontFamily';
 import RestaurantProductMenuHeader, { ProductMenuHeaderItem, ProductMenuHeaderItemDefaultValue } from '../../RestaurantProductMenu/components/RestaurantProductMenuHeader';
@@ -16,12 +18,16 @@ interface Props {
     shelveData?: [];
 
     hideHeader?: boolean;
+    data:any;
+    pitstopType?:any;
 }
 
 const defaultProps = {
     headerItem: ProductMenuHeaderItemDefaultValue,
     shelveData: [],
     hideHeader: false,
+    data:[],
+    pitstopType:1,
 };
 
 // #endregion :: INTERFACE END's FROM HERE 
@@ -81,7 +87,11 @@ const ProductMenuHeader = (props: Props) => {
                                                 ...styles.shelvePrimaryContainer
                                             }}
                                             color={colors}
-                                            seeAll />
+                                            seeAll
+                                            onItemPress={()=>{
+                                                NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Shelves.screen_name,{shelveData:props.shelveData,pitstopType:props.pitstopType})
+                                            }}
+                                        />
                                     }
 
 

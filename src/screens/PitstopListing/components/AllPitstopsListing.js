@@ -9,6 +9,7 @@ import { renderFile, sharedExceptionHandler } from '../../../helpers/SharedActio
 import { postRequest } from '../../../manager/ApiManager';
 import Endpoints from '../../../manager/Endpoints';
 import NavigationService from "../../../navigations/NavigationService";
+import ROUTES from '../../../navigations/ROUTES';
 import CardLoader from "./CardLoader";
 
 const ITEMS_PER_PAGE = 40;
@@ -116,7 +117,12 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
         componentLoaded.current = true;
     }, [])
     const onPressPitstop = (item) => {
-        NavigationService.NavigationActions.common_actions.navigate('RESTAURANTMENU',{...item,pitstopType});
+        const routes = {
+            4: ROUTES.APP_DRAWER_ROUTES.RestaurantProductMenu.screen_name,
+            1: ROUTES.APP_DRAWER_ROUTES.ProductMenu.screen_name,
+            2: ROUTES.APP_DRAWER_ROUTES.RestaurantProductMenu.screen_name,
+        }
+        NavigationService.NavigationActions.common_actions.navigate(routes[pitstopType],{...item,pitstopType});
     }
     const renderItem = (item, index) => {
         const { title, description, estTime, distanceFromLocation, image, averagePrice } = item;

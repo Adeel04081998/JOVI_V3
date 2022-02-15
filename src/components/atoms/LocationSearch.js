@@ -100,8 +100,8 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
             renderRightButton={
                 () => {
                     return (
-                        <View style={{justifyContent:'center', alignItems:'center', height:40}} >
-                            <TouchableOpacity style={{}} onPress={clearField}>
+                        <View>
+                            <TouchableOpacity style={styles.iconStyleRight} onPress={clearField}>
                                 <Image style={{ ...styles.IcoImg, transform: [{ rotate: '45deg' }] }} source={images.addIcon()} />
                             </TouchableOpacity>
                         </View>
