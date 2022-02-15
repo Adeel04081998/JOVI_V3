@@ -49,7 +49,6 @@ export default ({ navigation, route }) => {
         )
     };//end of _renderItem
 
-    console.log(ProductDummyData1.pitstopStockViewModel.shelves);
     return (
         <View style={styles.primaryContainer}>
 
