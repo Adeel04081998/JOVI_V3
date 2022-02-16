@@ -164,6 +164,7 @@ export default (props) => {
                 }}>
 
                     <TouchableScale
+                    wait={0}
                         onPress={() => { itemCountOnPress("minus") }}
                     >
                         <VectorIcon
@@ -177,6 +178,7 @@ export default (props) => {
                         <Text style={{ fontWeight: 'bold', fontSize: 20, justifyContent: 'center', alignItems: 'center', color: 'black', paddingHorizontal: 16 }}>{itemCount}</Text>
                     </TouchableScale>
                     <TouchableScale
+                    wait={0}
                         onPress={() => { itemCountOnPress("plus") }}
                     >
                         <VectorIcon

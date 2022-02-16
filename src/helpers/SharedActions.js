@@ -426,12 +426,12 @@ export const sharedAddUpdatePitstop = (
                     if (_pitstop[pitstopActionKey] === pitstopFound[pitstopActionKey]) {
                         const index = _pitstop.checkOutItemsListVM.findIndex(i => i[actionKey] === upcomingItemDetails[actionKey])
                         if (index !== -1) {
-                            console.log('upcomingItemDetails.quantity  ',upcomingItemDetails.quantity );
+                            console.log('upcomingItemDetails.quantity  ', upcomingItemDetails.quantity);
                             if (upcomingItemDetails.quantity > 0) {
                                 _pitstop.checkOutItemsListVM[index] = { ...upcomingItemDetails, checkOutItemID: _pitstop.checkOutItemsListVM[index].checkOutItemID };
                             } else {
                                 // _pitstop.checkOutItemsListVM.slice(index,index);
-                                _pitstop.checkOutItemsListVM=  _pitstop.checkOutItemsListVM.filter(y => y[actionKey] !== upcomingItemDetails[actionKey]);
+                                _pitstop.checkOutItemsListVM = _pitstop.checkOutItemsListVM.filter(y => y[actionKey] !== upcomingItemDetails[actionKey]);
                             }
                         } else {
                             _pitstop.checkOutItemsListVM.push({ checkOutItemID: sharedUniqueIdGenerator(), ...upcomingItemDetails, });
@@ -483,6 +483,17 @@ export const sharedGetFilters = () => {
 
 export const uniqueKeyExtractor = () => new Date().getTime().toString() + (Math.floor(Math.random() * Math.floor(new Date().getTime()))).toString();
 
-export const getKeyByValue=(object, value) =>{
+export const getKeyByValue = (object, value) => {
     return Object.keys(object).find(key => object[key] === value);
-  }
+}
+
+export const array_move = (arr, old_index, new_index) => {
+    if (new_index >= arr.length) {
+        var k = new_index - arr.length + 1;
+        while (k--) {
+            arr.push(undefined);
+        }
+    }
+    arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+    return arr; // for testing
+};

@@ -1,33 +1,27 @@
+import lodash from 'lodash'; // 4.0.8
 import AnimatedLottieView from 'lottie-react-native';
 import React from 'react';
 import { ActivityIndicator, Appearance, FlatList, SafeAreaView, ScrollView } from 'react-native';
-import { SvgXml } from 'react-native-svg';
-import svgs from '../../assets/svgs';
-import ImageBackground from '../../components/atoms/ImageBackground';
+import { useSelector } from 'react-redux';
 import Text from '../../components/atoms/Text';
 import TouchableScale from '../../components/atoms/TouchableScale';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import NoRecord from '../../components/organisms/NoRecord';
-import { getRandomInt, isNextPage, renderFile, renderPrice, sharedAddUpdatePitstop, sharedExceptionHandler, uniqueKeyExtractor, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { isNextPage, renderFile, sharedAddUpdatePitstop, sharedExceptionHandler, uniqueKeyExtractor, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
+import NavigationService from '../../navigations/NavigationService';
+import ROUTES from '../../navigations/ROUTES';
 import { store } from '../../redux/store';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
-import ENUMS from '../../utils/ENUMS';
 import GV, { PITSTOP_TYPES } from '../../utils/GV';
 import GotoCartButton from '../RestaurantProductMenu/components/GotoCartButton';
-import { ProductDummyData1 } from '../RestaurantProductMenu/components/ProductDummyData';
 import ProductMenuHeader from './components/ProductMenuHeader';
-import ProductQuantityCard from './components/ProductQuantityCard';
-import { itemStylesFunc, stylesFunc } from './styles';
-import { useSelector } from 'react-redux';
-import lodash from 'lodash'; // 4.0.8
-import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import ProductMenuItemCard from './components/ProductMenuItemCard';
-import NavigationService from '../../navigations/NavigationService';
-import ROUTES from '../../navigations/ROUTES';
+import { itemStylesFunc, stylesFunc } from './styles';
 
 const WINDOW_WIDTH = constants.window_dimensions.width;
 
@@ -51,7 +45,6 @@ export default ({ navigation, route }) => {
 
     // #endregion :: STYLES & THEME END's FROM HERE 
     const cartReducer = useSelector(store => store.cartReducer);
-    console.log("cartReducer", cartReducer);
     const marketID = route.params?.pitstopID ?? 0;// 4613,4609, 4521;
     const headerTitle = route.params?.title ?? '';
 
@@ -104,7 +97,6 @@ export default ({ navigation, route }) => {
         };
 
         postRequest(Endpoints.GET_PRODUCT_MENU_LIST, params, (res) => {
-            console.log('response ', res);
             if (res.data.statusCode === 404) {
                 updateQuery({
                     errorText: res.data.message,
@@ -154,7 +146,6 @@ export default ({ navigation, route }) => {
             });
 
         }, (err) => {
-            console.log('errror api  ', err);
             sharedExceptionHandler(err);
             updateQuery({
                 errorText: sharedExceptionHandler(err),
@@ -166,6 +157,7 @@ export default ({ navigation, route }) => {
     };//end of loadData
 
     // #endregion :: API IMPLEMENTATION END's FROM HERE 
+
     // #region :: RENDER HEADER START's FROM HERE 
     const _renderHeader = (title = headerTitle) => {
         return (
@@ -209,7 +201,7 @@ export default ({ navigation, route }) => {
                     <Text style={styles.title}>{`${parentItem.categoryName}`}</Text>
 
                     {isNextPage(productTotalItem, HORIZONTAL_MAX_ITEM_PER_REQUEST, 1) &&
-                        <TouchableScale onPress={() => {
+                        <TouchableScale wait={0} onPress={() => {
                             NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductMenuItem.screen_name, { pitstopType, marketID, item: parentItem })
                         }}>
                             <Text style={itemStyles.titleViewmoreText}>{`View More`}</Text>
@@ -225,24 +217,29 @@ export default ({ navigation, route }) => {
                         const image = (item?.images ?? []).length > 0 ? item.images[0].joviImageThumbnail : '';
                         const isOutOfStock = "isOutOfStock" in item ? item.isOutOfStock : false;
                         return (
-                            <ProductMenuItemCard
-                                colors={colors}
-                                index={index}
-                                itemImageSize={ITEM_IMAGE_SIZE}
-                                updateQuantity={(quantity) => {
-                                    updateQuantity(parentIndex, index, quantity);
-                                }}
-                                item={{
-                                    image: { uri: renderFile(`${image}`) },
-                                    isOutOfStock: isOutOfStock,
-                                    name: item.pitStopItemName,
-                                    price: item.gstAddedPrice,
-                                    quantity: item.quantity,
-                                    discountAmount: item.discountAmount,
-                                    discountType: item.discountType,
-                                    discountedPrice: item.discountedPrice,
-                                }}
-                            />
+                            <View style={{
+                                marginLeft: index === 0 ? 10 : 0,
+                                ...itemStyles.primaryContainer,
+                            }} key={uniqueKeyExtractor()}>
+                                <ProductMenuItemCard
+                                    colors={colors}
+                                    index={index}
+                                    itemImageSize={ITEM_IMAGE_SIZE}
+                                    updateQuantity={(quantity) => {
+                                        updateQuantity(parentIndex, index, quantity);
+                                    }}
+                                    item={{
+                                        image: { uri: renderFile(`${image}`) },
+                                        isOutOfStock: isOutOfStock,
+                                        name: item.pitStopItemName,
+                                        price: item.gstAddedPrice,
+                                        quantity: item.quantity,
+                                        discountAmount: item.discountAmount,
+                                        discountType: item.discountType,
+                                        discountedPrice: item.discountedPrice,
+                                    }}
+                                />
+                            </View>
                         )
                         // return (
                         //     <View style={{
@@ -371,7 +368,7 @@ export default ({ navigation, route }) => {
                 <NoRecord
                     title={query.errorText}
                     buttonText={`Retry`}
-                    onButtonPress={()=>{loadData(paginationInfo.currentRequestCount,false)}}  />
+                    onButtonPress={() => { loadData(paginationInfo.currentRequestCount, false) }} />
             </>
         )
     }
@@ -392,7 +389,7 @@ export default ({ navigation, route }) => {
             </>
         )
     }
-
+  
     return (
         <SafeAreaView style={styles.primaryContainer}>
             {_renderHeader('')}
@@ -414,6 +411,7 @@ export default ({ navigation, route }) => {
                         colors={colors}
                         shelveData={allData?.shelveSlicedArray ?? []}
                         data={allData.shelves}
+                        marketID={marketID}
                         headerItem={{
                             image: { uri: renderFile(allData?.pitstopImage ?? '') },
                             distance: allData?.distance ?? '',

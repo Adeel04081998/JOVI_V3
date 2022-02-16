@@ -6,7 +6,7 @@ import View from '../../components/atoms/View';
 import AnimatedFlatlist from '../../components/molecules/AnimatedScrolls/AnimatedFlatlist';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import NoRecord from '../../components/organisms/NoRecord';
-import { getKeyByValue, isNextPage, renderFile, sharedExceptionHandler, uniqueKeyExtractor } from '../../helpers/SharedActions';
+import { getKeyByValue, isNextPage, renderFile, sharedAddUpdatePitstop, sharedExceptionHandler, uniqueKeyExtractor } from '../../helpers/SharedActions';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
@@ -20,7 +20,7 @@ import { stylesFunc } from './styles';
 
 const WINDOW_WIDTH = constants.screen_dimensions.width;
 
-const ITEM_IMAGE_SIZE = WINDOW_WIDTH * 0.3;
+const ITEM_IMAGE_SIZE = WINDOW_WIDTH * 0.29;
 const DATA = new Array(10).fill(ProductDummyData1).flat();
 
 const VERTICAL_MAX_ITEM_PER_REQUEST = 10;
@@ -82,16 +82,14 @@ export default ({ navigation, route }) => {
             "longitude": finalDestination?.longitude ?? 73.044831,
             "searchItem": "",
             "categoryID": categoryID,
-            "catPageNumber": 1,
+            "catPageNumber": 10,
             "catItemsPerPage": 1,
             "productPageNumber": currentRequestNumber,
             "productItemsPerPage": paginationInfo.itemPerRequest,
             "marketID": marketID
         };
 
-        console.log('PARAM ', params);
         postRequest(Endpoints.GET_PRODUCT_MENU_LIST, params, (res) => {
-            console.log('res ', res);
             if (res.data.statusCode === 404) {
                 updateQuery({
                     errorText: res.data.message,
@@ -136,7 +134,6 @@ export default ({ navigation, route }) => {
             toggleMetaData(!metaData);
 
         }, (err) => {
-            console.log('errror api  ', err);
             sharedExceptionHandler(err);
             updateQuery({
                 errorText: sharedExceptionHandler(err),
@@ -177,19 +174,42 @@ export default ({ navigation, route }) => {
     // #endregion :: ON END REACHED END's FROM HERE 
 
 
+    // #region :: QUANTITY HANDLER START's FROM HERE 
+    const updateQuantity = (parentIndex, index, quantity) => {
+        data[parentIndex].pitstopItemList[index].quantity = quantity;
+        const pitstopDetails = {
+            pitstopType: PITSTOP_TYPES.SUPER_MARKET,
+            vendorDetails: { ...data[parentIndex], pitstopItemList: null, marketID, actionKey: "marketID" },
+            itemDetails: { ...data[parentIndex].pitstopItemList[index], actionKey: "pitStopItemID" },
+        }
+
+        sharedAddUpdatePitstop(pitstopDetails,)
+        // if (Math.random() < 0) {
+        //     undoQuantity(parentIndex, index);
+        // }
+    };
+
+    const undoQuantity = (parentIndex, index) => {
+        data[parentIndex].pitstopItemList[index].isOutOfStock = !data[parentIndex].pitstopItemList[index].isOutOfStock;
+        toggleMetaData(!metaData);
+
+    };//end of undoQuantity
+
+    // #endregion :: QUANTITY HANDLER END's FROM HERE 
+
     // #region :: RENDER ITEM START's FROM HERE 
     const _renderItem = ({ item, index }) => {
         const image = (item?.images ?? []).length > 0 ? item.images[0].joviImageThumbnail : '';
         const isOutOfStock = "isOutOfStock" in item ? item.isOutOfStock : false;
         return (
-            <View style={{ marginTop: 20 }} key={uniqueKeyExtractor()}>
+            <View style={{ marginTop: 20, marginLeft: index % 3 ===0 ? 10 : 0, }} key={uniqueKeyExtractor()}>
                 <ProductMenuItemCard
                     onPress={() => { }}
                     colors={colors}
                     index={index}
                     itemImageSize={ITEM_IMAGE_SIZE}
                     updateQuantity={(quantity) => {
-                        // updateQuantity(parentIndex, index, quantity);
+                        updateQuantity(parentIndex, index, quantity);
                     }}
                     item={{
                         image: { uri: renderFile(`${image}`) },
@@ -276,6 +296,7 @@ export default ({ navigation, route }) => {
                     data={data}
                     extraData={metaData}
                     numColumns={3}
+                    showsVerticalScrollIndicator={false}
                     columnWrapperStyle={{
                         paddingHorizontal: constants.spacing_horizontal / 2,
                     }}
@@ -290,7 +311,8 @@ export default ({ navigation, route }) => {
                         },
                         contentContainerStyle: {
                             paddingBottom: 60,
-                        }
+                        },
+                        showsVerticalScrollIndicator:false,
                     }}
                     renderItem={_renderItem}
                     onEndReachedThreshold={0.6}

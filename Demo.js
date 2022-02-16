@@ -16,6 +16,7 @@ import { useDispatch } from 'react-redux';
 import RNSplashScreen from './NativeModules/RNSplashScreen';
 import RestaurantProductMenu from './src/screens/ProductMenu';
 import ReduxActions from "./src/redux/actions";
+import ShelvesDetail from './src/screens/ShelvesDetail';
 
 AntDesign.loadFont();
 Entypo.loadFont();
@@ -52,9 +53,8 @@ export default () => {
             <SafeAreaView style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
                 <StatusBar backgroundColor={'#fff'} barStyle={"dark-content"} />
 
-
-                <RestaurantProductMenu />
-
+                <ShelvesDetail/>
+                
             </SafeAreaView>
         </SafeAreaProvider>
     );

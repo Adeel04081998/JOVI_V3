@@ -62,6 +62,10 @@ const APP_DRAWER_ROUTES = {
         screen_name: "Shelves",
         options: null,
     },
+    "ShelvesDetail": {
+        screen_name: "SHELVES_DETAIL",
+        options: null,
+    },
     "ProductMenuItem": {
         screen_name: "PRODUCT_MENU_ITEM",
         options: null,

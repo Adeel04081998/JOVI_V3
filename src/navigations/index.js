@@ -24,6 +24,7 @@ import RestaurantProductMenu from '../screens/RestaurantProductMenu';
 import ProductMenu from '../screens/ProductMenu';
 import Shelves from '../screens/Shelves';
 import ProductMenuItem from '../screens/ProductMenuItem';
+import ShelvesDetail from '../screens/ShelvesDetail';
 const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES, APP_DRAWER_ROUTES, APP_DRAWER_STACK } = ROUTES;
 const AppDrawerStack = (props) => {
     return <Stack.Navigator screenOptions={stackOpts} initialRouteName={APP_DRAWER_ROUTES.Home.screen_name}>
@@ -60,6 +61,7 @@ const AppDrawerComponents = {
     ProductMenuItem,
     JoviJob,
     Shelves,
+    ShelvesDetail,
     Map
 }//will open with Slide Animation
 const ContainerStack = createStackNavigator();

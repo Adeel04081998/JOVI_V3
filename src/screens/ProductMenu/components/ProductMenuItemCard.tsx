@@ -34,13 +34,18 @@ interface Props {
     updateQuantity?: (quantity: number) => void;
     onPress?: ((event: GestureResponderEvent) => void) | undefined;
 
-    disabled?:boolean;
+    disabled?: boolean;
+
+    seeAll?: boolean;
+    additionalCount?: number;
 }
 
 const defaultProps = {
     updateQuantity: undefined,
-    onPress:undefined,
-    disabled:false,
+    onPress: undefined,
+    disabled: false,
+    seeAll: false,
+    additionalCount: 1,
 };
 
 // #endregion :: INTERFACE END's FROM HERE 
@@ -51,73 +56,111 @@ const ProductMenuItemCard = (props: Props) => {
     const itemStyles = itemStylesFunc(props.colors, ITEM_IMAGE_SIZE);
 
     return (
-        <TouchableScale style={{
+        <TouchableScale wait={0} style={{
             ...itemStyles.primaryContainer,
         }} key={uniqueKeyExtractor()}
-        onPress={(event)=>{
-            props.onPress &&  props.onPress(event);
-        }}
-        disabled={props.disabled || !VALIDATION_CHECK(props.onPress)}>
+            onPress={(event) => {
+                props.onPress && props.onPress(event);
+            }}
+            disabled={props.disabled || !VALIDATION_CHECK(props.onPress)}>
+            {props.seeAll ?
+                <>
+                    {(VALIDATION_CHECK(props.additionalCount) && parseInt(`${props.additionalCount}`) > 0) &&
+                        <>
+                            <View style={{
+                                ...itemStyles.image,
+                                borderColor: props.colors.primary,
+                                borderWidth: 1,
+                                elevation: 0,
+                                shadowOpacity: 0,
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}>
+                                <Text fontFamily='PoppinsSemiBold' style={{
+                                    color: props.colors.primary,
+                                    fontSize: 24,
+                                    textAlign: "center",
+                                }}>{`${props.additionalCount}`}</Text>
 
-            {/* ****************** Start of IMAGE & QUANTITY ****************** */}
-            <View style={itemStyles.imageContainer}>
-                <ImageBackground
-                    source={props.item.image}
-                    style={itemStyles.image}
-                    borderRadius={8}
-                    tapToOpen={false}>
+                                <Text style={{
+                                    color: "#272727",
+                                    fontSize: 12,
+                                    textAlign: "center",
+                                }}>{`Additional products`}</Text>
+                            </View>
+                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", paddingTop: 18, }}>
+                                <Text fontFamily='PoppinsBold' style={{
+                                    color: props.colors.primary,
+                                    fontSize: 14,
+                                    textAlign: "center",
+                                }}>{`See all`}</Text>
+                                <VectorIcon name='chevron-right-circle' type='MaterialCommunityIcons' color={props.colors.primary} style={{ marginLeft: 6, marginTop: -4, }} />
+                            </View>
+                        </>
+                    }
+                </>
+                :
+                <>
+                    {/* ****************** Start of IMAGE & QUANTITY ****************** */}
+                    <View style={itemStyles.imageContainer}>
+                        <ImageBackground
+                            source={props.item.image}
+                            style={itemStyles.image}
+                            borderRadius={8}
+                            tapToOpen={false}>
 
-                    <ProductQuantityCard
-                        outOfStock={props.item.isOutOfStock}
-                        initialQuantity={props.item.quantity}
-                        colors={props.colors}
-                        size={ITEM_IMAGE_SIZE}
-                        updateQuantity={(quantity) => {
-                            props.updateQuantity && props.updateQuantity(quantity);
-                        }}
-                    />
-
-
-                </ImageBackground>
-            </View>
-
-            {/* ****************** End of IMAGE & QUANTITY ****************** */}
-
-            {/* ****************** Start of NAME/TITLE ****************** */}
-            <Text style={itemStyles.name} numberOfLines={2}>{`${props.item.name}`.repeat(100)}</Text>
-
-            {/* ****************** End of NAME/TITLE ****************** */}
-
-
-            {/* ****************** Start of PRICE & DISCOUNT ****************** */}
-            <Text fontFamily='PoppinsBold' style={itemStyles.price}>{renderPrice(props.item.price)}</Text>
-
-            {/* ****************** End of PRICE & DISCOUNT ****************** */}
-
-
-            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-
-                {(VALIDATION_CHECK(props.item.discountedPrice) && parseInt(`${props.item.discountedPrice}`) > 0) &&
-                    <Text style={itemStyles.discountPrice}>{renderPrice(props.item.discountedPrice)}</Text>
-                }
+                            <ProductQuantityCard
+                                outOfStock={props.item.isOutOfStock}
+                                initialQuantity={props.item.quantity}
+                                colors={props.colors}
+                                size={ITEM_IMAGE_SIZE}
+                                updateQuantity={(quantity) => {
+                                    props.updateQuantity && props.updateQuantity(quantity);
+                                }}
+                            />
 
 
-                {/* ****************** Start of DISCOUNT TYPE ****************** */}
-                {parseInt(`${props.item.discountType}`) !== parseInt(`${ENUMS.PROMO_VALUE_TYPE.Empty.value}`) &&
-                    <View style={itemStyles.discountTypeContainer}>
-                        {parseInt(`${props.item.discountType}`) === parseInt(`${ENUMS.PROMO_VALUE_TYPE.Percentage.value}`) &&
-                            <SvgXml xml={svgs.discount(props.colors.primary)} height={15} width={15} style={itemStyles.discountTypeIcon} />
-                        }
-                        <Text style={itemStyles.discountTypeText}>{`${renderPrice(props.item.discountAmount, '-', '%', /[^\d.]/g)}`}</Text>
+                        </ImageBackground>
                     </View>
-                }
 
-                {/* ****************** End of DISCOUNT TYPE ****************** */}
+                    {/* ****************** End of IMAGE & QUANTITY ****************** */}
 
-            </View>
+                    {/* ****************** Start of NAME/TITLE ****************** */}
+                    <Text style={itemStyles.name} numberOfLines={2}>{`${props.item.name}`.repeat(100)}</Text>
+
+                    {/* ****************** End of NAME/TITLE ****************** */}
 
 
+                    {/* ****************** Start of PRICE & DISCOUNT ****************** */}
+                    <Text fontFamily='PoppinsBold' style={itemStyles.price}>{renderPrice(props.item.price)}</Text>
 
+                    {/* ****************** End of PRICE & DISCOUNT ****************** */}
+
+
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+
+                        {(VALIDATION_CHECK(props.item.discountedPrice) && parseInt(`${props.item.discountedPrice}`) > 0) &&
+                            <Text style={itemStyles.discountPrice}>{renderPrice(props.item.discountedPrice)}</Text>
+                        }
+
+
+                        {/* ****************** Start of DISCOUNT TYPE ****************** */}
+                        {parseInt(`${props.item.discountType}`) !== parseInt(`${ENUMS.PROMO_VALUE_TYPE.Empty.value}`) &&
+                            <View style={itemStyles.discountTypeContainer}>
+                                {parseInt(`${props.item.discountType}`) === parseInt(`${ENUMS.PROMO_VALUE_TYPE.Percentage.value}`) &&
+                                    <SvgXml xml={svgs.discount(props.colors.primary)} height={15} width={15} style={itemStyles.discountTypeIcon} />
+                                }
+                                <Text style={itemStyles.discountTypeText}>{`${renderPrice(props.item.discountAmount, '-', '%', /[^\d.]/g)}`}</Text>
+                            </View>
+                        }
+
+                        {/* ****************** End of DISCOUNT TYPE ****************** */}
+
+                    </View>
+
+
+                </>
+            }
 
         </TouchableScale>
     )
@@ -137,7 +180,7 @@ export const itemStylesFunc = (colors: typeof initColors, ITEM_IMAGE_SIZE: numbe
     discountTypeContainer: {
         flexDirection: "row",
         alignItems: "center",
-        marginTop:-6,
+        marginTop: -6,
     },
     name: {
         color: "#6B6B6B",
