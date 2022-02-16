@@ -32,6 +32,7 @@ import { useSelector } from 'react-redux';
 import { sharedGetEnumsApi, sharedGetFilters, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser } from './src/helpers/SharedActions';
 import PistopListing from './src/screens/PitstopListing';
 import Filter from './src/components/atoms/Filter';
+import CheckOut from './src/screens/CheckOut';
 AntDesign.loadFont();
 Entypo.loadFont();
 EvilIcons.loadFont();
@@ -143,8 +144,9 @@ const App = () => {
         } */}
         <NavigationContainer theme={theme} ref={_NavgationRef} >
           <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
-            <RootStack />
+            {/* <RootStack /> */}
             {/* <PistopListing /> */}
+            <CheckOut />
           </View>
         </NavigationContainer>
         <Robot />

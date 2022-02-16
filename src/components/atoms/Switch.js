@@ -44,8 +44,8 @@ export default (props) => {
         })
 
     }
-    const width = 85;
-    const height = 40;
+    const width = props.width|| 85;
+    const height = props.height || 40;
     const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
     const animatedStyles = {
         transform: [
@@ -53,22 +53,22 @@ export default (props) => {
         ]
     }
     return (
-            <AnimatedTouchable activeOpacity={1} style={[
+        <AnimatedTouchable activeOpacity={1} style={[
+            active ?
+                 switchStyles.switchContainerActive
+                : switchStyles.switchContainerInActive
+            , {
+                width,
+                height
+            }, props.containerStyle]} onPress={onPress} >
+            <View style={[
                 active ?
-                    switchStyles.switchContainerActive
-                    : switchStyles.switchContainerInActive
-                , {
-                    width,
-                    height
-                }]} onPress={onPress} >
-                <View style={[
-                    active ?
-                        switchStyles.subSwitchContainerActive :
-                        switchStyles.subSwitchContainerInActive, animatedStyles, {
-                    }]} >
+                    switchStyles.subSwitchContainerActive :
+                    switchStyles.subSwitchContainerInActive, animatedStyles, {
+                }, props.toggleStyle]} >
 
-                </View>
-            </AnimatedTouchable>
+            </View>
+        </AnimatedTouchable>
     );
 }
 

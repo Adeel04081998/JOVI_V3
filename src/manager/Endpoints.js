@@ -22,11 +22,13 @@ export default {
 
 
 
-    "GET_PITSTOPS_PROMOTIONS":"api/Menu/Vendor/CategorizationByID",
-    "GET_ADVERTISEMENTS" : "api/Advertisement/List",
-    
+    "GET_PITSTOPS_PROMOTIONS": "api/Menu/Vendor/CategorizationByID",
+    "GET_ADVERTISEMENTS": "api/Advertisement/List",
+
 
     //RESTAURANT
-    "GET_PRODUCT_MENU_LIST":"api/SuperMarket/Stock/List", //SCREEN_NAME: ProductMenu
+    "GET_PRODUCT_MENU_LIST": "api/SuperMarket/Stock/List", //SCREEN_NAME: ProductMenu
+    "GET_VOUCHERS_LIST": "api/Menu/Promotion/List"
+
 
 }
