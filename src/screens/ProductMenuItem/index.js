@@ -175,12 +175,13 @@ export default ({ navigation, route }) => {
 
 
     // #region :: QUANTITY HANDLER START's FROM HERE 
-    const updateQuantity = (parentIndex, index, quantity) => {
-        data[parentIndex].pitstopItemList[index].quantity = quantity;
+    const updateQuantity = ( index, quantity) => {
+        
+        data[index].quantity = quantity;
         const pitstopDetails = {
             pitstopType: PITSTOP_TYPES.SUPER_MARKET,
-            vendorDetails: { ...data[parentIndex], pitstopItemList: null, marketID, actionKey: "marketID" },
-            itemDetails: { ...data[parentIndex].pitstopItemList[index], actionKey: "pitStopItemID" },
+            vendorDetails: { ...route?.params?.item, pitstopItemList: null, marketID, actionKey: "marketID" },
+            itemDetails: { ...data[index], actionKey: "pitStopItemID" },
         }
 
         sharedAddUpdatePitstop(pitstopDetails,)
@@ -209,7 +210,7 @@ export default ({ navigation, route }) => {
                     index={index}
                     itemImageSize={ITEM_IMAGE_SIZE}
                     updateQuantity={(quantity) => {
-                        updateQuantity(parentIndex, index, quantity);
+                        updateQuantity(index, quantity);
                     }}
                     item={{
                         image: { uri: renderFile(`${image}`) },
