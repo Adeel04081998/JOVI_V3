@@ -24,6 +24,7 @@ import Endpoints from "../../manager/Endpoints";
 import { sharedExceptionHandler } from "../../helpers/SharedActions";
 import AnimatedLottieView from "lottie-react-native";
 import Regex from "../../utils/Regex";
+import { sharedAddUpdatePitstop } from "../../helpers/SharedActions";
 
 
 export default (props) => {
@@ -46,12 +47,14 @@ export default (props) => {
     const productDetailsStyles = styleSheet.styles(colors)
     let productName = generalProductOrDealDetail.pitStopItemName || ""
     let productDetails = generalProductOrDealDetail.description || ""
-    let productPrice = generalProductOrDealDetail.itemPrice || ""
+    let gstAddedPrice = generalProductOrDealDetail.gstAddedPrice || ""
+    let productPrice = generalProductOrDealDetail.discountedPrice || gstAddedPrice || ""
     let optionsListArr = generalProductOrDealDetail.optionList ?? []
     let images = generalProductOrDealDetail.images ?? []
     let numberOfLines = 4
     let minHeight = (Platform.OS === 'ios' && numberOfLines) ? (20 * numberOfLines) : null
     console.log("propItem", propItem);
+
 
 
     const loadProductDetails = () => {
@@ -115,16 +118,27 @@ export default (props) => {
 
     const addToCartHandler = () => {
         let dataToSend = {
-            selectedOptions: selectedOptions,
-            itemCount: itemCount,
-            notes: notes,
-            totalAddOnPrice: totalAddOnPrice,
+            pitstopType,
+            itemDetails: {
+                ...generalProductOrDealDetail,
+                selectedOptions,
+                quantity: itemCount,
+                notes,
+                gstAddedPrice: productPrice - totalAddOnPrice,
+                totalAddOnPrice,
+                actionKey: propItem.pitStopItemID ? "pitStopItemID" : "pitStopDealID",
+                estimatePrepTime: pitstopType === PITSTOP_TYPES.RESTAURANT ? generalProductOrDealDetail.estimateTime : ""
+            },
+            vendorDetails: { ...propItem.vendorDetails, pitstopType, pitstopActionKey: "marketID" },
         }
+        sharedAddUpdatePitstop(dataToSend, false, [], true)
+
         // NavigationService.NavigationActions.common_actions.navigate({ dataToSend })
 
 
         setState((pre) => ({ ...pre, selectedOptions: [], totalAddOnPrice: 0, itemCount: 1, notes: "" }))
     }
+    console.log("[generalProductOrDealDetail]", state.generalProductOrDealDetail)
 
 
     const itemCountOnPress = (key) => {
@@ -229,7 +243,7 @@ export default (props) => {
                     <SafeAreaView style={productDetailsStyles.mainContainer}>
                         <CustomHeader
                             leftIconName={"chevron-back"}
-                            onLeftIconPress={() => { goBack() }}
+                            onLeftIconPress={goBack}
                             containerStyle={[productDetailsStyles.customHeaderMainContainer,]}
                             hideFinalDestination={true}
                             leftContainerStyle={productDetailsStyles.customHeaderLeftRightContainer}
@@ -238,7 +252,7 @@ export default (props) => {
                             rightIconColor={productDetailsStyles.customHeaderLeftRightIconColor}
                         />
                         <ScrollView showsVerticalScrollIndicator={false}>
-                            <View>
+                            <View onTouchStart={goBack}>
                                 <ImageCarousel
                                     data={images}
                                     containerStyle={{
@@ -251,6 +265,7 @@ export default (props) => {
                                     paginationDotStyle={{ borderColor: 'red', backgroundColor: colors.primary, }}
                                     uriKey="joviImage"
                                     height={180}
+
                                 />
                             </View>
                             <LinearGradient
@@ -267,6 +282,9 @@ export default (props) => {
                                         fontFamily='PoppinsRegular'
                                     >{` PKR - ${productPrice}`}</Text>
                                 </AnimatedView>
+                                <Text style={[productDetailsStyles.productPricetxt, { paddingHorizontal: 5, textDecorationLine: "line-through", color: colors.grey }]}
+                                    fontFamily='PoppinsRegular'
+                                >{`${gstAddedPrice}`}</Text>
                                 <RadioButton
                                     data={optionsListArr}
                                     onPressCb={onPressHandler}

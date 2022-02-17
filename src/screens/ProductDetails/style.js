@@ -6,13 +6,13 @@ export default {
         return StyleSheet.create({
 
             mainContainer: {
-                
+
                 flex: 1, flexDirection: 'column', backgroundColor: colors.screen_background,
-                
+
             },
             customHeaderMainContainer: {
-                position: 'absolute', zIndex: 2, backgroundColor: 'transparent', borderBottomWidth: 0, borderBottomColor: 'white',
-                
+                position: 'absolute', zIndex: 2, backgroundColor: 'transparent', borderBottomWidth: 0, borderBottomColor: 'white', marginTop: __DEV__ ? 20 : 0
+
             },
             customHeaderLeftRightContainer: {
                 backgroundColor: colors.white
@@ -40,14 +40,14 @@ export default {
             radioButtonSelectionTittle: {
                 fontSize: 16, color: colors.lightBlack
             },
-            requiredTxt:{
-                fontSize:12,color: colors.grey
+            requiredTxt: {
+                fontSize: 12, color: colors.grey
 
             },
             radioButtonPrimaryContainer: {
-                backgroundColor: 'white', 
-                padding: 10, 
-                marginVertical: 5, 
+                backgroundColor: 'white',
+                padding: 10,
+                marginVertical: 5,
                 borderRadius: 10,
             },
             radioButtonSecondaryContainer: {

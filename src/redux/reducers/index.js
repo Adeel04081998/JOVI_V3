@@ -1,47 +1,18 @@
 import constants from '../../res/constants';
-import GV, { PITSTOP_TYPES } from '../../utils/GV';
 import TYPES from '../TYPES';
-const CART_DATA = {
+const INIT_CART_DATA = {
   pitstops: [],
-  shippingCharges: 0,
-  totalProducts: 9876,
-  delivery: 150,
-  total: 10176,
-  isPrescriptionRequired: false,
-  isRestaurant: false,
-  prescriptionCheckOutID: 0,
-  estPrepTime: '00:10',
-  totalDiscount: 0,
-  actualTotal: 9876,
-  totalProductGST: 0,
-  showPopup: false,
-  serviceTax: 0,
-  gst: 0,
-  // CustomKeys
   joviRemainingAmount: constants.max_jovi_order_amount,
-  openOrdersList: [{ joviJobId: 123, estimatePrice: 300 }],
-  shippingCharges: 0,
-  totalProducts: 9876,
-  delivery: 150,
-  total: 10176,
-  isPrescriptionRequired: false,
-  isRestaurant: false,
-  prescriptionCheckOutID: 0,
-  estPrepTime: '00:10',
-  totalDiscount: 0,
-  actualTotal: 9876,
-  itemsCount: 3,
-  totalProductGST: 0,
-  showPopup: false,
-  serviceTax: 0,
-  gst: 0,
-  // CustomKeys
-  joviRemainingAmount: constants.max_jovi_order_amount,
-  openOrdersList: [{ joviJobId: 123, estimatePrice: 300 }],
+  openOrdersList: [],
   subTotal: 0,
   discount: 0,
   serviceCharges: 0,
   total: 0,
+  joviPitstopsTotal: 0,
+  joviPrevOrdersPitstopsAmount: 0,
+  joviCalculation: 0,
+  gst: 0,
+  estimateTime: 0
 };
 const userReducer = (state = {}, action) => {
   switch (action.type) {
@@ -57,13 +28,16 @@ const userReducer = (state = {}, action) => {
       return { ...state };
   }
 };
-const cartReducer = (state = CART_DATA, action) => {
+const cartReducer = (state = INIT_CART_DATA, action) => {
   // console.log("action", action)
   switch (action.type) {
     case TYPES.SET_CART_ACTION:
       return { ...state, ...action.payload };
     case TYPES.CLEAR_CART_ACTION:
-      return action.payload;
+      return {
+        ...INIT_CART_DATA,
+        ...action.payload
+      }
     default:
       return { ...state };
   }

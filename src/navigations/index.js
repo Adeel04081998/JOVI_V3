@@ -23,6 +23,7 @@ import PitstopsVerticalList from '../screens/PitstopListing/PitstopsVerticalList
 import RestaurantProductMenu from '../screens/RestaurantProductMenu';
 import ProductMenu from '../screens/ProductMenu';
 import Shelves from '../screens/Shelves';
+import Cart from '../screens/Cart';
 const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES,APP_DRAWER_ROUTES,APP_DRAWER_STACK } = ROUTES;
 const AppDrawerStack = (props) => {
     return <Stack.Navigator screenOptions={stackOpts} initialRouteName={APP_DRAWER_ROUTES.Home.screen_name}>
@@ -58,7 +59,8 @@ const AppDrawerComponents = {
     ProductMenu,
     JoviJob,
     Shelves,
-    Map
+    Map,
+    Cart
 }//will open with Slide Animation
 const ContainerStack = createStackNavigator();
 const Stack = createSharedElementStackNavigator();

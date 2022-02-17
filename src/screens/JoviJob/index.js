@@ -263,7 +263,7 @@ export default ({ navigation, route }) => {
         common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { onNavigateBack: cb })
     }
     const cb = (resp) => {
-        console.log('resp ==>>',resp);
+        console.log('resp ==>>', resp);
         setLocationVal(resp)
     }
     /************   End of functions of Pitstop location Component Funcs    **************/
@@ -832,10 +832,10 @@ export default ({ navigation, route }) => {
                 } />
         )
     } //End of Pitstop est Price
-     
+
 
     const validationCheck = () => {
-        if (locationVal !== '' && description !== '' ) return false
+        if (locationVal !== '' && description !== '') return false
         else return true
     }
     return (
@@ -873,7 +873,7 @@ export default ({ navigation, route }) => {
                                     imageData,
                                     voiceNote,
                                     estTime,
-                                    estVal
+                                    estimatePrice: parseInt( estVal)
                                 }
                                 sharedAddUpdatePitstop(pitstopData)
                             }}
