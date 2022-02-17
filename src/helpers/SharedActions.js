@@ -278,7 +278,14 @@ export const renderFile = picturePath => {
     )}?access_token=${userReducer?.token?.authToken}`;
 };
 
-export const renderPrice = (price, prefix = "Rs. ", suffix = "", reg = Regex.price,) => {
+export const renderPrice = (price, item = null, lineThrough = false, prefix = "Rs. ", suffix = "", reg = Regex.price,) => {
+    if (item) {
+        if (lineThrough) {
+            price = item.gstAddedPrice || item.itemPrice || item.price || price;
+        } else {
+            price = item.discountedPrice || item.gstAddedPrice || item.itemPrice || item.price || price;
+        }
+    }
     prefix = `${prefix}`.trim();
     suffix = `${suffix}`.trim();
     price = `${price}`.trim().replace(reg, '').trim();
@@ -546,12 +553,3 @@ export const array_move = (arr, old_index, new_index) => {
     arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
     return arr; // for testing
 };
-
-export const sharedGetPrice = (item = {}, lineThrough = false) => {
-    if (lineThrough) {
-        return renderPrice(item.gstAddedPrice || item.itemPrice || item.price || 0)
-    } else {
-        return renderPrice(product.discountedPrice || product.gstAddedPrice || item.itemPrice || product.price || 0)
-    }
-
-}
