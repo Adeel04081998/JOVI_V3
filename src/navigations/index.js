@@ -10,7 +10,6 @@ import VerifyOTP from '../screens/OTP/Verify';
 import SignUp from '../screens/SignUp/index';
 import ProductDetails from '../screens/ProductDetails';
 import JoviJob from '../screens/JoviJob';
-
 import Home from '../screens/Home';
 import Map from '../screens/Map';
 import PitstopListing from '../screens/PitstopListing';
@@ -23,6 +22,7 @@ import PitstopsVerticalList from '../screens/PitstopListing/PitstopsVerticalList
 import RestaurantProductMenu from '../screens/RestaurantProductMenu';
 import ProductMenu from '../screens/ProductMenu';
 import Shelves from '../screens/Shelves';
+import CheckOut from '../screens/CheckOut/index'
 import Cart from '../screens/Cart';
 import ProductMenuItem from '../screens/ProductMenuItem';
 import ShelvesDetail from '../screens/ShelvesDetail';
@@ -63,6 +63,7 @@ const AppDrawerComponents = {
     JoviJob,
     Shelves,
     Map,
+    CheckOut,
     Cart,
     ShelvesDetail,
 }//will open with Slide Animation
