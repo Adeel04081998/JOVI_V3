@@ -12,6 +12,8 @@ import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedGetServiceCharges } from '../../helpers/SharedActions';
+import NavigationService from '../../navigations/NavigationService';
+import ROUTES from '../../navigations/ROUTES';
 import sharedStyles from '../../res/sharedStyles';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES } from '../../utils/GV';
@@ -450,7 +452,7 @@ export default () => {
               backgroundColor: colors.primary,
               borderRadius: 10,
               marginHorizontal: 3,
-            }}>
+            }} onPress={() => { NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.CheckOut.screen_name)}}>
             <Text style={{ textAlign: 'center', color: colors.white }}>
               {title}
             </Text>
