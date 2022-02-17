@@ -20,7 +20,9 @@ interface ProductMenuItemCardItem {
     image: ImageSourcePropType,
     isOutOfStock: boolean,
     quantity: number,
+    /** Actual Price before discount  */
     price: number,
+     /** Main price OR Bold Price  */
     discountedPrice?: any,
     name: string,
     discountType?: any,
