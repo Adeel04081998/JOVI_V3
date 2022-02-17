@@ -546,3 +546,12 @@ export const array_move = (arr, old_index, new_index) => {
     arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
     return arr; // for testing
 };
+
+export const sharedGetPrice = (item = {}, lineThrough = false) => {
+    if (lineThrough) {
+        return renderPrice(item.gstAddedPrice || item.itemPrice || item.price || 0)
+    } else {
+        return renderPrice(product.discountedPrice || product.gstAddedPrice || item.itemPrice || product.price || 0)
+    }
+
+}
