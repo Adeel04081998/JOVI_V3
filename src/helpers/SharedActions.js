@@ -494,7 +494,7 @@ export const sharedGetFilters = () => {
     }, res => {
         console.log("[sharedGetFiltersApi].res ====>>", res);
         // dispatch(ReduxActionss.setMessagesAction({ ...res.data, robotJson: data }));
-        dispatch(ReduxActionss.setCategoriesTagsAction({ ...res.data }))
+        dispatch(ReduxActions.setCategoriesTagsAction({ ...res.data }))
 
 
     },

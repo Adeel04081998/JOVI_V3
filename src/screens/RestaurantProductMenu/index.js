@@ -50,7 +50,8 @@ export default ({ navigation, route }) => {
     });
 
     // #region :: ANIMATION START's FROM HERE 
-    const animScroll = React.useRef(new Animated.Value(0)).current
+    const animScroll = React.useRef(new Animated.Value(0)).current;
+
     const [headerHeight, setHeaderHeight] = React.useState(WINDOW_HEIGHT * 0.7);
 
     const headerTop = animScroll.interpolate({
@@ -62,7 +63,7 @@ export default ({ navigation, route }) => {
 
     const tabTop = animScroll.interpolate({
         inputRange: [0, headerHeight + 20],
-        outputRange: [headerHeight + 20, 0],
+        outputRange: [headerHeight + 20, 50],
         extrapolate: "clamp",
         useNativeDriver: true
     });
@@ -115,9 +116,11 @@ export default ({ navigation, route }) => {
     };
 
     // #endregion :: API IMPLEMENTATION END's FROM HERE 
+
+    // #region :: LOADING AND ERROR RENDERING START's FROM HERE 
     if (query.error) {
         return (
-            <SafeAreaView style={{ flex: 1, top: getStatusBarHeight(true) }}>
+            <SafeAreaView style={{ flex: 1, top: getStatusBarHeight(true), backgroundColor: colors.white, }}>
                 <CustomHeader
                     hideFinalDestination
                     title={route?.params?.title ?? ''}
@@ -141,7 +144,7 @@ export default ({ navigation, route }) => {
     }
     if (query.isLoading) {
         return (
-            <SafeAreaView style={{ flex: 1, top: getStatusBarHeight(true) }}>
+            <SafeAreaView style={{ flex: 1, top: getStatusBarHeight(true), backgroundColor: colors.white, }}>
                 <CustomHeader
                     hideFinalDestination
                     title={route?.params?.title ?? ''}
@@ -169,16 +172,46 @@ export default ({ navigation, route }) => {
             </SafeAreaView>
         )
     }
+
+    // #endregion :: LOADING AND ERROR RENDERING END's FROM HERE 
+
     const onItemPress = (item) => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, { propItem: { ...item, vendorDetails: { marketID: pitstopID, ...data, pitstopType: PITSTOP_TYPES.RESTAURANT, ...route.params } }, pitstopType: PITSTOP_TYPES.RESTAURANT });
     };
 
     return (
-        <SafeAreaView style={{ flex: 1, top: getStatusBarHeight(true) }}>
+        <SafeAreaView style={{ flex: 1, top: getStatusBarHeight(true), backgroundColor: colors.white, }}>
             <StatusBar backgroundColor={colors.white} />
+            <Animated.View style={{ position: 'absolute', top: 0, zIndex: 9999, }}>
+                <CustomHeader
+                    hideFinalDestination
+                    title={route?.params?.title ?? data?.pitstopName ?? ''}
+                    titleStyle={{
+                        color: colors.primary,
+                        opacity: animScroll.interpolate({
+                            inputRange:[headerHeight-100, headerHeight],
+                            outputRange:[0,1]
+                        }),
+                    }}
+                    leftIconName="chevron-back"
+                    leftContainerStyle={{
+                        backgroundColor: colors.white,
+                    }}
+                    rightContainerStyle={{
+                        backgroundColor: colors.white,
+                    }}
+                    leftIconColor={colors.primary}
+                    rightIconColor={colors.primary}
+                    containerStyle={{
+                        backgroundColor: 'transparent',
+                        borderBottomWidth: 0,
+                    }}
+                />
+            </Animated.View>
             {/* ****************** Start of UPPER HEADER TILL RECENT ORDER ****************** */}
             <Animated.View style={{
                 ...StyleSheet.absoluteFill,
+                backgroundColor: colors.white,
                 transform: [{
                     translateY: headerTop
                 }],
@@ -188,6 +221,7 @@ export default ({ navigation, route }) => {
                     onLayout={(e) => {
                         setHeaderHeight(e.nativeEvent.layout.height);
                     }}
+                    hideHeader
                     item={{
                         image: { uri: renderFile(data?.pitstopImage ?? '') },
                         distance: data?.distance ?? '',
@@ -206,6 +240,8 @@ export default ({ navigation, route }) => {
                 animatedScrollValue={animScroll}
                 headerHeight={headerHeight}
                 topHeaderStyle={{
+                    backgroundColor: colors.white,
+                    paddingTop: 10,
                     height: 50,
                     transform: [{
                         translateY: tabTop
