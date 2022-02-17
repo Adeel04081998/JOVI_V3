@@ -33,7 +33,7 @@ export default (props) => {
             return
         }
         Animated.timing(animatedValue, {
-            toValue: width / 1.8,
+            toValue: width / (props.toValue||1.8) ,
             duration: 200,
             easing: Easing.ease,
             useNativeDriver: true
