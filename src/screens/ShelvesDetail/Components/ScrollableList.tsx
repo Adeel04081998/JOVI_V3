@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Animated, Easing, FlatList, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StatusBar, StyleProp, StyleSheet, ViewStyle } from "react-native";
+import { Animated, Easing, FlatList, LogBox, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StatusBar, StyleProp, StyleSheet, ViewStyle } from "react-native";
 import Text from "../../../components/atoms/Text";
 import TouchableScale from "../../../components/atoms/TouchableScale";
 import View from "../../../components/atoms/View";
@@ -12,13 +12,11 @@ import constants from "../../../res/constants";
 type Props = React.ComponentProps<typeof Animated.View> & {
     children?: any;
     colors: typeof initColors;
-
+    contentContainerStyle?: StyleProp<ViewStyle>;
     data: any;
-    headerHeight?: number;
     topHeaderStyle?: StyleProp<ViewStyle>;
     itemsScrollViewStyle?: StyleProp<ViewStyle>;
     animatedScrollValue: Animated.Value;
-    renderAboveItems?: () => React.Component;
     itemsContainerStyle?: StyleProp<ViewStyle>;
     itemListPropertyName: string;
     renderItem?: (parentItem: any, item: any, parentIndex: number, index: number) => React.Component;
@@ -26,18 +24,17 @@ type Props = React.ComponentProps<typeof Animated.View> & {
 };
 
 const defaultProps = {
-    headerHeight: 0,
     topHeaderStyle: {},
     itemsScrollViewStyle: {},
     renderSectionHeader: undefined,
+
 };
 
 // #endregion :: INTERFACE END's FROM HERE 
 
 const INDICATOR_WIDTH_MINUS = 0;
 
-const RestaurantProductMenuScrollable = (props: Props) => {
-    const HEADER_HEIGHT = props?.headerHeight ?? defaultProps.headerHeight;
+const ScrollableList = (props: Props) => {
     const style = stylesFunc(props.colors);
 
     // #region :: State's & Ref's START's FROM HERE 
@@ -81,8 +78,8 @@ const RestaurantProductMenuScrollable = (props: Props) => {
 
         const allTab = tabs.current;
 
-        allTab[index].y = layout.y + HEADER_HEIGHT;
-        allTab[index].yy = layout.yy + HEADER_HEIGHT;
+        allTab[index].y = layout.y - 10;
+        allTab[index].yy = layout.yy - 10;
 
         allTab[index].height = layout.height;
         tabs.current = [...allTab];
@@ -91,7 +88,7 @@ const RestaurantProductMenuScrollable = (props: Props) => {
 
     // #region :: ON HORIZONTAL ITEM PRESS  START's FROM HERE 
     const handleScroll = (categoryID: any, name: any) => {
-        const content = tabs.current.find((singleTab: any) => singleTab.categoryID === categoryID)
+        const content = tabs.current.find((singleTab: any) => singleTab.categoryID === categoryID);
         scrollRef.current && scrollRef.current.scrollTo({ y: content.yy + 2 })
     }
 
@@ -161,6 +158,7 @@ const RestaurantProductMenuScrollable = (props: Props) => {
 
     return (
         <>
+
             <Animated.View style={[style.topHeaderStyle, props.topHeaderStyle]}>
                 <ScrollView
                     ref={tabScrollRef}
@@ -202,7 +200,6 @@ const RestaurantProductMenuScrollable = (props: Props) => {
             </Animated.View>
 
 
-
             <Animated.ScrollView
                 style={[props.itemsScrollViewStyle || {}]}
                 ref={scrollRef}
@@ -213,14 +210,15 @@ const RestaurantProductMenuScrollable = (props: Props) => {
                     //@ts-ignore
                     { listener: handleOnScroll, },
                 )}
-                contentContainerStyle={{ paddingBottom: 60 }}>
+                contentContainerStyle={{ paddingBottom: 40, }}>
 
-                {props.renderAboveItems && props.renderAboveItems()}
 
-                <View style={{ paddingHorizontal: 0, backgroundColor: "white" }}>
+
+                <View style={{}}>
                     {props.data && props.data.map((food: any, parentIndex: number) => {
                         return (
                             <View
+                                style={{}}
                                 onLayout={e => handleTabContent(food.categoryID, food.categoryName, { ...e.nativeEvent.layout, yy: e.nativeEvent.layout.y, xx: e.nativeEvent.layout.x })}
                                 key={uniqueKeyExtractor()}>
                                 {VALIDATION_CHECK(props.renderSectionHeader) ?
@@ -228,22 +226,31 @@ const RestaurantProductMenuScrollable = (props: Props) => {
                                     :
                                     <Text style={style.sectionTitle}>{food.categoryName}</Text>
                                 }
-                                <View style={props.itemsContainerStyle || {}}>
-                                    {(food?.isTopDeal ?? false) ?
-                                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                            {food[props.itemListPropertyName].map((singleFood: any, index: number) => {
-                                                return <View key={uniqueKeyExtractor()}>
-                                                    {props.renderItem && props.renderItem(food, singleFood, parentIndex, index)}
-                                                </View>
-                                            })}
-                                        </ScrollView>
-                                        :
-                                        food[props.itemListPropertyName].map((singleFood: any, index: number) => {
-                                            return <View key={uniqueKeyExtractor()}>
-                                                {props.renderItem && props.renderItem(food, singleFood, parentIndex, index)}
-                                            </View>
-                                        })}
-                                </View>
+                                <AnimatedFlatlist
+                                    data={food[props.itemListPropertyName]}
+                                    flatlistProps={{
+                                        numColumns: 3,
+                                        showVerticalScrollIndicator: false,
+                                    }}
+                                    //@ts-ignore
+                                    renderItem={(singleFood, index) => {
+                                        return <View key={uniqueKeyExtractor()}>
+                                            {props.renderItem && props.renderItem(food, singleFood, parentIndex, index)}
+                                        </View>
+                                    }} />
+                                {/* <View style={[{
+                                    minWidth: constants.window_dimensions.width,
+                                    flexWrap: "wrap",
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                }, props.itemsContainerStyle]}>
+                                    {food[props.itemListPropertyName].map((singleFood: any, index: number) => {
+                                        return <View key={uniqueKeyExtractor()}>
+                                            {props.renderItem && props.renderItem(food, singleFood, parentIndex, index)}
+                                        </View>
+                                    })}
+
+                                </View> */}
                             </View>
                         )
                     })}
@@ -254,8 +261,8 @@ const RestaurantProductMenuScrollable = (props: Props) => {
     )
 }
 
-RestaurantProductMenuScrollable.defaultProps = defaultProps;
-export default React.memo(RestaurantProductMenuScrollable);
+ScrollableList.defaultProps = defaultProps;
+export default React.memo(ScrollableList);
 
 // #region :: STYLES START's FROM HERE 
 const stylesFunc = (colors: typeof initColors) => StyleSheet.create({

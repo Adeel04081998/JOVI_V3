@@ -1,6 +1,5 @@
 import React from 'react';
 import { Appearance, ScrollView } from 'react-native';
-import Animated from 'react-native-reanimated';
 import { SvgXml } from 'react-native-svg';
 import { useSelector } from 'react-redux';
 import svgs from '../../assets/svgs';
@@ -11,21 +10,15 @@ import TextInput from '../../components/atoms/TextInput';
 import TouchableScale from '../../components/atoms/TouchableScale';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
-import Button from '../../components/molecules/Button';
 import CustomHeader from '../../components/molecules/CustomHeader';
-import { renderFile, sharedAddUpdatePitstop } from '../../helpers/SharedActions';
+import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedGetServiceCharges } from '../../helpers/SharedActions';
 import sharedStyles from '../../res/sharedStyles';
 import theme from '../../res/theme';
-import ENUMS from '../../utils/ENUMS';
 import GV, { PITSTOP_TYPES } from '../../utils/GV';
 import Progress from './components/Progress';
 import stylesheet from './styles';
 import {
-  pin_icon,
-  percent_icon,
-  pencil_icon,
-  edit_icon,
-  del_icon,
+  edit_icon, pencil_icon, percent_icon, pin_icon
 } from './svgs/cart_svgs';
 
 const BottomLine = () => (
@@ -39,14 +32,17 @@ const BottomLine = () => (
 );
 export default () => {
   const cartReducer = useSelector(store => store.cartReducer);
-  console.log('cartReducer', cartReducer);
+  console.log('[CART_SCREEN] cartReducer', cartReducer);
   const colors = theme.getTheme(
     GV.THEME_VALUES.DEFAULT,
     Appearance.getColorScheme() === 'dark',
   );
   const cartStyles = stylesheet.styles(colors);
+  React.useEffect(() => {
+    sharedGetServiceCharges()
+  }, [])
   const incDecDelHandler = pitstopDetails => {
-    sharedAddUpdatePitstop({ ...pitstopDetails }, false);
+    sharedAddUpdatePitstop({ ...pitstopDetails });
   };
   const Address = () => {
     const SPACING = 10;
@@ -100,11 +96,11 @@ export default () => {
 
   const PitstopsCard = ({ pitstop }) => {
     const {
-      pitstopIndex,
-      pitstopID,
-      pitstopName,
-      pitstopType,
-      checkOutItemsListVM,
+      pitstopIndex, // from cart pitstops
+      pitstopID, // from cart pitstops
+      pitstopName, // fill from component and got from cart iteration
+      pitstopType, // fill from component and got from cart iteration
+      checkOutItemsListVM, //fill from component and got from cart's pitstops nesting iteration
     } = pitstop;
     const dynamiColors = theme.getTheme(pitstopType);
     const isJOVI = pitstopType === PITSTOP_TYPES.JOVI;
@@ -184,25 +180,35 @@ export default () => {
             borderColor: colors.grey,
           }}
         />
-        {(checkOutItemsListVM || []).map((product, idx) => (
-          <Products
-            key={`product-key-${idx}`}
+        {
+          isJOVI ? <Products
+            key={`jovi-product-key`}
             dynamiColors={dynamiColors}
             isJOVI={isJOVI}
-            product={product}
-            incDecDelHandler={quantity => {
-              incDecDelHandler({
-                pitstopIndex,
-                vendorDetails: {
-                  pitstopID,
-                  pitstopName,
-                  pitstopType,
-                },
-                itemDetails: { ...product, actionKey: "checkOutItemID", productIndex: idx, quantity },
-              });
-            }}
+            product={pitstop}
           />
-        ))}
+            :
+            (checkOutItemsListVM || []).map((product, idx) => (
+              <Products
+                key={`product-key-${idx}`}
+                dynamiColors={dynamiColors}
+                isJOVI={isJOVI}
+                product={{ ...product, title: product.title || product.pitStopItemName, price: product.discountedPrice || product.gstAddedPrice || product.price }}
+                incDecDelHandler={quantity => {
+                  incDecDelHandler({
+                    // pitstopIndex,
+                    vendorDetails: {
+                      actionKey: "pitstopID",
+                      pitstopID,
+                      pitstopName,
+                      pitstopType,
+                    },
+                    itemDetails: { ...product, actionKey: "checkOutItemID", productIndex: idx, quantity },
+                  });
+                }}
+              />
+            ))
+        }
       </View>
     );
   };
@@ -212,7 +218,7 @@ export default () => {
     product,
     incDecDelHandler,
   }) => {
-    const { title, description, productImageList, price, quantity } = product;
+    const { title, description, images, price, gstAddedPrice, quantity } = product;
     return (
       <View style={{ flexDirection: 'row' }}>
         <View style={{ height: 70, width: 70, borderRadius: 10, margin: 5 }}>
@@ -221,7 +227,7 @@ export default () => {
               isJOVI
                 ? require('./assets/jovi.png')
                 : {
-                  uri: renderFile(productImageList[0].joviImageThumbnail),
+                  uri: renderFile(images[0].joviImageThumbnail),
                 }
             }
             style={{ height: 70, width: 70, borderRadius: 10 }}
@@ -270,15 +276,28 @@ export default () => {
               justifyContent: 'space-between',
               alignItems: 'center',
             }}>
-            <Text
-              style={{ color: dynamiColors.primary, fontSize: 12 }}
-              fontFamily="PoppinsMedium">
-              {price}
-            </Text>
-            <IncDec
-              quantity={quantity}
-              incDecDelHandler={quantity => incDecDelHandler(quantity)}
-            />
+            <View>
+              <Text
+                style={{ color: dynamiColors.primary, fontSize: 12 }}
+                fontFamily="PoppinsMedium">
+                {renderPrice(price)}
+              </Text>
+              {
+                gstAddedPrice &&
+                <Text
+                  style={{ color: dynamiColors.grey, fontSize: 12, textDecorationLine: "line-through" }}
+                  fontFamily="PoppinsMedium">
+                  {renderPrice(gstAddedPrice)}
+                </Text>
+              }
+            </View>
+            {
+              !isJOVI &&
+              <IncDec
+                quantity={quantity}
+                incDecDelHandler={quantity => incDecDelHandler(quantity)}
+              />
+            }
           </View>
         </View>
       </View>
@@ -342,7 +361,7 @@ export default () => {
         <Text
           fontFamily={
             isBold ? 'PoppinsBold' : 'PoppinsLight'
-          }>{`Rs. ${value}`}</Text>
+          }>{renderPrice(value)}</Text>
       </View>
     );
     return (

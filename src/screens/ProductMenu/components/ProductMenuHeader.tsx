@@ -4,30 +4,34 @@ import Text from '../../../components/atoms/Text';
 import View from '../../../components/atoms/View';
 import AnimatedFlatlist from '../../../components/molecules/AnimatedScrolls/AnimatedFlatlist';
 import ShelveCard from '../../../components/organisms/Card/ShelveCard';
-import { renderFile } from '../../../helpers/SharedActions';
+import { array_move, renderFile } from '../../../helpers/SharedActions';
 import NavigationService from '../../../navigations/NavigationService';
 import ROUTES from '../../../navigations/ROUTES';
 import { initColors } from '../../../res/colors';
 import FontFamily from '../../../res/FontFamily';
 import RestaurantProductMenuHeader, { ProductMenuHeaderItem, ProductMenuHeaderItemDefaultValue } from '../../RestaurantProductMenu/components/RestaurantProductMenuHeader';
 
+
+
 // #region :: INTERFACE START's FROM HERE 
 interface Props {
     colors: typeof initColors;
     headerItem?: ProductMenuHeaderItem;
     shelveData?: [];
+    data?: [];
 
     hideHeader?: boolean;
-    data:any;
-    pitstopType?:any;
+
+    pitstopType?: any;
+    marketID?: any;
 }
 
 const defaultProps = {
     headerItem: ProductMenuHeaderItemDefaultValue,
     shelveData: [],
     hideHeader: false,
-    data:[],
-    pitstopType:1,
+    data: [],
+    pitstopType: 1,
 };
 
 // #endregion :: INTERFACE END's FROM HERE 
@@ -35,6 +39,7 @@ const defaultProps = {
 const ProductMenuHeader = (props: Props) => {
     const colors = props.colors;
     const styles = stylesFunc(colors);
+    console.log('props.headerItem ', props.headerItem);
 
     return (
         <React.Fragment>
@@ -77,6 +82,21 @@ const ProductMenuHeader = (props: Props) => {
                                             image: { uri: renderFile(item?.tagImage ?? '') },
                                             title: item?.tagName ?? ''
                                         }}
+                                        onItemPress={() => {
+                                            let selectedShelvesData: any = props.data;
+                                            for (let i = 0; i < selectedShelvesData.length; i++) {
+                                                selectedShelvesData[i].isSelected = index === i;
+                                            }
+                                            selectedShelvesData = array_move(selectedShelvesData, index, 0);
+
+                                            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ShelvesDetail.screen_name, {
+                                                shelveData: selectedShelvesData,
+                                                pitstopType: props.pitstopType,
+                                                categoryName: props.headerItem?.title ?? '',
+                                                marketID: props.marketID ?? 0,
+                                                shelveID: item.tagID,
+                                            })
+                                        }}
                                     />
 
                                     {index === (props?.shelveData ?? []).length - 1 &&
@@ -88,8 +108,8 @@ const ProductMenuHeader = (props: Props) => {
                                             }}
                                             color={colors}
                                             seeAll
-                                            onItemPress={()=>{
-                                                NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Shelves.screen_name,{shelveData:props.shelveData,pitstopType:props.pitstopType})
+                                            onItemPress={() => {
+                                                NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Shelves.screen_name, { shelveData: props.shelveData, pitstopType: props.pitstopType, marketID: props.marketID })
                                             }}
                                         />
                                     }

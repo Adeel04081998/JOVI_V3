@@ -23,7 +23,10 @@ import RestaurantProductMenu from '../screens/RestaurantProductMenu';
 import ProductMenu from '../screens/ProductMenu';
 import Shelves from '../screens/Shelves';
 import CheckOut from '../screens/CheckOut/index'
-const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES,APP_DRAWER_ROUTES,APP_DRAWER_STACK } = ROUTES;
+import Cart from '../screens/Cart';
+import ProductMenuItem from '../screens/ProductMenuItem';
+import ShelvesDetail from '../screens/ShelvesDetail';
+const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES, APP_DRAWER_ROUTES, APP_DRAWER_STACK } = ROUTES;
 const AppDrawerStack = (props) => {
     return <Stack.Navigator screenOptions={stackOpts} initialRouteName={APP_DRAWER_ROUTES.Home.screen_name}>
         {(APP_DRAWER_STACK || []).map((routeInfo, index) => (
@@ -46,7 +49,7 @@ const AuthComponents = {
 }//will open with Slide Animation
 const AppComponents = {
     AppDrawerStack,
-   
+
 };//will open without Slide Animation
 const AppDrawerComponents = {
     Home,
@@ -54,12 +57,15 @@ const AppDrawerComponents = {
     Filter,
     PitstopsVerticalList,
     RestaurantProductMenu,
-    ProductDetails,    
+    ProductDetails,
     ProductMenu,
+    ProductMenuItem,
     JoviJob,
     Shelves,
     Map,
-    CheckOut
+    CheckOut,
+    Cart,
+    ShelvesDetail,
 }//will open with Slide Animation
 const ContainerStack = createStackNavigator();
 const Stack = createSharedElementStackNavigator();
@@ -112,7 +118,7 @@ const forSlide = ({ current, next, inverted, layouts: { screen } }) => {
 };
 const stackOpts = () => ({
     headerShown: false,
-    unmountOnBlur:true,
+    unmountOnBlur: true,
     swipeEnabled: false
 });
 const AuthStacks = (props) => {
@@ -134,10 +140,10 @@ const AuthStacks = (props) => {
     </Stack.Navigator >
 }
 const AppDrawers = (props) => {
-        // console.log("[AppDrawers].props", props)
+    // console.log("[AppDrawers].props", props)
     return <Drawer.Navigator screenOptions={stackOpts} initialRouteName={APP_ROUTES.AppDrawerStack.screen_name}>
         {(APP_STACKS || []).map((routeInfo, index) => {
-            console.log('routeInfo',AppComponents);
+            console.log('routeInfo', AppComponents);
             return <Drawer.Screen
                 key={`AppDrawers-Screen-key-${index}-${routeInfo.id}`}
                 name={routeInfo.screen_name}
@@ -145,7 +151,7 @@ const AppDrawers = (props) => {
                 options={{
                 }}
             />
-            })}
+        })}
     </Drawer.Navigator >
 }
 

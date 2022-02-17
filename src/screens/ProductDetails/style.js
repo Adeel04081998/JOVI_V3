@@ -1,4 +1,5 @@
 import { Platform, StyleSheet } from "react-native";
+import { getStatusBarHeight } from "../../helpers/StatusBarHeight";
 import { initColors } from "../../res/colors";
 const SPACING_VERTICAL = 10;
 export default {
@@ -6,12 +7,14 @@ export default {
         return StyleSheet.create({
 
             mainContainer: {
-                
+
                 flex: 1, flexDirection: 'column', backgroundColor: colors.screen_background,
-                
+
             },
-            customHeaderMainContainer: {
+            customHeaderMainContainer: { 
                 position: 'absolute', zIndex: 2, backgroundColor: 'transparent', borderBottomWidth: 0, borderBottomColor: 'white',
+                top:getStatusBarHeight(true)
+                // top: Platform.OS === 'ios' ? 20 : null
                 
             },
             customHeaderLeftRightContainer: {
@@ -40,14 +43,14 @@ export default {
             radioButtonSelectionTittle: {
                 fontSize: 16, color: colors.lightBlack
             },
-            requiredTxt:{
-                fontSize:12,color: colors.grey
+            requiredTxt: {
+                fontSize: 12, color: colors.grey
 
             },
             radioButtonPrimaryContainer: {
-                backgroundColor: 'white', 
-                padding: 10, 
-                marginVertical: 5, 
+                backgroundColor: 'white',
+                padding: 10,
+                marginVertical: 5,
                 borderRadius: 10,
             },
             radioButtonSecondaryContainer: {

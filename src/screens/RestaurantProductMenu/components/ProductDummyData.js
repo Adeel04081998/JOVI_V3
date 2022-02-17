@@ -1131,6 +1131,1285 @@ export const ProductDummyData2 = {
   "statusCode": 200
 };
 
+export const ProductDummyData3ShelveDetail1={
+  "pitstopStockViewModel": {
+    "pitstopName": "Madina Cash & Carry G-9",
+    "pitstopTag": "pitstop",
+    "distance": 4,
+    "time": "09 AM - 10 PM",
+    "pitstopImage": "staging/SupermarketItem/2021/3/16/qtjr_24oy_da3z_rtft_tsod_cltt_ybwr_sstt_r9pp_Thumbnail_cheez Smossa 12piece price-140_153734.jpg",
+    "isClosed": false,
+    "isAreaLock": false,
+    "isBannerPresistant": false,
+    "categoryWithItems": [
+      {
+        "categoryID": 584,
+        "isSelected": true,
+        "categoryName": "Samosa & Roll",
+        "pitstopItemList": [
+          {
+            "pitStopItemID": 26324,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Cheese Samosa 12 pcs",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 140,
+            "gstAddedPrice": 140,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/3/16/qtjr_24oy_da3z_rtft_tsod_cltt_ybwr_sstt_r9pp_Thumbnail_cheez Smossa 12piece price-140_153734.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 26325,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Chickens Roll 6 pcs",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 130,
+            "gstAddedPrice": 130,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/3/16/x4fm_natr_rhvm_8lum_budu_z0hd_hxr6_4fid_6lys_Thumbnail_chiken Roll 6piece price-130_152855.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          }
+        ],
+        "productsPaginationInfo": {
+          "totalItems": 2,
+          "itemsPerPage": 2,
+          "actualPage": 1,
+          "totalPages": 1,
+          "isNextPage": false
+        }
+      },
+      {
+        "categoryID": 585,
+        "isSelected": false,
+        "categoryName": "Kebabs",
+        "pitstopItemList": [
+          {
+            "pitStopItemID": 36385,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Chapli Kabab 300gm",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 265,
+            "gstAddedPrice": 265,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/4/10/Thumbnail_Pic not  available_113946.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 36387,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Chapli Kabab 900gm ",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 605,
+            "gstAddedPrice": 605,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/4/10/Thumbnail_Pic not  available_114030.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 36389,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Chapli Kabab VP 900gm",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 475,
+            "gstAddedPrice": 475,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/4/10/Thumbnail_Pic not  available_114227.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 36394,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Kofta Kabab 340gm",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 275,
+            "gstAddedPrice": 275,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/4/10/Thumbnail_Pic not  available_114919.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 36395,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Kofta Kabab EP 840gm",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 605,
+            "gstAddedPrice": 605,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/4/10/Thumbnail_Pic not  available_114919.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          }
+        ],
+        "productsPaginationInfo": {
+          "totalItems": 2,
+          "itemsPerPage": 5,
+          "actualPage": 1,
+          "totalPages": 1,
+          "isNextPage": false
+        }
+      },
+      {
+        "categoryID": 586,
+        "isSelected": false,
+        "categoryName": "Nuggets",
+        "pitstopItemList": [
+          {
+            "pitStopItemID": 36391,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Chicken Nuggets VP 1kg",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 475,
+            "gstAddedPrice": 475,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/4/10/Thumbnail_Pic not  available_11444.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 36403,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Nuggets 270gm",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 260,
+            "gstAddedPrice": 260,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/4/10/Thumbnail_Pic not  available_115311.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 36404,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Nuggets EP 1kg",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 605,
+            "gstAddedPrice": 605,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/4/10/Thumbnail_Pic not  available_115311.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          }
+        ],
+        "productsPaginationInfo": {
+          "totalItems": 2,
+          "itemsPerPage": 3,
+          "actualPage": 1,
+          "totalPages": 1,
+          "isNextPage": false
+        }
+      },
+      {
+        "categoryID": 588,
+        "isSelected": false,
+        "categoryName": "Fries",
+        "pitstopItemList": [
+          {
+            "pitStopItemID": 36019,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Chunky 1.8kg ",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 720,
+            "gstAddedPrice": 720,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/4/9/Thumbnail_Opa Chunky 1.8kg_181336.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 36020,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Chunky 900gm",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 395,
+            "gstAddedPrice": 395,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/4/9/Thumbnail_Opa Chunky 900gm_181336.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 36021,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Crinkle 1.8kg",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 720,
+            "gstAddedPrice": 720,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/4/9/Thumbnail_Opa Crinkle 1.8kg_181336.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 36022,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Crinkle 900kg",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 395,
+            "gstAddedPrice": 395,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/4/9/Thumbnail_Opa Crinkle 900kg_181336.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 36023,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Fries Super Chunky 2kg",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 720,
+            "gstAddedPrice": 720,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/4/9/Thumbnail_Opa Frie Super Chunky 2kg_181336.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          }
+        ],
+        "productsPaginationInfo": {
+          "totalItems": 2,
+          "itemsPerPage": 5,
+          "actualPage": 1,
+          "totalPages": 1,
+          "isNextPage": false
+        }
+      },
+      {
+        "categoryID": 589,
+        "isSelected": false,
+        "categoryName": "Fruits",
+        "pitstopItemList": [
+          {
+            "pitStopItemID": 36005,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": " Juicy Strawberries 500gm",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 240,
+            "gstAddedPrice": 240,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/4/9/Thumbnail_Opa Juicy Strawbrries 500gm_18756.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          }
+        ],
+        "productsPaginationInfo": {
+          "totalItems": 2,
+          "itemsPerPage": 1,
+          "actualPage": 1,
+          "totalPages": 1,
+          "isNextPage": false
+        }
+      },
+      {
+        "categoryID": 590,
+        "isSelected": false,
+        "categoryName": "Vegetables",
+        "pitstopItemList": [
+          {
+            "pitStopItemID": 36009,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Appetizing Mixed Vegetables 500gm ",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 150,
+            "gstAddedPrice": 150,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/4/9/Thumbnail_Opa Appetizing Mixed Vegetables 500gm_18854.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 36030,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Hearty Broccoli 300gm",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 135,
+            "gstAddedPrice": 135,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/4/9/Thumbnail_Opa Hearty Broccoli 300gm_181817.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          }
+        ],
+        "productsPaginationInfo": {
+          "totalItems": 2,
+          "itemsPerPage": 2,
+          "actualPage": 1,
+          "totalPages": 1,
+          "isNextPage": false
+        }
+      },
+      {
+        "categoryID": 703,
+        "isSelected": false,
+        "categoryName": "Fast Food",
+        "pitstopItemList": [
+          {
+            "pitStopItemID": 38000,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Burger Patty VP 1Kg",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 475,
+            "gstAddedPrice": 475,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/4/13/Thumbnail_Pic not  available_12349.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 38001,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Crispy Burger Patty 370gm",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 275,
+            "gstAddedPrice": 275,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/4/13/Thumbnail_Pic not  available_12349.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 38002,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "AP Crispy Burger Patty EP 1kg",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 605,
+            "gstAddedPrice": 605,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/4/13/Thumbnail_Pic not  available_12349.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          }
+        ],
+        "productsPaginationInfo": {
+          "totalItems": 2,
+          "itemsPerPage": 3,
+          "actualPage": 1,
+          "totalPages": 1,
+          "isNextPage": false
+        }
+      }
+    ],
+    "categoryPaginationInfo": {
+      "totalItems": 7,
+      "itemsPerPage": 7,
+      "actualPage": 1,
+      "totalPages": 1,
+      "isNextPage": false
+    },
+    "shelves": [
+      {
+        "tagID": 15,
+        "categoryID": 703,
+        "isSelected": false,
+        "tagName": "Frozen Food",
+        "tagImage": "Dev/CommonImage/2022/2/12/Rectangle 20137_162619.png"
+      }
+    ]
+  },
+  "success": true,
+  "message": "Success",
+  "statusCode": 200
+};
+
+
+export const ProductDummyData3ShelveDetail={
+  "pitstopStockViewModel": {
+    "pitstopName": "Quetta Dry Fruit F-11",
+    "pitstopTag": "pitstop",
+    "distance": 0,
+    "time": "11 AM - 11 PM",
+    "pitstopImage": "staging/SupermarketItem/2021/3/27/Thumbnail_Finger Chips RS 600kg_172252.jpg",
+    "isClosed": false,
+    "isAreaLock": false,
+    "isBannerPresistant": false,
+    "categoryWithItems": [
+      {
+        "categoryID": 668,
+        "isSelected": true,
+        "categoryName": "Dry Fruits2",
+        "pitstopItemList": [
+          {
+            "pitStopItemID": 19716,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Finger Chips",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 600,
+            "gstAddedPrice": 600,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/3/27/Thumbnail_Finger Chips RS 600kg_172252.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 19717,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Mix Dry Fruit",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 1600,
+            "gstAddedPrice": 1600,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/3/27/Thumbnail_Mis Dry Fruit Rs 1600kg_172255.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          }, {
+            "pitStopItemID": 1971712,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Mix Dry Fruit",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 1600,
+            "gstAddedPrice": 1600,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/3/27/Thumbnail_Mis Dry Fruit Rs 1600kg_172255.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 19718,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Mabroom Dates",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 550,
+            "gstAddedPrice": 550,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/3/27/Thumbnail_Mabroom Dates Rs 2200 kg_172255.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 19719,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Badaam",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 1600,
+            "gstAddedPrice": 1600,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/3/27/Thumbnail_Badaam RS 1600kg_172249.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 19720,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Mabroom Dates",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 1100,
+            "gstAddedPrice": 1100,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/3/27/Thumbnail_Mabroom Dates Rs 2200 kg_172255.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          }
+        ],
+        "productsPaginationInfo": {
+          "totalItems": 128,
+          "itemsPerPage": 5,
+          "actualPage": 1,
+          "totalPages": 32,
+          "isNextPage": false
+        }
+      },  {
+        "categoryID": 6681,
+        "isSelected": true,
+        "categoryName": "Dry Fruits",
+        "pitstopItemList": [
+          {
+            "pitStopItemID": 19716,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Finger Chips",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 600,
+            "gstAddedPrice": 600,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/3/27/Thumbnail_Finger Chips RS 600kg_172252.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 19717,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Mix Dry Fruit",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 1600,
+            "gstAddedPrice": 1600,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/3/27/Thumbnail_Mis Dry Fruit Rs 1600kg_172255.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 19718,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Mabroom Dates",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 550,
+            "gstAddedPrice": 550,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/3/27/Thumbnail_Mabroom Dates Rs 2200 kg_172255.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 19719,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Badaam",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 1600,
+            "gstAddedPrice": 1600,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/3/27/Thumbnail_Badaam RS 1600kg_172249.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 19720,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Mabroom Dates",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 1100,
+            "gstAddedPrice": 1100,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/3/27/Thumbnail_Mabroom Dates Rs 2200 kg_172255.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          }
+        ],
+        "productsPaginationInfo": {
+          "totalItems": 128,
+          "itemsPerPage": 5,
+          "actualPage": 1,
+          "totalPages": 32,
+          "isNextPage": false
+        }
+      },  {
+        "categoryID": 66811,
+        "isSelected": true,
+        "categoryName": "Dry Fruits1",
+        "pitstopItemList": [
+          {
+            "pitStopItemID": 19716,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Finger Chips",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 600,
+            "gstAddedPrice": 600,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/3/27/Thumbnail_Finger Chips RS 600kg_172252.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 19717,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Mix Dry Fruit",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 1600,
+            "gstAddedPrice": 1600,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/3/27/Thumbnail_Mis Dry Fruit Rs 1600kg_172255.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 19718,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Mabroom Dates",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 550,
+            "gstAddedPrice": 550,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/3/27/Thumbnail_Mabroom Dates Rs 2200 kg_172255.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 19719,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Badaam",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 1600,
+            "gstAddedPrice": 1600,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/3/27/Thumbnail_Badaam RS 1600kg_172249.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          },
+          {
+            "pitStopItemID": 19720,
+            "pitStopStatus": 1,
+            "pitStopStatusDesc": "Activated",
+            "availabilityStatus": 1,
+            "availabilityStatusDesc": "Available",
+            "pitStopItemName": "Mabroom Dates",
+            "description": "",
+            "categoryID": 0,
+            "marketID": 0,
+            "itemPrice": 1100,
+            "gstAddedPrice": 1100,
+            "gstAmount": 0,
+            "gstPercentage": 16,
+            "discountedPrice": 0,
+            "discountAmount": 0,
+            "discountType": 0,
+            "discountTypeDescription": "",
+            "images": [
+              {
+                "joviImageID": 0,
+                "joviImage": "",
+                "joviImageThumbnail": "staging/SupermarketItem/2021/3/27/Thumbnail_Mabroom Dates Rs 2200 kg_172255.jpg",
+                "fileType": 0,
+                "fileTypeStr": "",
+                "galleryFileId": 0
+              }
+            ]
+          }
+        ],
+        "productsPaginationInfo": {
+          "totalItems": 128,
+          "itemsPerPage": 5,
+          "actualPage": 1,
+          "totalPages": 32,
+          "isNextPage": false
+        }
+      }
+    ],
+    "categoryPaginationInfo": {
+      "totalItems": 1,
+      "itemsPerPage": 1,
+      "actualPage": 1,
+      "totalPages": 1,
+      "isNextPage": false
+    },
+    "shelves": [
+      {
+        "tagID": 193,
+        "categoryID": 668121,
+        "isSelected": false,
+        "tagName": "Dry Fruits",
+        "tagImage": "Dev/CommonImage/2022/2/12/Rectangle 20137_162619.png"
+      }
+    ]
+  },
+  "success": true,
+  "message": "Success",
+  "statusCode": 200
+}
+
 export const ProductDummyData1={
   "pitstopStockViewModel": {
     "pitstopName": " SJ Flowers",
@@ -1322,7 +2601,7 @@ export const ProductDummyData1={
       {
         "tagID": 11,
         "categoryID": 541,
-        "isSelected": false,
+        "isSelected": true,
         "tagName": "Cooking",
         "tagImage": "Dev/CommonImage/2022/2/12/Rectangle 20137_162619.png"
       },
