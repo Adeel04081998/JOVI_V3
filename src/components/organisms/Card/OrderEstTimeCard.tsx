@@ -60,7 +60,7 @@ const OrderEstTimeCard = (props: Props) => {
 
             {/* ****************** Start of LEFT SIDE ****************** */}
             <View style={[styles.leftSideContainer, { paddingLeft: 0 }, props.leftContainerStyle]}>
-                <SvgXml xml={xmlImage} height={props.imageHeight} width={props.imageWidth} style={{ paddingRight: 5 }} />
+                <SvgXml xml={xmlImage} height={props.imageHeight} width={props.imageWidth} style={{ paddingHorizontal: 5 }} />
             </View>
 
             {/* ****************** End of LEFT SIDE ****************** */}
@@ -120,7 +120,7 @@ const stylesFunc = (colors: typeof initColors) => StyleSheet.create({
         paddingHorizontal: CARD_INSIDE_PADDING_HORIZONTAL,
     },
     middleContainer: {
-        flex: 2,
+        flex: 3,
         alignItems: "center",
         justifyContent: "center",
         paddingHorizontal: CARD_INSIDE_PADDING_HORIZONTAL,
@@ -139,7 +139,7 @@ const stylesFunc = (colors: typeof initColors) => StyleSheet.create({
         backgroundColor: colors.white,
         borderRadius: 8,
         paddingVertical: constants.spacing_vertical,
-        marginVertical: constants.spacing_horizontal,
+        marginTop: constants.spacing_horizontal,
         marginHorizontal: constants.spacing_horizontal,
     },
 

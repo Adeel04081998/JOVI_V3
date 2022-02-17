@@ -9,12 +9,13 @@ export const stylesFunc = (colors = initColors) => StyleSheet.create({
         flex: 1,
     },
     cardContainer: {
+        flex: 1,
         ...AppStyles.shadow,
         ...AppStyles.borderRadius,
         paddingVertical: constants.spacing_vertical,
         marginVertical: constants.spacing_vertical,
         marginHorizontal: constants.spacing_horizontal,
-        minHeight: 250,
+        // minHeight: 250,
         backgroundColor: colors.white,
     },
 
