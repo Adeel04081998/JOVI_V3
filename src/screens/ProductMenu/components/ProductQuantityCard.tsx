@@ -85,19 +85,19 @@ const ProductQuantityCard = (props: Props) => {
                     {(state.quantity > 0) &&
                         <>
                             <TouchableOpacity wait={0} onPress={decrementQuantity}
-                                hitSlop={{ top: 20, bottom: 20, left: 50, right: 50 }}>
+                                hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}>
                                 {state.quantity === 1 ?
-                                    <VectorIcon color={colors.primary} name={"delete"} type="MaterialCommunityIcons" size={19} />
+                                    <VectorIcon color={colors.primary} name={"delete"} type="MaterialCommunityIcons" size={ITEM_SIZE * 0.15} />
                                     :
-                                    <VectorIcon color={colors.primary} name="minus" type="Feather" />
+                                    <VectorIcon color={colors.primary} name="minus" type="Feather" size={ITEM_SIZE * 0.15} />
                                 }
                             </TouchableOpacity>
                             <Text style={styles.text}>{state.quantity}</Text>
                         </>
                     }
                     <TouchableOpacity wait={0} onPress={incrementQuantity}
-                        hitSlop={{ top: 20, bottom: 20, left: 50, right: 50 }}>
-                        <VectorIcon color={colors.primary} name="plus" type="Feather" />
+                        hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}>
+                        <VectorIcon color={colors.primary} name="plus" type="Feather" size={ITEM_SIZE * 0.15} />
                     </TouchableOpacity>
                 </>
             }

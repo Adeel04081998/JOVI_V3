@@ -37,7 +37,7 @@ const APP_DRAWER_ROUTES = {
         screen_name: "MAP",
         options: null,
     },
-  
+
     "PitstopListing": {
         screen_name: "VENDORS",
         options: null,
@@ -50,22 +50,30 @@ const APP_DRAWER_ROUTES = {
         screen_name: "PitstopsVerticalList",
         options: null,
     },
-    "RestaurantProductMenu":{
+    "RestaurantProductMenu": {
         screen_name: "RESTAURANTMENU",
         options: null,
     },
-    "ProductMenu":{
+    "ProductMenu": {
         screen_name: "SUPERMARKET_MENU",
         options: null,
     },
-    "Shelves":{
+    "Shelves": {
         screen_name: "Shelves",
         options: null,
     },
     "Cart": {
         screen_name: "cart",
         options: null,
-    }
+    },
+    "ShelvesDetail": {
+        screen_name: "SHELVES_DETAIL",
+        options: null,
+    },
+    "ProductMenuItem": {
+        screen_name: "PRODUCT_MENU_ITEM",
+        options: null,
+    },
 }
 const APP_ROUTES = {
     "AppDrawerStack": {

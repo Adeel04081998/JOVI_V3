@@ -3,6 +3,7 @@ import { GestureResponderEvent, Platform, StyleProp, StyleSheet, TextStyle, View
 import { useSelector } from "react-redux";
 import { VALIDATION_CHECK } from "../../helpers/SharedActions";
 import NavigationService from "../../navigations/NavigationService";
+import ROUTES from "../../navigations/ROUTES";
 import Text from "../atoms/Text";
 import TouchableOpacity from "../atoms/TouchableOpacity";
 import TouchableScale from "../atoms/TouchableScale";
@@ -86,7 +87,7 @@ const defaultProps = {
     rightIconStyle: {},
     rightIconSize: 25,
     rightIconColor: "#272727",
-    onRightIconPress: undefined,
+    onRightIconPress: () => NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name),
 
     //RIGHT SIDE PROP's ENDING 
 
@@ -298,7 +299,7 @@ const headerStyles = (primaryColor = "#FA3E3E") => StyleSheet.create({
         justifyContent: "center",
     },
     numberDotText: {
-        fontSize: 7,
+        fontSize: 10,
         color: "#fff",
         paddingTop: (DOT.size * 2) / 6
     },

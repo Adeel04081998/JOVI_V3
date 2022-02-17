@@ -14,8 +14,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import { useDispatch } from 'react-redux';
 import RNSplashScreen from './NativeModules/RNSplashScreen';
-import RestaurantProductMenu from './src/screens/ProductMenu';
 import ReduxActions from "./src/redux/actions";
+import OrderProcessing from './src/screens/OrderProcessing';
 
 AntDesign.loadFont();
 Entypo.loadFont();
@@ -52,8 +52,7 @@ export default () => {
             <SafeAreaView style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
                 <StatusBar backgroundColor={'#fff'} barStyle={"dark-content"} />
 
-
-                <RestaurantProductMenu />
+                <OrderProcessing />
 
             </SafeAreaView>
         </SafeAreaProvider>

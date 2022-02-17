@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Animated, Image as RNImage, Modal, StyleProp, StyleSheet, ViewStyle } from "react-native";
+import { Animated, Image as RNImage, ImageStyle, Modal, StyleProp, StyleSheet, ViewStyle } from "react-native";
 import AnimatedView from "./AnimatedView";
 import FullImage from "./FullImage";
 import TouchableScale from "./TouchableScale";
@@ -9,6 +9,7 @@ type Props = React.ComponentProps<typeof RNImage> & {
   parentRef?: any;
   defaultIconSize?: number,
   containerStyle?: StyleProp<ViewStyle>;
+  loadingImageStyle?: StyleProp<ImageStyle>;
   onPress?: () => void;
 
   tapToOpen?: boolean;
@@ -108,7 +109,7 @@ const Image = (props: Props) => {
             } : {
               opacity: 0,
               overflow: 'hidden',
-            }, props.style]}
+            }, props.style,props.loadingImageStyle]}
           source={DEFAULT_IMAGE}
         />
       }
