@@ -22,7 +22,6 @@ export const hybridLocationPermission = async (cb) => {
     else if (Platform.OS === 'ios') {
         const resultAlways = await request(PERMISSIONS.IOS.LOCATION_ALWAYS);
         const resultWhenInUse = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-        console.log('resultAlways',resultAlways, 'resultWhenInUse',resultWhenInUse);
         if (resultAlways !== RESULTS.GRANTED && resultWhenInUse !== RESULTS.GRANTED) {
             handleDeniedPermission('Location permission is not granted!', 'Please allow Location permission by visiting the Settings.');
             return;
@@ -37,13 +36,11 @@ export const hybridLocationPermission = async (cb) => {
 };
 
 export const addressInfo = async (latitude, longitude) => {
-    console.log('latitude ==>>>>',latitude, 'longitude ===>>>>>',longitude);
     try {
         let addressResponse = await fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&rankby=distance&key=${env.GOOGLE_API_KEY}`);
         addressResponse = await addressResponse.json();
         console.log('addressResponse',addressResponse);
         if (addressResponse.error_message) {
-            console.log('error_message', addressResponse.error_message)
             // CustomToast.error("Error while Fetching Address!", null, "long")
             Toast.error('Error while Fetching Address!')
         }

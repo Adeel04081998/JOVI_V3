@@ -25,6 +25,7 @@ const rootReducer = combineReducers({
     userReducer: persistReducer(persistUserConfig, Reducers.userReducer),
     // cartReducer: persistReducer(persistCartConfig, Reducers.cartReducer),
     cartReducer: Reducers.cartReducer,
+    modalReducer: Reducers.modalReducer
 });
 
 export default rootReducer;

@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { View, Platform, Text, Image, StyleSheet, Alert, TouchableOpacity, Dimensions } from "react-native";
+import { View, Platform, Text, Image, StyleSheet, Alert, TouchableOpacity, Dimensions, Appearance } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { SvgXml } from "react-native-svg";
 import images from "../../assets/images";
 import svgs from "../../assets/svgs";
+import constants from "../../res/constants";
+import theme from "../../res/theme";
 import configs, { env } from "../../utils/configs";
+import GV from "../../utils/GV";
+import VectorIcon from "./VectorIcon";
 
 export default LocationSearch = ({ handleOnInputChange, locationVal, index, clearInputField, textToShow, onLocationSelected, /* handleAddPitstop, */ handleDeletePitstop, isLast, handleInputFocused, totalPitstops, onSetFavClicked, isFavourite, marginBottom = 5, }) => {
 
-    const locTextRef = React.createRef();
+    const HEIGHT = constants.window_dimensions.height;
+    const WIDTH = constants.window_dimensions.width;
+    const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
 
     const [state, setState] = useState({ searchFocused: false });
     const { searchFocused } = state;
@@ -66,7 +72,6 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
                 rankby: "distance", // "prominence" | "distance"
                 type: "cafe"
             }}
-
             renderRow={(data) => {
                 return (
                     <View style={{ display: "flex", flexDirection: "row" }}>
@@ -109,6 +114,16 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
                 }
 
             }
+            renderLeftButton={
+                () => {
+                    return (
+                        <TouchableOpacity style={{ ...styles.iconStyleLeft, alignItems: 'center', justifyContent: 'center' }} onPress={clearField}>
+                            <VectorIcon name="search" type="Fontisto" style={{ ...styles.IcoImg, height: 21, width: 25, marginLeft: 15, zIndex: 9 }} size={20} color={colors.primary} />
+                        </TouchableOpacity>
+                    )
+                }
+
+            }
             textInputProps={{
                 onFocus: () => {
                     handleInputFocused(index, false);
@@ -137,8 +152,7 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
             enablePoweredByContainer={false}
             styles={{
                 container: {
-                    position: "relative",
-                    top: Platform.select({ ios: -5, android: -5 }),
+                    alignSelf: 'flex-end',
                     width: "100%",
                     marginBottom: marginBottom,
                     borderWidth: 0,
@@ -150,35 +164,42 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
                     borderTopWidth: 0,
                     borderBottomWidth: 0,
                     width: '95%',
-                    alignSelf: 'center'
+                    alignSelf: 'center',
                 },
                 textInput: {
                     borderWidth: 1,
-                    borderColor: "#BBBB",
+                    borderColor: "#E6EAFA",
                     borderRadius: 5,
                     paddingVertical: 0,
                     height: 40,
                     marginBottom: 10,
-                    paddingHorizontal: 10,
+                    paddingHorizontal: 40,
                     color: "#000",
+                    zIndex: -1,
+                    backgroundColor: "#F8F9FD",
                 },
-                
+
                 listView: {
                     borderWidth: 1,
                     borderColor: "#BBBB",
                     backgroundColor: "#FFF",
-                    marginHorizontal: 10,
-                    elevation: 3,
                     shadowColor: "#000",
-                    shadowOpacity: 0.1,
-                    shadowOffset: { x: 0, y: 0 },
-                    shadowRadius: 15,
-                    marginTop: -10,
-                    width: '90%',
-                    alignSelf: 'center',
-                    maxHeight: Dimensions.get("window").height * 0.2,
-                    overflow: 'scroll'
+                    shadowOffset: {
+                        width: 0,
+                        height: 2,
+                    },
+                    shadowOpacity: 0.23,
+                    shadowRadius: 2.62,
 
+                    elevation: 10,
+                    width: WIDTH,
+                    maxHeight: HEIGHT * 0.4,
+                    zIndex: 999,
+                    position: 'absolute',
+                    top: 50,
+                    borderBottomRightRadius: 10,
+                    borderBottomLeftRadius: 10,
+                    left: -48,
                 },
                 description: {
                     fontSize: 16,
@@ -212,8 +233,8 @@ const styles = StyleSheet.create({
 
     iconStyleLeft: {
         position: "absolute",
-        right: 30,
-        top: 18,
+        left: 0,
+        top: -5,
         width: 32,
         height: 50,
     },

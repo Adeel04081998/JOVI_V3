@@ -1,3 +1,4 @@
+
 export default {
   otp: () => `<?xml version="1.0" encoding="utf-8"?>
   <!-- Generator: Adobe Illustrator 26.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
@@ -2384,4 +2385,56 @@ export default {
   <path id="Path_19041" data-name="Path 19041" d="M4.5,21H9.644v5.144H4.5Z" transform="translate(0 -8.417)" fill="none" stroke="#272727" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
 </g>
 </svg>`,
+
+
+locateMeIcon: ()=>`<svg xmlns="http://www.w3.org/2000/svg" width="17.044" height="17.044" viewBox="0 0 17.044 17.044">
+<g id="Group_24" data-name="Group 24" transform="translate(-3167 -1731)">
+  <path id="Path_10" data-name="Path 10" d="M3175.521,1731a8.522,8.522,0,1,0,8.522,8.522A8.531,8.531,0,0,0,3175.521,1731Zm0,15.685a7.163,7.163,0,1,1,7.163-7.163A7.171,7.171,0,0,1,3175.521,1746.685Z" fill="#7359be"/>
+  <path id="Path_11" data-name="Path 11" d="M3190.377,1750.463a3.915,3.915,0,1,0,3.915,3.915A3.919,3.919,0,0,0,3190.377,1750.463Zm0,6.47a2.555,2.555,0,1,1,2.556-2.555A2.558,2.558,0,0,1,3190.377,1756.933Z" transform="translate(-14.856 -14.856)" fill="#7359be"/>
+  <circle id="Ellipse_5" data-name="Ellipse 5" cx="1.47" cy="1.47" r="1.47" transform="translate(3174.052 1738.052)" fill="#7359be"/>
+</g>
+</svg>`,
+
+homeAddIcon: (color) =>`<svg xmlns="http://www.w3.org/2000/svg" width="22.097" height="21.157" viewBox="0 0 22.097 21.157">
+<g id="home-svgrepo-com_1_" data-name="home-svgrepo-com (1)" transform="translate(0 -1.019)">
+  <g id="Group_14667" data-name="Group 14667" transform="translate(0 1.019)">
+    <path id="Path_26479" data-name="Path 26479" d="M3.783,22.176H18.314a2.4,2.4,0,0,0,2.4-2.4V9.763H22.1L20.656,1.019H1.441L0,9.763H1.381V19.775A2.4,2.4,0,0,0,3.783,22.176ZM4.263,9.763h13.57v9.531H12.82V14.7H9.277v4.6H4.263Z" transform="translate(0 -1.019)" fill="#212121"/>
+    <rect id="Rectangle_20442" data-name="Rectangle 20442" width="1.922" height="1.922" transform="translate(5.214 9.929)" fill="#212121"/>
+    <rect id="Rectangle_20443" data-name="Rectangle 20443" width="1.922" height="1.922" transform="translate(14.941 9.929)" fill="#212121"/>
+  </g>
+</g>
+</svg>`,
+
+bagIcon: (color) => `<svg xmlns="http://www.w3.org/2000/svg" width="22.18" height="20.014" viewBox="0 0 22.18 20.014">
+<g id="business-bag-svgrepo-com" transform="translate(0 -29.884)">
+  <g id="Group_14668" data-name="Group 14668" transform="translate(0 29.884)">
+    <path id="Path_26480" data-name="Path 26480" d="M12.855,325.246a.5.5,0,0,1-.5.5H9.83a.5.5,0,0,1-.5-.5v-1.771L0,321.356V329.8a1.008,1.008,0,0,0,1.008,1.008H21.172A1.008,1.008,0,0,0,22.18,329.8v-8.434l-9.326,2.111Z" transform="translate(0 -310.792)" fill="#212121"/>
+    <path id="Path_26481" data-name="Path 26481" d="M21.172,164.844H1.008A1.008,1.008,0,0,0,0,165.852v3.372l9.326,2.118v-.97a.5.5,0,0,1,.5-.5h2.52a.5.5,0,0,1,.5.5v.971l9.326-2.111v-3.38A1.008,1.008,0,0,0,21.172,164.844Z" transform="translate(0 -159.953)" fill="#212121"/>
+    <path id="Path_26482" data-name="Path 26482" d="M167.135,32.435a1.367,1.367,0,0,1,1.366-1.366h5.049a1.367,1.367,0,0,1,1.366,1.366v1.332H176.1V32.435a2.554,2.554,0,0,0-2.551-2.551H168.5a2.554,2.554,0,0,0-2.551,2.551v1.332h1.186V32.435Z" transform="translate(-159.935 -29.884)" fill="#212121"/>
+  </g>
+</g>
+</svg>`,
+
+relationIcon: (color) =>`<svg xmlns="http://www.w3.org/2000/svg" width="25.777" height="19.298" viewBox="0 0 25.777 19.298">
+<path id="Path_26483" data-name="Path 26483" d="M9.467,7.4H9.459a38.393,38.393,0,0,0-4.36,0c-1.525.065-3.114,1.389-4.047,3.359A8.184,8.184,0,0,0,.27,14.025,24.632,24.632,0,0,0,0,17.722c.3,1.895,2.7,1.332,2.906,0L3.2,13.9a4.239,4.239,0,0,1,.317-1.517,2.535,2.535,0,0,1,.4-.661L4.054,18.7l-.082.583h6.607l-.088-.65.128-7.694a5.3,5.3,0,0,1,1.76-.418c-.025.052-.052.1-.078.157a8.184,8.184,0,0,0-.783,3.262,24.863,24.863,0,0,0-.271,3.695c.3,1.895,2.7,1.332,2.906,0l.292-3.818a4.239,4.239,0,0,1,.317-1.517,2.535,2.535,0,0,1,.4-.661l.145,6.976-.1.68h6.634l-.1-.745.1-6v.117l.021-1.022a2.594,2.594,0,0,1,.4.661,4.2,4.2,0,0,1,.317,1.517l.292,3.818c.281,1.821,2.906,1.857,2.906,0a24.565,24.565,0,0,0-.271-3.695,8.184,8.184,0,0,0-.783-3.262c-.959-2.025-2.2-3.1-4.081-3.317-1.16-.094-3.109.013-4.272-.021a5.542,5.542,0,0,0-.852.183A20.029,20.029,0,0,0,12.883,7.3c-1.4,0-2.782.235-3.416.1ZM18.525,0A3.424,3.424,0,1,1,15.1,3.424,3.425,3.425,0,0,1,18.525,0ZM7.25,0A3.424,3.424,0,1,1,3.826,3.424,3.425,3.425,0,0,1,7.25,0Z" transform="translate(0.001)" fill="#212121"/>
+</svg>`,
+
+plusIcon:(color) =>`<svg xmlns="http://www.w3.org/2000/svg" width="18.054" height="18.054" viewBox="0 0 18.054 18.054">
+<path id="_7019658931553239393" data-name="7019658931553239393" d="M8.579,17.519H15.6v7.024a.5.5,0,1,0,1,0V17.519H23.63a.5.5,0,0,0,0-1H16.606V9.492a.5.5,0,0,0-1,0v7.024H8.579a.5.5,0,1,0,0,1Z" transform="translate(-7.077 -7.99)" fill="none" stroke="#212121" stroke-width="2"/>
+</svg>`,
+
+pinMap: () =>`<svg xmlns="http://www.w3.org/2000/svg" width="28.576" height="40.29" viewBox="0 0 28.576 40.29">
+<g id="location-sign-svgrepo-com" transform="translate(-59.531 1)">
+  <path id="Path_26478" data-name="Path 26478" d="M73.818,0A13.3,13.3,0,0,0,60.531,13.288c0,7.053,12.056,23.53,12.569,24.228l.479.652a.3.3,0,0,0,.48,0l.479-.652c.514-.7,12.569-17.175,12.569-24.228A13.3,13.3,0,0,0,73.818,0Zm0,8.528a4.76,4.76,0,1,1-4.76,4.76A4.765,4.765,0,0,1,73.818,8.528Z" fill="#6d51bb" stroke="#3205ae" stroke-width="2"/>
+</g>
+</svg>`,
+
+pinField: () =>`<svg xmlns="http://www.w3.org/2000/svg" width="22" height="30.816" viewBox="0 0 22 30.816">
+<g id="location-sign-svgrepo-com" transform="translate(-59.531 1)">
+  <path id="Path_26478" data-name="Path 26478" d="M70.531,0a10.011,10.011,0,0,0-10,10c0,5.308,9.073,17.708,9.459,18.233l.361.491a.224.224,0,0,0,.361,0l.36-.491c.387-.525,9.459-12.926,9.459-18.233A10.012,10.012,0,0,0,70.531,0Zm0,6.418A3.582,3.582,0,1,1,66.948,10,3.586,3.586,0,0,1,70.531,6.418Z" fill="#6d51bb" stroke="#3205ae" stroke-width="2"/>
+</g>
+</svg>`
+
+
+
 }

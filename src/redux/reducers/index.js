@@ -69,6 +69,14 @@ const cartReducer = (state = CART_DATA, action) => {
       return { ...state };
   }
 };
+const modalReducer = (state = { visible: false, ModalContent: null }, action) => {
+  switch (action.type) {
+    case TYPES.SET_MODAL:
+      return { ...state, ...action.payload };
+    default:
+      return { ...state };
+  }
+};
 const enumsReducer = (state = {}, action) => {
   switch (action.type) {
     case TYPES.SET_ENUMS_ACTION:
@@ -123,5 +131,6 @@ export default {
   messagesReducer,
   promotionsReducer,
   categoriesTagsReducer,
+  modalReducer
   //...
 }

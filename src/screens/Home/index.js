@@ -1,10 +1,13 @@
 import LottieView from "lottie-react-native";
-import React from 'react';
+import React, { useState } from 'react';
 import { Animated, Appearance, Easing } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import { useDispatch, useSelector } from 'react-redux';
+import BottomAllignedModal from "../../components/atoms/BottomAllignedModal";
+import AddressesList from "../../components/atoms/FinalDestination/AddressesList";
 import RecentOrders from '../../components/atoms/RecentOrders';
 import SafeAreaView from "../../components/atoms/SafeAreaView";
+import Text from "../../components/atoms/Text";
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import GenericList from '../../components/molecules/GenericList';
@@ -21,6 +24,10 @@ import Greetings from './components/Greetings';
 import Search from './components/Search';
 import stylesheet from './styles';
 export default () => {
+    let initState = {
+        "modalVisible": false,
+        "finalDestTitle": ''
+    }
     const promotionsReducer = useSelector(state => state.promotionsReducer);
     const messagesReducer = useSelector(state => state.messagesReducer);
     const userReducer = useSelector(state => state.userReducer);
@@ -29,6 +36,8 @@ export default () => {
     const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark");
     const homeStyles = stylesheet.styles(colors);
     const homeFadeIn = React.useRef(new Animated.Value(0)).current;
+    const [state, setState] = useState(initState)
+    const { modalVisible, finalDestTitle } = state
     React.useEffect(() => {
         if (!loaderVisible) {
             Animated.timing(homeFadeIn, {
@@ -59,19 +68,31 @@ export default () => {
     return (
         <View style={homeStyles.container}>
             <SafeAreaView style={{ flex: 1 }}>
-                <CustomHeader 
-                leftIconName={"ios-menu"}
-                onLeftIconPress={null}
-                onRightIconPress={() => {
-                    sharedConfirmationAlert("Alert", "Log me out and remove all the cache?",
-                        [
-                            { text: "No", onPress: () => { } },
-                            {
-                                text: "Yes", onPress: () => preference_manager.clearAllCacheAsync().then(() => sharedLogoutUser())
-                            },
-                        ]
-                    )
-                }} 
+                <CustomHeader
+                    finalDest={userReducer?.finalDestObj?.placeName || null}
+                    leftIconName={"ios-menu"}
+                    onTitlePress={() => {
+                        dispatch(ReduxActions.setModalAction({
+                            visible: true,
+                            ModalContent: <AddressesList finalDestFunc={(placeName) => {
+                                setState(pre => ({
+                                    ...pre,
+                                    finalDestTitle: placeName
+                                }))
+                            }} />
+                        }))
+                    }}
+                    onLeftIconPress={null}
+                    onRightIconPress={() => {
+                        sharedConfirmationAlert("Alert", "Log me out and remove all the cache?",
+                            [
+                                { text: "No", onPress: () => { } },
+                                {
+                                    text: "Yes", onPress: () => preference_manager.clearAllCacheAsync().then(() => sharedLogoutUser())
+                                },
+                            ]
+                        )
+                    }}
                 />
                 {loaderVisible ? renderLoader() : <Animated.View style={{
                     opacity: homeFadeIn.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1] }),

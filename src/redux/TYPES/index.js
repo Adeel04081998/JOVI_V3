@@ -2,6 +2,8 @@ export default {
     // USER ACTIONS
     "SET_USER_ACTION": "set_user",
     "CLEAR_USER_ACTION": "clear_user",
+    // MODAL ACTIONS
+    "SET_MODAL": "set_modal",
     // CART ACTIONS
     "SET_CART_ACTION": "set_cart",
     "CLEAR_CART_ACTION": "clear_clear",
@@ -19,5 +21,5 @@ export default {
     "USER_FINAL_DESTINATION": "user_final_destination",
 
     // FILTERED_CATEGORIES_TAGS
-    "SET_CATEGORIES_TAGS" : "get_filtered_categories"
+    "SET_CATEGORIES_TAGS": "get_filtered_categories"
 }
