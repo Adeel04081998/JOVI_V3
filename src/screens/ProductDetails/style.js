@@ -1,4 +1,5 @@
 import { Platform, StyleSheet } from "react-native";
+import { getStatusBarHeight } from "../../helpers/StatusBarHeight";
 import { initColors } from "../../res/colors";
 const SPACING_VERTICAL = 10;
 export default {
@@ -10,9 +11,11 @@ export default {
                 flex: 1, flexDirection: 'column', backgroundColor: colors.screen_background,
 
             },
-            customHeaderMainContainer: {
-                position: 'absolute', zIndex: 2, backgroundColor: 'transparent', borderBottomWidth: 0, borderBottomColor: 'white', marginTop: __DEV__ ? 20 : 0
-
+            customHeaderMainContainer: { 
+                position: 'absolute', zIndex: 2, backgroundColor: 'transparent', borderBottomWidth: 0, borderBottomColor: 'white',
+                top:getStatusBarHeight(true)
+                // top: Platform.OS === 'ios' ? 20 : null
+                
             },
             customHeaderLeftRightContainer: {
                 backgroundColor: colors.white
