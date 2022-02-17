@@ -278,8 +278,9 @@ export const renderFile = picturePath => {
     )}?access_token=${userReducer?.token?.authToken}`;
 };
 
-export const renderPrice = (price, item = null, lineThrough = false, prefix = "Rs. ", suffix = "", reg = Regex.price,) => {
-    if (item) {
+export const renderPrice = (item = null, lineThrough = false, prefix = "Rs. ", suffix = "", reg = Regex.price,) => {
+    let price = item;
+    if (typeof item === "object") {
         if (lineThrough) {
             price = item.gstAddedPrice || item.itemPrice || item.price || price;
         } else {
