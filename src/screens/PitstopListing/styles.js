@@ -124,7 +124,8 @@ export default {
                     marginVertical: 5
                 },
                 image: {
-                    height: height,
+                    height: 200,
+                    // height: height,
                     width: width,
                     borderRadius: 10
                 },

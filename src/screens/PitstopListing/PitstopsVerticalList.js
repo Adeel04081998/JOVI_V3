@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Animated, Appearance, Easing, ScrollView, StyleSheet } from 'react-native';
+import { Animated, Appearance, Easing, FlatList, ScrollView, StyleSheet } from 'react-native';
 import Image from '../../components/atoms/Image';
 import Text from '../../components/atoms/Text';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
@@ -10,9 +10,8 @@ import { renderFile, sharedExceptionHandler } from '../../helpers/SharedActions'
 import constants from '../../res/constants';
 import sharedStyles from '../../res/sharedStyles';
 import theme from '../../res/theme';
-import GV from '../../utils/GV';
+import GV, { PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import Filters from './components/Filters';
-import lodash from 'lodash';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import CustomHeader from '../../components/molecules/CustomHeader';
@@ -21,13 +20,8 @@ import NavigationService from '../../navigations/NavigationService';
 import CardLoader from './components/CardLoader';
 import Categories from './components/Categories';
 import ROUTES from '../../navigations/ROUTES';
+import Card from './components/Card';
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
-const PITSTOPS = {
-    SUPER_MARKET: 1,
-    JOVI: 2,
-    PHARMACY: 3,
-    RESTAURANT: 4,
-}
 const SPACING_VERTICAL = 10;
 const ITEMS_PER_PAGE = 10;
 const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
@@ -67,7 +61,7 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
         width: constants.window_dimensions.width * 0.87
     }
     const { height, width } = SCALE_IMAGE;
-    const colors = theme.getTheme(GV.THEME_VALUES[lodash.invert(PITSTOPS)[pitstopType]], Appearance.getColorScheme() === "dark");
+    const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]], Appearance.getColorScheme() === "dark");
     const styles = _styles(colors, width, height);
     const isRequestSent = React.useRef(false);
     const cardsRenderedCount = React.useRef(-1);
@@ -187,12 +181,11 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
         componentLoaded.current = true;
     }, [])
     const RenderItem = ({ item, index }) => {
-        const [itemState,setItemState] = React.useState({
-            rendered:false
+        const [itemState, setItemState] = React.useState({
+            rendered: false
         });
-        const { title, description, estTime, distance, image, averagePrice } = item;
-        const isAnimateable = index < 3 && cardsRenderedCount.current < index ;
-        const animatedScale = React.useRef(new Animated.Value(isAnimateable?0:1)).current;
+        const isAnimateable = index < 3 && cardsRenderedCount.current < index;
+        const animatedScale = React.useRef(new Animated.Value(isAnimateable ? 0 : 1)).current;
         const TC = isAnimateable && !itemState.rendered ? AnimatedTouchableOpacity : TouchableOpacity;
         React.useEffect(() => {
             if (isAnimateable) {
@@ -205,7 +198,7 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
                     }).start(finished => {
                         if (finished) {
                             cardsRenderedCount.current = cardsRenderedCount.current < index ? index : cardsRenderedCount.current;
-                            setItemState(pre=>({...pre,rendered:true}));
+                            setItemState(pre => ({ ...pre, rendered: true }));
                         }
                     });
                 }, index * 100);
@@ -213,7 +206,7 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
         }, []);
         return (
             <TC key={index} activeOpacity={0.8} style={{
-                ...styles.itemContainer, ...isAnimateable ? {
+                ...styles.itemContainer, height: 270, ...isAnimateable ? {
                     opacity: animatedScale,
                     transform: [{
                         scale: animatedScale.interpolate({
@@ -223,20 +216,12 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
                     }]
                 } : {}
             }}>
-                <Image source={{ uri: renderFile(image) }} style={[styles.image, imageStyles]} tapToOpen={false} />
-                <View style={styles.subContainer}>
-                    <Text style={styles.title} numberOfLines={1} >{title}</Text>
-                    {(distance || estTime) &&
-                        <View style={styles.iconContainer} >
-                            <VectorIcon name={item.distance ? "map-marker" : "clock-time-four"} type={item.distance ? "FontAwesome" : "MaterialCommunityIcons"} color={colors.primary || "#6D51BB"} size={15} style={{ marginRight: 5 }} />
-                            <Text style={styles.estTime} >{estTime || distance}</Text>
-                        </View>
-                    }
-                </View>
-                <Text style={styles.tagsText} numberOfLines={1} >{description}</Text>
-                {averagePrice &&
-                    <Text style={styles.title} >Rs. {averagePrice}</Text>
-                }
+                <Card
+                    colors={colors}
+                    data={item}
+                    index={index}
+                    renderWithoutTouchableOpacity={true}
+                />
             </TC>
         )
     }
@@ -267,20 +252,37 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
                         parentCategoryHandler={onCategoryChange}
                         selectedCategories={state.filters.cuisines}
                     />}
-                    <ScrollView showsVerticalScrollIndicator={false} scrollEventThrottle={16} style={{ marginTop: SPACING_VERTICAL, marginBottom: pitstopType === 4 ? 100 : 0 }} onScroll={(event) => {
+                    <FlatList
+                        data={(state.vendorCategoryViewModel.vendorList ?? [])}
+                        renderItem={({ item, index }) => <RenderItem item={item} index={index} />}
+                        showsVerticalScrollIndicator={false}
+                        onEndReached={() => {
+                            setFetchDataFlag(Math.random());
+                        }}
+                        style={{ marginTop: SPACING_VERTICAL, marginBottom: pitstopType === 4 ? 100 : 0 }}
+                        ListFooterComponent={
+                            state.isLoading ? <CardLoader styles={styles} loaderStyles={{ marginTop: -15 }} type={2} /> : <></>
+                        }
+                    />
+                    {
+                        state.vendorCategoryViewModel.vendorList.length < 1 && state.isLoading === false ? <Text style={{marginTop:50,alignSelf:'center',color:colors.grey}} fontFamily={'PoppinsMedium'}>
+                            No {pitstopType === 4 ? 'Restaurants':'Supermarkets'} Found
+                        </Text> : null
+                    }
+                    {/* <ScrollView showsVerticalScrollIndicator={false} scrollEventThrottle={16} style={{ marginTop: SPACING_VERTICAL, marginBottom: pitstopType === 4 ? 100 : 0 }} onScroll={(event) => {
                         if (handleInfinityScroll(event)) {
                             setFetchDataFlag(Math.random());
                         }
                     }}>
                         {
                             (state.vendorCategoryViewModel.vendorList ?? []).map((item, i) => {
-                                return <RenderItem item={item} index={i} />
+                                return 
                             })
                         }
                         {
                             state.isLoading ? <CardLoader styles={styles} loaderStyles={{ marginTop: -15 }} type={2} /> : <></>
                         }
-                    </ScrollView>
+                    </ScrollView> */}
                     {/* <AnimatedFlatlist
                         data={state.vendorCategoryViewModel.vendorList ?? []}
                         renderItem={renderItem}
