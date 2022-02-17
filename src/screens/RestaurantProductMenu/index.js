@@ -262,7 +262,7 @@ export default ({ navigation, route }) => {
                                     }
 
                                     {VALIDATION_CHECK(item.price) &&
-                                        <Text fontFamily='PoppinsMedium' style={itemStyles.price}>{renderPrice(item.price, 'from Rs.')}</Text>
+                                        <Text fontFamily='PoppinsMedium' style={itemStyles.price}>{renderPrice(item.price, null, false, 'from Rs.')}</Text>
                                     }
                                 </View>
 
