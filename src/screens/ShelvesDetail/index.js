@@ -334,11 +334,11 @@ export default ({ navigation, route }) => {
                                         image: { uri: renderFile(`${image}`) },
                                         isOutOfStock: isOutOfStock,
                                         name: item.pitStopItemName,
-                                        price: item.gstAddedPrice,
+                                        discountedPrice: item.discountedPrice || item.gstAddedPrice || item.itemPrice,
+                                        price: item.gstAddedPrice || item.itemPrice,
                                         quantity: item.quantity,
                                         discountAmount: item.discountAmount,
                                         discountType: item.discountType,
-                                        discountedPrice: item.discountedPrice,
                                     }}
                                 />
                                 {index === parentItem["pitstopItemListSliced"].length - 1 &&

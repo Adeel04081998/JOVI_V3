@@ -175,8 +175,8 @@ export default ({ navigation, route }) => {
 
 
     // #region :: QUANTITY HANDLER START's FROM HERE 
-    const updateQuantity = ( index, quantity) => {
-        
+    const updateQuantity = (index, quantity) => {
+
         data[index].quantity = quantity;
         const pitstopDetails = {
             pitstopType: PITSTOP_TYPES.SUPER_MARKET,
@@ -203,7 +203,7 @@ export default ({ navigation, route }) => {
         const image = (item?.images ?? []).length > 0 ? item.images[0].joviImageThumbnail : '';
         const isOutOfStock = "isOutOfStock" in item ? item.isOutOfStock : false;
         return (
-            <View style={{ marginTop: 20, marginLeft: index % 3 ===0 ? 10 : 0, }} key={uniqueKeyExtractor()}>
+            <View style={{ marginTop: 20, marginLeft: index % 3 === 0 ? 10 : 0, }} key={uniqueKeyExtractor()}>
                 <ProductMenuItemCard
                     onPress={() => { }}
                     colors={colors}
@@ -216,11 +216,11 @@ export default ({ navigation, route }) => {
                         image: { uri: renderFile(`${image}`) },
                         isOutOfStock: isOutOfStock,
                         name: item.pitStopItemName,
-                        price: item.gstAddedPrice,
+                        discountedPrice: item.discountedPrice || item.gstAddedPrice || item.itemPrice,
+                        price: item.gstAddedPrice || item.itemPrice,
                         quantity: item.quantity,
                         discountAmount: item.discountAmount,
                         discountType: item.discountType,
-                        discountedPrice: item.discountedPrice,
                     }}
                 />
             </View>
@@ -313,7 +313,7 @@ export default ({ navigation, route }) => {
                         contentContainerStyle: {
                             paddingBottom: 60,
                         },
-                        showsVerticalScrollIndicator:false,
+                        showsVerticalScrollIndicator: false,
                     }}
                     renderItem={_renderItem}
                     onEndReachedThreshold={0.6}

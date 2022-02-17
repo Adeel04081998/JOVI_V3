@@ -132,15 +132,15 @@ const ProductMenuItemCard = (props: Props) => {
 
 
                     {/* ****************** Start of PRICE & DISCOUNT ****************** */}
-                    <Text fontFamily='PoppinsBold' style={itemStyles.price}>{renderPrice(props.item.price)}</Text>
+                    <Text fontFamily='PoppinsBold' style={itemStyles.price}>{renderPrice(props.item.discountedPrice)}</Text> 
 
                     {/* ****************** End of PRICE & DISCOUNT ****************** */}
 
 
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
 
-                        {(VALIDATION_CHECK(props.item.discountedPrice) && parseInt(`${props.item.discountedPrice}`) > 0) &&
-                            <Text style={itemStyles.discountPrice}>{renderPrice(props.item.discountedPrice)}</Text>
+                        {(VALIDATION_CHECK(props.item.price) && parseInt(`${props.item.price}`) > 0) &&
+                            <Text style={itemStyles.discountPrice}>{renderPrice(props.item.price)}</Text>
                         }
 
 
