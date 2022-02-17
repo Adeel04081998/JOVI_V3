@@ -114,6 +114,21 @@ export const VALIDATION_CHECK = text => {
     return true;
 };
 
+export const VALIDATION_NUMBER_CHECK = text => {
+    text = `${text}`.toLowerCase().trim();
+    if (
+        text === '' ||
+        text === ' ' ||
+        text === 'null' ||
+        text === 'undefined' ||
+        text === 'false' ||
+        text === '0'
+    ) {
+        return null;
+    }
+    return true;
+};
+
 export const sendOTPToServer = (payload, onSuccess, onError, onLoader) => {
     postRequest(
         Endpoints.SEND_OTP,
@@ -282,15 +297,15 @@ export const renderPrice = (item = null, lineThrough = false, prefix = "Rs. ", s
     let price = item;
     if (typeof item === "object") {
         if (lineThrough) {
-            price = item.gstAddedPrice || item.itemPrice || item.price || price;
+            price = item.gstAddedPrice || item.itemPrice || item.price || 0;
         } else {
-            price = item.discountedPrice || item.gstAddedPrice || item.itemPrice || item.price || price;
+            price = item.discountedPrice || item.gstAddedPrice || item.itemPrice || item.price || 0;
         }
     }
     prefix = `${prefix}`.trim();
     suffix = `${suffix}`.trim();
     price = `${price}`.trim().replace(reg, '').trim();
-    return suffix.length > 0 ? `${prefix} ${price}${suffix}` : `${prefix} ${price}`;
+    return parseInt(`${price}`) < 1 ? null : suffix.length > 0 ? `${prefix} ${price}${suffix}` : `${prefix} ${price}`;
 }
 
 export const isNextPage = (totalItem, itemPerRequest, currentRequestCount) => {
