@@ -1,11 +1,12 @@
 import React, { useRef } from "react";
-import { Animated, Easing, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StatusBar, StyleProp, StyleSheet, ViewStyle } from "react-native";
+import { Animated, Easing, FlatList, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StatusBar, StyleProp, StyleSheet, ViewStyle } from "react-native";
 import Text from "../../../components/atoms/Text";
 import TouchableScale from "../../../components/atoms/TouchableScale";
 import View from "../../../components/atoms/View";
 import AnimatedFlatlist from "../../../components/molecules/AnimatedScrolls/AnimatedFlatlist";
 import { uniqueKeyExtractor, VALIDATION_CHECK } from "../../../helpers/SharedActions";
 import { initColors } from '../../../res/colors';
+import constants from "../../../res/constants";
 
 // #region :: INTERFACE START's FROM HERE 
 type Props = React.ComponentProps<typeof Animated.View> & {
@@ -229,18 +230,13 @@ const RestaurantProductMenuScrollable = (props: Props) => {
                                 }
                                 <View style={props.itemsContainerStyle || {}}>
                                     {(food?.isTopDeal ?? false) ?
-                                        <AnimatedFlatlist
-                                            horizontal
-                                            flatlistProps={{
-                                                showsHorizontalScrollIndicator: false,
-                                            }}
-                                            data={food[props.itemListPropertyName]}
-                                            //@ts-ignore
-                                            renderItem={(singleFood: any, index: number) => {
+                                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                            {food[props.itemListPropertyName].map((singleFood: any, index: number) => {
                                                 return <View key={uniqueKeyExtractor()}>
                                                     {props.renderItem && props.renderItem(food, singleFood, parentIndex, index)}
                                                 </View>
-                                            }} />
+                                            })}
+                                        </ScrollView>
                                         :
                                         food[props.itemListPropertyName].map((singleFood: any, index: number) => {
                                             return <View key={uniqueKeyExtractor()}>

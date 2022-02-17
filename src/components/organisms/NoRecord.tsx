@@ -87,7 +87,7 @@ const stylesFunc = (colors: typeof initColors) => StyleSheet.create({
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#fff",
+        backgroundColor: colors.white,
     },
     image: {
         width: WINDOW_WIDTH * 0.5,

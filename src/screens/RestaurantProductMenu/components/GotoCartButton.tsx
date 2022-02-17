@@ -4,8 +4,11 @@ import Text from "../../../components/atoms/Text";
 import View from "../../../components/atoms/View";
 import Button, { ButtonProps } from "../../../components/molecules/Button";
 import { renderPrice, VALIDATION_CHECK } from "../../../helpers/SharedActions";
+import { getStatusBarHeight } from "../../../helpers/StatusBarHeight";
 import { initColors } from '../../../res/colors';
 import FontFamily from "../../../res/FontFamily";
+import { EdgeInsets, useSafeAreaInsets } from 'react-native-safe-area-context';
+
 
 // #region :: INTERFACE START's FROM HERE 
 
@@ -28,7 +31,11 @@ const defaultProps = {
 const GotoCartButton = (props: Props) => {
     const propText = props?.text ?? defaultProps.text;
     const colors = props.colors;
-    const styles = stylesFunc(colors);
+
+    const insets = useSafeAreaInsets();
+    console.log('insets.bottom ', insets.bottom)
+    const styles = stylesFunc(colors, insets);
+
 
 
 
@@ -65,7 +72,7 @@ export default GotoCartButton;
 
 // #region :: STYLES START's FROM HERE 
 
-const stylesFunc = (colors: typeof initColors) => StyleSheet.create({
+const stylesFunc = (colors: typeof initColors, insets: EdgeInsets) => StyleSheet.create({
     rightText: {
         color: colors.white,
         fontSize: 16,
@@ -99,10 +106,12 @@ const stylesFunc = (colors: typeof initColors) => StyleSheet.create({
         textAlign: "center",
         flex: 1,
     },
+
+
     button: {
         flex: 1,
         position: 'absolute',
-        bottom: 10,
+        bottom: getStatusBarHeight(true) + (insets.bottom > 0 ? insets.bottom * 0.7 : 10),
         width: "90%",
         alignSelf: "center",
         borderRadius: 10,
