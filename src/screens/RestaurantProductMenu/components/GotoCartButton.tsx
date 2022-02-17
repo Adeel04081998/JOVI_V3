@@ -8,6 +8,9 @@ import { getStatusBarHeight } from "../../../helpers/StatusBarHeight";
 import { initColors } from '../../../res/colors';
 import FontFamily from "../../../res/FontFamily";
 import { EdgeInsets, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSelector } from "react-redux";
+import NavigationService from "../../../navigations/NavigationService";
+import ROUTES from "../../../navigations/ROUTES";
 
 
 // #region :: INTERFACE START's FROM HERE 
@@ -23,8 +26,8 @@ interface Props extends ButtonProps {
 
 const defaultProps = {
     text: "Go to cart",
-    count: 1,
-    price: 'Rs. 500',
+    count: null,
+    price: null,
 };
 // #endregion :: INTERFACE END's FROM HERE 
 
@@ -33,34 +36,41 @@ const GotoCartButton = (props: Props) => {
     const colors = props.colors;
 
     const insets = useSafeAreaInsets();
-    console.log('insets.bottom ', insets.bottom)
     const styles = stylesFunc(colors, insets);
 
+    const cartReducer = useSelector((store: any) => store.cartReducer);
+    const { itemsCount, subTotal } = cartReducer;
+    const price = props?.price ?? subTotal;
+    const count = props?.count ?? itemsCount;
 
 
-
+    if (!VALIDATION_CHECK(count)) return null;
     return (
         <Button
             style={[styles.button, props.style]}
             //@ts-ignore
             textStyle={[styles.textStyle, props.textStyle]}
             text={propText}
-            {...VALIDATION_CHECK(props.count) && {
+            {...VALIDATION_CHECK(count) && {
                 leftComponent: () => (
                     <View style={styles.leftContainer}>
-                        <Text style={styles.leftText}>{props.count}</Text>
+                        <Text style={styles.leftText}>{count}</Text>
                     </View>
                 )
             }}
 
-            {...VALIDATION_CHECK(props.price) && {
+            {...VALIDATION_CHECK(price) && {
                 rightComponent: () => (
                     <View style={styles.rightContainer}>
-                        <Text style={styles.rightText}>{renderPrice(props.price)}</Text>
+                        <Text style={styles.rightText}>{renderPrice(price)}</Text>
                     </View>
                 )
             }}
+            onPress={() => {
+                NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name);
+            }}
             {...props}
+            wait={0}
 
         />
     );

@@ -170,7 +170,7 @@ export default ({ navigation, route }) => {
         )
     }
     const onItemPress = (item) => {
-        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, { propItem: item, pitstopID, pitstopType: PITSTOP_TYPES.RESTAURANT });
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, { propItem: { ...item, vendorDetails: { marketID: pitstopID, ...data, pitstopType: PITSTOP_TYPES.RESTAURANT, ...route.params } }, pitstopType: PITSTOP_TYPES.RESTAURANT });
     };
 
     return (

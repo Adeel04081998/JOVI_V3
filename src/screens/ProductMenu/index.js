@@ -37,7 +37,7 @@ const PITSTOPS = {
     RESTAURANT: 4,
 }
 export default ({ navigation, route }) => {
-    const pitstopType = route?.params?.pitstopType ?? 4;
+    const pitstopType = route?.params?.pitstopType ?? PITSTOP_TYPES.SUPER_MARKET;
     // #region :: STYLES & THEME START's FROM HERE 
     const colors = theme.getTheme(GV.THEME_VALUES[lodash.invert(PITSTOPS)[pitstopType]], Appearance.getColorScheme() === "dark");
     const styles = stylesFunc(colors);
@@ -238,6 +238,14 @@ export default ({ navigation, route }) => {
                                         discountType: item.discountType,
                                         discountedPrice: item.discountedPrice,
                                     }}
+                                    onPress={() => {
+                                        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, {
+                                            propItem: {
+                                                itemDetails: {},
+                                                vendorDetails: { ...route.params }
+                                            }
+                                        })
+                                    }}
                                 />
                             </View>
                         )
@@ -320,7 +328,7 @@ export default ({ navigation, route }) => {
         data[parentIndex].pitstopItemList[index].quantity = quantity;
         const pitstopDetails = {
             pitstopType: PITSTOP_TYPES.SUPER_MARKET,
-            vendorDetails: { ...data[parentIndex], pitstopItemList: null, marketID, actionKey: "marketID" },
+            vendorDetails: { ...data[parentIndex], pitstopItemList: null, marketID, actionKey: "marketID", pitstopName: allData.pitstopName, pitstopIndex: null, pitstopType, ...route.params },
             itemDetails: { ...data[parentIndex].pitstopItemList[index], actionKey: "pitStopItemID" },
         }
 
@@ -389,7 +397,7 @@ export default ({ navigation, route }) => {
             </>
         )
     }
-  
+
     return (
         <SafeAreaView style={styles.primaryContainer}>
             {_renderHeader('')}
@@ -435,10 +443,7 @@ export default ({ navigation, route }) => {
             />
 
 
-            <GotoCartButton colors={colors} onPress={() => {
-
-            }}
-            />
+            <GotoCartButton colors={colors} />
 
 
 
