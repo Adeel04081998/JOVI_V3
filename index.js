@@ -12,7 +12,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 Text.defaultProps = Text.defaultProps || {};
 
 ScrollView.defaultProps = ScrollView.defaultProps || {};
-FlatList.defaultProps = ScrollView.defaultProps || {};
+FlatList.defaultProps = FlatList.defaultProps || {};
 
 Animated.FlatList.defaultProps = Animated.FlatList.defaultProps || {};
 Animated.ScrollView.defaultProps = Animated.ScrollView.defaultProps || {};
