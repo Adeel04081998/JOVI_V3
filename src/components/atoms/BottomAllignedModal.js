@@ -68,7 +68,7 @@ export default (props) => {
                     transform: [{
                         translateY: openAnimation.interpolate({
                             inputRange: [0, 1],
-                            outputRange: [300, 0],
+                            outputRange: [900, 0],
                         })
                     }]
                 }}
