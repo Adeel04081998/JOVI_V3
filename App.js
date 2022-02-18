@@ -37,6 +37,7 @@ import BottomAllignedModal from './src/components/atoms/BottomAllignedModal';
 import Maps from './src/components/atoms/GoogleMaps/Maps';
 import Map from './src/screens/Map';
 import AddAddress from './src/screens/AddAddress';
+import CheckOut from './src/screens/CheckOut';
 AntDesign.loadFont();
 Entypo.loadFont();
 EvilIcons.loadFont();
@@ -150,7 +151,6 @@ const App = () => {
         <NavigationContainer theme={theme} ref={_NavgationRef} >
           <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
             <RootStack />
-            {/* <PistopListing /> */}
             {visible && <BottomAllignedModal />}
           </View>
         </NavigationContainer>
@@ -161,7 +161,7 @@ const App = () => {
     </SafeAreaProvider>
   );
 };
-export default CodePush(CODE_PUSH_OPTIONS)(App);
+export default App;
 const SharedGetApis = ({ }) => {
   const { isLoggedIn } = useSelector(state => state.userReducer);
   React.useEffect(() => {

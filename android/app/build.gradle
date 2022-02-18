@@ -83,6 +83,7 @@ project.ext.react = [
     //to be changed to false once verified that app will run without it-
 
 apply from: "../../node_modules/react-native/react.gradle"
+apply from: "../../node_modules/react-native-code-push/android/codepush.gradle" //for codepush
 
 /**
  * Set this to true to create two separate APKs instead of one:

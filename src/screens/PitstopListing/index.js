@@ -15,19 +15,13 @@ import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
-import GV from '../../utils/GV';
+import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import Search from '../Home/components/Search';
 import AllPitstopsListing from './components/AllPitstopsListing';
 import CardLoader from './components/CardLoader';
 import Categories from './components/Categories';
 import Filters from './components/Filters';
 import stylesheet from './styles';
-const PITSTOPS = {
-    SUPER_MARKET: 1,
-    JOVI: 2,
-    PHARMACY: 3,
-    RESTAURANT: 4,
-}
 const SPACING_VERTICAL = 10;
 // const renderLoader = (styles) => {
 //     return <View style={styles.gifLoader}>
@@ -43,7 +37,7 @@ const SPACING_VERTICAL = 10;
 // }
 const PistopListing = React.memo(({ route, }) => {
     const { pitstopType } = route.params;
-    console.log('pitstopType',pitstopType);
+    console.log('pitstopType', pitstopType);
     const [state, setState] = React.useState({
         filters: {
             filter: [],
@@ -64,8 +58,11 @@ const PistopListing = React.memo(({ route, }) => {
     // const promotionsReducer = {};
     const promotionsReducer = useSelector(state => state.promotionsReducer);
     const categoriesTagsReducer = useSelector(state => state.categoriesTagsReducer);
+    const [categoryAnimation, setCategoryAnimation] = React.useState({
+        allRestaurant: false,
+    });
     const pitstopSpecific = {
-        [PITSTOPS.RESTAURANT]: {
+        [PITSTOP_TYPES.RESTAURANT]: {
             filterTitleShown: false,
             filterScreenIcon: true,
             searchPlaceHolder: 'What do you want to eat?',
@@ -73,7 +70,7 @@ const PistopListing = React.memo(({ route, }) => {
             categoryTitle: false,
             pitstopListingTitle: 'All Restaurants'
         },
-        [PITSTOPS.SUPER_MARKET]: {
+        [PITSTOP_TYPES.SUPER_MARKET]: {
             filterTitleShown: false,
             filterScreenIcon: false,
             searchPlaceHolder: 'What do you want to order?',
@@ -87,8 +84,8 @@ const PistopListing = React.memo(({ route, }) => {
         width: constants.window_dimensions.width * 0.86
     }
     const { height, width } = SCALE_IMAGE;
-    const animationHeight = constants.window_dimensions.height*0.96 ;
-    const colors = theme.getTheme(GV.THEME_VALUES[lodash.invert(PITSTOPS)[pitstopType]], Appearance.getColorScheme() === "dark");
+    const animationHeight = constants.window_dimensions.height * 0.96;
+    const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]], Appearance.getColorScheme() === "dark");
     const listingStyles = stylesheet.styles(colors, width, height);
     const isLoading = !promotionsReducer?.dashboardContentListViewModel?.dashboardBannerImg || !categoriesTagsReducer;
     const filterValidations = {
@@ -98,9 +95,10 @@ const PistopListing = React.memo(({ route, }) => {
         averagePrice: (val, currentVal) => { return val !== null && val.length > 0 && val[0] === currentVal }
     }
     const onSearchHandler = (val) => {
-        const isDisSelect = val && val === '';
+        const isDisSelect = val === '';
         setState(pre => ({ ...pre, filters: { ...pre.filters, search: isDisSelect ? '' : val } }));
         filtersRef.current.search = isDisSelect ? '' : val;
+        allRestaurantAnimation(isDisSelect ? 1 : 0);
     };
     const onPressFilter = (item, updatedFilters = {}) => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.PitstopsVerticalList.screen_name, { pitstopType: pitstopType, updatedFilters, listingObj: { ...item } });
@@ -111,21 +109,22 @@ const PistopListing = React.memo(({ route, }) => {
         setState(pre => ({ ...pre, filters: { ...pre.filters, [key]: isDisSelect ? emptyVal : [item[idKey]] } }));
         filtersRef.current[key] = isDisSelect ? emptyVal : [item[idKey]];
         const isAllDisSelected = filtersRef.current.averagePrice === null && filtersRef.current.cuisines.length === 0 && filtersRef.current.filter.length === 0;
-        if (isAllDisSelected) {
-            Animated.timing(scaleAnimation, {
-                toValue: 1,
-                duration: 600,
-                useNativeDriver: true,
-                easing: Easing.ease
-            }).start();
-        } else {
-            Animated.timing(scaleAnimation, {
-                toValue: 0,
-                duration: 600,
-                useNativeDriver: true,
-                easing: Easing.ease
-            }).start();
+        allRestaurantAnimation(isAllDisSelected ? 1 : 0);
+    }
+    const allRestaurantAnimation = (toValue = 1) => {
+        if (toValue === 1) {
+            setCategoryAnimation(pre => ({ ...pre, allRestaurant: false }));
         }
+        Animated.timing(scaleAnimation, {
+            toValue: toValue,
+            duration: 600,
+            useNativeDriver: true,
+            easing: Easing.ease
+        }).start(finished => {
+            if (finished && toValue === 0) {
+                setCategoryAnimation(pre => ({ ...pre, allRestaurant: true }));
+            }
+        });
     }
     const backFromFiltersHandler = (updatedFilters) => {
         if (updatedFilters.activeFilterBy) {
@@ -145,6 +144,8 @@ const PistopListing = React.memo(({ route, }) => {
                 averagePrice: updatedFilters.activeAvergePrice
             }
         }));
+        const isAllDisSelected = filtersRef.current.averagePrice === null && filtersRef.current.cuisines.length === 0 && filtersRef.current.filter.length === 0;
+        allRestaurantAnimation(isAllDisSelected ? 1 : 0);
         console.log('updatedFilters', updatedFilters);
     }
     const goToFilters = () => {
@@ -165,13 +166,12 @@ const PistopListing = React.memo(({ route, }) => {
         postRequest(Endpoints.GET_ADVERTISEMENTS, {
             "adTypes": [1]
         }, res => {
-            console.log('res --- GET_ADVERTISEMENTS',res);
+            console.log('res --- GET_ADVERTISEMENTS', res);
         }, err => { sharedExceptionHandler(err); });
     }
-    React.useEffect(()=>{
+    React.useEffect(() => {
         getAdvertisements();
-    },[])
-    console.log('height',animationHeight);
+    }, [])
     const renderFilters = () => (<View style={{ ...listingStyles.wrapper, paddingBottom: 0, zIndex: 100, paddingTop: SPACING_VERTICAL }}>
         <Search
             placeholder={currentPitstopType.searchPlaceHolder}
@@ -197,6 +197,7 @@ const PistopListing = React.memo(({ route, }) => {
     </View>);
     const renderCarouselNdListing = () => (<Animated.View style={{
         opacity: scaleAnimation,
+        display: categoryAnimation.allRestaurant === true ? 'none' : 'flex',
         zIndex: 80,
         transform: [{
             translateY: scaleAnimation.interpolate({
@@ -223,12 +224,7 @@ const PistopListing = React.memo(({ route, }) => {
     </Animated.View>);
     const renderAllRestaurantsListing = () => (<Animated.View style={{
         ...listingStyles.wrapper,
-        transform: [{
-            translateY: scaleAnimation.interpolate({
-                inputRange: [0, 1],
-                outputRange: [-animationHeight, 0]
-            })
-        }]
+        marginTop: -10
     }}>
         <AllPitstopsListing
             config={currentPitstopType}

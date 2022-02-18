@@ -10,11 +10,12 @@ Axios.interceptors.request.use(
         try {
             if (!GV.NET_INFO_REF?.current?.isConnected) return Toast.info("No Internet connection!", 5000);
             config.baseURL = GV.BASE_URL.current;
-            config.timeout = 15000;
+            config.timeout = __DEV__ ? 60000 : 15000;
             config.timeoutErrorMessage = "Request Timeout..."
-            config.headers['clientInfo'] = {}; // for device and app info in future
+            config.headers['isNewApp'] = "true"; // for device and app info in future
+            config.headers['deviceInfo'] = JSON.stringify({}); // for device and app info in future
             const userReducer = store.getState().userReducer;
-            const authToken =userReducer?.token?.authToken; // [?.] Added becuase of before login api request when we dont have auth token...
+            const authToken = userReducer?.token?.authToken; // [?.] Added becuase of before login api request when we dont have auth token...
             if (authToken) {
                 config.headers['Authorization'] = 'Bearer ' + authToken;
             }
@@ -77,6 +78,7 @@ Axios.interceptors.response.use(
             console.log("[Axios.Reponse.Error]", JSON.stringify(error))
             // if (error?.response?.status === 400) Toast.error('Bad Request!');
             // else if (error?.response?.status === 404) Toast.error('Bad Request!');
+            if (error.message) Toast.error(error.message);
             if (error?.response?.status === 500) Toast.error('Something went wrong!');
             // if (error.config.metadata) {
             //     // Request failed, e.g. HTTP code 500

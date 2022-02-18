@@ -19,18 +19,19 @@ export default {
     "GET_RESTAURANT_PRODUCT_MENU_LIST": "api/Restaurant/ProductsAndDeals/List/V2",// SCREEN_NAME: RestaurantProductMenu
     //PRODUCT DETAILS
     "PRODUCT_DETAILS": "api/Restaurant/ProductOrDeal/DetailsV1",
-
-
-
-    "GET_PITSTOPS_PROMOTIONS":"api/Menu/Vendor/CategorizationByID",
-    "GET_ADVERTISEMENTS" : "api/Advertisement/List",
-    
-
+    "GET_PITSTOPS_PROMOTIONS": "api/Menu/Vendor/CategorizationByID",
+    "GET_ADVERTISEMENTS": "api/Advertisement/List",
     //RESTAURANT
-    "GET_PRODUCT_MENU_LIST":"api/SuperMarket/Stock/List", //SCREEN_NAME: ProductMenu
+    "GET_PRODUCT_MENU_LIST": "api/SuperMarket/Stock/List", //SCREEN_NAME: ProductMenu
+    "GET_VOUCHERS_LIST": "api/Menu/Promotion/List",
+    "SERVICE_CHARGES": "api/Order/EstimateServiceChargeV2", // Cart Screen
+    "AddorUpdateAddress": "/api/Menu/Address/AddOrUpdate" //AddAdresses
 
-
-
-    //AddAdresses
-    "AddorUpdateAddress": "/api/Menu/Address/AddOrUpdate"
 }
+// TO UPDATE ENDPOINT
+// api/Pitstop/ListOrSearch/V2
+// PRODUCT CONTROLLER
+
+
+
+    

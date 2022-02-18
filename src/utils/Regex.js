@@ -9,4 +9,5 @@ export default {
     androidOTP: /\b\d{4}\b/,
 
     price: /[pkr|rs|rs.|pkr.]{2,}/i,
+    time: /:\d\d([ ap]|$)/
 }

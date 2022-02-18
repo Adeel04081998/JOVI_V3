@@ -31,7 +31,7 @@ type Props = React.ComponentProps<typeof Animated.View> & {
     customItem?: () => React.Component;
 
     item?: ProductCardItem;
-    onItemPress?:(item:ProductCardItem)=>void;
+    onItemPress?: (item: ProductCardItem) => void;
 };
 
 const defaultProps = {
@@ -41,7 +41,7 @@ const defaultProps = {
     containerStyle: {},
     item: { title: '', description: '', price: '', image: constants.DEFAULT_JOVI_IMAGE },
     customItem: undefined,
-    onItemPress:undefined,
+    onItemPress: undefined,
 };
 // #endregion :: INTERFACE END's FROM HERE 
 
@@ -59,12 +59,9 @@ const ProductCard = (props: Props) => {
                 width: cardWidth,
                 ...styles.primaryContainer,
             }, props.containerStyle]}
-            onPress={()=>{
+            onPress={() => {
                 props.onItemPress && props.onItemPress(propItem);
-                
-                // Alert.alert('hy')
-            }}
-            >
+            }}>
 
             {VALIDATION_CHECK(props.customItem) ?
                 props.customItem && props.customItem()
@@ -83,7 +80,9 @@ const ProductCard = (props: Props) => {
 
                     <Text style={styles.title} numberOfLines={1}>{`${propItem.title}`}</Text>
 
-                    <Text style={styles.description}>{`${propItem.description}`}</Text>
+                    <Text style={{...styles.description,
+                    height:40,
+                    }} numberOfLines={2}>{`${propItem.description}`}</Text>
 
                     <Text style={styles.price}>{`${propItem.price}`}</Text>
 
@@ -94,7 +93,7 @@ const ProductCard = (props: Props) => {
 }
 
 ProductCard.defaultProps = defaultProps;
-export default ProductCard;
+export default React.memo(ProductCard);
 
 // #region :: STYLES START's FROM HERE 
 const stylesFunc = (colors: typeof initColors) => StyleSheet.create({

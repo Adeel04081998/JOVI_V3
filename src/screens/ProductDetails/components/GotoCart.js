@@ -1,415 +1,101 @@
-// // import React, { useState, useRef } from "react";
-// // import { Alert, SectionList, StyleSheet } from "react-native";
-// // import { boolean } from "yargs";
-// // import AnimatedView from "../../../components/atoms/AnimatedView";
-// // import Text from "../../../components/atoms/Text";
-// // import TouchableOpacity from "../../../components/atoms/TouchableOpacity";
-// // import View from "../../../components/atoms/View";
+// {/* <View style={{
+//                     flex: 1,
+//                     paddingVertical: 15,
+//                     borderRadius: 10,
+//                     // backgroundColor: "#6449AE",
+//                     flexDirection: 'row',
+//                     marginVertical: 10,
+//                     alignItems: 'center',
+//                     justifyContent: 'space-between'
 
-// // export default ({ data = [], onPressCb, selectionTittle = "", requiredTittle = "", isMultipleSelection = false, selectedItem = [], selectCOndition = null, productDetailsStyles }) => {
-// //     console.log("datta=>>", data);
-// //     const choosedQuantity = data.quantity ?? ""
-// //     const isRequired = data.isRequired ?? false
-// //     const isMany = data.isMany ?? false
-// //     let optionsList = data?.pitstopItemsOptionList ?? []
-// //     console.log("optionList", optionsList);
 
-// //     const onPress = (item) => {
-// //         if (isMultipleSelection) {
-// //             const isExist = selectedItem.findIndex(i => i.id === item.id);
-// //             console.log('isExist ', isExist);
-// //             if (isExist === -1) {
-// //                 if (selectedItem.length === selectCOndition) return
-// //                 selectedItem.push(item); // adding item
-// //             } else {
-// //                 selectedItem.splice(isExist, 1); // deleting same item from
-// //             }
+//                 }}>
+//                     <View style={{ backgroundColor: 'red', flex: 0.5, justifyContent: 'center', alignSelf: 'center', alignItems: 'center' }}>
+//                         <SvgXml xml={svgs.Percentage()} style={{}} ></SvgXml>
+//                     </View>
+//                     <Text style={{ olor: '#fff', backgroundColor: 'green', textAlign: 'center', left: 20 }}>You have 3 vouchers</Text>
+//                     <TouchableOpacity style={{ backgroundColor: '#fff', borderRadius: 2, marginHorizontal: 5, paddingHorizontal: 10 }} >
+//                         <Text style={{ color: "black", marginHorizontal: 10, marginVertical: 5 }}>{"See All"}</Text>
+//                     </TouchableOpacity>
+//                     <View style={{ borderRadius: 20, height: 20, width: 20, position: 'absolute', left: 70, top: -10, backgroundColor: 'white', }} ></View>
+//                     <View style={{ borderRadius: 20, height: 20, width: 20, position: 'absolute', left: 70, bottom: -10, backgroundColor: 'white' }} ></View>
 
-// //             onPressCb && onPressCb(selectedItem, isMultipleSelection,);
+//                     {cuts.map((i) => <View key={`pitstop-arc-${i.index}`} style={{ height: 6, width: 1, position: 'absolute', left: 80, top: i["index"] === 0 ? 16 : i["index"] === 1 ? 28 : 39, backgroundColor: '#fff' }} ></View>)}
 
-// //         } else {
-// //             //SINGLE SELECTION
+//                 </View> */}
 
-// //             selectedItem = [];
-// //             selectedItem.push(item); // adding item
-// //             onPressCb && onPressCb(selectedItem, isMultipleSelection);
 
-// //         }
 
-// //     };
 
 
-
-// //     // return (
-
-// //     //     <View>
-// //     //         {
-// //     //             data.map((x, i) => {
-// //     //                 console.log("x=>>", x);
-// //     //                 const mainTitle = x.mainTitle ?? ""
-// //     //                 const choosedQuantity = x.quantity ?? ""
-// //     //                 const isRequired = x.isRequired ?? false
-// //     //                 const selectedIndex = selectedItem.findIndex(k => k.id === x.id);
-// //     //                 let isActive = selectedIndex === -1 ? false : x.id === selectedItem[selectedIndex].id;
-// //     //                 return <AnimatedView  style={{}}>
-// //     //                     <Text style={productDetailsStyles.radioButtonSelectionTittle}
-// //     //                         fontFamily="PoppinsRegular"
-// //     //                     >{`${mainTitle},(Select${choosedQuantity})`}</Text>
-// //     //                     <Text style={productDetailsStyles.requiredTxt} fontFamily="PoppinsRegular">{isRequired && "Required"}</Text>
-// //     //                     <View style={{flexDirection:'column'}}>
-// //     //                     <AnimatedView style={productDetailsStyles.radioButtonPrimaryContainer}>
-// //     //                         <AnimatedView style={productDetailsStyles.radioButtonSecondaryContainer} key={i}  >
-// //     //                             <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', }} onPress={() => { onPress(x) }} >
-// //     //                                 <View style={productDetailsStyles.radioButtonCircle}>
-// //     //                                     {isActive &&
-// //     //                                         <View style={productDetailsStyles.filledCircle(true)} />
-// //     //                                     }
-
-// //     //                                 </View>
-// //     //                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1 }}>
-// //     //                                     <Text style={{ color: '#212121', fontSize: 14 }} fontFamily="PoppinsRegular">{x.title}</Text>
-// //     //                                     <Text style={{ color: '#212121', fontSize: 14 }} fontFamily="PoppinsRegular">{`+ ${x.price}`}</Text>
-// //     //                                 </View>
-// //     //                             </TouchableOpacity>
-
-
-// //     //                             <TouchableOpacity style={productDetailsStyles.radioButtonCircle} onPress={() => { onPress(x) }}>
-// //     //                                 {isActive &&
-// //     //                                     <View style={productDetailsStyles.filledCircle(true)} />
-// //     //                                 }
-
-// //     //                             </TouchableOpacity>
-// //     //                             <Text style={{ color: 'black' }}>{x.title}</Text>
-
-// //     //                         </AnimatedView>
-
-
-// //     //                     </AnimatedView>
-// //     //                     </View>
-// //     //                 </AnimatedView>
-
-
-// //     //             })
-
-// //     //         }
-
-// //     //     </View>
-// //     // )
-
-// //     return (
-
-
-// //         <View>
-// //             {/* <Text style={productDetailsStyles.radioButtonSelectionTittle}
-// //                 fontFamily="PoppinsRegular"
-// //             >{`${selectionTittle},(Select${selectCOndition})`}</Text>
-// //             <Text style={productDetailsStyles.requiredTxt} fontFamily="PoppinsRegular">{requiredTittle}</Text> */}
-// //             <AnimatedView style={productDetailsStyles.radioButtonPrimaryContainer}>
-// //                 {
-// //                     optionsList.map((x, i) => {
-// //                         console.log("option ", x);
-// //                         const selectedIndex = selectedItem.findIndex(k => k.id === x.id);
-// //                         let isActive = selectedIndex === -1 ? false : x.id === selectedItem[selectedIndex].id;
-// //                         console.log("isActive=>>", isActive);
-// //                         return <AnimatedView style={productDetailsStyles.radioButtonSecondaryContainer} key={i}  >
-// //                             <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', }} onPress={() => { onPress(x) }} >
-// //                                 <View style={productDetailsStyles.radioButtonCircle}>
-// //                                     {isActive &&
-// //                                         <View style={productDetailsStyles.filledCircle(true)} />
-// //                                     }
-
-// //                                 </View>
-// //                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1 }}>
-// //                                     <Text style={{ color: '#212121', fontSize: 14 }} fontFamily="PoppinsRegular">{x.title}</Text>
-// //                                     <Text style={{ color: '#212121', fontSize: 14 }} fontFamily="PoppinsRegular">{`+ ${x.price}`}</Text>
-// //                                 </View>
-// //                             </TouchableOpacity>
-
-
-// //                             {/* <TouchableOpacity style={productDetailsStyles.radioButtonCircle} onPress={() => { onPress(x) }}>
-// //                                 {isActive &&
-// //                                     <View style={productDetailsStyles.filledCircle(true)} />
-// //                                 }
-
-// //                             </TouchableOpacity>
-// //                             <Text style={{ color: 'black' }}>{x.title}</Text> */}
-
-// //                         </AnimatedView>
-
-// //                     })
-
-// //                 }
-
-
-// //             </AnimatedView>
-
-
-// //         </View>
-
-
-
-// //     )
-
-// // }
-// // const styles = StyleSheet.create({
-// //     primaryContainer: {
-// //         backgroundColor: 'white',
-// //         padding: 10,
-// //         marginVertical: 5,
-// //         // shadowColor: "#000",
-// //         // shadowOffset: {
-// //         //     width: 0,
-// //         //     height: 8,
-// //         // },
-// //         // shadowOpacity: 0.9,
-// //         // shadowRadius: 20,
-
-// //         // elevation: 5,
-// //         borderRadius: 10,
-// //         // borderWidth:1
-
-
-
-// //     },
-// //     container: {
-// //         flexDirection: 'row', width: "100%", alignItems: 'center', paddingVertical: 3
-
-// //     },
-// //     radioCircle: {
-// //         height: 18, width: 18,
-// //         borderRadius: 10,
-// //         marginRight: 12,
-// //         borderWidth: 1.5,
-// //         // borderColor: '#D3D3D3',
-// //         borderColor: 'grey',
-// //         alignItems: 'center',
-// //         justifyContent: 'center'
-// //     },
-// //     filledCircle: (val) => ({
-// //         width: 10, height: 10, borderRadius: 30, backgroundColor: val ? "red" : "blue"
-// //     }
-// //     )
-// // })
-
-
-
-
-// // ///////////////mapeed ok
-// // {pitstopItemsOptionList.map(() => {
-                            
-// //     return <AnimatedView style={{
-// //         backgroundColor: 'white',
-// //         padding: 10,
-// //         marginVertical: 5,
-// //         borderRadius: 10,
-// //         flexDirection: 'row',
-// //         height: 90
-// //     }}>
-// //         <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1 }} onPress={() => { onPress(x) }} >
-// //             <View style={productDetailsStyles.radioButtonCircle}>
-// //                 {/* {isActive &&
-// //     <View style={productDetailsStyles.filledCircle(true)} />
-// // } */}
-
-// //             </View>
-// //             <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1 }}>
-// //                 <Text style={{ color: '#212121', fontSize: 14 }} fontFamily="PoppinsRegular">hello</Text>
-// //                 <Text style={{ color: '#212121', fontSize: 14 }} fontFamily="PoppinsRegular">Prixe</Text>
-// //             </View>
-// //         </TouchableOpacity>
-// //     </AnimatedView>
-
-
-
-// // })
-// // }
-
-
-
-
-
-// /////////////////
-
-
-
-// import React, { useState, useRef } from "react";
-// import { Alert, SectionList, StyleSheet } from "react-native";
-// import { boolean } from "yargs";
-// import AnimatedView from "../../../components/atoms/AnimatedView";
-// import Text from "../../../components/atoms/Text";
-// import TouchableOpacity from "../../../components/atoms/TouchableOpacity";
-// import View from "../../../components/atoms/View";
-
-// export default ({ data = [], selectedOptions = [], onPressCb,  isMultipleSelection = false, selectedItem = [], selectCOndition = null, productDetailsStyles }) => {
-
-//     console.log("selectedItem", selectedItem);
-//     const checkSelected = (x) => {
-//         const check = selectedOptions.filter(item=>item.itemOptionID === x.itemOptionID)[0];
-//         if(check){
-//             return true;
-//         }
-//         return false;
-//     }
-//     const onPress = (item, isMany, i) => {
-//         console.log("isMany, i", isMany, i);
-//         if (isMany === true) {
-//             const isExist = selectedItem.findIndex(i => i.itemOptionID === item.itemOptionID);
-//             // console.log('isExist ', isExist);
-//             if (isExist === -1) {
-//                 // if (selectedItem.length === selectCOndition) return
-//                 selectedItem.push(item); // adding item
-//             } else {
-//                 selectedItem.splice(isExist, 1); // deleting same item from
-//             }
-
-//             onPressCb && onPressCb(selectedItem, isMany);
-
-//         } else {
-//             //SINGLE SELECTION
-
-//             selectedItem = [];
-//             selectedItem.push(item); // adding item
-//             onPressCb && onPressCb(selectedItem, isMany);
-
-//         }
-
-
-//         return
-//         if (isMultipleSelection) {
-//             const isExist = selectedItem.findIndex(i => i.id === item.id);
-//             console.log('isExist ', isExist);
-//             if (isExist === -1) {
-//                 if (selectedItem.length === selectCOndition) return
-//                 selectedItem.push(item); // adding item
-//             } else {
-//                 selectedItem.splice(isExist, 1); // deleting same item from
-//             }
-
-//             onPressCb && onPressCb(selectedItem, isMultipleSelection,);
-
-//         } else {
-//             //SINGLE SELECTION
-
-//             selectedItem = [];
-//             selectedItem.push(item); // adding item
-//             onPressCb && onPressCb(selectedItem, isMultipleSelection);
-
-//         }
-
-//     };
-
-//     const RenderUi = ({ pitstopItemsOptionList,choosedQuantity, isMany, parentIndex }) => {
-//         console.log(`pitstopItemsOptionList`, pitstopItemsOptionList,choosedQuantity)
-
-//         return (
-//             <View style={{
-//                 backgroundColor: 'white',
-//                 padding: 10,
-//                 marginVertical: 5,
-//                 borderRadius: 10,
-//                 flexDirection: 'column',
-//                 // height: 90,
-
-//             }}>
+//                 <AnimatedView style={{ margin: 10, marginTop: 0 }} >
 //                 {
-//                     pitstopItemsOptionList.map((x, i) => {
-//                         const attributeName = x.tittle
-//                         const attributeOptionPrice = x.optionPrice
-//                         const selectedIndex = selectedItem.findIndex(k => k.itemOptionID === x.itemOptionID);
-//                         // let isActive = selectedIndex === -1 ? false : x.itemOptionID === selectedItem[selectedIndex].itemOptionID;
-//                         let isActive = checkSelected(x);
-//                         // return <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1, paddingVertical:5 }} onPress={() => { onPress(x, isMany,i) }} >
-//                         return <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1, paddingVertical: 5 }} onPress={() => onPressCb(x, isMany, parentIndex,choosedQuantity??null)} >
-//                             <View style={productDetailsStyles.radioButtonCircle}>
-//                                 {isActive &&
-//                                     <View style={productDetailsStyles.filledCircle(true)} />
+
+//                     PitstopData.map((x, i) => {
+//                         let pitStopNumber = i + 1
+//                         let pitstopName = x.brandName
+//                         let totalPitstopAmount = x.price
+
+//                         return <View style={{ flex: 1 }}>
+//                             <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, paddingVertical: 5, }}>
+//                                 <View style={{ width: 12, height: 12, borderRadius: 12, backgroundColor: colors.primary }} />
+//                                 <Text style={{ flex: 1, fontSize: 12, textAlign: 'center', color: '#272727' }} fontFamily='PoppinsMedium'>{`Pit Stop ${pitStopNumber}-`}</Text>
+//                                 <Text style={{ flex: 2, fontSize: 12, color: '#272727' }} fontFamily='PoppinsMedium'>{`${pitstopName}`}</Text>
+//                                 {showDetails &&
+//                                     <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
+//                                         <Text style={{ justifyContent: 'flex-end', fontSize: 12, color: '#272727' }} fontFamily='PoppinsMedium'>{totalPitstopAmount}</Text>
+//                                     </View>
 //                                 }
 //                             </View>
-//                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1 }}>
-//                                 <Text style={{ color: '#212121', fontSize: 14 }} fontFamily="PoppinsRegular">{`${attributeName}`}</Text>
-//                                 <Text style={{ color: '#212121', fontSize: 14 }} fontFamily="PoppinsRegular">{`${attributeOptionPrice}`}</Text>
-//                             </View>
-//                         </TouchableOpacity>
+
+//                             {showDetails ?
+//                                 <View style={{ justifyContent: 'center', flex: 1, }}>
+//                                     <View style={{ flex: 1, backgroundColor: 'red', flexDirection: 'row', alignItems: 'center', }}>
+//                                         <View style={{ flexDirection: 'row' }}>
+//                                             <Text>Piza small -xl</Text>
+//                                             <Text>Piza small -xl</Text>
+//                                         </View>
+//                                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
+//                                             <Text style={{ justifyContent: 'flex-end', fontSize: 12, color: '#272727' }} fontFamily='PoppinsMedium'>{x.price}</Text>
+//                                         </View>
+//                                     </View>
+//                                 </View>
+//                                 : null
+//                             }
+//                         </View>
 //                     })
+
+
 //                 }
-//             </View>
 
-//         )
-
-
-//     }
-
-//     return (
-
-//         <View>
-//             {
-//                 data.map((x, i) => {
-//                     const isMany = (__DEV__ && i === 0) ? true : x.isMany ?? false
-//                     // const isMany = false
-
-//                     const isRequired = x.isRequired ?? false
-//                     const mainTitle = x.mainTittle ?? ""
-//                     // const choosedQuantity = x.quantity 
-//                     const choosedQuantity =(__DEV__ && i === 1) ? 2 : x.quantity ?? 0
-//                     const pitstopItemsOptionList = x.pitStopItemsOptionList ?? []
-//                     // const selectedIndex = selectedItem.findIndex(k => k.id === x.id);
-//                     // let isActive = selectedIndex === -1 ? false : x.id === selectedItem[selectedIndex].id;
-//                     return <AnimatedView style={{}}>
-//                         <Text style={productDetailsStyles.radioButtonSelectionTittle}
-//                             fontFamily="PoppinsRegular"
-//                         >{`${mainTitle},(Select${choosedQuantity})`}</Text>
-//                         <Text style={productDetailsStyles.requiredTxt} fontFamily="PoppinsRegular">{isRequired && "Required"}</Text>
-//                         <RenderUi pitstopItemsOptionList={pitstopItemsOptionList} isMany={isMany} parentIndex={i} choosedQuantity={choosedQuantity} />
-
-//                     </AnimatedView>
-
-
-//                 })
-
-//             }
-
-//         </View>
-//     )
+//             </AnimatedView>
 
 
 
-// }
-// const styles = StyleSheet.create({
-//     primaryContainer: {
-//         backgroundColor: 'white',
-//         padding: 10,
-//         marginVertical: 5,
-//         // shadowColor: "#000",
-//         // shadowOffset: {
-//         //     width: 0,
-//         //     height: 8,
-//         // },
-//         // shadowOpacity: 0.9,
-//         // shadowRadius: 20,
+                {/* <LinearGradient
+                    colors={['#6D51BB', '#6C50B9', '#6449AE']}
+                    style={{
+                        // flex: 1,
+                        paddingVertical: 15,
+                        borderRadius: 10,
+                        flexDirection: 'row',
+                        marginVertical: CONTAINERS_MARGIN,
+                        alignItems: 'center',
+                        justifyContent: 'space-between'
+                    }}
+                >
 
-//         // elevation: 5,
-//         borderRadius: 10,
-//         // borderWidth:1
+                    <View style={{ flex: 0.5, justifyContent: 'center', alignSelf: 'center', alignItems: 'center', }}>
+                        <SvgXml xml={svgs.Percentage()} style={{}} ></SvgXml>
+                    </View>
+                    <View style={{ flex: 2, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
 
-
-
-//     },
-//     container: {
-//         flexDirection: 'row', width: "100%", alignItems: 'center', paddingVertical: 3
-
-//     },
-//     radioCircle: {
-//         height: 18, width: 18,
-//         borderRadius: 10,
-//         marginRight: 12,
-//         borderWidth: 1.5,
-//         // borderColor: '#D3D3D3',
-//         borderColor: 'grey',
-//         alignItems: 'center',
-//         justifyContent: 'center'
-//     },
-//     filledCircle: (val) => ({
-//         width: 10, height: 10, borderRadius: 30, backgroundColor: val ? "red" : "blue"
-//     }
-//     )
-// })
+                        <Text style={{ color: '#fff', textAlign: 'center', flex: 1 }}>You have 3 vouchers</Text>
+                        <TouchableOpacity style={{ backgroundColor: '#fff', borderRadius: 2, marginHorizontal: 5, paddingHorizontal: 10 }} >
+                            <Text style={{ color: "black", marginHorizontal: 10, marginVertical: 5 }}>{"See All"}</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={{ borderRadius: 20, height: 20, width: 20, position: 'absolute', left: 60, top: -10, backgroundColor: '#F6F5FA', }} ></View>
+                    <View style={{ borderRadius: 20, height: 20, width: 20, position: 'absolute', left: 60, bottom: -10, backgroundColor: '#F6F5FA' }} ></View>
+                    {cuts.map((i) => <View key={`pitstop-arc-${i.index}`} style={{ height: 6, width: 1, position: 'absolute', left: 70, top: i["index"] === 0 ? 16 : i["index"] === 1 ? 28 : 39, backgroundColor: '#fff' }} ></View>)}
+                </LinearGradient> */}

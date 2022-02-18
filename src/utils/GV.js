@@ -1,7 +1,7 @@
 import React from "react";
 import constants from "../res/constants";
 let initUrlRef = React.createRef(null);
-initUrlRef.current = __DEV__ ? constants.url_dev : constants.url_qasprint_v1;
+initUrlRef.current = __DEV__ ? constants.url_qasprint_v1 : constants.url_qasprint_v1;
 export const PITSTOP_TYPES = {
     DEFAULT: 0,
     SUPER_MARKET: 1,
@@ -9,6 +9,15 @@ export const PITSTOP_TYPES = {
     PHARMACY: 3,
     RESTAURANT: 4,
     JOVI_MART: 5,
+};
+
+export const PITSTOP_TYPES_INVERTED = {
+     0:'DEFAULT',
+     1:'SUPER_MARKET',
+     2:'JOVI',
+     3:'PHARMACY',
+     4:'RESTAURANT',
+     5:'JOVI_MART',
 };
 export default {
     BASE_URL: initUrlRef,

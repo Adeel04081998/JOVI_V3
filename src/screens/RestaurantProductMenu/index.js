@@ -21,6 +21,7 @@ import { itemStylesFunc, sectionHeaderStylesFunc, stylesFunc } from './styles';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
+import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 
 const WINDOW_HEIGHT = constants.window_dimensions.height;
 const PITSTOPS = {
@@ -34,10 +35,10 @@ LogBox.ignoreLogs([
 ]);
 
 export default ({ navigation, route }) => {
-    const pitstopType = route.params.pitstopType ?? 4;
+    const pitstopType = route?.params?.pitstopType ?? 4;
     const colors = theme.getTheme(GV.THEME_VALUES[lodash.invert(PITSTOPS)[pitstopType]], Appearance.getColorScheme() === "dark");
     const styles = stylesFunc(colors);
-    const pitstopID = route?.params?.pitstopID ?? (__DEV__ ? 3738 : -1);
+    const pitstopID = route?.params?.pitstopID ?? 3979;
     const sectionHeaderStyles = sectionHeaderStylesFunc(colors);
     const itemStyles = itemStylesFunc(colors);
 
@@ -49,19 +50,20 @@ export default ({ navigation, route }) => {
     });
 
     // #region :: ANIMATION START's FROM HERE 
-    const animScroll = React.useRef(new Animated.Value(0)).current
+    const animScroll = React.useRef(new Animated.Value(0)).current;
+
     const [headerHeight, setHeaderHeight] = React.useState(WINDOW_HEIGHT * 0.7);
 
     const headerTop = animScroll.interpolate({
         inputRange: [0, headerHeight],
-        outputRange: [0, -(headerHeight + 20)],
+        outputRange: [0, -(headerHeight + getStatusBarHeight())],
         extrapolate: "clamp",
         useNativeDriver: true
     });
 
     const tabTop = animScroll.interpolate({
         inputRange: [0, headerHeight + 20],
-        outputRange: [headerHeight + 20, 0],
+        outputRange: [headerHeight + 20, 50],
         extrapolate: "clamp",
         useNativeDriver: true
     });
@@ -114,20 +116,11 @@ export default ({ navigation, route }) => {
     };
 
     // #endregion :: API IMPLEMENTATION END's FROM HERE 
+
+    // #region :: LOADING AND ERROR RENDERING START's FROM HERE 
     if (query.error) {
         return (
-            <>
-                <CustomHeader />
-                <NoRecord
-                    title={query.errorText}
-                    buttonText={`Retry`}
-                    onButtonPress={loadData} />
-            </>
-        )
-    }
-    if (query.isLoading) {
-        return (
-            <>
+            <SafeAreaView style={{ flex: 1, top: getStatusBarHeight(true), backgroundColor: colors.white, }}>
                 <CustomHeader
                     hideFinalDestination
                     title={route?.params?.title ?? ''}
@@ -142,31 +135,83 @@ export default ({ navigation, route }) => {
                         borderBottomWidth: 0,
                     }}
                 />
-                <View
-                    style={{ height: '93%', width: '101%', paddingLeft: 10, paddingTop: 4, paddingHorizontal: 5, display: 'flex', justifyContent: 'center', alignContent: 'center', }}
-                >
-                    <AnimatedLottieView
-                        autoSize={true}
-                        resizeMode={'contain'}
-                        style={{ width: '100%' }}
-                        source={require('../../assets/gifs/Homeloading.json')}
-                        autoPlay
-                        loop
-                    />
-                </View>
-            </>
+                <NoRecord
+                    title={query.errorText}
+                    buttonText={`Retry`}
+                    onButtonPress={loadData} />
+            </SafeAreaView>
         )
     }
+    if (query.isLoading) {
+        return (
+            <SafeAreaView style={{ flex: 1, top: getStatusBarHeight(true), backgroundColor: colors.white, }}>
+                <CustomHeader
+                    hideFinalDestination
+                    title={route?.params?.title ?? ''}
+                    titleStyle={{
+                        color: colors.primary
+                    }}
+                    leftIconName="chevron-back"
+                    leftIconColor={colors.primary}
+                    rightIconColor={colors.primary}
+                    containerStyle={{
+                        backgroundColor: "transparent",
+                        borderBottomWidth: 0,
+                    }}
+                />
+
+                <AnimatedLottieView
+                    autoSize={true}
+                    resizeMode={'contain'}
+                    style={{ width: '100%' }}
+                    source={require('../../assets/gifs/Homeloading.json')}
+                    autoPlay
+                    loop
+                />
+
+            </SafeAreaView>
+        )
+    }
+
+    // #endregion :: LOADING AND ERROR RENDERING END's FROM HERE 
+
     const onItemPress = (item) => {
-        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, { propItem: item, pitstopID, pitstopType: PITSTOP_TYPES.RESTAURANT });
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, { propItem: { ...item, vendorDetails: { marketID: pitstopID, ...data, pitstopType: PITSTOP_TYPES.RESTAURANT, ...route.params } }, pitstopType: PITSTOP_TYPES.RESTAURANT });
     };
 
     return (
-        <View style={{ flex: 1, }}>
+        <SafeAreaView style={{ flex: 1, top: getStatusBarHeight(true), backgroundColor: colors.white, }}>
             <StatusBar backgroundColor={colors.white} />
+            <Animated.View style={{ position: 'absolute', top: 0, zIndex: 9999, }}>
+                <CustomHeader
+                    hideFinalDestination
+                    title={route?.params?.title ?? data?.pitstopName ?? ''}
+                    titleStyle={{
+                        color: colors.primary,
+                        opacity: animScroll.interpolate({
+                            inputRange:[headerHeight-100, headerHeight],
+                            outputRange:[0,1]
+                        }),
+                    }}
+                    leftIconName="chevron-back"
+                    leftContainerStyle={{
+                        backgroundColor: colors.white,
+                    }}
+                    rightContainerStyle={{
+                        backgroundColor: colors.white,
+                    }}
+                    leftIconColor={colors.primary}
+                    rightIconColor={colors.primary}
+                    containerStyle={{
+                        backgroundColor: 'transparent',
+                        borderBottomWidth: 0,
+                    }}
+                />
+            </Animated.View>
             {/* ****************** Start of UPPER HEADER TILL RECENT ORDER ****************** */}
             <Animated.View style={{
                 ...StyleSheet.absoluteFill,
+                backgroundColor: colors.white,
                 transform: [{
                     translateY: headerTop
                 }],
@@ -176,6 +221,7 @@ export default ({ navigation, route }) => {
                     onLayout={(e) => {
                         setHeaderHeight(e.nativeEvent.layout.height);
                     }}
+                    hideHeader
                     item={{
                         image: { uri: renderFile(data?.pitstopImage ?? '') },
                         distance: data?.distance ?? '',
@@ -194,6 +240,8 @@ export default ({ navigation, route }) => {
                 animatedScrollValue={animScroll}
                 headerHeight={headerHeight}
                 topHeaderStyle={{
+                    backgroundColor: colors.white,
+                    paddingTop: 10,
                     height: 50,
                     transform: [{
                         translateY: tabTop
@@ -217,7 +265,7 @@ export default ({ navigation, route }) => {
                     if (parentItem?.isTopDeal ?? false) {
                         return (
                             <ProductCard
-                                onItemPress={()=>onItemPress(item)}
+                                onItemPress={() => onItemPress(item)}
                                 color={colors}
                                 containerStyle={{
                                     ...itemStyles.primaryContainer,
@@ -273,7 +321,7 @@ export default ({ navigation, route }) => {
 
             <GotoCartButton colors={colors} onPress={() => { }} />
 
-        </View>
+        </SafeAreaView>
     )
 };//end of EXPORT DEFAULT
 

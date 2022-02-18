@@ -21,7 +21,7 @@ interface ShelveCardItem {
     image: ImageSourcePropType;
 }
 
-interface Props  {
+interface Props {
     children?: any;
     color: typeof initColors,
     cardWidth?: number,
@@ -124,6 +124,9 @@ const ShelveCard = (props: Props) => {
                             }, props.imageStyle]}
                             tapToOpen={false}
                             resizeMode={"cover"}
+                            loadingImageStyle={{
+                                right: 0,
+                            }}
                         />
                         {/* <ImageBackground
                             source={propItem.image}
