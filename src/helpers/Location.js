@@ -39,18 +39,23 @@ export const addressInfo = async (latitude, longitude) => {
     try {
         let addressResponse = await fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&rankby=distance&key=${env.GOOGLE_API_KEY}`);
         addressResponse = await addressResponse.json();
-        console.log('addressResponse',addressResponse);
+        console.log('addressResponse', addressResponse);
         if (addressResponse.error_message) {
             // CustomToast.error("Error while Fetching Address!", null, "long")
             Toast.error('Error while Fetching Address!')
         }
         else if (addressResponse) {
             const address = ((addressResponse?.results?.[0]?.name || "") + (addressResponse?.results?.[0]?.name ? ", " : "") + (addressResponse?.results?.[0]?.vicinity || ""));
-            return address
+            let city = null;
+            let addressObj = addressResponse?.results?.[0] ?? {}
+            if (addressObj?.plus_code?.compound_code) {
+                city = addressObj.plus_code.compound_code.replace(/\,/gi, "")?.split(/\s/gi)?.[1];
+            };
+            return { city, address }
         }
     }
     catch (exp) {
-        console.log('exp',exp);
+        console.log('exp', exp);
     }
 };
 

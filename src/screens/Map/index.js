@@ -10,17 +10,26 @@ import ReduxActions from "../../redux/actions/index";
 export default (props) => {
 
   const dispatch = useDispatch();
-
+console.log('props in map ===>>>>',props);
   const onConfirmLoc = (finalDestObj) => {
-    if (props.route.params.index === 3) {
+    if (props.route.params.index === 0) {
+      props.route.params.onNavigateBack && props.route.params.onNavigateBack(finalDestObj.title);
+      dispatch(ReduxActions.setUserFinalDestAction({ finalDestObj }))
+      NavigationService.NavigationActions.common_actions.goBack();
+    } else if (props.route.params.index === 1) {
+      props.route.params.onNavigateBack && props.route.params.onNavigateBack(finalDestObj.title);
+      NavigationService.NavigationActions.common_actions.goBack();
+    }
+    else if (props.route.params.index === 3) {
       dispatch(ReduxActions.setUserFinalDestAction({ finalDestObj }))
       NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.AddAddress.screen_name, {
         finalDestObj
       })
     } else {
-      props.route.params.onNavigateBack && props.route.params.onNavigateBack(finalDestObj.placeName);
       dispatch(ReduxActions.setUserFinalDestAction({ finalDestObj }))
-      NavigationService.NavigationActions.common_actions.goBack();
+      NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.AddAddress.screen_name, {
+        finalDestObj
+      })
     }
   }
 

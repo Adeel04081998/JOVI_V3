@@ -40,10 +40,8 @@ export default (props) => {
   const mapView = useRef(null)
   const placeNameRef = useRef(null)
   const coordinatesRef = useRef(null)
-  const [ready, setMapReady] = useState(Platform.OS === "ios" ? true : false)
+  const [ready, setMapReady] = useState(false)
   const [region, setRegion] = useState(sharedStartingRegionPK)
-
-
 
 
   /******************************************* END OF VARIABLE INITIALIZATION **********************************/
@@ -73,15 +71,14 @@ export default (props) => {
   };
 
   const onMapReady = (e) => {
-    if (ready) {
-      setMapReady(true);
-    } else {
+    if (!ready) {
       setMapReady(true);
     }
   };
 
 
   const onRegionChange = (region) => {
+    // setPlaceName('')
   };
 
 
@@ -99,7 +96,9 @@ export default (props) => {
       await hybridLocationPermission();
     }
     locationHandler();
-    getCurrentPosition()
+    setTimeout(() => {
+      getCurrentPosition()
+    }, 500);
   }, [ready]);
 
 
@@ -175,11 +174,14 @@ export default (props) => {
 
   const rendermarkers = () => {
     return (
-      <VectorIcon name="map-marker"
-        type="FontAwesome"
+      // <VectorIcon name="map-marker"
+      //   type="FontAwesome"
+      //   style={styles.marker}
+      //   size={40}
+      //   color={colors.primary} />
+      <SvgXml xml={svgs.pinMap()}
         style={styles.marker}
-        size={40}
-        color={colors.primary} />
+      />
     )
   }
 
@@ -257,12 +259,15 @@ export default (props) => {
         onPress={async () => {
           const { latitude, longitude } = coordinatesRef.current
           let adrInfo = await addressInfo(latitude, longitude)
-          placeNameRef.current = adrInfo
-          setPlaceName(adrInfo)
+          placeNameRef.current = adrInfo.address
+          setPlaceName(adrInfo.address)
           let placeObj = {
-            placeName: placeNameRef.current,
+            title: placeNameRef.current,
             latitude,
-            longitude
+            longitude,
+            latitudeDelta: LATITUDE_DELTA,
+            longitudeDelta: LONGITUDE_DELTA,
+            city: adrInfo.city
           }
           props.onConfirmLoc(placeObj)
         }

@@ -124,11 +124,10 @@ export default (props) => {
 
     const rendermarkers = () => {
         return (
-            <VectorIcon name="map-marker"
-                type="FontAwesome"
+            <SvgXml xml={svgs.pinMap()}
                 style={styles.marker}
-                size={40}
-                color={colors.primary} />
+            />
+
         )
     }
 
@@ -302,11 +301,11 @@ const mapStyles = (colors, height, width, props) => StyleSheet.create({
         shadowRadius: 4.65,
         elevation: 6,
         position: 'absolute',
-        top: 20,
+        top: 10,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 40 / 2,
-        left: 20
+        left: 10
     }
 });
 

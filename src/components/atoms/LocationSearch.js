@@ -1,3 +1,4 @@
+import { useLinkProps } from "@react-navigation/native";
 import React, { useState, useEffect } from "react";
 import { View, Platform, Text, Image, StyleSheet, Alert, TouchableOpacity, Dimensions, Appearance } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -11,7 +12,7 @@ import configs, { env } from "../../utils/configs";
 import GV from "../../utils/GV";
 import VectorIcon from "./VectorIcon";
 
-export default LocationSearch = ({ handleOnInputChange, locationVal, index, clearInputField, textToShow, onLocationSelected, /* handleAddPitstop, */ handleDeletePitstop, isLast, handleInputFocused, totalPitstops, onSetFavClicked, isFavourite, marginBottom = 5, }) => {
+export default LocationSearch = ({ handleOnInputChange, locationVal, index, clearInputField, textToShow, onLocationSelected, /* handleAddPitstop, */ handleDeletePitstop, isLast, handleInputFocused, totalPitstops, onSetFavClicked, isFavourite, marginBottom = 5,listViewStyles }) => {
 
     const HEIGHT = constants.window_dimensions.height;
     const WIDTH = constants.window_dimensions.width;
@@ -179,7 +180,7 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
                     backgroundColor: "#F8F9FD",
                 },
 
-                listView: {
+                listView: [listViewStyles || {
                     borderWidth: 1,
                     borderColor: "#BBBB",
                     backgroundColor: "#FFF",
@@ -200,7 +201,8 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
                     borderBottomRightRadius: 10,
                     borderBottomLeftRadius: 10,
                     left: -48,
-                },
+                    numberOfLines: 1
+                }],
                 description: {
                     fontSize: 16,
                 },

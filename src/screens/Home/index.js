@@ -69,7 +69,7 @@ export default () => {
         <View style={homeStyles.container}>
             <SafeAreaView style={{ flex: 1 }}>
                 <CustomHeader
-                    finalDest={userReducer?.finalDestObj?.placeName || null}
+                    finalDest={userReducer?.finalDestObj?.title || null}
                     leftIconName={"ios-menu"}
                     onTitlePress={() => {
                         dispatch(ReduxActions.setModalAction({
