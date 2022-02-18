@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Appearance, StyleSheet, Platform, Animated, Easing } from 'react-native';
 import constants from '../../res/constants';
@@ -14,12 +15,15 @@ export default (props) => {
     const [animatedValue, setAnimatedValue] = useState(new Animated.Value(0))
     const [active, toggleActive] = useState(false);
 
+    console.log('active', active);
     const onPressParentEvent = (bool) => {
+        console.log('bool', bool);
         toggleActive(bool);
         props.onToggleSwitch(bool)
     }
     const onPress = () => {
         if (active) {
+            console.log("1");
             Animated.timing(animatedValue, {
                 toValue: 0,
                 duration: 200,
@@ -30,21 +34,24 @@ export default (props) => {
                     onPressParentEvent(false)
                 }
             })
-            return
+        } else {
+            console.log("2");
+
+            Animated.timing(animatedValue, {
+                toValue: width / 1.8,
+                duration: 200,
+                easing: Easing.ease,
+                useNativeDriver: true
+            }).start((finished) => {
+                if (finished && props.onToggleSwitch) {
+                    onPressParentEvent(true)
+                }
+            })
         }
-        Animated.timing(animatedValue, {
-            toValue: width / (props.toValue||1.8) ,
-            duration: 200,
-            easing: Easing.ease,
-            useNativeDriver: true
-        }).start((finished) => {
-            if (finished && props.onToggleSwitch) {
-                onPressParentEvent(true)
-            }
-        })
+
 
     }
-    const width = props.width|| 85;
+    const width = props.width || 85;
     const height = props.height || 40;
     const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
     const animatedStyles = {
@@ -55,17 +62,17 @@ export default (props) => {
     return (
         <AnimatedTouchable activeOpacity={1} style={[
             active ?
-                 switchStyles.switchContainerActive
-                : switchStyles.switchContainerInActive
+                props.switchContainerActive || switchStyles.switchContainerActive
+                : props.switchContainerInActive || switchStyles.switchContainerInActive
             , {
                 width,
                 height
-            }, props.containerStyle]} onPress={onPress} >
+            },]} onPress={onPress} >
             <View style={[
                 active ?
-                    switchStyles.subSwitchContainerActive :
-                    switchStyles.subSwitchContainerInActive, animatedStyles, {
-                }, props.toggleStyle]} >
+                    props.subSwitchContainerActive || switchStyles.subSwitchContainerActive :
+                    props.subSwitchContainerInActive || switchStyles.subSwitchContainerInActive, animatedStyles, {
+                },]} >
 
             </View>
         </AnimatedTouchable>

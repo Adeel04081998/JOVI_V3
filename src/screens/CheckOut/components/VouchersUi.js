@@ -5,6 +5,8 @@ import svgs from '../../../assets/svgs'
 import Text from '../../../components/atoms/Text'
 import TouchableOpacity from '../../../components/atoms/TouchableOpacity'
 import View from '../../../components/atoms/View'
+const TOPSPACING = 8
+
 export default ({ }) => {
 
     let cuts = [{
@@ -35,7 +37,8 @@ export default ({ }) => {
                 paddingVertical: 15,
                 borderRadius: 10,
                 flexDirection: 'row',
-                marginVertical: 15,
+                margin: TOPSPACING,
+                // marginBottom:0,
                 alignItems: 'center',
                 justifyContent: 'space-between'
             }}

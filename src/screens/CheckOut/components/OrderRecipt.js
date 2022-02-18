@@ -16,7 +16,7 @@ const RECEIPTPiTSTOPMAINTXTCOLOR = "#6B6B6B"
 const subDetailListTxtColor = "#6B6B6B"
 const subDetailListTxtFontSize = 12
 const subDetailListTxtFontFamily = 'PoppinsRegular'
-const CONTAINERS_MARGIN = 10
+const TOPSPACING = 10
 
 export default ({ cartReducer = [], colors = {}, secondData = [] }) => {
     const [showDetails, setShowDetails] = useState(false)
@@ -110,7 +110,7 @@ export default ({ cartReducer = [], colors = {}, secondData = [] }) => {
     }
 
     return (
-        <AnimatedView style={[{ backgroundColor: 'white', flex: 1, marginVertical: CONTAINERS_MARGIN, borderRadius: 8, ...AppStyles.shadow, elevation: 2 }]}>
+        <AnimatedView style={[{ backgroundColor: 'white', flex: 1, margin: TOPSPACING, borderRadius: 8, ...AppStyles.shadow, elevation: 2 }]}>
             <View style={{ flexDirection: 'row', margin: 12, marginBottom: 0, }}>
                 <SvgXml xml={svgs.compliance()}></SvgXml>
                 <Text style={{ color: '#6D51BB', fontSize: 14, paddingHorizontal: 10 }} fontFamily='PoppinsSemiBold'>Order Receipt</Text>
