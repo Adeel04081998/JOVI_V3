@@ -4,6 +4,7 @@ export default {
     "CLEAR_USER_ACTION": "clear_user",
     // MODAL ACTIONS
     "SET_MODAL": "set_modal",
+    "CLOSE_MODAL": "close_modal",
     // CART ACTIONS
     "SET_CART_ACTION": "set_cart",
     "CLEAR_CART_ACTION": "clear_clear",

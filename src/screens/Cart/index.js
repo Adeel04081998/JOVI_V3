@@ -189,7 +189,7 @@ export default () => {
     product,
     incDecDelHandler,
   }) => {
-    const { title, description, images,_itemPriceWithoutDiscount, _totalDiscount,_itemPrice, quantity } = product;
+    const { title, description,notes, images,_itemPriceWithoutDiscount, _totalDiscount,_itemPrice, quantity } = product;
     if (isJOVI) {
       return <View style={{ flexDirection: 'row' }}>
         <View style={{ height: 70, width: 70, borderRadius: 10, margin: 5 }}>

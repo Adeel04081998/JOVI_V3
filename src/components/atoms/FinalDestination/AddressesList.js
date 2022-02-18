@@ -34,7 +34,7 @@ export default (props) => {
 
     const onConfirmAddress = () => {
         let finalDestObj = adrObjRef.current
-        dispatch(ReduxActions.setModalAction({ visible: false }))
+        dispatch(ReduxActions.closeModalAction());
         dispatch(ReduxActions.setUserFinalDestAction({ finalDestObj }))
         setState(initState)
     }
@@ -54,7 +54,7 @@ export default (props) => {
     }
 
     const onTitlePress = (index) => {
-        dispatch(ReduxActions.setModalAction({ visible: false }))
+        dispatch(ReduxActions.closeModalAction());
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { onNavigateBack: (placeName) => {}, index })
     }
 

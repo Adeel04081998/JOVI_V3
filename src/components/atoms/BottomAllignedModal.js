@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ReduxActions from '../../redux/actions';
 import AnimatedKeyboardAwareScroll from '../molecules/AnimatedKeyboardAwareScroll';
 import AddressesList from './FinalDestination/AddressesList';
+import actions from '../../redux/actions';
 
 const AnimatedToucableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 export default (props) => {
@@ -12,14 +13,18 @@ export default (props) => {
     const HEIGHT = constants.window_dimensions.height;
     const WIDTH = constants.window_dimensions.width;
     const dispatch = useDispatch();
-    const { visible, ModalContent } = useSelector(state => state.modalReducer)
+    const { visible, ModalContent, closeModal } = useSelector(state => state.modalReducer)
     const modalAnimation = (toValue = 1) => {
         Animated.timing(openAnimation, {
             toValue: toValue,
             duration: 600,
             easing: Easing.ease,
             useNativeDriver: true
-        }).start();
+        }).start(finished=>{
+            if(finished && toValue === 0){
+                dispatch(actions.setModalAction({visible:false}));
+            }
+        });
     }
 
     React.useEffect(() => {
@@ -29,6 +34,11 @@ export default (props) => {
             modalAnimation(0);
         }
     }, []);
+    React.useEffect(()=>{
+        if(closeModal){
+            modalAnimation(0);
+        }
+    },[closeModal]);
     let modalContentToRender = null;
     if (ModalContent) {
         modalContentToRender = ModalContent
@@ -43,7 +53,7 @@ export default (props) => {
 
     return (
         <View style={{ position: 'absolute', height: HEIGHT, width: WIDTH, top: 0, zIndex: 999 }}>
-            <AnimatedToucableOpacity activeOpacity={1} onPress={() => { dispatch(ReduxActions.setModalAction({ visible: false })) }} style={{ flex: 1, opacity: openAnimation, backgroundColor: 'rgba(0,0,0,0.5)' }} />
+            <AnimatedToucableOpacity activeOpacity={1} onPress={() => { dispatch(ReduxActions.closeModalAction()) }} style={{ flex: 1, opacity: openAnimation, backgroundColor: 'rgba(0,0,0,0.5)' }} />
 
             <Animated.View
                 style={{
