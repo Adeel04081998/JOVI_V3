@@ -439,6 +439,7 @@ export const sharedAddUpdatePitstop = (
                 let currentPitstopItems = pitstops[pitstopIdx].checkOutItemsListVM;
                 let itemIndex = currentPitstopItems.findIndex(item => item[actionKey] === upcomingItemDetails[actionKey])
                 if (itemIndex !== -1 && !forceAddNewItem) {
+                    console.log('[ITEM FOUND]', currentPitstopItems[itemIndex]);
                     if (!upcomingItemDetails.quantity) {
                         console.log('[QUANTITY LESS THAN OR EQUAL TO ZERO]');
                         if ((currentPitstopItems.length - 1) <= 0) pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIdx);

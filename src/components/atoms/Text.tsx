@@ -14,6 +14,7 @@ const defaultProps={
 }
 
 const Text =(props: Props) =>{
+  if(!props.children) return null;
   return (
   <RNText 
   {...props}
