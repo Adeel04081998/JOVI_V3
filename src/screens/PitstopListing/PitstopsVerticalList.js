@@ -235,7 +235,7 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
     return (
         <View style={styles.container}>
             <SafeAreaView style={{ flex: 1, }}>
-                <CustomHeader defaultColor={colors.primary} onLeftIconPress={onBackPress} leftIconType={'AntDesign'} leftIconName={'arrowleft'} />
+                <CustomHeader defaultColor={colors.primary} onLeftIconPress={onBackPress}  />
                 <View style={{ margin: SPACING_VERTICAL, paddingBottom: 160 }}>
                     <View style={{ ...styles.container, marginVertical: SPACING_VERTICAL }} >
                         <Text style={styles.mainText} >{listingObj?.header ?? 'Vendors'}</Text>
