@@ -51,7 +51,7 @@ export default () => {
     // sharedGetServiceCharges()
   }, [])
   const incDecDelHandler = (pitstopDetails, pitstopIndex = null, isDeletePitstop = false) => {
-    sharedAddUpdatePitstop({ ...pitstopDetails, pitstopIndex }, isDeletePitstop);
+    sharedAddUpdatePitstop({ ...pitstopDetails }, isDeletePitstop, [], false, true);
   };
   const PitstopsCard = ({ pitstop }) => {
     const {
@@ -188,7 +188,7 @@ export default () => {
     product,
     incDecDelHandler,
   }) => {
-    const { title, notes, images, price, gstAddedPrice, quantity } = product;
+    const { title, description, images,_itemPriceWithoutDiscount, _totalDiscount,_itemPrice, quantity } = product;
     if (isJOVI) {
       return <View style={{ flexDirection: 'row' }}>
         <View style={{ height: 70, width: 70, borderRadius: 10, margin: 5 }}>
@@ -289,13 +289,16 @@ export default () => {
                 <Text
                   style={{ color: dynamiColors.primary, fontSize: 12 }}
                   fontFamily="PoppinsMedium">
-                  {renderPrice(price)}
+                  {renderPrice(_itemPrice)}
                 </Text>
-                <Text
-                  style={{ color: dynamiColors.grey, fontSize: 12, textDecorationLine: "line-through" }}
-                  fontFamily="PoppinsMedium">
-                  {renderPrice(gstAddedPrice)}
-                </Text>
+                {
+                  _totalDiscount > 0 &&
+                  <Text
+                    style={{ color: dynamiColors.grey, fontSize: 12, textDecorationLine: "line-through" }}
+                    fontFamily="PoppinsMedium">
+                    {renderPrice(_itemPriceWithoutDiscount)}
+                  </Text>
+                }
               </View>
               <IncDec
                 quantity={quantity}

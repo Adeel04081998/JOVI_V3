@@ -4,6 +4,7 @@ import constants from '../../res/constants';
 import { useDispatch, useSelector } from 'react-redux';
 import ReduxActions from '../../redux/actions';
 import AnimatedKeyboardAwareScroll from '../molecules/AnimatedKeyboardAwareScroll';
+import AddressesList from './FinalDestination/AddressesList';
 
 const AnimatedToucableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 export default (props) => {
@@ -31,6 +32,13 @@ export default (props) => {
     let modalContentToRender = null;
     if (ModalContent) {
         modalContentToRender = ModalContent
+    } else {
+        modalContentToRender = <AddressesList finalDestFunc={(placeName) => {
+            // setState(pre => ({
+            //     ...pre,
+            //     finalDestTitle: placeName
+            // }))
+        }} />
     }
 
     return (

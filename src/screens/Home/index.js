@@ -74,12 +74,7 @@ export default () => {
                     onTitlePress={() => {
                         dispatch(ReduxActions.setModalAction({
                             visible: true,
-                            ModalContent: <AddressesList finalDestFunc={(placeName) => {
-                                setState(pre => ({
-                                    ...pre,
-                                    finalDestTitle: placeName
-                                }))
-                            }} />
+                            ModalContent: <AddressesList />
                         }))
                     }}
                     onLeftIconPress={null}

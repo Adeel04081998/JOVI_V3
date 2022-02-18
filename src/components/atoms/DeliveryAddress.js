@@ -1,9 +1,12 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import { SvgXml } from "react-native-svg";
+import { useDispatch, useSelector } from "react-redux";
+import ReduxActions from "../../redux/actions";
 import { initColors } from "../../res/colors";
 import sharedStyles from "../../res/sharedStyles";
 import Text from "./Text";
+import TouchableScale from "./TouchableScale";
 import View from "./View";
 
 const pin_icon = () => `<svg xmlns="http://www.w3.org/2000/svg" width="14.948" height="20.99" viewBox="0 0 14.948 20.99">
@@ -36,6 +39,10 @@ export default ({ instructions = "" }) => {
     const ICON_WIDTH = 20;
     const styles = _styles(colors);
     const colors = initColors;
+    const userReducer = useSelector(store => store.userReducer);
+    const dispatch = useDispatch();
+    console.log("[DeliveryAddress].userReducer", userReducer);
+    const finalDestination = userReducer.finalDestObj;
     return (
         <View
             style={{
@@ -63,7 +70,13 @@ export default ({ instructions = "" }) => {
                         Delivery Address
             </Text>
                 </View>
-                <SvgXml xml={edit_icon()} height={20} width={20} />
+                <TouchableScale onPress={() => dispatch(
+                    ReduxActions.setModalAction({
+                        visible: true,
+                    })
+                )}>
+                    <SvgXml xml={edit_icon()} height={20} width={20} />
+                </TouchableScale>
             </View>
 
             <BottomLine />
@@ -72,11 +85,12 @@ export default ({ instructions = "" }) => {
                     style={{ color: colors.primary, fontSize: 14 }}
                     fontFamily="PoppinsSemiBold"
                     numberOfLines={1}>
-                    Office
-          </Text>
+                    {finalDestination.addressTypeStr}
+                </Text>
                 <Text style={{ color: colors.black, fontSize: 11 }} numberOfLines={2}>
-                    2nd floor, pakland plaza, I8 Markaz, Islamabad
-          </Text>
+                    {finalDestination.title}
+
+                </Text>
             </View>
             {
                 instructions ?

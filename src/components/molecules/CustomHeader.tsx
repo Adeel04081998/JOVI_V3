@@ -109,11 +109,10 @@ const defaultProps = {
 const CustomHeader = (props: Props) => {
     const DEFAULT_COLOR = props.defaultColor;//REDUX.THEME.background;
     const styles = headerStyles(DEFAULT_COLOR);
-    const finalDestination = props.finalDest ? props.finalDest : 'Set your location';
-
-
 
     const cartReducer = useSelector((store: any) => store.cartReducer);
+    const userReducer = useSelector((store: any) => store.userReducer);
+    const finalDestination = userReducer.finalDestObj ? userReducer.finalDestObj : {title: 'Set your location'};
 
     // React.useEffect(()=>{
 
@@ -135,7 +134,7 @@ const CustomHeader = (props: Props) => {
                     <VectorIcon name={"chevron-down"} type={"EvilIcons"} />
                 </View>
                 <Text style={styles.finalDestinationText} numberOfLines={1}>
-                    {VALIDATION_CHECK(finalDestination) ? finalDestination : `Set your location`}
+                    {VALIDATION_CHECK(finalDestination.title) ? finalDestination.title : `Set your location`}
                     {/* {"version-2.1"} */}
                 </Text>
             </TouchableOpacity>
