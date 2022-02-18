@@ -17,11 +17,12 @@ import ROUTES from '../../navigations/ROUTES';
 import sharedStyles from '../../res/sharedStyles';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES } from '../../utils/GV';
-import Progress from './components/Progress';
+import SetpProgress from '../../components/atoms/StepProgress';
 import stylesheet from './styles';
 import {
   edit_icon, pencil_icon, percent_icon, pin_icon
 } from './svgs/cart_svgs';
+import DeliveryAddress from "../../components/atoms/DeliveryAddress";
 
 const BottomLine = () => (
   <View
@@ -284,14 +285,11 @@ export default () => {
                 fontFamily="PoppinsMedium">
                 {renderPrice(price)}
               </Text>
-              {
-                gstAddedPrice &&
-                <Text
-                  style={{ color: dynamiColors.grey, fontSize: 12, textDecorationLine: "line-through" }}
-                  fontFamily="PoppinsMedium">
-                  {renderPrice(gstAddedPrice)}
-                </Text>
-              }
+              <Text
+                style={{ color: dynamiColors.grey, fontSize: 12, textDecorationLine: "line-through" }}
+                fontFamily="PoppinsMedium">
+                {renderPrice(gstAddedPrice)}
+              </Text>
             </View>
             {
               !isJOVI &&
@@ -369,7 +367,9 @@ export default () => {
     return (
       <View style={{}}>
         {row('Subtotal', subTotal, true)}
-        {row('Discount', discount)}
+        {
+          discount ? row('Discount', discount) : null
+        }
         {row('Service Charges', serviceCharges)}
         <BottomLine />
         {row('Total', total, true)}
@@ -388,10 +388,10 @@ export default () => {
           // borderBottomColor: ,
         }}
       />
-      <Progress styles={cartStyles} />
+      <SetpProgress isCart={true} />
       <ScrollView contentContainerStyle={{ padding: 10 }} style={{ flex: 1 }}>
         <View style={{ marginHorizontal: 0 }}>
-          <Address />
+          <DeliveryAddress />
           <Text style={{ padding: 10 }}>Hold text would be here...</Text>
           {(cartReducer.pitstops || []).map((pitstop, pitstopIndex) => (
             <PitstopsCard

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { LayoutChangeEvent, StyleSheet } from 'react-native';
 import Text from '../../../components/atoms/Text';
 import View from '../../../components/atoms/View';
 import AnimatedFlatlist from '../../../components/molecules/AnimatedScrolls/AnimatedFlatlist';
@@ -24,6 +24,9 @@ interface Props {
 
     pitstopType?: any;
     marketID?: any;
+
+    onHeaderLayout?: (event: LayoutChangeEvent) => void;
+
 }
 
 const defaultProps = {
@@ -39,7 +42,6 @@ const defaultProps = {
 const ProductMenuHeader = (props: Props) => {
     const colors = props.colors;
     const styles = stylesFunc(colors);
-    console.log('props.headerItem ', props.headerItem);
 
     return (
         <React.Fragment>
@@ -50,6 +52,7 @@ const ProductMenuHeader = (props: Props) => {
                 colors={colors}
                 item={props.headerItem}
                 hideHeader={props.hideHeader}
+                onLayout={(e)=>{props.onHeaderLayout && props.onHeaderLayout(e)}}
             />
 
 
