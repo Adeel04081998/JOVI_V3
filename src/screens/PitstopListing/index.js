@@ -58,7 +58,7 @@ const PistopListing = React.memo(({ route, }) => {
     // const promotionsReducer = {};
     const promotionsReducer = useSelector(state => state.promotionsReducer);
     const categoriesTagsReducer = useSelector(state => state.categoriesTagsReducer);
-    const [categoryAnimation,setCategoryAnimation] = React.useState({
+    const [categoryAnimation, setCategoryAnimation] = React.useState({
         allRestaurant: false,
     });
     const pitstopSpecific = {
@@ -95,9 +95,10 @@ const PistopListing = React.memo(({ route, }) => {
         averagePrice: (val, currentVal) => { return val !== null && val.length > 0 && val[0] === currentVal }
     }
     const onSearchHandler = (val) => {
-        const isDisSelect = val && val === '';
+        const isDisSelect = val === '';
         setState(pre => ({ ...pre, filters: { ...pre.filters, search: isDisSelect ? '' : val } }));
         filtersRef.current.search = isDisSelect ? '' : val;
+        allRestaurantAnimation(isDisSelect ? 1 : 0);
     };
     const onPressFilter = (item, updatedFilters = {}) => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.PitstopsVerticalList.screen_name, { pitstopType: pitstopType, updatedFilters, listingObj: { ...item } });
@@ -111,8 +112,8 @@ const PistopListing = React.memo(({ route, }) => {
         allRestaurantAnimation(isAllDisSelected ? 1 : 0);
     }
     const allRestaurantAnimation = (toValue = 1) => {
-        if(toValue === 1){
-            setCategoryAnimation(pre=>({...pre,allRestaurant:false}));
+        if (toValue === 1) {
+            setCategoryAnimation(pre => ({ ...pre, allRestaurant: false }));
         }
         Animated.timing(scaleAnimation, {
             toValue: toValue,
@@ -120,8 +121,8 @@ const PistopListing = React.memo(({ route, }) => {
             useNativeDriver: true,
             easing: Easing.ease
         }).start(finished => {
-            if(finished&&toValue===0){
-                setCategoryAnimation(pre=>({...pre,allRestaurant:true}));
+            if (finished && toValue === 0) {
+                setCategoryAnimation(pre => ({ ...pre, allRestaurant: true }));
             }
         });
     }
@@ -143,6 +144,8 @@ const PistopListing = React.memo(({ route, }) => {
                 averagePrice: updatedFilters.activeAvergePrice
             }
         }));
+        const isAllDisSelected = filtersRef.current.averagePrice === null && filtersRef.current.cuisines.length === 0 && filtersRef.current.filter.length === 0;
+        allRestaurantAnimation(isAllDisSelected ? 1 : 0);
         console.log('updatedFilters', updatedFilters);
     }
     const goToFilters = () => {
@@ -194,7 +197,7 @@ const PistopListing = React.memo(({ route, }) => {
     </View>);
     const renderCarouselNdListing = () => (<Animated.View style={{
         opacity: scaleAnimation,
-        display:categoryAnimation.allRestaurant === true? 'none':'flex',
+        display: categoryAnimation.allRestaurant === true ? 'none' : 'flex',
         zIndex: 80,
         transform: [{
             translateY: scaleAnimation.interpolate({
@@ -221,7 +224,7 @@ const PistopListing = React.memo(({ route, }) => {
     </Animated.View>);
     const renderAllRestaurantsListing = () => (<Animated.View style={{
         ...listingStyles.wrapper,
-        marginTop:-10
+        marginTop: -10
     }}>
         <AllPitstopsListing
             config={currentPitstopType}
