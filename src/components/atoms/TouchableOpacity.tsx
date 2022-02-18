@@ -1,7 +1,7 @@
 import * as React from "react";
-import { TouchableOpacity as RNTouchableOpacity, Animated, GestureResponderEvent, } from "react-native";
+import { TouchableOpacity as RNTC, Animated, GestureResponderEvent, } from "react-native";
 import debounce from 'lodash.debounce'; // 4.0.8
-
+const RNTouchableOpacity = Animated.createAnimatedComponent(RNTC);
 type Props = React.ComponentProps<typeof RNTouchableOpacity> & {
   children?: any;
   wait?: number,

@@ -10,14 +10,13 @@ export const PITSTOP_TYPES = {
     RESTAURANT: 4,
     JOVI_MART: 5,
 };
-
 export const PITSTOP_TYPES_INVERTED = {
-     0:'DEFAULT',
-     1:'SUPER_MARKET',
-     2:'JOVI',
-     3:'PHARMACY',
-     4:'RESTAURANT',
-     5:'JOVI_MART',
+    0:'DEFAULT',
+    1:'SUPER_MARKET',
+    2:'JOVI',
+    3:'PHARMACY',
+    4:'RESTAURANT',
+    5:'JOVI_MART',
 };
 export default {
     BASE_URL: initUrlRef,
