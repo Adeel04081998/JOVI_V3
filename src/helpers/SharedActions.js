@@ -350,13 +350,14 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
             _pitstop.vendorMaxEstTime = vendorMaxEstTime;
             _pitstop.checkOutItemsListVM.map((product, j) => {
 
-                // gst += (product.gstAmount || 0) * product.quantity;
-                // discount += (product.discountAmount || 0) * product.quantity;
-                // _pitTotal = ((product.gstAddedPrice || product.itemPrice || 0) + (product.totalAddOnPrice || 0)) * product.quantity;
+                gst += (product.gstAmount || 0) * product.quantity;
+                discount += (product.discountAmount || 0) * product.quantity;
+                _pitTotal = ((product.gstAddedPrice || product.itemPrice || 0) + (product.totalAddOnPrice || 0)) * product.quantity;
 
-                gst += product._totalGst * product.quantity;
-                discount += product._totalDiscount * product.quantity;
-                _pitTotal = product._itemPrice * product.quantity;
+                // gst += product._totalGst * product.quantity;
+                // discount += product._totalDiscount * product.quantity;
+                // _pitTotal = product._itemPrice * product.quantity;
+
                 subTotal += _pitTotal + discount;
             })
             _pitstop.individualPitstopTotal = _pitTotal;

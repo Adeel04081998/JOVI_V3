@@ -189,7 +189,7 @@ export default () => {
     product,
     incDecDelHandler,
   }) => {
-    const { title, description,notes, images,_itemPriceWithoutDiscount, _totalDiscount,_itemPrice, quantity } = product;
+    const { title, description, notes, images, _itemPriceWithoutDiscount, _totalDiscount, _itemPrice, quantity } = product;
     if (isJOVI) {
       return <View style={{ flexDirection: 'row' }}>
         <View style={{ height: 70, width: 70, borderRadius: 10, margin: 5 }}>
@@ -401,7 +401,7 @@ export default () => {
         }}
       />
       <View style={{ top: -10 }}>
-        <SetpProgress isCart={true} />
+        <SetpProgress maxHighlight={2} />
       </View>
       <ScrollView contentContainerStyle={{ padding: 10 }} style={{ flex: 1 }}>
         <View style={{ marginHorizontal: 0 }}>
@@ -462,7 +462,7 @@ export default () => {
         <Totals />
       </ScrollView>
       <View style={{ flexDirection: 'row' }}>
-        {['Add Pitstop', 'Checkout'].map(title => (
+        {['Add Pitstop', 'Checkout'].map((title, idx) => (
           <TouchableScale
             key={title}
             style={{
@@ -471,7 +471,11 @@ export default () => {
               backgroundColor: colors.primary,
               borderRadius: 10,
               marginHorizontal: 3,
-            }} >
+            }}
+            onPress={() => {
+              NavigationService.NavigationActions.common_actions.navigate(idx > 0 ? ROUTES.APP_DRAWER_ROUTES.CheckOut.screen_name : ROUTES.APP_DRAWER_ROUTES.Home.screen_name)
+            }}
+          >
             <Text style={{ textAlign: 'center', color: colors.white }}>
               {title}
             </Text>

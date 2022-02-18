@@ -71,11 +71,7 @@ export default ({ instructions = "", contianerStyle = {}, addressTxtStyle = {} }
                     </Text>
 
                 </View>
-                <TouchableScale onPress={() => dispatch(
-                    ReduxActions.setModalAction({
-                        visible: true,
-                    })
-                )}>
+                <TouchableScale onPress={() => dispatch(ReduxActions.setModalAction({ visible: true }))}>
                     <SvgXml xml={edit_icon()} height={20} width={20} />
                 </TouchableScale>
             </View>

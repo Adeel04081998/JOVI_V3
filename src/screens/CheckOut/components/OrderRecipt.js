@@ -71,14 +71,14 @@ export default ({ cartReducer = [], colors = {}, secondData = [] }) => {
                     <View style={{ flexDirection: "row", flex: 1 }}>
                         <Text style={{ fontSize: 13, color: '#4D4D4D' }} fontFamily='PoppinsRegular'>GST</Text>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
-                            <Text style={{ justifyContent: 'flex-end', fontSize: 13, color: '#4D4D4D' }} fontFamily='PoppinsRegular'>{gst}</Text>
+                            <Text style={{ justifyContent: 'flex-end', fontSize: 13, color: '#4D4D4D' }} fontFamily='PoppinsRegular'>{`${gst}`}</Text>
                         </View>
                     </View>
                     <View style={{ flexDirection: "row", flex: 1 }}>
                         <Text style={{ fontSize: 13, color: '#4D4D4D' }} fontFamily='PoppinsRegular' >Service Charges</Text>
                         <Text style={{ fontSize: 13, color: '#4D4D4D' }} fontFamily='PoppinsRegular'>{`(incl S.T ${st})`}</Text>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
-                            <Text style={{ justifyContent: 'flex-end', fontSize: 13, color: '#4D4D4D' }} fontFamily='PoppinsRegular'>{serviceCharges}</Text>
+                            <Text style={{ justifyContent: 'flex-end', fontSize: 13, color: '#4D4D4D' }} fontFamily='PoppinsRegular'>{`${serviceCharges}`}</Text>
                         </View>
                     </View>
 

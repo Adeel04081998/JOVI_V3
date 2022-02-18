@@ -37,15 +37,16 @@ export default () => {
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED['10']], Appearance.getColorScheme() === "dark");
     const checkOutStyles = StyleSheet.styles(colors)
     const cartReducer = useSelector(store => store.cartReducer);
+    const userReducer = useSelector(store => store.userReducer);
     const totalPitstop = cartReducer.pitstops.length ?? ""
-    const estimatedDeliveryTime = "Now 30 - 45 min"
+    const estimatedDeliveryTime = cartReducer.estTimeStr || "Now 30 - 45 min"
     const [vouchersList, setVouchersList] = useState([])
     const [switchVal, setSwitchVal] = useState(false)
     const [paymentMode, setpaymentMode] = useState("Wallet")
     const paymentMethod = "Payment Method"
     const paymentType = "Wallet"
-    const walletAmount = "1500"
-    const instructionForRider = "Call me when you reach on the address"
+    const walletAmount = userReducer.wallet || "1500"
+    const instructionForRider = cartReducer.riderInstructions || "Call me when you reach on the address"
 
     const goBack = () => {
         NavigationService.NavigationActions.common_actions.goBack()
