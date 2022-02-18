@@ -6,6 +6,7 @@ export default {
     url_dev: "https://dev-api.jovi-app.com",
     url_staging: "https://staging-api.jovi-app.com",
     url_live: "https://live-api.jovi-app.com",
+    url_ngrok: "https://zeeshan.ngrok.io",
     screen_dimensions: Dimensions.get("screen"),
     window_dimensions: Dimensions.get("window"),
     horizontal_margin: 10,
