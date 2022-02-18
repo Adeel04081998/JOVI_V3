@@ -260,7 +260,7 @@ export default ({ navigation, route }) => {
 
 
     const onLocationPress = () => {
-        common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { onNavigateBack: cb })
+        common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { onNavigateBack:(placeName) => cb(placeName), index: 1 })
     }
     const cb = (resp) => {
         console.log('resp ==>>', resp);

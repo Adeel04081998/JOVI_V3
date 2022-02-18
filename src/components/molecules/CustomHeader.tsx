@@ -49,6 +49,7 @@ type Props = React.ComponentProps<typeof RNView> & {
 
     //CENTER PROP's
     title?: string;
+    finalDest?: string,
     onTitlePress?: (event: GestureResponderEvent) => void;
     titleStyle?: StyleProp<TextStyle>;
     hideFinalDestination?: boolean;
@@ -58,6 +59,8 @@ type Props = React.ComponentProps<typeof RNView> & {
 
 const defaultProps = {
     containerStyle: {},
+
+    
     //LEFT SIDE PROP's
     leftCustom: undefined,
     leftDot: false,
@@ -95,8 +98,9 @@ const defaultProps = {
     title: null,
     onTitlePress: undefined,
     titleStyle: {},
-    hideFinalDestination: false,
-    defaultColor: "#6D51BB",
+    hideFinalDestination:false,
+    defaultColor:"#6D51BB",
+    finalDest: ''
     //CENTER PROP's ENDING
 
 
@@ -105,11 +109,10 @@ const defaultProps = {
 const CustomHeader = (props: Props) => {
     const DEFAULT_COLOR = props.defaultColor;//REDUX.THEME.background;
     const styles = headerStyles(DEFAULT_COLOR);
-    const finalDestination = 'Set your location';
-
-
 
     const cartReducer = useSelector((store: any) => store.cartReducer);
+    const userReducer = useSelector((store: any) => store.userReducer);
+    const finalDestination = userReducer.finalDestObj ? userReducer.finalDestObj : {title: 'Set your location'};
 
     // React.useEffect(()=>{
 
@@ -131,8 +134,8 @@ const CustomHeader = (props: Props) => {
                     <VectorIcon name={"chevron-down"} type={"EvilIcons"} />
                 </View>
                 <Text style={styles.finalDestinationText} numberOfLines={1}>
-                    {/* {VALIDATION_CHECK(finalDestination) ? finalDestination : `Set your location`} */}
-                    {"version-2.1"}
+                    {VALIDATION_CHECK(finalDestination.title) ? finalDestination.title : `Set your location`}
+                    {/* {"version-2.1"} */}
                 </Text>
             </TouchableOpacity>
         )
@@ -155,6 +158,7 @@ const CustomHeader = (props: Props) => {
     };//end of _renderDot
     return (
         <View style={[styles.primaryContainer, props.containerStyle]}>
+
 
             {/* ****************** Start of LEFT SIDE ICON ****************** */}
             <View style={styles.sideContainer}>
@@ -181,6 +185,7 @@ const CustomHeader = (props: Props) => {
             </View>
 
             {/* ****************** End of LEFT SIDE ICON ****************** */}
+
 
             {/* ****************** Start of CENTER ****************** */}
             <View style={styles.middleContainer}>

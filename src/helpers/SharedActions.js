@@ -349,10 +349,15 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
             vendorMaxEstTime = sharedCalculateMaxTime(_pitstop.pitstopType === PITSTOP_TYPES.RESTAURANT ? _pitstop.checkOutItemsListVM : [], "estimatePrepTime")
             _pitstop.vendorMaxEstTime = vendorMaxEstTime;
             _pitstop.checkOutItemsListVM.map((product, j) => {
-                gst += (product.gstAmount || 0) * product.quantity;
-                discount += (product.discountAmount || 0) * product.quantity;
-                _pitTotal = ((product.gstAddedPrice || product.itemPrice || 0) + (product.totalAddOnPrice || 0)) * product.quantity;
-                subTotal += _pitTotal;
+
+                // gst += (product.gstAmount || 0) * product.quantity;
+                // discount += (product.discountAmount || 0) * product.quantity;
+                // _pitTotal = ((product.gstAddedPrice || product.itemPrice || 0) + (product.totalAddOnPrice || 0)) * product.quantity;
+
+                gst += product._totalGst * product.quantity;
+                discount += product._totalDiscount * product.quantity;
+                _pitTotal = product._itemPrice * product.quantity;
+                subTotal += _pitTotal + discount;
             })
             _pitstop.individualPitstopTotal = _pitTotal;
         }
@@ -382,11 +387,25 @@ export const sharedDiscountsCalculator = (
 export const sharedUniqueIdGenerator = (randomNum = 1000) => {
     return Math.floor(Math.random() * randomNum) + new Date().getTime();
 };
+const checkSameProduct = (currentCheckoutItems, newP) => {
+    let newProductOptionsListIds = newP.selectedOptions.map(item => (item.itemOptionID)).slice().sort();
+    currentCheckoutItems.map((item,i)=>{
+        let isOptionsSame = item.selectedOptions.map(x => (x.itemOptionID)).slice().sort().every(function (value, index) {
+            return value === newProductOptionsListIds[index];
+        });
+        let isNotesSame = item.notes.toString().toLowerCase() === newP.notes.toString().toLowerCase();
+        if(isOptionsSame && isNotesSame){
+            newP = {...newP, quantity: newP.quantity + item.quantity, alreadyExisted: true, checkoutIndex: i };
+        }
+    });
+    return newP;
+}
 export const sharedAddUpdatePitstop = (
     pitstopDetails = {},
     isDeletePitstop = false,
     swappedArray = [],
-    forceAddNewItem = false
+    forceAddNewItem = false,
+    fromCart = false
 ) => {
     if (false) return dispatch(ReduxActionss.clearCartAction({}));
     if (swappedArray.length) return sharedCalculateCartTotals(swappedArray)
@@ -424,7 +443,7 @@ export const sharedAddUpdatePitstop = (
     } else {
         // VENDOR PITSTOPS HANDLING
         const upcomingVendorDetails = pitstopDetails.vendorDetails;
-        const upcomingItemDetails = pitstopDetails.itemDetails;
+        let upcomingItemDetails = pitstopDetails.itemDetails;
         const actionKey = upcomingItemDetails.actionKey || 'checkOutItemID'; //
         const pitstopActionKey = upcomingVendorDetails.actionKey || 'marketID'; //
         console.log('[PITSTOP IDACTION KEY]', pitstopActionKey);
@@ -437,8 +456,21 @@ export const sharedAddUpdatePitstop = (
             if (pitstopIdx !== -1) {
                 console.log('[PITSTOP FOUND]', pitstops[pitstopIdx]);
                 let currentPitstopItems = pitstops[pitstopIdx].checkOutItemsListVM;
-                let itemIndex = currentPitstopItems.findIndex(item => item[actionKey] === upcomingItemDetails[actionKey])
-                if (itemIndex !== -1 && !forceAddNewItem) {
+                let itemIndex = currentPitstopItems.findIndex(item => item[actionKey] === upcomingItemDetails[actionKey]);
+                if(!fromCart){
+                    upcomingItemDetails = checkSameProduct(currentPitstopItems, upcomingItemDetails);
+                }
+                if (upcomingItemDetails.alreadyExisted) {
+                    itemIndex = upcomingItemDetails.checkoutIndex;
+                    console.log('[Update EXISTING CHECKOUT ITEMS]');
+                    if(!upcomingItemDetails.quantity){
+                        console.log('[QUANTITY LESS THAN OR EQUAL TO ZERO]');
+                        if ((currentPitstopItems.length - 1) <= 0) pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIdx);
+                    }else{
+                        currentPitstopItems[itemIndex] = { ...upcomingItemDetails, alreadyExisted: undefined,checkoutIndex: undefined, checkOutItemID: currentPitstopItems[itemIndex].checkOutItemID };
+                        pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
+                    }
+                } else if (itemIndex !== -1 && !forceAddNewItem) {
                     if (!upcomingItemDetails.quantity) {
                         console.log('[QUANTITY LESS THAN OR EQUAL TO ZERO]');
                         if ((currentPitstopItems.length - 1) <= 0) pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIdx);
@@ -486,7 +518,7 @@ export const sharedGetFilters = () => {
     }, res => {
         console.log("[sharedGetFiltersApi].res ====>>", res);
         // dispatch(ReduxActionss.setMessagesAction({ ...res.data, robotJson: data }));
-        dispatch(ReduxActions.setCategoriesTagsAction({ ...res.data }))
+        dispatch(ReduxActions.setCategoriesTagsAction({ ...res?.data }))
 
 
     },

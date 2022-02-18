@@ -28,10 +28,14 @@ export default (props) => {
     // const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark"
     let initialState = {
 
-        'generalProductOrDealDetail': [],
+        'generalProductOrDealDetail': {},
         'notes': '',
         'itemCount': 1,
+        discountedPriceWithGst: 0,
+        totalPriceWithoutDiscount: 0,
         totalAddOnPrice: 0,
+        totalDiscount: 0,
+        totalGst: 0,
         selectedOptions: [],
         loading: true,
         addToCardAnimation: false
@@ -41,7 +45,8 @@ export default (props) => {
         enableBtn: false,
         requiredIds: [],
     });
-    const { itemCount, generalProductOrDealDetail, selectedOptions, notes, totalAddOnPrice, loading, } = state;
+    const { itemCount, generalProductOrDealDetail, discountedPriceWithGst, selectedOptions, notes, totalAddOnPrice, loading, } = state;
+    const { data } = props;
     const pitstopType = props.route.params.pitstopType ?? 4;
     const propItem = props.route.params.propItem
     const colors = theme.getTheme(GV.THEME_VALUES[lodash.invert(PITSTOP_TYPES)[pitstopType]], Appearance.getColorScheme() === "dark");
@@ -54,7 +59,11 @@ export default (props) => {
     let images = generalProductOrDealDetail.images ?? []
     let numberOfLines = 4
     let minHeight = (Platform.OS === 'ios' && numberOfLines) ? (20 * numberOfLines) : null
-    console.log("propItem", propItem);
+    // console.log("propItem", propItem);
+    const discountTypeCallbacks = {
+        1: (amount, discount) => discount > 0 ? (amount - ((discount / 100) * amount)) : amount,
+        2: (amount, discount) => discount > 0 ? (amount - discount) : amount,
+    };
 
 
 
@@ -67,12 +76,19 @@ export default (props) => {
             console.log('if GET_PRODUCTDETAIL  res', res);
             setState((pre) => ({
                 ...pre,
-                generalProductOrDealDetail: res.data.generalProductOrDealDetail,
+                generalProductOrDealDetail: {
+                    ...res.data.generalProductOrDealDetail,
+                    // gstAmount: 40,
+                    // discountAmount: 20,
+                    // gstPercentage: 10,
+                    // gstAddedPrice: res.data.generalProductOrDealDetail.gstAddedPrice + 40
+                },
                 loading: false
 
             }));
             setEnable(pre => ({
                 ...pre,
+                enableBtn: (res.data.generalProductOrDealDetail.optionList ?? []).length < 1,
                 requiredIds: (res.data.generalProductOrDealDetail?.optionList ?? []).filter(item => item.isRequired === true).map((_, i) => (i))
             }));
 
@@ -121,9 +137,28 @@ export default (props) => {
             updatedArr.push({ ...item, parentIndex });
         }
         enableDisable(updatedArr);
+        const totalAddOnPrice = updatedArr.reduce((previousValue, currentValue) => { return parseInt(previousValue) + parseInt(currentValue.optionPrice) }, 0);
+        const discountAmount = generalProductOrDealDetail.discountAmount;
+        let totalAmountWithoutGst = totalAddOnPrice + generalProductOrDealDetail.itemPrice;
+        let totalDiscount = discountAmount > 0 ? totalAmountWithoutGst * (discountAmount / 100) : 0;
+        let discountedPriceWithoutGst = discountTypeCallbacks[1](totalAmountWithoutGst, discountAmount);
+        const totalGst = ((generalProductOrDealDetail.gstPercentage / 100) * totalAmountWithoutGst);
+        let discountedPriceWithGst = discountedPriceWithoutGst + totalGst;
+        const totalPriceWithoutDiscount = discountedPriceWithGst + totalDiscount;
+        // console.log('discountedPrice', totalAmountWithoutGst, discountedPriceWithoutGst, (totalAddOnPrice + generalProductOrDealDetail.itemPrice) * 0.2, (totalAddOnPrice + generalProductOrDealDetail.itemPrice) - ((20 / 100) * (totalAddOnPrice + generalProductOrDealDetail.itemPrice)));
+        console.log('Item', generalProductOrDealDetail);
         setState(pre => ({
-            ...pre, selectedOptions: updatedArr, totalAddOnPrice: updatedArr.reduce((previousValue, currentValue) => { return parseInt(previousValue) + parseInt(currentValue.optionPrice) },
-                0)
+            ...pre, selectedOptions: updatedArr, totalAddOnPrice: totalAddOnPrice,
+            discountedPriceWithoutGst,
+            discountedPriceWithGst,
+            totalPriceWithoutDiscount,
+            totalDiscount,
+            totalGst,
+            generalProductOrDealDetail: {
+                ...pre.generalProductOrDealDetail,
+                // gstAddedPrice: discountedPrice,
+                // discountedPrice: pre.generalProductOrDealDetail.discountAmount > 0 ? discountedPrice : pre.generalProductOrDealDetail.discountedPrice
+            }
         }));
     }
 
@@ -135,19 +170,41 @@ export default (props) => {
                 selectedOptions,
                 quantity: itemCount,
                 notes,
-                gstAddedPrice: productPrice - totalAddOnPrice,
+                gstAddedPrice: state.discountedPriceWithGst,
+                _itemPriceWithoutDiscount: state.totalPriceWithoutDiscount,
+                _itemPrice: state.discountedPriceWithGst,
+                _totalGst: state.totalGst,
+                _totalDiscount: state.totalDiscount,
                 totalAddOnPrice,
                 actionKey: propItem.pitStopItemID ? "pitStopItemID" : "pitStopDealID",
                 estimatePrepTime: pitstopType === PITSTOP_TYPES.RESTAURANT ? generalProductOrDealDetail.estimateTime : ""
             },
             vendorDetails: { ...propItem.vendorDetails, pitstopType, pitstopActionKey: "marketID" },
         }
+        setState((pre) => ({
+            ...pre,
+            selectedOptions: [],
+            totalAddOnPrice: 0,
+            itemCount: 1,
+            addToCardAnimation: true,
+            notes: "",
+            discountedPriceWithGst: 0,
+            totalPriceWithoutDiscount: 0,
+            totalAddOnPrice: 0,
+            totalDiscount: 0,
+            totalGst: 0,
+        }));
         sharedAddUpdatePitstop(dataToSend, false, [], true)
 
         // NavigationService.NavigationActions.common_actions.navigate({ dataToSend })
-        setState((pre) => ({ ...pre, selectedOptions: [], totalAddOnPrice: 0, itemCount: 1, addToCardAnimation: true, notes: "", }))
+        
+        setEnable(pre => ({
+            ...pre,
+            enableBtn: optionsListArr.length < 1,
+            requiredIds: [],
+        }));
     }
-    console.log("[generalProductOrDealDetail]", state.generalProductOrDealDetail)
+    // console.log("[generalProductOrDealDetail]", state.generalProductOrDealDetail)
 
 
     const itemCountOnPress = (key) => {
@@ -216,7 +273,8 @@ export default (props) => {
                     <Button
                         disabled={!enable.enableBtn}
                         onPress={() => addToCartHandler()}
-                        text={`Add to cart ${productPrice ? '- ' + (parseInt(productPrice) + parseInt(state.totalAddOnPrice)) : ''}`}
+                        text={`Add to cart${optionsListArr.length > 0 ? ' - ' + discountedPriceWithGst : ''}`}
+                        // text={`Add to cart ${productPrice ? '- ' + (parseInt(productPrice) + parseInt(state.totalAddOnPrice)) : ''}`}
                         textStyle={{ textAlign: 'center', fontSize: 16 }}
                         style={{ paddingHorizontal: 16, alignSelf: "center", paddingVertical: 10, borderRadius: 10, backgroundColor: colors.primary, justifyContent: 'center', alignItems: 'center' }}
                     />
@@ -240,7 +298,7 @@ export default (props) => {
             />
         </View>
     }
-    const RenderPutItemInCartBox = () => {
+    const RenderPutItemInCartBox = ({addToCardAnimation}) => {
         const animateAddToCart = React.useRef(new Animated.Value(0)).current;
         const animateLoader = (toValue = 1) => {
             Animated.timing(animateAddToCart, {
@@ -255,10 +313,12 @@ export default (props) => {
             });
         }
         React.useEffect(() => {
-            animateLoader();
-        }, []);
+            if(addToCardAnimation === true){
+                animateLoader();
+            }
+        }, [addToCardAnimation]);
         return (
-            <AnimatedView style={{ opacity: animateAddToCart, position: 'absolute', height: "100%", backgroundColor: 'rgba(0,0,1,0.5)', width: '100%', justifyContent: 'flex-start', alignContent: 'flex-start' }}>
+            <AnimatedView style={{ opacity: animateAddToCart,display:addToCardAnimation === true?'flex':'none', position: 'absolute', height: "100%", backgroundColor: 'rgba(0,0,1,0.5)', width: '100%', justifyContent: 'flex-start', alignContent: 'flex-start' }}>
                 <AnimatedLottieView
                     source={require('../../assets/gifs/Add To Cart.json')}
                     onAnimationFinish={() => {
@@ -337,7 +397,7 @@ export default (props) => {
                                     productDetailsStyles={productDetailsStyles}
                                     selectedOptions={state.selectedOptions}
                                 />
-                                <TextInput
+                                {pitstopType === 4?<TextInput
                                     containerStyle={{ backgroundColor: 'white', marginVertical: 30, margin: 0, }}
                                     placeholder="Types your notes"
                                     titleStyle={{ color: 'black', fontSize: 14, }}
@@ -351,14 +411,14 @@ export default (props) => {
                                     }}
                                     multiline={true} // ios fix for centering it at the top-left corner 
                                     numberOfLines={Platform.OS === "ios" ? null : numberOfLines}
-                                />
+                                />:null}
                             </AnimatedView>
                         </ScrollView>
                         {renderButtonsUi()}
                     </SafeAreaView>
 
             }
-            {state.addToCardAnimation ? <RenderPutItemInCartBox /> : null}
+            {<RenderPutItemInCartBox addToCardAnimation={state.addToCardAnimation}/> }
 
         </View>
 
