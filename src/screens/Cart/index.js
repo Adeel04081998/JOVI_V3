@@ -452,7 +452,7 @@ export default () => {
               backgroundColor: colors.primary,
               borderRadius: 10,
               marginHorizontal: 3,
-            }} onPress={() => { NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.CheckOut.screen_name)}}>
+            }} >
             <Text style={{ textAlign: 'center', color: colors.white }}>
               {title}
             </Text>
