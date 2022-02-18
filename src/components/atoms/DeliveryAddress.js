@@ -30,7 +30,7 @@ const BottomLine = () => (
         }}
     />
 );
-export default ({ instructions = "" }) => {
+export default ({ instructions = "", contianerStyle = {}, addressTxtStyle = {} }) => {
     const SPACING = 10;
     const ICON_HEIGHT = 20;
     const ICON_WIDTH = 20;
@@ -38,13 +38,13 @@ export default ({ instructions = "" }) => {
     const colors = initColors;
     return (
         <View
-            style={{
+            style={[{
                 backgroundColor: colors.white,
                 borderRadius: 10,
                 padding: 5,
                 ...sharedStyles._styles(colors).shadow,
                 elevation: 3,
-            }}>
+            }, contianerStyle]}>
             <View
                 style={{
                     flexDirection: 'row',
@@ -54,16 +54,17 @@ export default ({ instructions = "" }) => {
                 <View style={{ flexDirection: 'row', padding: SPACING }}>
                     <SvgXml xml={pin_icon()} height={ICON_HEIGHT} width={ICON_WIDTH} />
                     <Text
-                        style={{
+                        style={[{
                             paddingHorizontal: 10,
                             color: colors.primary,
                             fontSize: 16,
-                        }}
+                        }, addressTxtStyle]}
                         fontFamily="PoppinsSemiBold">
                         Delivery Address
-            </Text>
+                    </Text>
+
                 </View>
-                <SvgXml xml={edit_icon()} height={20} width={20} />
+                <SvgXml xml={edit_icon()} height={20} width={20} style={{ marginHorizontal: 6 }} />
             </View>
 
             <BottomLine />
@@ -73,10 +74,10 @@ export default ({ instructions = "" }) => {
                     fontFamily="PoppinsSemiBold"
                     numberOfLines={1}>
                     Office
-          </Text>
-                <Text style={{ color: colors.black, fontSize: 11 }} numberOfLines={2}>
+                </Text>
+                <Text style={{ color: colors.black, fontSize: 11 }} numberOfLines={2} fontFamily="PoppinsRegular">
                     2nd floor, pakland plaza, I8 Markaz, Islamabad
-          </Text>
+                </Text>
             </View>
             {
                 instructions ?
@@ -88,8 +89,8 @@ export default ({ instructions = "" }) => {
                                 fontFamily="PoppinsSemiBold"
                                 numberOfLines={1}>
                                 Instruction for rider
-          </Text>
-                            <Text style={{ color: colors.black, fontSize: 11 }} numberOfLines={2}>
+                            </Text>
+                            <Text style={{ color: colors.black, fontSize: 11 }} numberOfLines={2} fontFamily='PoppinsRegular'>
                                 {instructions}
                             </Text>
                         </View>

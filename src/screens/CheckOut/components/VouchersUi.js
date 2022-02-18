@@ -51,7 +51,7 @@ export default ({ }) => {
 
                 <Text style={{ color: '#fff', textAlign: 'left', paddingLeft: 20, flex: 1 }} numberOfLines={1}>You have 3 vouchers</Text>
                 <TouchableOpacity style={{ backgroundColor: '#fff', borderRadius: 2, marginRight: 15, paddingHorizontal: 5 }} >
-                    <Text style={{ color: "black", marginHorizontal: 10, marginVertical: 5 }}>{"See All"}</Text>
+                    <Text style={{ color: "#6D51BB", marginHorizontal: 10, marginVertical: 5, fontSize: 14 }} fontFamily='PoppinsMedium'>{"See All"}</Text>
                 </TouchableOpacity>
             </View>
             <View style={{ borderRadius: 20, height: 20, width: 20, position: 'absolute', left: 60, top: -10, backgroundColor: '#F6F5FA', }} ></View>

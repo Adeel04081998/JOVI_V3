@@ -7,31 +7,31 @@ import Text from './Text';
 const DATA = [{ title: "Browsing" }, { title: "Cart" }, { title: "Checkout" }];
 const CIRCLE_HEIGHT = 20;
 const { width, height } = constants.screen_dimensions;
-export default (props) => {
+export default ({ maxHighlight = 0 }) => {
     const colors = initColors;
-    const styles = _styles(colors, props);
+    const styles = _styles(colors);
     const StrEnum = {
         "0": "Browsing",
         "1": "Cart",
         "2": "Checkout",
     }
     const highlight = (i) => {
-        let clr = colors.primary;
-        if (props.isCart && i > 1) clr = colors.grey
+        let clr = colors.grey;
+        if (i < maxHighlight) clr = colors.primary
         return clr;
     }
     return (
         <>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <View style={{ flexDirection: "row", alignItems: "center", }}>
                 {
                     DATA.map((p, i) => (
                         <React.Fragment key={`progress-key-${i}`}>
                             <View style={[styles.bar, { backgroundColor: highlight(i) }]} />
-                            <View style={[styles.circle, { borderColor: props.isCart && i > 1 ? colors.grey : colors.primary }]} />
+                            <View style={[styles.circle, { borderColor: highlight(i) }]} />
                         </React.Fragment>
                     ))
                 }
-                <View style={{ width, backgroundColor: highlight(DATA.length + 1), paddingVertical: 2 }} />
+                <View style={{ width, backgroundColor: colors.grey, paddingVertical: 2 }} />
 
             </View>
             <View style={{ flexDirection: "row", alignItems: "center", paddingVertical: 5 }}>
@@ -48,7 +48,7 @@ export default (props) => {
     )
 }
 
-const _styles = (colors = initColors, props) => StyleSheet.create({
+const _styles = (colors = initColors) => StyleSheet.create({
     bar: {
         width: (width - CIRCLE_HEIGHT * 3) / 4, backgroundColor: colors.primary, paddingVertical: 2
     },

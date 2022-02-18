@@ -9,15 +9,17 @@ export const PITSTOP_TYPES = {
     PHARMACY: 3,
     RESTAURANT: 4,
     JOVI_MART: 5,
+    ALL: 10,//To Get Every Theme
 };
 
 export const PITSTOP_TYPES_INVERTED = {
-     0:'DEFAULT',
-     1:'SUPER_MARKET',
-     2:'JOVI',
-     3:'PHARMACY',
-     4:'RESTAURANT',
-     5:'JOVI_MART',
+    0: 'DEFAULT',
+    1: 'SUPER_MARKET',
+    2: 'JOVI',
+    3: 'PHARMACY',
+    4: 'RESTAURANT',
+    5: 'JOVI_MART',
+    10: 'ALL',
 };
 export default {
     BASE_URL: initUrlRef,

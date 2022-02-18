@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Animated, Dimensions, StyleProp, StyleSheet, ViewStyle } from "react-native";
+import { Animated, Dimensions, Image, StyleProp, StyleSheet, ViewStyle } from "react-native";
 import { SvgXml } from "react-native-svg";
 import svgs from "../../../assets/svgs";
 import { VALIDATION_CHECK } from "../../../helpers/SharedActions";
@@ -9,6 +9,7 @@ import constants from "../../../res/constants";
 import FontFamily from "../../../res/FontFamily";
 import Text from "../../atoms/Text";
 import View from "../../atoms/View";
+import images from '../../../assets/images/index'
 
 // #region :: INTERFACE START's FROM HERE 
 
@@ -33,6 +34,8 @@ interface Props {
 
     imageHeight?: string | number;
     imageWidth?: string | number;
+    isShow?: boolean
+
 };
 
 const defaultProps = {
@@ -42,6 +45,7 @@ const defaultProps = {
 
     imageWidth: "90%",
     imageHeight: 80,
+    isShow: false
 };
 // #endregion :: INTERFACE END's FROM HERE 
 
@@ -59,9 +63,30 @@ const OrderEstTimeCard = (props: Props) => {
         <View style={[styles.primaryContainer, props.contentContainerStyle]}>
 
             {/* ****************** Start of LEFT SIDE ****************** */}
-            <View style={[styles.leftSideContainer, { paddingLeft: 0 }, props.leftContainerStyle]}>
+            {/* <View style={[styles.leftSideContainer, { paddingLeft: 0 }, props.leftContainerStyle]}>
                 <SvgXml xml={xmlImage} height={props.imageHeight} width={props.imageWidth} style={{ paddingHorizontal: 5 }} />
-            </View>
+            </View> */}
+
+            {props.isShow ?
+                <View style={[styles.leftSideContainer, {}, props.leftContainerStyle]}>
+                    <View style={{ width: 80, height: 80, backgroundColor: "#6D51BB", borderRadius: 10, justifyContent: 'center', alignItems: 'center', }}>
+                        <Image
+                            // style={{ width: '100%', height: '100%', }}
+                            style={{ width: props.imageWidth, height: props.imageHeight }}
+                            source={images.joviNewBox()}
+                            resizeMode="contain"
+                        />
+                    </View>
+
+                </View>
+                :
+                <View style={[styles.leftSideContainer, { paddingLeft: 0 }, props.leftContainerStyle]}>
+                    <SvgXml xml={xmlImage} height={props.imageHeight} width={props.imageWidth} style={{ paddingHorizontal: 5 }} />
+                </View>
+
+            }
+
+
 
             {/* ****************** End of LEFT SIDE ****************** */}
 

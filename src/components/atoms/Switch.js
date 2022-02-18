@@ -15,9 +15,8 @@ export default (props) => {
     const [animatedValue, setAnimatedValue] = useState(new Animated.Value(0))
     const [active, toggleActive] = useState(false);
 
-    console.log('active', active);
+
     const onPressParentEvent = (bool) => {
-        console.log('bool', bool);
         toggleActive(bool);
         props.onToggleSwitch(bool)
     }
