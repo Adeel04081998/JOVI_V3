@@ -20,6 +20,7 @@ import stylesheet from './styles';
 import {
   edit_icon, pencil_icon, percent_icon, pin_icon
 } from './svgs/cart_svgs';
+import DeliveryAddress from "../../components/atoms/DeliveryAddress";
 
 const BottomLine = () => (
   <View
@@ -388,7 +389,7 @@ export default () => {
       <SetpProgress isCart={true} />
       <ScrollView contentContainerStyle={{ padding: 10 }} style={{ flex: 1 }}>
         <View style={{ marginHorizontal: 0 }}>
-          <Address />
+          <DeliveryAddress />
           <Text style={{ padding: 10 }}>Hold text would be here...</Text>
           {(cartReducer.pitstops || []).map((pitstop, pitstopIndex) => (
             <PitstopsCard
