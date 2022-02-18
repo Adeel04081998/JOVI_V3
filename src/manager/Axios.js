@@ -12,7 +12,8 @@ Axios.interceptors.request.use(
             config.baseURL = GV.BASE_URL.current;
             config.timeout = __DEV__ ? 60000 : 15000;
             config.timeoutErrorMessage = "Request Timeout..."
-            config.headers['deviceInfo'] = JSON.stringify({ isNewApp: true }); // for device and app info in future
+            config.headers['isNewApp'] = "true"; // for device and app info in future
+            config.headers['deviceInfo'] = JSON.stringify({}); // for device and app info in future
             const userReducer = store.getState().userReducer;
             const authToken = userReducer?.token?.authToken; // [?.] Added becuase of before login api request when we dont have auth token...
             if (authToken) {
