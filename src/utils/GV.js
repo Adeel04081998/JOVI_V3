@@ -1,7 +1,7 @@
 import React from "react";
 import constants from "../res/constants";
 let initUrlRef = React.createRef(null);
-initUrlRef.current = __DEV__ ? constants.url_qasprint_v1 : constants.url_qasprint_v1;
+initUrlRef.current = __DEV__ ? constants.url_dev : constants.url_qasprint_v1;
 export const PITSTOP_TYPES = {
     DEFAULT: 0,
     SUPER_MARKET: 1,

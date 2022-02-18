@@ -1,15 +1,16 @@
 import * as React from "react";
 import { GestureResponderEvent, Platform, StyleProp, StyleSheet, TextStyle, View as RNView, ViewStyle } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { VALIDATION_CHECK } from "../../helpers/SharedActions";
 import NavigationService from "../../navigations/NavigationService";
 import ROUTES from "../../navigations/ROUTES";
+import ReduxActions from "../../redux/actions";
+import AddressesList from "../atoms/FinalDestination/AddressesList";
 import Text from "../atoms/Text";
 import TouchableOpacity from "../atoms/TouchableOpacity";
 import TouchableScale from "../atoms/TouchableScale";
 import VectorIcon from "../atoms/VectorIcon";
 import View from "../atoms/View";
-
 type Props = React.ComponentProps<typeof RNView> & {
     children?: any;
 
@@ -60,7 +61,7 @@ type Props = React.ComponentProps<typeof RNView> & {
 const defaultProps = {
     containerStyle: {},
 
-    
+
     //LEFT SIDE PROP's
     leftCustom: undefined,
     leftDot: false,
@@ -98,8 +99,8 @@ const defaultProps = {
     title: null,
     onTitlePress: undefined,
     titleStyle: {},
-    hideFinalDestination:false,
-    defaultColor:"#6D51BB",
+    hideFinalDestination: false,
+    defaultColor: "#6D51BB",
     finalDest: ''
     //CENTER PROP's ENDING
 
@@ -109,10 +110,10 @@ const defaultProps = {
 const CustomHeader = (props: Props) => {
     const DEFAULT_COLOR = props.defaultColor;//REDUX.THEME.background;
     const styles = headerStyles(DEFAULT_COLOR);
-
+    const dispatch = useDispatch();
     const cartReducer = useSelector((store: any) => store.cartReducer);
     const userReducer = useSelector((store: any) => store.userReducer);
-    const finalDestination = userReducer.finalDestObj ? userReducer.finalDestObj : {title: 'Set your location'};
+    const finalDestination = userReducer.finalDestObj ? userReducer.finalDestObj : { title: 'Set your location' };
 
     // React.useEffect(()=>{
 
@@ -121,11 +122,13 @@ const CustomHeader = (props: Props) => {
     const _renderFinalDestination = () => {
         return props.hideFinalDestination ? <></> : (
             <TouchableOpacity style={{ alignItems: "center" }} activeOpacity={0.5}
-                {...props.onTitlePress ? {
-                    onPress: (event) => props.onTitlePress && props.onTitlePress(event)
-                } : {
-                    disabled: true
-                }}>
+                onPress={(event) => {
+                    dispatch(ReduxActions.setModalAction({
+                        visible: true,
+                    }))
+                    props.onTitlePress && props.onTitlePress(event);
+                }}
+                >
                 <View style={{ flexDirection: "row", alignItems: "center", }}>
                     <Text style={styles.deliverToText}
                         fontFamily={"PoppinsLight"}>

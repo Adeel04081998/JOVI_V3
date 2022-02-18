@@ -12,6 +12,7 @@ import NavigationService from "../../../navigations/NavigationService";
 import ROUTES from '../../../navigations/ROUTES';
 import Card from './Card';
 import CardLoader from "./CardLoader";
+import { useSelector } from 'react-redux';
 
 const ITEMS_PER_PAGE = 20;
 
@@ -22,6 +23,9 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
         },
         isLoading: false
     });
+    const userReducer = useSelector(store => store.userReducer);
+    console.log('userReducer',userReducer);
+    const finalDestination = userReducer.finalDestObj??{};
     const isRequestSent = React.useRef(false);
     const componentLoaded = React.useRef(false);
     const paginationInfo = React.useRef({
@@ -42,8 +46,8 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
         isRequestSent.current = true;
         setState(pre => ({ ...pre, isLoading: true }));
         postRequest(Endpoints.GET_PITSTOPS, {
-            "latitude": 33.66902188096789,
-            "longitude": 73.07520348918612,
+            "latitude": finalDestination.latitude ?? 0,
+            "longitude": finalDestination.longitude ?? 0,
             "marketPageNumber": paginationInfo.current.pageNumber,
             "marketItemsPerPage": paginationInfo.current.itemsPerPage,
             "marketID": 0,
@@ -116,7 +120,10 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
     React.useEffect(() => {
         fetchDataWithUpdatedPageNumber();
         componentLoaded.current = true;
-    }, [])
+    }, []);
+    React.useEffect(()=>{
+        fetchDataWithResetedPageNumber();
+    },[finalDestination]);
     const onPressPitstop = (item) => {
         const routes = {
             4: ROUTES.APP_DRAWER_ROUTES.RestaurantProductMenu.screen_name,
