@@ -22,7 +22,6 @@ export const hybridLocationPermission = async (cb) => {
     else if (Platform.OS === 'ios') {
         const resultAlways = await request(PERMISSIONS.IOS.LOCATION_ALWAYS);
         const resultWhenInUse = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-        console.log('resultAlways',resultAlways, 'resultWhenInUse',resultWhenInUse);
         if (resultAlways !== RESULTS.GRANTED && resultWhenInUse !== RESULTS.GRANTED) {
             handleDeniedPermission('Location permission is not granted!', 'Please allow Location permission by visiting the Settings.');
             return;
@@ -37,23 +36,26 @@ export const hybridLocationPermission = async (cb) => {
 };
 
 export const addressInfo = async (latitude, longitude) => {
-    console.log('latitude ==>>>>',latitude, 'longitude ===>>>>>',longitude);
     try {
         let addressResponse = await fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&rankby=distance&key=${env.GOOGLE_API_KEY}`);
         addressResponse = await addressResponse.json();
-        console.log('addressResponse',addressResponse);
+        console.log('addressResponse', addressResponse);
         if (addressResponse.error_message) {
-            console.log('error_message', addressResponse.error_message)
             // CustomToast.error("Error while Fetching Address!", null, "long")
             Toast.error('Error while Fetching Address!')
         }
         else if (addressResponse) {
             const address = ((addressResponse?.results?.[0]?.name || "") + (addressResponse?.results?.[0]?.name ? ", " : "") + (addressResponse?.results?.[0]?.vicinity || ""));
-            return address
+            let city = null;
+            let addressObj = addressResponse?.results?.[0] ?? {}
+            if (addressObj?.plus_code?.compound_code) {
+                city = addressObj.plus_code.compound_code.replace(/\,/gi, "")?.split(/\s/gi)?.[1];
+            };
+            return { city, address }
         }
     }
     catch (exp) {
-        console.log('exp',exp);
+        console.log('exp', exp);
     }
 };
 

@@ -32,7 +32,9 @@ export const initColors = {
     "lightGreyBorder": '#BBBBBB',
     "light_grey": "#F6F5FA",
     "oldFlame" :"#F3B8B4",
-    "drWhite":"#FAFAFA"
+    "drWhite":"#FAFAFA",
+    "subTextGreyColor": '#464646',
+    "light_primary_color": '#E2DCF1'
 }
 export default {
 

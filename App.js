@@ -22,6 +22,7 @@ import View from './src/components/atoms/View';
 import Toast from 'react-native-toast-message';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Modal from './src/components/atoms/Modal';
+import Geolocation from 'react-native-geolocation-service';
 
 
 
@@ -32,6 +33,10 @@ import { useSelector } from 'react-redux';
 import { sharedGetEnumsApi, sharedGetFilters, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser } from './src/helpers/SharedActions';
 import PistopListing from './src/screens/PitstopListing';
 import Filter from './src/components/atoms/Filter';
+import BottomAllignedModal from './src/components/atoms/BottomAllignedModal';
+import Maps from './src/components/atoms/GoogleMaps/Maps';
+import Map from './src/screens/Map';
+import AddAddress from './src/screens/AddAddress';
 import CheckOut from './src/screens/CheckOut';
 AntDesign.loadFont();
 Entypo.loadFont();
@@ -59,8 +64,9 @@ const CODE_PUSH_OPTIONS = {
 
 const App = () => {
   const netInfo = useNetInfo();
+  const { visible } = useSelector(state => state.modalReducer)
   GV.NET_INFO_REF.current = netInfo;
-  const [state,setState] = React.useState({appLoaded:false});
+  const [state, setState] = React.useState({ appLoaded: false });
   // console.log("netInfo", netInfo)
   const isDarkMode = useColorScheme() === "dark";
   const theme = isDarkMode ? {
@@ -120,8 +126,8 @@ const App = () => {
       codePushDownloadDidProgress(progress)
     })
     setTimeout(() => {
-        RNSplashScreen.hide();
-        setState(pre=>({...pre,appLoaded:true}));//if we run splash screen forcefully for 3 seconds, then the home page gets loaded without animation, this will stop that.
+      RNSplashScreen.hide();
+      setState(pre => ({ ...pre, appLoaded: true }));//if we run splash screen forcefully for 3 seconds, then the home page gets loaded without animation, this will stop that.
     }, 2000)
     return () => { }
   }, []);
@@ -129,9 +135,9 @@ const App = () => {
   LogBox.ignoreLogs([
     "[react-native-gesture-handler] Seems like you\'re using an old API with gesture components, check out new Gestures system!",
   ]);
-  navigator.geolocation = require('react-native-geolocation-service');
+  navigator.geolocation = Geolocation;
 
-  if(!state.appLoaded) return null;
+  if (!state.appLoaded) return null;
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
@@ -145,8 +151,7 @@ const App = () => {
         <NavigationContainer theme={theme} ref={_NavgationRef} >
           <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
             <RootStack />
-            {/* <PistopListing /> */}
-            {/* <CheckOut /> */}
+            {visible && <BottomAllignedModal />}
           </View>
         </NavigationContainer>
         <Robot />

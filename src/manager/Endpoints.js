@@ -24,10 +24,14 @@ export default {
     //RESTAURANT
     "GET_PRODUCT_MENU_LIST": "api/SuperMarket/Stock/List", //SCREEN_NAME: ProductMenu
     "GET_VOUCHERS_LIST": "api/Menu/Promotion/List",
-    "SERVICE_CHARGES": "api/Order/EstimateServiceCharge" // Cart Screen
+    "SERVICE_CHARGES": "api/Order/EstimateServiceChargeV2", // Cart Screen
+    "AddorUpdateAddress": "/api/Menu/Address/AddOrUpdate" //AddAdresses
 
 }
 // TO UPDATE ENDPOINT
 // api/Pitstop/ListOrSearch/V2
 // PRODUCT CONTROLLER
 
+
+
+    
