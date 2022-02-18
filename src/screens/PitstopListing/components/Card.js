@@ -39,7 +39,7 @@ export default ({ colors, data = {}, onPressPitstop = () => { }, containerStyles
         return renderBody()
     }
     return (
-        <TouchableOpacity onPress={() => onPressPitstop(item, index)} activeOpacity={0.8} style={{ ...styles.itemContainer, height: 270, ...containerStyles }} {...containerProps}>
+        <TouchableOpacity onPress={() => onPressPitstop(data, index)} activeOpacity={0.8} style={{ ...styles.itemContainer, height: 270, ...containerStyles }} {...containerProps}>
             {renderBody()}
         </TouchableOpacity>
     );
