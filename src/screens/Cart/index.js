@@ -23,7 +23,6 @@ import { pencil_icon, percent_icon } from './svgs/cart_svgs';
 import DeliveryAddress from "../../components/atoms/DeliveryAddress";
 import colors, { initColors } from '../../res/colors';
 import ReduxActions from '../../redux/actions';
-import NavigationService from '../../navigations/NavigationService';
 
 const BottomLine = () => (
   <View
