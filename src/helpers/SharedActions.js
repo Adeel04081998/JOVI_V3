@@ -389,13 +389,13 @@ export const sharedUniqueIdGenerator = (randomNum = 1000) => {
 };
 const checkSameProduct = (currentCheckoutItems, newP) => {
     let newProductOptionsListIds = newP.selectedOptions.map(item => (item.itemOptionID)).slice().sort();
-    currentCheckoutItems.map((item,i)=>{
+    currentCheckoutItems.map((item, i) => {
         let isOptionsSame = item.selectedOptions.map(x => (x.itemOptionID)).slice().sort().every(function (value, index) {
             return value === newProductOptionsListIds[index];
         });
         let isNotesSame = item.notes.toString().toLowerCase() === newP.notes.toString().toLowerCase();
-        if(isOptionsSame && isNotesSame){
-            newP = {...newP, quantity: newP.quantity + item.quantity, alreadyExisted: true, checkoutIndex: i };
+        if (isOptionsSame && isNotesSame) {
+            newP = { ...newP, quantity: newP.quantity + item.quantity, alreadyExisted: true, checkoutIndex: i };
         }
     });
     return newP;
@@ -417,17 +417,18 @@ export const sharedAddUpdatePitstop = (
     // }
     // **********
     // FOR VENDOR PITSTOP
-    console.log('pitstopDetails', pitstopDetails);
     const cartReducer = store.getState().cartReducer;
     let pitstops = cartReducer.pitstops;
-    const pitstopIndex = pitstopDetails.pitstopIndex || null;
-
-    if (pitstopDetails.pitstopType === PITSTOP_TYPES.JOVI) {
+    const pitstopIndex = (pitstopDetails.pitstopIndex !== undefined && pitstopDetails.pitstopIndex !== null?pitstopDetails.pitstopIndex :null);
+    if (pitstopIndex !== null && isDeletePitstop) {
+        console.log('[DELETE PITSTOP FROM CART]');
+        pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIndex);
+    }else if (pitstopDetails.pitstopType === PITSTOP_TYPES.JOVI) {
         console.log('[JOVI PITSTOP]');
         // JOVI PITSTOPS HANDLING
         if (pitstopIndex !== null) {
             console.log('[INDEX] EXIST');
-            if (isDeletePitstop) {
+            if (false) {
                 console.log('[DELETE PITSTOP CASE]');
                 pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIndex);
             } else {
@@ -448,7 +449,7 @@ export const sharedAddUpdatePitstop = (
         const pitstopActionKey = upcomingVendorDetails.actionKey || 'marketID'; //
         console.log('[PITSTOP IDACTION KEY]', pitstopActionKey);
         console.log('[ITEM ID ACTION KEY]', actionKey);
-        if (pitstopIndex !== null && isDeletePitstop) {
+        if (false) {
             console.log('[DELETE PITSTOP FROM CART]');
             pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIndex);
         } else {
@@ -457,17 +458,17 @@ export const sharedAddUpdatePitstop = (
                 console.log('[PITSTOP FOUND]', pitstops[pitstopIdx]);
                 let currentPitstopItems = pitstops[pitstopIdx].checkOutItemsListVM;
                 let itemIndex = currentPitstopItems.findIndex(item => item[actionKey] === upcomingItemDetails[actionKey]);
-                if(!fromCart){
+                if (!fromCart && upcomingItemDetails.selectedOptions) {
                     upcomingItemDetails = checkSameProduct(currentPitstopItems, upcomingItemDetails);
                 }
                 if (upcomingItemDetails.alreadyExisted) {
                     itemIndex = upcomingItemDetails.checkoutIndex;
                     console.log('[Update EXISTING CHECKOUT ITEMS]');
-                    if(!upcomingItemDetails.quantity){
+                    if (!upcomingItemDetails.quantity) {
                         console.log('[QUANTITY LESS THAN OR EQUAL TO ZERO]');
                         if ((currentPitstopItems.length - 1) <= 0) pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIdx);
-                    }else{
-                        currentPitstopItems[itemIndex] = { ...upcomingItemDetails, alreadyExisted: undefined,checkoutIndex: undefined, checkOutItemID: currentPitstopItems[itemIndex].checkOutItemID };
+                    } else {
+                        currentPitstopItems[itemIndex] = { ...upcomingItemDetails, alreadyExisted: undefined, checkoutIndex: undefined, checkOutItemID: currentPitstopItems[itemIndex].checkOutItemID };
                         pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
                     }
                 } else if (itemIndex !== -1 && !forceAddNewItem) {

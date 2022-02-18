@@ -97,6 +97,7 @@ export default ({ navigation, route }) => {
         };
 
         postRequest(Endpoints.GET_PRODUCT_MENU_LIST, params, (res) => {
+            console.log('GET_PRODUCT_MENU_LIST', res);
             if (res.data.statusCode === 404) {
                 updateQuery({
                     errorText: res.data.message,
@@ -244,7 +245,7 @@ export default ({ navigation, route }) => {
                                                 itemDetails: {},
                                                 vendorDetails: { ...route.params },
                                             },
-                                            pitstopType:pitstopType
+                                            pitstopType: pitstopType
                                         })
                                     }}
                                 />
@@ -323,14 +324,30 @@ export default ({ navigation, route }) => {
     }
 
     // #endregion :: RENDER VERTICAL & HORIZONTAL SCROLL ITEM END's FROM HERE 
-
+    const discountTypeCallbacks = {
+        1: (amount, discount) => discount > 0 ? ((discount / 100) * amount) : 0,
+        2: (amount, discount) => discount > 0 ? (amount - discount) : 0,
+    };
     // #region :: QUANTITY HANDLER START's FROM HERE 
     const updateQuantity = (parentIndex, index, quantity) => {
+        let currentItem = data[parentIndex].pitstopItemList[index];
+        let priceWithoutGst = currentItem.gstAddedPrice - currentItem.gstAmount;
+        let discountAmount = discountTypeCallbacks[currentItem.discountType!==0?currentItem.discountType:1](priceWithoutGst,currentItem.discountAmount);
         data[parentIndex].pitstopItemList[index].quantity = quantity;
         const pitstopDetails = {
             pitstopType: PITSTOP_TYPES.SUPER_MARKET,
             vendorDetails: { ...data[parentIndex], pitstopItemList: null, marketID, actionKey: "marketID", pitstopName: allData.pitstopName, pitstopIndex: null, pitstopType, ...route.params },
-            itemDetails: { ...data[parentIndex].pitstopItemList[index], actionKey: "pitStopItemID" },
+            itemDetails: {
+                ...data[parentIndex].pitstopItemList[index],
+                actionKey: "pitStopItemID",
+                gstAddedPrice: currentItem.gstAddedPrice,
+                _itemPrice: currentItem.gstAddedPrice,
+                _itemPriceWithoutDiscount: currentItem.gstAddedPrice - discountAmount,
+                _totalDiscount: discountAmount,
+                _totalGst: currentItem.gstAmount,
+                totalAddOnPrice: 0,
+
+            },
         }
 
         sharedAddUpdatePitstop(pitstopDetails,)
