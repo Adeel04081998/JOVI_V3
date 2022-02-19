@@ -1,5 +1,5 @@
 import React from 'react';
-import { Appearance } from 'react-native';
+import { Appearance, Dimensions } from 'react-native';
 import constants from '../../../res/constants';
 import View from '../../../components/atoms/View';
 import joviJobStyles from '../styles';
@@ -32,6 +32,26 @@ const PitStopLocation = (props) => {
                 marginBottom={0}
                 locationVal={props.locationVal}
                 clearInputField={props.clearInputField}
+                listViewStyles={{
+                    borderWidth: 1,
+                    borderColor: "#BBBB",
+                    backgroundColor: "#FFF",
+                    marginHorizontal: 10,
+                    elevation: 3,
+                    shadowColor: "#000",
+                    shadowOpacity: 0.1,
+                    shadowOffset: { x: 0, y: 0 },
+                    shadowRadius: 15,
+                    marginTop: -10,
+                    width: WIDTH - 10,
+                    alignSelf: 'center',
+                    maxHeight: HEIGHT * 0.18,
+                    overflow: 'scroll',
+                    numberOfLines: 1,
+                    position:'absolute',
+                    top:50,
+                    zIndex: 999
+                }}
             />
             <Button
                 onPress={props.onLocationPress}
@@ -43,11 +63,11 @@ const PitStopLocation = (props) => {
                         <VectorIcon name="pin-outline" type="MaterialCommunityIcons" size={20} color={colors.white} />
                     )
                 }}
-                style={[styles.locButton, { width: WIDTH - 30, height: 40 }]} />
+                style={[styles.locButton, { width: WIDTH - 30, height: 40, zIndex:-1 }]} />
             <TextInput
                 title="Name (Optional)"
                 placeholder="Please Add Your Name"
-                containerStyle={{ marginTop: 30, alignSelf: 'center' }}
+                containerStyle={{ marginTop: 30, alignSelf: 'center', zIndex:-1  }}
                 titleStyle={{ opacity: 0.8, color: '#000', fontFamily: FontFamily.Poppins.Regular, fontSize: 12 }}
                 value={props.nameVal}
                 returnKeyType="done"

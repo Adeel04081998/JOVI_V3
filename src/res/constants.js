@@ -1,11 +1,13 @@
 import { Dimensions } from "react-native";
 export default {
     DEFAULT_JOVI_IMAGE: require('../assets/Logo/image_default.png'),
+    app_version:'1.0',
     url_qa: "https://qa-api.jovi-app.com",
     url_qasprint_v1: "https://qasprintv1-api.jovi-app.com",
     url_dev: "https://dev-api.jovi-app.com",
     url_staging: "https://staging-api.jovi-app.com",
     url_live: "https://live-api.jovi-app.com",
+    url_ngrok: "https://zeeshan.ngrok.io",
     screen_dimensions: Dimensions.get("screen"),
     window_dimensions: Dimensions.get("window"),
     horizontal_margin: 10,

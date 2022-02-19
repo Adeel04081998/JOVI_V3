@@ -10,9 +10,11 @@ import { postRequest } from '../../../manager/ApiManager';
 import Endpoints from '../../../manager/Endpoints';
 import NavigationService from "../../../navigations/NavigationService";
 import ROUTES from '../../../navigations/ROUTES';
+import Card from './Card';
 import CardLoader from "./CardLoader";
+import { useSelector } from 'react-redux';
 
-const ITEMS_PER_PAGE = 40;
+const ITEMS_PER_PAGE = 20;
 
 export default ({ config, filters, pitstopType, styles, imageStyles = { width: '100%' }, fetchPitstopsFlagParent = null, pitstopFilters = null, colors }) => {
     const [state, setState] = React.useState({
@@ -21,6 +23,9 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
         },
         isLoading: false
     });
+    const userReducer = useSelector(store => store.userReducer);
+    console.log('userReducer',userReducer);
+    const finalDestination = userReducer.finalDestObj??{};
     const isRequestSent = React.useRef(false);
     const componentLoaded = React.useRef(false);
     const paginationInfo = React.useRef({
@@ -41,8 +46,8 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
         isRequestSent.current = true;
         setState(pre => ({ ...pre, isLoading: true }));
         postRequest(Endpoints.GET_PITSTOPS, {
-            "latitude": 33.66902188096789,
-            "longitude": 73.07520348918612,
+            "latitude": finalDestination.latitude ?? 0,
+            "longitude": finalDestination.longitude ?? 0,
             "marketPageNumber": paginationInfo.current.pageNumber,
             "marketItemsPerPage": paginationInfo.current.itemsPerPage,
             "marketID": 0,
@@ -65,7 +70,7 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
                     totalItems: res.data.pitstopListViewModel?.paginationInfo?.totalItems
                 }
             }
-            else if(res.data.statusCode === 404){
+            else if (res.data.statusCode === 404) {
                 setState(pre => ({ ...pre, isLoading: false, pitstopListViewModel: { list: [] } }));
             }
             console.log('GET_PITSTOPS', res);
@@ -115,35 +120,26 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
     React.useEffect(() => {
         fetchDataWithUpdatedPageNumber();
         componentLoaded.current = true;
-    }, [])
+    }, []);
+    React.useEffect(()=>{
+        fetchDataWithResetedPageNumber();
+    },[finalDestination]);
     const onPressPitstop = (item) => {
         const routes = {
             4: ROUTES.APP_DRAWER_ROUTES.RestaurantProductMenu.screen_name,
             1: ROUTES.APP_DRAWER_ROUTES.ProductMenu.screen_name,
             2: ROUTES.APP_DRAWER_ROUTES.RestaurantProductMenu.screen_name,
         }
-        NavigationService.NavigationActions.common_actions.navigate(routes[pitstopType],{...item,pitstopType});
+        NavigationService.NavigationActions.common_actions.navigate(routes[pitstopType], { ...item, pitstopType });
     }
     const renderItem = (item, index) => {
-        const { title, description, estTime, distanceFromLocation, image, averagePrice } = item;
-        return (
-            <TouchableOpacity onPress={()=>onPressPitstop(item)} key={index} activeOpacity={0.8} style={{ ...styles.itemContainer }}>
-                <Image source={{ uri: renderFile(image) }} style={[styles.image, imageStyles]} tapToOpen={false} />
-                <View style={styles.subContainer}>
-                    <Text style={styles.title} numberOfLines={1} >{title}</Text>
-                    {(distanceFromLocation || estTime) &&
-                        <View style={styles.iconContainer} >
-                            <VectorIcon name={item.distanceFromLocation ? "map-marker" : "clock-time-four"} type={item.distanceFromLocation ? "FontAwesome" : "MaterialCommunityIcons"} color={colors.primary || "#6D51BB"} size={15} style={{ marginRight: 5 }} />
-                            <Text style={styles.estTime} >{estTime || distanceFromLocation} m</Text>
-                        </View>
-                    }
-                </View>
-                <Text style={styles.tagsText} numberOfLines={1} >{description}</Text>
-                {averagePrice &&
-                    <Text style={styles.title} >Rs. {averagePrice}</Text>
-                }
-            </TouchableOpacity>
-        )
+        return <Card
+            colors={colors}
+            key={index}
+            data={item}
+            index={index}
+            onPressPitstop={onPressPitstop}
+        />
     }
     return (
         <View style={{ flex: 1 }}>
@@ -155,7 +151,12 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
                     state.pitstopListViewModel.list.map((item, index) => renderItem(item, index))
                 }
                 {
-                    state.isLoading ? <CardLoader styles={styles} type={2} loaderStyles={{marginTop:-15}} /> : <></>
+                    state.isLoading ? <CardLoader styles={styles} type={2} loaderStyles={{ marginTop: -15 }} /> : <></>
+                }
+                {
+                    state.pitstopListViewModel.list.length < 1 && state.isLoading === false ? <Text style={{ marginTop: 50, alignSelf: 'center', color: colors.grey }} fontFamily={'PoppinsMedium'}>
+                        No {pitstopType === 4 ? 'Restaurants' : 'Supermarkets'} Found
+                    </Text> : null
                 }
             </View>
         </View>

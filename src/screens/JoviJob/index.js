@@ -260,7 +260,7 @@ export default ({ navigation, route }) => {
 
 
     const onLocationPress = () => {
-        common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { onNavigateBack: cb })
+        common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { onNavigateBack:(placeName) => cb(placeName), index: 1 })
     }
     const cb = (resp) => {
         console.log('resp ==>>', resp);
@@ -840,7 +840,7 @@ export default ({ navigation, route }) => {
     }
     return (
         <SafeAreaView style={{ flex: 1 }} >
-            <CustomHeader leftIconName="keyboard-backspace" leftIconType="MaterialCommunityIcons" leftIconSize={30} onLeftIconPress={() => common_actions.goBack()} />
+            <CustomHeader leftIconColor={colors.primary} rightIconColor={colors.primary} leftIconSize={30} onLeftIconPress={() => common_actions.goBack()} />
             <Transitioning.View
                 ref={ref}
                 transition={transition}

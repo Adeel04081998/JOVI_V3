@@ -22,6 +22,7 @@ import PitstopsVerticalList from '../screens/PitstopListing/PitstopsVerticalList
 import RestaurantProductMenu from '../screens/RestaurantProductMenu';
 import ProductMenu from '../screens/ProductMenu';
 import Shelves from '../screens/Shelves';
+import AddAddress from '../screens/AddAddress';
 import CheckOut from '../screens/CheckOut/index'
 import Cart from '../screens/Cart';
 import ProductMenuItem from '../screens/ProductMenuItem';
@@ -63,6 +64,7 @@ const AppDrawerComponents = {
     JoviJob,
     Shelves,
     Map,
+    AddAddress,
     CheckOut,
     Cart,
     ShelvesDetail,

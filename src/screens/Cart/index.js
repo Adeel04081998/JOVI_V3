@@ -1,7 +1,7 @@
 import React from 'react';
 import { Appearance, ScrollView } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import svgs from '../../assets/svgs';
 import Image from '../../components/atoms/Image';
 import SafeAreaView from '../../components/atoms/SafeAreaView';
@@ -12,14 +12,17 @@ import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedGetServiceCharges } from '../../helpers/SharedActions';
+import NavigationService from '../../navigations/NavigationService';
+import ROUTES from '../../navigations/ROUTES';
 import sharedStyles from '../../res/sharedStyles';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES } from '../../utils/GV';
-import Progress from './components/Progress';
+import SetpProgress from '../../components/atoms/StepProgress';
 import stylesheet from './styles';
-import {
-  edit_icon, pencil_icon, percent_icon, pin_icon
-} from './svgs/cart_svgs';
+import { pencil_icon, percent_icon } from './svgs/cart_svgs';
+import DeliveryAddress from "../../components/atoms/DeliveryAddress";
+import colors, { initColors } from '../../res/colors';
+import ReduxActions from '../../redux/actions';
 
 const BottomLine = () => (
   <View
@@ -30,8 +33,15 @@ const BottomLine = () => (
     }}
   />
 );
+const DashedLines = () => {
+  return <View style={{ flexDirection: "row", overflow: "hidden" }}>
+    {Array(1000).fill("-").map((line, idx) => <Text style={{ color: initColors.grey }}>{line}</Text>)}
+  </View>
+
+}
 export default () => {
   const cartReducer = useSelector(store => store.cartReducer);
+  const dispatch = useDispatch();
   console.log('[CART_SCREEN] cartReducer', cartReducer);
   const colors = theme.getTheme(
     GV.THEME_VALUES.DEFAULT,
@@ -39,61 +49,11 @@ export default () => {
   );
   const cartStyles = stylesheet.styles(colors);
   React.useEffect(() => {
-    sharedGetServiceCharges()
+    // sharedGetServiceCharges()
   }, [])
-  const incDecDelHandler = pitstopDetails => {
-    sharedAddUpdatePitstop({ ...pitstopDetails });
+  const incDecDelHandler = (pitstopDetails, pitstopIndex = null, isDeletePitstop = false) => {
+    sharedAddUpdatePitstop({ ...pitstopDetails }, isDeletePitstop, [], false, true);
   };
-  const Address = () => {
-    const SPACING = 10;
-    const ICON_HEIGHT = 20;
-    const ICON_WIDTH = 20;
-    return (
-      <View
-        style={{
-          backgroundColor: colors.white,
-          borderRadius: 10,
-          padding: 5,
-          ...sharedStyles._styles(colors).shadow,
-          elevation: 3,
-        }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}>
-          <View style={{ flexDirection: 'row', padding: SPACING }}>
-            <SvgXml xml={pin_icon()} height={ICON_HEIGHT} width={ICON_WIDTH} />
-            <Text
-              style={{
-                paddingHorizontal: 10,
-                color: colors.primary,
-                fontSize: 16,
-              }}
-              fontFamily="PoppinsSemiBold">
-              Delivery Address
-            </Text>
-          </View>
-          <SvgXml xml={edit_icon()} height={20} width={20} />
-        </View>
-
-        <BottomLine />
-        <View style={{ padding: SPACING - 5, paddingLeft: SPACING + 20 }}>
-          <Text
-            style={{ color: colors.primary, fontSize: 14 }}
-            fontFamily="PoppinsSemiBold"
-            numberOfLines={1}>
-            Office
-          </Text>
-          <Text style={{ color: colors.black, fontSize: 11 }} numberOfLines={2}>
-            2nd floor, pakland plaza, I8 Markaz, Islamabad
-          </Text>
-        </View>
-      </View>
-    );
-  };
-
   const PitstopsCard = ({ pitstop }) => {
     const {
       pitstopIndex, // from cart pitstops
@@ -142,15 +102,19 @@ export default () => {
           </View>
 
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Text
-              style={{
-                paddingHorizontal: 10,
-                fontSize: 10,
-                color: dynamiColors.grey,
-              }}
-              fontFamily="PoppinsRegular">
-              Clear pitstop
+            <TouchableScale onPress={() => {
+              sharedAddUpdatePitstop({ pitstopIndex, pitstopType }, true)
+            }} >
+              <Text
+                style={{
+                  paddingHorizontal: 10,
+                  fontSize: 10,
+                  color: dynamiColors.grey,
+                }}
+                fontFamily="PoppinsRegular">
+                Clear pitstop
             </Text>
+            </TouchableScale>
 
             <View
               style={{
@@ -162,6 +126,7 @@ export default () => {
                 backgroundColor: '#C1C1C1',
                 alignItems: 'center',
                 justifyContent: 'center',
+                opacity: .7,
               }}>
               <VectorIcon
                 type="AntDesign"
@@ -189,24 +154,30 @@ export default () => {
           />
             :
             (checkOutItemsListVM || []).map((product, idx) => (
-              <Products
-                key={`product-key-${idx}`}
-                dynamiColors={dynamiColors}
-                isJOVI={isJOVI}
-                product={{ ...product, title: product.title || product.pitStopItemName, price: product.discountedPrice || product.gstAddedPrice || product.price }}
-                incDecDelHandler={quantity => {
-                  incDecDelHandler({
-                    // pitstopIndex,
-                    vendorDetails: {
-                      actionKey: "pitstopID",
-                      pitstopID,
-                      pitstopName,
-                      pitstopType,
-                    },
-                    itemDetails: { ...product, actionKey: "checkOutItemID", productIndex: idx, quantity },
-                  });
-                }}
-              />
+              <>
+                <Products
+                  key={`product-key-${idx}`}
+                  dynamiColors={dynamiColors}
+                  isJOVI={isJOVI}
+                  product={{ ...product, title: product.title || product.pitStopItemName, price: product.discountedPrice || product.gstAddedPrice || product.price }}
+                  incDecDelHandler={quantity => {
+                    incDecDelHandler({
+                      // pitstopIndex,
+                      vendorDetails: {
+                        actionKey: "pitstopID",
+                        pitstopID,
+                        pitstopName,
+                        pitstopType,
+                      },
+                      itemDetails: { ...product, actionKey: "checkOutItemID", productIndex: idx, quantity },
+                    });
+                  }}
+                />
+                {
+                  idx === checkOutItemsListVM.length - 1 ? null : <DashedLines />
+                }
+
+              </>
             ))
         }
       </View>
@@ -218,22 +189,15 @@ export default () => {
     product,
     incDecDelHandler,
   }) => {
-    const { title, description, images, price, gstAddedPrice, quantity } = product;
-    return (
-      <View style={{ flexDirection: 'row' }}>
+    const { title, description, notes, images, _itemPriceWithoutDiscount, _totalDiscount, _itemPrice, quantity } = product;
+    if (isJOVI) {
+      return <View style={{ flexDirection: 'row' }}>
         <View style={{ height: 70, width: 70, borderRadius: 10, margin: 5 }}>
           <Image
-            source={
-              isJOVI
-                ? require('./assets/jovi.png')
-                : {
-                  uri: renderFile(images[0].joviImageThumbnail),
-                }
-            }
+            source={require('./assets/jovi.png')}
             style={{ height: 70, width: 70, borderRadius: 10 }}
           />
         </View>
-
         <View style={{ flex: 1, margin: 5 }}>
           <View
             style={{
@@ -242,34 +206,15 @@ export default () => {
               alignItems: 'center',
               // margin: 5,
             }}>
-            <View style={{ flexDirection: 'row' }}>
-              <Text
-                style={{ color: dynamiColors.black, fontSize: 14 }}
-                fontFamily="PoppinsBold">
-                {title}
-              </Text>
-              {!isJOVI && (
-                <SvgXml
-                  xml={percent_icon(dynamiColors.primary)}
-                  height={20}
-                  width={20}
-                  style={{ marginHorizontal: 10 }}
-                />
-              )}
-            </View>
-
-            <SvgXml xml={pencil_icon()} height={20} width={12} />
-          </View>
-
-          <View>
             <Text
-              numberOfLines={2}
-              style={{ textAlign: 'left', color: '#6B6B6B', fontSize: 12 }}
-              fontFamily="PoppinsLight">
-              {description}
+              style={{ color: dynamiColors.black, fontSize: 14 }}
+              fontFamily="PoppinsBold">
+              {title}
             </Text>
+            <TouchableScale style={{ paddingRight: 5 }}>
+              <SvgXml xml={pencil_icon()} height={20} width={12} />
+            </TouchableScale>
           </View>
-
           <View
             style={{
               flexDirection: 'row',
@@ -282,55 +227,121 @@ export default () => {
                 fontFamily="PoppinsMedium">
                 {renderPrice(price)}
               </Text>
-              {
-                gstAddedPrice &&
-                <Text
-                  style={{ color: dynamiColors.grey, fontSize: 12, textDecorationLine: "line-through" }}
-                  fontFamily="PoppinsMedium">
-                  {renderPrice(gstAddedPrice)}
-                </Text>
-              }
             </View>
-            {
-              !isJOVI &&
-              <IncDec
-                quantity={quantity}
-                incDecDelHandler={quantity => incDecDelHandler(quantity)}
-              />
-            }
           </View>
         </View>
       </View>
-    );
+    } else {
+      return (
+        <View style={{ flexDirection: 'row' }}>
+          <View style={{ height: 70, width: 70, borderRadius: 10, margin: 5 }}>
+            <Image
+              source={{ uri: renderFile(images[0].joviImageThumbnail) }}
+              style={{ height: 70, width: 70, borderRadius: 10 }}
+            />
+          </View>
+          <View style={{ flex: 1, margin: 5 }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                // margin: 5,
+              }}>
+              <View style={{ flexDirection: 'row' }}>
+                <Text
+                  style={{ color: dynamiColors.black, fontSize: 14 }}
+                  fontFamily="PoppinsBold">
+                  {title}
+                </Text>
+
+                <SvgXml
+                  xml={percent_icon(dynamiColors.primary)}
+                  height={20}
+                  width={20}
+                  style={{ marginHorizontal: 10 }}
+                />
+              </View>
+              <TouchableScale style={{ paddingRight: 5 }}>
+                <SvgXml xml={pencil_icon()} height={22} width={14} />
+              </TouchableScale>
+            </View>
+            <View>
+              <Text
+                numberOfLines={1}
+                style={{ textAlign: 'left', color: '#6B6B6B', fontSize: 12 }}
+                fontFamily="PoppinsLight">
+                {notes}
+              </Text>
+            </View>
+            <Text style={{ color: colors.grey }} numberOfLines={1}>
+              {
+                product?.selectedOptions?.map(obj => obj.tittle).join(",")
+              }
+            </Text>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+              <View>
+                <Text
+                  style={{ color: dynamiColors.primary, fontSize: 12 }}
+                  fontFamily="PoppinsMedium">
+                  {renderPrice(_itemPrice)}
+                </Text>
+                {
+                  _totalDiscount > 0 &&
+                  <Text
+                    style={{ color: dynamiColors.grey, fontSize: 12, textDecorationLine: "line-through" }}
+                    fontFamily="PoppinsMedium">
+                    {renderPrice(_itemPriceWithoutDiscount)}
+                  </Text>
+                }
+              </View>
+              <IncDec
+                quantity={quantity}
+                incDecDelHandler={quantity => incDecDelHandler(quantity)}
+                dynamiColors={dynamiColors}
+              />
+            </View>
+          </View>
+        </View>
+      );
+    }
   };
-  const IncDec = ({ quantity, incDecDelHandler }) => (
+  const IncDec = ({ quantity, incDecDelHandler, dynamiColors }) => (
     <View
       style={{
         flexDirection: 'row',
         alignSelf: 'center',
-        backgroundColor: 'white',
+        backgroundColor: dynamiColors.white,
         borderRadius: 30,
         alignItems: 'center',
         paddingHorizontal: 6,
-        paddingVertical: 5,
-        ...sharedStyles._styles(colors).shadow,
+        borderColor: dynamiColors.primary,
+        borderWidth: 1,
+        paddingVertical: 2,
+        ...sharedStyles._styles(dynamiColors).shadow,
       }}>
       <TouchableScale onPress={() => incDecDelHandler(quantity - 1)}>
         <VectorIcon
-          name="minus"
+          name={quantity <= 1 ? "delete" : "minus"}
           type="MaterialCommunityIcons"
-          size={25}
-          color={'black'}
+          size={20}
+          color={dynamiColors.primary}
         />
       </TouchableScale>
       <TouchableScale>
         <Text
           style={{
             fontWeight: 'bold',
-            fontSize: 20,
+            fontSize: 14,
             justifyContent: 'center',
             alignItems: 'center',
-            color: 'black',
+            color: dynamiColors.primary,
             paddingHorizontal: 16,
           }}>
           {quantity}
@@ -340,30 +351,33 @@ export default () => {
         <VectorIcon
           name="plus"
           type="MaterialCommunityIcons"
-          size={25}
-          color={'black'}
+          size={20}
+          color={dynamiColors.primary}
         />
       </TouchableScale>
     </View>
   );
+
   const Totals = () => {
     const { subTotal, discount, serviceCharges, total } = cartReducer;
-    const row = (caption = '', value = '', isBold = false) => (
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
-        <Text fontFamily={isBold ? 'PoppinsBold' : 'PoppinsLight'}>
-          {caption}
-        </Text>
-        <Text
-          fontFamily={
-            isBold ? 'PoppinsBold' : 'PoppinsLight'
-          }>{renderPrice(value)}</Text>
-      </View>
-    );
+    const row = (caption = '', value = 0, isBold = false) => {
+      if (value) {
+        return <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}>
+          <Text fontFamily={isBold ? 'PoppinsBold' : 'PoppinsLight'}>
+            {caption}
+          </Text>
+          <Text
+            fontFamily={
+              isBold ? 'PoppinsBold' : 'PoppinsLight'
+            }>{renderPrice(value)}</Text>
+        </View>
+      } else return null;
+    };
     return (
       <View style={{}}>
         {row('Subtotal', subTotal, true)}
@@ -386,11 +400,13 @@ export default () => {
           // borderBottomColor: ,
         }}
       />
-      <Progress styles={cartStyles} />
+      <View style={{ top: -10 }}>
+        <SetpProgress maxHighlight={2} />
+      </View>
       <ScrollView contentContainerStyle={{ padding: 10 }} style={{ flex: 1 }}>
         <View style={{ marginHorizontal: 0 }}>
-          <Address />
-          <Text style={{ padding: 10 }}>Hold text would be here...</Text>
+          <DeliveryAddress />
+          <Text style={{ padding: 10, fontSize: 12 }} fontFamily="PoppinsLight">{'Hold and drag to rearrange your pitstops to get the better route and less service charges.'}</Text>
           {(cartReducer.pitstops || []).map((pitstop, pitstopIndex) => (
             <PitstopsCard
               key={`pit-key${pitstopIndex}`}
@@ -424,7 +440,12 @@ export default () => {
             alignItems: 'center',
             borderColor: colors.primary,
             borderWidth: 1,
-          }}>
+          }}
+          onPress={() => {
+            dispatch(ReduxActions.clearCartAction());
+            NavigationService.NavigationActions.common_actions.goBack();
+          }}
+        >
           <Text style={{ color: colors.primary, paddingHorizontal: 5 }}>
             Empty entire jovi cart
           </Text>
@@ -441,7 +462,7 @@ export default () => {
         <Totals />
       </ScrollView>
       <View style={{ flexDirection: 'row' }}>
-        {['Add Pitstop', 'Checkout'].map(title => (
+        {['Add Pitstop', 'Checkout'].map((title, idx) => (
           <TouchableScale
             key={title}
             style={{
@@ -450,7 +471,11 @@ export default () => {
               backgroundColor: colors.primary,
               borderRadius: 10,
               marginHorizontal: 3,
-            }}>
+            }}
+            onPress={() => {
+              NavigationService.NavigationActions.common_actions.navigate(idx > 0 ? ROUTES.APP_DRAWER_ROUTES.CheckOut.screen_name : ROUTES.APP_DRAWER_ROUTES.Home.screen_name)
+            }}
+          >
             <Text style={{ textAlign: 'center', color: colors.white }}>
               {title}
             </Text>

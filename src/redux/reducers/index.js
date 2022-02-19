@@ -42,6 +42,17 @@ const cartReducer = (state = INIT_CART_DATA, action) => {
       return { ...state };
   }
 };
+const modalReducer = (state = { visible: false,closeModal:false, ModalContent: null }, action) => {
+  switch (action.type) {
+    case TYPES.SET_MODAL:
+      return { ...state, ...action.payload, closeModal: false };
+    case TYPES.CLOSE_MODAL:{
+        return {...state, closeModal: true}
+    }
+    default:
+      return { ...state };
+  }
+};
 const enumsReducer = (state = {}, action) => {
   switch (action.type) {
     case TYPES.SET_ENUMS_ACTION:
@@ -96,5 +107,6 @@ export default {
   messagesReducer,
   promotionsReducer,
   categoriesTagsReducer,
+  modalReducer
   //...
 }

@@ -6,6 +6,26 @@ const setUserAction = (payload = {}) => {
         payload: { ...payload }
     }
 }
+
+const setUserFinalDestAction = (payload = {}) => {
+    return {
+        type: TYPES.USER_FINAL_DESTINATION,
+        payload: { ...payload }
+    }
+}
+
+const setModalAction = (payload = {}) => {
+    return {
+        type: TYPES.SET_MODAL,
+        payload: { ...payload }
+    }
+}
+const closeModalAction = () => {
+    return {
+        type: TYPES.CLOSE_MODAL,
+        payload: { closeModal:true }
+    }
+}
 const clearUserAction = (payload = {}) => {
     return {
         type: TYPES.CLEAR_USER_ACTION,
@@ -80,6 +100,9 @@ export default {
     setRobotJsonAction,
     clearRobotJsonAction,
     showRobotAction,
-    setCategoriesTagsAction
+    setCategoriesTagsAction,
+    setModalAction,
+    setUserFinalDestAction,
+    closeModalAction,
     //...
 }

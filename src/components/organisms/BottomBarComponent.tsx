@@ -338,6 +338,7 @@ const BottomBarComponent = (props: Props) => {
                         {/* ****************** Start of RIGHT SIDE ****************** */}
                         <View style={[styles.rowRight, { height: height }]}>
                             {(props.rightData ?? []).map((item: BottomBarItem, index) => _renderSideItem(item, index))}
+                            <Text style={{ position: 'absolute', bottom: 0, right: 40, fontSize: 14, fontWeight: 'bold', color: 'rgba(0,0,0,0.6)' }}>{constants.app_version}</Text>
                         </View>
 
                         {/* ****************** End of RIGHT SIDE ****************** */}
@@ -351,7 +352,7 @@ const BottomBarComponent = (props: Props) => {
 
                 {/* ****************** Start of CIRCULAR CATEGORIES ****************** */}
                 {/* {isCloseIcon && */}
-                    <CategoryCircular data={mockData} isShown={isCloseIcon} />
+                <CategoryCircular data={mockData} isShown={isCloseIcon} />
                 {/* } */}
 
                 {/* ****************** End of CIRCULAR CATEGORIES ****************** */}

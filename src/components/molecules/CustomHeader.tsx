@@ -1,15 +1,16 @@
 import * as React from "react";
 import { GestureResponderEvent, Platform, StyleProp, StyleSheet, TextStyle, View as RNView, ViewStyle } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { VALIDATION_CHECK } from "../../helpers/SharedActions";
 import NavigationService from "../../navigations/NavigationService";
 import ROUTES from "../../navigations/ROUTES";
+import ReduxActions from "../../redux/actions";
+import AddressesList from "../atoms/FinalDestination/AddressesList";
 import Text from "../atoms/Text";
 import TouchableOpacity from "../atoms/TouchableOpacity";
 import TouchableScale from "../atoms/TouchableScale";
 import VectorIcon from "../atoms/VectorIcon";
 import View from "../atoms/View";
-
 type Props = React.ComponentProps<typeof RNView> & {
     children?: any;
 
@@ -49,6 +50,7 @@ type Props = React.ComponentProps<typeof RNView> & {
 
     //CENTER PROP's
     title?: string;
+    finalDest?: string,
     onTitlePress?: (event: GestureResponderEvent) => void;
     titleStyle?: StyleProp<TextStyle>;
     hideFinalDestination?: boolean;
@@ -58,6 +60,8 @@ type Props = React.ComponentProps<typeof RNView> & {
 
 const defaultProps = {
     containerStyle: {},
+
+
     //LEFT SIDE PROP's
     leftCustom: undefined,
     leftDot: false,
@@ -97,6 +101,7 @@ const defaultProps = {
     titleStyle: {},
     hideFinalDestination: false,
     defaultColor: "#6D51BB",
+    finalDest: ''
     //CENTER PROP's ENDING
 
 
@@ -105,11 +110,10 @@ const defaultProps = {
 const CustomHeader = (props: Props) => {
     const DEFAULT_COLOR = props.defaultColor;//REDUX.THEME.background;
     const styles = headerStyles(DEFAULT_COLOR);
-    const finalDestination = 'Set your location';
-
-
-
+    const dispatch = useDispatch();
     const cartReducer = useSelector((store: any) => store.cartReducer);
+    const userReducer = useSelector((store: any) => store.userReducer);
+    const finalDestination = userReducer.finalDestObj ? userReducer.finalDestObj : { title: 'Set your location' };
 
     // React.useEffect(()=>{
 
@@ -118,11 +122,13 @@ const CustomHeader = (props: Props) => {
     const _renderFinalDestination = () => {
         return props.hideFinalDestination ? <></> : (
             <TouchableOpacity style={{ alignItems: "center" }} activeOpacity={0.5}
-                {...props.onTitlePress ? {
-                    onPress: (event) => props.onTitlePress && props.onTitlePress(event)
-                } : {
-                    disabled: true
-                }}>
+                onPress={(event) => {
+                    dispatch(ReduxActions.setModalAction({
+                        visible: true,
+                    }))
+                    props.onTitlePress && props.onTitlePress(event);
+                }}
+                >
                 <View style={{ flexDirection: "row", alignItems: "center", }}>
                     <Text style={styles.deliverToText}
                         fontFamily={"PoppinsLight"}>
@@ -131,8 +137,8 @@ const CustomHeader = (props: Props) => {
                     <VectorIcon name={"chevron-down"} type={"EvilIcons"} />
                 </View>
                 <Text style={styles.finalDestinationText} numberOfLines={1}>
-                    {/* {VALIDATION_CHECK(finalDestination) ? finalDestination : `Set your location`} */}
-                    {"version-2.1"}
+                    {VALIDATION_CHECK(finalDestination.title) ? finalDestination.title : `Set your location`}
+                    {/* {"version-2.1"} */}
                 </Text>
             </TouchableOpacity>
         )
@@ -155,6 +161,7 @@ const CustomHeader = (props: Props) => {
     };//end of _renderDot
     return (
         <View style={[styles.primaryContainer, props.containerStyle]}>
+
 
             {/* ****************** Start of LEFT SIDE ICON ****************** */}
             <View style={styles.sideContainer}>
@@ -181,6 +188,7 @@ const CustomHeader = (props: Props) => {
             </View>
 
             {/* ****************** End of LEFT SIDE ICON ****************** */}
+
 
             {/* ****************** Start of CENTER ****************** */}
             <View style={styles.middleContainer}>
