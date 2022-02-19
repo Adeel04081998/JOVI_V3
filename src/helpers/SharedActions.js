@@ -405,7 +405,8 @@ export const sharedAddUpdatePitstop = (
     isDeletePitstop = false,
     swappedArray = [],
     forceAddNewItem = false,
-    fromCart = false
+    fromCart = false,
+    cb = () => { }
 ) => {
     if (false) return dispatch(ReduxActionss.clearCartAction({}));
     if (swappedArray.length) return sharedCalculateCartTotals(swappedArray)
@@ -419,11 +420,11 @@ export const sharedAddUpdatePitstop = (
     // FOR VENDOR PITSTOP
     const cartReducer = store.getState().cartReducer;
     let pitstops = cartReducer.pitstops;
-    const pitstopIndex = (pitstopDetails.pitstopIndex !== undefined && pitstopDetails.pitstopIndex !== null?pitstopDetails.pitstopIndex :null);
+    const pitstopIndex = (pitstopDetails.pitstopIndex !== undefined && pitstopDetails.pitstopIndex !== null ? pitstopDetails.pitstopIndex : null);
     if (pitstopIndex !== null && isDeletePitstop) {
         console.log('[DELETE PITSTOP FROM CART]');
         pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIndex);
-    }else if (pitstopDetails.pitstopType === PITSTOP_TYPES.JOVI) {
+    } else if (pitstopDetails.pitstopType === PITSTOP_TYPES.JOVI) {
         console.log('[JOVI PITSTOP]');
         // JOVI PITSTOPS HANDLING
         if (pitstopIndex !== null) {
@@ -503,6 +504,7 @@ export const sharedAddUpdatePitstop = (
         }
     }
     console.log('[TO CALCULATE PITSTOPS]', pitstops);
+    cb();
     sharedCalculateCartTotals(pitstops, cartReducer)
 };
 
