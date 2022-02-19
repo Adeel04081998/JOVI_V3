@@ -94,7 +94,7 @@ export default (props) => {
                     <Text fontFamily={"PoppinsSemiBold"} style={{ color: colors.primary, fontSize: 16 }}>{'Add New Location'}</Text>
                 </View>
             </TouchableOpacity>
-            <Button text="Confirm" onPress={onConfirmAddress} style={{ width: WIDTH * 0.95, height: HEIGHT / 15, alignSelf: 'center' }} />
+            <Button text="Confirm location" onPress={onConfirmAddress} style={{ width: WIDTH * 0.95, height: HEIGHT / 15, alignSelf: 'center' }} />
         </View>
     )
 }
