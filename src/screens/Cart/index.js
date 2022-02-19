@@ -11,7 +11,7 @@ import TouchableScale from '../../components/atoms/TouchableScale';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
-import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedGetServiceCharges } from '../../helpers/SharedActions';
+import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedConfirmationAlert, sharedGetServiceCharges } from '../../helpers/SharedActions';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import sharedStyles from '../../res/sharedStyles';
@@ -189,7 +189,7 @@ export default () => {
     product,
     incDecDelHandler,
   }) => {
-    const { title, description, notes, images, _itemPriceWithoutDiscount, _totalDiscount, _itemPrice, quantity } = product;
+    const { title, estimatePrice, description, notes, images, _itemPriceWithoutDiscount, _totalDiscount, _itemPrice, quantity } = product;
     if (isJOVI) {
       return <View style={{ flexDirection: 'row' }}>
         <View style={{ height: 70, width: 70, borderRadius: 10, margin: 5 }}>
@@ -215,20 +215,16 @@ export default () => {
               <SvgXml xml={pencil_icon()} height={20} width={12} />
             </TouchableScale>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}>
-            <View>
-              <Text
-                style={{ color: dynamiColors.primary, fontSize: 12 }}
-                fontFamily="PoppinsMedium">
-                {renderPrice(price)}
-              </Text>
-            </View>
-          </View>
+          <Text
+            style={{ color: dynamiColors.black, fontSize: 10 }}
+            fontFamily="PoppinsRegular">
+            {description}
+          </Text>
+          <Text
+            style={{ color: dynamiColors.primary, fontSize: 12 }}
+            fontFamily="PoppinsMedium">
+            {renderPrice(estimatePrice)}
+          </Text>
         </View>
       </View>
     } else {
@@ -442,8 +438,22 @@ export default () => {
             borderWidth: 1,
           }}
           onPress={() => {
-            dispatch(ReduxActions.clearCartAction());
-            NavigationService.NavigationActions.common_actions.goBack();
+            sharedConfirmationAlert(
+              "Alert!", "Are you sure you want to clear entire cart?",
+              [
+                {
+                  text: "No",
+                  onPress: () => { }
+                },
+                {
+                  text: "Yes",
+                  onPress: () => {
+                    dispatch(ReduxActions.clearCartAction());
+                    NavigationService.NavigationActions.common_actions.goBack();
+                  }
+                },
+              ]
+            )
           }}
         >
           <Text style={{ color: colors.primary, paddingHorizontal: 5 }}>

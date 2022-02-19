@@ -58,7 +58,7 @@ export default ({ navigation, route }) => {
     const styles = joviJobStyles(colors, WIDTH, HEIGHT);
     const { stack_actions, common_actions, drawer_actions } = NavigationService.NavigationActions
     const { APP_STACKS } = ROUTES;
-    const [cardData, setCardData] = useState([
+    const initCartData = [
         {
             "idx": 1,
             "title": "Pitstop",
@@ -116,7 +116,8 @@ export default ({ navigation, route }) => {
             "disabled": true,
 
         },
-    ])
+    ]
+    const [cardData, setCardData] = useState(initCartData)
 
     /******** End of Main variables *******/
 
@@ -187,7 +188,36 @@ export default ({ navigation, route }) => {
 
 
 
+const clearData = () => {
+    setCardData(initCartData);
+    setNameVal("");
+    setCityVal("");
 
+    setLocationVal("");
+
+    setScrollEnabled(true);
+    
+    setDescription("");
+
+    updateImagesData([]);
+
+    setRecordingUploading(false);
+
+
+    setIsRecord(false);
+
+    setMicPress(false);
+    setIsDeleted(false);
+    setVoiceNote({});
+
+    setEstVal("");
+
+    setSwitch(false);
+
+    setEstTime({text: "Estimated Time", value: 0})
+    setCollapsed(true)
+
+}
     /*****************************     Start of  useEffect            ***********************************/
 
 
@@ -875,7 +905,7 @@ export default ({ navigation, route }) => {
                                     estTime,
                                     estimatePrice: parseInt( estVal)
                                 }
-                                sharedAddUpdatePitstop(pitstopData)
+                                sharedAddUpdatePitstop(pitstopData, false, [], false, false, clearData);
                             }}
                             disabled={validationCheck()}
                             style={[styles.locButton, { height: 45, marginVertical: 10 }]}
