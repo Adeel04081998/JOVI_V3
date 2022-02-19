@@ -68,7 +68,7 @@ export default (props) => {
                             <SvgXml xml={item.addressType ? item.addressType === 1 ? svgs.homeAddIcon(item.iconColor ? item.iconColor : colors.primary) : item.addressType === 2 ? svgs.bagIcon(item.iconColor ? item.iconColor : colors.primary) : svgs.relationIcon(item.iconColor ? item.iconColor : colors.primary) : svgs.plusIcon(item.iconColor ? item.iconColor : colors.primary)} />
                             <View style={{ flexDirection: 'column', marginLeft: 10 }}>
                                 <Text fontFamily={"PoppinsMedium"} style={{ color: item.iconColor ? item.iconColor : colors.primary, fontSize: 16 }}>{item.addressTypeStr || 'Other'}</Text>
-                                {item.title && <Text numberOfLines={1} fontFamily={"PoppinsRegular"} style={{ color: colors.subTextGreyColor || item.iconColor, fontSize: 10 }}>{item.title}</Text>}
+                                {item.title && <Text numberOfLines={1} fontFamily={"PoppinsRegular"} style={{ color: colors.subTextGreyColor || item.iconColor, fontSize: 10, width: WIDTH * 0.8 }}>{item.title}</Text>}
                             </View>
                         </TouchableOpacity>
                     )
@@ -78,7 +78,7 @@ export default (props) => {
     }
     return (
         <View style={{ marginBottom: 10 }} >
-            <Text style={{ padding: 10, color: colors.black, fontSize: 18, paddingLeft:15 }} fontFamily="PoppinsMedium" >Can you confirm if this is your location?</Text>
+            <Text style={{  color: colors.black, fontSize: 18, paddingLeft:20, paddingTop:15 }} fontFamily="PoppinsMedium" >Can you confirm if this is your location?</Text>
             <TouchableOpacity style={{ flexDirection: 'row', padding: 10,paddingLeft:15, alignItems: 'center' }} onPress={() => onTitlePress(0)}>
                 <VectorIcon name="map-marker" type="FontAwesome" size={20} color={colors.primary} />
                 <View style={{ flexDirection: 'column', marginLeft: 10 }}>

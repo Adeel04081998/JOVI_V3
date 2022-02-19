@@ -203,7 +203,6 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
                         height: 38,
                         flex: 1,
                         width: "100%",
-                        backgroundColor:'red',
                     },
 
                     predefinedPlacesDescription: {
