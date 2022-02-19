@@ -243,6 +243,7 @@ export default ({ navigation, route }) => {
                                         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, {
                                             propItem: {
                                                 itemDetails: {},
+                                                ...item,
                                                 vendorDetails: { ...route.params },
                                             },
                                             pitstopType: pitstopType

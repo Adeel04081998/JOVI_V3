@@ -28,8 +28,8 @@ export default {
                 marginVertical: 5
             },
             greetingHeaderText: {
-                fontSize: 14,
-                color: '#272727'
+                fontSize: 25,
+                color: '#272727',
 
             },
             greetingBodyText: {
@@ -40,9 +40,10 @@ export default {
                 justifyContent: 'space-between',
                 borderRadius: 7,
                 backgroundColor: colors.BlueChalk || '#EEE5FF',
+                
             },
             alertMsgSecondaryContainer: {
-                flex: 1, flexDirection: 'column', justifyContent: 'center', padding: 10
+                flex: 1, flexDirection: 'column', justifyContent: 'center', padding: 10,
             },
             alertMsgHeaderText: {
                 fontSize: 14,

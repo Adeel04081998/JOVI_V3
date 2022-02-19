@@ -11,7 +11,7 @@ export default ({ messagesReducer, homeStyles }) => {
     else {
         const alertMessage = alertMsgList[0];
         return (
-            <AnimatedView style={{ marginTop: 30 }}>
+            <AnimatedView style={{ marginTop: 30,  }}>
                 <AnimatedView style={homeStyles.alertMsgPrimaryContainer}>
                     <AnimatedView style={homeStyles.alertMsgSecondaryContainer}>
                         <Text style={homeStyles.alertMsgHeaderText} numberOfLines={2}>
@@ -24,7 +24,7 @@ export default ({ messagesReducer, homeStyles }) => {
                     <AnimatedView style={homeStyles.alertMsgSvgView}>
                         <LottieView
                             source={require('../../../assets/gifs/animated_cat.json')}
-                            style={{ position: 'absolute', right: 15, height: 80, bottom: Platform.OS === 'android' ? 2 : 1 }}
+                            style={{ position: 'absolute', right: 15, height: 90, bottom: Platform.OS === 'android' ? 2 : 1 }}
                             hardwareAccelerationAndroid={true}
                             autoPlay
                             loop

@@ -25,6 +25,7 @@ import styleSheet from "./style";
 
 
 export default (props) => {
+    console.log("props product Details=>>", props);
     // const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark"
     let initialState = {
 
@@ -68,9 +69,10 @@ export default (props) => {
 
 
     const loadProductDetails = () => {
+
         postRequest(Endpoints.PRODUCT_DETAILS, {
-            "pitstopProductID": propItem?.pitStopItemID ?? 55278,
-            "pitstopDealID": propItem?.pitstopDealID ?? 0,
+            "pitstopProductID": propItem?.pitStopItemID,
+            "pitstopDealID": propItem?.pitStopDealID,
             "pitstopType": pitstopType
         }, (res) => {
             console.log('if GET_PRODUCTDETAIL  res', res);
@@ -197,7 +199,7 @@ export default (props) => {
         sharedAddUpdatePitstop(dataToSend, false, [], true)
 
         // NavigationService.NavigationActions.common_actions.navigate({ dataToSend })
-        
+
         setEnable(pre => ({
             ...pre,
             enableBtn: optionsListArr.length < 1,
@@ -298,7 +300,7 @@ export default (props) => {
             />
         </View>
     }
-    const RenderPutItemInCartBox = ({addToCardAnimation}) => {
+    const RenderPutItemInCartBox = ({ addToCardAnimation }) => {
         const animateAddToCart = React.useRef(new Animated.Value(0)).current;
         const animateLoader = (toValue = 1) => {
             Animated.timing(animateAddToCart, {
@@ -313,12 +315,12 @@ export default (props) => {
             });
         }
         React.useEffect(() => {
-            if(addToCardAnimation === true){
+            if (addToCardAnimation === true) {
                 animateLoader();
             }
         }, [addToCardAnimation]);
         return (
-            <AnimatedView style={{ opacity: animateAddToCart,display:addToCardAnimation === true?'flex':'none', position: 'absolute', height: "100%", backgroundColor: 'rgba(0,0,1,0.5)', width: '100%', justifyContent: 'flex-start', alignContent: 'flex-start' }}>
+            <AnimatedView style={{ opacity: animateAddToCart, display: addToCardAnimation === true ? 'flex' : 'none', position: 'absolute', height: "100%", backgroundColor: 'rgba(0,0,1,0.5)', width: '100%', justifyContent: 'flex-start', alignContent: 'flex-start' }}>
                 <AnimatedLottieView
                     source={require('../../assets/gifs/Add To Cart.json')}
                     onAnimationFinish={() => {
@@ -397,28 +399,27 @@ export default (props) => {
                                     productDetailsStyles={productDetailsStyles}
                                     selectedOptions={state.selectedOptions}
                                 />
-                                {pitstopType === 4?<TextInput
+                                {pitstopType === 4 ? <TextInput
                                     containerStyle={{ backgroundColor: 'white', marginVertical: 30, margin: 0, }}
-                                    placeholder="Types your notes"
+                                    placeholder="Types your instructions"
                                     titleStyle={{ color: 'black', fontSize: 14, }}
                                     title="Please add your instructions"
                                     textAlignVertical='top'
                                     style={{ textAlign: "left", backgroundColor: '#0000002E', borderColor: '#0000002E', opacity: 0.3, margin: 10, borderRadius: 10, minHeight: minHeight, }}
-                                    placeholder="Types your notes"
                                     onChangeText={(text) => {
                                         if (Regex.Space_Regex.test(text)) return
                                         setState((pre) => ({ ...pre, notes: text }))
                                     }}
                                     multiline={true} // ios fix for centering it at the top-left corner 
                                     numberOfLines={Platform.OS === "ios" ? null : numberOfLines}
-                                />:null}
+                                /> : null}
                             </AnimatedView>
                         </ScrollView>
                         {renderButtonsUi()}
                     </SafeAreaView>
 
             }
-            {<RenderPutItemInCartBox addToCardAnimation={state.addToCardAnimation}/> }
+            {<RenderPutItemInCartBox addToCardAnimation={state.addToCardAnimation} />}
 
         </View>
 
