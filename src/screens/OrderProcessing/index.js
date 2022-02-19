@@ -59,7 +59,7 @@ export default ({ navigation, route }) => {
                 }}
             />
 
-            <Text fontFamily='Medium' style={{
+            <Text fontFamily='PoppinsMedium' style={{
                 fontSize: 16,
                 color: colors.primary,
                 textAlign: "center",
