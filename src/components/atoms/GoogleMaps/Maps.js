@@ -14,7 +14,7 @@ import constants from '../../../res/constants';
 import Toast from '../Toast';
 import LocationSearch from '../LocationSearch';
 import NavigationService from '../../../navigations/NavigationService';
-import ROUTES from '../../../navigations/ROUTES';
+import SafeAreaView from '../SafeAreaView';
 
 
 const LATITUDE_DELTA = 0.01;
@@ -114,7 +114,20 @@ export default (props) => {
 
   const renderLocationSearchUI = () => {
     return (
-      <View style={{ position: 'absolute', top: 0, height: Platform.OS === "android" ? HEIGHT * 0.08 : HEIGHT * 0.12, width: WIDTH, backgroundColor: colors.white, flexDirection: 'row', zIndex: 10, borderBottomWidth: 3, borderBottomColor: colors.primary, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{
+        position: 'absolute',
+        top: 0,
+        height: HEIGHT * 0.08,
+        width: WIDTH,
+        backgroundColor: colors.white,
+        flexDirection: 'row',
+        zIndex: 10,
+        borderBottomWidth: 3,
+        borderBottomColor: colors.primary,
+        justifyContent:'center',
+        paddingTop: WIDTH * 0.0085,
+        paddingLeft:5
+      }}>
         <TouchableOpacity
           onPress={() => NavigationService.NavigationActions.common_actions.goBack()}
           style={{
@@ -123,11 +136,11 @@ export default (props) => {
             borderColor: ICON_BORDER.color,
             borderWidth: ICON_BORDER.width,
             borderRadius: ICON_BORDER.borderRadius,
-            alignSelf: Platform.OS === "android" ? "center" : 'flex-end',
+            // alignSelf: Platform.OS === "android" ? "center" : 'flex-end',
             alignItems: "center",
             justifyContent: "center",
-            marginVertical: Platform.OS === "android" ? 0 : 11,
-            marginLeft: 10,
+            // marginVertical: Platform.OS === "android" ? 0 : 11,
+            // marginLeft: 10,
           }}>
           <VectorIcon
             name={"keyboard-backspace"}
@@ -174,11 +187,6 @@ export default (props) => {
 
   const rendermarkers = () => {
     return (
-      // <VectorIcon name="map-marker"
-      //   type="FontAwesome"
-      //   style={styles.marker}
-      //   size={40}
-      //   color={colors.primary} />
       <SvgXml xml={svgs.pinMap()}
         style={styles.marker}
       />
@@ -214,7 +222,8 @@ export default (props) => {
         // followsUserLocation={true}
         zoomControlEnabled={false}
         zoomEnabled={true}
-        showsCompass={false} />
+        showsCompass={false}
+        />
     )
   }
 
@@ -320,6 +329,7 @@ const styles = StyleSheet.create({
   },
   map: {
     ...StyleSheet.absoluteFillObject,
+    zIndex: -1
   },
   marker: {
     zIndex: 3,

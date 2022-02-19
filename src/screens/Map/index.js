@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native';
+import { View, Text, Appearance } from 'react-native';
 import React, { useState } from 'react';
 import Maps from '../../components/atoms/GoogleMaps/Maps';
 import { addressInfo } from '../../helpers/Location';
@@ -6,11 +6,15 @@ import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import { useDispatch, useSelector } from 'react-redux';
 import ReduxActions from "../../redux/actions/index";
+import SafeAreaView from '../../components/atoms/SafeAreaView';
+import theme from '../../res/theme';
+import GV from '../../utils/GV';
 
 export default (props) => {
+  const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
 
   const dispatch = useDispatch();
-console.log('props in map ===>>>>',props);
+  
   const onConfirmLoc = (finalDestObj) => {
     if (props.route.params.index === 0) {
       props.route.params.onNavigateBack && props.route.params.onNavigateBack(finalDestObj.title);
@@ -34,8 +38,10 @@ console.log('props in map ===>>>>',props);
   }
 
   return (
+    <SafeAreaView style={{flex:1, backgroundColor: colors.white}} >
     <View style={{ flex: 1 }} >
       <Maps onConfirmLoc={onConfirmLoc} />
     </View>
+    </SafeAreaView>
   );
 }
