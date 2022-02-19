@@ -21,6 +21,7 @@ export default {
         discounted_price_key: "discountedPrice",
         price_key: "gstAddedPrice",
     },
+    cart_icon: "shopping-bag",
     colors: {
         "name": "Default",
         "backgroundColor": "#1D1D1D",

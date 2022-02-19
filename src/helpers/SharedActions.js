@@ -420,26 +420,19 @@ export const sharedAddUpdatePitstop = (
     // FOR VENDOR PITSTOP
     const cartReducer = store.getState().cartReducer;
     let pitstops = cartReducer.pitstops;
-    const pitstopIndex = (pitstopDetails.pitstopIndex !== undefined && pitstopDetails.pitstopIndex !== null ? pitstopDetails.pitstopIndex : null);
+    const pitstopIndex = (pitstopDetails?.pitstopIndex >= 0 ? pitstopDetails.pitstopIndex : null);
     if (pitstopIndex !== null && isDeletePitstop) {
         console.log('[DELETE PITSTOP FROM CART]');
         pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIndex);
     } else if (pitstopDetails.pitstopType === PITSTOP_TYPES.JOVI) {
         console.log('[JOVI PITSTOP]');
-        // JOVI PITSTOPS HANDLING
         if (pitstopIndex !== null) {
             console.log('[INDEX] EXIST');
-            if (false) {
-                console.log('[DELETE PITSTOP CASE]');
-                pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIndex);
-            } else {
-                console.log('[UPDATE JOVI PITSTOP]');
-                pitstops[pitstopIndex] = { ...pitstopDetails }; // TO RETAIN OLD PROPERTIES AS IT IS WITH UPDATED VAUES YOU NEED TO PASS SPREADED (...) OLD ITEM'S FULL DATA WITH UPDATED FIELDS
-                // pitstops[pitstopIndex] = { ...pitstops[index], ...pitstopDetails }; // ...pitstops[index] IF YOU DON'T HAVE ITEM'S PREVIOUS DATA (VERY RARE CASE)
-            }
+            console.log('[UPDATE JOVI PITSTOP]');
+            pitstops[pitstopIndex] = { ...pitstopDetails }; // TO RETAIN OLD PROPERTIES AS IT IS WITH UPDATED VAUES YOU NEED TO PASS SPREADED (...) OLD ITEM'S FULL DATA WITH UPDATED FIELDS
+            // pitstops[pitstopIndex] = { ...pitstops[index], ...pitstopDetails }; // ...pitstops[index] IF YOU DON'T HAVE ITEM'S PREVIOUS DATA (VERY RARE CASE)
         } else {
-            // ADD NEW PITSTOP
-            console.log('[NEW CREATE]');
+            console.log('[ADD NEW PITSTOP]');
             pitstops.push({ pitstopID: sharedUniqueIdGenerator(), ...pitstopDetails, isRestaurant: false });
         }
     } else {
@@ -450,57 +443,52 @@ export const sharedAddUpdatePitstop = (
         const pitstopActionKey = upcomingVendorDetails.actionKey || 'marketID'; //
         console.log('[PITSTOP IDACTION KEY]', pitstopActionKey);
         console.log('[ITEM ID ACTION KEY]', actionKey);
-        if (false) {
-            console.log('[DELETE PITSTOP FROM CART]');
-            pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIndex);
-        } else {
-            const pitstopIdx = pitstops.findIndex(x => x[pitstopActionKey] === upcomingVendorDetails[pitstopActionKey]); //(x.pitstopID === pitstopDetails.pitstopID || x.smid === pitstopDetails.smid))
-            if (pitstopIdx !== -1) {
-                console.log('[PITSTOP FOUND]', pitstops[pitstopIdx]);
-                let currentPitstopItems = pitstops[pitstopIdx].checkOutItemsListVM;
-                let itemIndex = currentPitstopItems.findIndex(item => item[actionKey] === upcomingItemDetails[actionKey]);
-                if (!fromCart && upcomingItemDetails.selectedOptions) {
-                    upcomingItemDetails = checkSameProduct(currentPitstopItems, upcomingItemDetails);
+        const pitstopIdx = pitstops.findIndex(x => x[pitstopActionKey] === upcomingVendorDetails[pitstopActionKey]); //(x.pitstopID === pitstopDetails.pitstopID || x.smid === pitstopDetails.smid))
+        if (pitstopIdx !== -1) {
+            console.log('[PITSTOP FOUND]', pitstops[pitstopIdx]);
+            let currentPitstopItems = pitstops[pitstopIdx].checkOutItemsListVM;
+            let itemIndex = currentPitstopItems.findIndex(item => item[actionKey] === upcomingItemDetails[actionKey]);
+            if (!fromCart && upcomingItemDetails.selectedOptions) {
+                upcomingItemDetails = checkSameProduct(currentPitstopItems, upcomingItemDetails);
+            }
+            if (upcomingItemDetails.alreadyExisted) {
+                itemIndex = upcomingItemDetails.checkoutIndex;
+                console.log('[Update EXISTING CHECKOUT ITEMS]');
+                if (!upcomingItemDetails.quantity) {
+                    console.log('[QUANTITY LESS THAN OR EQUAL TO ZERO]');
+                    if ((currentPitstopItems.length - 1) <= 0) pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIdx);
+                } else {
+                    currentPitstopItems[itemIndex] = { ...upcomingItemDetails, alreadyExisted: undefined, checkoutIndex: undefined, checkOutItemID: currentPitstopItems[itemIndex].checkOutItemID };
+                    pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
                 }
-                if (upcomingItemDetails.alreadyExisted) {
-                    itemIndex = upcomingItemDetails.checkoutIndex;
-                    console.log('[Update EXISTING CHECKOUT ITEMS]');
-                    if (!upcomingItemDetails.quantity) {
-                        console.log('[QUANTITY LESS THAN OR EQUAL TO ZERO]');
-                        if ((currentPitstopItems.length - 1) <= 0) pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIdx);
-                    } else {
-                        currentPitstopItems[itemIndex] = { ...upcomingItemDetails, alreadyExisted: undefined, checkoutIndex: undefined, checkOutItemID: currentPitstopItems[itemIndex].checkOutItemID };
-                        pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
-                    }
-                } else if (itemIndex !== -1 && !forceAddNewItem) {
-                    if (!upcomingItemDetails.quantity) {
-                        console.log('[QUANTITY LESS THAN OR EQUAL TO ZERO]');
-                        if ((currentPitstopItems.length - 1) <= 0) pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIdx);
-                        else {
-                            console.log('[REMOVE SINGLE ITEM FROM CHECKOUT LIST..]');
-                            currentPitstopItems = currentPitstopItems.filter((_item, idx) => idx !== itemIndex);
-                            pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
-                        }
-                    } else {
-                        console.log('[INCREAMETN DECREACMENT QUANTITY]');
-                        currentPitstopItems[itemIndex] = { ...upcomingItemDetails, checkOutItemID: currentPitstopItems[itemIndex].checkOutItemID };
+            } else if (itemIndex !== -1 && !forceAddNewItem) {
+                if (!upcomingItemDetails.quantity) {
+                    console.log('[QUANTITY LESS THAN OR EQUAL TO ZERO]');
+                    if ((currentPitstopItems.length - 1) <= 0) pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIdx);
+                    else {
+                        console.log('[REMOVE SINGLE ITEM FROM CHECKOUT LIST..]');
+                        currentPitstopItems = currentPitstopItems.filter((_item, idx) => idx !== itemIndex);
                         pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
                     }
                 } else {
-                    console.log('[ADD NEW ITEM TO EXISTING CHECKOUT ITEMS]');
-                    currentPitstopItems.push({ checkOutItemID: sharedUniqueIdGenerator(), ...upcomingItemDetails, });
+                    console.log('[INCREAMETN DECREACMENT QUANTITY]');
+                    currentPitstopItems[itemIndex] = { ...upcomingItemDetails, checkOutItemID: currentPitstopItems[itemIndex].checkOutItemID };
                     pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
                 }
             } else {
-                // ADD NEW PITSTOP (DONE)
-                console.log('[PITSTOP NOT FOUND AND ADD NEW PITSTOP]');
-                pitstops.push({
-                    ...pitstopDetails.vendorDetails,
-                    isRestaurant: pitstopDetails.pitstopType === PITSTOP_TYPES.RESTAURANT,
-                    pitstopID: sharedUniqueIdGenerator(),
-                    checkOutItemsListVM: [{ ...upcomingItemDetails, checkOutItemID: sharedUniqueIdGenerator() }],
-                });
+                console.log('[ADD NEW ITEM TO EXISTING CHECKOUT ITEMS]');
+                currentPitstopItems.push({ checkOutItemID: sharedUniqueIdGenerator(), ...upcomingItemDetails, });
+                pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
             }
+        } else {
+            // ADD NEW PITSTOP (DONE)
+            console.log('[PITSTOP NOT FOUND AND ADD NEW PITSTOP]');
+            pitstops.push({
+                ...pitstopDetails.vendorDetails,
+                isRestaurant: pitstopDetails.pitstopType === PITSTOP_TYPES.RESTAURANT,
+                pitstopID: sharedUniqueIdGenerator(),
+                checkOutItemsListVM: [{ ...upcomingItemDetails, checkOutItemID: sharedUniqueIdGenerator() }],
+            });
         }
     }
     console.log('[TO CALCULATE PITSTOPS]', pitstops);

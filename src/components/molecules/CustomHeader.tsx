@@ -5,6 +5,7 @@ import { VALIDATION_CHECK } from "../../helpers/SharedActions";
 import NavigationService from "../../navigations/NavigationService";
 import ROUTES from "../../navigations/ROUTES";
 import ReduxActions from "../../redux/actions";
+import constants from "../../res/constants";
 import AddressesList from "../atoms/FinalDestination/AddressesList";
 import Text from "../atoms/Text";
 import TouchableOpacity from "../atoms/TouchableOpacity";
@@ -86,12 +87,12 @@ const defaultProps = {
     rightDotTextStyle: {},
     rightContainerStyle: {},
 
-    rightIconName: "shopping-bag",
+    rightIconName: constants.cart_icon,
     rightIconType: Platform.OS === 'android' ? 'FontAwesome5' : 'FontAwesome',
     rightIconStyle: {},
     rightIconSize: 25,
     rightIconColor: "#272727",
-    onRightIconPress: () => NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name),
+    onRightIconPress: undefined,
 
     //RIGHT SIDE PROP's ENDING 
 
@@ -159,6 +160,7 @@ const CustomHeader = (props: Props) => {
         )
 
     };//end of _renderDot
+    const IS_CART_ICON = props.rightIconName === constants.cart_icon;
     return (
         <View style={[styles.primaryContainer, props.containerStyle]}>
 
@@ -209,7 +211,12 @@ const CustomHeader = (props: Props) => {
                         {...props.onRightIconPress ? {
                             onPress: (event) => props.onRightIconPress && props.onRightIconPress(event)
                         } : {
-                            disabled: true
+                            onPress: () => {
+                                if(IS_CART_ICON && cartReducer.itemsCount > 0){
+                                    NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name)
+                                }
+},
+                            disabled: (cartReducer.itemsCount > 0 && IS_CART_ICON) ? false: true
                         }}>
                         {VALIDATION_CHECK(props.rightIconName) &&
                             <VectorIcon

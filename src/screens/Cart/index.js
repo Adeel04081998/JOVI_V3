@@ -103,7 +103,19 @@ export default () => {
 
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <TouchableScale onPress={() => {
-              sharedAddUpdatePitstop({ pitstopIndex, pitstopType }, true)
+              sharedConfirmationAlert(
+                "Alert!", "Are you sure you want to clear the pitstop?",
+                [
+                  {
+                    text: "No",
+                    onPress: () => { }
+                  },
+                  {
+                    text: "Yes",
+                    onPress: () => sharedAddUpdatePitstop({ pitstopIndex, pitstopType }, true, [], false, false, () => NavigationService.NavigationActions.common_actions.goBack())
+                  },
+                ]
+              )
             }} >
               <Text
                 style={{
