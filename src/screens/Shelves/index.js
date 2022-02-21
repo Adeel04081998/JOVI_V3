@@ -15,8 +15,10 @@ import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 
 const WINDOW_WIDTH = constants.screen_dimensions.width;
-const CARD_WIDTH = WINDOW_WIDTH * 0.4;
-const CARD_HEIGHT = CARD_WIDTH * 0.4;
+const SHELVE_CARD_SIZE = {
+    width: WINDOW_WIDTH * 0.35,
+    height: WINDOW_WIDTH * 0.18,
+};
 
 // const DATA = new Array(10).fill(ProductDummyData1.pitstopStockViewModel.shelves).flat();
 
@@ -36,18 +38,21 @@ export default ({ navigation, route }) => {
 
 
     const _renderItem = (item, index) => {
+        const shouldEmpty="shouldEmpty" in item ? item.shouldEmpty :false;
         return (
             <View style={{
-                paddingTop: 20,
-                paddingBottom: 3,
+                paddingTop: (index === 0 || index === 1) ? 20 : 10,
+                paddingBottom: 10,
+                opacity: shouldEmpty ? 0 : 1
             }}>
                 <ShelveCard color={colors}
                     item={{
                         image: { uri: renderFile(item?.tagImage ?? '') },//renderFile(item?.tagImage ?? '') },
                         title: item?.tagName ?? ''
                     }}
-                    cardWidth={CARD_WIDTH}
-                    cardHeight={CARD_HEIGHT}
+                    cardWidth={SHELVE_CARD_SIZE.width}
+                    cardHeight={SHELVE_CARD_SIZE.height}
+                itemDisabled={shouldEmpty}
                     onItemPress={() => {
                         let selectedShelvesData = DATA;
                         for (let i = 0; i < selectedShelvesData.length; i++) {
@@ -103,8 +108,8 @@ export default ({ navigation, route }) => {
                     },
                     columnWrapperStyle: {
                         alignItems: "center",
-                        justifyContent: 'space-between',
-                        marginHorizontal: CARD_WIDTH * 0.2,
+                        justifyContent: 'space-evenly',
+                        marginHorizontal: 0
                     },
                     style: {
                     }

@@ -82,10 +82,10 @@ export default ({ instructions = "", contianerStyle = {}, addressTxtStyle = {} }
                     style={{ color: colors.primary, fontSize: 14 }}
                     fontFamily="PoppinsSemiBold"
                     numberOfLines={1}>
-                    {finalDestination.addressTypeStr}
+                    {finalDestination?.addressTypeStr}
                 </Text>
                 <Text style={{ color: colors.black, fontSize: 11 }} numberOfLines={2}>
-                    {finalDestination.title}
+                    {finalDestination?.title}
 
                 </Text>
             </View>

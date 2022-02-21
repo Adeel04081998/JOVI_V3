@@ -63,7 +63,7 @@ const ShelveCard = (props: Props) => {
     const cardHeight = props.cardHeight ?? defaultProps.cardHeight;
 
     return (
-        <TouchableScale activeOpacity={0.8}
+        <TouchableScale wait={0} activeOpacity={0.8}
             style={[{
                 height: cardHeight,
                 width: cardWidth,
@@ -108,7 +108,7 @@ const ShelveCard = (props: Props) => {
                             color: "#272727",
                             fontSize: 12,
                             maxWidth: (cardWidth) / 2,
-                        }} >{`${propItem.title}`}</Text>
+                        }} numberOfLines={2}>{`${propItem.title}`}</Text>
 
                         <Image
                             source={propItem.image}
@@ -128,30 +128,6 @@ const ShelveCard = (props: Props) => {
                                 right: 0,
                             }}
                         />
-                        {/* <ImageBackground
-                            source={propItem.image}
-                            style={[{
-                                height: cardHeight,
-                                width: cardWidth,
-                                borderRadius: 10,
-                                alignItems: "center",
-                                justifyContent: "center",
-                            }, props.imageStyle]}
-                            imageStyle={[{
-                                height: cardHeight,
-                                width: cardWidth,
-                                borderRadius: 10,
-                                alignItems: "center",
-                                justifyContent: "center",
-                                resizeMode: 'cover',
-                            }, props.imageStyle]}
-                            tapToOpen={false}
-                            resizeMode="cover"
-                        >
-                        
-                        </ImageBackground> */}
-
-
 
                     </View>
             }

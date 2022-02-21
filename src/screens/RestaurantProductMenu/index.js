@@ -34,6 +34,8 @@ LogBox.ignoreLogs([
     "Animated: `useNativeDriver` was not specified.",
 ]);
 
+const SCROLL_HEADER_HEIGHT_LINE=60;
+
 export default ({ navigation, route }) => {
     const pitstopType = route?.params?.pitstopType ?? 4;
     const colors = theme.getTheme(GV.THEME_VALUES[lodash.invert(PITSTOPS)[pitstopType]], Appearance.getColorScheme() === "dark");
@@ -52,7 +54,7 @@ export default ({ navigation, route }) => {
     // #region :: ANIMATION START's FROM HERE 
     const animScroll = React.useRef(new Animated.Value(0)).current;
 
-    const [headerHeight, setHeaderHeight] = React.useState(WINDOW_HEIGHT * 0.7);
+    const [headerHeight, setHeaderHeight] = React.useState(WINDOW_HEIGHT * 0.4);
 
     const headerTop = animScroll.interpolate({
         inputRange: [0, headerHeight],
@@ -63,7 +65,7 @@ export default ({ navigation, route }) => {
 
     const tabTop = animScroll.interpolate({
         inputRange: [0, headerHeight + 20],
-        outputRange: [headerHeight + 20, 50],
+        outputRange: [headerHeight + 20, SCROLL_HEADER_HEIGHT_LINE],
         extrapolate: "clamp",
         useNativeDriver: true
     });
@@ -242,7 +244,7 @@ export default ({ navigation, route }) => {
                 topHeaderStyle={{
                     backgroundColor: colors.white,
                     paddingTop: 10,
-                    height: 50,
+                    height: SCROLL_HEADER_HEIGHT_LINE,
                     transform: [{
                         translateY: tabTop
                     }],
