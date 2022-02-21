@@ -38,6 +38,8 @@ import Maps from './src/components/atoms/GoogleMaps/Maps';
 import Map from './src/screens/Map';
 import AddAddress from './src/screens/AddAddress';
 import CheckOut from './src/screens/CheckOut';
+import { fcmService } from './src/utils/FCMServices';
+import { localNotificationService } from './src/utils/LocalNotificationServices';
 AntDesign.loadFont();
 Entypo.loadFont();
 EvilIcons.loadFont();
@@ -50,132 +52,155 @@ MaterialIcons.loadFont();
 Foundation.loadFont();
 SimpleLineIcons.loadFont();
 const CODE_PUSH_OPTIONS = {
-  // `deploymentKey` should be dynamic according to environment like QA, STAGING, PRODUCTION before publish to staging and master
-  //Currently QA Environment setup done 
-  deploymentKey: Platform.select({
-    ios: env.CODE_PUSH_DEP_KEYS.JOVI_IOS.STAGING,
-    android: env.CODE_PUSH_DEP_KEYS.JOVI_ANDROID.STAGING
-  }),
-  checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
-  installMode: CodePush.InstallMode.IMMEDIATE,
-  mandatoryInstallMode: CodePush.InstallMode.IMMEDIATE,
-  updateDialog: false
+    // `deploymentKey` should be dynamic according to environment like QA, STAGING, PRODUCTION before publish to staging and master
+    //Currently QA Environment setup done 
+    deploymentKey: Platform.select({
+        ios: env.CODE_PUSH_DEP_KEYS.JOVI_IOS.STAGING,
+        android: env.CODE_PUSH_DEP_KEYS.JOVI_ANDROID.STAGING
+    }),
+    checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
+    installMode: CodePush.InstallMode.IMMEDIATE,
+    mandatoryInstallMode: CodePush.InstallMode.IMMEDIATE,
+    updateDialog: false
 };
 
 const App = () => {
-  const netInfo = useNetInfo();
-  const { visible } = useSelector(state => state.modalReducer)
-  GV.NET_INFO_REF.current = netInfo;
-  const [state, setState] = React.useState({ appLoaded: false });
-  // console.log("netInfo", netInfo)
-  const isDarkMode = useColorScheme() === "dark";
-  const theme = isDarkMode ? {
-    ...DefaultTheme,
-    colors: {
-      ...DefaultTheme.colors,
-      ...AppTheme.getTheme(GV.THEME_VALUES.JOVI)
-    }
+    const netInfo = useNetInfo();
+    const { visible } = useSelector(state => state.modalReducer)
+    GV.NET_INFO_REF.current = netInfo;
+    const [state, setState] = React.useState({ appLoaded: false });
+    // console.log("netInfo", netInfo)
+    const isDarkMode = useColorScheme() === "dark";
+    const theme = isDarkMode ? {
+        ...DefaultTheme,
+        colors: {
+            ...DefaultTheme.colors,
+            ...AppTheme.getTheme(GV.THEME_VALUES.JOVI)
+        }
 
-  } : {
-    ...DefaultTheme,
-    colors: {
-      ...DefaultTheme.colors,
-      ...AppTheme.getTheme(GV.THEME_VALUES.JOVI)
+    } : {
+        ...DefaultTheme,
+        colors: {
+            ...DefaultTheme.colors,
+            ...AppTheme.getTheme(GV.THEME_VALUES.JOVI)
+        }
     }
-  }
-  function message(msg) {
-    // console.log("Codepush message", msg);
-  }
-  function codePushStatusDidChange(syncStatus) {
-    switch (syncStatus) {
-      case CodePush.SyncStatus.CHECKING_FOR_UPDATE:
-        // message("Checking for update.");
-        break;
-      case CodePush.SyncStatus.DOWNLOADING_PACKAGE:
-        message("Downloading package.");
-        break;
-      case CodePush.SyncStatus.AWAITING_USER_ACTION:
-        // message("Awaiting user action.");
-        break;
-      case CodePush.SyncStatus.INSTALLING_UPDATE:
-        message("Installing update...");
-        break;
-      case CodePush.SyncStatus.UP_TO_DATE:
-        // message("App up to date.");
-        break;
-      case CodePush.SyncStatus.UPDATE_IGNORED:
-        message("Update cancelled by user.");
-        break;
-      case CodePush.SyncStatus.UPDATE_INSTALLED:
-        message("Update installed and app will be restart shortly");
-        break;
-      case CodePush.SyncStatus.UNKNOWN_ERROR:
-        message("An unknown error occurred.");
-        break;
+    function message(msg) {
+        // console.log("Codepush message", msg);
     }
-  }
-  function codePushDownloadDidProgress(progress) {
-    // console.log("progress", progress);
-  }
-  useEffect(() => {
-    CodePush.sync(CODE_PUSH_OPTIONS, syncStatus => {
-      // console.log("[CodePush.sync].syncStatus", syncStatus)
-      codePushStatusDidChange(syncStatus)
-    }, progress => {
-      // console.log("[CodePush.sync].progress", progress)
-      codePushDownloadDidProgress(progress)
-    })
-    setTimeout(() => {
-      RNSplashScreen.hide();
-      setState(pre => ({ ...pre, appLoaded: true }));//if we run splash screen forcefully for 3 seconds, then the home page gets loaded without animation, this will stop that.
-    }, 2000)
-    return () => { }
-  }, []);
+    function codePushStatusDidChange(syncStatus) {
+        switch (syncStatus) {
+            case CodePush.SyncStatus.CHECKING_FOR_UPDATE:
+                // message("Checking for update.");
+                break;
+            case CodePush.SyncStatus.DOWNLOADING_PACKAGE:
+                message("Downloading package.");
+                break;
+            case CodePush.SyncStatus.AWAITING_USER_ACTION:
+                // message("Awaiting user action.");
+                break;
+            case CodePush.SyncStatus.INSTALLING_UPDATE:
+                message("Installing update...");
+                break;
+            case CodePush.SyncStatus.UP_TO_DATE:
+                // message("App up to date.");
+                break;
+            case CodePush.SyncStatus.UPDATE_IGNORED:
+                message("Update cancelled by user.");
+                break;
+            case CodePush.SyncStatus.UPDATE_INSTALLED:
+                message("Update installed and app will be restart shortly");
+                break;
+            case CodePush.SyncStatus.UNKNOWN_ERROR:
+                message("An unknown error occurred.");
+                break;
+        }
+    }
+    function codePushDownloadDidProgress(progress) {
+        // console.log("progress", progress);
+    }
+    useEffect(() => {
+        CodePush.sync(CODE_PUSH_OPTIONS, syncStatus => {
+            // console.log("[CodePush.sync].syncStatus", syncStatus)
+            codePushStatusDidChange(syncStatus)
+        }, progress => {
+            // console.log("[CodePush.sync].progress", progress)
+            codePushDownloadDidProgress(progress)
+        })
+        setTimeout(() => {
+            RNSplashScreen.hide();
+            setState(pre => ({ ...pre, appLoaded: true }));//if we run splash screen forcefully for 3 seconds, then the home page gets loaded without animation, this will stop that.
+        }, 2000)
+        return () => { }
+    }, []);
 
-  LogBox.ignoreLogs([
-    "[react-native-gesture-handler] Seems like you\'re using an old API with gesture components, check out new Gestures system!",
-  ]);
-  navigator.geolocation = Geolocation;
+    LogBox.ignoreLogs([
+        "[react-native-gesture-handler] Seems like you\'re using an old API with gesture components, check out new Gestures system!",
+    ]);
+    navigator.geolocation = Geolocation;
 
-  if (!state.appLoaded) return null;
-  return (
-    <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
-        <StatusBar backgroundColor={'#fff'} barStyle={"dark-content"} />
-        {/* {
+    if (!state.appLoaded) return null;
+    return (
+        <SafeAreaProvider>
+            <SafeAreaView style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
+                <StatusBar backgroundColor={'#fff'} barStyle={"dark-content"} />
+                {/* {
           Platform.OS === "ios" ?
             <StatusBar backgroundColor={'transparent'} barStyle={isDarkMode ? "light-content" : "dark-content"} />
             :
             <StatusBar backgroundColor={'#fff'} barStyle={"dark-content"} />
         } */}
-        <NavigationContainer theme={theme} ref={_NavgationRef} >
-          <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
-            <RootStack />
-            {visible && <BottomAllignedModal />}
-          </View>
-        </NavigationContainer>
-        <Robot />
-        <Toast />
-      </SafeAreaView>
-      <SharedGetApis />
-    </SafeAreaProvider>
-  );
+                <NavigationContainer theme={theme} ref={_NavgationRef} >
+                    <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
+                        <RootStack />
+                        {visible && <BottomAllignedModal />}
+                    </View>
+                </NavigationContainer>
+                <Robot />
+                <Toast />
+            </SafeAreaView>
+            <SharedGetApis />
+        </SafeAreaProvider>
+    );
 };
 export default App;
 const SharedGetApis = ({ }) => {
-  const { isLoggedIn } = useSelector(state => state.userReducer);
-  React.useEffect(() => {
-    sharedGetEnumsApi();
-    // sharedLogoutUser();
-  }, [])
-  React.useEffect(() => {
-    if (isLoggedIn) {
-      sharedGetUserDetailsApi();
-      sharedGetHomeMsgsApi();
-      sharedGetUserAddressesApi();
-      sharedGetPromotions();
-      sharedGetFilters()
-    }
-  }, [isLoggedIn])
-  return (<></>);
+    const { isLoggedIn } = useSelector(state => state.userReducer);
+    React.useEffect(() => {
+        sharedGetEnumsApi();
+        // sharedLogoutUser();
+        const onRegister = (token) => {
+            console.log('Registered--',token);
+        }
+        const onNotification = (notify) => {
+            console.log('onNotification--',notify);
+        }
+        const onOpenNotification = (notify) => {
+            console.log('onOpenNotification--',notify);
+        }
+        const onRegistrationError = (err) => {
+            console.log('onRegistrationError--',err);
+        }
+        const onAction = (action) => {
+            console.log('onAction--',action);
+        }
+        fcmService.registerAppWithFCM();
+        fcmService.register(onRegister, onNotification, onOpenNotification)
+        localNotificationService.configure(onRegister, onRegistrationError, onOpenNotification, onAction);
+        return()=>{
+            console.log('[App] cleared!!');
+            localNotificationService.unRegister();
+            fcmService.unRegister();
+        };
+    }, [])
+    React.useEffect(() => {
+        if (isLoggedIn) {
+            sharedGetUserDetailsApi();
+            sharedGetHomeMsgsApi();
+            sharedGetUserAddressesApi();
+            sharedGetPromotions();
+            sharedGetFilters()
+        }
+    }, [isLoggedIn])
+    return (<></>);
 }

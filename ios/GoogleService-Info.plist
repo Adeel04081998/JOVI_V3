@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>405272577787-mui1nmq9oth0ba0l1h506fk7kftujqvm.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.405272577787-mui1nmq9oth0ba0l1h506fk7kftujqvm</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>405272577787-1b61ntjp063nuklr7htfas3b3eu17gbe.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyC0svrb4-GZBqUXLk2-tIdTnh2xyxFgXtg</string>
+	<key>GCM_SENDER_ID</key>
+	<string>405272577787</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.jovi.ios</string>
+	<key>PROJECT_ID</key>
+	<string>jovi-d0727</string>
+	<key>STORAGE_BUCKET</key>
+	<string>jovi-d0727.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:405272577787:ios:7e71611bfa6d0a0e1a125e</string>
+	<key>DATABASE_URL</key>
+	<string>https://jovi-d0727-default-rtdb.asia-southeast1.firebasedatabase.app</string>
+</dict>
+</plist>
