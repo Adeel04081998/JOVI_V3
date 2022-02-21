@@ -14,14 +14,14 @@ const FILTER_ICON_HEIGHT = 35;
 const FILTER_ICON_SIZE = 17;
 
 export default ({ filterConfig, selectedFilters, parentFilterHandler = () => { }, colors, goToFilters, }) => {
-    const [state,setState] = React.useState({activeTab:null});
+    const [state, setState] = React.useState({ activeTab: null });
     const categoriesTagsReducer = useSelector(state => state.categoriesTagsReducer);
-    const filtersData = categoriesTagsReducer?.vendorFilterViewModel?.filtersList??[];
+    const filtersData = categoriesTagsReducer?.vendorFilterViewModel?.filtersList ?? [];
     const checkSelectedFilter = (item) => {
         // return state.activeTab === item.vendorDashboardCatID;
         return (selectedFilters ?? []).find(x => x === item.vendorDashboardCatID);
     }
-    const _styles = styles(colors,checkSelectedFilter);
+    const _styles = styles(colors, checkSelectedFilter);
     return (<View style={_styles.parentContainer}>
         {filterConfig.filterTitleShown && <Text numberOfLines={1} fontFamily='PoppinsSemiBold' style={_styles.filterTitle}>
             Filters
@@ -33,9 +33,9 @@ export default ({ filterConfig, selectedFilters, parentFilterHandler = () => { }
             <AnimatedFlatlist
                 data={filtersData}
                 renderItem={(item, i) => {
-                    return <TouchableScale onPress={() => {setState(pre=>({...pre,activeTab:pre.activeTab === item.vendorDashboardCatID?null:item.vendorDashboardCatID})); parentFilterHandler(item, 'vendorDashboardCatID', 'filter')}} style={_styles.filterTouchable}>
+                    return <TouchableScale onPress={() => { setState(pre => ({ ...pre, activeTab: pre.activeTab === item.vendorDashboardCatID ? null : item.vendorDashboardCatID })); parentFilterHandler(item, 'vendorDashboardCatID', 'filter') }} style={_styles.filterTouchable}>
                         {VALIDATION_CHECK(item.image) && <SvgXml height={FILTER_ICON_SIZE} width={FILTER_ICON_SIZE} xml={item.image} />}
-                        <Text style={{ fontSize: 12, color: 'rgba(0,0,0,0.6)' }} fontFamily={'PoppinsBold'} >{item.name}</Text>
+                        <Text style={{ fontSize: 12, color: 'rgba(0,0,0,0.6)', paddingHorizontal: 5, }} fontFamily={'PoppinsBold'} >{item.name}</Text>
                     </TouchableScale>
                 }}
                 horizontal={true}
@@ -44,28 +44,28 @@ export default ({ filterConfig, selectedFilters, parentFilterHandler = () => { }
         </View>
     </View>)
 };
-const styles = (colors,checkSelectedFilter)=>{
+const styles = (colors, checkSelectedFilter) => {
     return StyleSheet.create({
-        filterContainer:(x)=> ({
+        filterContainer: (x) => ({
             height: FILTER_ICON_HEIGHT,
             borderColor: 'rgba(0,0,0,0.4)',
             justifyContent: 'center',
             paddingHorizontal: 5,
             marginHorizontal: 5,
-            borderRadius: checkSelectedFilter(x) ? 4:1,
+            borderRadius: checkSelectedFilter(x) ? 4 : 1,
             backgroundColor: checkSelectedFilter(x) ? colors.primary + '20' : '#fff',
             borderColor: checkSelectedFilter(x) ? colors.primary : '',
             borderWidth: checkSelectedFilter(x) ? 1 : 0.1,
         }),
-        filterTouchable:{
+        filterTouchable: {
             display: 'flex',
             flexDirection: 'row'
         },
-        scrollParent:{
+        scrollParent: {
             display: 'flex',
             flexDirection: 'row'
         },
-        filterIcon:{
+        filterIcon: {
             height: FILTER_ICON_HEIGHT,
             borderRadius: 4,
             justifyContent: 'center',
@@ -82,7 +82,7 @@ const styles = (colors,checkSelectedFilter)=>{
 
             elevation: 6,
         },
-        parentContainer:{ width: '100%', paddingTop: 10, display: 'flex', justifyContent: 'center', alignContent: 'center' },
-        filterTitle:{ fontSize: 15, color: "#272727", paddingVertical: SPACING_VERTICAL },
+        parentContainer: { width: '100%', paddingTop: 10, display: 'flex', justifyContent: 'center', alignContent: 'center' },
+        filterTitle: { fontSize: 15, color: "#272727", paddingVertical: SPACING_VERTICAL },
     });
 }

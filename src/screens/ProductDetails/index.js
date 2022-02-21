@@ -46,7 +46,7 @@ export default (props) => {
         enableBtn: false,
         requiredIds: [],
     });
-    const { itemCount, generalProductOrDealDetail, discountedPriceWithGst, selectedOptions, notes, totalAddOnPrice, loading, } = state;
+    const { itemCount, generalProductOrDealDetail, discountedPriceWithGst, selectedOptions, notes, totalAddOnPrice, loading, addToCardAnimation } = state;
     const { data } = props;
     const pitstopType = props.route.params.pitstopType ?? 4;
     const propItem = props.route.params.propItem
@@ -288,6 +288,7 @@ export default (props) => {
         )
 
     }
+
     const renderLoader = () => {
         return <View style={{ flex: 1 }}>
             <AnimatedLottieView
@@ -383,36 +384,42 @@ export default (props) => {
 
                             <AnimatedView style={[productDetailsStyles.primaryContainer]}>
                                 <Text style={productDetailsStyles.productNametxt} numberOfLines={1} fontFamily="PoppinsMedium">{productName}</Text>
-                                {productDetails ? <Text style={productDetailsStyles.productDescriptionTxt} fontFamily="PoppinsRegular">{productDetails}</Text> : null}
+                                {productDetails ? <Text style={productDetailsStyles.productDescriptionTxt} fontFamily="PoppinsRegular" numberOfLines={2}>{`${productDetails}`}</Text> : null}
                                 <AnimatedView style={productDetailsStyles.productPriceContainer}>
                                     <Text style={productDetailsStyles.productPricelabel} fontFamily="PoppinsRegular">Price:</Text>
                                     <Text style={productDetailsStyles.productPricetxt}
                                         fontFamily='PoppinsRegular'
                                     >{` PKR - ${productPrice}`}</Text>
+                                    <Text style={[productDetailsStyles.productPricetxt, { paddingHorizontal: 5, textDecorationLine: "line-through", color: colors.grey }]}
+                                        fontFamily='PoppinsRegular'
+                                    >{`${gstAddedPrice}`}</Text>
                                 </AnimatedView>
-                                <Text style={[productDetailsStyles.productPricetxt, { paddingHorizontal: 5, textDecorationLine: "line-through", color: colors.grey }]}
-                                    fontFamily='PoppinsRegular'
-                                >{`${gstAddedPrice}`}</Text>
+
                                 <RadioButton
                                     data={optionsListArr}
                                     onPressCb={onPressHandler}
                                     productDetailsStyles={productDetailsStyles}
                                     selectedOptions={state.selectedOptions}
                                 />
-                                {pitstopType === 4 ? <TextInput
-                                    containerStyle={{ backgroundColor: 'white', marginVertical: 30, margin: 0, }}
-                                    placeholder="Types your instructions"
-                                    titleStyle={{ color: 'black', fontSize: 14, }}
-                                    title="Please add your instructions"
-                                    textAlignVertical='top'
-                                    style={{ textAlign: "left", backgroundColor: '#0000002E', borderColor: '#0000002E', opacity: 0.3, margin: 10, borderRadius: 10, minHeight: minHeight, }}
-                                    onChangeText={(text) => {
-                                        if (Regex.Space_Regex.test(text)) return
-                                        setState((pre) => ({ ...pre, notes: text }))
-                                    }}
-                                    multiline={true} // ios fix for centering it at the top-left corner 
-                                    numberOfLines={Platform.OS === "ios" ? null : numberOfLines}
-                                /> : null}
+                                {pitstopType === 4 ?
+                                    <View style={{ marginVertical: 25 }}>
+                                        <TextInput
+                                            containerStyle={{ backgroundColor: 'white', margin: 0, }}
+                                            placeholder="Types your instructions"
+                                            placeholderTextColor={"#CFCFCF"}
+                                            titleStyle={{ color: 'black', fontSize: 14, marginVertical: -8 }}
+                                            title="Please add your instructions"
+                                            textAlignVertical='top'
+                                            style={{ textAlign: "left", backgroundColor: colors.drWhite, borderColor: 'rgba(112, 112, 112, 0.1)', borderWidth: 1, color: 'black', margin: 10, borderRadius: 10, minHeight: minHeight, }}
+                                            onChangeText={(text) => {
+                                                if (Regex.Space_Regex.test(text)) return
+                                                setState((pre) => ({ ...pre, notes: text }))
+                                            }}
+                                            multiline={true} // ios fix for centering it at the top-left corner 
+                                            numberOfLines={Platform.OS === "ios" ? null : numberOfLines}
+                                        />
+                                    </View>
+                                    : null}
                             </AnimatedView>
                         </ScrollView>
                         {renderButtonsUi()}

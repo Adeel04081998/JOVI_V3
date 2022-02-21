@@ -28,7 +28,7 @@ export default {
                 fontSize: 20, color: colors.black
             },
             productDescriptionTxt: {
-                paddingVertical: 10, width: '100%', color: colors.grey, fontSize: 14
+                paddingVertical: 10, width: '100%', color: colors.grey, fontSize: 14,paddingRight:10
 
             },
             productPriceContainer: {

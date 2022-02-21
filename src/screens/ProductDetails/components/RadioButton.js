@@ -61,7 +61,7 @@ export default ({ data = [], selectedOptions = [], onPressCb, productDetailsStyl
                     const mainTitle = x.mainTittle ?? ""
                     const choosedQuantity = x.quantity ?? 0
                     const pitstopItemsOptionList = x.pitStopItemsOptionList ?? []
-                    return <AnimatedView style={{marginTop:5, }} key={i}>
+                    return <AnimatedView style={{ marginVertical: 14, }} key={i}>
                         <Text style={productDetailsStyles.radioButtonSelectionTittle}
                             fontFamily="PoppinsRegular"
                         >{`${mainTitle}`}
