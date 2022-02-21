@@ -31,10 +31,12 @@ export const initColors = {
     "black": "#000",
     "lightGreyBorder": '#BBBBBB',
     "light_grey": "#F6F5FA",
-    "oldFlame" :"#F3B8B4",
-    "drWhite":"#FAFAFA",
+    "oldFlame": "#F3B8B4",
+    "drWhite": "#FAFAFA",
     "subTextGreyColor": '#464646',
-    "light_primary_color": '#E2DCF1'
+    "light_primary_color": '#E2DCF1',
+    "grey": "#6B6B6B",
+    "ASH_TO_ASH": "#4D4D4D"
 }
 export default {
 

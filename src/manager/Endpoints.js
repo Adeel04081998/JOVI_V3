@@ -25,8 +25,9 @@ export default {
     "GET_PRODUCT_MENU_LIST": "api/Product/Stock/List", //SCREEN_NAME: ProductMenu
     "GET_VOUCHERS_LIST": "api/Menu/Promotion/List",
     "SERVICE_CHARGES": "api/Order/EstimateServiceChargeV2", // Cart Screen
-    "AddorUpdateAddress": "/api/Menu/Address/AddOrUpdate" //AddAdresses
-
+    "AddorUpdateAddress": "/api/Menu/Address/AddOrUpdate", //AddAdresses
+    //Arearestriction
+    "AreaRestriction": "api/Common/AreaRestriction/Pitstop"
 }
 
 
@@ -42,4 +43,4 @@ export default {
 // api/SuperMarket/Stock/List
 
 
-    
+

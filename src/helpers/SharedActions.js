@@ -594,3 +594,23 @@ export const sharedGetPrice = (item, lineThrough) => {
     }
     return renderPrice(_price);
 }
+
+
+
+
+export const confirmServiceAvailabilityForLocation = (postRequest, latitude, longitude, cbSuccess, cbFailure) => {
+    postRequest(
+        Endpoints.AreaRestriction,
+        {
+            "cityID": 0,
+            "latitude": latitude,
+            "longitude": longitude
+        },
+        async (response) => {
+            cbSuccess && cbSuccess(response);
+        },
+        (error) => {
+            cbFailure && cbFailure(error);
+        },
+    );
+};

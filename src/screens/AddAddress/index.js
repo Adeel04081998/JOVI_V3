@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Appearance, ScrollView } from 'react-native'
+import { Alert, Appearance, ScrollView } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
 import { SvgXml } from 'react-native-svg';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,7 +12,7 @@ import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import Button from '../../components/molecules/Button';
-import { sharedExceptionHandler } from '../../helpers/SharedActions';
+import { confirmServiceAvailabilityForLocation, sharedExceptionHandler } from '../../helpers/SharedActions';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
@@ -23,6 +23,7 @@ import theme from '../../res/theme';
 import GV from '../../utils/GV';
 import ReduxActions from "../../redux/actions/index";
 import addressStyles from './styles';
+import Toast from '../../components/atoms/Toast';
 
 
 
@@ -44,30 +45,23 @@ export default (props) => {
             {
                 key: 1,
                 val: '',
-                placeHolder: 'Street# 22',
-                shown: true
-
+                placeHolder: '(Optional) Street# 22',
             },
             {
                 key: 2,
                 val: '',
-                placeHolder: 'House#645',
-                shown: true
-
+                placeHolder: '(Optional) House#645',
             },
             {
                 key: 3,
                 val: '',
                 placeHolder: '(Optional) Note to Rider',
-                shown: true
-
             },
             {
                 key: 4,
                 val: '',
                 placeHolder: 'e.g Chutti Dedo',
                 shown: false
-
             }
         ],
         "addressTypeList": [
@@ -115,43 +109,72 @@ export default (props) => {
     }
 
     const onPressSaveAndContinue = () => {
-        let addressType = addressTypeList.filter(x => x.selected === true)
-        postRequest(Endpoints.AddorUpdateAddress,
-            {
-                "addressID": 0,
-                "title": props.route.params.finalDestObj.title,
-                "latitude": props.route?.params?.finalDestObj.latitude,
-                "longitude": props.route?.params?.finalDestObj.longitude,
-                "latitudeDelta": LATITUDE_DELTA,
-                "longitudeDelta": LONGITUDE_DELTA,
-                "note": inputs[2].val,
-                "city": props.route?.params?.finalDestObj.city,
-                "addressType": addressType[0]?.key || '',
-                "AddressTypeStr": addressType[0]?.lable || ''
-            },
-            res => {
-                console.log("ADDorUPDATE ADDRESS.RESPONSE", res);
-                if (res.data.statusCode === 200) {
-                    dispatch(ReduxActions.setUserFinalDestAction({ ...props.route.params.finalDestObj }))
-                    NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name)
+        confirmServiceAvailabilityForLocation(postRequest, props.route?.params?.finalDestObj.latitude, props.route?.params?.finalDestObj.longitude,
+            (resp) => {
+                let addressType = addressTypeList.filter(x => x.selected === true)
+                let data = {
+                    "addressID": 0,
+                    "title": props.route.params.finalDestObj.title,
+                    "latitude": props.route?.params?.finalDestObj.latitude,
+                    "longitude": props.route?.params?.finalDestObj.longitude,
+                    "latitudeDelta": LATITUDE_DELTA,
+                    "longitudeDelta": LONGITUDE_DELTA,
+                    "note": inputs[2].val,
+                    "city": props.route?.params?.finalDestObj.city,
+                    "addressType": addressType[0]?.key || '',
+                    "addressTypeStr": inputs[3].val || ''
                 }
-                // setData(res.data.vendorCategoriesViewModel.vendorList.map((item,i)=>{return {...item,cardType:!i%2===0?2:1}}));
-            },
-            err => {
-                sharedExceptionHandler(err)
-            },
-            {},
-            false,
-        );
+                console.log('data ==>>>', data);
+                postRequest(Endpoints.AddorUpdateAddress,
+                    {
+                        "addressID": 0,
+                        "title": props.route.params.finalDestObj.title,
+                        "latitude": props.route?.params?.finalDestObj.latitude,
+                        "longitude": props.route?.params?.finalDestObj.longitude,
+                        "latitudeDelta": LATITUDE_DELTA,
+                        "longitudeDelta": LONGITUDE_DELTA,
+                        "note": inputs[2].val,
+                        "city": props.route?.params?.finalDestObj.city,
+                        "addressType": addressType[0]?.key || '',
+                        "addressTypeStr": inputs[3].val || ''
+                    },
+                    res => {
+                        console.log("ADDorUPDATE ADDRESS.RESPONSE", res);
+                        if (res.data.statusCode === 200) {
+                            dispatch(ReduxActions.setUserFinalDestAction({ ...props.route.params.finalDestObj }))
+                            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name)
+                        }
+                    },
+                    err => {
+                        sharedExceptionHandler(err)
+                    },
+                    {},
+                    false,
+                );
+
+            }, (error) => {
+                console.log(((error?.response) ? error.response : {}), error);
+                if (error?.data?.statusCode === 417) {
+                    if (error.areaLock) { } else {
+                        error?.data?.message && Toast.error(error?.data?.message);
+                    }
+                }
+                else {
+                    Toast.error('An Error Occurred!');
+                }
+            })
+
     }
 
     const onPresslabel = (item, index) => {
-        let modifiedArray = state.addressTypeList.map((object, idx) => {
+        let modifiedArray = addressTypeList.map((object, idx) => {
             if (idx === index) {
                 return { ...object, selected: !object.selected }
             } else return { ...object, selected: false }
 
         })
+
+        if (index === 3) inputs[3].shown = !inputs[3].shown
         setState(pre => ({
             ...pre,
             addressTypeList: modifiedArray
@@ -165,6 +188,7 @@ export default (props) => {
             ...pre,
         }))
     }
+
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -198,11 +222,11 @@ export default (props) => {
                                     <Text numberOfLines={1} style={styles.subAddressText} fontFamily="PoppinsRegular" >{props.route.params.finalDestObj.city}</Text>
                                 </View>
                             </TouchableOpacity>
-                            <View>
+                            <View style={{}} >
                                 {
                                     inputs.map((item, index) => {
                                         return (
-                                            item.shown &&
+                                            index !== 3 &&
                                             <TextInput key={`textinput  ${item.key}`} value={item.val} placeholder={item.placeHolder} onChangeText={(text) => { onChangeText(text, index) }} />
                                         )
                                     })
@@ -219,11 +243,21 @@ export default (props) => {
                                         <View style={{ ...styles.addressList, borderWidth: item.selected ? 1 : 0, borderColor: item.selected ? colors.primary : item.color }}>
                                             <SvgXml xml={item.iconName(item.selected ? colors.primary : item.color)} height={20} width={20} />
                                         </View>
-                                        <Text fontFamily="PoppinsRegular" style={{ fontSize: 12, color: item.selected ? colors.primary : item.color}} >{item.lable}</Text>
+                                        <Text fontFamily="PoppinsRegular" style={{ fontSize: 12, color: item.selected ? colors.primary : item.color }} >{item.lable}</Text>
                                     </TouchableOpacity>
                                 )
                             })}
                         </ScrollView>
+                        {
+                            inputs.map((item, index) => {
+                                return (
+                                    index == 3 ?
+                                        item.shown === true &&
+                                        <TextInput key={`textinput  ${item.key}`} value={item.val} placeholder={item.placeHolder} onChangeText={(text) => { onChangeText(text, index) }} containerStyle={{ width: WIDTH - 50, alignSelf: 'center' }} />
+                                        : null
+                                )
+                            })
+                        }
                         <Button
                             onPress={onPressSaveAndContinue}
                             disabled={IS_DISABLED()}

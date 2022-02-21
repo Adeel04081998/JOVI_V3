@@ -7,7 +7,7 @@ import TouchableOpacity from '../../../components/atoms/TouchableOpacity'
 import View from '../../../components/atoms/View'
 const TOPSPACING = 8
 
-export default ({ }) => {
+export default ({ checkOutStyles = {} }) => {
 
     let cuts = [{
         "dashedLine": true,
@@ -32,26 +32,17 @@ export default ({ }) => {
     return (
         <LinearGradient
             colors={['#6D51BB', '#6C50B9', '#6449AE']}
-            style={{
-                // flex: 1,
-                paddingVertical: 15,
-                borderRadius: 10,
-                flexDirection: 'row',
-                margin: TOPSPACING,
-                // marginBottom:0,
-                alignItems: 'center',
-                justifyContent: 'space-between'
-            }}
+            style={checkOutStyles.voucherMainContainer}
         >
-            <View style={{ position: 'absolute', left: 20, justifyContent: 'center', alignSelf: 'center', alignItems: 'center', }}>
+            <View style={checkOutStyles.voucherPerntgeSvg}>
                 <SvgXml xml={svgs.Percentage()} style={{}} ></SvgXml>
             </View>
             <View style={{ width: 70 }} />
-            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
+            <View style={checkOutStyles.voucherPrimaryContainer}>
 
-                <Text style={{ color: '#fff', textAlign: 'left', paddingLeft: 20, flex: 1 }} numberOfLines={1}>You have 3 vouchers</Text>
-                <TouchableOpacity style={{ backgroundColor: '#fff', borderRadius: 2, marginRight: 15, paddingHorizontal: 5 }} >
-                    <Text style={{ color: "#6D51BB", marginHorizontal: 10, marginVertical: 5, fontSize: 14 }} fontFamily='PoppinsMedium'>{"See All"}</Text>
+                <Text style={checkOutStyles.vouchertxtStyle} numberOfLines={1}>You have 3 vouchers</Text>
+                <TouchableOpacity style={checkOutStyles.voucherSecondaryContainer} >
+                    <Text style={checkOutStyles.voucherSeeAllTxtstyle} fontFamily='PoppinsMedium'>{"See All"}</Text>
                 </TouchableOpacity>
             </View>
             <View style={{ borderRadius: 20, height: 20, width: 20, position: 'absolute', left: 60, top: -10, backgroundColor: '#F6F5FA', }} ></View>
