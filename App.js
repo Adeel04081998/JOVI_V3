@@ -120,14 +120,14 @@ const App = () => {
         // console.log("progress", progress);
     }
     useEffect(() => {
-        CodePush.sync(CODE_PUSH_OPTIONS, syncStatus => {
-            // console.log("[CodePush.sync].syncStatus", syncStatus)
-            codePushStatusDidChange(syncStatus)
-        }, progress => {
-            // console.log("[CodePush.sync].progress", progress)
-            codePushDownloadDidProgress(progress)
-        })
         setTimeout(() => {
+            CodePush.sync(CODE_PUSH_OPTIONS, syncStatus => {
+                // console.log("[CodePush.sync].syncStatus", syncStatus)
+                codePushStatusDidChange(syncStatus)
+            }, progress => {
+                // console.log("[CodePush.sync].progress", progress)
+                codePushDownloadDidProgress(progress)
+            })
             RNSplashScreen.hide();
             setState(pre => ({ ...pre, appLoaded: true }));//if we run splash screen forcefully for 3 seconds, then the home page gets loaded without animation, this will stop that.
         }, 2000)
@@ -169,25 +169,7 @@ const SharedGetApis = ({ }) => {
     React.useEffect(() => {
         sharedGetEnumsApi();
         // sharedLogoutUser();
-        const onRegister = (token) => {
-            console.log('Registered--',token);
-        }
-        const onNotification = (notify) => {
-            console.log('onNotification--',notify);
-        }
-        const onOpenNotification = (notify) => {
-            console.log('onOpenNotification--',notify);
-        }
-        const onRegistrationError = (err) => {
-            console.log('onRegistrationError--',err);
-        }
-        const onAction = (action) => {
-            console.log('onAction--',action);
-        }
-        fcmService.registerAppWithFCM();
-        fcmService.register(onRegister, onNotification, onOpenNotification)
-        localNotificationService.configure(onRegister, onRegistrationError, onOpenNotification, onAction);
-        return()=>{
+        return () => {
             console.log('[App] cleared!!');
             localNotificationService.unRegister();
             fcmService.unRegister();
@@ -199,7 +181,57 @@ const SharedGetApis = ({ }) => {
             sharedGetHomeMsgsApi();
             sharedGetUserAddressesApi();
             sharedGetPromotions();
-            sharedGetFilters()
+            sharedGetFilters();
+            const pushNotification = (notify = {}) => {
+                if (notify.data) {
+                    localNotificationService.showNotification(0, notify.notification.title, notify.notification.body, notify, {
+                        soundName: Platform.select({ android: notify.data.soundName || "my_sound.mp3", ios: "default" }),
+                        playSound: true,
+                        userInteraction: true,
+                    },
+                        // actions array
+                        [],
+    
+                    )
+                } else {
+                    localNotificationService.showNotification(0, notify.notification.title, notify.notification.body, notify, {
+                        soundName: Platform.select({ android: "my_sound.mp3", ios: "default" }),
+                        playSound: true,
+                        userInteraction: true,
+                    },
+                        // actions array
+                        [],
+    
+                    )
+                }
+            }
+            const onRegister = (token) => {
+                console.log('Registered--', token);
+            }
+            const onNotification = (notify) => {
+                console.log('onNotification--', notify);
+                console.log("===> onNotification.notify -> ", notify)
+                // dispatch(fcmAction({ ...notify }));
+                if (notify.data) {
+                    console.log("notify.data", notify.data);
+                    const results =true;
+                    // const results = sharedCheckNotificationExpiry(notify.data.ExpiryDate);
+                    pushNotification(notify);
+                }
+                else pushNotification(notify)
+            }
+            const onOpenNotification = (notify) => {
+                console.log('onOpenNotification--', notify);
+            }
+            const onRegistrationError = (err) => {
+                console.log('onRegistrationError--', err);
+            }
+            const onAction = (action) => {
+                console.log('onAction--', action);
+            }
+            fcmService.registerAppWithFCM();
+            fcmService.register(onRegister, onNotification, onOpenNotification)
+            localNotificationService.configure(onRegister, onRegistrationError, onOpenNotification, onAction);
         }
     }, [isLoggedIn])
     return (<></>);
