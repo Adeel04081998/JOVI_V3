@@ -73,7 +73,7 @@ const defaultProps = {
     leftIconType: 'Ionicons',
     leftIconStyle: {},
     leftIconSize: 25,
-    leftIconColor: "#272727",
+    leftIconColor: null,
     onLeftIconPress: () => { NavigationService.NavigationActions.common_actions.goBack() },
 
     //LEFT SIDE PROP's ENDING 
@@ -90,7 +90,7 @@ const defaultProps = {
     rightIconType: Platform.OS === 'android' ? 'FontAwesome5' : 'FontAwesome',
     rightIconStyle: {},
     rightIconSize: 25,
-    rightIconColor: "#272727",
+    rightIconColor: null,
     onRightIconPress: () => NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name),
 
     //RIGHT SIDE PROP's ENDING 
@@ -128,7 +128,7 @@ const CustomHeader = (props: Props) => {
                     }))
                     props.onTitlePress && props.onTitlePress(event);
                 }}
-                >
+            >
                 <View style={{ flexDirection: "row", alignItems: "center", }}>
                     <Text style={styles.deliverToText}
                         fontFamily={"PoppinsLight"}>
@@ -179,7 +179,7 @@ const CustomHeader = (props: Props) => {
                             <VectorIcon
                                 name={props.leftIconName}
                                 type={props.leftIconType}
-                                color={props.leftIconColor}
+                                color={props.leftIconColor || props.defaultColor}
                                 size={props.leftIconSize} />
                         }
                         {props.leftDot && _renderDot(props.leftDot, props.leftDotStyle, props.leftDotTextStyle)}
@@ -215,7 +215,7 @@ const CustomHeader = (props: Props) => {
                             <VectorIcon
                                 name={props.rightIconName}
                                 type={props.rightIconType}
-                                color={props.rightIconColor}
+                                color={props.rightIconColor || props.defaultColor}
                                 size={props.rightIconSize} />
                         }
                         {VALIDATION_CHECK(cartReducer.itemsCount) && _renderDot(cartReducer.itemsCount, props.rightDotStyle, props.rightDotTextStyle)}

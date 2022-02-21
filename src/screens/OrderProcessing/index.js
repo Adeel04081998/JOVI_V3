@@ -33,7 +33,8 @@ export default ({ navigation, route }) => {
             <SafeAreaView style={{ ...styles.primaryContainer, flex: 0, }}>
                 <CustomHeader
                     rightIconName='home'
-                    rightIconSize={22} />
+                    rightIconSize={22}
+                    defaultColor={colors.primary} />
             </SafeAreaView>
         )
     }
@@ -126,13 +127,13 @@ export default ({ navigation, route }) => {
                     />
 
 
-                    <ChargesUI title='GST' value='120' />
-                    <ChargesUI title='Service Charges(Incl S.T 76)' value='120' />
+                    <OrderProcessingChargesUI title='GST' value='120' />
+                    <OrderProcessingChargesUI title='Service Charges(Incl S.T 76)' value='120' />
                     <DashedLine />
-                    <ChargesUI title='Discount' value='-158' />
+                    <OrderProcessingChargesUI title='Discount' value='-158' />
                     <DashedLine />
 
-                    <EstimatedTotalUI estimatedPrice='4924' />
+                    <OrderProcessingEstimatedTotalUI estimatedPrice='4924' />
 
                     <View style={{
                         backgroundColor: "#707070",
@@ -190,7 +191,7 @@ const PaidWithUI = ({ title = 'Cash on delivery', price = '' }) => {
 // #endregion :: PAID WITH UI END's FROM HERE 
 
 // #region :: ESTIMATED TOTAL PRICE UI START's FROM HERE 
-const EstimatedTotalUI = ({ estimatedPrice = '', title = `Estimated Total` }) => {
+export const OrderProcessingEstimatedTotalUI = ({ estimatedPrice = '', title = `Estimated Total` }) => {
     return (
         <View style={{
             flexDirection: "row", alignItems: "center", justifyContent: "space-between",
@@ -212,7 +213,7 @@ const EstimatedTotalUI = ({ estimatedPrice = '', title = `Estimated Total` }) =>
 // #endregion :: ESTIMATED TOTAL PRICE UI END's FROM HERE 
 
 // #region :: CHARGES, GST, DISCOUNT UI START's FROM HERE 
-const ChargesUI = ({ title = '', value = '', }) => {
+export const OrderProcessingChargesUI = ({ title = '', value = '', }) => {
     return (
         <View style={{
             flexDirection: "row", alignItems: "center", justifyContent: "space-between",
