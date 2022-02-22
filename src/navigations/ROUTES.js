@@ -82,6 +82,14 @@ const APP_DRAWER_ROUTES = {
         screen_name: "PRODUCT_MENU_ITEM",
         options: null,
     },
+    "OrderProcessing": {
+        screen_name: "ORDER_PROCESSING",
+        options: null,
+    },
+    "OrderProcessingError": {
+        screen_name: "ORDER_PROCESSING_ERROR",
+        options: null,
+    },
 }
 const APP_ROUTES = {
     "AppDrawerStack": {
