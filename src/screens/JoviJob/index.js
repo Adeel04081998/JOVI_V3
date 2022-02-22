@@ -671,7 +671,7 @@ export default ({ navigation, route }) => {
                             if (itemSize > 1) {
 
                                 return (
-                                    <View key={`item path ${item.path}`} style={[styles.galleryIcon, {
+                                    <View key={`item path ${item.id}`} style={[styles.galleryIcon, {
                                         borderRadius: 5,
                                         padding: 5,
                                         height: 50,

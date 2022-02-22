@@ -99,9 +99,7 @@ export default (props) => {
       await hybridLocationPermission();
     }
     locationHandler();
-    setTimeout(() => {
-      getCurrentPosition()
-    }, 500);
+    getCurrentPosition()
   }, [ready]);
 
 
