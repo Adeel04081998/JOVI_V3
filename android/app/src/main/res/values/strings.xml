@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">jovi</string>
+    <string name="app_name">Jovi</string>
 
     <!-- for codepush -->
     <string name="appCenterCrashes_whenToSendCrashes" moduleConfig="true" translatable="false">DO_NOT_ASK_JAVASCRIPT</string>
