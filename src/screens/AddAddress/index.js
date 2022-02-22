@@ -9,7 +9,6 @@ import SafeAreaView from '../../components/atoms/SafeAreaView';
 import Text from '../../components/atoms/Text';
 import TextInput from '../../components/atoms/TextInput';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
-import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import Button from '../../components/molecules/Button';
 import { confirmServiceAvailabilityForLocation, sharedExceptionHandler } from '../../helpers/SharedActions';
@@ -112,19 +111,6 @@ export default (props) => {
         confirmServiceAvailabilityForLocation(postRequest, props.route?.params?.finalDestObj.latitude, props.route?.params?.finalDestObj.longitude,
             (resp) => {
                 let addressType = addressTypeList.filter(x => x.selected === true)
-                let data = {
-                    "addressID": 0,
-                    "title": props.route.params.finalDestObj.title,
-                    "latitude": props.route?.params?.finalDestObj.latitude,
-                    "longitude": props.route?.params?.finalDestObj.longitude,
-                    "latitudeDelta": LATITUDE_DELTA,
-                    "longitudeDelta": LONGITUDE_DELTA,
-                    "note": inputs[2].val,
-                    "city": props.route?.params?.finalDestObj.city,
-                    "addressType": addressType[0]?.key || '',
-                    "addressTypeStr": inputs[3].val || ''
-                }
-                console.log('data ==>>>', data);
                 postRequest(Endpoints.AddorUpdateAddress,
                     {
                         "addressID": 0,

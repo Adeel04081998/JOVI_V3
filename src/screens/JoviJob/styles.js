@@ -39,12 +39,12 @@ export default (colors = initColors, width, height) => StyleSheet.create({
         alignItems: "center"
     },
     cardView: {
-        marginHorizontal: 5,
+        marginHorizontal: 10,
         borderWidth: 1,
         borderColor: colors.cardBorder || '#BBBBBB',
         borderRadius: 5,
-        marginVertical: 5,
-        backgroundColor: colors.textColor,
+        marginVertical: 10,
+        backgroundColor: colors.dull_primary,
     },
 
     /**  start of Card Header Component Styles */
@@ -54,7 +54,7 @@ export default (colors = initColors, width, height) => StyleSheet.create({
         marginHorizontal: 5,
         marginVertical: 10,
         alignItems: 'center',
-        backgroundColor: colors.textColor,
+        backgroundColor: colors.dull_primary,
         // zIndex:999,
     },
 
@@ -85,16 +85,16 @@ export default (colors = initColors, width, height) => StyleSheet.create({
     },
 
     pitstopText: {
-        // fontSize: 14,
+        fontSize: 14,
         color: colors.black || '#000'
     },
     pitStopLoc: {
-        // fontSize: 10,
+        fontSize: 10,
         color: colors.subTextColor || '#272727',
         opacity: 0.8
     },
     arrow: {
-        borderRadius: 5,
+        borderRadius: 10,
         backgroundColor: colors.primary,
         padding: 5,
         justifyContent: "center",
@@ -117,7 +117,7 @@ export default (colors = initColors, width, height) => StyleSheet.create({
         alignSelf: 'center',
     },
     locButton: {
-        width: width - 40,
+        width: width - 50,
         height: 35,
         borderRadius: 8,
         alignSelf: 'center'
@@ -128,7 +128,7 @@ export default (colors = initColors, width, height) => StyleSheet.create({
     },
     attachment: {
         textAlign: 'left',
-        marginLeft: 15,
+        marginLeft: 10,
         paddingVertical: 5,
         color: colors.black || '#000',
         opacity: 0.8,
@@ -161,11 +161,15 @@ export default (colors = initColors, width, height) => StyleSheet.create({
         flexDirection: "row",
         // justifyContent: "center",
         alignSelf: 'center',
-        borderRadius: 10,
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10,
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
         paddingVertical: SPACING_VERTICAL,
         borderWidth: 1,
         borderColor: '#BBBBBB',
         width: width - 40,
+        overflow:'hidden'
     },
     textAlignCenter: {
         paddingLeft: 15

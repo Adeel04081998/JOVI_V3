@@ -74,7 +74,7 @@ const defaultProps = {
     leftIconType: 'Ionicons',
     leftIconStyle: {},
     leftIconSize: 25,
-    leftIconColor: "#272727",
+    leftIconColor: null,
     onLeftIconPress: () => { NavigationService.NavigationActions.common_actions.goBack() },
 
     //LEFT SIDE PROP's ENDING 
@@ -115,6 +115,7 @@ const CustomHeader = (props: Props) => {
     const cartReducer = useSelector((store: any) => store.cartReducer);
     const userReducer = useSelector((store: any) => store.userReducer);
     const finalDestination = userReducer.finalDestObj ? userReducer.finalDestObj : { title: 'Set your location' };
+    const IS_CART_ICON = props.rightIconName === constants.cart_icon;
 
     // React.useEffect(()=>{
 
@@ -129,7 +130,7 @@ const CustomHeader = (props: Props) => {
                     }))
                     props.onTitlePress && props.onTitlePress(event);
                 }}
-                >
+            >
                 <View style={{ flexDirection: "row", alignItems: "center", }}>
                     <Text style={styles.deliverToText}
                         fontFamily={"PoppinsLight"}>
@@ -146,7 +147,6 @@ const CustomHeader = (props: Props) => {
     };//end of _renderFinalDestination
 
     const _renderDot = (value: boolean | number = false, styleForParent: StyleProp<ViewStyle> = {}, numberStyleForParent: StyleProp<TextStyle> = {}) => {
-        console.log('value ', value);
 
         if (typeof value === "number") {
             return (
@@ -160,7 +160,6 @@ const CustomHeader = (props: Props) => {
         )
 
     };//end of _renderDot
-    const IS_CART_ICON = props.rightIconName === constants.cart_icon;
     return (
         <View style={[styles.primaryContainer, props.containerStyle]}>
 
@@ -181,7 +180,7 @@ const CustomHeader = (props: Props) => {
                             <VectorIcon
                                 name={props.leftIconName}
                                 type={props.leftIconType}
-                                color={props.leftIconColor}
+                                color={props.leftIconColor || props.defaultColor}
                                 size={props.leftIconSize} />
                         }
                         {props.leftDot && _renderDot(props.leftDot, props.leftDotStyle, props.leftDotTextStyle)}
@@ -222,7 +221,7 @@ const CustomHeader = (props: Props) => {
                             <VectorIcon
                                 name={props.rightIconName}
                                 type={props.rightIconType}
-                                color={props.rightIconColor}
+                                color={props.rightIconColor || props.defaultColor}
                                 size={props.rightIconSize} />
                         }
                         {VALIDATION_CHECK(cartReducer.itemsCount) && _renderDot(cartReducer.itemsCount, props.rightDotStyle, props.rightDotTextStyle)}

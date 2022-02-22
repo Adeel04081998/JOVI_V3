@@ -86,6 +86,12 @@ const setCategoriesTagsAction = (payload = {}) => {
         payload: { ...payload }
     }
 }
+const fcmAction = (payload = {}) => {
+    return {
+        type: TYPES.SET_FCM_ACTION,
+        payload: { ...payload }
+    }
+}
 //...Rest of the actions would be here
 
 
@@ -104,5 +110,6 @@ export default {
     setModalAction,
     setUserFinalDestAction,
     closeModalAction,
+    fcmAction,
     //...
 }

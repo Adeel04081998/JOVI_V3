@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
-import { Animated, Easing, StyleProp, TextStyle, TouchableOpacity,GestureResponderEvent, ViewStyle } from 'react-native';
+import { Animated, Easing, StyleProp, TextStyle, GestureResponderEvent, ViewStyle } from 'react-native';
 import { NumberProp, SvgXml } from 'react-native-svg';
 import { VALIDATION_CHECK } from '../../helpers/SharedActions';
 import sharedStyles from '../../res/sharedStyles';
 import AnimatedView from '../atoms/AnimatedView';
 import Text from '../atoms/Text';
+import TouchableOpacity from '../atoms/TouchableOpacity';
 import View from '../atoms/View';
-
 
 type Props = React.ComponentProps<typeof TouchableOpacity> & {
     children?: any;

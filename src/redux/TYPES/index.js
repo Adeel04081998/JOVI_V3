@@ -22,5 +22,8 @@ export default {
     "USER_FINAL_DESTINATION": "user_final_destination",
 
     // FILTERED_CATEGORIES_TAGS
-    "SET_CATEGORIES_TAGS": "get_filtered_categories"
+    "SET_CATEGORIES_TAGS": "get_filtered_categories",
+
+    //FCM Notification Action
+    "SET_FCM_ACTION": "set_fcm_action"
 }

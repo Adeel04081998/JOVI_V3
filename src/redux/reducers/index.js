@@ -98,6 +98,21 @@ const categoriesTagsReducer = (state = {}, action) => {
       return { ...state };
   }
 }
+const fcmReducer = (state = { "notifications": [] }, action = {}) => {
+    const { type, payload } = action;
+    switch (type) {
+        case TYPES.SET_FCM_ACTION:
+            let notifications = [{ notifyClientID: state.notifications.length + 1, ...payload }, ...state.notifications];
+            if (state.notifications.length > 0) {
+                if (payload.notifyClientID) notifications = notifications.filter(n => n.notifyClientID !== payload.notifyClientID)
+                return { ...state, notifications };
+            } else {
+                return { ...state, notifications };
+            }
+        default:
+            return state;
+        }
+}
 //...Rest of the reducers would be here
 
 export default {
@@ -107,6 +122,7 @@ export default {
   messagesReducer,
   promotionsReducer,
   categoriesTagsReducer,
-  modalReducer
+  modalReducer,
+  fcmReducer,
   //...
 }

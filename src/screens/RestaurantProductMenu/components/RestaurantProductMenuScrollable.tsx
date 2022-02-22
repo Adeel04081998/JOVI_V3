@@ -189,7 +189,9 @@ const RestaurantProductMenuScrollable = (props: Props) => {
                         </View>
 
 
-                        <Animated.View style={[{ transform: [{ translateX: value }], }]}>
+                        <Animated.View style={[{
+                            transform: [{ translateX: value }],
+                        }]}>
                             <Animated.View style={[style.indicator, {
                                 width: widthValue,
                                 overflow: "hidden",
