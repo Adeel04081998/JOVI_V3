@@ -142,6 +142,26 @@ export default {
 
 
         }
-    ]
+    ],
+
+    JOVI_JOB_STATUS:{
+        Open:1,
+        Closed:2,
+        Inactive:3,
+        Cancel:4,
+        Failed:5,
+        InQueue:6,
+        Preparing:7,
+        ResturentOpen:8,
+        Returning:9,
+
+    },
+    AVAILABILITY_STATUS:{
+        Available:1,
+        OutOfStock:2,
+        Discontinued:3,
+        Replaced:4,
+        NotAvailable:5,
+    },
 
 }

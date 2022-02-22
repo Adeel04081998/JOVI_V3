@@ -297,6 +297,7 @@ export const renderPrice = (price, prefix = "Rs. ", suffix = "", reg = Regex.pri
     prefix = `${prefix}`.trim();
     suffix = `${suffix}`.trim();
     price = `${price}`.trim().replace(reg, '').trim();
+    return suffix.length > 0 ? `${prefix} ${price}${suffix}` : `${prefix} ${price}`;
     return parseInt(`${price}`) < 1 ? null : suffix.length > 0 ? `${prefix} ${price}${suffix}` : `${prefix} ${price}`;
 }
 
@@ -419,11 +420,11 @@ export const sharedAddUpdatePitstop = (
     // FOR VENDOR PITSTOP
     const cartReducer = store.getState().cartReducer;
     let pitstops = cartReducer.pitstops;
-    const pitstopIndex = (pitstopDetails.pitstopIndex !== undefined && pitstopDetails.pitstopIndex !== null?pitstopDetails.pitstopIndex :null);
+    const pitstopIndex = (pitstopDetails.pitstopIndex !== undefined && pitstopDetails.pitstopIndex !== null ? pitstopDetails.pitstopIndex : null);
     if (pitstopIndex !== null && isDeletePitstop) {
         console.log('[DELETE PITSTOP FROM CART]');
         pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIndex);
-    }else if (pitstopDetails.pitstopType === PITSTOP_TYPES.JOVI) {
+    } else if (pitstopDetails.pitstopType === PITSTOP_TYPES.JOVI) {
         console.log('[JOVI PITSTOP]');
         // JOVI PITSTOPS HANDLING
         if (pitstopIndex !== null) {

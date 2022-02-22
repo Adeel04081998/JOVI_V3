@@ -13,6 +13,7 @@ import constants from '../../res/constants';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import { stylesFunc } from './styles';
+import { orderProcessingDummyData } from './StaticData';
 
 const DOUBLE_SPACING = constants.spacing_horizontal + 6;
 const IMAGE_SIZE = constants.window_dimensions.width * 0.3;
@@ -41,6 +42,64 @@ export default ({ navigation, route }) => {
 
     // #endregion :: RENDER HEADER END's FROM HERE 
 
+    // #region :: STATE's & REF's START's FROM HERE 
+
+    const [query, updateQuery] = React.useState({
+        data: {},
+        pitstopData: [],
+        isLoading: true,
+    });
+
+    const data = query.data;
+    // #endregion :: STATE's & REF's END's FROM HERE 
+
+    React.useEffect(() => {
+        let pitstopDataArr = orderProcessingDummyData.data.order.pitStopsList.slice(0, orderProcessingDummyData.data.order.pitStopsList.length - 1);
+
+        pitstopDataArr = pitstopDataArr.map(e => {
+            const ptItemData = [];
+            if (e.pitstopType === PITSTOP_TYPES.SUPER_MARKET || e.pitstopType === PITSTOP_TYPES.RESTAURANT) {
+                //RESTURANT AND SUPERMARKET
+                (e?.jobItemsListViewModel ?? []).map((f, index) => {
+                    ptItemData.push({
+                        id: e?.jobItemID ?? index,
+                        title: f?.productItemName ?? '',
+                        value: f?.price ?? '',
+                    })
+                    return
+                })
+            } else {
+                //JOVI JOB
+                ptItemData.push({
+                    id: 1,
+                    title: e?.description ?? '',
+                    value: e?.jobAmount ?? '',
+                });
+
+            }
+            return {
+                ...e,
+                data: ptItemData,
+            }
+        });
+
+
+
+        updateQuery({
+            data: {
+                ...orderProcessingDummyData.data.order,
+                finalDestination: orderProcessingDummyData.data.order.pitStopsList[orderProcessingDummyData.data.order.pitStopsList.length - 1],
+            },
+            pitstopData: pitstopDataArr,
+            isLoading: false,
+        })
+        return () => { };
+    }, []);
+
+    if (query.isLoading) {
+        return <View />
+    }
+
     return (
         <View style={styles.primaryContainer}>
             {_renderHeader()}
@@ -49,9 +108,12 @@ export default ({ navigation, route }) => {
                 imageHeight={IMAGE_SIZE * 0.6}
                 color={colors}
                 middle={{
-                    value: `Now 30 - 45 min`
+                    value: `Now ${data.OrderEstimateTime.replace('min'.toLowerCase().trim(), 'min')}`
                 }} />
 
+
+
+            {/*  ****************** Start of IMAGE, TEXT & LOADING BAR LINE ****************** */}
             <Image source={require('../../assets/gifs/OrderProcessing.gif')}
                 style={{
                     height: IMAGE_SIZE,
@@ -78,6 +140,9 @@ export default ({ navigation, route }) => {
                 }}
             />
 
+            {/*  ****************** End of IMAGE, TEXT & LOADING BAR LINE ****************** */}
+
+
             {/* ****************** Start of ORDER DETAIL CARD ****************** */}
             <View style={styles.cardContainer}>
                 <Text fontFamily='PoppinsMedium' style={{
@@ -96,9 +161,14 @@ export default ({ navigation, route }) => {
                     showsVerticalScrollIndicator={false}>
 
 
-                    <OrderNumberUI colors={colors} orderNumber={`#68954`} />
-                    <DeliveryAddressUI address={`2nd floor, Pakland plaza, I8 Markaz, Islamabad  2nd floor, Pakland plaza, I8 Markaz, Islamabad`} />
+                    {/* ****************** Start of DELIVERY ADDRESS ****************** */}
+                    <OrderNumberUI colors={colors} orderNumber={`#${data.orderID}`} />
+                    <DeliveryAddressUI address={`${data.finalDestination?.title ?? ''}`} />
 
+                    {/* ****************** End of DELIVERY ADDRESS ****************** */}
+
+
+                    {/* ****************** Start of SEPERATOR ****************** */}
                     <View style={{
                         backgroundColor: "#707070",
                         height: 1,
@@ -107,34 +177,66 @@ export default ({ navigation, route }) => {
                         marginBottom: 12,
                     }} />
 
-                    <PitStopItemUI
-                        pitstopTitle='Rahat Bakers'
-                        data={[{
-                            id: 1,
-                            title: 'Pepperoni Pizza - Medium',
-                            value: '750.00',
-                        }]}
-                    />
-
-                    <PitStopItemUI
-                        pitstopTitle='Rahat Bakers'
-                        data={[{
-                            id: 1,
-                            title: 'Pepperoni Pizza - Medium',
-                            value: '750.00',
-                        }]}
-                        pitstopNumber={2}
-                    />
+                    {/* ****************** End of SEPERATOR ****************** */}
 
 
-                    <OrderProcessingChargesUI title='GST' value='120' />
-                    <OrderProcessingChargesUI title='Service Charges(Incl S.T 76)' value='120' />
+                    {/* ****************** Start of PITSTOP DETAILS ****************** */}
+                    {query.pitstopData.map((item, index) => {
+                        return (
+                            <PitStopItemUI
+                                key={index}
+                                pitstopNumber={index + 1}
+                                pitstopTitle={item?.title ?? ''}
+                                data={item.data}
+                            />
+                        )
+                    })}
+
+                    {/* ****************** End of PITSTOP DETAILS ****************** */}
+
+
+                    {/* ****************** Start of SEPERATOR ****************** */}
+                    <View style={{
+                        marginBottom: constants.spacing_vertical,
+                    }} />
+
+                    {/* ****************** End of SEPERATOR ****************** */}
+
+
+                    {/* ****************** Start of GST ****************** */}
+                    <OrderProcessingChargesUI
+                        title='GST'
+                        value={renderPrice(data.chargeBreakdown.totalProductGST, '')} />
+
+                    {/* ****************** End of GST ****************** */}
+
+
+                    {/* ****************** Start of SERVICE CHARGES ****************** */}
+                    <OrderProcessingChargesUI
+                        title={`Service Charges(Incl S.T ${renderPrice(data.chargeBreakdown.estimateServiceTax, '')})`}
+                        value={renderPrice(data.chargeBreakdown.totalEstimateCharge, '')} />
                     <DashedLine />
-                    <OrderProcessingChargesUI title='Discount' value='-158' />
+
+                    {/* ****************** End of SERVICE CHARGES ****************** */}
+
+
+                    {/* ****************** Start of DISCOUNT ****************** */}
+                    <OrderProcessingChargesUI title='Discount'
+                        value={parseInt(renderPrice(data.chargeBreakdown.discount, '')) > 0 ? renderPrice(data.chargeBreakdown.discount, '-') : renderPrice(data.chargeBreakdown.discount, '')} />
                     <DashedLine />
 
-                    <OrderProcessingEstimatedTotalUI estimatedPrice='4924' />
+                    {/* ****************** End of DISCOUNT ****************** */}
 
+
+
+                    {/* ****************** Start of ESTIMATED PRICE ****************** */}
+                    <OrderProcessingEstimatedTotalUI estimatedPrice={renderPrice(data.chargeBreakdown.estimateTotalAmount, '')} />
+
+                    {/* ****************** End of ESTIMATED PRICE ****************** */}
+
+
+
+                    {/* ****************** Start of SEPERATOR ****************** */}
                     <View style={{
                         backgroundColor: "#707070",
                         height: 1,
@@ -143,8 +245,14 @@ export default ({ navigation, route }) => {
                         marginBottom: 12,
                     }} />
 
+                    {/* ****************** End of SEPERATOR ****************** */}
 
-                    <PaidWithUI price={'1320'} />
+
+                    {/* ****************** Start of PAID WITH TOTAL PRICE ****************** */}
+                    <PaidWithUI price={renderPrice(data.chargeBreakdown.estimateTotalAmount)} />
+
+                    {/* ****************** End of PAID WITH TOTAL PRICE ****************** */}
+
                 </ScrollView>
             </View>
 
@@ -242,7 +350,7 @@ const PitStopItemUI = ({ pitstopTitle = '', pitstopNumber = 1, data = [], dataLe
                 color: "#272727",
                 fontSize: 13,
                 paddingHorizontal: DOUBLE_SPACING,
-            }}>{`Pit Stop ${pitstopNumber} - ${pitstopTitle}`}</Text>
+            }} numberOfLines={2}>{`Pit Stop ${pitstopNumber} - ${pitstopTitle}`}</Text>
 
             {data.map((item, index) => {
                 return (
@@ -260,7 +368,7 @@ const PitStopItemUI = ({ pitstopTitle = '', pitstopNumber = 1, data = [], dataLe
                             paddingHorizontal: DOUBLE_SPACING,
                             width: "25%",
                             textAlign: "right",
-                        }} numberOfLines={1}>{`${item[dataRightKey]}`}</Text>
+                        }} numberOfLines={1}>{renderPrice(`${item[dataRightKey]}`, '')}</Text>
                     </View>
                 )
             })}

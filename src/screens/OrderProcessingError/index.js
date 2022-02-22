@@ -3,6 +3,8 @@ import { Appearance, SafeAreaView } from 'react-native';
 import Text from '../../components/atoms/Text';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
+import AnimatedFlatlist from '../../components/molecules/AnimatedScrolls/AnimatedFlatlist';
+import Button from '../../components/molecules/Button';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import OrderEstTimeCard from '../../components/organisms/Card/OrderEstTimeCard';
 import DashedLine from '../../components/organisms/DashedLine';
@@ -10,8 +12,10 @@ import { renderPrice, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import constants from '../../res/constants';
 import FontFamily from '../../res/FontFamily';
 import theme from '../../res/theme';
+import ENUMS from '../../utils/ENUMS';
 import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import { OrderProcessingChargesUI, OrderProcessingEstimatedTotalUI } from '../OrderProcessing';
+import { orderProcessingDummyData } from '../OrderProcessing/StaticData';
 import { stylesFunc } from './styles';
 
 const IMAGE_SIZE = constants.window_dimensions.width * 0.3;
@@ -40,6 +44,112 @@ export default ({ navigation, route }) => {
 
     // #endregion :: RENDER HEADER END's FROM HERE 
 
+
+    // #region :: STATE's & REF's START's FROM HERE 
+
+    const [query, updateQuery] = React.useState({
+        data: {},
+        pitstopData: [],
+        isLoading: true,
+    });
+
+    const data = query.data;
+    // #endregion :: STATE's & REF's END's FROM HERE 
+
+    React.useEffect(() => {
+        let pitstopDataArr = orderProcessingDummyData.data.order.pitStopsList.slice(0, orderProcessingDummyData.data.order.pitStopsList.length - 1);
+
+        pitstopDataArr = pitstopDataArr.map(e => {
+            const ptItemData = [];
+            if (e.pitstopType === PITSTOP_TYPES.SUPER_MARKET || e.pitstopType === PITSTOP_TYPES.RESTAURANT) {
+                //RESTURANT AND SUPERMARKET
+                (e?.jobItemsListViewModel ?? []).map((f, index) => {
+
+                    let type = CARD_SUB_TITLE_TYPES.available;
+
+                    if (f.pitStopItemStatus === ENUMS.AVAILABILITY_STATUS.OutOfStock || f.pitStopItemStatus === ENUMS.AVAILABILITY_STATUS.NotAvailable) {
+                        //OUT OF STOCK
+                        type = CARD_SUB_TITLE_TYPES.outOfStock;
+                    } else if (f.pitStopItemStatus === ENUMS.AVAILABILITY_STATUS.Replaced) {
+                        //REPLACED
+                        type = CARD_SUB_TITLE_TYPES.replaced;
+                    }
+
+                    ptItemData.push({
+                        id: e?.jobItemID ?? index,
+                        title: f?.productItemName ?? '',
+                        value: f?.price ?? '',
+                        type,
+                    })
+                    return
+                })
+            } else {
+                //JOVI JOB
+                ptItemData.push({
+                    id: 1,
+                    title: e?.description ?? '',
+                    value: e?.jobAmount ?? '',
+                    type: CARD_SUB_TITLE_TYPES.available,
+                });
+            }
+
+
+            const CANCELLED_ARRAY = ptItemData.filter(i => i.type === CARD_SUB_TITLE_TYPES.outOfStock && e.jobItemsListViewModel.length < 2);
+            const OUTOFSTOCK_ARRAY = ptItemData.filter(i => i.type === CARD_SUB_TITLE_TYPES.outOfStock && !(e.jobItemsListViewModel.length < 2));
+            const REPLACED_ARRAY = ptItemData.filter(i => i.type === CARD_SUB_TITLE_TYPES.replaced);
+
+
+            return {
+                ...e,
+                data: {
+                    cancelledData: CANCELLED_ARRAY,
+                    outOfStockData: OUTOFSTOCK_ARRAY,
+                    replacedData: REPLACED_ARRAY,
+                },
+                forceStrikethrough: CANCELLED_ARRAY.length > 0,
+                hasError: CANCELLED_ARRAY.length > 0 || OUTOFSTOCK_ARRAY.length > 0 || REPLACED_ARRAY.length > 0,
+            }
+        });
+
+        console.log('REPLACED_ARRAY ', pitstopDataArr[0].data.cancelledData);
+
+        updateQuery({
+            data: {
+                ...orderProcessingDummyData.data.order,
+                finalDestination: orderProcessingDummyData.data.order.pitStopsList[orderProcessingDummyData.data.order.pitStopsList.length - 1],
+            },
+            pitstopData: pitstopDataArr,
+            isLoading: false,
+        })
+        return () => { };
+    }, []);
+
+
+    const _renderFooter = () => {
+        return (
+            <>
+                <OrderProcessingChargesUI
+                    title='GST'
+                    value={renderPrice(data.chargeBreakdown.totalProductGST, '')} />
+
+                <OrderProcessingChargesUI
+                    title={`Service Charges(Incl S.T ${renderPrice(data.chargeBreakdown.estimateServiceTax, '')})`}
+                    value={renderPrice(data.chargeBreakdown.totalEstimateCharge, '')} />
+                <DashedLine />
+                <OrderProcessingChargesUI
+                    title='Discount'
+                    value={parseInt(renderPrice(data.chargeBreakdown.discount, '')) > 0 ? renderPrice(data.chargeBreakdown.discount, '-') : renderPrice(data.chargeBreakdown.discount, '')} />
+                <DashedLine />
+
+                <OrderProcessingEstimatedTotalUI estimatedPrice={renderPrice(data.chargeBreakdown.estimateTotalAmount, '')} />
+            </>
+        )
+    }
+
+    if (query.isLoading) {
+        return <View />
+    }
+
     return (
         <View style={styles.primaryContainer}>
             {_renderHeader()}
@@ -48,85 +158,220 @@ export default ({ navigation, route }) => {
                 imageHeight={IMAGE_SIZE * 0.6}
                 color={colors}
                 middle={{
-                    value: `Now 30 - 45 min`
+                    value: `Now ${data.OrderEstimateTime.replace('min'.toLowerCase().trim(), 'min')}`,
+                }} />
+
+            <AnimatedFlatlist
+                data={query.pitstopData}
+                flatlistProps={{
+                    contentContainerStyle: {
+                        paddingBottom: 75,
+                    },
+                    ListFooterComponent: <View style={styles.cardContainer}>
+                        {_renderFooter()}
+                    </View>
+                }}
+                renderItem={(item, index) => {
+                    console.log('item ', item);
+                    if (!item.hasError) return null;
+
+                    return (
+                        <View style={styles.cardContainer} key={index}>
+                            <CardTitle
+                                pitstopType={item.pitstopType}
+                                pitstopNumber={`${index + 1}`}
+                                title={item.title}
+                                strikethrough={item.joviJobStatus === ENUMS.JOVI_JOB_STATUS.Cancel || (item?.forceStrikethrough ?? false)}
+                            />
+                            <DashedLine />
+
+                            {item.data.cancelledData.length > 0 &&
+                                <>
+                                    <CardSubTitle type={CARD_SUB_TITLE_TYPES.cancelled} />
+
+                                    <View style={styles.greyCardContainer}>
+                                        {item.data.cancelledData.map((childItem, childIndex) => {
+                                            return (
+                                                <CardText
+                                                    key={childIndex}
+                                                    title={childItem.title}
+                                                    price={childItem.value}
+                                                    type={CARD_SUB_TITLE_TYPES.cancelled}
+                                                />
+                                            )
+                                        })}
+                                    </View>
+                                </>
+                            }
+
+                            {item.data.outOfStockData.length > 0 &&
+                                <>
+                                    <CardSubTitle type={CARD_SUB_TITLE_TYPES.outOfStock} />
+
+                                    <View style={styles.greyCardContainer}>
+                                        {item.data.outOfStockData.map((childItem, childIndex) => {
+                                            console.log(' outOfStockData ', childItem);
+                                            return (
+                                                <CardText
+                                                    key={childIndex}
+                                                    title={childItem.title}
+                                                    price={childItem.value}
+                                                    type={CARD_SUB_TITLE_TYPES.outOfStock}
+                                                />
+                                            )
+                                        })}
+                                    </View>
+                                </>
+                            }
+
+                            {item.data.replacedData.length > 0 &&
+                                <>
+                                    <CardSubTitle type={CARD_SUB_TITLE_TYPES.replaced} />
+
+                                    <View style={styles.greyCardContainer}>
+                                        {item.data.replacedData.map((childItem, childIndex) => {
+                                            console.log(' replacedData ', childItem);
+                                            return (
+                                                <CardText
+                                                    key={childIndex}
+                                                    title={childItem.title}
+                                                    price={childItem.value}
+                                                    type={CARD_SUB_TITLE_TYPES.replaced}
+                                                />
+                                            )
+                                        })}
+                                    </View>
+                                </>
+                            }
+
+                        </View>
+                    )
                 }} />
 
 
-            {/* ****************** Start of STATIC DATA ****************** */}
 
-            <View style={styles.cardContainer}>
-                <CardTitle pitstopType={1} pitstopNumber="01" title="Rahat Bakers I-8" strikethrough />
-                <DashedLine />
-                <CardSubTitle type={CARD_SUB_TITLE_TYPES.cancelled} />
+            {/* ****************** Start of BOTTOM BUTTON ****************** */}
+            <View style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
 
-                <View style={styles.greyCardContainer}>
-                    <CardText title='Pepperoni Pizza' price='Rs. 850.00' strikethrough />
-                    <CardText title='Red N Hot Pizza - Tika' price='Rs. 1050.00' strikethrough />
-                    <CardText title='Beef Patty Burger' price='Rs. 550.00' strikethrough />
-                </View>
+                backgroundColor: colors.white,
+                flexDirection: "row",
+                alignItems: "center",
+                paddingHorizontal: constants.spacing_horizontal,
+                paddingVertical: constants.spacing_vertical,
+            }}>
+                <Button
+                    onPress={() => { }}
+                    text="Cancel"
+                    style={{
+                        width: "30%",
+                        backgroundColor: colors.white,
+                        height: 45,
+                        marginRight: constants.spacing_horizontal,
+                        borderColor: "#C4C4C4",
+                        borderWidth: 0.5,
+                        borderRadius: 7,
+                    }}
+                    textStyle={{
+                        color: "#B2B2B2",
+                        fontSize: 12,
+                        fontFamily: FontFamily.Poppins.Medium,
+                    }} />
+
+                <Button
+                    onPress={() => { }}
+                    // disabled={enableDisableButton}
+                    text='Continue with your order'
+                    style={{
+                        width: "68%",
+                        height: 45,
+                    }}
+                    textStyle={{
+                        color: colors.white,
+                        fontSize: 15,
+                        fontFamily: FontFamily.Poppins.Medium,
+                    }}
+                />
             </View>
 
-            <View style={styles.cardContainer}>
-                <CardTitle pitstopType={PITSTOP_TYPES.SUPER_MARKET}
-                    pitstopNumber="3" title="Madina Cash & Carry" />
-                <DashedLine />
-                <CardSubTitle type={CARD_SUB_TITLE_TYPES.outOfStock} />
+            {/* ****************** End of BOTTOM BUTTON ****************** */}
 
-                <View style={styles.greyCardContainer}>
-                    <CardText title='Nido 1 plus - 2 kg' price='Rs. 750.00' strikethrough />
-                </View>
 
-                <CardSubTitle type={CARD_SUB_TITLE_TYPES.replaced} />
-
-                <View style={styles.greyCardContainer}>
-                    <CardText title='Red Chilli Powder - 150 g' price='Rs. 32.00' strikethrough />
-                    <CardText title='Red Chilli Powder - 250 g' price='Rs. 50.00' strikethrough />
-                </View>
-            </View>
-
-            {/* ****************** End of STATIC DATA ****************** */}
-
-            <View style={styles.cardContainer}>
-                <OrderProcessingChargesUI title='GST' value='120' />
-                <OrderProcessingChargesUI title='Service Charges(Incl S.T 76)' value='120' />
-                <DashedLine />
-                <OrderProcessingChargesUI title='Discount' value='-158' />
-                <DashedLine />
-
-                <OrderProcessingEstimatedTotalUI estimatedPrice='4924' />
-            </View>
 
         </View>
     )
 };//end of EXPORT DEFAULT
 
 // #region :: CARD TEXT UI START's FROM HERE 
-const CardText = ({ title = '', price = '', strikethrough = false, }) => {
-    return (
-        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-            <Text fontFamily='PoppinsMedium' style={{
-                maxWidth: "70%",
-                fontSize: 12,
-                color: strikethrough ? "#B1B1B1" : "#272727",
-                textDecorationLine: strikethrough ? "line-through" : "none",
-                textDecorationColor: "#B1B1B1",
+const CardText = ({ title = '', price = '', type }) => {
+    if (type === CARD_SUB_TITLE_TYPES.cancelled || type === CARD_SUB_TITLE_TYPES.outOfStock) {
+        return (
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                <Text fontFamily='PoppinsMedium' style={{
+                    maxWidth: "70%",
+                    fontSize: 12,
+                    color: "#B1B1B1",
+                    textDecorationLine: "line-through",
+                    textDecorationColor: "#B1B1B1",
 
-            }} numberOfLines={1}>{`${title}`}</Text>
-            <Text fontFamily='PoppinsMedium' style={{
-                maxWidth: "30%",
-                fontSize: 12,
-                color: strikethrough ? "#B1B1B1" : "#272727",
-                textDecorationLine: strikethrough ? "line-through" : "none",
-                textDecorationColor: "#B1B1B1",
-            }} numberOfLines={1}>{`${renderPrice(`${price}`)}`}</Text>
-        </View>
+                }} numberOfLines={1}>{`${title}`}</Text>
+                <Text fontFamily='PoppinsMedium' style={{
+                    maxWidth: "30%",
+                    fontSize: 12,
+                    color: "#B1B1B1",
+                    textDecorationLine: "line-through",
+                    textDecorationColor: "#B1B1B1",
+                }} numberOfLines={1}>{`${renderPrice(`${price}`)}`}</Text>
+            </View>
+        )
+    }
+    return (
+        <>
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                <Text fontFamily='PoppinsMedium' style={{
+                    maxWidth: "70%",
+                    fontSize: 12,
+                    color: "#B1B1B1",
+                    textDecorationLine: "line-through",
+                    textDecorationColor: "#B1B1B1",
+
+                }} numberOfLines={1}>{`${title}`}</Text>
+                <Text fontFamily='PoppinsMedium' style={{
+                    maxWidth: "30%",
+                    fontSize: 12,
+                    color: "#B1B1B1",
+                    textDecorationLine: "line-through",
+                    textDecorationColor: "#B1B1B1",
+                }} numberOfLines={1}>{`${renderPrice(`${price}`)}`}</Text>
+            </View>
+
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                <Text fontFamily='PoppinsMedium' style={{
+                    maxWidth: "70%",
+                    fontSize: 12,
+                    color: "#272727",
+
+                }} numberOfLines={1}>{`${title}`}</Text>
+                <Text fontFamily='PoppinsMedium' style={{
+                    maxWidth: "30%",
+                    fontSize: 12,
+                    color: "#272727",
+                }} numberOfLines={1}>{`${renderPrice(`${price}`)}`}</Text>
+            </View>
+        </>
     )
+
+
 }
 
 // #endregion :: CARD TEXT UI END's FROM HERE 
 
 // #region :: CODE SUB TITLE UI START's FROM HERE 
 const CARD_SUB_TITLE_TYPES = {
+    "available": -1,
     "cancelled": 1,
     "outOfStock": 2,
     "replaced": 3,
@@ -173,7 +418,7 @@ const CardTitle = ({ pitstopType, strikethrough = false, pitstopNumber = '', tit
                 color: "#D80D30",
                 textDecorationLine: "line-through",
                 textDecorationColor: "#D80D30",
-            }}>{`Pitstop ${pitstopNumber} - ${title}`}
+            }} numberOfLines={1}>{`Pitstop ${pitstopNumber} - ${title}`}
             </Text>
         )
     }
@@ -182,10 +427,10 @@ const CardTitle = ({ pitstopType, strikethrough = false, pitstopNumber = '', tit
             padding: constants.spacing_horizontal,
             fontSize: 17,
             color: "#272727",
-        }}>{`Pitstop ${pitstopNumber} - `}
+        }} numberOfLines={1}>{`Pitstop ${pitstopNumber} - `}
             <Text style={{
                 color: colors.primary,
-            }}>{`${title}`}</Text>
+            }} numberOfLines={1}>{`${title}`}</Text>
         </Text>
     )
 }
