@@ -16,6 +16,7 @@ import { useDispatch } from 'react-redux';
 import RNSplashScreen from './NativeModules/RNSplashScreen';
 import ReduxActions from "./src/redux/actions";
 import OrderProcessing from './src/screens/OrderProcessing';
+import OrderProcessingError from './src/screens/OrderProcessingError';
 
 AntDesign.loadFont();
 Entypo.loadFont();
@@ -52,7 +53,7 @@ export default () => {
             <SafeAreaView style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
                 <StatusBar backgroundColor={'#fff'} barStyle={"dark-content"} />
 
-                <OrderProcessing />
+                <OrderProcessingError />
 
             </SafeAreaView>
         </SafeAreaProvider>
