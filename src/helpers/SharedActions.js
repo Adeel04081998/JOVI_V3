@@ -626,3 +626,34 @@ export const confirmServiceAvailabilityForLocation = (postRequest, latitude, lon
         },
     );
 };
+export const sharedGetDeviceMacAddress = async () => {
+    const deviceMacAddress = (Platform.OS === "android") ?
+        await DeviceInfo.getAndroidId()
+        :
+        DeviceInfo.getUniqueId();
+    // console.log("hardwareID", deviceMacAddress)
+
+    return deviceMacAddress;
+};
+export const sharedSendFCMTokenToServer = async (postRequest, FcmToken) => {
+    postRequest(
+        Endpoints.FirebaseTokenAddLog,
+        {
+            "deviceToken": FcmToken,
+            "hardwareID": await sharedGetDeviceMacAddress(),
+            "androidVersion": parseInt(DeviceInfo.getSystemVersion()),
+        },
+        res => {
+            if (res.data.statusCode === 200) {
+                console.log("sharedSendFCMTokenToServer.success :", res)
+            };
+        },
+        err => {
+            if (err) {
+                console.log("sharedSendFCMTokenToServer.error :", err)
+            }
+        },
+        {},
+        false
+    );
+};

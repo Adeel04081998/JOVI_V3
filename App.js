@@ -24,13 +24,11 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Modal from './src/components/atoms/Modal';
 import Geolocation from 'react-native-geolocation-service';
 
-
-
 import CodePush from "react-native-code-push"; //for codepush
 import { env } from './src/utils/configs';
 import Robot from './src/components/organisms/Robot';
 import { useSelector } from 'react-redux';
-import { sharedGetEnumsApi, sharedGetFilters, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser } from './src/helpers/SharedActions';
+import { sharedGetEnumsApi, sharedGetFilters, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser, sharedSendFCMTokenToServer } from './src/helpers/SharedActions';
 import PistopListing from './src/screens/PitstopListing';
 import Filter from './src/components/atoms/Filter';
 import BottomAllignedModal from './src/components/atoms/BottomAllignedModal';
@@ -40,6 +38,8 @@ import AddAddress from './src/screens/AddAddress';
 import CheckOut from './src/screens/CheckOut';
 import { fcmService } from './src/utils/FCMServices';
 import { localNotificationService } from './src/utils/LocalNotificationServices';
+import actions from './src/redux/actions';
+import { postRequest } from './src/manager/ApiManager';
 AntDesign.loadFont();
 Entypo.loadFont();
 EvilIcons.loadFont();
@@ -191,7 +191,7 @@ const SharedGetApis = ({ }) => {
                     },
                         // actions array
                         [],
-    
+
                     )
                 } else {
                     localNotificationService.showNotification(0, notify.notification.title, notify.notification.body, notify, {
@@ -201,20 +201,22 @@ const SharedGetApis = ({ }) => {
                     },
                         // actions array
                         [],
-    
+
                     )
                 }
             }
             const onRegister = (token) => {
                 console.log('Registered--', token);
+                sharedSendFCMTokenToServer(postRequest, token);
+
             }
             const onNotification = (notify) => {
                 console.log('onNotification--', notify);
                 console.log("===> onNotification.notify -> ", notify)
-                // dispatch(fcmAction({ ...notify }));
+                dispatch(actions.fcmAction({ ...notify }));
                 if (notify.data) {
                     console.log("notify.data", notify.data);
-                    const results =true;
+                    const results = true;
                     // const results = sharedCheckNotificationExpiry(notify.data.ExpiryDate);
                     pushNotification(notify);
                 }
