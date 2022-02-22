@@ -5,7 +5,7 @@ export default {
     numberOnly: /^[0-9]+$/,
     pkCellNo: /^((\+92)?(0092)?(92)?(0)?)(3)([0-9]{9})$/,
     name: /^[a-zA-Z]{2,}$/,
-    Space_Regex: /\s/,
+    Space_Regex: /\s/g,
     androidOTP: /\b\d{4}\b/,
 
     price: /[pkr|rs|rs.|pkr.]{2,}/i,

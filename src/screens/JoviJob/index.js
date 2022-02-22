@@ -85,7 +85,7 @@ export default ({ navigation, route }) => {
             "idx": 3,
             "title": "Estimated Waiting Time",
             "desc": "What Is The Estimated Time Of The Job ?",
-            "svg": svgs.pitStopBuy(),
+            "svg": svgs.pitStopEstTime(),
             "isOpened": __DEV__ ? true : false,
             "headerColor": __DEV__ ? colors.primary : colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["estimated-time"],
@@ -96,7 +96,7 @@ export default ({ navigation, route }) => {
             "idx": 4,
             "title": "Buy For Me ?",
             "desc": "Do You Want Us To Buy For You ?",
-            "svg": svgs.pitStopEstTime(),
+            "svg": svgs.pitStopBuy(),
             "isOpened": __DEV__ ? true : false,
             "headerColor": __DEV__ ? colors.primary : colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["buy-for-me"],
@@ -188,36 +188,36 @@ export default ({ navigation, route }) => {
 
 
 
-const clearData = () => {
-    setCardData(initCartData);
-    setNameVal("");
-    setCityVal("");
+    const clearData = () => {
+        setCardData(initCartData);
+        setNameVal("");
+        setCityVal("");
 
-    setLocationVal("");
+        setLocationVal("");
 
-    setScrollEnabled(true);
-    
-    setDescription("");
+        setScrollEnabled(true);
 
-    updateImagesData([]);
+        setDescription("");
 
-    setRecordingUploading(false);
+        updateImagesData([]);
+
+        setRecordingUploading(false);
 
 
-    setIsRecord(false);
+        setIsRecord(false);
 
-    setMicPress(false);
-    setIsDeleted(false);
-    setVoiceNote({});
+        setMicPress(false);
+        setIsDeleted(false);
+        setVoiceNote({});
 
-    setEstVal("");
+        setEstVal("");
 
-    setSwitch(false);
+        setSwitch(false);
 
-    setEstTime({text: "Estimated Time", value: 0})
-    setCollapsed(true)
+        setEstTime({ text: "Estimated Time", value: 0 })
+        setCollapsed(true)
 
-}
+    }
     /*****************************     Start of  useEffect            ***********************************/
 
 
@@ -249,6 +249,7 @@ const clearData = () => {
         // cardData[index].isOpened = open;
         cardData[index].headerColor = color;
         setCardData(cardData);
+        forceUpdate()
     };//end of toggleCardData
 
 
@@ -278,23 +279,23 @@ const clearData = () => {
         setCityVal(city)
         setLocationVal(data && (data.name ? data.name : data.description))
         toggleCardData(PITSTOP_CARD_TYPES["description"]);
-        forceUpdate();
     };
 
     const onLocationSearchInputChange = (value) => {
-        if ((value && value !== '') || value === false) {
-            setLocationVal(value)
+        if ((value && value !== '') && value.includes('')  || value === false) {
+            setLocationVal(value.trim())
         }
     }
     const handleSetFavClicked = () => { }
 
 
     const onLocationPress = () => {
-        common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { onNavigateBack:(placeName) => cb(placeName), index: 1 })
+        common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { onNavigateBack: (placeName) => cb(placeName), index: 1 })
     }
     const cb = (resp) => {
         console.log('resp ==>>', resp);
         setLocationVal(resp)
+        forceUpdate();
     }
     /************   End of functions of Pitstop location Component Funcs    **************/
 
@@ -805,7 +806,7 @@ const clearData = () => {
                 isOpened={isDisabled ? false : isOpened}
                 onEstTimePress={(item) => {
                     setEstTime(item);
-                    setCollapsed(!collapsed);
+                    setCollapsed(true);
                     toggleCardData(PITSTOP_CARD_TYPES["buy-for-me"]);
                 }}
                 onPressDropDown={() => {
@@ -903,12 +904,12 @@ const clearData = () => {
                                     imageData,
                                     voiceNote,
                                     estTime,
-                                    estimatePrice: parseInt( estVal)
+                                    estimatePrice: parseInt(estVal)
                                 }
                                 sharedAddUpdatePitstop(pitstopData, false, [], false, false, clearData);
                             }}
                             disabled={validationCheck()}
-                            style={[styles.locButton, { height: 45, marginVertical: 10 }]}
+                            style={[styles.locButton, { height: 60, marginVertical: 10 }]}
                             textStyle={[styles.btnText, { fontSize: 16 }]}
                             fontFamily="PoppinsRegular"
                         />

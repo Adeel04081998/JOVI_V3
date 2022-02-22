@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { Appearance, Platform, StyleSheet, View } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
-import { sharedStartingRegionPK } from '../../../helpers/SharedActions';
+import { confirmServiceAvailabilityForLocation, sharedStartingRegionPK } from '../../../helpers/SharedActions';
 import VectorIcon from '../VectorIcon';
 import { addressInfo, hybridLocationPermission } from '../../../helpers/Location';
 import Button from '../../molecules/Button';
@@ -15,6 +15,7 @@ import Toast from '../Toast';
 import LocationSearch from '../LocationSearch';
 import NavigationService from '../../../navigations/NavigationService';
 import SafeAreaView from '../SafeAreaView';
+import { postRequest } from '../../../manager/ApiManager';
 
 
 const LATITUDE_DELTA = 0.01;
@@ -42,6 +43,8 @@ export default (props) => {
   const coordinatesRef = useRef(null)
   const [ready, setMapReady] = useState(false)
   const [region, setRegion] = useState(sharedStartingRegionPK)
+  const disabledRef = useRef(false)
+
 
 
   /******************************************* END OF VARIABLE INITIALIZATION **********************************/
@@ -124,9 +127,9 @@ export default (props) => {
         zIndex: 10,
         borderBottomWidth: 3,
         borderBottomColor: colors.primary,
-        justifyContent:'center',
+        justifyContent: 'center',
         paddingTop: WIDTH * 0.0085,
-        paddingLeft:5
+        paddingLeft: 5
       }}>
         <TouchableOpacity
           onPress={() => NavigationService.NavigationActions.common_actions.goBack()}
@@ -223,7 +226,7 @@ export default (props) => {
         zoomControlEnabled={false}
         zoomEnabled={true}
         showsCompass={false}
-        />
+      />
     )
   }
 
@@ -267,20 +270,39 @@ export default (props) => {
       <Button
         onPress={async () => {
           const { latitude, longitude } = coordinatesRef.current
-          let adrInfo = await addressInfo(latitude, longitude)
-          placeNameRef.current = adrInfo.address
-          setPlaceName(adrInfo.address)
-          let placeObj = {
-            title: placeNameRef.current,
-            latitude,
-            longitude,
-            latitudeDelta: LATITUDE_DELTA,
-            longitudeDelta: LONGITUDE_DELTA,
-            city: adrInfo.city
-          }
-          props.onConfirmLoc(placeObj)
+          disabledRef.current = true
+          confirmServiceAvailabilityForLocation(postRequest, latitude, longitude,
+            async (resp) => {
+              console.log('resp', resp);
+              disabledRef.current = false
+              let adrInfo = await addressInfo(latitude, longitude)
+              placeNameRef.current = adrInfo.address
+              setPlaceName(adrInfo.address)
+              let placeObj = {
+                title: placeNameRef.current,
+                latitude,
+                longitude,
+                latitudeDelta: LATITUDE_DELTA,
+                longitudeDelta: LONGITUDE_DELTA,
+                city: adrInfo.city
+              }
+              props.onConfirmLoc(placeObj)
+
+            }, (error) => {
+              console.log(((error?.response) ? error.response : {}), error);
+              if (error?.data?.statusCode === 417) {
+                if (error.areaLock) { } else {
+                  error?.data?.message && Toast.error(error?.data?.message);
+                }
+              }
+              else {
+                Toast.error('An Error Occurred!');
+              }
+            })
+
         }
         }
+        disabled={disabledRef.current}
         text="Confirm Location" style={styles.confirmBtn} />
     )
   }

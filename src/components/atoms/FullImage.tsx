@@ -1,6 +1,7 @@
 import React from 'react';
 import { Animated, BackHandler, Dimensions, ImageSourcePropType, Modal } from 'react-native';
 import ImageZoom from '../../../libs/Image-Viewer';
+import VectorIcon from './VectorIcon';
 import View from './View';
 
 const WINDOW_WIDTH = Dimensions.get('window').width;
@@ -64,6 +65,9 @@ const FullImage = (props: Props) => {
           />
 
         </ImageZoom>
+        <VectorIcon name="close" type="AntDesign" color={'#fff'} size={30} style={{
+          position: 'absolute', top: 30, right: 10
+        }} onPress={backAction} />
       </View>
     </Modal>
   )

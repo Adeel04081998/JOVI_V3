@@ -29,8 +29,6 @@ export default (props) => {
     const dispatch = useDispatch();
     const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark");
     const [state, setState] = useState(initState)
-    const [, updateStateaaa] = React.useState();
-    const forceUpdate = React.useCallback(() => updateStateaaa({}), []);
     const adrObjRef = useRef(null)
 
     const onConfirmAddress = () => {
@@ -57,6 +55,11 @@ export default (props) => {
     const onTitlePress = (index) => {
         dispatch(ReduxActions.setModalAction({ visible: false }))
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { onNavigateBack: (placeName) => props.finalDestFunc(placeName), index })
+    }
+
+    const validate = () =>{
+        if(adrObjRef.current === null) return true
+        else return false
     }
 
     const renderAddressList = () => {
@@ -95,11 +98,15 @@ export default (props) => {
                     <Text fontFamily={"PoppinsSemiBold"} style={{ color: colors.primary, fontSize: 16 }}>{'Add New Location'}</Text>
                 </View>
             </TouchableOpacity>
-            <Button text="Confirm Button" onPress={onConfirmAddress} textStyle={{
+            <Button text="Confirm Button"
+             onPress={onConfirmAddress}
+             disabled={validate()}
+              textStyle={{
                 fontSize: 16,
                 fontFamily: FontFamily.Poppins.Regular,
                 color: colors.white
-            }} style={{ width: WIDTH * 0.95, height: HEIGHT / 15, alignSelf: 'center', marginVertical: 20 }} />
+            }} 
+            style={{ width: WIDTH * 0.95, height: HEIGHT / 15, alignSelf: 'center', marginVertical: 20 }} />
         </View>
     )
 }

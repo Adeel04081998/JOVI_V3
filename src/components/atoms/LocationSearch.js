@@ -10,7 +10,7 @@ import configs, { env } from "../../utils/configs";
 import GV from "../../utils/GV";
 import VectorIcon from "./VectorIcon";
 
-export default LocationSearch = ({ handleOnInputChange, locationVal, index, clearInputField, textToShow, onLocationSelected, /* handleAddPitstop, */ handleDeletePitstop, isLast, handleInputFocused, totalPitstops, onSetFavClicked, isFavourite, marginBottom = 5, listViewStyles }) => {
+export default LocationSearch = ({ handleOnInputChange, locationVal, index, clearInputField, textToShow, onLocationSelected, /* handleAddPitstop, */ handleDeletePitstop, isLast, handleInputFocused, totalPitstops, onSetFavClicked, isFavourite, marginBottom = 5, listViewStyles, inputStyles }) => {
 
     const HEIGHT = constants.window_dimensions.height;
     const WIDTH = constants.window_dimensions.width;
@@ -159,7 +159,7 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
                         width: '95%',
                         alignSelf: 'center',
                     },
-                    textInput: {
+                    textInput: [inputStyles || {
                         borderWidth: 1,
                         borderColor: "#E6EAFA",
                         borderRadius: 5,
@@ -170,7 +170,7 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
                         color: "#000",
                         zIndex: -1,
                         backgroundColor: "#F8F9FD",
-                    },
+                    }],
 
                     listView: [listViewStyles || {
                         borderWidth: 1,
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     iconStyleRight: {
         position: "absolute",
         right: 4,
-        top: 10,
+        top: 13,
         width: 32,
         height: 50,
     },
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
     iconStyleLeft: {
         position: "absolute",
         left: 0,
-        top: -5,
+        top: -3,
         width: 32,
         height: 50,
     },

@@ -34,7 +34,10 @@ const PitStopDetails = (props) => {
                 }}
                 containerStyle={{
                     width: WIDTH - 40,
-                    alignSelf: 'center'
+                    alignSelf: 'center',
+                    backgroundColor: colors.white,
+                    borderWidth:1, borderColor: colors.light_input_border,
+                    borderRadius: 10
                 }}
                 multiline={true}
                 titleStyle={{ opacity: 0.8, color: '#000', fontFamily: FontFamily.Poppins.Regular, fontSize: 12 }}

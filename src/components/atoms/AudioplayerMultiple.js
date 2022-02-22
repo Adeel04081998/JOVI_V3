@@ -52,7 +52,7 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
     const setupSoundPlayer = async () => {
 
 
-        const chatAudioplayer = new Sound(audioURL,'', error => {
+        const chatAudioplayer = new Sound(audioURL, '', error => {
             if (error) {
                 console.log("failed to load the sound", error);
 
@@ -135,12 +135,12 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
 
     const sliderPlay = (startFrom = 0) => {
         soundPlayerRef.current?.setCurrentTime(startFrom);
-        if (currentTime < 1) {
-            playAudio();
-            return;
-        }
-        setIsPlaying(true);
-        soundPlayerRef.current?.play();
+        // if (currentTime < 1) {
+        //     playAudio();
+        //     return;
+        // }
+        setIsPlaying(false);
+        // soundPlayerRef.current?.play();
     };//end of sliderPlay
 
 
@@ -190,6 +190,7 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
                                 sliderPause();
                             }}
                             onSlidingComplete={(value) => {
+                                console.log('onSlidingComplete velue ==>>>', value);
                                 sliderPlay(parseInt(value))
                             }}
                             onValueChange={(value) => {
