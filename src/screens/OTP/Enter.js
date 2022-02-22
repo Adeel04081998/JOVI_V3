@@ -62,7 +62,7 @@ export default () => {
 
     const [country, setCountry] = React.useState("92");
     const onPress = async () => {
-        const appHash = Platform.OS === "android" && (await RNOtpVerify.getHash())[0]
+        const appHash = Platform.OS === "android" ? (await RNOtpVerify.getHash())[0] : "";
         const phoneNumber = country + cellNo
         if (network.value <= 0) return Toast.info("Please select your mobile network.");
         else if (!regexp.test(phoneNumber)) {
@@ -97,7 +97,7 @@ export default () => {
     return <SafeAreaView style={styles.otpSafeArea}>
         <KeyboardAwareScrollView>
             <SvgXml xml={svgs.otp()} height={120} width={120} style={{ alignSelf: "center", marginBottom: 20, }} />
-            <Text fontFamily={'PoppinsMedium'} style={{ fontSize: 14, paddingLeft: 25, color: 'black', marginBottom:-3 }}>Enter your Mobile Number</Text>
+            <Text fontFamily={'PoppinsMedium'} style={{ fontSize: 14, paddingLeft: 25, color: 'black', marginBottom: -3 }}>Enter your Mobile Number</Text>
             <View style={styles.otpDropdownParentView}>
                 <TouchableOpacity style={styles.otpDropdownView}
                     wait={0.55}//greater than the animation time of dropdown rendered below
@@ -137,15 +137,15 @@ export default () => {
                         containerStyle={{
                             width: '50%', borderColor: forcePattern ? 'red' : null,
                             borderWidth: forcePattern ? 0.5 : 0,
-                            marginLeft:5
+                            marginLeft: 5
                         }}
                         onFocus={() => setForcePattern(false)}
                     />
                 </AnimatedView>
                 {forcePattern &&
                     <View style={{ flexDirection: 'row' }}>
-                        <View style={{ width: '35%' }} 
-                         /** Will remove it soon */
+                        <View style={{ width: '35%' }}
+                        /** Will remove it soon */
                         />
                         <View style={{ width: '50%' }} >
                             <Text style={[{
