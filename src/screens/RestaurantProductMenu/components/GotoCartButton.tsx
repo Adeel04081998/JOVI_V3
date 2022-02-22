@@ -46,33 +46,44 @@ const GotoCartButton = (props: Props) => {
 
     if (!VALIDATION_CHECK(count)) return null;
     return (
-        <Button
-            style={[styles.button, props.style]}
-            //@ts-ignore
-            textStyle={[styles.textStyle, props.textStyle]}
-            text={propText}
-            {...VALIDATION_CHECK(count) && {
-                leftComponent: () => (
-                    <View style={styles.leftContainer}>
-                        <Text style={styles.leftText}>{count}</Text>
-                    </View>
-                )
-            }}
+        <View style={{
+            ...styles.primaryContainer,
+        }}>
+            <Button
+                style={[styles.button, props.style]}
+                //@ts-ignore
+                textStyle={[styles.textStyle, props.textStyle]}
+                text={propText}
+                {...VALIDATION_CHECK(count) && {
+                    leftComponent: () => (
+                        <View style={styles.leftContainer}>
+                            <View style={{
+                                backgroundColor: colors.white,
+                                borderRadius: 6,
+                                paddingVertical: 1,
+                                paddingHorizontal: 12,
+                            }}>
+                                <Text style={styles.leftText}>{count}</Text>
+                            </View>
+                        </View>
+                    )
+                }}
 
-            {...VALIDATION_CHECK(price) && {
-                rightComponent: () => (
-                    <View style={styles.rightContainer}>
-                        <Text style={styles.rightText}>{renderPrice(price)}</Text>
-                    </View>
-                )
-            }}
-            onPress={() => {
-                NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name);
-            }}
-            {...props}
-            wait={0}
+                {...VALIDATION_CHECK(price) && {
+                    rightComponent: () => (
+                        <View style={styles.rightContainer}>
+                            <Text style={styles.rightText}>{renderPrice(price)}</Text>
+                        </View>
+                    )
+                }}
+                onPress={() => {
+                    NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name);
+                }}
+                {...props}
+                wait={0}
 
-        />
+            />
+        </View>
     );
 }
 
@@ -89,43 +100,49 @@ const stylesFunc = (colors: typeof initColors, insets: EdgeInsets) => StyleSheet
         textAlign: 'center',
     },
     rightContainer: {
-        padding: 10,
-        paddingRight: 0,
+        flex: 1,
         marginRight: 16,
+        alignItems: "flex-end",
     },
+
+
     leftText: {
         color: colors.primary,
         fontSize: 16,
+        top: 2,
         textAlign: 'center',
     },
     leftContainer: {
-        paddingHorizontal: 14,
-        paddingVertical: 4,
-        backgroundColor: "#fff",
-        borderRadius: 6,
         marginLeft: 16,
-        justifyContent: "center",
-        alignItems: "center",
-        alignContent: "center",
-        alignSelf: "center",
+        alignItems: "flex-start",
+        flex: 1,
     },
+
+
     textStyle: {
         color: colors.white,
         fontSize: 16,
         fontFamily: FontFamily.Poppins.Medium,
         textAlign: "center",
-        flex: 1,
+        flex: 2,
     },
 
 
     button: {
         flex: 1,
-        position: 'absolute',
-        bottom: getStatusBarHeight(true) + (insets.bottom > 0 ? insets.bottom * 0.7 : 10),
         width: "90%",
         alignSelf: "center",
         borderRadius: 10,
         backgroundColor: colors.primary,
+    },
+    primaryContainer: {
+        backgroundColor: colors.white,
+        position: 'absolute',
+        paddingTop: getStatusBarHeight(true) + (insets.bottom > 0 ? insets.bottom * 0.7 : 10),
+        paddingBottom: getStatusBarHeight(true) + (insets.bottom > 0 ? insets.bottom * 0.7 : 10),
+        bottom: 0,
+
+        width: "100%",
     },
 
 });//end of stylesFunc

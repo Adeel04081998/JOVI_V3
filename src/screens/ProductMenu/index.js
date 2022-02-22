@@ -17,6 +17,7 @@ import ROUTES from '../../navigations/ROUTES';
 import { store } from '../../redux/store';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
+import ENUMS from '../../utils/ENUMS';
 import GV, { PITSTOP_TYPES } from '../../utils/GV';
 import GotoCartButton from '../RestaurantProductMenu/components/GotoCartButton';
 import ProductMenuHeader from './components/ProductMenuHeader';
@@ -25,7 +26,7 @@ import { itemStylesFunc, stylesFunc } from './styles';
 
 const WINDOW_WIDTH = constants.window_dimensions.width;
 
-const ITEM_IMAGE_SIZE = WINDOW_WIDTH / 2.5;
+const ITEM_IMAGE_SIZE = WINDOW_WIDTH * 0.35;
 const VERTICAL_MAX_ITEM_PER_REQUEST = 10;
 const HORIZONTAL_MAX_ITEM_PER_REQUEST = 2;
 const SHELVE_MAX_COUNT = 7;
@@ -198,7 +199,10 @@ export default ({ navigation, route }) => {
             <React.Fragment>
 
                 {/* ****************** Start of TITLE & VIEW MORE ****************** */}
-                <View style={itemStyles.titlePrimaryContainer}>
+                <View style={{
+                    ...itemStyles.titlePrimaryContainer,
+                    paddingTop: parentIndex === 0 ? 10 : 20,
+                }}>
                     <Text style={styles.title}>{`${parentItem.categoryName}`}</Text>
 
                     {isNextPage(productTotalItem, HORIZONTAL_MAX_ITEM_PER_REQUEST, 1) &&
@@ -216,13 +220,19 @@ export default ({ navigation, route }) => {
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     {(parentItem?.pitstopItemList ?? []).map((item, index) => {
                         const image = (item?.images ?? []).length > 0 ? item.images[0].joviImageThumbnail : '';
-                        const isOutOfStock = "isOutOfStock" in item ? item.isOutOfStock : false;
+                        console.log('item ', item);
+                        let isOutOfStock = "isOutOfStock" in item ? item.isOutOfStock : false;
+                        if (item.availabilityStatus === ENUMS.PRODUCT_AVAILABILIITY_STATUS.OutOfStock) {
+                            isOutOfStock = true;
+                        }
+                        
                         return (
                             <View style={{
                                 marginLeft: index === 0 ? 10 : 0,
                                 ...itemStyles.primaryContainer,
                             }} key={uniqueKeyExtractor()}>
                                 <ProductMenuItemCard
+                                    disabled={isOutOfStock}
                                     colors={colors}
                                     index={index}
                                     itemImageSize={ITEM_IMAGE_SIZE}
@@ -332,7 +342,7 @@ export default ({ navigation, route }) => {
     const updateQuantity = (parentIndex, index, quantity) => {
         let currentItem = data[parentIndex].pitstopItemList[index];
         let priceWithoutGst = currentItem.gstAddedPrice - currentItem.gstAmount;
-        let discountAmount = discountTypeCallbacks[currentItem.discountType!==0?currentItem.discountType:1](priceWithoutGst,currentItem.discountAmount);
+        let discountAmount = discountTypeCallbacks[currentItem.discountType !== 0 ? currentItem.discountType : 1](priceWithoutGst, currentItem.discountAmount);
         data[parentIndex].pitstopItemList[index].quantity = quantity;
         const pitstopDetails = {
             pitstopType: PITSTOP_TYPES.SUPER_MARKET,
@@ -402,16 +412,16 @@ export default ({ navigation, route }) => {
         return (
             <>
                 {_renderHeader()}
-                <View style={{ height: '93%', width: '101%', paddingLeft: 10, paddingTop: 4, paddingHorizontal: 5, display: 'flex', justifyContent: 'center', alignContent: 'center', }}>
-                    <AnimatedLottieView
-                        autoSize={true}
-                        resizeMode={'contain'}
-                        style={{ width: '100%' }}
-                        source={require('../../assets/LoadingView/SupermarketMenu.json')}
-                        autoPlay
-                        loop
-                    />
-                </View>
+                {/* <View style={{ height: '93%', width: '101%', paddingLeft: 10, paddingTop: 4, paddingHorizontal: 5, display: 'flex', justifyContent: 'center', alignContent: 'center', }}> */}
+                <AnimatedLottieView
+                    autoSize={true}
+                    resizeMode={'contain'}
+                    style={{ width: '100%' }}
+                    source={require('../../assets/LoadingView/SupermarketMenu.json')}
+                    autoPlay
+                    loop
+                />
+                {/* </View> */}
             </>
         )
     }
@@ -426,7 +436,7 @@ export default ({ navigation, route }) => {
                 scrollEnabled={true}
                 nestedScrollEnabled
                 contentContainerStyle={{
-                    paddingBottom: 85,
+                    paddingBottom: 55,
                 }}
                 onEndReachedThreshold={0.6}
                 onEndReached={onEndReached}

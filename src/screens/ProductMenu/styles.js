@@ -7,7 +7,7 @@ export const stylesFunc = (colors) => StyleSheet.create({
         flex: 1,
     },
     title: {
-        color: "#1D1D1D",
+        color: "#212121",
         fontSize: 18,
         fontFamily: FontFamily.Poppins.Medium,
 
