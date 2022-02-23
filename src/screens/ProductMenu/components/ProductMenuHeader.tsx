@@ -8,10 +8,16 @@ import { array_move, renderFile } from '../../../helpers/SharedActions';
 import NavigationService from '../../../navigations/NavigationService';
 import ROUTES from '../../../navigations/ROUTES';
 import { initColors } from '../../../res/colors';
+import constants from '../../../res/constants';
 import FontFamily from '../../../res/FontFamily';
 import RestaurantProductMenuHeader, { ProductMenuHeaderItem, ProductMenuHeaderItemDefaultValue } from '../../RestaurantProductMenu/components/RestaurantProductMenuHeader';
 
+const WINDOW_WIDTH = constants.window_dimensions.width;
 
+const SHELVE_CARD_SIZE = {
+    width: WINDOW_WIDTH * 0.25,
+    height: WINDOW_WIDTH * 0.13,
+};
 
 // #region :: INTERFACE START's FROM HERE 
 interface Props {
@@ -52,7 +58,7 @@ const ProductMenuHeader = (props: Props) => {
                 colors={colors}
                 item={props.headerItem}
                 hideHeader={props.hideHeader}
-                onLayout={(e)=>{props.onHeaderLayout && props.onHeaderLayout(e)}}
+                onLayout={(e) => { props.onHeaderLayout && props.onHeaderLayout(e) }}
             />
 
 
@@ -68,17 +74,24 @@ const ProductMenuHeader = (props: Props) => {
                         flatlistProps={{
                             nestedScrollEnabled: true,
                             showsHorizontalScrollIndicator: false,
+                            contentContainerStyle: {
+                                paddingBottom: 10,
+                            }
                         }}
                         horizontal
+                        nestedScrollEnabled={true}
+                        showsHorizontalScrollIndicator={false}
+
                         //@ts-ignore
                         renderItem={(item, index) => {
                             return (
-                                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                    {/* @ts-ignore */}
+                                <View style={{ flexDirection: "row", alignItems: "center", }}>
                                     <ShelveCard
+                                        cardWidth={SHELVE_CARD_SIZE.width}
+                                        cardHeight={SHELVE_CARD_SIZE.height}
                                         containerStyle={{
+                                            ...styles.shelvePrimaryContainer,
                                             marginLeft: index === 0 ? 10 : 0,
-                                            ...styles.shelvePrimaryContainer
                                         }}
                                         color={colors}
                                         item={{
@@ -102,21 +115,29 @@ const ProductMenuHeader = (props: Props) => {
                                         }}
                                     />
 
-                                    {index === (props?.shelveData ?? []).length - 1 &&
-                                        // @ts-ignore
+                                    {(index === (props?.shelveData ?? []).length - 1) &&
                                         <ShelveCard
+                                            cardWidth={SHELVE_CARD_SIZE.width}
+                                            cardHeight={SHELVE_CARD_SIZE.height}
                                             containerStyle={{
-                                                marginLeft: index === 0 ? 10 : 0,
                                                 ...styles.shelvePrimaryContainer
                                             }}
                                             color={colors}
                                             seeAll
                                             onItemPress={() => {
-                                                NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Shelves.screen_name, { shelveData: props.shelveData, pitstopType: props.pitstopType, marketID: props.marketID })
+                                                const allData: any = props?.data ?? [];
+                                                if (Math.abs(allData.length % 2) === 1) {
+                                                    //WHEN ODD
+                                                    allData.push({
+                                                        id: allData.length + 1,
+                                                        shouldEmpty: true,
+                                                    })
+                                                }
+
+                                                NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Shelves.screen_name, { shelveData: allData, pitstopType: props.pitstopType, marketID: props.marketID })
                                             }}
                                         />
                                     }
-
 
                                 </View>
                             )
@@ -148,6 +169,5 @@ export const stylesFunc = (colors: typeof initColors) => StyleSheet.create({
     },
     shelvePrimaryContainer: {
         marginRight: 10,
-        marginBottom: 4,
     },
 })

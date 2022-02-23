@@ -19,7 +19,7 @@ const subDetailListTxtFontSize = 12
 const subDetailListTxtFontFamily = 'PoppinsRegular'
 const TOPSPACING = 10
 
-export default ({ cartReducer = [], colors = {}, secondData = [] }) => {
+export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData = [] }) => {
     const [showDetails, setShowDetails] = useState(false)
     const pitStops = cartReducer.pitstops || []
     const discount = cartReducer.discount
@@ -43,19 +43,16 @@ export default ({ cartReducer = [], colors = {}, secondData = [] }) => {
                         let itemSize = "1"
                         return <View style={{ flex: 1, flexDirection: 'row', paddingVertical: 3 }}>
                             <View style={{ flexDirection: 'row', flex: 1, marginHorizontal: 20 }}>
-                                <Text style={{ color: subDetailListTxtColor, fontSize: subDetailListTxtFontSize }} numberOfLines={1} fontFamily={subDetailListTxtFontFamily}>{`${pitStopItemName}`}</Text>
+                                <Text style={checkOutStyles.reciptSubDetailspitStopItemName} numberOfLines={1} fontFamily={subDetailListTxtFontFamily}>{`${pitStopItemName}`}</Text>
                                 {/* <Text style={{ color: subDetailListTxtColor, fontSize: subDetailListTxtFontSize }} numberOfLines={1} fontFamily={subDetailListTxtFontFamily}>{` -${itemSize}`}</Text>
                                 <Text style={{ color: subDetailListTxtColor, fontSize: subDetailListTxtFontSize }} numberOfLines={1} fontFamily={subDetailListTxtFontFamily}>{` -${itemQuantity}`}</Text> */}
                             </View>
                             <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
-                                <Text style={{ justifyContent: 'flex-end', color: subDetailListTxtColor, fontSize: subDetailListTxtFontSize }} fontFamily={subDetailListTxtFontFamily}>{sharedGetPrice(item, false)}</Text>
-                                <Text style={{ left: 4, justifyContent: 'flex-end', color: subDetailListTxtColor, fontSize: subDetailListTxtFontSize, textDecorationLine: "line-through" }} fontFamily={subDetailListTxtFontFamily}>{sharedGetPrice(item, true,)}</Text>
-
-
+                                <Text style={checkOutStyles.reciptSubDetailspitStopItemPrice} fontFamily={subDetailListTxtFontFamily}>{sharedGetPrice(item, false)}</Text>
+                                <Text style={checkOutStyles.reciptSubDetailspitStopItemPriceLineThrough} fontFamily={subDetailListTxtFontFamily}>{sharedGetPrice(item, true,)}</Text>
                             </View>
                         </View>
                     })
-
                     }
 
                 </View>
@@ -67,18 +64,18 @@ export default ({ cartReducer = [], colors = {}, secondData = [] }) => {
     const RenderGSTServiceChargeUi = ({ }) => {
         return (
             <View style={{}}>
-                <View style={{ flex: 1, flexDirection: 'column', marginHorizontal: 12 }}>
-                    <View style={{ flexDirection: "row", flex: 1 }}>
-                        <Text style={{ fontSize: 13, color: '#4D4D4D' }} fontFamily='PoppinsRegular'>GST</Text>
+                <View style={checkOutStyles.gstMainContainer}>
+                    <View style={checkOutStyles.gstPrimaryContainer}>
+                        <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular'>GST</Text>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
-                            <Text style={{ justifyContent: 'flex-end', fontSize: 13, color: '#4D4D4D' }} fontFamily='PoppinsRegular'>{`${gst}`}</Text>
+                            <Text style={checkOutStyles.gstCommonPriceTxtStyle} fontFamily='PoppinsRegular'>{`${gst}`}</Text>
                         </View>
                     </View>
-                    <View style={{ flexDirection: "row", flex: 1 }}>
-                        <Text style={{ fontSize: 13, color: '#4D4D4D' }} fontFamily='PoppinsRegular' >Service Charges</Text>
-                        <Text style={{ fontSize: 13, color: '#4D4D4D' }} fontFamily='PoppinsRegular'>{`(incl S.T ${st})`}</Text>
+                    <View style={checkOutStyles.gstPrimaryContainer}>
+                        <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular' >Service Charges</Text>
+                        <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular'>{`(incl S.T ${st})`}</Text>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
-                            <Text style={{ justifyContent: 'flex-end', fontSize: 13, color: '#4D4D4D' }} fontFamily='PoppinsRegular'>{`${serviceCharges}`}</Text>
+                            <Text style={checkOutStyles.gstCommonPriceTxtStyle} fontFamily='PoppinsRegular'>{`${serviceCharges}`}</Text>
                         </View>
                     </View>
 
@@ -88,9 +85,9 @@ export default ({ cartReducer = [], colors = {}, secondData = [] }) => {
                 </View>
                 <View style={{ flex: 1, flexDirection: 'column', marginHorizontal: 12 }}>
                     <View style={{ flexDirection: "row", flex: 1 }}>
-                        <Text style={{ fontSize: 13, color: RECEIPTPiTSTOPMAINTXTCOLOR }} fontFamily='PoppinsRegular'>Discount</Text>
+                        <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular'>Discount</Text>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
-                            <Text style={{ justifyContent: 'flex-end', fontSize: 13, color: RECEIPTPiTSTOPMAINTXTCOLOR }} fontFamily='PoppinsRegular'>{`-${discount}`}</Text>
+                            <Text style={checkOutStyles.gstCommonPriceTxtStyle} fontFamily='PoppinsRegular'>{`-${discount}`}</Text>
                         </View>
                     </View>
                 </View>
@@ -121,16 +118,16 @@ export default ({ cartReducer = [], colors = {}, secondData = [] }) => {
     }
 
     return (
-        <AnimatedView style={[{ backgroundColor: 'white', flex: 1, margin: TOPSPACING, borderRadius: 8, ...AppStyles.shadow, elevation: 2 }]}>
-            <View style={{ flexDirection: 'row', margin: 12, marginBottom: 0, }}>
+        <AnimatedView style={checkOutStyles.receiptMainContainer}>
+            <View style={checkOutStyles.receiptPrimaryContainer}>
                 <SvgXml xml={svgs.compliance()}></SvgXml>
-                <Text style={{ color: '#6D51BB', fontSize: 14, paddingHorizontal: 10 }} fontFamily='PoppinsSemiBold'>Order Receipt</Text>
+                <Text style={checkOutStyles.orderReciptTxt} fontFamily='PoppinsSemiBold'>Order Receipt</Text>
                 <TouchableOpacity style={{ position: 'absolute', right: 0 }} onPress={onShowDetails} >
-                    <Text style={{ color: '#6D51BB', fontSize: 12 }} fontFamily='PoppinsMedium'>Details</Text>
+                    <Text style={checkOutStyles.detailTxt} fontFamily='PoppinsMedium'>Details</Text>
                 </TouchableOpacity>
             </View>
             <View style={{ marginHorizontal: 2 }}>
-                <DashedLine dashLineStyles={{ color: "#707070", }} />
+                <DashedLine dashLineStyles={checkOutStyles.dashedLine} />
             </View>
             <View>
                 <AnimatedView style={{ margin: 12, marginTop: 0, }} >
@@ -143,11 +140,11 @@ export default ({ cartReducer = [], colors = {}, secondData = [] }) => {
                             return <View style={{ flex: 1 }}>
                                 <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, paddingVertical: i === 0 ? 0 : 3, }}>
                                     <View style={{ width: 10, height: 10, borderRadius: 10, backgroundColor: dotColor(x.pitstopType).primary, }} />
-                                    <Text style={{ marginLeft: 4, fontSize: 12, color: RECEIPTPiTSTOPMAINTXTCOLOR }} fontFamily='PoppinsMedium'>{`Pit Stop 0${pitStopNumber}-`}</Text>
-                                    <Text style={{ fontSize: 12, color: RECEIPTPiTSTOPMAINTXTCOLOR, }} fontFamily='PoppinsMedium' numberOfLines={1}>{String(pitstopName).substring(0, 25)}</Text>
+                                    <Text style={checkOutStyles.reciptMainDetailsPitstopNo} fontFamily='PoppinsMedium'>{`Pit Stop 0${pitStopNumber}-`}</Text>
+                                    <Text style={checkOutStyles.reciptMainDetailsPitstopName} fontFamily='PoppinsMedium' numberOfLines={1}>{String(pitstopName).substring(0, 25)}</Text>
                                     {!showDetails &&
                                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
-                                            <Text style={{ justifyContent: 'flex-end', fontSize: 12, color: RECEIPTPiTSTOPMAINTXTCOLOR }} fontFamily='PoppinsMedium'>{`${renderPrice(individualPitstopTotal, '')}`}</Text>
+                                            <Text style={checkOutStyles.reciptMainDetailsindividualPitstopTotal} fontFamily='PoppinsMedium'>{`${renderPrice(individualPitstopTotal, '')}`}</Text>
                                         </View>
                                     }
                                 </View>

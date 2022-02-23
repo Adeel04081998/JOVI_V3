@@ -25,7 +25,7 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
     });
     const userReducer = useSelector(store => store.userReducer);
     console.log('userReducer',userReducer);
-    const finalDestination = userReducer.finalDestObj??{};
+    const finalDestination =  userReducer.finalDestObj??{};
     const isRequestSent = React.useRef(false);
     const componentLoaded = React.useRef(false);
     const paginationInfo = React.useRef({

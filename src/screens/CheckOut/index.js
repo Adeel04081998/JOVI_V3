@@ -67,20 +67,18 @@ export default () => {
     const RenderPaymentMethodCardUi = () => {
 
         return (
-            <AnimatedView style={{ flexDirection: 'column', backgroundColor: 'white', borderRadius: 8, ...AppStyles.shadow, elevation: 3, margin: TOPSPACING, }}>
+            <AnimatedView style={checkOutStyles.paymentCardMainCOntainder}>
                 <View style={{ margin: 10 }}>
                     <View style={{ flexDirection: 'row', marginVertical: 7 }}>
                         <SvgXml xml={svgs.paymentMethod()} width={20} height={20} />
-                        <Text style={{ paddingHorizontal: 10, fontSize: 14, color: '#6D51BB' }} fontFamily='PoppinsSemiBold'>{paymentMethod}</Text>
+                        <Text style={checkOutStyles.paymentMethodLabelTxt} fontFamily='PoppinsSemiBold'>{paymentMethod}</Text>
                     </View>
-                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={checkOutStyles.paymentOptionMainContainer}>
                         <View style={{ flexDirection: 'row' }}>
-                            {/* <SvgXml xml={svgs.wallet()} style={{ alignSelf: "center", borderWidth: 1 }} fill={colors.grey} height={20} width={30} /> */}
-
                             <SvgXml xml={switchVal ? svgs.wallet() : svgs.paymentCash()} fill={colors.grey} style={{ alignSelf: "center", height: 20, width: 20 }} />
-                            <View style={{ paddingHorizontal: 10, height: 30, justifyContent: 'center' }}>
-                                <Text style={{ fontSize: 11, color: '#272727', alignSelf: 'center', justifyContent: 'center', }} fontFamily='PoppinsSemiBold'>{switchVal ? `${paymentType}` : " Cash on delivery"}</Text>
-                                {switchVal ? <Text style={{ color: '#6B6B6B', fontSize: 10 }} fontFamily='PoppinsRegular'>{`Rs ${walletAmount}`}</Text> : null}
+                            <View style={checkOutStyles.paymentOptionPrimaryContainer}>
+                                <Text style={checkOutStyles.paymentOptionLabelTxt} fontFamily='PoppinsSemiBold'>{switchVal ? `${paymentType}` : " Cash on delivery"}</Text>
+                                {switchVal ? <Text style={checkOutStyles.paymentOptionLabelWallletTxt} fontFamily='PoppinsRegular'>{`Rs ${walletAmount}`}</Text> : null}
                             </View>
                         </View>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1, alignItems: 'center', }}>
@@ -130,7 +128,7 @@ export default () => {
 
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#F6F5FA' }} >
+        <SafeAreaView style={checkOutStyles.mainContainer} >
             <CustomHeader
                 title='Checkout'
                 titleStyle={{ fontSize: 16, fontFamily: FontFamily.Poppins.SemiBold, color: '#6D51BB' }}
@@ -156,8 +154,8 @@ export default () => {
                     instructions={instructionForRider}
                 />
                 {RenderPaymentMethodCardUi()}
-                <VouchersUi />
-                <OrderRecipt cartReducer={cartReducer} colors={colors} />
+                <VouchersUi checkOutStyles={checkOutStyles} />
+                <OrderRecipt checkOutStyles={checkOutStyles} cartReducer={cartReducer} colors={colors} />
             </ScrollView>
             <AnimatedView style={{ width: '100%', paddingHorizontal: 10, paddingVertical: 5, bottom: 0, ...AppStyles.shadow, elevation: 4 }}>
                 <Button
