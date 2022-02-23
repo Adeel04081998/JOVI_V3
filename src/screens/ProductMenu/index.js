@@ -222,10 +222,10 @@ export default ({ navigation, route }) => {
                         const image = (item?.images ?? []).length > 0 ? item.images[0].joviImageThumbnail : '';
                         console.log('item ', item);
                         let isOutOfStock = "isOutOfStock" in item ? item.isOutOfStock : false;
-                        if (item.availabilityStatus === ENUMS.PRODUCT_AVAILABILIITY_STATUS.OutOfStock) {
+                        if (item.availabilityStatus === ENUMS.AVAILABILITY_STATUS.OutOfStock) {
                             isOutOfStock = true;
                         }
-                        
+
                         return (
                             <View style={{
                                 marginLeft: index === 0 ? 10 : 0,
