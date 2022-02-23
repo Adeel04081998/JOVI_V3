@@ -27,7 +27,7 @@ const WINDOW_WIDTH = constants.window_dimensions.width;
 
 const ITEM_IMAGE_SIZE = WINDOW_WIDTH / 2.5;
 const VERTICAL_MAX_ITEM_PER_REQUEST = 10;
-const HORIZONTAL_MAX_ITEM_PER_REQUEST = 2;
+const HORIZONTAL_MAX_ITEM_PER_REQUEST = 4;
 const SHELVE_MAX_COUNT = 7;
 const DEFAULT_PAGINATION_INFO = { totalItem: 0, itemPerRequest: VERTICAL_MAX_ITEM_PER_REQUEST, currentRequestCount: 1 };
 const PITSTOPS = {
