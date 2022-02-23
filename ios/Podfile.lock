@@ -354,7 +354,7 @@ PODS:
     - React-Core
   - react-native-safe-area-context (3.3.2):
     - React-Core
-  - react-native-slider (4.2.0):
+  - react-native-slider (4.1.7):
     - React-Core
   - React-perflogger (0.67.0)
   - React-RCTActionSheet (0.67.0):
@@ -797,7 +797,7 @@ SPEC CHECKSUMS:
   react-native-maps: d752b0dd0e1951d815b1336332835aab6b4a836f
   react-native-netinfo: c023b7c36ff34e3b607d1446002b5b39089a860b
   react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
-  react-native-slider: 37e1cf275dab20d3c015e40969aa9f5c309645a8
+  react-native-slider: 269d81247e2a87358ee03241da55b00c919e4d7a
   React-perflogger: 9454d63e7027e0830fa3e527628558160684f5dd
   React-RCTActionSheet: 240d798e2f5bd1ba2e85503a00fd390f560e6827
   React-RCTAnimation: 0ebf0df36838057097b8c6a30d1036531f8c7b1e

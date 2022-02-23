@@ -73,6 +73,9 @@
 		<string>PoppinsSemiBoldItalic.ttf</string>
 		<string>PoppinsThin.ttf</string>
 		<string>PoppinsThinItalic.ttf</string>
+		<string>FontAwesome5_Brands.ttf</string>
+		<string>FontAwesome5_Regular.ttf</string>
+		<string>FontAwesome5_Solid.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

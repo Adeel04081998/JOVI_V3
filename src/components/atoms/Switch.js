@@ -18,7 +18,7 @@ export default (props) => {
     const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
     const [animatedValue, setAnimatedValue] = useState(new Animated.Value(props.switchVal ? width / 1.8 : 4))
 
-    console.log('active ==>>', active);
+    
     const onPressParentEvent = (bool) => {
         toggleActive(bool);
         props.onToggleSwitch(bool)
