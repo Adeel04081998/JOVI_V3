@@ -32,7 +32,7 @@ export default {
 
             },
             productPriceContainer: {
-                flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center'
+                flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', marginVertical:10,
             },
             productPricelabel: {
                 fontSize: 16, color: colors.grey, textAlign: 'center',
