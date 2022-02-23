@@ -66,7 +66,7 @@ export default ({ data = [], selectedOptions = [], onPressCb, productDetailsStyl
                             fontFamily="PoppinsRegular"
                         >{`${mainTitle}`}
                             {choosedQuantity > 0 &&
-                                <Text>{`(Select ${choosedQuantity})`}</Text>
+                                <Text>{` (Select ${choosedQuantity})`}</Text>
 
                             }
                         </Text>

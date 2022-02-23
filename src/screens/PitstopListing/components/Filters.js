@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { useSelector } from 'react-redux';
+import svgs from '../../../assets/svgs';
 import Text from '../../../components/atoms/Text';
 import TouchableScale from '../../../components/atoms/TouchableScale';
 import VectorIcon from '../../../components/atoms/VectorIcon';
@@ -28,14 +29,15 @@ export default ({ filterConfig, selectedFilters, parentFilterHandler = () => { }
         </Text>}
         <View style={_styles.scrollParent}>
             {filterConfig.filterScreenIcon && <TouchableScale onPress={goToFilters} style={_styles.filterIcon}>
-                <VectorIcon name={'filter'} type={'AntDesign'} size={17} color={'black'} style={{ marginRight: 2 }} />
+                {/* <VectorIcon name={'filter'} type={'AntDesign'} size={17} color={'black'} style={{ marginRight: 2 }} /> */}
+                <SvgXml height={20} width={20} xml={svgs.filter()} style={{ margin: 5 }} />
             </TouchableScale>}
             <AnimatedFlatlist
                 data={filtersData}
                 renderItem={(item, i) => {
                     return <TouchableScale onPress={() => { setState(pre => ({ ...pre, activeTab: pre.activeTab === item.vendorDashboardCatID ? null : item.vendorDashboardCatID })); parentFilterHandler(item, 'vendorDashboardCatID', 'filter') }} style={_styles.filterTouchable}>
                         {VALIDATION_CHECK(item.image) && <SvgXml height={FILTER_ICON_SIZE} width={FILTER_ICON_SIZE} xml={item.image} />}
-                        <Text style={{ fontSize: 12, color: 'rgba(0,0,0,0.6)', paddingHorizontal: 5, }} fontFamily={'PoppinsBold'} >{item.name}</Text>
+                        <Text style={{ fontSize: 12, color: 'rgba(0,0,0,0.6)', paddingHorizontal: 5 }} fontFamily={'PoppinsBold'} >{item.name}</Text>
                     </TouchableScale>
                 }}
                 horizontal={true}
@@ -50,7 +52,7 @@ const styles = (colors, checkSelectedFilter) => {
             height: FILTER_ICON_HEIGHT,
             borderColor: 'rgba(0,0,0,0.4)',
             justifyContent: 'center',
-            paddingHorizontal: 5,
+            paddingHorizontal: 8,
             marginHorizontal: 5,
             borderRadius: checkSelectedFilter(x) ? 4 : 1,
             backgroundColor: checkSelectedFilter(x) ? colors.primary + '20' : '#fff',

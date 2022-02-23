@@ -5,7 +5,7 @@ import Text from '../../../components/atoms/Text';
 import View from '../../../components/atoms/View';
 export default ({ messagesReducer, homeStyles, userReducer, colors }) => {
     const greetingsList = messagesReducer?.homeScreenDataViewModel?.greetingsList;
-    if (!greetingsList?.length) return <View style={{ paddingVertical: 10 }} />
+    if (!greetingsList?.length) return <View style={{ paddingVertical: 5 }} />
     else {
         const greetingMessage = greetingsList[0];
         // const REGEX = /[<<Name>>, , <<phoneNumber>>]/g

@@ -1,7 +1,7 @@
 import lodash from 'lodash'; // 4.0.8
 import AnimatedLottieView from "lottie-react-native";
 import React, { useEffect, useState } from "react";
-import { Animated, Appearance, Easing, Platform, ScrollView } from "react-native";
+import { Animated, Appearance, Easing, Platform, ScrollView, TextInput as RNTextInput } from "react-native";
 import LinearGradient from 'react-native-linear-gradient';
 import AnimatedView from "../../components/atoms/AnimatedView";
 import SafeAreaView from "../../components/atoms/SafeAreaView";
@@ -22,6 +22,8 @@ import GV, { PITSTOP_TYPES } from "../../utils/GV";
 import Regex from "../../utils/Regex";
 import RadioButton from "./components/RadioButton";
 import styleSheet from "./style";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
+
 
 
 export default (props) => {
@@ -340,6 +342,8 @@ export default (props) => {
         loadProductDetails()
 
     }, [])
+
+    const inputRef = React.useRef(null);
     return (
         <View style={{ flex: 1 }} >
 
@@ -358,7 +362,17 @@ export default (props) => {
                             rightContainerStyle={productDetailsStyles.customHeaderLeftRightContainer}
                             rightIconColor={productDetailsStyles.customHeaderLeftRightIconColor}
                         />
-                        <ScrollView showsVerticalScrollIndicator={false}>
+                        <KeyboardAwareScrollView showsVerticalScrollIndicator={false} 
+                            // style={{ backgroundColor: 'gray' }}
+                            keyboardDismissMode="interactive"
+                            keyboardShouldPersistTaps="always"
+
+                            // getTextInputRefs={() => {
+                            //     return [
+                            //         inputRef.current,
+                            //     ];
+                            // }}
+                        >
 
                             <View>
                                 <ImageCarousel
@@ -372,13 +386,17 @@ export default (props) => {
                                     imageStyle={{ borderRadius: 0 }}
                                     paginationDotStyle={{ borderColor: 'red', backgroundColor: colors.primary, }}
                                     uriKey="joviImage"
-                                    height={180}
+                                    // height={180}
+                                    height={330}
+
 
                                 />
                             </View>
                             <LinearGradient
+                                // colors={['#F6F5FA00', '#F6F5FA00', '#F6F5FA', '#F6F5FA']}
                                 colors={['#F6F5FA00', '#F6F5FA00', '#F6F5FA', '#F6F5FA']}
-                                style={{ top: 150, width: '100%', height: 40, position: 'absolute', }}
+                                // style={{ top: 150, width: '100%', height: 40, position: 'absolute', }}
+                                style={{ top:280, width: '100%', height: 60, position: 'absolute', }}
                             >
                             </LinearGradient>
 
@@ -402,8 +420,9 @@ export default (props) => {
                                     selectedOptions={state.selectedOptions}
                                 />
                                 {pitstopType === 4 ?
-                                    <View style={{ marginVertical: 25 }}>
+                                    <View style={{ marginVertical: 25, }}>
                                         <TextInput
+                                            ref={inputRef}
                                             containerStyle={{ backgroundColor: 'white', margin: 0, }}
                                             placeholder="Types your instructions"
                                             placeholderTextColor={"#CFCFCF"}
@@ -421,7 +440,7 @@ export default (props) => {
                                     </View>
                                     : null}
                             </AnimatedView>
-                        </ScrollView>
+                        </KeyboardAwareScrollView>
                         {renderButtonsUi()}
                     </SafeAreaView>
 

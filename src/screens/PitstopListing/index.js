@@ -239,7 +239,10 @@ const PistopListing = React.memo(({ route, }) => {
     return (
         <View style={listingStyles.container}>
             <SafeAreaView style={{ flex: 1 }}>
-                <CustomHeader defaultColor={colors.primary} onLeftIconPress={onBackPress} leftIconColor={colors.primary} rightIconColor={colors.primary} leftIconType={'AntDesign'} leftIconName={'left'} />
+                <CustomHeader defaultColor={colors.primary} onLeftIconPress={onBackPress} leftIconColor={colors.primary} rightIconColor={colors.primary}
+                    // leftIconType={'AntDesign'} leftIconName={'left'}
+                    leftIconSize={30}
+                />
                 {isLoading ? <CardLoader styles={listingStyles} /> : <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false} scrollEventThrottle={16} onScroll={(event) => {
                     if (handleInfinityScroll(event)) {
                         setFetchDataUseEffect(Math.random());
