@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Appearance, StyleSheet, Platform, Animated, Easing } from 'react-native';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
@@ -12,20 +12,23 @@ export default (props) => {
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
 
     const switchStyles = switchStylesFunc(colors, width, height)
-    const [animatedValue, setAnimatedValue] = useState(new Animated.Value(0))
-    const [active, toggleActive] = useState(false);
+    const [active, toggleActive] = useState(props.switchVal);
+    const width = props.width || 55;
+    const height = props.height || 30;
+    const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
+    const animatedValue = useRef(new Animated.Value(props.switchVal ? width / 1.8 : 4)).current
 
-
+    
     const onPressParentEvent = (bool) => {
         toggleActive(bool);
         props.onToggleSwitch(bool)
     }
     const onPress = () => {
+        console.log('bsdk nomi');
         if (active) {
-            console.log("1");
             Animated.timing(animatedValue, {
-                toValue: 0,
-                duration: 200,
+                toValue: 4,
+                duration: 100,
                 easing: Easing.ease,
                 useNativeDriver: true
             }).start((finished) => {
@@ -34,12 +37,10 @@ export default (props) => {
                 }
             })
         } else {
-            console.log("2");
-
             Animated.timing(animatedValue, {
                 toValue: width / 1.8,
-                duration: 200,
-                easing: Easing.ease,
+                duration: 100,
+                easing: Easing.linear,
                 useNativeDriver: true
             }).start((finished) => {
                 if (finished && props.onToggleSwitch) {
@@ -50,9 +51,7 @@ export default (props) => {
 
 
     }
-    const width = props.width || 85;
-    const height = props.height || 40;
-    const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
+
     const animatedStyles = {
         transform: [
             { translateX: animatedValue }
@@ -95,20 +94,20 @@ const switchStylesFunc = (colors, width, height) => StyleSheet.create({
         // alignItems: 'center'
     },
     subSwitchContainerInActive: {
-        width: 25,
-        height: 25,
-        borderRadius: 25 / 2,
+        width: 20,
+        height: 20,
+        borderRadius: 20 / 2,
         borderColor: 'white',
-        borderWidth: 6.5,
-        marginHorizontal: 10,
+        borderWidth: 5.5,
+        // marginHorizontal: 10,
     },
     subSwitchContainerActive: {
-        width: 25,
-        height: 25,
-        borderRadius: 25 / 2,
+        width: 20,
+        height: 20,
+        borderRadius: 20 / 2,
         borderColor: 'white',
-        borderWidth: 6.5,
-        marginHorizontal: 5,
+        borderWidth: 5.5,
+        // marginHorizontal: 5,
     },
     inactiveClr: {
         backgroundColor: '#FF4651'

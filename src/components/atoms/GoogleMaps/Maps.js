@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { Appearance, Platform, StyleSheet, View } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
-import { sharedStartingRegionPK } from '../../../helpers/SharedActions';
+import { confirmServiceAvailabilityForLocation, sharedStartingRegionPK } from '../../../helpers/SharedActions';
 import VectorIcon from '../VectorIcon';
 import { addressInfo, hybridLocationPermission } from '../../../helpers/Location';
 import Button from '../../molecules/Button';
@@ -14,7 +14,8 @@ import constants from '../../../res/constants';
 import Toast from '../Toast';
 import LocationSearch from '../LocationSearch';
 import NavigationService from '../../../navigations/NavigationService';
-import ROUTES from '../../../navigations/ROUTES';
+import SafeAreaView from '../SafeAreaView';
+import { postRequest } from '../../../manager/ApiManager';
 
 
 const LATITUDE_DELTA = 0.01;
@@ -31,7 +32,7 @@ export default (props) => {
   const ICON_BORDER = {
     color: "#E5E2F5",
     width: 0.5,
-    size: 38,
+    size: 40,
     borderRadius: 6,
   };
 
@@ -42,6 +43,8 @@ export default (props) => {
   const coordinatesRef = useRef(null)
   const [ready, setMapReady] = useState(false)
   const [region, setRegion] = useState(sharedStartingRegionPK)
+  const disabledRef = useRef(false)
+
 
 
   /******************************************* END OF VARIABLE INITIALIZATION **********************************/
@@ -96,9 +99,7 @@ export default (props) => {
       await hybridLocationPermission();
     }
     locationHandler();
-    setTimeout(() => {
-      getCurrentPosition()
-    }, 500);
+    getCurrentPosition()
   }, [ready]);
 
 
@@ -114,7 +115,20 @@ export default (props) => {
 
   const renderLocationSearchUI = () => {
     return (
-      <View style={{ position: 'absolute', top: 0, height: Platform.OS === "android" ? HEIGHT * 0.08 : HEIGHT * 0.12, width: WIDTH, backgroundColor: colors.white, flexDirection: 'row', zIndex: 10, borderBottomWidth: 3, borderBottomColor: colors.primary, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{
+        position: 'absolute',
+        top: 0,
+        height: HEIGHT * 0.08,
+        width: WIDTH,
+        backgroundColor: colors.white,
+        flexDirection: 'row',
+        zIndex: 10,
+        borderBottomWidth: 3,
+        borderBottomColor: colors.primary,
+        justifyContent: 'center',
+        paddingTop: WIDTH * 0.0085,
+        paddingLeft: 5
+      }}>
         <TouchableOpacity
           onPress={() => NavigationService.NavigationActions.common_actions.goBack()}
           style={{
@@ -123,16 +137,16 @@ export default (props) => {
             borderColor: ICON_BORDER.color,
             borderWidth: ICON_BORDER.width,
             borderRadius: ICON_BORDER.borderRadius,
-            alignSelf: Platform.OS === "android" ? "center" : 'flex-end',
+            // alignSelf: Platform.OS === "android" ? "center" : 'flex-end',
             alignItems: "center",
             justifyContent: "center",
-            marginVertical: Platform.OS === "android" ? 0 : 11,
-            marginLeft: 10,
+            // marginVertical: Platform.OS === "android" ? 0 : 11,
+            // marginLeft: 10,
           }}>
           <VectorIcon
-            name={"keyboard-backspace"}
-            type={"MaterialIcons"}
-            color={colors.black}
+            name={"chevron-back"}
+            type={"Ionicons"}
+            color={colors.primary}
             size={30} />
         </TouchableOpacity>
         <LocationSearch
@@ -144,17 +158,15 @@ export default (props) => {
               longitude: lng
             }, 300);
             setPlaceName(data.name ? data.name : data.description)
-
           }}
           handleOnInputChange={(text) => {
-            setPlaceName(text)
           }}
           onNearbyLocationPress={() => { }}
           handleInputFocused={(index, isFocus) => { }}
           onSetFavClicked={() => { }}
+          textToShow={placeName}
           isFavourite={''}
           marginBottom={0}
-          locationVal={placeName}
           clearInputField={() => { setPlaceName('') }}
         />
       </View>
@@ -174,11 +186,6 @@ export default (props) => {
 
   const rendermarkers = () => {
     return (
-      // <VectorIcon name="map-marker"
-      //   type="FontAwesome"
-      //   style={styles.marker}
-      //   size={40}
-      //   color={colors.primary} />
       <SvgXml xml={svgs.pinMap()}
         style={styles.marker}
       />
@@ -214,7 +221,8 @@ export default (props) => {
         // followsUserLocation={true}
         zoomControlEnabled={false}
         zoomEnabled={true}
-        showsCompass={false} />
+        showsCompass={false}
+      />
     )
   }
 
@@ -258,20 +266,40 @@ export default (props) => {
       <Button
         onPress={async () => {
           const { latitude, longitude } = coordinatesRef.current
-          let adrInfo = await addressInfo(latitude, longitude)
-          placeNameRef.current = adrInfo.address
-          setPlaceName(adrInfo.address)
-          let placeObj = {
-            title: placeNameRef.current,
-            latitude,
-            longitude,
-            latitudeDelta: LATITUDE_DELTA,
-            longitudeDelta: LONGITUDE_DELTA,
-            city: adrInfo.city
-          }
-          props.onConfirmLoc(placeObj)
+          disabledRef.current = true
+          confirmServiceAvailabilityForLocation(postRequest, latitude, longitude,
+            async (resp) => {
+              disabledRef.current = false
+              let adrInfo = await addressInfo(latitude, longitude)
+              placeNameRef.current = adrInfo.address
+              setPlaceName(adrInfo.address)
+              let placeObj = {
+                title: placeNameRef.current,
+                latitude,
+                longitude,
+                latitudeDelta: LATITUDE_DELTA,
+                longitudeDelta: LONGITUDE_DELTA,
+                city: adrInfo.city
+              }
+              props.onConfirmLoc(placeObj)
+
+            }, (error) => {
+              console.log(((error?.response) ? error.response : {}), error);
+              if (error?.data?.statusCode === 417) {
+                if (error.areaLock) { } else {
+                  disabledRef.current = false
+                  error?.data?.message && Toast.error(error?.data?.message);
+                }
+              }
+              else {
+                disabledRef.current = false
+                Toast.error('An Error Occurred!');
+              }
+            })
+
         }
         }
+        disabled={disabledRef.current}
         text="Confirm Location" style={styles.confirmBtn} />
     )
   }
@@ -320,6 +348,7 @@ const styles = StyleSheet.create({
   },
   map: {
     ...StyleSheet.absoluteFillObject,
+    zIndex: -1
   },
   marker: {
     zIndex: 3,

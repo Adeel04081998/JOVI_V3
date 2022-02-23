@@ -145,7 +145,6 @@ const CustomHeader = (props: Props) => {
     };//end of _renderFinalDestination
 
     const _renderDot = (value: boolean | number = false, styleForParent: StyleProp<ViewStyle> = {}, numberStyleForParent: StyleProp<TextStyle> = {}) => {
-        console.log('value ', value);
 
         if (typeof value === "number") {
             return (

@@ -1,7 +1,7 @@
 export const initColors = {
     // XD Colors Start Mudassir
     "primary": "#6D51BB",
-    "black": "#272727",
+    "greyish_black": "#272727",
     "lightBlack": "#212121",
     "card": "#047A9E",
     "grey": "#7D7D7D",
@@ -36,7 +36,9 @@ export const initColors = {
     "subTextGreyColor": '#464646',
     "light_primary_color": '#E2DCF1',
     "grey": "#6B6B6B",
-    "ASH_TO_ASH": "#4D4D4D"
+    "ASH_TO_ASH": "#4D4D4D",
+    "dull_primary": '#F0F4F9',
+    "light_input_border": "#CACDD1"
 }
 export default {
 

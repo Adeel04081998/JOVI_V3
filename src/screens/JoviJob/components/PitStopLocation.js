@@ -10,6 +10,7 @@ import Button from '../../../components/molecules/Button';
 import FontFamily from '../../../res/FontFamily';
 import LocationSearch from '../../../components/atoms/LocationSearch';
 import VectorIcon from '../../../components/atoms/VectorIcon';
+import Text from '../../../components/atoms/Text';
 
 const PitStopLocation = (props) => {
     // colors.primary will recieve value from colors.js file's colors
@@ -21,6 +22,7 @@ const PitStopLocation = (props) => {
     return (
         props.isOpened &&
         <View style={{ marginVertical: 10, flexGrow: 1 }} >
+            <Text fontFamily="PoppinsRegular" style={{ fontSize: 12, color: colors.black, paddingLeft: 10,paddingBottom:5, opacity: 0.8 }}>Location</Text>
             <LocationSearch
                 index={0}
                 onLocationSelected={props.handleLocationSelected}
@@ -28,10 +30,23 @@ const PitStopLocation = (props) => {
                 onNearbyLocationPress={() => props.onNearbyLocationPress}
                 handleInputFocused={(index, isFocus) => props.handleInputFocused(index, isFocus)}
                 onSetFavClicked={props.handleSetFavClicked}
+                textToShow={props.textToShow}
                 isFavourite={''}
                 marginBottom={0}
-                locationVal={props.locationVal}
+                // locationVal={props.locationVal}
                 clearInputField={props.clearInputField}
+                inputStyles={{
+                    borderWidth: 1,
+                    borderColor: colors.light_input_border,
+                    borderRadius: 10,
+                    paddingVertical: 0,
+                    height: 45,
+                    marginBottom: 10,
+                    paddingHorizontal: 40,
+                    color: "#000",
+                    zIndex: -1,
+                    backgroundColor: colors.white,
+                }}
                 listViewStyles={{
                     borderWidth: 1,
                     borderColor: "#BBBB",
@@ -43,13 +58,13 @@ const PitStopLocation = (props) => {
                     shadowOffset: { x: 0, y: 0 },
                     shadowRadius: 15,
                     marginTop: -10,
-                    width: WIDTH - 10,
+                    width: WIDTH - 50.5,
                     alignSelf: 'center',
                     maxHeight: HEIGHT * 0.18,
                     overflow: 'scroll',
                     numberOfLines: 1,
-                    position:'absolute',
-                    top:50,
+                    position: 'absolute',
+                    top: 50,
                     zIndex: 999
                 }}
             />
@@ -63,11 +78,11 @@ const PitStopLocation = (props) => {
                         <VectorIcon name="pin-outline" type="MaterialCommunityIcons" size={20} color={colors.white} />
                     )
                 }}
-                style={[styles.locButton, { width: WIDTH - 30, height: 40, zIndex:-1 }]} />
+                style={[styles.locButton, { width: WIDTH - 70, height: 35, zIndex: -1 }]} />
             <TextInput
                 title="Name (Optional)"
-                placeholder="Please Add Your Name"
-                containerStyle={{ marginTop: 30, alignSelf: 'center', zIndex:-1  }}
+                placeholder="Please Add Your Pitstop Location"
+                containerStyle={{ marginTop: 30, alignSelf: 'center', zIndex: -1, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.light_input_border, borderRadius: 10 }}
                 titleStyle={{ opacity: 0.8, color: '#000', fontFamily: FontFamily.Poppins.Regular, fontSize: 12 }}
                 value={props.nameVal}
                 returnKeyType="done"
