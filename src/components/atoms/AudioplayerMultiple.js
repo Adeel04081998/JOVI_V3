@@ -10,7 +10,7 @@ import Sound from "react-native-sound";
 
 let timer = null;
 const playerRefArr = [];
-
+let isLastPlaying = false;
 
 export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', width = "90%", forceStopAll = false, }) => {
     // let isPlaying = (chatPlayingVoice && chatPlayingVoiceIndex === index);
@@ -52,10 +52,8 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
     const setupSoundPlayer = async () => {
 
 
-        const chatAudioplayer = new Sound(audioURL,'', error => {
+        const chatAudioplayer = new Sound(audioURL, '', error => {
             if (error) {
-                console.log("failed to load the sound", error);
-
                 return;
             }
 
@@ -88,14 +86,10 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
         }
     };//end of pauseAll
 
-    const playAudio = () => {
-        pauseAll();
-        setIsPlaying(true);
-        console.log('here in playAudio');
-        soundPlayerRef.current?.play(() => { stopAudio(); });
+    const startTimer = () => {
         timer = setInterval(() => {
             soundPlayerRef.current?.getCurrentTime(sec => {
-                if (sec > 0) {
+                if (sec > 0 || displayTime === 0) {
                     if (Platform.OS === "android") {
                         sec += 1;
                     }
@@ -110,7 +104,14 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
                 }
 
             });
-        }, 1000)
+        }, 100);
+    };//end of startTimer
+
+    const playAudio = () => {
+        pauseAll();
+        setIsPlaying(true);
+        soundPlayerRef.current?.play(() => { stopAudio(); });
+        startTimer();
     };//end of playAudio
 
     const stopAudio = () => {
@@ -127,7 +128,9 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
         clearInterval(timer);
     };//end of pauseAudio
 
+
     const sliderPause = () => {
+        isLastPlaying = soundPlayerRef.current._playing;
         setIsPlaying(false);
         pauseAll();
 
@@ -135,12 +138,17 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
 
     const sliderPlay = (startFrom = 0) => {
         soundPlayerRef.current?.setCurrentTime(startFrom);
-        if (currentTime < 1) {
+        if (currentTime < 1 && isLastPlaying) {
             playAudio();
             return;
         }
-        setIsPlaying(true);
-        soundPlayerRef.current?.play();
+
+
+        if (isLastPlaying) {
+            setIsPlaying(true);
+            startTimer();
+            soundPlayerRef.current?.play();
+        }
     };//end of sliderPlay
 
 
@@ -154,7 +162,6 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
                     :
                     <>
                         <TouchableOpacity onPress={() => {
-                            console.log('soundPlayerRef ', soundPlayerRef.current);
                             if (isPlaying)
                                 pauseAudio();
                             else
@@ -175,8 +182,8 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
                                 ...styles.slider,
                                 width: width
                             }}
-                            minimumTrackTintColor="#FFFFFF"
-                            maximumTrackTintColor="#000000"
+                            // minimumTrackTintColor="#FFFFFF"
+                            // maximumTrackTintColor="#000000"
                             // thumbImage={SliderCircle}
                             thumbImage={icon}
                             minimumTrackTintColor={activeTheme.primary}

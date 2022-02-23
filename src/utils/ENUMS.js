@@ -51,35 +51,35 @@ export default {
             "value": 2,
             "icon": svgs.jovi(),
             "isActive": true,
-            "color":"#6D51BB",
+            "color": "#6D51BB",
         },
         {
             "text": "Food",
             "value": 4,
             "icon": svgs.food(),
             "isActive": true,
-            "color":"#F94E41",
+            "color": "#F94E41",
         },
         {
             "text": "Grocery",
             "value": 1,
             "icon": svgs.grocery(),
             "isActive": true,
-            "color":"#27C787",
+            "color": "#27C787",
         },
         {
             "text": "Pharmacy",
             "value": 3,
             "icon": svgs.pharmacy(),
             "isActive": true,
-            "color":"#1945BE",
+            "color": "#1945BE",
         },
         {
             "text": "Jovi Mart",
             "value": 5,
             "icon": null,
             "isActive": false,
-            "color":"#6B6B6B",
+            "color": "#6B6B6B",
 
         }
     ],
@@ -105,7 +105,7 @@ export default {
     },
     "FILTER_BY": [
         {
-           
+
             "text": "New on Jovi",
             "value": 1,
             // "icon": svgs.newOnJovi(),
@@ -117,17 +117,17 @@ export default {
         },
     ],
     "AVERAGE_PRICE_FILTERS": [
-        {        
+        {
             "text": "$",
             "value": 1,
-            "id":1,
+            "id": 1,
             "icon": null,
             "price": "under 500"
 
         }, {
             "text": "$$",
             "value": 2,
-            "id":2,
+            "id": 2,
             "icon": null,
             "price": "500 - 100"
 
@@ -136,12 +136,31 @@ export default {
         , {
             "text": "$$$",
             "value": 3,
-            "id":3,
+            "id": 3,
             "icon": null,
             "price": "1000 - 2000"
 
 
         }
-    ]
+    ],
 
+    JOVI_JOB_STATUS: {
+        Open: 1,
+        Closed: 2,
+        Inactive: 3,
+        Cancel: 4,
+        Failed: 5,
+        InQueue: 6,
+        Preparing: 7,
+        ResturentOpen: 8,
+        Returning: 9,
+
+    },
+    AVAILABILITY_STATUS: {
+        Available: 1,
+        OutOfStock: 2,
+        Discontinued: 3,
+        Replaced: 4,
+        NotAvailable: 5,
+    },
 }

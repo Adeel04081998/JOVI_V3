@@ -1,5 +1,5 @@
 import React from 'react';
-import { GestureResponderEvent, ImageSourcePropType, ImageURISource, StyleSheet } from 'react-native';
+import { GestureResponderEvent, ImageSourcePropType, ImageBackground as RNImageBackground, ImageURISource, StyleSheet } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import svgs from '../../../assets/svgs';
 import ImageBackground from '../../../components/atoms/ImageBackground';
@@ -22,7 +22,7 @@ interface ProductMenuItemCardItem {
     quantity: number,
     /** Actual Price before discount  */
     price: number,
-     /** Main price OR Bold Price  */
+    /** Main price OR Bold Price  */
     discountedPrice?: any,
     name: string,
     discountType?: any,
@@ -109,8 +109,16 @@ const ProductMenuItemCard = (props: Props) => {
                             source={props.item.image}
                             style={itemStyles.image}
                             borderRadius={8}
-                            tapToOpen={false}>
-
+                            tapToOpen={false}
+                        >
+                            {props.item.isOutOfStock &&
+                                <View style={{
+                                    ...StyleSheet.absoluteFillObject,
+                                    backgroundColor: 'black',
+                                    opacity: 0.5,
+                                    borderRadius:8,
+                                }} />
+                            }
                             <ProductQuantityCard
                                 outOfStock={props.item.isOutOfStock}
                                 initialQuantity={props.item.quantity}
@@ -134,7 +142,7 @@ const ProductMenuItemCard = (props: Props) => {
 
 
                     {/* ****************** Start of PRICE & DISCOUNT ****************** */}
-                    <Text fontFamily='PoppinsBold' style={itemStyles.price}>{renderPrice(props.item.discountedPrice)}</Text> 
+                    <Text fontFamily='PoppinsBold' style={itemStyles.price}>{renderPrice(props.item.discountedPrice)}</Text>
 
                     {/* ****************** End of PRICE & DISCOUNT ****************** */}
 

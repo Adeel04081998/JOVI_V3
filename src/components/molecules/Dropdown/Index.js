@@ -4,7 +4,7 @@ import {Animated,ScrollView,Easing} from 'react-native';
 const HEIGHT = 120;
 const SPACING_VERTICAL = 10;
 const EXP_HEIGHT = (HEIGHT * 2) + SPACING_VERTICAL;
-const Dropdown = ({ collapsed,options=[],itemUI= null,scrollViewStyles={} }) => {
+const Dropdown = ({ collapsed,options=[],itemUI= null,scrollViewStyles={}, cb = (type)=>{} }) => {
     const [shown, setShown] = React.useState(false);
     const animationDropdown = React.useRef(new Animated.Value(0)).current;
     const animationDropdownCollapse = React.useRef(new Animated.Value(0)).current;
@@ -12,10 +12,11 @@ const Dropdown = ({ collapsed,options=[],itemUI= null,scrollViewStyles={} }) => 
         if(collapsed && shown === true){
             Animated.timing(animationDropdownCollapse, {
                 toValue:EXP_HEIGHT,
-                duration: 500,
+                duration: 100,
                 useNativeDriver: true,
                 easing: Easing.ease
             }).start(finished => {
+                cb(0)
                 if(finished){
                     setShown(false);
                     animationDropdownCollapse.setValue(0);
@@ -24,10 +25,11 @@ const Dropdown = ({ collapsed,options=[],itemUI= null,scrollViewStyles={} }) => 
         }else if(!collapsed){
             Animated.timing(animationDropdown, {
                 toValue:EXP_HEIGHT,
-                duration: 500,
+                duration: 300,
                 useNativeDriver: true,
                 easing: Easing.ease
             }).start(finished => {
+                cb(1)
                 if(finished){
                     setShown(true);
                     animationDropdown.setValue(0);

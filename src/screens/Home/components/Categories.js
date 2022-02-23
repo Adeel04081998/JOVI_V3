@@ -10,7 +10,12 @@ import { PITSTOP_TYPES } from '../../../utils/GV';
 const CONTAINER_WIDTH = ((constants.screen_dimensions.width) * 0.22);
 const CONTAINER_HEIGHT = constants.screen_dimensions.width * 0.3;
 export default React.memo(({ homeStyles }) => {
+    const categoryPressed = React.useRef(false);
     const cartOnPressHandler = (index, item) => {
+        if(categoryPressed.current){
+            return;
+        }
+        categoryPressed.current = true;
         if(item.value == PITSTOP_TYPES.JOVI){
             NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.JoviJob.screen_name,{pitstopType:item.value});
         }else if(index === 1){
@@ -18,6 +23,9 @@ export default React.memo(({ homeStyles }) => {
         }else if(index ===2){
             NavigationService.NavigationActions.common_actions.navigate('VENDORS',{pitstopType:1});
         }
+        setTimeout(() => {
+            categoryPressed.current = false;
+        }, 1000);
      }
     return <AnimatedView style={[homeStyles.categoriesCardPrimaryContainer]}>
         <Text style={homeStyles.categoriesCardTittleText}>Categories</Text>
