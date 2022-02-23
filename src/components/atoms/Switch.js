@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Appearance, StyleSheet, Platform, Animated, Easing } from 'react-native';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
@@ -16,14 +16,15 @@ export default (props) => {
     const width = props.width || 55;
     const height = props.height || 30;
     const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
-    const [animatedValue, setAnimatedValue] = useState(new Animated.Value(props.switchVal ? width / 1.8 : 4))
+    const animatedValue = useRef(new Animated.Value(props.switchVal ? width / 1.8 : 4)).current
 
-    console.log('active ==>>', active);
+    
     const onPressParentEvent = (bool) => {
         toggleActive(bool);
         props.onToggleSwitch(bool)
     }
     const onPress = () => {
+        console.log('bsdk nomi');
         if (active) {
             Animated.timing(animatedValue, {
                 toValue: 4,

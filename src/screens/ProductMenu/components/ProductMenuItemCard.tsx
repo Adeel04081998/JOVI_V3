@@ -116,6 +116,7 @@ const ProductMenuItemCard = (props: Props) => {
                                     ...StyleSheet.absoluteFillObject,
                                     backgroundColor: 'black',
                                     opacity: 0.5,
+                                    borderRadius:8,
                                 }} />
                             }
                             <ProductQuantityCard

@@ -230,7 +230,7 @@ export default ({ navigation, route }) => {
 
     // #endregion :: QUANTITY HANDLER END's FROM HERE 
 
-    const onViewMorePress=(item)=>{
+    const onViewMorePress = (item) => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductMenuItem.screen_name, { pitstopType, marketID, item: item });
     };//end of onViewMorePress
 
@@ -323,7 +323,16 @@ export default ({ navigation, route }) => {
                                 justifyContent: "center",
                             }} key={uniqueKeyExtractor()}>
                                 <ProductMenuItemCard
-                                    onPress={() => { }}
+                                    onPress={() => {
+                                        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, {
+                                            propItem: {
+                                                itemDetails: {},
+                                                ...item,
+                                                vendorDetails: { ...route.params },
+                                            },
+                                            pitstopType: pitstopType
+                                        })
+                                    }}
                                     colors={colors}
                                     index={index}
                                     itemImageSize={ITEM_IMAGE_SIZE}
@@ -343,7 +352,7 @@ export default ({ navigation, route }) => {
                                 />
                                 {index === parentItem["pitstopItemListSliced"].length - 1 &&
                                     <ProductMenuItemCard
-                                        onPress={() => {onViewMorePress(parentItem); }}
+                                        onPress={() => { onViewMorePress(parentItem); }}
                                         colors={colors}
                                         index={index}
                                         itemImageSize={ITEM_IMAGE_SIZE}

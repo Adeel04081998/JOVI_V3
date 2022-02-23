@@ -82,7 +82,7 @@ export default ({ navigation, route }) => {
             "longitude": finalDestination?.longitude ?? 73.044831,
             "searchItem": "",
             "categoryID": categoryID,
-            "catPageNumber": 10,
+            "catPageNumber": 1,
             "catItemsPerPage": 1,
             "productPageNumber": currentRequestNumber,
             "productItemsPerPage": paginationInfo.itemPerRequest,

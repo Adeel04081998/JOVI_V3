@@ -34,7 +34,7 @@ const PitStopEstTime = (props) => {
                     if (type === 0) setDisabled(true)
                     else setDisabled(false)
                 }}
-                scrollViewStyles={{ top: 75, width: WIDTH * 0.895, alignSelf: 'center'}}
+                scrollViewStyles={{ top: 68, width: WIDTH * 0.82, alignSelf: 'center'}}
                 options={ENUMS.ESTIMATED_TIME}
                 itemUI={(item, index, collapsed) =>
                     <TouchableOpacity key={`estTime-key-${index}`}
@@ -43,7 +43,7 @@ const PitStopEstTime = (props) => {
                             borderWidth: 0.5,
                             borderTopWidth: 0,
                             borderColor: 'rgba(0,0,0,0.3)',
-                            width: WIDTH * 0.9,
+                            width: WIDTH * 0.82,
                             backgroundColor: 'white',
                             borderBottomRightRadius: index === ENUMS.ESTIMATED_TIME.length - 1 ? 12 : 0,
                             borderBottomLeftRadius: index === ENUMS.ESTIMATED_TIME.length - 1 ? 12 : 0,

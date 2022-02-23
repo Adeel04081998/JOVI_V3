@@ -5,7 +5,7 @@ import Text from '../../../components/atoms/Text';
 import View from '../../../components/atoms/View';
 export default ({ messagesReducer, homeStyles, userReducer, colors }) => {
     const greetingsList = messagesReducer?.homeScreenDataViewModel?.greetingsList;
-    if (!greetingsList?.length) return <View style={{ paddingVertical: 10 }} />
+    if (!greetingsList?.length) return <View style={{ paddingVertical: 5 }} />
     else {
         const greetingMessage = greetingsList[0];
         // const REGEX = /[<<Name>>, , <<phoneNumber>>]/g
@@ -35,11 +35,11 @@ export default ({ messagesReducer, homeStyles, userReducer, colors }) => {
             ]} >
             <Text style={[homeStyles.greetingHeaderText]} numberOfLines={1} fontFamily='PoppinsRegular' >
                 {`${String(greetingMessage.header.replace(REGEX, ""))}`}
-                <Text style={{ color: colors.BlueVoilet || "#6D51BB", alignSelf: 'center', fontSize: 16 }} numberOfLines={1} >
+                <Text style={{ color: colors.BlueVoilet || "#6D51BB", alignSelf: 'center', fontSize: 25, }} numberOfLines={1} fontFamily='PoppinsRegular'>
                     {userReducer["firstName"]}
                 </Text>
             </Text>
-            <Text style={homeStyles.greetingBodyText} numberOfLines={2}>
+            <Text style={homeStyles.greetingBodyText} numberOfLines={2} fontFamily='PoppinsLight'>
                 {`${String(greetingMessage.body.replace(REGEX, ""))}`}
             </Text>
         </AnimatedView>

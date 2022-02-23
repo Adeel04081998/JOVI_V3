@@ -121,13 +121,16 @@ export default (props) => {
                     activeCusine={state.activeCusine}
                 />
             </ScrollView>
+            <View style={{width:'100%', justifyContent:'center', alignSelf:'center', }}>
+
             <Button
                 onPress={onApplyPress}
                 // disabled={enableDisableButton}
                 text='Apply'
-                style={{ width: "90%", alignSelf: "center", marginBottom: 10, backgroundColor: "#F94E41", borderRadius: 10 }}
+                style={{width:'90%',  alignSelf: "center", marginBottom: 10, backgroundColor: "#F94E41", borderRadius: 25 }}
 
             />
+            </View>
         </SafeAreaView>
     )
 }

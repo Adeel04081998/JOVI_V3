@@ -28,7 +28,7 @@ export type ButtonProps = React.ComponentProps<typeof TouchableOpacity> & {
 const defaultProps = {
     text: 'JOVI',
     activeOpacity: 0.9,
-    wait: 0.3,
+    wait: 0.4,
     isLoading: false,
 
     leftComponent: undefined,
@@ -38,7 +38,7 @@ const defaultProps = {
 const Button = (props: ButtonProps, textProps: TextProps) => {
     // let onPressRef: NodeJS.Timeout;
     // let isAssigned = false;
-    // const isAssignedRef = React.useRef(false);
+    // const isPressed = React.useRef(false);
     // const onPressTimoutRef = React.useRef(onPressTimout);
     const buttonMargin = React.useRef(new Animated.Value(1)).current;
 
@@ -63,7 +63,15 @@ const Button = (props: ButtonProps, textProps: TextProps) => {
             easing: Easing.ease,
         }).start((finished) => {
             if (finished && props.onPress) {
+                // if(isPressed.current){
+                    // return;
+                // }
+                // console.log('onPressParent',isPressed.current);
                 onPressParent(event);
+                // isPressed.current = true;
+                // setTimeout(()=>{
+                //     isPressed.current = false;
+                // },(props.wait*1000)+200);
                 //Dont Remove The code below, might be used in future.
                 // if (isAssignedRef.current === true) {
                 //     clearTimeout(onPressRef);

@@ -1,7 +1,34 @@
 import React from 'react'
 import { PermissionsAndroid, Platform, Alert } from 'react-native';
 import { check, request, PERMISSIONS, RESULTS, openSettings } from 'react-native-permissions';
-import ImagePicker from 'react-native-image-crop-picker';
+// import ImagePicker from 'react-native-image-crop-picker';
+import * as ImagePicker from 'react-native-image-picker';
+
+
+// ImagePicker Options
+const options = {
+    // customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
+    // allowsEditing: false,
+    selectionLimit: 3,
+    quality: 0.5,
+    maxWidth: 1000,
+    storageOptions: Platform.select({
+        ios: {
+            skipBackup: true,
+            path: 'images',
+            // skipBackup?: boolean;
+            // path?: string;
+            // cameraRoll?: boolean;
+            // waitUntilSaved?: boolean;
+            // privateDirectory?: boolean;
+            // cameraRoll: false
+
+        }
+    }),
+    mediaType: "photo",
+    // noData: true,
+    // saveToPhotos: false,
+};
 
 const cameraResponseHandler = (response, cb, next) => {
     console.log('response ==>>>', response);
@@ -15,7 +42,11 @@ const cameraResponseHandler = (response, cb, next) => {
     } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
         cb();
-    } else {
+    }  else if (response.errorCode) {
+        console.log('User tapped custom button: ', response.errorCode);
+        cb();
+    } 
+    else {
         console.log(response);
         next(response);
     }
@@ -78,23 +109,31 @@ export const sharedLaunchCameraorGallery = async (pressType, cb, next) => {
             }
         }
         if (pressType === 1) {
-            ImagePicker.openCamera({
-                width: 300,
-                height: 400,
-                cropping: false,
-            }).then(image => {
-                cameraResponseHandler([{ ...image }], cb, next)
-            }).catch((e) => {
-                console.log('e ==>>>', e);
-            })
+            ImagePicker.launchCamera(options, response => {
+                // debugger;
+                cameraResponseHandler(response, cb, next)
+            });
+            // ImagePicker.openCamera({
+            //     width: 300,
+            //     height: 400,
+            //     cropping: false,
+            // }).then(image => {
+            //     cameraResponseHandler([{ ...image }], cb, next)
+            // }).catch((e) => {
+            //     console.log('e ==>>>', e);
+            // })
         } else {
-            ImagePicker.openPicker({
-                multiple: true
-            }).then(image => {
-                cameraResponseHandler(image, cb, next)
-            }).catch((e) => {
-                console.log('e ==>>>', e);
-            })
+            ImagePicker.launchImageLibrary(options, response => {
+                // debugger;
+                cameraResponseHandler(response, cb, next)
+            });
+            // ImagePicker.openPicker({
+            //     multiple: true
+            // }).then(image => {
+            //     cameraResponseHandler(image, cb, next)
+            // }).catch((e) => {
+            //     console.log('e ==>>>', e);
+            // })
         }
     } catch (error) {
         console.log('Catch error :', error)

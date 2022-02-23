@@ -7,7 +7,7 @@ import CustomHeader from '../../components/molecules/CustomHeader';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import RNMediaMeta from "../../../RNMediaMeta";
 import StopWatch from "react-native-stopwatch-timer/lib/stopwatch";
-import { Recorder } from '@react-native-community/audio-toolkit';
+import { Recorder, Player } from '@react-native-community/audio-toolkit';
 
 import CardHeader from './components/CardHeader';
 import PitStopBuy from './components/PitStopBuy';
@@ -28,10 +28,15 @@ import { multipartPostRequest, postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import AudioplayerMultiple from '../../components/atoms/AudioplayerMultiple';
 import Image from '../../components/atoms/Image';
-import { sharedAddUpdatePitstop, sharedConfirmationAlert } from '../../helpers/SharedActions';
+import { confirmServiceAvailabilityForLocation, sharedAddUpdatePitstop, sharedConfirmationAlert } from '../../helpers/SharedActions';
+import Toast from '../../components/atoms/Toast';
+import Regex from '../../utils/Regex';
+import { useDispatch, useSelector } from 'react-redux';
+import actions from '../../redux/actions';
+import FontFamily from '../../res/FontFamily';
 
 export const PITSTOP_CARD_TYPES = Object.freeze({ "location": 0, "description": 1, "estimated-time": 2, "buy-for-me": 3, "estimated-price": 4, });
-
+let updateCardOnHeaderPressItem = {};
 
 export default ({ navigation, route }) => {
 
@@ -56,8 +61,13 @@ export default ({ navigation, route }) => {
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
     // colors.primary will recieve value from colors.js file's colors
     const styles = joviJobStyles(colors, WIDTH, HEIGHT);
+    const dispatch = useDispatch()
+    const { prevOrders } = useSelector(state => state.userReducer)
+    console.log('prevOrders', prevOrders);
     const { stack_actions, common_actions, drawer_actions } = NavigationService.NavigationActions
     const { APP_STACKS } = ROUTES;
+    const homeFadeIn = React.useRef(new Animated.Value(0)).current;
+
     const initCartData = [
         {
             "idx": 1,
@@ -75,8 +85,8 @@ export default ({ navigation, route }) => {
             "title": "Pitstop Details",
             "desc": "What Would You Like Your Jovi To Do ?",
             "svg": svgs.pitstopPin(),
-            "isOpened": __DEV__ ? true : false,
-            "headerColor": __DEV__ ? colors.primary : colors.lightGreyBorder,
+            "isOpened": false,
+            "headerColor": colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["description"],
             "showSubCard": true,
             "disabled": true,
@@ -86,8 +96,8 @@ export default ({ navigation, route }) => {
             "title": "Estimated Waiting Time",
             "desc": "What Is The Estimated Time Of The Job ?",
             "svg": svgs.pitStopEstTime(),
-            "isOpened": __DEV__ ? true : false,
-            "headerColor": __DEV__ ? colors.primary : colors.lightGreyBorder,
+            "isOpened": false,
+            "headerColor": colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["estimated-time"],
             "showSubCard": true,
             "disabled": true,
@@ -97,8 +107,8 @@ export default ({ navigation, route }) => {
             "title": "Buy For Me ?",
             "desc": "Do You Want Us To Buy For You ?",
             "svg": svgs.pitStopBuy(),
-            "isOpened": __DEV__ ? true : false,
-            "headerColor": __DEV__ ? colors.primary : colors.lightGreyBorder,
+            "isOpened": false,
+            "headerColor": colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["buy-for-me"],
             "showSubCard": true,
             "disabled": true,
@@ -109,10 +119,10 @@ export default ({ navigation, route }) => {
             "title": "Estimated Price",
             "desc": "What is the Estimated Price?",
             "svg": svgs.pitStopEstTime(),
-            "isOpened": __DEV__ ? true : false,
-            "headerColor": __DEV__ ? colors.primary : colors.lightGreyBorder,
+            "isOpened": false,
+            "headerColor": colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["estimated-price"],
-            "showSubCard": false,
+            "showSubCard": true,
             "disabled": true,
 
         },
@@ -136,11 +146,15 @@ export default ({ navigation, route }) => {
 
     /******** Start of pitsTop Location variables *******/
 
-    const [nameval, setNameVal] = useState(__DEV__ ? 'Ahmed' : '')
+    const [nameval, setNameVal] = useState('')
     const [cityVal, setCityVal] = useState('')
     const [placeName, setPlaceName] = useState('')
     const [locationVal, setLocationVal] = useState(__DEV__ ? "Islamabad" : "")
     const [scrollEnabled, setScrollEnabled] = useState(true)
+    const latitudeRef = React.useRef(null);
+    const longitudeRef = React.useRef(null);
+
+
 
     /******** End of pitsTop Location variables *******/
 
@@ -148,7 +162,7 @@ export default ({ navigation, route }) => {
 
     /******** Start of Pitstop Details variables *******/
 
-    const [description, setDescription] = useState(__DEV__ ? 'CHUTTI CHAHIYE' : '')
+    const [description, setDescription] = useState(__DEV__ ? 'lkjsjjsjsjs' : '')
     const [imageData, updateImagesData] = useState([]);
 
     const [, updateStateaaa] = React.useState();
@@ -163,6 +177,7 @@ export default ({ navigation, route }) => {
     const recordTimeRef = useRef(null);
     const [micPress, setMicPress] = useState(false);
     const [isDeleted, setIsDeleted] = useState(false);
+    const [forceDeleted, setForceDeleted] = useState(false);
     const [voiceNote, setVoiceNote] = useState({})
 
     /******** End of Pitstop Details variables *******/
@@ -173,9 +188,10 @@ export default ({ navigation, route }) => {
     /******** Start of other Pitstop variables *******/
 
     const [estVal, setEstVal] = useState(__DEV__ ? '1500' : '')
+    const [initialEstVal, setInitialEstVal] = useState(__DEV__ ? '1500' : '')
     const [switchVal, setSwitch] = useState(false);
     const [estTime, setEstTime] = React.useState({
-        text: __DEV__ ? "0-15 mins" : "Estimated Time",
+        text: __DEV__ ? "15 mins" : "Estimated Time",
         value: __DEV__ ? 1 : 0
     });
     const [collapsed, setCollapsed] = React.useState(true);
@@ -234,6 +250,15 @@ export default ({ navigation, route }) => {
         }
     }, [route])
 
+    useEffect(() => {
+        Animated.timing(homeFadeIn, {
+            toValue: 1,
+            duration: 700,
+            useNativeDriver: true,
+            easing: Easing.ease
+        }).start();
+    }, [])
+
 
     const locationHandler = async () => {
         await hybridLocationPermission();
@@ -259,6 +284,7 @@ export default ({ navigation, route }) => {
 
     const handleLocationSelected = (data, geometry, index, pinData, modifyPitstops = true, forceMode) => {
         locationHandler()
+        const { lat, lng } = geometry.location
         Keyboard.dismiss();
         let city = "";
         if (data) {
@@ -276,15 +302,22 @@ export default ({ navigation, route }) => {
                 city = addressObj.plus_code.compound_code.replace(/\,/gi, "")?.split(/\s/gi)?.[1];
             }
         }
+        latitudeRef.current = lat
+        longitudeRef.current = lng
         setCityVal(city)
         setLocationVal(data && (data.name ? data.name : data.description))
+        setScrollEnabled(true)
         toggleCardData(PITSTOP_CARD_TYPES["description"]);
+        forceUpdate()
     };
 
     const onLocationSearchInputChange = (value) => {
-        if ((value && value !== '') && value.includes('')  || value === false) {
-            setLocationVal(value.trim())
-        }
+        // setLocationVal(value)
+        // if ((value && value !== '') && value.includes('') || value === false) {
+        //     setLocationVal(value.trim())
+        // } else {
+        //     setLocationVal("")
+        // }
     }
     const handleSetFavClicked = () => { }
 
@@ -294,14 +327,21 @@ export default ({ navigation, route }) => {
     }
     const cb = (resp) => {
         console.log('resp ==>>', resp);
-        setLocationVal(resp)
+        setLocationVal(resp.title)
+        toggleCardData(PITSTOP_CARD_TYPES["description"], colors.primary)
+        latitudeRef.current = resp.latitude
+        longitudeRef.current = resp.longitude
         forceUpdate();
     }
     /************   End of functions of Pitstop location Component Funcs    **************/
 
+    const cartReducer = useSelector((store) => {
+        return store.cartReducer;
+    });
+    const remainingAmount = cartReducer.joviRemainingAmount;
 
     const getRemainingAmount = () => {
-        let RA = GV.MAX_JOVI_AMOUNT - estVal
+        let RA = remainingAmount - estVal
         return RA
     }
 
@@ -309,40 +349,50 @@ export default ({ navigation, route }) => {
 
     /************   Start of functions of Pitstop Details Component  Funcs   **************/
 
-    const pitStopImage = (obj = null) => {
-        // setState((prevState) => ({
-        //     ...prevState,
-        //     pitstops: pitStopArr
-        // }));
-        const newImageData = imageData;
-        newImageData.push(obj)
-        updateImagesData(newImageData)
-        forceUpdate();
-    };
+    // const pitStopImage = (obj = null) => {
+    //     // setState((prevState) => ({
+    //     //     ...prevState,
+    //     //     pitstops: pitStopArr
+    //     // }));
+    //     const newImageData = imageData;
+    //     newImageData.push(obj)
+    //     updateImagesData(newImageData)
+    //     forceUpdate();
+    // };
 
     const getPicture = picData => {
-        if (picData.length > 1) {
-            let maxLength = 3;
-            // At position 2, add 2 elements: 
-            picData.splice(0, picData.length - maxLength);
-            for (let i = 0; i < picData.length; i++) {
-                pitStopImage({
-                    id: Math.floor(Math.random() * 100000),
-                    fileName: picData[i].path.split('/').pop(),
-                    path: picData[i].path,
-                    isUploading: true,
-                }, null)
+        let slicedImages = null;
+        if (imageData.length) {
+            slicedImages = [...imageData];
+            let maxIterator = slicedImages.length === 1 && picData.assets.length === 1 ? 1 : slicedImages.length === 1 && picData.assets.length === 2 ? 2 : slicedImages.length === 2 ? 1 : 3;
+            for (let index = 0; index < maxIterator; index++) {
+                let imgObj = picData.assets[index];
+                imgObj.id = Math.floor(Math.random() * 100000)
+                imgObj.fileName = imgObj.uri.split('/').pop();
+                imgObj.path = imgObj.uri
+                imgObj.isUploading = true;
+                slicedImages.push(imgObj);
             }
-        }
-        else {
-            pitStopImage({
+        } else {
+            slicedImages = picData.assets.slice(0, 3).map(_p => ({
                 id: Math.floor(Math.random() * 100000),
-                fileName: picData[0].path.split('/').pop(),
-                path: picData[0].path,
+                fileName: _p.uri.split('/').pop(),
+                path: _p.uri,
                 isUploading: true,
-            });
+            }))
         }
-
+        console.log('slicedImages ==>>> ', slicedImages);
+        toggleCardData(PITSTOP_CARD_TYPES["estimated-time"]);
+        updateImagesData(slicedImages);
+        // for (let i = 0; i < picData.assets.length; i++) {
+        //     pitStopImage({
+        //         id: Math.floor(Math.random() * 100000),
+        //         fileName: picData.assets[i].uri.split('/').pop(),
+        //         path: picData.assets[i].uri,
+        //         isUploading: true,
+        //     }, null)
+        // }
+        // console.log('picData ==>>>', picData);
 
 
         // const obj = {
@@ -384,19 +434,28 @@ export default ({ navigation, route }) => {
 
     const pitStopVoiceNote = (obj = null, del = false) => {
         if (del) {
-            setVoiceNote(null)
+            setVoiceNote({})
             setIsDeleted(true)
             setIsRecord(false)
         } else {
+            toggleCardData(PITSTOP_CARD_TYPES["estimated-time"]);
             setVoiceNote(obj)
         }
     };
 
 
+    React.useEffect(() => {
+        if (isDeleted) {
+            setVoiceNote(null);
+            setIsRecord(false);
+            setIsDeleted(false);
+        }
+    }, [isDeleted])
 
     const deleteRecording = async () => {
         if (isRecord) {
-            pitStopVoiceNote(null, true);
+            setIsDeleted(true);
+            // pitStopVoiceNote(null, true);
             // const joviImageID = recorderRef.current?.joviImageID ?? -1;
             // console.log('VR IS===> on del joviImageID', joviImageID);
 
@@ -418,17 +477,23 @@ export default ({ navigation, route }) => {
         }
     };//end of deleteRecording
 
-    const recordingPress = async () => {
+    const recordingPress = async (closeSecond = false) => {
         if (!micPress) {
             askForAudioRecordPermission((allowRecording) => {
-                const fileName = "record-" + new Date().getTime() + ".mp4";
-                recorderRef.current = new Recorder(fileName).record();
-                setMicPress(!micPress);
+                if (allowRecording) {
+                    const fileName = "record-" + new Date().getTime() + ".mp4";
+                    recorderRef.current = new Recorder(fileName).record();
+                    setMicPress(!micPress);
+                }
             })
         } else {
-            setMicPress(!micPress);
+
             if (recorderRef.current !== null) {
                 recorderRef.current.stop((error) => {
+                    if (Platform.OS === "ios") {
+                        new Player("playerDestroyer.mp4").prepare((err) => { }).destroy(); //ADDING THIS TO DESTROY RECORDER FOR iOS Devices 
+                    }
+
                     if (!error) {
                         const path = recorderRef.current._fsPath;
                         RNMediaMeta.get(`${path}`)
@@ -444,14 +509,19 @@ export default ({ navigation, route }) => {
 
                                     setIsRecord(true);
                                     setRecordingUploading(false);
+                                    setMicPress(false);
                                     //SUCCESS HANDLER
 
                                     // const resAt0 = res.joviImageReturnViewModelList[0];
 
                                     pitStopVoiceNote(obj, false);
-
-                                    setIsRecord(true);
                                     toggleCardData(PITSTOP_CARD_TYPES["estimated-time"]);
+
+                                    if (closeSecond) {
+                                        updateCardOnHeaderPress(updateCardOnHeaderPressItem);
+                                    }
+
+
                                     // updateProgress(0);
                                     // setRecordingUploading(false);
                                     // Multipart.upload([{ ...obj }], { ...parentProps, dispatch: parentDispatch }, false, (uploadPercentage) => {
@@ -485,14 +555,17 @@ export default ({ navigation, route }) => {
                             .catch(err => {
                                 console.log('recorderRef.current Media meta Error   ', err)
                                 setIsRecord(false);
+                                setMicPress(false);
                             });
                     }
                     else {
                         Alert.alert("Error Occurred while Recording Audio!");
                         setIsRecord(false);
+                        setMicPress(false);
                     }
                 });
             } else {
+                setMicPress(false);
                 setIsRecord(false);
             }
 
@@ -511,7 +584,7 @@ export default ({ navigation, route }) => {
             if (index === 1 && locationVal.length) {
                 isDisable = false;
             }
-            if (index === 2 && description.length) {
+            if (index === 2 && description.length || imageData.length || Object.keys(voiceNote).length) {
                 isDisable = false;
             }
             if (index === 3 && estTime.text.includes('mins') || estTime.text.includes('hour')) {
@@ -526,6 +599,36 @@ export default ({ navigation, route }) => {
         }
         return isDisable;
     }
+
+    React.useEffect(() => {
+        if (forceDeleted) {
+            updateCardOnHeaderPress(updateCardOnHeaderPressItem);
+            setForceDeleted(false);
+        }
+    }, [forceDeleted]);
+
+    const updateCardOnHeaderPress = (item) => {
+        const { idx, isDisabled, } = item;
+        setCardData([...cardData].map(object => {
+            if (object.idx === idx) {
+                return {
+                    ...object,
+                    isOpened: !object.isOpened,
+                    headerColor: isDisabled ? colors.lightGreyBorder : colors.primary,
+                    showSubCard: (
+                        idx === 5 ?
+                            switchVal ?
+                                true :
+                                false :
+                            true
+                    )
+                }
+            }
+            else return object;
+        }))
+        ref.current.animateNextTransition();
+    }
+
     const renderHeader = (idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled) => {
         const isDisabled = disabledHandler(index, disabled);
         return (
@@ -539,24 +642,22 @@ export default ({ navigation, route }) => {
                 activeOpacity={0.9}
                 disabled={isDisabled}
                 onHeaderPress={() => {
-                    setCardData([...cardData].map(object => {
-                        if (object.idx === idx) {
-                            return {
-                                ...object,
-                                isOpened: !object.isOpened,
-                                headerColor: isDisabled ? colors.lightGreyBorder : colors.primary,
-                                showSubCard: (
-                                    idx === 5 ?
-                                        switchVal ?
-                                            true :
-                                            false :
-                                        true
-                                )
-                            }
+                    updateCardOnHeaderPressItem = {
+                        idx, title, desc, svg, isOpened, headerColor, index, disabled, isDisabled
+                    };
+
+                    if (idx === 2 && isOpened) { //AHMED KH RHA KOI 2 ko change nh kry ga... ;-P
+                        //WHEN DESCRIPTION TOGGLE  
+                        if (micPress) {
+                            recordingPress(true);
+                        } else {
+                            setForceDeleted(true);
+                            updateStateaaa();
                         }
-                        else return object;
-                    }))
-                    ref.current.animateNextTransition();
+                    } else {
+                        updateCardOnHeaderPress(updateCardOnHeaderPressItem);
+                    }
+
                 }} />
         )
     }
@@ -599,9 +700,9 @@ export default ({ navigation, route }) => {
         return (
             <PitStopLocation
                 nameVal={nameval}
-                locationVal={locationVal}
+                // locationVal={locationVal}
                 isOpened={isOpened}
-                onChangeName={(text) => { setNameVal(text) }}
+                onChangeName={(text) => { setNameVal(text.trim()) }}
                 onLocationPress={onLocationPress}
                 handleLocationSelected={handleLocationSelected}
                 onLocationSearchInputChange={onLocationSearchInputChange}
@@ -611,6 +712,7 @@ export default ({ navigation, route }) => {
                     setScrollEnabled(isFocus)
                 }}
                 handleSetFavClicked={handleSetFavClicked}
+                textToShow={locationVal}
             />
         )
     }
@@ -655,20 +757,27 @@ export default ({ navigation, route }) => {
                                                 });
                                             }
                                         },
-                                    ]
+                                        {
+                                            text: "Cancel", onPress: () => {
+                                                console.log('Cancel Pressed');
+                                            }
+                                        }
+                                    ],
                                 )
 
                         }}
                         text="Browse"
                         textStyle={styles.btnText}
                         fontFamily="PoppinsRegular"
-                        style={styles.locButton} />
+                        style={{ ...styles.locButton, width: WIDTH - 70 }} />
                     <ScrollView horizontal={true} style={styles.galleryIcon} >
-                        {(imageData.length > 0 ? imageData : new Array(1).fill({ index: 1 })).map((item, index) => {
+                        {
+                            // (imageData.length > 0 ? imageData : new Array(1).fill({ index: 1 }))
+                            imageData.map((item, index) => {
 
-                            const itemSize = Object.keys(item).length;
+                                // const itemSize = Object.keys(item).length;
 
-                            if (itemSize > 1) {
+                                // if (itemSize > 1) {
 
                                 return (
                                     <View key={`item path ${item.id}`} style={[styles.galleryIcon, {
@@ -687,15 +796,15 @@ export default ({ navigation, route }) => {
                                         <Image source={{ uri: item.path }} style={{ height: 30, width: 30, resizeMode: "cover", borderRadius: 6 }} />
                                     </View>
                                 )
-                            }
-                            return (
-                                <View key={`item path ${item.index}`} style={styles.galleryIcon} >
-                                    <VectorIcon name="image" type="Ionicons" color={colors.primary} size={25} style={{ marginRight: 5 }} />
-                                    <VectorIcon name="image" type="Ionicons" color={colors.text} size={25} style={{ marginRight: 5 }} />
-                                    <VectorIcon name="image" type="Ionicons" color={colors.text} size={25} style={{ marginRight: 5 }} />
-                                </View>
-                            )
-                        })}
+                                // }
+                                // return (
+                                //     <View key={`item path ${item.index}`} style={styles.galleryIcon} >
+                                //         <VectorIcon name="image" type="Ionicons" color={colors.primary} size={25} style={{ marginRight: 5 }} />
+                                //         <VectorIcon name="image" type="Ionicons" color={colors.text} size={25} style={{ marginRight: 5 }} />
+                                //         <VectorIcon name="image" type="Ionicons" color={colors.text} size={25} style={{ marginRight: 5 }} />
+                                //     </View>
+                                // )
+                            })}
                     </ScrollView>
                 </View>
 
@@ -716,7 +825,7 @@ export default ({ navigation, route }) => {
                                 <AudioplayerMultiple
                                     activeTheme={colors}
                                     audioURL={recorderRef.current?._fsPath}
-                                    forceStopAll={isDeleted}
+                                    forceStopAll={isDeleted || forceDeleted}
                                     width={Platform.OS === "ios" ? "90%" : "95%"}
                                 />
 
@@ -823,7 +932,6 @@ export default ({ navigation, route }) => {
 
     const renderPitStopBuy = (idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled) => {
         const isDisabled = disabledHandler(index, disabled);
-
         return (
             <PitStopBuy
                 switchVal={switchVal}
@@ -831,6 +939,7 @@ export default ({ navigation, route }) => {
                 onToggleSwitch={(bool) => {
                     if (switchVal) cardData[index + 1].showSubCard = false
                     else cardData[index + 1].showSubCard = true
+                    toggleCardData(PITSTOP_CARD_TYPES["estimated-price"], colors.primary)
                     setSwitch(bool)
                     setCardData(cardData)
                 }} />
@@ -838,59 +947,89 @@ export default ({ navigation, route }) => {
     } // End of pitstop BUY
 
 
-
     const renderPitStopEstPrice = (idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled) => {
         const isDisabled = disabledHandler(index, disabled);
 
         return (
             <PitStopEstPrice
-                estVal={estVal}
+                estVal={isNaN(parseInt(`${estVal}`)) ? 0 : parseInt(`${estVal}`)}
+                textinputVal={`${estVal}`}
                 isOpened={isDisabled ? false : isOpened}
-                onChangeSliderText={
-                    newsliderValue => {
-                        if (!isNaN(parseInt(newsliderValue))) {
-                            setEstVal(parseInt(newsliderValue))
+                onChangeSliderText={newsliderValue => {
+                    if (Regex.numberOnly.test(newsliderValue)) {
+                        const maxLengthRegex = new RegExp(`^([0-9]{0,4}|${remainingAmount})$`, "g");
+
+                        if (maxLengthRegex.test(newsliderValue)) {
+                            setEstVal(newsliderValue);
+                            setInitialEstVal(newsliderValue);
                         }
+
+                    } else {
+                        setEstVal('');
+                        setInitialEstVal(0);
                     }
                 }
+                }
                 getRemainingAmount={() => getRemainingAmount()}
-                onSliderChange={
-                    newsliderValue => {
-                        if (!isNaN(parseInt(newsliderValue))) {
-                            setEstVal(parseInt(newsliderValue))
-                        }
-                    }
-                } />
+                onSliderChange={(newsliderValue) => {
+                    setEstVal(newsliderValue);
+                }} />
         )
     } //End of Pitstop est Price
 
 
     const validationCheck = () => {
-        if (locationVal !== '' && description !== '') return false
+        if (locationVal !== '' && (description !== '' || Object.keys(voiceNote).length || imageData.length) && (estTime.text.includes('mins') || estTime.text.includes('hour')) && (switchVal ? parseInt(estVal) > 0 : true)) return false
         else return true
     }
     return (
         <SafeAreaView style={{ flex: 1 }} >
             <CustomHeader leftIconColor={colors.primary} rightIconColor={colors.primary} leftIconSize={30} onLeftIconPress={() => common_actions.goBack()} />
-            <Transitioning.View
-                ref={ref}
-                transition={transition}
-                style={styles.container}>
-                <ScrollView nestedScrollEnabled={true} scrollEnabled={scrollEnabled} style={{ backgroundColor: 'white' }} contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="always" >
-                    {cardData.map(({ idx, title, desc, svg, isOpened, key, headerColor, showSubCard, disabled }, index) => {
-                        return (
-                            showSubCard &&
-                            <View
-                                key={`card mapping ${idx}`}
-                                style={[{ ...styles.cardView, zIndex: idx === 3 ? 99 : 9 }]}>
-                                {renderHeader(idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled)}
-                                {renderBody(idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled)}
-                            </View >
+            <Animated.View style={{
+                flex: 1,
+                opacity: homeFadeIn.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1] }),
+                transform: [{ scale: homeFadeIn.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] }) }]
+            }}>
+                <Transitioning.View
+                    ref={ref}
+                    transition={transition}
+                    style={styles.container}>
+                    <ScrollView nestedScrollEnabled={true} scrollEnabled={scrollEnabled} style={{}} contentContainerStyle={{ flexGrow: 1, }} keyboardShouldPersistTaps="handled">
+                        {prevOrders && prevOrders.length !== 0 &&
+                            <>
+                                <Text style={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 16, color: colors.greyish_black, paddingLeft: 15, paddingTop: 5 }} >Previous Orders</Text>
+                                <ScrollView horizontal contentContainerStyle={{ marginTop: 5 }} >
+                                    {prevOrders.map((item, index) => {
+                                        return (
+                                            <TouchableOpacity key={`prevOrders ${index}`} style={{ backgroundColor: colors.white, borderRadius: 10, borderWidth: 0.5, borderColor: colors.primary, marginLeft: 15, width: WIDTH * 0.4, height: HEIGHT * 0.05, justifyContent: 'center', paddingLeft: 10 }} >
+                                                <Text numberOfLines={1} style={{ fontSize: 12, color: colors.black, fontFamily: FontFamily.Poppins.Regular, width: WIDTH * 0.36 }} >{`${item.pitstopData.title}`}</Text>
+                                                <Text numberOfLines={1} style={{ fontSize: 8, fontFamily: FontFamily.Poppins.Regular, color: colors.black, opacity: 0.6, width: WIDTH * 0.36 }} >{item.pitstopData.date || `29-11-2021 Tuesday`}</Text>
+                                            </TouchableOpacity>
+                                        )
+                                    })}
+                                </ScrollView>
+                            </>
+                        }
+                        <View style={{
+                            margin: 15, borderRadius: 10, backgroundColor: colors.white,
+                            marginBottom: !collapsed ? 50 : 0
+                        }} >
+                            {cardData.map(({ idx, title, desc, svg, isOpened, key, headerColor, showSubCard, disabled }, index) => {
+                                return (
+                                    showSubCard &&
+                                    <View
+                                        key={`card mapping ${idx}`}
+                                        style={[{ ...styles.cardView, zIndex: idx === 3 ? 99 : 9 }]}>
+                                        {renderHeader(idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled)}
+                                        {renderBody(idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled)}
+                                    </View >
 
-                        );
-                    })
-                    }
-                    <>
+                                );
+                            })
+                            }
+                        </View>
+                    </ScrollView>
+                    <View style={{ zIndex: -999 }} >
                         <Button
                             text="Save and Continue"
                             onPress={() => {
@@ -904,19 +1043,32 @@ export default ({ navigation, route }) => {
                                     imageData,
                                     voiceNote,
                                     estTime,
-                                    estimatePrice: parseInt(estVal)
+                                    estimatePrice: parseInt(estVal),
+                                    latitude: latitudeRef.current,
+                                    longitude: longitudeRef.current
                                 }
-                                sharedAddUpdatePitstop(pitstopData, false, [], false, false, clearData);
+                                confirmServiceAvailabilityForLocation(postRequest, latitudeRef.current, longitudeRef.current, (resp) => {
+                                    sharedAddUpdatePitstop(pitstopData, false, [], false, false, clearData);
+                                }, (error) => {
+                                    console.log(((error?.response) ? error.response : {}), error);
+                                    if (error?.data?.statusCode === 417) {
+                                        if (error.areaLock) { } else {
+                                            error?.data?.message && Toast.error(error?.data?.message);
+                                        }
+                                    }
+                                    else {
+                                        Toast.error('An Error Occurred!');
+                                    }
+                                })
                             }}
                             disabled={validationCheck()}
                             style={[styles.locButton, { height: 60, marginVertical: 10 }]}
                             textStyle={[styles.btnText, { fontSize: 16 }]}
                             fontFamily="PoppinsRegular"
                         />
-                    </>
-                </ScrollView>
-
-            </Transitioning.View>
+                    </View>
+                </Transitioning.View>
+            </Animated.View>
         </SafeAreaView >
     );
 }

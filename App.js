@@ -1,5 +1,10 @@
+import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
 import React, { useEffect } from 'react';
-import { StatusBar, useColorScheme, LogBox, StyleSheet, Platform } from 'react-native';
+import { LogBox, Platform, StatusBar, StyleSheet, useColorScheme } from 'react-native';
+import CodePush from "react-native-code-push"; //for codepush
+import Geolocation from 'react-native-geolocation-service';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
@@ -12,47 +17,44 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import RNSplashScreen from './NativeModules/RNSplashScreen';
-import { NavigationContainer, DefaultTheme, DarkTheme } from "@react-navigation/native";
-import RootStack from "./src/navigations";
-import AppTheme from './src/res/theme';
-import useNetInfo from './src/hooks/useNetInfo';
-import GV from './src/utils/GV';
-import { _NavgationRef } from './src/navigations/NavigationService';
-import View from './src/components/atoms/View';
-import Toast from 'react-native-toast-message';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import Modal from './src/components/atoms/Modal';
-import Geolocation from 'react-native-geolocation-service';
-
-import CodePush from "react-native-code-push"; //for codepush
-import { env } from './src/utils/configs';
-import Robot from './src/components/organisms/Robot';
 import { useSelector } from 'react-redux';
-import { sharedGetEnumsApi, sharedGetFilters, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser, sharedSendFCMTokenToServer } from './src/helpers/SharedActions';
-import PistopListing from './src/screens/PitstopListing';
-import Filter from './src/components/atoms/Filter';
+import RNSplashScreen from './NativeModules/RNSplashScreen';
 import BottomAllignedModal from './src/components/atoms/BottomAllignedModal';
-import Maps from './src/components/atoms/GoogleMaps/Maps';
-import Map from './src/screens/Map';
+import View from './src/components/atoms/View';
+import Robot from './src/components/organisms/Robot';
+import { sharedGetEnumsApi, sharedGetFilters, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser, sharedSendFCMTokenToServer } from './src/helpers/SharedActions';
+import useNetInfo from './src/hooks/useNetInfo';
+import RootStack from "./src/navigations";
+import { _NavgationRef } from './src/navigations/NavigationService';
+import Modal from './src/components/atoms/Modal';
+import AppTheme from './src/res/theme';
 import AddAddress from './src/screens/AddAddress';
-import CheckOut from './src/screens/CheckOut';
-import { fcmService } from './src/utils/FCMServices';
-import { localNotificationService } from './src/utils/LocalNotificationServices';
-import actions from './src/redux/actions';
+import Maps from './src/components/atoms/GoogleMaps/Maps';
 import { postRequest } from './src/manager/ApiManager';
+import { fcmService } from './src/utils/FCMServices';
+import actions from './src/redux/actions';
+import { localNotificationService } from './src/utils/LocalNotificationServices';
+import CheckOut from './src/screens/CheckOut';
+import Map from './src/screens/Map';
+import { env } from './src/utils/configs';
+import GV from './src/utils/GV';
+
+
+// #region :: VECTOR ICON LOAD START's FROM HERE 
 AntDesign.loadFont();
 Entypo.loadFont();
 EvilIcons.loadFont();
 Feather.loadFont();
 FontAwesome.loadFont();
-FontAwesome5.loadFont();
 Fontisto.loadFont();
 Ionicons.loadFont();
 MaterialCommunityIcons.loadFont();
 MaterialIcons.loadFont();
 Foundation.loadFont();
 SimpleLineIcons.loadFont();
+
+// #endregion :: VECTOR ICON LOAD END's FROM HERE 
+
 const CODE_PUSH_OPTIONS = {
     // `deploymentKey` should be dynamic according to environment like QA, STAGING, PRODUCTION before publish to staging and master
     //Currently QA Environment setup done 

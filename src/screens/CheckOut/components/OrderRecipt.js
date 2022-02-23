@@ -22,12 +22,12 @@ const TOPSPACING = 10
 export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData = [] }) => {
     const [showDetails, setShowDetails] = useState(false)
     const pitStops = cartReducer.pitstops || []
-    const discount = cartReducer.discount
+    const discount = cartReducer.discount || 0
     const serviceCharges = cartReducer.serviceCharges
-    const gst = cartReducer.gst
-    const estimatedTotal = cartReducer.total;
+    const gst = cartReducer.gst || 0
+    const estimatedTotal = cartReducer.total || 0;
     const st = cartReducer.st || 0;
-
+    console.log("cartReducer", cartReducer);
     const onShowDetails = () => {
         setShowDetails(!showDetails)
     }
@@ -41,7 +41,7 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                         let itemPrice = item.itemPrice
                         let itemQuantity = item.quantity || "xl"
                         let itemSize = "1"
-                        return <View style={{ flex: 1, flexDirection: 'row', paddingVertical: 3 }}>
+                        return <View style={{ flex: 1, flexDirection: 'row', paddingVertical: 3 }} key={i}>
                             <View style={{ flexDirection: 'row', flex: 1, marginHorizontal: 20 }}>
                                 <Text style={checkOutStyles.reciptSubDetailspitStopItemName} numberOfLines={1} fontFamily={subDetailListTxtFontFamily}>{`${pitStopItemName}`}</Text>
                                 {/* <Text style={{ color: subDetailListTxtColor, fontSize: subDetailListTxtFontSize }} numberOfLines={1} fontFamily={subDetailListTxtFontFamily}>{` -${itemSize}`}</Text>
@@ -68,14 +68,14 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                     <View style={checkOutStyles.gstPrimaryContainer}>
                         <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular'>GST</Text>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
-                            <Text style={checkOutStyles.gstCommonPriceTxtStyle} fontFamily='PoppinsRegular'>{`${gst}`}</Text>
+                            <Text style={checkOutStyles.gstCommonPriceTxtStyle} fontFamily='PoppinsRegular'>{`${renderPrice(gst, '')}`}</Text>
                         </View>
                     </View>
                     <View style={checkOutStyles.gstPrimaryContainer}>
                         <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular' >Service Charges</Text>
-                        <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular'>{`(incl S.T ${st})`}</Text>
+                        <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular'>{`(incl S.T ${renderPrice(st, '')})`}</Text>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
-                            <Text style={checkOutStyles.gstCommonPriceTxtStyle} fontFamily='PoppinsRegular'>{`${serviceCharges}`}</Text>
+                            <Text style={checkOutStyles.gstCommonPriceTxtStyle} fontFamily='PoppinsRegular'>{`${renderPrice(serviceCharges)}`}</Text>
                         </View>
                     </View>
 
@@ -87,7 +87,7 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                     <View style={{ flexDirection: "row", flex: 1 }}>
                         <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular'>Discount</Text>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
-                            <Text style={checkOutStyles.gstCommonPriceTxtStyle} fontFamily='PoppinsRegular'>{`-${discount}`}</Text>
+                            {discount ? <Text style={checkOutStyles.gstCommonPriceTxtStyle} fontFamily='PoppinsRegular'>{`-${discount}`}</Text> : null}
                         </View>
                     </View>
                 </View>
@@ -137,9 +137,9 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                             let pitstopName = x.pitstopName
                             let individualPitstopTotal = x.individualPitstopTotal;
                             let checkOutItemsListVM = x.checkOutItemsListVM
-                            return <View style={{ flex: 1 }}>
+                            return <View style={{ flex: 1 }} key={i}>
                                 <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, paddingVertical: i === 0 ? 0 : 3, }}>
-                                    <View style={{ width: 10, height: 10, borderRadius: 10, backgroundColor: dotColor(x.pitstopType).primary, }} />
+                                    <View style={{ width: 10, height: 10, borderRadius: 10, backgroundColor: dotColor(x.pitstopType)?.primary, }} />
                                     <Text style={checkOutStyles.reciptMainDetailsPitstopNo} fontFamily='PoppinsMedium'>{`Pit Stop 0${pitStopNumber}-`}</Text>
                                     <Text style={checkOutStyles.reciptMainDetailsPitstopName} fontFamily='PoppinsMedium' numberOfLines={1}>{String(pitstopName).substring(0, 25)}</Text>
                                     {!showDetails &&

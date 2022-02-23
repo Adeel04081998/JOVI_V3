@@ -111,7 +111,6 @@ export default ({ navigation, route }) => {
             }
         });
 
-        console.log('REPLACED_ARRAY ', pitstopDataArr[0].data.cancelledData);
 
         updateQuery({
             data: {
@@ -172,7 +171,6 @@ export default ({ navigation, route }) => {
                     </View>
                 }}
                 renderItem={(item, index) => {
-                    console.log('item ', item);
                     if (!item.hasError) return null;
 
                     return (
@@ -210,7 +208,6 @@ export default ({ navigation, route }) => {
 
                                     <View style={styles.greyCardContainer}>
                                         {item.data.outOfStockData.map((childItem, childIndex) => {
-                                            console.log(' outOfStockData ', childItem);
                                             return (
                                                 <CardText
                                                     key={childIndex}
@@ -230,7 +227,6 @@ export default ({ navigation, route }) => {
 
                                     <View style={styles.greyCardContainer}>
                                         {item.data.replacedData.map((childItem, childIndex) => {
-                                            console.log(' replacedData ', childItem);
                                             return (
                                                 <CardText
                                                     key={childIndex}

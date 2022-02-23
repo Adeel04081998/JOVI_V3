@@ -5,6 +5,7 @@ import AnimatedView from "../../../components/atoms/AnimatedView";
 import Text from "../../../components/atoms/Text";
 import TouchableOpacity from "../../../components/atoms/TouchableOpacity";
 import View from "../../../components/atoms/View";
+import { renderPrice } from "../../../helpers/SharedActions";
 
 export default ({ data = [], selectedOptions = [], onPressCb, productDetailsStyles }) => {
 
@@ -39,7 +40,7 @@ export default ({ data = [], selectedOptions = [], onPressCb, productDetailsStyl
                             </View>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1 }}>
                                 <Text style={{ color: '#212121', fontSize: 14 }} fontFamily="PoppinsRegular">{`${attributeName}`}</Text>
-                                <Text style={{ color: '#212121', fontSize: 14 }} fontFamily="PoppinsRegular">{`${attributeOptionPrice}`}</Text>
+                                {attributeOptionPrice ? <Text style={{ color: '#212121', fontSize: 14 }} fontFamily="PoppinsRegular">{`${renderPrice(attributeOptionPrice)}`}</Text> : null}
                             </View>
                         </TouchableOpacity>
                     })
@@ -60,12 +61,12 @@ export default ({ data = [], selectedOptions = [], onPressCb, productDetailsStyl
                     const mainTitle = x.mainTittle ?? ""
                     const choosedQuantity = x.quantity ?? 0
                     const pitstopItemsOptionList = x.pitStopItemsOptionList ?? []
-                    return <AnimatedView style={{}} key={i}>
+                    return <AnimatedView style={{ marginVertical: 14, }} key={i}>
                         <Text style={productDetailsStyles.radioButtonSelectionTittle}
                             fontFamily="PoppinsRegular"
                         >{`${mainTitle}`}
                             {choosedQuantity > 0 &&
-                                <Text>{`(Select${choosedQuantity})`}</Text>
+                                <Text>{` (Select ${choosedQuantity})`}</Text>
 
                             }
                         </Text>
