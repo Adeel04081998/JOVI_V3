@@ -438,9 +438,11 @@ export default ({ navigation, route }) => {
     const recordingPress = async (closeSecond = false) => {
         if (!micPress) {
             askForAudioRecordPermission((allowRecording) => {
-                const fileName = "record-" + new Date().getTime() + ".mp4";
-                recorderRef.current = new Recorder(fileName).record();
-                setMicPress(!micPress);
+                if (allowRecording) {
+                    const fileName = "record-" + new Date().getTime() + ".mp4";
+                    recorderRef.current = new Recorder(fileName).record();
+                    setMicPress(!micPress);
+                }
             })
         } else {
 
@@ -910,7 +912,7 @@ export default ({ navigation, route }) => {
                         if (maxLengthRegex.test(newsliderValue)) {
                             setEstVal(newsliderValue);
                             setInitialEstVal(newsliderValue);
-                        } 
+                        }
 
                     } else {
                         setEstVal('');

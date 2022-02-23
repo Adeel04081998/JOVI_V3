@@ -63,7 +63,7 @@ const PitStopEstPrice = (props) => {
                     }}
                     tapToSeek
                     thumbImage={icon}
-                    thumbTintColor={Platform.OS === "ios" ? null : activeTheme.default}
+                    thumbTintColor={Platform.OS === "ios" ? null : colors.primary}
 
                     value={typeof props.estVal === "number" ? props.estVal : 0}
 
