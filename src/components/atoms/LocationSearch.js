@@ -10,47 +10,38 @@ import configs, { env } from "../../utils/configs";
 import GV from "../../utils/GV";
 import VectorIcon from "./VectorIcon";
 
-export default LocationSearch = ({ handleOnInputChange, locationVal, index, clearInputField, textToShow, onLocationSelected, /* handleAddPitstop, */ handleDeletePitstop, isLast, handleInputFocused, totalPitstops, onSetFavClicked, isFavourite, marginBottom = 5, listViewStyles, inputStyles }) => {
+export default LocationSearch = ({ handleOnInputChange, index, clearInputField, textToShow, onLocationSelected, /* handleAddPitstop, */ handleDeletePitstop, isLast, handleInputFocused, totalPitstops, onSetFavClicked, isFavourite, marginBottom = 5, listViewStyles, inputStyles}) => {
 
     const HEIGHT = constants.window_dimensions.height;
     const WIDTH = constants.window_dimensions.width;
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
-
+    const styles = locationSearchStyles(colors, WIDTH, HEIGHT)
+    const locTextRef = React.useRef(null);
+    const textValRef = React.useRef(null);
     const [state, setState] = useState({ searchFocused: false });
     const { searchFocused } = state;
 
     const [placesState, setPlacesState] = useState({ show: true, predefinedPlaces: [] });
     const { show, predefinedPlaces } = placesState;
 
-
     useEffect(() => {
-        const loadPredefinedPlaces = async () => {
-            // if (true) {
-            //     // const predefinedPlaces = await AsyncStorage.getItem("customerOrder_predefinedPlaces");
-            //     if (predefinedPlaces) {
-            //         setPlacesState({ show: true, predefinedPlaces: JSON.parse(predefinedPlaces) });
-            //     }
-            //     else {
-            //         setPlacesState({ show: true, predefinedPlaces: [] });
-            //     }
-            // }
-        }
-        // loadPredefinedPlaces();
-    }, []);
+        locTextRef.current && locTextRef.current.setAddressText(textToShow);
+    });
+
+
     const clearField = () => {
-        clearInputField()
+        locTextRef.current && locTextRef.current.clear();
+        locTextRef.current && locTextRef.current.blur();
         handleInputFocused(null, true);
+        if (clearInputField) {
+            clearInputField()
+        }
     }
-    const STRING_VALUE = String(locationVal).length
+
     return (
         show &&
         <GooglePlacesAutocomplete
-            {
-            ...STRING_VALUE ? {} : {
-                currentLocationLabel: "Nearby Locations...",
-                currentLocation: true
-            }
-            }
+            ref={locTextRef}
             disableScroll={false}
             placeholder={"Enter a pitstop location"}
             placeholderTextColor="rgba(0, 0, 0, 0.5)"
@@ -66,8 +57,8 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
             }}
             predefinedPlaces={predefinedPlaces.map((place, i) => ({ ...place, description: (place.description + Array(i).join(" ")) }))}
             predefinedPlacesAlwaysVisible={false}
-            // currentLocation={false}
-            // currentLocationLabel={undefined}
+            currentLocation={true}
+            currentLocationLabel={"Nearby Locations..."}
             nearbyPlacesAPI="GooglePlacesSearch"
             GooglePlacesSearchQuery={{
                 rankby: "distance", // "prominence" | "distance"
@@ -105,8 +96,7 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
             }}
             renderRightButton={
                 () => {
-                    if (STRING_VALUE) {
-
+                    if (locTextRef?.current?.isFocused() && locTextRef?.current?.getAddressText().length) {
                         return (
                             <View>
                                 <TouchableOpacity style={styles.iconStyleRight} onPress={clearField}>
@@ -133,7 +123,10 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
                     handleInputFocused(index, false);
                 },
                 onChangeText: (value) => {
+                    textValRef.current = value
+                    locTextRef?.current?.setAddressText(value)
                     handleOnInputChange(value);
+
                 },
                 onBlur: () => {
                     handleInputFocused(index, true);
@@ -222,7 +215,7 @@ export default LocationSearch = ({ handleOnInputChange, locationVal, index, clea
 }
 
 
-const styles = StyleSheet.create({
+const locationSearchStyles = (color, width, height) => StyleSheet.create({
 
     iconStyleRight: {
         position: "absolute",

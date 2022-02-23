@@ -10,7 +10,7 @@ export default (colors = initColors, width, height) => StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        // backgroundColor: '#fff',
         // justifyContent: 'center',
         flexGrow: 1,
     },
@@ -168,7 +168,7 @@ export default (colors = initColors, width, height) => StyleSheet.create({
         paddingVertical: SPACING_VERTICAL,
         borderWidth: 1,
         borderColor: '#BBBBBB',
-        width: width - 40,
+        width: width - 70,
         overflow:'hidden'
     },
     textAlignCenter: {
@@ -227,9 +227,10 @@ export default (colors = initColors, width, height) => StyleSheet.create({
         justifyContent: 'space-between',
         // paddingHorizontal: 10,
         alignItems: 'center',
-        width: width - 40,
+        width: width - 70,
         alignSelf: 'center',
-        marginVertical: 10
+        marginVertical: 10,
+        backgroundColor: colors.white
     },
 
     //end of buy for me styles

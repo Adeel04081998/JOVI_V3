@@ -86,6 +86,14 @@ const setCategoriesTagsAction = (payload = {}) => {
         payload: { ...payload }
     }
 }
+
+
+const setUserPrevOrdersAction = (payload = {}) => {
+    return {
+        type: TYPES.SET_PREV_ORDERS,
+        payload: { ...payload }
+    }
+}
 //...Rest of the actions would be here
 
 
@@ -104,5 +112,6 @@ export default {
     setModalAction,
     setUserFinalDestAction,
     closeModalAction,
+    setUserPrevOrdersAction
     //...
 }

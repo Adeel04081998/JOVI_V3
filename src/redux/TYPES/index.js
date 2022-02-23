@@ -22,5 +22,8 @@ export default {
     "USER_FINAL_DESTINATION": "user_final_destination",
 
     // FILTERED_CATEGORIES_TAGS
-    "SET_CATEGORIES_TAGS": "get_filtered_categories"
+    "SET_CATEGORIES_TAGS": "get_filtered_categories",
+
+    // PREVIOUS ORDERS
+    "SET_PREV_ORDERS": "set_prev_orders"
 }

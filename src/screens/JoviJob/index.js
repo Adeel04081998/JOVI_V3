@@ -30,6 +30,9 @@ import AudioplayerMultiple from '../../components/atoms/AudioplayerMultiple';
 import Image from '../../components/atoms/Image';
 import { confirmServiceAvailabilityForLocation, sharedAddUpdatePitstop, sharedConfirmationAlert } from '../../helpers/SharedActions';
 import Toast from '../../components/atoms/Toast';
+import { useDispatch, useSelector } from 'react-redux';
+import actions from '../../redux/actions';
+import FontFamily from '../../res/FontFamily';
 
 export const PITSTOP_CARD_TYPES = Object.freeze({ "location": 0, "description": 1, "estimated-time": 2, "buy-for-me": 3, "estimated-price": 4, });
 
@@ -57,8 +60,13 @@ export default ({ navigation, route }) => {
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
     // colors.primary will recieve value from colors.js file's colors
     const styles = joviJobStyles(colors, WIDTH, HEIGHT);
+    const dispatch = useDispatch()
+    const { prevOrders } = useSelector(state => state.userReducer)
+    console.log('prevOrders', prevOrders);
     const { stack_actions, common_actions, drawer_actions } = NavigationService.NavigationActions
     const { APP_STACKS } = ROUTES;
+    const homeFadeIn = React.useRef(new Animated.Value(0)).current;
+
     const initCartData = [
         {
             "idx": 1,
@@ -140,7 +148,7 @@ export default ({ navigation, route }) => {
     const [nameval, setNameVal] = useState('')
     const [cityVal, setCityVal] = useState('')
     const [placeName, setPlaceName] = useState('')
-    const [locationVal, setLocationVal] = useState("")
+    const [locationVal, setLocationVal] = useState(__DEV__ ? "Islamabad" : "")
     const [scrollEnabled, setScrollEnabled] = useState(true)
     const latitudeRef = React.useRef(null);
     const longitudeRef = React.useRef(null);
@@ -153,7 +161,7 @@ export default ({ navigation, route }) => {
 
     /******** Start of Pitstop Details variables *******/
 
-    const [description, setDescription] = useState('')
+    const [description, setDescription] = useState(__DEV__ ? 'lkjsjjsjsjs' : '')
     const [imageData, updateImagesData] = useState([]);
 
     const [, updateStateaaa] = React.useState();
@@ -177,10 +185,10 @@ export default ({ navigation, route }) => {
 
     /******** Start of other Pitstop variables *******/
 
-    const [estVal, setEstVal] = useState('')
+    const [estVal, setEstVal] = useState(__DEV__ ? '1500' : '')
     const [switchVal, setSwitch] = useState(false);
     const [estTime, setEstTime] = React.useState({
-        text: "Estimated Time",
+        text: __DEV__ ? "15 mins" : "Estimated Time",
         value: __DEV__ ? 1 : 0
     });
     const [collapsed, setCollapsed] = React.useState(true);
@@ -237,7 +245,16 @@ export default ({ navigation, route }) => {
                 setEstTime(pitstopItemObj.estTime)
             }
         }
-    }, [route])  
+    }, [route])
+
+    useEffect(() => {
+        Animated.timing(homeFadeIn, {
+            toValue: 1,
+            duration: 700,
+            useNativeDriver: true,
+            easing: Easing.ease
+        }).start();
+    }, [])
 
 
     const locationHandler = async () => {
@@ -307,7 +324,10 @@ export default ({ navigation, route }) => {
     }
     const cb = (resp) => {
         console.log('resp ==>>', resp);
-        setLocationVal(resp)
+        setLocationVal(resp.title)
+        toggleCardData(PITSTOP_CARD_TYPES["description"], colors.primary)
+        latitudeRef.current = resp.latitude
+        longitudeRef.current = resp.longitude
         forceUpdate();
     }
     /************   End of functions of Pitstop location Component Funcs    **************/
@@ -569,13 +589,6 @@ export default ({ navigation, route }) => {
                                 ...object,
                                 isOpened: !object.isOpened,
                                 headerColor: isDisabled ? colors.lightGreyBorder : colors.primary,
-                                showSubCard: (
-                                    idx === 5 ?
-                                        switchVal ?
-                                            true :
-                                            false :
-                                        true
-                                )
                             }
                         }
                         else return object;
@@ -623,9 +636,9 @@ export default ({ navigation, route }) => {
         return (
             <PitStopLocation
                 nameVal={nameval}
-                locationVal={locationVal}
+                // locationVal={locationVal}
                 isOpened={isOpened}
-                onChangeName={(text) => { setNameVal(text) }}
+                onChangeName={(text) => { setNameVal(text.trim()) }}
                 onLocationPress={onLocationPress}
                 handleLocationSelected={handleLocationSelected}
                 onLocationSearchInputChange={onLocationSearchInputChange}
@@ -635,6 +648,7 @@ export default ({ navigation, route }) => {
                     setScrollEnabled(isFocus)
                 }}
                 handleSetFavClicked={handleSetFavClicked}
+                textToShow={locationVal}
             />
         )
     }
@@ -691,7 +705,7 @@ export default ({ navigation, route }) => {
                         text="Browse"
                         textStyle={styles.btnText}
                         fontFamily="PoppinsRegular"
-                        style={styles.locButton} />
+                        style={{ ...styles.locButton, width: WIDTH - 70 }} />
                     <ScrollView horizontal={true} style={styles.galleryIcon} >
                         {
                             // (imageData.length > 0 ? imageData : new Array(1).fill({ index: 1 }))
@@ -854,7 +868,6 @@ export default ({ navigation, route }) => {
 
     const renderPitStopBuy = (idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled) => {
         const isDisabled = disabledHandler(index, disabled);
-
         return (
             <PitStopBuy
                 switchVal={switchVal}
@@ -898,31 +911,57 @@ export default ({ navigation, route }) => {
 
 
     const validationCheck = () => {
-        if (locationVal !== '' && (description !== '' || Object.keys(voiceNote).length || imageData.length) && (switchVal ? parseInt(estVal) > 0 : true)) return false
+        if (locationVal !== '' && (description !== '' || Object.keys(voiceNote).length || imageData.length) && (estTime.text.includes('mins') || estTime.text.includes('hour')) && (switchVal ? parseInt(estVal) > 0 : true)) return false
         else return true
     }
     return (
         <SafeAreaView style={{ flex: 1 }} >
             <CustomHeader leftIconColor={colors.primary} rightIconColor={colors.primary} leftIconSize={30} onLeftIconPress={() => common_actions.goBack()} />
-            <Transitioning.View
-                ref={ref}
-                transition={transition}
-                style={styles.container}>
-                <ScrollView nestedScrollEnabled={true} scrollEnabled={scrollEnabled} style={{ backgroundColor: 'white' }} contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="always" >
-                    {cardData.map(({ idx, title, desc, svg, isOpened, key, headerColor, showSubCard, disabled }, index) => {
-                        return (
-                            showSubCard &&
-                            <View
-                                key={`card mapping ${idx}`}
-                                style={[{ ...styles.cardView, zIndex: idx === 3 ? 99 : 9 }]}>
-                                {renderHeader(idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled)}
-                                {renderBody(idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled)}
-                            </View >
+            <Animated.View style={{
+                flex: 1,
+                opacity: homeFadeIn.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1] }),
+                transform: [{ scale: homeFadeIn.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] }) }]
+            }}>
+                <Transitioning.View
+                    ref={ref}
+                    transition={transition}
+                    style={styles.container}>
+                    <ScrollView nestedScrollEnabled={true} scrollEnabled={scrollEnabled} style={{}} contentContainerStyle={{ flexGrow: 1, }} keyboardShouldPersistTaps="handled">
+                        {prevOrders && prevOrders.length !== 0 &&
+                            <>
+                                <Text style={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 16, color: colors.greyish_black, paddingLeft: 15, paddingTop: 5 }} >Previous Orders</Text>
+                                <ScrollView horizontal contentContainerStyle={{ marginTop: 5 }} >
+                                    {prevOrders.map((item, index) => {
+                                        return (
+                                            <TouchableOpacity key={`prevOrders ${index}`} style={{ backgroundColor: colors.white, borderRadius: 10, borderWidth: 0.5, borderColor: colors.primary, marginLeft: 15, width: WIDTH * 0.4, height: HEIGHT * 0.05, justifyContent: 'center', paddingLeft: 10 }} >
+                                                <Text numberOfLines={1} style={{ fontSize: 12, color: colors.black, fontFamily: FontFamily.Poppins.Regular, width: WIDTH * 0.36 }} >{`${item.pitstopData.title}`}</Text>
+                                                <Text numberOfLines={1} style={{ fontSize: 8, fontFamily: FontFamily.Poppins.Regular, color: colors.black, opacity: 0.6, width: WIDTH * 0.36 }} >{item.pitstopData.date || `29-11-2021 Tuesday`}</Text>
+                                            </TouchableOpacity>
+                                        )
+                                    })}
+                                </ScrollView>
+                            </>
+                        }
+                        <View style={{
+                            margin: 15, borderRadius: 10, backgroundColor: colors.white,
+                            marginBottom: !collapsed ? 50 : 0
+                        }} >
+                            {cardData.map(({ idx, title, desc, svg, isOpened, key, headerColor, showSubCard, disabled }, index) => {
+                                return (
+                                    showSubCard &&
+                                    <View
+                                        key={`card mapping ${idx}`}
+                                        style={[{ ...styles.cardView, zIndex: idx === 3 ? 99 : 9 }]}>
+                                        {renderHeader(idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled)}
+                                        {renderBody(idx, title, desc, svg, isOpened, key, headerColor, showSubCard, index, disabled)}
+                                    </View >
 
-                        );
-                    })
-                    }
-                    <>
+                                );
+                            })
+                            }
+                        </View>
+                    </ScrollView>
+                    <View style={{ zIndex: -999 }} >
                         <Button
                             text="Save and Continue"
                             onPress={() => {
@@ -936,11 +975,12 @@ export default ({ navigation, route }) => {
                                     imageData,
                                     voiceNote,
                                     estTime,
-                                    estimatePrice: parseInt(estVal)
+                                    estimatePrice: parseInt(estVal),
+                                    latitude: latitudeRef.current,
+                                    longitude: longitudeRef.current
                                 }
                                 confirmServiceAvailabilityForLocation(postRequest, latitudeRef.current, longitudeRef.current, (resp) => {
                                     sharedAddUpdatePitstop(pitstopData, false, [], false, false, clearData);
-
                                 }, (error) => {
                                     console.log(((error?.response) ? error.response : {}), error);
                                     if (error?.data?.statusCode === 417) {
@@ -958,10 +998,9 @@ export default ({ navigation, route }) => {
                             textStyle={[styles.btnText, { fontSize: 16 }]}
                             fontFamily="PoppinsRegular"
                         />
-                    </>
-                </ScrollView>
-
-            </Transitioning.View>
+                    </View>
+                </Transitioning.View>
+            </Animated.View>
         </SafeAreaView >
     );
 }

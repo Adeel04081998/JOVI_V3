@@ -14,7 +14,8 @@ const INIT_CART_DATA = {
   gst: 0,
   estimateTime: 0
 };
-const userReducer = (state = {}, action) => {
+
+const userReducer = (state = { prevOrders: [] }, action) => {
   switch (action.type) {
     case TYPES.SET_USER_ACTION:
       return { ...state, ...action.payload };
@@ -24,6 +25,10 @@ const userReducer = (state = {}, action) => {
       return {
         ...state, ...action.payload
       };
+      case TYPES.SET_PREV_ORDERS:
+        return {
+          ...state, prevOrders : [...state.prevOrders, action.payload]
+        };
     default:
       return { ...state };
   }
@@ -42,12 +47,12 @@ const cartReducer = (state = INIT_CART_DATA, action) => {
       return { ...state };
   }
 };
-const modalReducer = (state = { visible: false,closeModal:false, ModalContent: null }, action) => {
+const modalReducer = (state = { visible: false, closeModal: false, ModalContent: null }, action) => {
   switch (action.type) {
     case TYPES.SET_MODAL:
       return { ...state, ...action.payload, closeModal: false };
-    case TYPES.CLOSE_MODAL:{
-        return {...state, closeModal: true}
+    case TYPES.CLOSE_MODAL: {
+      return { ...state, closeModal: true }
     }
     default:
       return { ...state };
@@ -98,6 +103,7 @@ const categoriesTagsReducer = (state = {}, action) => {
       return { ...state };
   }
 }
+
 //...Rest of the reducers would be here
 
 export default {
@@ -107,6 +113,6 @@ export default {
   messagesReducer,
   promotionsReducer,
   categoriesTagsReducer,
-  modalReducer
+  modalReducer,
   //...
 }

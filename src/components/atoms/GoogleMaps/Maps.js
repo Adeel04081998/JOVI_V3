@@ -32,7 +32,7 @@ export default (props) => {
   const ICON_BORDER = {
     color: "#E5E2F5",
     width: 0.5,
-    size: 38,
+    size: 40,
     borderRadius: 6,
   };
 
@@ -144,9 +144,9 @@ export default (props) => {
             // marginLeft: 10,
           }}>
           <VectorIcon
-            name={"keyboard-backspace"}
-            type={"MaterialIcons"}
-            color={colors.black}
+            name={"chevron-back"}
+            type={"Ionicons"}
+            color={colors.primary}
             size={30} />
         </TouchableOpacity>
         <LocationSearch
@@ -158,17 +158,15 @@ export default (props) => {
               longitude: lng
             }, 300);
             setPlaceName(data.name ? data.name : data.description)
-
           }}
           handleOnInputChange={(text) => {
-            setPlaceName(text)
           }}
           onNearbyLocationPress={() => { }}
           handleInputFocused={(index, isFocus) => { }}
           onSetFavClicked={() => { }}
+          textToShow={placeName}
           isFavourite={''}
           marginBottom={0}
-          locationVal={placeName}
           clearInputField={() => { setPlaceName('') }}
         />
       </View>
@@ -271,7 +269,6 @@ export default (props) => {
           disabledRef.current = true
           confirmServiceAvailabilityForLocation(postRequest, latitude, longitude,
             async (resp) => {
-              console.log('resp', resp);
               disabledRef.current = false
               let adrInfo = await addressInfo(latitude, longitude)
               placeNameRef.current = adrInfo.address
@@ -290,10 +287,12 @@ export default (props) => {
               console.log(((error?.response) ? error.response : {}), error);
               if (error?.data?.statusCode === 417) {
                 if (error.areaLock) { } else {
+                  disabledRef.current = false
                   error?.data?.message && Toast.error(error?.data?.message);
                 }
               }
               else {
+                disabledRef.current = false
                 Toast.error('An Error Occurred!');
               }
             })
