@@ -117,7 +117,7 @@ const RestaurantProductMenuHeader = (props: Props) => {
 
                 <Text style={styles.detailTypeText}>{`${propItem.description}`}</Text>
 
-                <View style={{ marginVertical: 12, }} />
+                <View style={{ marginVertical: 6, }} />
 
                 {_renderBottomDetail("Distance", propItem?.distance ?? defaultProps.item.distance, "location-pin", "Entypo")}
 
@@ -187,7 +187,7 @@ const stylesFunc = (colors: typeof initColors) => StyleSheet.create({
     },
     image: {
         width: WINDOW_WIDTH,
-        height: WINDOW_HEIGHT * 0.35,
+        height: WINDOW_HEIGHT * 0.3,
     },
     headerContainer: {
         backgroundColor: "transparent",

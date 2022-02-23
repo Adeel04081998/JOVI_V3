@@ -76,10 +76,17 @@ const ProductQuantityCard = (props: Props) => {
             borderRadius: ITEM_SIZE * 0.25,
             justifyContent: state.quantity > 0 && !props.outOfStock ? "space-between" : "center",
             paddingHorizontal: state.quantity > 0 || props.outOfStock ? 8 : 0,
-            ...styles.primaryContainer
+            ...styles.primaryContainer,
+            ...props.outOfStock && {
+                left: ITEM_SIZE * 0.1,
+                right: ITEM_SIZE * 0.1,
+            },
+
         }}>
             {props.outOfStock ?
+
                 <Text style={styles.text}>{props.outOfStockText}</Text>
+
                 :
                 <>
                     {(state.quantity > 0) &&
@@ -122,7 +129,7 @@ export const stylesFunc = (colors: typeof initColors, ITEM_SIZE: number = defaul
     text: {
         fontSize: 12,
         fontFamily: FontFamily.Poppins.Medium,
-        color: "#272727",
+        color: colors.primary,// "#272727",
 
     },
 })

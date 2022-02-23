@@ -27,7 +27,8 @@ export default {
     "SERVICE_CHARGES": "api/Order/EstimateServiceChargeV2", // Cart Screen
     "AddorUpdateAddress": "/api/Menu/Address/AddOrUpdate", //AddAdresses
     //Arearestriction
-    "AreaRestriction": "api/Common/AreaRestriction/Pitstop"
+    "AreaRestriction": "api/Common/AreaRestriction/Pitstop",
+    "FirebaseTokenAddLog":"/api/Common/FireBase/AddLog",
 }
 
 
