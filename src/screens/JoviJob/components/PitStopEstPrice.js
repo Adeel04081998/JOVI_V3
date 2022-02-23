@@ -56,14 +56,8 @@ const PitStopEstPrice = (props) => {
             <View style={styles.estPriceContainer}>
 
                 <Slider
-                    style={{
-                        width: Platform.OS === "ios" ? constants.window_dimensions.width - 45 : constants.window_dimensions.width - 15,
-                        height: Platform.OS === "ios" ? 35 : 20,
-                        marginLeft: Platform.OS === "ios" ? 7 : -5,
-                    }}
                     tapToSeek
                     thumbImage={icon}
-                    thumbTintColor={Platform.OS === "ios" ? null : colors.primary}
 
                     value={typeof props.estVal === "number" ? props.estVal : 0}
 
