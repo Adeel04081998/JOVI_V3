@@ -57,8 +57,8 @@ export default (props) => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { onNavigateBack: (placeName) => props.finalDestFunc(placeName), index })
     }
 
-    const validate = () =>{
-        if(adrObjRef.current === null) return true
+    const validate = () => {
+        if (adrObjRef.current === null) return true
         else return false
     }
 
@@ -81,8 +81,8 @@ export default (props) => {
     }
     return (
         <View style={{ marginBottom: 10 }} >
-            <Text style={{  color: colors.black, fontSize: 18, paddingLeft:20, paddingTop:15 }} fontFamily="PoppinsMedium" >Can you confirm if this is your location?</Text>
-            <TouchableOpacity style={{ flexDirection: 'row', padding: 10,paddingLeft:15, alignItems: 'center' }} onPress={() => onTitlePress(0)}>
+            <Text style={{ color: colors.black, fontSize: 18, paddingLeft: 20, paddingTop: 15 }} fontFamily="PoppinsMedium" >Can you confirm if this is your location?</Text>
+            <TouchableOpacity style={{ flexDirection: 'row', padding: 10, paddingLeft: 15, alignItems: 'center' }} onPress={() => onTitlePress(0)}>
                 <VectorIcon name="map-marker" type="FontAwesome" size={20} color={colors.primary} />
                 <View style={{ flexDirection: 'column', marginLeft: 10 }}>
                     <Text fontFamily={"PoppinsMedium"} style={{ color: colors.primary, fontSize: 16 }}>{'Use my current location'}</Text>
@@ -99,14 +99,14 @@ export default (props) => {
                 </View>
             </TouchableOpacity>
             <Button text="Confirm Button"
-             onPress={onConfirmAddress}
-             disabled={validate()}
-              textStyle={{
-                fontSize: 16,
-                fontFamily: FontFamily.Poppins.Regular,
-                color: colors.white
-            }} 
-            style={{ width: WIDTH * 0.95, height: HEIGHT / 15, alignSelf: 'center', marginVertical: 20 }} />
+                onPress={onConfirmAddress}
+                disabled={validate()}
+                textStyle={{
+                    fontSize: 16,
+                    fontFamily: FontFamily.Poppins.Regular,
+                    color: colors.white
+                }}
+                style={{ width: WIDTH * 0.95, height: HEIGHT / 15, alignSelf: 'center', marginVertical: 20 }} />
         </View>
     )
 }
