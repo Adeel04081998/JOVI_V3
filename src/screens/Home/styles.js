@@ -31,7 +31,7 @@ export default {
             greetingHeaderText: {
                 fontSize: 16,
                 color: '#272727',
-                fontWeight:'700',
+                fontWeight:'normal',
 
             },
             greetingBodyText: {
