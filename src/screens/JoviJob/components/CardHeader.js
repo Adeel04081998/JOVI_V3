@@ -40,6 +40,7 @@ export default React.memo((props) => {
         </TouchableOpacity>
     );
 }, ((n, p) => {
+    return n===p
     return (n.isOpened === p.isOpened && n.disabled === p.disabled && n.headerBackgroundColor === p.headerBackgroundColor)
 }))
 

@@ -143,7 +143,7 @@ export default ({ navigation, route }) => {
     const [nameval, setNameVal] = useState('')
     const [cityVal, setCityVal] = useState('')
     const [placeName, setPlaceName] = useState('')
-    const [locationVal, setLocationVal] = useState("")
+    const [locationVal, setLocationVal] = useState('')
     const [scrollEnabled, setScrollEnabled] = useState(true)
     const latitudeRef = React.useRef(null);
     const longitudeRef = React.useRef(null);
@@ -465,13 +465,18 @@ export default ({ navigation, route }) => {
         }
     };//end of deleteRecording
 
+    React.useEffect(()=>{
+        console.log('micPressmicPressmicPressmicPress' ,micPress);
+    },[micPress])
     const recordingPress = async (closeSecond = false) => {
         if (!micPress) {
             askForAudioRecordPermission((allowRecording) => {
+                console.log('akllow aaaaa ',allowRecording);
                 if (allowRecording) {
                     const fileName = "record-" + new Date().getTime() + ".mp4";
                     recorderRef.current = new Recorder(fileName).record();
-                    setMicPress(!micPress);
+                    setMicPress(true);
+                    
                 }
             })
         } else {
@@ -504,7 +509,7 @@ export default ({ navigation, route }) => {
 
                                     pitStopVoiceNote(obj, false);
                                     toggleCardData(PITSTOP_CARD_TYPES["estimated-time"]);
-
+                                    console.log('closeSecond   ',closeSecond);
                                     if (closeSecond) {
                                         updateCardOnHeaderPress(updateCardOnHeaderPressItem);
                                     }
@@ -631,6 +636,7 @@ export default ({ navigation, route }) => {
 
     const renderHeader = (idx, title, desc, svg, isOpened, key, headerColor, index, disabled) => {
         const isDisabled = disabledHandler(index, disabled);
+        
         return (
             <CardHeader
                 title={title}
@@ -648,13 +654,20 @@ export default ({ navigation, route }) => {
 
                     if (idx === 2 && isOpened) { //AHMED KH RHA KOI 2 ko change nh kry ga... ;-P
                         //WHEN DESCRIPTION TOGGLE  
+                        console.log('micPress ',micPress);
                         if (micPress) {
+                            console.log('if isOpened ==>>> micPress');
+
                             recordingPress(true);
                         } else {
+                            console.log('else isOpened ==>>> micPress');
+
                             setForceDeleted(true);
                             updateStateaaa();
                         }
+                        console.log('if isOpened');
                     } else {
+                        console.log('else ==>>>> isOpened');
                         updateCardOnHeaderPress(updateCardOnHeaderPressItem);
                     }
 
@@ -850,7 +863,7 @@ export default ({ navigation, route }) => {
 
                                 }}
                                     activeOpacity={1}
-                                    onPressIn={recordingPress}>
+                                    onPressIn={()=>{recordingPress(false)}}>
                                     {micPress ?
                                         <RNImage
                                             source={require('../../assets/gifs/Record.gif')}
@@ -1018,7 +1031,7 @@ export default ({ navigation, route }) => {
                                 idx === 5 ? (
                                     toggleEstPriceCard() === true &&
                                     renderMainUI(idx, title, desc, svg, isOpened, key, headerColor, disabled, index)
-                                    ):
+                                ) :
                                     renderMainUI(idx, title, desc, svg, isOpened, key, headerColor, disabled, index)
 
                             );
@@ -1026,42 +1039,42 @@ export default ({ navigation, route }) => {
                         }
                     </View>
                 </KeyboardAwareScrollView>
-                    <Button
-                        text="Save and Continue"
-                        onPress={() => {
-                            let pitstopData = {
-                                pitstopID: 0, // on update will get from params, 
-                                title: locationVal,
-                                description,
-                                pitstopName: 'Jovi Job',
-                                pitstopType: route.params.pitstopType,
-                                nameval,
-                                imageData,
-                                voiceNote,
-                                estTime,
-                                estimatePrice: parseInt(estVal),
-                                latitude: latitudeRef.current,
-                                longitude: longitudeRef.current
+                <Button
+                    text="Save and Continue"
+                    onPress={() => {
+                        let pitstopData = {
+                            pitstopID: 0, // on update will get from params, 
+                            title: locationVal,
+                            description,
+                            pitstopName: 'Jovi Job',
+                            pitstopType: route.params.pitstopType,
+                            nameval,
+                            imageData,
+                            voiceNote,
+                            estTime,
+                            estimatePrice: parseInt(estVal),
+                            latitude: latitudeRef.current,
+                            longitude: longitudeRef.current
+                        }
+                        confirmServiceAvailabilityForLocation(postRequest, latitudeRef.current, longitudeRef.current, (resp) => {
+                            sharedAddUpdatePitstop(pitstopData, false, [], false, false, clearData);
+                        }, (error) => {
+                            console.log(((error?.response) ? error.response : {}), error);
+                            if (error?.data?.statusCode === 417) {
+                                if (error.areaLock) { } else {
+                                    error?.data?.message && Toast.error(error?.data?.message);
+                                }
                             }
-                            confirmServiceAvailabilityForLocation(postRequest, latitudeRef.current, longitudeRef.current, (resp) => {
-                                sharedAddUpdatePitstop(pitstopData, false, [], false, false, clearData);
-                            }, (error) => {
-                                console.log(((error?.response) ? error.response : {}), error);
-                                if (error?.data?.statusCode === 417) {
-                                    if (error.areaLock) { } else {
-                                        error?.data?.message && Toast.error(error?.data?.message);
-                                    }
-                                }
-                                else {
-                                    Toast.error('An Error Occurred!');
-                                }
-                            })
-                        }}
-                        disabled={validationCheck()}
-                        style={[styles.locButton, { height: 60, marginVertical: 10 }]}
-                        textStyle={[styles.btnText, { fontSize: 16 }]}
-                        fontFamily="PoppinsRegular"
-                    />
+                            else {
+                                Toast.error('An Error Occurred!');
+                            }
+                        })
+                    }}
+                    disabled={validationCheck()}
+                    style={[styles.locButton, { height: 60, marginVertical: 10 }]}
+                    textStyle={[styles.btnText, { fontSize: 16 }]}
+                    fontFamily="PoppinsRegular"
+                />
             </Transitioning.View>
         </SafeAreaView >
     );
