@@ -24,7 +24,6 @@ export default (props) => {
         props.onToggleSwitch(bool)
     }
     const onPress = () => {
-        console.log('bsdk nomi');
         if (active) {
             Animated.timing(animatedValue, {
                 toValue: 4,

@@ -12,7 +12,7 @@ import GV from '../../../utils/GV';
 import joviJobStyles from '../styles';
 
 
-const PitStopEstPrice = (props) => {
+export default React.memo((props) => {
     const [icon, setIcon] = React.useState();
     const isSliderUse = React.useRef(true);
     const [, updateState] = React.useState();
@@ -105,8 +105,9 @@ const PitStopEstPrice = (props) => {
         //     }
         // </View>
     );
-}
-export default PitStopEstPrice;
+},((n,p)=>{
+    return n.isOpened === p.isOpened
+}))
 
 
 
