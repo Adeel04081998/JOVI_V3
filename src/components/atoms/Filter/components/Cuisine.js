@@ -9,7 +9,6 @@ export default ({ data = {}, filterType = "", filterTypeStyle, styles, colors, o
     let categoriesData = data.categoriesList ?? []
     const cuisineAnimation = React.useRef(new Animated.Value(0)).current;
     React.useLayoutEffect(() => {
-        console.log('Categories',categoriesData)
         if (categoriesData.length > 0) {
             setTimeout(() => {
                 Animated.timing(cuisineAnimation, {
@@ -32,8 +31,7 @@ export default ({ data = {}, filterType = "", filterTypeStyle, styles, colors, o
                         const isActive = activeCusine === x.categoryID;
                         let borderColor = isActive ? "#F3B8B4" : "#C1C1C1"
                         let color = isActive ? "#F94E41" : "black"
-                        return <TouchableOpacity style={{
-                            justifyContent: 'center', height: 25, paddingHorizontal: 5, borderWidth: 0.8, borderColor, borderRadius: 5,marginRight:10,marginBottom:10, alignItems: 'center', backgroundColor: '#FFFFFF',
+                        return <TouchableOpacity style={{justifyContent: 'center', height: 25, borderWidth: 0.8, borderColor, borderRadius: 5, marginRight: 10, marginBottom: 10, alignItems: 'center', backgroundColor: '#FFFFFF',
                             transform: [{
                                 scale: cuisineAnimation.interpolate({
                                     inputRange: [0, 1],
@@ -43,10 +41,10 @@ export default ({ data = {}, filterType = "", filterTypeStyle, styles, colors, o
                             }]
                         }}
                             key={i}
-                            onPress={() => { onPress(x,i) }}
+                            onPress={() => { onPress(x, i) }}
                         >
 
-                            <Text style={{ fontSize: 12, color, }} fontFamily='PoppinsMedium'>{x.categoryName}</Text>
+                            <Text style={{ fontSize: 12, color, textAlign: 'center', paddingHorizontal: 10 }} fontFamily='PoppinsMedium'>{x.categoryName}</Text>
                         </TouchableOpacity>
                     })
                 }

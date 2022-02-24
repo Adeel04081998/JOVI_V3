@@ -9,7 +9,11 @@ export default ({ messagesReducer, homeStyles, userReducer, colors }) => {
     else {
         const greetingMessage = greetingsList[0];
         // const REGEX = /[<<Name>>, , <<phoneNumber>>]/g
-        const REGEX = "<<Name>>"
+        const REGEX = "<<Name>>";
+        const greetingMessageSplitted = (greetingMessage.header ?? '').split(REGEX);
+        const beforeName = greetingMessageSplitted[0];
+        const afterName = greetingMessageSplitted[1];
+        const isNameExists = (greetingMessage.header ?? '').includes(REGEX);
         const greetingAnimation = React.useRef(new Animated.Value(0)).current;
         React.useLayoutEffect(() => {
             Animated.timing(greetingAnimation, {
@@ -33,16 +37,18 @@ export default ({ messagesReducer, homeStyles, userReducer, colors }) => {
                 },
                 { margin: 5 }
             ]} >
-            <Text style={[homeStyles.greetingHeaderText]} numberOfLines={1} fontFamily='PoppinsRegular' >
-                {`${String(greetingMessage.header.replace(REGEX, ""))}`}
-                <Text style={{ color: colors.BlueVoilet || "#6D51BB", alignSelf: 'center', fontSize: 25, }} numberOfLines={1} fontFamily='PoppinsRegular'>
-                    {userReducer["firstName"]}
-                </Text>
+            <Text style={[homeStyles.greetingHeaderText,]} numberOfLines={1} fontFamily='PoppinsRegular' >
+                {beforeName ? `${String(beforeName)}` : null}
+                {isNameExists && <Text style={{ color: colors.BlueVoilet || "#6D51BB", alignSelf: 'center', fontSize: 16, fontWeight: '700', }} numberOfLines={1} fontFamily='PoppinsRegular'>
+                    {`${userReducer["firstName"]}`}
+                </Text>}
+                {afterName ? `${String(afterName)}` : null}
             </Text>
-            <Text style={homeStyles.greetingBodyText} numberOfLines={2} fontFamily='PoppinsLight'>
+            <Text style={homeStyles.greetingBodyText} numberOfLines={2} fosntFamily='PoppinsLight'>
                 {`${String(greetingMessage.body.replace(REGEX, ""))}`}
             </Text>
         </AnimatedView>
     }
 
 }
+
