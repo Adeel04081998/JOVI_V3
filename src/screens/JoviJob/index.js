@@ -28,7 +28,7 @@ import { multipartPostRequest, postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import AudioplayerMultiple from '../../components/atoms/AudioplayerMultiple';
 import Image from '../../components/atoms/Image';
-import { sharedAddUpdatePitstop, sharedConfirmationAlert } from '../../helpers/SharedActions';
+import { sharedAddUpdatePitstop, sharedConfirmationAlert, uniqueKeyExtractor } from '../../helpers/SharedActions';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import Regex from '../../utils/Regex';
 import { useSelector } from 'react-redux';
@@ -730,7 +730,7 @@ export default ({ navigation, route }) => {
                             if (itemSize > 1) {
 
                                 return (
-                                    <View key={`item path ${item.path}`} style={[styles.galleryIcon, {
+                                    <View key={uniqueKeyExtractor()} style={[styles.galleryIcon, {
                                         borderRadius: 5,
                                         padding: 5,
                                         height: 50,
