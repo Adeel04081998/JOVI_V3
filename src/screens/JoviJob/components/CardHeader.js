@@ -11,13 +11,12 @@ import theme from '../../../res/theme';
 import GV from '../../../utils/GV';
 import TouchableOpacity from '../../../components/atoms/TouchableOpacity';
 
-const CardHeader = (props) => {
+export default React.memo((props) => {
     // colors.primary will recieve value from colors.js file's colors
     const WIDTH = constants.window_dimensions.width
     const HEIGHT = constants.window_dimensions.height
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
     const styles = joviJobStyles(colors, WIDTH, HEIGHT);
-
     return (
         <TouchableOpacity activeOpacity={1} style={[styles.header]}
             disabled={props.disabled}
@@ -40,8 +39,9 @@ const CardHeader = (props) => {
             </View>
         </TouchableOpacity>
     );
-}
-export default CardHeader;
+}, ((n, p) => {
+    return (n.isOpened === p.isOpened && n.disabled === p.disabled && n.headerBackgroundColor === p.headerBackgroundColor)
+}))
 
 
 

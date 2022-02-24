@@ -300,6 +300,7 @@ export default (props) => {
         }
         }
         disabled={disabledRef.current}
+        wait={1.2}
         text="Confirm Location" style={styles.confirmBtn} />
     )
   }
