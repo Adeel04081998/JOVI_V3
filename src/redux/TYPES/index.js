@@ -5,6 +5,7 @@ export default {
     // MODAL ACTIONS
     "SET_MODAL": "set_modal",
     "CLOSE_MODAL": "close_modal",
+    "CLEAR_MODAL_REDUCER":"clear_modal_reducer",
     // CART ACTIONS
     "SET_CART_ACTION": "set_cart",
     "CLEAR_CART_ACTION": "clear_clear",
@@ -27,5 +28,5 @@ export default {
     // PREVIOUS ORDERS
     "SET_PREV_ORDERS": "set_prev_orders",
     //FCM Notification Action
-    "SET_FCM_ACTION": "set_fcm_action"
+    "SET_FCM_ACTION": "set_fcm_action",
 }

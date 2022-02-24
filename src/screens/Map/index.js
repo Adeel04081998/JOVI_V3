@@ -25,7 +25,7 @@ export default (props) => {
       NavigationService.NavigationActions.common_actions.goBack();
     }
     else if (props.route.params.index === 3) {
-      dispatch(ReduxActions.setUserFinalDestAction({ finalDestObj }))
+      // dispatch(ReduxActions.setUserFinalDestAction({ finalDestObj }))
       NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.AddAddress.screen_name, {
         finalDestObj
       })

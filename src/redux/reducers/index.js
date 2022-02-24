@@ -54,6 +54,8 @@ const modalReducer = (state = { visible: false, closeModal: false, ModalContent:
     case TYPES.CLOSE_MODAL: {
       return { ...state, closeModal: true }
     }
+    case TYPES.CLEAR_MODAL_REDUCER:
+      return {visible: false, closeModal: false, ModalContent: null}
     default:
       return { ...state };
   }

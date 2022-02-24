@@ -14,6 +14,7 @@ import Regex from '../utils/Regex';
 import GV, { PITSTOP_TYPES } from '../utils/GV';
 import constants from '../res/constants';
 import NavigationService from '../navigations/NavigationService';
+import actions from '../redux/actions';
 const dispatch = store.dispatch;
 export const sharedGetDeviceInfo = async () => {
     let model = DeviceInfo.getModel();
@@ -657,3 +658,6 @@ export const sharedSendFCMTokenToServer = async (postRequest, FcmToken) => {
         false
     );
 };
+export const sharedClearReducers = () => {
+    dispatch(actions.clearModalAction());
+}

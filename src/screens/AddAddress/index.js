@@ -11,7 +11,7 @@ import TextInput from '../../components/atoms/TextInput';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import View from '../../components/atoms/View';
 import Button from '../../components/molecules/Button';
-import { confirmServiceAvailabilityForLocation, sharedExceptionHandler } from '../../helpers/SharedActions';
+import { confirmServiceAvailabilityForLocation, sharedExceptionHandler, sharedGetUserAddressesApi } from '../../helpers/SharedActions';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
@@ -59,7 +59,7 @@ export default (props) => {
             {
                 key: 4,
                 val: '',
-                placeHolder: 'e.g Chutti Dedo',
+                placeHolder: 'e.g Jovi Office',
                 shown: false
             }
         ],
@@ -128,6 +128,7 @@ export default (props) => {
                         console.log("ADDorUPDATE ADDRESS.RESPONSE", res);
                         if (res.data.statusCode === 200) {
                             dispatch(ReduxActions.setUserFinalDestAction({ ...props.route.params.finalDestObj }))
+                            sharedGetUserAddressesApi();
                             NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name)
                         }
                     },
@@ -195,7 +196,7 @@ export default (props) => {
                     }}
                     onMapPress={() => { NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name,) }} />
                 <View style={styles.modalView} >
-                    <KeyboardAwareScrollView contentContainerStyle={{ flexGrow: 1 }} >
+                    <KeyboardAwareScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 15 }} >
 
                         <Text style={styles.mainText} fontFamily="PoppinsMedium" >Your current location</Text>
                         <View style={styles.inputContainer}>
@@ -247,6 +248,7 @@ export default (props) => {
                         <Button
                             onPress={onPressSaveAndContinue}
                             disabled={IS_DISABLED()}
+                            wait={0}
                             text="Save and Continue"
                             textStyle={{
                                 fontSize: 16,

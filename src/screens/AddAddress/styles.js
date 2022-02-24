@@ -32,7 +32,7 @@ export default (colors = initColors, width, height) => StyleSheet.create({
         backgroundColor: colors.light_grey,
         borderRadius: 15,
         width: '90%',
-        height: height * 0.7,
+        height: height/1.3,
         marginLeft: 20,
         marginVertical: 5
     },

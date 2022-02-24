@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react'
-import { Appearance, Platform, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Appearance, Platform, StyleSheet, View } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import { confirmServiceAvailabilityForLocation, sharedStartingRegionPK } from '../../../helpers/SharedActions';
 import VectorIcon from '../VectorIcon';
@@ -16,6 +16,8 @@ import LocationSearch from '../LocationSearch';
 import NavigationService from '../../../navigations/NavigationService';
 import SafeAreaView from '../SafeAreaView';
 import { postRequest } from '../../../manager/ApiManager';
+import Text from '../Text';
+import TouchableScale from '../TouchableScale';
 
 
 const LATITUDE_DELTA = 0.01;
@@ -42,6 +44,7 @@ export default (props) => {
   const placeNameRef = useRef(null)
   const coordinatesRef = useRef(null)
   const [ready, setMapReady] = useState(false)
+  const [loader, setLoader] = useState(false)
   const [region, setRegion] = useState(sharedStartingRegionPK)
   const disabledRef = useRef(false)
 
@@ -259,18 +262,27 @@ export default (props) => {
 
 
   /******************************************* START OF CONTINUE BUTTON UI **********************************/
+  const disabledCheck = () => {
+    if (disabledRef.current) return true
+    else false
+  }
 
+  const cb = (loaderBool) => {
+    setLoader(loaderBool)
+  }
 
   const renderContinueButton = () => {
     return (
       <Button
         onPress={async () => {
-          const { latitude, longitude } = coordinatesRef.current
+          if(disabledRef.current){
+            return;
+          }
           disabledRef.current = true
+          const { latitude, longitude } = coordinatesRef.current
           confirmServiceAvailabilityForLocation(postRequest, latitude, longitude,
             async (resp) => {
-              disabledRef.current = false
-              let adrInfo = await addressInfo(latitude, longitude)
+              let adrInfo = await addressInfo(latitude, longitude, cb)
               placeNameRef.current = adrInfo.address
               setPlaceName(adrInfo.address)
               let placeObj = {
@@ -282,25 +294,24 @@ export default (props) => {
                 city: adrInfo.city
               }
               props.onConfirmLoc(placeObj)
-
             }, (error) => {
+              disabledRef.current = false
               console.log(((error?.response) ? error.response : {}), error);
               if (error?.data?.statusCode === 417) {
                 if (error.areaLock) { } else {
-                  disabledRef.current = false
                   error?.data?.message && Toast.error(error?.data?.message);
                 }
               }
               else {
-                disabledRef.current = false
                 Toast.error('An Error Occurred!');
               }
             })
 
         }
         }
-        disabled={disabledRef.current}
-        wait={1.2}
+        wait={0}
+        disabled={disabledCheck()}
+        isLoading={loader}
         text="Confirm Location" style={styles.confirmBtn} />
     )
   }

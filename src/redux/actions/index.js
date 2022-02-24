@@ -20,6 +20,11 @@ const setModalAction = (payload = {}) => {
         payload: { ...payload }
     }
 }
+const clearModalAction = () => {
+    return {
+        type: TYPES.CLEAR_MODAL_REDUCER,
+    }
+}
 const closeModalAction = () => {
     return {
         type: TYPES.CLOSE_MODAL,
@@ -116,6 +121,7 @@ export default {
     showRobotAction,
     setCategoriesTagsAction,
     setModalAction,
+    clearModalAction,
     setUserFinalDestAction,
     closeModalAction,
     setUserPrevOrdersAction,
