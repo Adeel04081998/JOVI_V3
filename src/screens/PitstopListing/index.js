@@ -132,8 +132,8 @@ const PistopListing = React.memo(({ route, }) => {
             onPressFilter(listing, { cuisines: updatedFilters.activeCusine });
             return;
         }
-        filtersRef.current.cuisines = [updatedFilters.activeCusine];
-        filtersRef.current.activeFilterBy = [updatedFilters.activeFilterBy];
+        filtersRef.current.cuisines = updatedFilters.activeCusine?[updatedFilters.activeCusine]:[];
+        filtersRef.current.activeFilterBy = updatedFilters.activeFilterBy?[updatedFilters.activeFilterBy]:[];
         filtersRef.current.averagePrice = updatedFilters.activeAvergePrice;
         setState(pre => ({
             ...pre,

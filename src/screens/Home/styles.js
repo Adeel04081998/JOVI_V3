@@ -29,8 +29,9 @@ export default {
                 marginVertical: 5
             },
             greetingHeaderText: {
-                fontSize: 25,
+                fontSize: 16,
                 color: '#272727',
+                fontWeight:'normal',
 
             },
             greetingBodyText: {

@@ -102,8 +102,13 @@ export default (props) => {
     const { inputs, addressTypeList, selectedRegion } = state;
 
     const IS_DISABLED = () => {
-        let addressType = addressTypeList.find(x => x.selected === true)
-        if (addressType) return false
+        let addressType = addressTypeList.find(x => x.selected === true);
+        if (addressType) {
+            if (addressType.key === AddressTypeEnum[5].value) {
+                return inputs[3].val ? false : true;
+            }
+            return false
+        }
         else return true
     }
 
@@ -161,7 +166,8 @@ export default (props) => {
 
         })
 
-        if (index === 3) inputs[3].shown = !inputs[3].shown
+        if (index === 3) inputs[3].shown = true
+        else inputs[3].shown = false
         setState(pre => ({
             ...pre,
             addressTypeList: modifiedArray

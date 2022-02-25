@@ -301,6 +301,13 @@ export const renderPrice = (price, prefix = "Rs. ", suffix = "", reg = Regex.pri
     return parseInt(`${price}`) < 1 ? '' : suffix.length > 0 ? `${prefix} ${price}${suffix}` : `${prefix} ${price}`;
 }
 
+export const renderDistance = (distance, suffix = "m",prefix = "",  reg = Regex.distanceM,) => {
+    prefix = `${prefix}`.trim();
+    suffix = `${suffix}`.trim();
+    distance = `${distance}`.trim().replace(reg, '').trim();
+    return prefix.length > 0 ? `${prefix} ${distance}${suffix}` : `${distance}${suffix}`;
+}
+
 export const isNextPage = (totalItem, itemPerRequest, currentRequestCount) => {
     const total = itemPerRequest * currentRequestCount;
 

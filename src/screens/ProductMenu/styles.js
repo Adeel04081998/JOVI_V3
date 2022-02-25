@@ -86,7 +86,7 @@ export const itemStylesFunc = (colors, ITEM_IMAGE_SIZE) => StyleSheet.create({
         height: ITEM_IMAGE_SIZE,
     },
     primaryContainer: {
-        marginRight: 10,
+        marginRight: 0,
         marginTop: 2,
     },
     titleViewmoreText: {
@@ -97,8 +97,8 @@ export const itemStylesFunc = (colors, ITEM_IMAGE_SIZE) => StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        paddingBottom: 10,
-        paddingTop: 20,
+        paddingBottom: 0,
+        paddingTop: 0,
         paddingHorizontal: 10,
     },
 

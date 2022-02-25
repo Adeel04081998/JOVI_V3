@@ -29,7 +29,7 @@ import { multipartPostRequest, postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import AudioplayerMultiple from '../../components/atoms/AudioplayerMultiple';
 import Image from '../../components/atoms/Image';
-import { confirmServiceAvailabilityForLocation, sharedAddUpdatePitstop, sharedConfirmationAlert } from '../../helpers/SharedActions';
+import { confirmServiceAvailabilityForLocation, sharedAddUpdatePitstop, sharedConfirmationAlert,uniqueKeyExtractor } from '../../helpers/SharedActions';
 import Toast from '../../components/atoms/Toast';
 import Regex from '../../utils/Regex';
 import { useDispatch, useSelector } from 'react-redux';
@@ -787,7 +787,7 @@ export default ({ navigation, route }) => {
                         {
                             imageData.map((item, index) => {
                                 return (
-                                    <View key={`item path ${item.id}`} style={[styles.galleryIcon, {
+                                    <View key={uniqueKeyExtractor()} style={[styles.galleryIcon, {
                                         borderRadius: 5,
                                         padding: 5,
                                         height: 50,

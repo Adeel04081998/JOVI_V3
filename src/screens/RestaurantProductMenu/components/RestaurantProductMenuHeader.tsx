@@ -1,5 +1,7 @@
 import * as React from "react";
 import { Alert, Animated, ImageSourcePropType, LayoutChangeEvent, ScrollView, StatusBar, StyleSheet } from "react-native";
+import { SvgXml } from "react-native-svg";
+import svgs from "../../../assets/svgs";
 import ImageBackground from "../../../components/atoms/ImageBackground";
 import Text from "../../../components/atoms/Text";
 import TouchableScale from "../../../components/atoms/TouchableScale";
@@ -7,6 +9,7 @@ import VectorIcon, { IconTypeProps } from "../../../components/atoms/VectorIcon"
 import View from "../../../components/atoms/View";
 import CustomHeader from "../../../components/molecules/CustomHeader";
 import RecentOrder from "../../../components/organisms/RecentOrder";
+import { renderDistance } from "../../../helpers/SharedActions";
 import NavigationService from "../../../navigations/NavigationService";
 import AppStyles from "../../../res/AppStyles";
 import { initColors } from '../../../res/colors';
@@ -51,10 +54,14 @@ const RestaurantProductMenuHeader = (props: Props) => {
     const styles = stylesFunc(colors);
 
     // #region :: RENDER BOTTOM DETAIL START's FROM HERE 
-    const _renderBottomDetail = (text: string, value: string, iconName: string, iconType: IconTypeProps = "Ionicons") => {
+    const _renderBottomDetail = (text: string, value: string, iconName: string | { xml: any }, iconType: IconTypeProps = "Ionicons") => {
         return (
             <View style={styles.bottomDetailPrimaryContainer}>
-                <VectorIcon name={iconName} type={iconType} color={colors.primary} style={styles.bottomDetailIcon} />
+                {typeof iconName === "string" ?
+                    <VectorIcon name={iconName} type={iconType} color={colors.primary} style={styles.bottomDetailIcon} />
+                    :
+                    <SvgXml xml={iconName.xml} height={20} width={20} style={{ top: -2, marginRight: 6, }} />
+                }
                 <Text fontFamily="PoppinsMedium" style={styles.bottomDetailText}>{`${`${text}`.replace(':', '')}: `}</Text>
                 <Text style={styles.bottomDetailValue}>{`${value}`}</Text>
             </View>
@@ -119,7 +126,7 @@ const RestaurantProductMenuHeader = (props: Props) => {
 
                 <View style={{ marginVertical: 6, }} />
 
-                {_renderBottomDetail("Distance", propItem?.distance ?? defaultProps.item.distance, "location-pin", "Entypo")}
+                {_renderBottomDetail("Distance", renderDistance(propItem?.distance ?? defaultProps.item.distance), { xml: svgs.productMenuHeaderLocation(colors.primary) }, "Entypo")}
 
                 {_renderBottomDetail("Time", propItem?.time ?? defaultProps.item.time, "clock-time-four-outline", "MaterialCommunityIcons")}
 

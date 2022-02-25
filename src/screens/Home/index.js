@@ -1,3 +1,4 @@
+import { useFocusEffect } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import React, { useState } from 'react';
 import { Animated, Appearance, Easing } from "react-native";
@@ -38,6 +39,29 @@ export default () => {
     const homeFadeIn = React.useRef(new Animated.Value(0)).current;
     const [state, setState] = useState(initState)
     const { modalVisible, finalDestTitle } = state
+
+    // #region :: SELECTING FINAL DESTINATION IF NOT SELECTED START's FROM HERE 
+    const gotoFinalDestinationModal = () => {
+        dispatch(ReduxActions.setModalAction({
+            visible: true,
+            ModalContent: <AddressesList />,
+            disabled: true, //DISABLING OUTSIDE TOUCH
+        }))
+    };
+
+    useFocusEffect(
+        React.useCallback(() => {
+            if (!(!!userReducer?.finalDestObj)) {
+                gotoFinalDestinationModal();
+            }
+
+            return () => { };
+        }, [userReducer?.finalDestObj])
+    );
+
+
+    // #endregion :: SELECTING FINAL DESTINATION IF NOT SELECTED END's FROM HERE 
+
     React.useEffect(() => {
         if (!loaderVisible) {
             Animated.timing(homeFadeIn, {

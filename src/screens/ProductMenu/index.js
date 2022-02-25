@@ -172,6 +172,7 @@ export default ({ navigation, route }) => {
                         zIndex: 999,
 
                     },
+                    zIndex: 999,
                     top: getStatusBarHeight(true),
                 }}
                 title={title}
@@ -403,6 +404,7 @@ export default ({ navigation, route }) => {
             <>
                 {_renderHeader()}
                 <NoRecord
+                    color={colors}
                     title={query.errorText}
                     buttonText={`Retry`}
                     onButtonPress={() => { loadData(paginationInfo.currentRequestCount, false) }} />
