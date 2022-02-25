@@ -64,7 +64,7 @@ export default ({ navigation, route }) => {
     });
 
     const tabTop = animScroll.interpolate({
-        inputRange: [0, headerHeight + 20],
+        inputRange: [0, headerHeight - ((SCROLL_HEADER_HEIGHT_LINE * 2) + 20)],
         outputRange: [headerHeight + 20, SCROLL_HEADER_HEIGHT_LINE],
         extrapolate: "clamp",
         useNativeDriver: true
