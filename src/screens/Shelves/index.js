@@ -27,6 +27,7 @@ export default ({ navigation, route }) => {
     const DATA = route?.params?.shelveData ?? [];
     const marketID = route?.params?.marketID ?? 0;
     const pitstopType = route?.params?.pitstopType ?? PITSTOP_TYPES.JOVI;
+    const pitstopName = route?.params?.categoryName ?? '';
     const headerTitle = 'Shelves';
     // #endregion :: ROUTE PARAM's END's FROM HERE 
 
@@ -38,7 +39,7 @@ export default ({ navigation, route }) => {
 
 
     const _renderItem = (item, index) => {
-        const shouldEmpty="shouldEmpty" in item ? item.shouldEmpty :false;
+        const shouldEmpty = "shouldEmpty" in item ? item.shouldEmpty : false;
         return (
             <View style={{
                 paddingTop: (index === 0 || index === 1) ? 20 : 10,
@@ -52,7 +53,7 @@ export default ({ navigation, route }) => {
                     }}
                     cardWidth={SHELVE_CARD_SIZE.width}
                     cardHeight={SHELVE_CARD_SIZE.height}
-                itemDisabled={shouldEmpty}
+                    itemDisabled={shouldEmpty}
                     onItemPress={() => {
                         let selectedShelvesData = DATA;
                         for (let i = 0; i < selectedShelvesData.length; i++) {
@@ -63,7 +64,7 @@ export default ({ navigation, route }) => {
                         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ShelvesDetail.screen_name, {
                             shelveData: selectedShelvesData,
                             pitstopType: pitstopType,
-                            categoryName: item?.tagName ?? '',
+                            categoryName: pitstopName,//item?.tagName ?? '',
                             marketID: marketID,
                             shelveID: item.tagID,
                         })

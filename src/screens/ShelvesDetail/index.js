@@ -314,13 +314,16 @@ export default ({ navigation, route }) => {
 
                         const productTotalItem = parentItem?.productsPaginationInfo?.totalItems ?? 0;
                         const additionalCount = productTotalItem - PITSTOP_ITEM_LIST_MAX_COUNT;
+                        const isSeeAll = index === parentItem["pitstopItemListSliced"].length - 1;
 
                         return (
                             <View style={{
                                 marginTop: 0, flexDirection: "row", marginBottom: 10,
                                 marginLeft: index % 3 === 0 ? constants.spacing_horizontal : 0,
-                                alignItems: "center",
-                                justifyContent: "center",
+                                ...!isSeeAll && {
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                },
                             }} key={uniqueKeyExtractor()}>
                                 <ProductMenuItemCard
                                     onPress={() => {
@@ -350,7 +353,7 @@ export default ({ navigation, route }) => {
                                         discountType: item.discountType,
                                     }}
                                 />
-                                {index === parentItem["pitstopItemListSliced"].length - 1 &&
+                                {isSeeAll &&
                                     <ProductMenuItemCard
                                         onPress={() => { onViewMorePress(parentItem); }}
                                         colors={colors}
