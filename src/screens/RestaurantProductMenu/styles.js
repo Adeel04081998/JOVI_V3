@@ -34,7 +34,7 @@ export const itemStylesFunc = (colors) => StyleSheet.create({
     },
     seperator: {
         backgroundColor: "#C1C1C1",
-        height: 2,
+        height: 1,
         width: "100%",
         borderRadius: 5,
         marginVertical: 16,
