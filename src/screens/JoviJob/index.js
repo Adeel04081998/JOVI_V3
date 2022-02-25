@@ -29,7 +29,7 @@ import { multipartPostRequest, postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import AudioplayerMultiple from '../../components/atoms/AudioplayerMultiple';
 import Image from '../../components/atoms/Image';
-import { confirmServiceAvailabilityForLocation, sharedAddUpdatePitstop, sharedConfirmationAlert } from '../../helpers/SharedActions';
+import { confirmServiceAvailabilityForLocation, sharedAddUpdatePitstop, sharedConfirmationAlert,uniqueKeyExtractor } from '../../helpers/SharedActions';
 import Toast from '../../components/atoms/Toast';
 import Regex from '../../utils/Regex';
 import { useDispatch, useSelector } from 'react-redux';
@@ -83,30 +83,30 @@ export default ({ navigation, route }) => {
             "title": "Pitstop Details",
             "desc": "What Would You Like Your Jovi To Do ?",
             "svg": svgs.pitstopPin(),
-            "isOpened": false,
+            "isOpened": __DEV__ ? true : false,
             "headerColor": colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["description"],
-            "disabled": true,
+            "disabled": __DEV__ ? false : true,
         },
         {
             "idx": 3,
             "title": "Estimated Waiting Time",
             "desc": "What Is The Estimated Time Of The Job ?",
             "svg": svgs.pitStopEstTime(),
-            "isOpened": false,
+            "isOpened": __DEV__ ? true : false,
             "headerColor": colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["estimated-time"],
-            "disabled": true,
+            "disabled": __DEV__ ? false : true,
         },
         {
             "idx": 4,
             "title": "Buy For Me ?",
             "desc": "Do You Want Us To Buy For You ?",
             "svg": svgs.pitStopBuy(),
-            "isOpened": false,
+            "isOpened": __DEV__ ? true : false,
             "headerColor": colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["buy-for-me"],
-            "disabled": true,
+            "disabled": __DEV__ ? false : true,
 
         },
         {
@@ -114,10 +114,10 @@ export default ({ navigation, route }) => {
             "title": "Estimated Price",
             "desc": "What is the Estimated Price?",
             "svg": svgs.pitStopEstTime(),
-            "isOpened": false,
+            "isOpened": __DEV__ ? true : false,
             "headerColor": colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["estimated-price"],
-            "disabled": true,
+            "disabled": __DEV__ ? false : true,
 
         },
     ]
@@ -143,7 +143,7 @@ export default ({ navigation, route }) => {
     const [nameval, setNameVal] = useState('')
     const [cityVal, setCityVal] = useState('')
     const [placeName, setPlaceName] = useState('')
-    const [locationVal, setLocationVal] = useState("")
+    const [locationVal, setLocationVal] = useState(__DEV__? 'Islamabad':'')
     const [scrollEnabled, setScrollEnabled] = useState(true)
     const latitudeRef = React.useRef(null);
     const longitudeRef = React.useRef(null);
@@ -172,7 +172,7 @@ export default ({ navigation, route }) => {
 
     /******** Start of Pitstop Details variables *******/
 
-    const [description, setDescription] = useState('')
+    const [description, setDescription] = useState(__DEV__? 'HELLOO':'')
     const [imageData, updateImagesData] = useState([]);
 
     const [, updateStateaaa] = React.useState();
@@ -199,9 +199,9 @@ export default ({ navigation, route }) => {
 
     const [estVal, setEstVal] = useState('')
     const [initialEstVal, setInitialEstVal] = useState('')
-    const [switchVal, setSwitch] = useState(false);
+    const [switchVal, setSwitch] = useState(true);
     const [estTime, setEstTime] = React.useState({
-        text: "Estimated Time",
+        text: __DEV__? '0-15 mins':"Estimated Time",
         value: __DEV__ ? 1 : 0
     });
     const [collapsed, setCollapsed] = React.useState(true);
@@ -465,13 +465,18 @@ export default ({ navigation, route }) => {
         }
     };//end of deleteRecording
 
+    React.useEffect(()=>{
+        console.log('micPressmicPressmicPressmicPress' ,micPress);
+    },[micPress])
     const recordingPress = async (closeSecond = false) => {
         if (!micPress) {
             askForAudioRecordPermission((allowRecording) => {
+                console.log('akllow aaaaa ',allowRecording);
                 if (allowRecording) {
                     const fileName = "record-" + new Date().getTime() + ".mp4";
                     recorderRef.current = new Recorder(fileName).record();
-                    setMicPress(!micPress);
+                    setMicPress(true);
+                    
                 }
             })
         } else {
@@ -504,7 +509,7 @@ export default ({ navigation, route }) => {
 
                                     pitStopVoiceNote(obj, false);
                                     toggleCardData(PITSTOP_CARD_TYPES["estimated-time"]);
-
+                                    console.log('closeSecond   ',closeSecond);
                                     if (closeSecond) {
                                         updateCardOnHeaderPress(updateCardOnHeaderPressItem);
                                     }
@@ -631,6 +636,7 @@ export default ({ navigation, route }) => {
 
     const renderHeader = (idx, title, desc, svg, isOpened, key, headerColor, index, disabled) => {
         const isDisabled = disabledHandler(index, disabled);
+        
         return (
             <CardHeader
                 title={title}
@@ -648,13 +654,20 @@ export default ({ navigation, route }) => {
 
                     if (idx === 2 && isOpened) { //AHMED KH RHA KOI 2 ko change nh kry ga... ;-P
                         //WHEN DESCRIPTION TOGGLE  
+                        console.log('micPress ',micPress);
                         if (micPress) {
+                            console.log('if isOpened ==>>> micPress');
+
                             recordingPress(true);
                         } else {
+                            console.log('else isOpened ==>>> micPress');
+
                             setForceDeleted(true);
                             updateStateaaa();
                         }
+                        console.log('if isOpened');
                     } else {
+                        console.log('else ==>>>> isOpened');
                         updateCardOnHeaderPress(updateCardOnHeaderPressItem);
                     }
 
@@ -772,15 +785,9 @@ export default ({ navigation, route }) => {
                         style={{ ...styles.locButton, width: WIDTH - 70 }} />
                     <ScrollView horizontal={true} style={styles.galleryIcon} >
                         {
-                            // (imageData.length > 0 ? imageData : new Array(1).fill({ index: 1 }))
                             imageData.map((item, index) => {
-
-                                // const itemSize = Object.keys(item).length;
-
-                                // if (itemSize > 1) {
-
                                 return (
-                                    <View key={`item path ${item.id}`} style={[styles.galleryIcon, {
+                                    <View key={uniqueKeyExtractor()} style={[styles.galleryIcon, {
                                         borderRadius: 5,
                                         padding: 5,
                                         height: 50,
@@ -796,14 +803,6 @@ export default ({ navigation, route }) => {
                                         <Image source={{ uri: item.path }} style={{ height: 30, width: 30, resizeMode: "cover", borderRadius: 6 }} />
                                     </View>
                                 )
-                                // }
-                                // return (
-                                //     <View key={`item path ${item.index}`} style={styles.galleryIcon} >
-                                //         <VectorIcon name="image" type="Ionicons" color={colors.primary} size={25} style={{ marginRight: 5 }} />
-                                //         <VectorIcon name="image" type="Ionicons" color={colors.text} size={25} style={{ marginRight: 5 }} />
-                                //         <VectorIcon name="image" type="Ionicons" color={colors.text} size={25} style={{ marginRight: 5 }} />
-                                //     </View>
-                                // )
                             })}
                     </ScrollView>
                 </View>
@@ -850,7 +849,7 @@ export default ({ navigation, route }) => {
 
                                 }}
                                     activeOpacity={1}
-                                    onPressIn={recordingPress}>
+                                    onPressIn={()=>{recordingPress(false)}}>
                                     {micPress ?
                                         <RNImage
                                             source={require('../../assets/gifs/Record.gif')}
@@ -949,19 +948,22 @@ export default ({ navigation, route }) => {
 
         return (
             <PitStopEstPrice
-                estVal={isNaN(parseInt(`${estVal}`)) ? 0 : parseInt(`${estVal}`)}
+                estVal={isNaN(parseInt(`${estVal}`)) ? '' : parseInt(`${estVal}`)}
                 textinputVal={`${estVal}`}
                 isOpened={isDisabled ? false : isOpened}
                 onChangeSliderText={newsliderValue => {
                     if (Regex.numberOnly.test(newsliderValue)) {
-                        const maxLengthRegex = new RegExp(`^([0-9]{0,4}|${remainingAmount})$`, "g");
-
+                        let remainingAmountLength=(`${remainingAmount}`.length)-1;
+                        if(remainingAmountLength<1){
+                            remainingAmountLength=1;
+                        }
+                        const maxLengthRegex = new RegExp(`^([0-${remainingAmountLength>1 ? '9':remainingAmount}]{0,${remainingAmountLength}}|${remainingAmount})$`, "g");
                         if (maxLengthRegex.test(newsliderValue)) {
                             setEstVal(newsliderValue);
                             setInitialEstVal(newsliderValue);
                         }
-
-                    } else {
+                    }
+                     else {
                         setEstVal('');
                         setInitialEstVal(0);
                     }
@@ -1018,7 +1020,7 @@ export default ({ navigation, route }) => {
                                 idx === 5 ? (
                                     toggleEstPriceCard() === true &&
                                     renderMainUI(idx, title, desc, svg, isOpened, key, headerColor, disabled, index)
-                                    ):
+                                ) :
                                     renderMainUI(idx, title, desc, svg, isOpened, key, headerColor, disabled, index)
 
                             );
@@ -1026,42 +1028,42 @@ export default ({ navigation, route }) => {
                         }
                     </View>
                 </KeyboardAwareScrollView>
-                    <Button
-                        text="Save and Continue"
-                        onPress={() => {
-                            let pitstopData = {
-                                pitstopID: 0, // on update will get from params, 
-                                title: locationVal,
-                                description,
-                                pitstopName: 'Jovi Job',
-                                pitstopType: route.params.pitstopType,
-                                nameval,
-                                imageData,
-                                voiceNote,
-                                estTime,
-                                estimatePrice: parseInt(estVal),
-                                latitude: latitudeRef.current,
-                                longitude: longitudeRef.current
+                <Button
+                    text="Save and Continue"
+                    onPress={() => {
+                        let pitstopData = {
+                            pitstopID: 0, // on update will get from params, 
+                            title: locationVal,
+                            description,
+                            pitstopName: 'Jovi Job',
+                            pitstopType: route.params.pitstopType,
+                            nameval,
+                            imageData,
+                            voiceNote,
+                            estTime,
+                            estimatePrice: parseInt(estVal),
+                            latitude: latitudeRef.current,
+                            longitude: longitudeRef.current
+                        }
+                        confirmServiceAvailabilityForLocation(postRequest, latitudeRef.current, longitudeRef.current, (resp) => {
+                            sharedAddUpdatePitstop(pitstopData, false, [], false, false, clearData);
+                        }, (error) => {
+                            console.log(((error?.response) ? error.response : {}), error);
+                            if (error?.data?.statusCode === 417) {
+                                if (error.areaLock) { } else {
+                                    error?.data?.message && Toast.error(error?.data?.message);
+                                }
                             }
-                            confirmServiceAvailabilityForLocation(postRequest, latitudeRef.current, longitudeRef.current, (resp) => {
-                                sharedAddUpdatePitstop(pitstopData, false, [], false, false, clearData);
-                            }, (error) => {
-                                console.log(((error?.response) ? error.response : {}), error);
-                                if (error?.data?.statusCode === 417) {
-                                    if (error.areaLock) { } else {
-                                        error?.data?.message && Toast.error(error?.data?.message);
-                                    }
-                                }
-                                else {
-                                    Toast.error('An Error Occurred!');
-                                }
-                            })
-                        }}
-                        disabled={validationCheck()}
-                        style={[styles.locButton, { height: 60, marginVertical: 10 }]}
-                        textStyle={[styles.btnText, { fontSize: 16 }]}
-                        fontFamily="PoppinsRegular"
-                    />
+                            else {
+                                Toast.error('An Error Occurred!');
+                            }
+                        })
+                    }}
+                    disabled={validationCheck()}
+                    style={[styles.locButton, { height: 60, marginVertical: 10 }]}
+                    textStyle={[styles.btnText, { fontSize: 16 }]}
+                    fontFamily="PoppinsRegular"
+                />
             </Transitioning.View>
         </SafeAreaView >
     );

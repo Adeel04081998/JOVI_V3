@@ -7,6 +7,8 @@ import styles from '../../screens/IntroScreen/styles';
 import GV from '../../utils/GV';
 import TouchableOpacity from './TouchableOpacity';
 import View from './AnimatedView';
+import Toast from './Toast';
+import { useSelector } from 'react-redux';
 
 export default (props) => {
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
@@ -17,13 +19,17 @@ export default (props) => {
     const height = props.height || 30;
     const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
     const animatedValue = useRef(new Animated.Value(props.switchVal ? width / 1.8 : 4)).current
+    const cartReducer = useSelector((store) => {
+        return store.cartReducer;
+    });
+    const remainingAmount = cartReducer.joviRemainingAmount;
 
-    
     const onPressParentEvent = (bool) => {
         toggleActive(bool);
         props.onToggleSwitch(bool)
     }
     const onPress = () => {
+        if (remainingAmount === 0) return Toast.error('Maximum amount reached!')
         if (active) {
             Animated.timing(animatedValue, {
                 toValue: 4,

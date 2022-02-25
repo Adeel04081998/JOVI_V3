@@ -22,7 +22,7 @@ import RNSplashScreen from './NativeModules/RNSplashScreen';
 import BottomAllignedModal from './src/components/atoms/BottomAllignedModal';
 import View from './src/components/atoms/View';
 import Robot from './src/components/organisms/Robot';
-import { sharedGetEnumsApi, sharedGetFilters, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser, sharedSendFCMTokenToServer } from './src/helpers/SharedActions';
+import { sharedClearReducers, sharedGetEnumsApi, sharedGetFilters, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser, sharedSendFCMTokenToServer } from './src/helpers/SharedActions';
 import useNetInfo from './src/hooks/useNetInfo';
 import RootStack from "./src/navigations";
 import { _NavgationRef } from './src/navigations/NavigationService';
@@ -175,6 +175,7 @@ const SharedGetApis = ({ }) => {
         // sharedLogoutUser();
         return () => {
             console.log('[App] cleared!!');
+            sharedClearReducers();//modal reducer wasn't clearing when the app was closed on back press.
             localNotificationService.unRegister();
             fcmService.unRegister();
         };

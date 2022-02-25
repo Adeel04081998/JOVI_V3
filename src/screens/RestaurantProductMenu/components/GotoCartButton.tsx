@@ -139,7 +139,7 @@ const stylesFunc = (colors: typeof initColors, insets: EdgeInsets) => StyleSheet
         backgroundColor: colors.white,
         position: 'absolute',
         paddingTop: 20,
-        paddingBottom: getStatusBarHeight(true) + (insets.bottom > 0 ? insets.bottom * 0.1 : Platform.OS === "ios" ? 0 : 10),
+        paddingBottom: insets.bottom > 0 ? insets.bottom : getStatusBarHeight() * 0.7,
         bottom: 0,
 
         width: "100%",

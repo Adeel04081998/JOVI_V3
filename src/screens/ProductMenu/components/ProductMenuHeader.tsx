@@ -134,7 +134,7 @@ const ProductMenuHeader = (props: Props) => {
                                                     })
                                                 }
 
-                                                NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Shelves.screen_name, { shelveData: allData, pitstopType: props.pitstopType, marketID: props.marketID })
+                                                NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Shelves.screen_name, { shelveData: allData, pitstopType: props.pitstopType, marketID: props.marketID ,  categoryName: props.headerItem?.title ?? '',})
                                             }}
                                         />
                                     }

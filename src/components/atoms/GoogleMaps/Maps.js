@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react'
-import { Appearance, Platform, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Appearance, Platform, StyleSheet, View } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import { confirmServiceAvailabilityForLocation, sharedStartingRegionPK } from '../../../helpers/SharedActions';
 import VectorIcon from '../VectorIcon';
@@ -16,6 +16,8 @@ import LocationSearch from '../LocationSearch';
 import NavigationService from '../../../navigations/NavigationService';
 import SafeAreaView from '../SafeAreaView';
 import { postRequest } from '../../../manager/ApiManager';
+import Text from '../Text';
+import TouchableScale from '../TouchableScale';
 
 
 const LATITUDE_DELTA = 0.01;
@@ -42,6 +44,7 @@ export default (props) => {
   const placeNameRef = useRef(null)
   const coordinatesRef = useRef(null)
   const [ready, setMapReady] = useState(false)
+  const [loader, setLoader] = useState(false)
   const [region, setRegion] = useState(sharedStartingRegionPK)
   const disabledRef = useRef(false)
 
@@ -59,12 +62,22 @@ export default (props) => {
 
   const getCurrentPosition = () => {
     navigator.geolocation.getCurrentPosition(({ coords: { latitude, longitude } }) => {
-      mapView?.current?.animateToRegion({
-        latitude,
-        longitude,
-        latitudeDelta: LATITUDE_DELTA,
-        longitudeDelta: LONGITUDE_DELTA,
-      });
+      if (props.route?.params?.latitude !== undefined && props.route?.params?.latitude !== null) {
+        mapView?.current?.animateToRegion({
+          latitude: props.route.params.latitude,
+          longitude: props.route.params.longitude,
+          latitudeDelta: LATITUDE_DELTA,
+          longitudeDelta: LONGITUDE_DELTA,
+        });
+        setPlaceName(props.route.params.title)
+      } else {
+        mapView?.current?.animateToRegion({
+          latitude,
+          longitude,
+          latitudeDelta: LATITUDE_DELTA,
+          longitudeDelta: LONGITUDE_DELTA,
+        });
+      }
     }, (error) => {
       mapView.current && mapView.current.animateToRegion(sharedStartingRegionPK);
       Toast.error("Location is either turned off or unresponsive!");
@@ -130,7 +143,7 @@ export default (props) => {
         paddingLeft: 5
       }}>
         <TouchableOpacity
-          onPress={() => NavigationService.NavigationActions.common_actions.goBack()}
+          onPress={() => props.onBackPress()}
           style={{
             height: ICON_BORDER.size,
             width: ICON_BORDER.size,
@@ -259,48 +272,57 @@ export default (props) => {
 
 
   /******************************************* START OF CONTINUE BUTTON UI **********************************/
+  const disabledCheck = () => {
+    if (disabledRef.current) return true
+    else false
+  }
 
+  const cb = (loaderBool) => {
+    disabledRef.current = false
+    setLoader(loaderBool)
+  }
 
   const renderContinueButton = () => {
     return (
       <Button
         onPress={async () => {
-          const { latitude, longitude } = coordinatesRef.current
+          if (disabledRef.current) {
+            return;
+          }
           disabledRef.current = true
-          confirmServiceAvailabilityForLocation(postRequest, latitude, longitude,
+          const { latitude, longitude } = coordinatesRef.current
+          confirmServiceAvailabilityForLocation(postRequest, latitude || props.route?.params?.latitude, longitude || props.route?.params?.longitude,
             async (resp) => {
-              disabledRef.current = false
-              let adrInfo = await addressInfo(latitude, longitude)
+              let adrInfo = await addressInfo(latitude || props.route?.params?.latitude, longitude  || props.route?.params?.longitude, cb)
               placeNameRef.current = adrInfo.address
               setPlaceName(adrInfo.address)
               let placeObj = {
                 title: placeNameRef.current,
-                latitude,
-                longitude,
+                latitude: latitude || props.route?.params?.latitude ,
+                longitude: longitude  || props.route?.params?.longitude,
                 latitudeDelta: LATITUDE_DELTA,
                 longitudeDelta: LONGITUDE_DELTA,
                 city: adrInfo.city
               }
               props.onConfirmLoc(placeObj)
-
             }, (error) => {
+              disabledRef.current = false
               console.log(((error?.response) ? error.response : {}), error);
               if (error?.data?.statusCode === 417) {
                 if (error.areaLock) { } else {
-                  disabledRef.current = false
                   error?.data?.message && Toast.error(error?.data?.message);
                 }
               }
               else {
-                disabledRef.current = false
                 Toast.error('An Error Occurred!');
               }
             })
 
         }
         }
-        disabled={disabledRef.current}
-        wait={1.2}
+        wait={0}
+        disabled={disabledCheck()}
+        isLoading={loader}
         text="Confirm Location" style={styles.confirmBtn} />
     )
   }

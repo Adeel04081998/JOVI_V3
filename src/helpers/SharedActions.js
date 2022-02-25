@@ -14,6 +14,7 @@ import Regex from '../utils/Regex';
 import GV, { PITSTOP_TYPES } from '../utils/GV';
 import constants from '../res/constants';
 import NavigationService from '../navigations/NavigationService';
+import actions from '../redux/actions';
 const dispatch = store.dispatch;
 export const sharedGetDeviceInfo = async () => {
     let model = DeviceInfo.getModel();
@@ -298,6 +299,13 @@ export const renderPrice = (price, prefix = "Rs. ", suffix = "", reg = Regex.pri
     suffix = `${suffix}`.trim();
     price = `${price}`.trim().replace(reg, '').trim();
     return parseInt(`${price}`) < 1 ? '' : suffix.length > 0 ? `${prefix} ${price}${suffix}` : `${prefix} ${price}`;
+}
+
+export const renderDistance = (distance, suffix = "m",prefix = "",  reg = Regex.distanceM,) => {
+    prefix = `${prefix}`.trim();
+    suffix = `${suffix}`.trim();
+    distance = `${distance}`.trim().replace(reg, '').trim();
+    return prefix.length > 0 ? `${prefix} ${distance}${suffix}` : `${distance}${suffix}`;
 }
 
 export const isNextPage = (totalItem, itemPerRequest, currentRequestCount) => {
@@ -657,3 +665,6 @@ export const sharedSendFCMTokenToServer = async (postRequest, FcmToken) => {
         false
     );
 };
+export const sharedClearReducers = () => {
+    dispatch(actions.clearModalAction());
+}

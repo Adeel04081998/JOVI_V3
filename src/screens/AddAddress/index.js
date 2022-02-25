@@ -11,7 +11,7 @@ import TextInput from '../../components/atoms/TextInput';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import View from '../../components/atoms/View';
 import Button from '../../components/molecules/Button';
-import { confirmServiceAvailabilityForLocation, sharedExceptionHandler } from '../../helpers/SharedActions';
+import { confirmServiceAvailabilityForLocation, sharedExceptionHandler, sharedGetUserAddressesApi } from '../../helpers/SharedActions';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
@@ -59,7 +59,7 @@ export default (props) => {
             {
                 key: 4,
                 val: '',
-                placeHolder: 'e.g Chutti Dedo',
+                placeHolder: 'e.g Jovi Office',
                 shown: false
             }
         ],
@@ -102,8 +102,13 @@ export default (props) => {
     const { inputs, addressTypeList, selectedRegion } = state;
 
     const IS_DISABLED = () => {
-        let addressType = addressTypeList.find(x => x.selected === true)
-        if (addressType) return false
+        let addressType = addressTypeList.find(x => x.selected === true);
+        if (addressType) {
+            if (addressType.key === AddressTypeEnum[5].value) {
+                return inputs[3].val ? false : true;
+            }
+            return false
+        }
         else return true
     }
 
@@ -128,6 +133,7 @@ export default (props) => {
                         console.log("ADDorUPDATE ADDRESS.RESPONSE", res);
                         if (res.data.statusCode === 200) {
                             dispatch(ReduxActions.setUserFinalDestAction({ ...props.route.params.finalDestObj }))
+                            sharedGetUserAddressesApi();
                             NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name)
                         }
                     },
@@ -160,7 +166,8 @@ export default (props) => {
 
         })
 
-        if (index === 3) inputs[3].shown = !inputs[3].shown
+        if (index === 3) inputs[3].shown = true
+        else inputs[3].shown = false
         setState(pre => ({
             ...pre,
             addressTypeList: modifiedArray
@@ -180,8 +187,12 @@ export default (props) => {
         <SafeAreaView style={styles.safeArea}>
             <View style={styles.container} >
                 <SharedMapView
+                onBackPress={()=>{
+                NavigationService.NavigationActions.stack_actions.popToTop();
+                }}
                     latitude={props.route?.params?.finalDestObj.latitude}
                     longitude={props.route?.params?.finalDestObj.longitude}
+                    route={props.route}
                     showCurrentLocationBtn={false}
                     showContinueBtn={false}
                     mapHeight={(HEIGHT * 1.4) - HEIGHT}
@@ -193,14 +204,15 @@ export default (props) => {
                         left: WIDTH / 2,
                         top: ((HEIGHT * 1.35) - HEIGHT) / 2,
                     }}
-                    onMapPress={() => { NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name,) }} />
+                    onMapPress={() => { NavigationService.NavigationActions.stack_actions.push(ROUTES.APP_DRAWER_ROUTES.Map.screen_name,props.route.params.finalDestObj ) }} />
                 <View style={styles.modalView} >
-                    <KeyboardAwareScrollView contentContainerStyle={{ flexGrow: 1 }} >
+                    <KeyboardAwareScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 15 }} >
 
                         <Text style={styles.mainText} fontFamily="PoppinsMedium" >Your current location</Text>
                         <View style={styles.inputContainer}>
                             <TouchableOpacity style={styles.touchableField} onPress={() => {
-                                NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name)
+                                    props.route.params.updateFinalDestination(props.route.params.finalDestObj);
+                                      NavigationService.NavigationActions.stack_actions.pop(1);
                             }} >
                                 <SvgXml xml={svgs.pinField()} />
                                 <View style={styles.touchableFieldTextContainer} >
@@ -247,6 +259,7 @@ export default (props) => {
                         <Button
                             onPress={onPressSaveAndContinue}
                             disabled={IS_DISABLED()}
+                            wait={0}
                             text="Save and Continue"
                             textStyle={{
                                 fontSize: 16,

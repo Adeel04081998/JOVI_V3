@@ -71,6 +71,9 @@ const NavigationActions = {
             if (count > 0) navigation.dispatch(StackActions.pop(count))
             else navigation.dispatch(StackActions.popToTop())
         },
+        popToTop: (navigation = _NavgationRef.current) => {
+            navigation.dispatch(StackActions.popToTop())
+        },
     },
     drawer_actions: {
         openDrawer: (navigation = _NavgationRef.current) => {

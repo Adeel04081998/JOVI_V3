@@ -35,13 +35,16 @@ export const hybridLocationPermission = async (cb) => {
     // }
 };
 
-export const addressInfo = async (latitude, longitude) => {
+export const addressInfo = async (latitude, longitude, cb = () => { }) => {
+    let isLoading = true
     try {
         let addressResponse = await fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&rankby=distance&key=${env.GOOGLE_API_KEY}`);
         addressResponse = await addressResponse.json();
         console.log('addressResponse', addressResponse);
         if (addressResponse.error_message) {
             // CustomToast.error("Error while Fetching Address!", null, "long")
+            isLoading = false
+            cb(isLoading)
             Toast.error('Error while Fetching Address!')
         }
         else if (addressResponse) {
@@ -51,10 +54,14 @@ export const addressInfo = async (latitude, longitude) => {
             if (addressObj?.plus_code?.compound_code) {
                 city = addressObj.plus_code.compound_code.replace(/\,/gi, "")?.split(/\s/gi)?.[1];
             };
+            isLoading = false
+            cb(isLoading)
             return { city, address }
         }
     }
     catch (exp) {
+        isLoading = false
+        cb(isLoading)
         console.log('exp', exp);
     }
 };

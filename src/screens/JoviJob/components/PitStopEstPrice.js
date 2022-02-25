@@ -44,6 +44,7 @@ export default React.memo((props) => {
         }
         return step
     }
+    console.log('estValestValestValestVal ',props.estVal);
 
     return (
         // <View style={styles.pitStopLocationContainer} >
@@ -106,7 +107,7 @@ export default React.memo((props) => {
         // </View>
     );
 },((n,p)=>{
-    return n.isOpened === p.isOpened
+    return (n.isOpened === p.isOpened && n.estVal === p.estVal ) 
 }))
 
 
