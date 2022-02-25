@@ -184,6 +184,8 @@ export default (props) => {
                     longitude={props.route?.params?.finalDestObj.longitude}
                     showCurrentLocationBtn={false}
                     showContinueBtn={false}
+                    showDirections={false}
+                    showMarker={true}
                     mapHeight={(HEIGHT * 1.4) - HEIGHT}
                     markerStyle={{
                         zIndex: 3,

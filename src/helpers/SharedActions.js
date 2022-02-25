@@ -14,6 +14,7 @@ import Regex from '../utils/Regex';
 import GV, { PITSTOP_TYPES } from '../utils/GV';
 import constants from '../res/constants';
 import NavigationService from '../navigations/NavigationService';
+import preference_manager from '../preference_manager';
 const dispatch = store.dispatch;
 export const sharedGetDeviceInfo = async () => {
     let model = DeviceInfo.getModel();
@@ -346,8 +347,9 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
             joviPitstopsTotal += _pitstop.estimatePrice || 0;
         } else {
             let _pitTotal = 0
-            itemsCount += _pitstop.checkOutItemsListVM.length;
-            vendorMaxEstTime = sharedCalculateMaxTime(_pitstop.pitstopType === PITSTOP_TYPES.RESTAURANT ? _pitstop.checkOutItemsListVM : [], "estimatePrepTime")
+            // itemsCount += _pitstop.checkOutItemsListVM.length;
+            vendorMaxEstTime = sharedCalculateMaxTime(_pitstop.pitstopType === PITSTOP_TYPES.RESTAURANT ? _pitstop.checkOutItemsListVM : [], "estimatePrepTime");
+            console.log("vendorMaxEstTime", vendorMaxEstTime);
             _pitstop.vendorMaxEstTime = vendorMaxEstTime;
             _pitstop.checkOutItemsListVM.map((product, j) => {
 
@@ -359,6 +361,8 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
                 discount += product._totalDiscount * product.quantity;
                 _pitTotal = product._itemPrice * product.quantity;
                 subTotal += _pitTotal + discount;
+                itemsCount += product.quantity;
+
             })
             _pitstop.individualPitstopTotal = _pitTotal;
         }
@@ -371,9 +375,10 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
     joviRemainingAmount = joviCalculation <= 0 ? 0 : joviCalculation;
     // console.log('[TO STORE DATA => PITSTOPS,joviRemainingAmount, subTotal,discount, total,itemsCount, serviceCharges]', pitstops, joviRemainingAmount, subTotal, discount, total, itemsCount, serviceCharges);
     if (!pitstops.length) {
-        // NavigationService.NavigationActions.common_actions.goBack();
         dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
-    } else dispatch(ReduxActions.setCartAction({ pitstops, joviRemainingAmount, subTotal, itemsCount, joviPitstopsTotal, joviPrevOrdersPitstopsAmount, joviCalculation, total, estimateTime, gst, discount }));
+    } else {
+        dispatch(ReduxActions.setCartAction({ pitstops, joviRemainingAmount, subTotal, itemsCount, joviPitstopsTotal, joviPrevOrdersPitstopsAmount, joviCalculation, total, estimateTime, gst, discount }));
+    }
 };
 export const sharedDiscountsCalculator = (
     originalPrice = 0,
@@ -410,16 +415,8 @@ export const sharedAddUpdatePitstop = (
     cb = () => { }
 ) => {
     if (false) return dispatch(ReduxActionss.clearCartAction({}));
-    if (swappedArray.length) return sharedCalculateCartTotals(swappedArray)
-    // FOR JOVI PITSTOPS
-    // {
-    //      GIVE ONLY ITEM OBJECT TO ADD NEW PITSTOP
-    //      GIVE ITEM AND INDEX TO UPDATE
-    //      GIVE INDEX >= 0 AND ISDELETE AS TRUE TO DELETE PITSTOP
-    // }
-    // **********
-    // FOR VENDOR PITSTOP
     const cartReducer = store.getState().cartReducer;
+    if (swappedArray.length) return sharedCalculateCartTotals(swappedArray, cartReducer);
     let pitstops = cartReducer.pitstops;
     const pitstopIndex = (pitstopDetails?.pitstopIndex >= 0 ? pitstopDetails.pitstopIndex : null);
     if (pitstopIndex !== null && isDeletePitstop) {

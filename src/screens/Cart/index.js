@@ -19,10 +19,13 @@ import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES } from '../../utils/GV';
 import SetpProgress from '../../components/atoms/StepProgress';
 import stylesheet from './styles';
-import { pencil_icon, percent_icon } from './svgs/cart_svgs';
+import { pencil_icon, percent_icon, routes_icon } from './svgs/cart_svgs';
 import DeliveryAddress from "../../components/atoms/DeliveryAddress";
 import colors, { initColors } from '../../res/colors';
 import ReduxActions from '../../redux/actions';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
+import DraggableFlatList from '../../components/molecules/DraggableFlatList';
+
 
 const BottomLine = () => (
   <View
@@ -43,6 +46,8 @@ export default () => {
   const cartReducer = useSelector(store => store.cartReducer);
   const dispatch = useDispatch();
   console.log('[CART_SCREEN] cartReducer', cartReducer);
+  const [expanded, setExpanded] = React.useState([0]);
+  const _instructionsRef = React.createRef("");
   const colors = theme.getTheme(
     GV.THEME_VALUES.DEFAULT,
     Appearance.getColorScheme() === 'dark',
@@ -54,6 +59,13 @@ export default () => {
   const incDecDelHandler = (pitstopDetails, pitstopIndex = null, isDeletePitstop = false) => {
     sharedAddUpdatePitstop({ ...pitstopDetails }, isDeletePitstop, [], false, true);
   };
+  const expandCollapeHanlder = (idx) => {
+    let _list = [...expanded];
+    const _idx = expanded.findIndex(_num => _num === idx);
+    if (_idx !== -1) _list = _list.filter(i => i !== _idx);
+    else _list.push(idx);
+    setExpanded(_list)
+  }
   const PitstopsCard = ({ pitstop }) => {
     const {
       pitstopIndex, // from cart pitstops
@@ -64,6 +76,40 @@ export default () => {
     } = pitstop;
     const dynamiColors = theme.getTheme(pitstopType);
     const isJOVI = pitstopType === PITSTOP_TYPES.JOVI;
+    const viewToRender = () => {
+      if (isJOVI) return <Products
+        key={`jovi-product-key`}
+        dynamiColors={dynamiColors}
+        isJOVI={isJOVI}
+        product={pitstop}
+      />
+      else return (checkOutItemsListVM || []).map((product, idx) => (
+        <>
+          <Products
+            key={`product-key-${idx}`}
+            dynamiColors={dynamiColors}
+            isJOVI={isJOVI}
+            product={{ ...product, title: product.title || product.pitStopItemName, price: product.discountedPrice || product.gstAddedPrice || product.price }}
+            incDecDelHandler={quantity => {
+              incDecDelHandler({
+                // pitstopIndex,
+                vendorDetails: {
+                  actionKey: "pitstopID",
+                  pitstopID,
+                  pitstopName,
+                  pitstopType,
+                },
+                itemDetails: { ...product, actionKey: "checkOutItemID", productIndex: idx, quantity },
+              });
+            }}
+          />
+          {
+            idx === checkOutItemsListVM.length - 1 ? null : <DashedLines />
+          }
+
+        </>
+      ))
+    }
     return (
       <View
         style={{
@@ -112,7 +158,13 @@ export default () => {
                   },
                   {
                     text: "Yes",
-                    onPress: () => sharedAddUpdatePitstop({ pitstopIndex, pitstopType }, true, [], false, false, () => NavigationService.NavigationActions.common_actions.goBack())
+                    onPress: () => sharedAddUpdatePitstop({ pitstopIndex, pitstopType }, true, [], false, false, () => {
+                      if ((cartReducer.pitstops.length - 1) <= 0) {
+                        NavigationService.NavigationActions.common_actions.goBack()
+                      } else {
+
+                      }
+                    })
                   },
                 ]
               )
@@ -120,15 +172,15 @@ export default () => {
               <Text
                 style={{
                   paddingHorizontal: 10,
-                  fontSize: 10,
+                  fontSize: 12,
                   color: dynamiColors.grey,
                 }}
                 fontFamily="PoppinsRegular">
                 Clear pitstop
-            </Text>
+              </Text>
             </TouchableScale>
 
-            <View
+            <TouchableScale
               style={{
                 height: 30,
                 width: 30,
@@ -139,14 +191,16 @@ export default () => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 opacity: .7,
-              }}>
+              }}
+              onPress={() => expandCollapeHanlder(pitstopIndex)}
+            >
               <VectorIcon
                 type="AntDesign"
-                name="up"
+                name={expanded.includes(pitstopIndex) ? "down" : "up"}
                 color={dynamiColors.primary}
                 size={20}
               />
-            </View>
+            </TouchableScale>
           </View>
         </View>
         <View
@@ -157,41 +211,7 @@ export default () => {
             borderColor: colors.grey,
           }}
         />
-        {
-          isJOVI ? <Products
-            key={`jovi-product-key`}
-            dynamiColors={dynamiColors}
-            isJOVI={isJOVI}
-            product={pitstop}
-          />
-            :
-            (checkOutItemsListVM || []).map((product, idx) => (
-              <>
-                <Products
-                  key={`product-key-${idx}`}
-                  dynamiColors={dynamiColors}
-                  isJOVI={isJOVI}
-                  product={{ ...product, title: product.title || product.pitStopItemName, price: product.discountedPrice || product.gstAddedPrice || product.price }}
-                  incDecDelHandler={quantity => {
-                    incDecDelHandler({
-                      // pitstopIndex,
-                      vendorDetails: {
-                        actionKey: "pitstopID",
-                        pitstopID,
-                        pitstopName,
-                        pitstopType,
-                      },
-                      itemDetails: { ...product, actionKey: "checkOutItemID", productIndex: idx, quantity },
-                    });
-                  }}
-                />
-                {
-                  idx === checkOutItemsListVM.length - 1 ? null : <DashedLines />
-                }
-
-              </>
-            ))
-        }
+        {expanded.includes(pitstopIndex) ? viewToRender() : null}
       </View>
     );
   };
@@ -298,14 +318,14 @@ export default () => {
                 <Text
                   style={{ color: dynamiColors.primary, fontSize: 12 }}
                   fontFamily="PoppinsMedium">
-                  {renderPrice(_itemPrice)}
+                  {renderPrice(_itemPriceWithoutDiscount)}
                 </Text>
                 {
                   _totalDiscount > 0 &&
                   <Text
                     style={{ color: dynamiColors.grey, fontSize: 12, textDecorationLine: "line-through" }}
                     fontFamily="PoppinsMedium">
-                    {renderPrice(_itemPriceWithoutDiscount)}
+                    {renderPrice(_itemPrice)}
                   </Text>
                 }
               </View>
@@ -411,16 +431,25 @@ export default () => {
       <View style={{ top: -10 }}>
         <SetpProgress maxHighlight={2} />
       </View>
+
       <ScrollView contentContainerStyle={{ padding: 10 }} style={{ flex: 1 }}>
         <View style={{ marginHorizontal: 0 }}>
           <DeliveryAddress />
           <Text style={{ padding: 10, fontSize: 12 }} fontFamily="PoppinsLight">{'Hold and drag to rearrange your pitstops to get the better route and less service charges.'}</Text>
-          {(cartReducer.pitstops || []).map((pitstop, pitstopIndex) => (
+          <DraggableFlatList
+            data={cartReducer.pitstops}
+            renderItem={({ item, index }) => <PitstopsCard
+              key={`pit-key${index}`}
+              pitstop={{ ...item, pitstopIndex: index }}
+            />}
+            updateData={(newData) => sharedAddUpdatePitstop(null, false, newData)}
+          />
+          {/* {(cartReducer.pitstops || []).map((pitstop, pitstopIndex) => (
             <PitstopsCard
               key={`pit-key${pitstopIndex}`}
               pitstop={{ ...pitstop, pitstopIndex }}
             />
-          ))}
+          ))} */}
         </View>
         <TouchableScale
           style={{
@@ -431,8 +460,10 @@ export default () => {
             alignSelf: 'center',
             flexDirection: 'row',
             alignItems: 'center',
-          }}>
-          <SvgXml xml={svgs.jovi()} height={20} width={20} color="#fff" />
+          }}
+          onPress={() => NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.SharedMapView.screen_name)}
+        >
+          <SvgXml xml={routes_icon()} height={20} width={20} color="#fff" />
           <Text style={{ color: '#fff', paddingHorizontal: 5 }}>
             Check route on map
           </Text>
@@ -480,29 +511,32 @@ export default () => {
             borderWidth: 0.5,
             borderRadius: 7,
           }}
+          onChangeText={text => _instructionsRef.current = text.trim()}
         />
         <Totals />
       </ScrollView>
-      <View style={{ flexDirection: 'row' }}>
-        {['Add Pitstop', 'Checkout'].map((title, idx) => (
-          <TouchableScale
-            key={title}
-            style={{
-              flex: 1,
-              paddingVertical: 10,
-              backgroundColor: colors.primary,
-              borderRadius: 10,
-              marginHorizontal: 3,
-            }}
-            onPress={() => {
-              NavigationService.NavigationActions.common_actions.navigate(idx > 0 ? ROUTES.APP_DRAWER_ROUTES.CheckOut.screen_name : ROUTES.APP_DRAWER_ROUTES.Home.screen_name)
-            }}
-          >
-            <Text style={{ textAlign: 'center', color: colors.white }}>
-              {title}
-            </Text>
-          </TouchableScale>
-        ))}
+      <View style={{ backgroundColor: colors.white, paddingVertical: 10, alignItems: "center", justifyContent: "center", }}>
+        <View style={{ flexDirection: 'row', marginHorizontal: 10, }}>
+          {['Add Pitstop', 'Checkout'].map((title, idx) => (
+            <TouchableScale
+              key={title}
+              style={{
+                flex: 1,
+                paddingVertical: 10,
+                backgroundColor: colors.primary,
+                borderRadius: 10,
+                marginHorizontal: 3,
+              }}
+              onPress={() => {
+                NavigationService.NavigationActions.common_actions.navigate(idx > 0 ? ROUTES.APP_DRAWER_ROUTES.CheckOut.screen_name : ROUTES.APP_DRAWER_ROUTES.Home.screen_name)
+              }}
+            >
+              <Text style={{ textAlign: 'center', color: colors.white }}>
+                {title}
+              </Text>
+            </TouchableScale>
+          ))}
+        </View>
       </View>
     </SafeAreaView>
   );

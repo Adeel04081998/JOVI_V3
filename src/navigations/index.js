@@ -29,6 +29,7 @@ import ProductMenuItem from '../screens/ProductMenuItem';
 import ShelvesDetail from '../screens/ShelvesDetail';
 import OrderProcessing from '../screens/OrderProcessing';
 import OrderProcessingError from '../screens/OrderProcessingError';
+import SharedMapView from '../components/atoms/GoogleMaps/SharedMapView';
 const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES, APP_DRAWER_ROUTES, APP_DRAWER_STACK } = ROUTES;
 const AppDrawerStack = (props) => {
     return <Stack.Navigator screenOptions={stackOpts} initialRouteName={APP_DRAWER_ROUTES.Home.screen_name}>
@@ -72,6 +73,7 @@ const AppDrawerComponents = {
     ShelvesDetail,
     OrderProcessing,
     OrderProcessingError,
+    SharedMapView,
 }//will open with Slide Animation
 const ContainerStack = createStackNavigator();
 const Stack = createSharedElementStackNavigator();

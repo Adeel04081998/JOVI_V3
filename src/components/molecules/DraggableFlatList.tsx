@@ -28,10 +28,10 @@ const DraggableFlatList = (props: Props) => {
         onLongPress={itemProps.drag}
         disabled={itemProps.isActive}
         style={itemProps.isActive ? {
-    backgroundColor: "#fff",
+    // backgroundColor: "#fff",
           opacity: 1,
         } : {
-          backgroundColor:activatedIndex.current!==-1 ? `rgba(0,0,0,0.3)` : '#fff',
+          // backgroundColor:activatedIndex.current!==-1 ? `rgba(0,0,0,0.3)` : '#fff',
         }}>
         {/* @ts-ignore */}
         <props.renderItem {...itemProps} />

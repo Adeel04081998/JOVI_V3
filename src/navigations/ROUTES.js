@@ -90,6 +90,11 @@ const APP_DRAWER_ROUTES = {
         screen_name: "ORDER_PROCESSING_ERROR",
         options: null,
     },
+    "SharedMapView": {
+        screen_name: "SHARED_MAP_VIEW",
+        options: null,
+    },
+    
 }
 const APP_ROUTES = {
     "AppDrawerStack": {
