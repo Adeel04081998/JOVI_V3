@@ -83,30 +83,30 @@ export default ({ navigation, route }) => {
             "title": "Pitstop Details",
             "desc": "What Would You Like Your Jovi To Do ?",
             "svg": svgs.pitstopPin(),
-            "isOpened": false,
+            "isOpened": __DEV__ ? true : false,
             "headerColor": colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["description"],
-            "disabled": true,
+            "disabled": __DEV__ ? false : true,
         },
         {
             "idx": 3,
             "title": "Estimated Waiting Time",
             "desc": "What Is The Estimated Time Of The Job ?",
             "svg": svgs.pitStopEstTime(),
-            "isOpened": false,
+            "isOpened": __DEV__ ? true : false,
             "headerColor": colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["estimated-time"],
-            "disabled": true,
+            "disabled": __DEV__ ? false : true,
         },
         {
             "idx": 4,
             "title": "Buy For Me ?",
             "desc": "Do You Want Us To Buy For You ?",
             "svg": svgs.pitStopBuy(),
-            "isOpened": false,
+            "isOpened": __DEV__ ? true : false,
             "headerColor": colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["buy-for-me"],
-            "disabled": true,
+            "disabled": __DEV__ ? false : true,
 
         },
         {
@@ -114,10 +114,10 @@ export default ({ navigation, route }) => {
             "title": "Estimated Price",
             "desc": "What is the Estimated Price?",
             "svg": svgs.pitStopEstTime(),
-            "isOpened": false,
+            "isOpened": __DEV__ ? true : false,
             "headerColor": colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["estimated-price"],
-            "disabled": true,
+            "disabled": __DEV__ ? false : true,
 
         },
     ]
@@ -143,7 +143,7 @@ export default ({ navigation, route }) => {
     const [nameval, setNameVal] = useState('')
     const [cityVal, setCityVal] = useState('')
     const [placeName, setPlaceName] = useState('')
-    const [locationVal, setLocationVal] = useState('')
+    const [locationVal, setLocationVal] = useState(__DEV__? 'Islamabad':'')
     const [scrollEnabled, setScrollEnabled] = useState(true)
     const latitudeRef = React.useRef(null);
     const longitudeRef = React.useRef(null);
@@ -172,7 +172,7 @@ export default ({ navigation, route }) => {
 
     /******** Start of Pitstop Details variables *******/
 
-    const [description, setDescription] = useState('')
+    const [description, setDescription] = useState(__DEV__? 'HELLOO':'')
     const [imageData, updateImagesData] = useState([]);
 
     const [, updateStateaaa] = React.useState();
@@ -199,9 +199,9 @@ export default ({ navigation, route }) => {
 
     const [estVal, setEstVal] = useState('')
     const [initialEstVal, setInitialEstVal] = useState('')
-    const [switchVal, setSwitch] = useState(false);
+    const [switchVal, setSwitch] = useState(true);
     const [estTime, setEstTime] = React.useState({
-        text: "Estimated Time",
+        text: __DEV__? '0-15 mins':"Estimated Time",
         value: __DEV__ ? 1 : 0
     });
     const [collapsed, setCollapsed] = React.useState(true);
@@ -785,13 +785,7 @@ export default ({ navigation, route }) => {
                         style={{ ...styles.locButton, width: WIDTH - 70 }} />
                     <ScrollView horizontal={true} style={styles.galleryIcon} >
                         {
-                            // (imageData.length > 0 ? imageData : new Array(1).fill({ index: 1 }))
                             imageData.map((item, index) => {
-
-                                // const itemSize = Object.keys(item).length;
-
-                                // if (itemSize > 1) {
-
                                 return (
                                     <View key={`item path ${item.id}`} style={[styles.galleryIcon, {
                                         borderRadius: 5,
@@ -809,14 +803,6 @@ export default ({ navigation, route }) => {
                                         <Image source={{ uri: item.path }} style={{ height: 30, width: 30, resizeMode: "cover", borderRadius: 6 }} />
                                     </View>
                                 )
-                                // }
-                                // return (
-                                //     <View key={`item path ${item.index}`} style={styles.galleryIcon} >
-                                //         <VectorIcon name="image" type="Ionicons" color={colors.primary} size={25} style={{ marginRight: 5 }} />
-                                //         <VectorIcon name="image" type="Ionicons" color={colors.text} size={25} style={{ marginRight: 5 }} />
-                                //         <VectorIcon name="image" type="Ionicons" color={colors.text} size={25} style={{ marginRight: 5 }} />
-                                //     </View>
-                                // )
                             })}
                     </ScrollView>
                 </View>
@@ -962,19 +948,22 @@ export default ({ navigation, route }) => {
 
         return (
             <PitStopEstPrice
-                estVal={isNaN(parseInt(`${estVal}`)) ? 0 : parseInt(`${estVal}`)}
+                estVal={isNaN(parseInt(`${estVal}`)) ? '' : parseInt(`${estVal}`)}
                 textinputVal={`${estVal}`}
                 isOpened={isDisabled ? false : isOpened}
                 onChangeSliderText={newsliderValue => {
                     if (Regex.numberOnly.test(newsliderValue)) {
-                        const maxLengthRegex = new RegExp(`^([0-9]{0,4}|${remainingAmount})$`, "g");
-
+                        let remainingAmountLength=(`${remainingAmount}`.length)-1;
+                        if(remainingAmountLength<1){
+                            remainingAmountLength=1;
+                        }
+                        const maxLengthRegex = new RegExp(`^([0-${remainingAmountLength>1 ? '9':remainingAmount}]{0,${remainingAmountLength}}|${remainingAmount})$`, "g");
                         if (maxLengthRegex.test(newsliderValue)) {
                             setEstVal(newsliderValue);
                             setInitialEstVal(newsliderValue);
                         }
-
-                    } else {
+                    }
+                     else {
                         setEstVal('');
                         setInitialEstVal(0);
                     }
