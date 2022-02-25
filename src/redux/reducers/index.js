@@ -47,12 +47,13 @@ const cartReducer = (state = INIT_CART_DATA, action) => {
       return { ...state };
   }
 };
-const modalReducer = (state = { visible: false, closeModal: false, ModalContent: null }, action) => {
+const modalReducer = (state = { visible: false, closeModal: false, ModalContent: null, }, action) => {
+  
   switch (action.type) {
     case TYPES.SET_MODAL:
-      return { ...state, ...action.payload, closeModal: false };
+      return { ...state, ...action.payload, closeModal: false, disabled: "disabled" in action.payload ? action.payload.disabled : false };
     case TYPES.CLOSE_MODAL: {
-      return { ...state, closeModal: true }
+      return { ...state, closeModal: true, }
     }
     default:
       return { ...state };

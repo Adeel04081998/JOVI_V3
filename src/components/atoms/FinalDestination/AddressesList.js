@@ -57,8 +57,8 @@ export default (props) => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { onNavigateBack: (placeName) => {}, index })
     }
 
-    const validate = () =>{
-        if(adrObjRef.current === null) return true
+    const validate = () => {
+        if (adrObjRef.current === null) return true
         else return false
     }
 
@@ -68,7 +68,7 @@ export default (props) => {
                 {state.addressList.map((item, index) => {
                     return (
                         <TouchableOpacity activeOpacity={1} key={`addressList ${index}`} style={{ flexDirection: 'row', padding: 15, alignItems: 'center', backgroundColor: item.iconColor ? colors.light_primary_color : colors.white }} onPress={() => onAdressListPress(item, index)} >
-                            <SvgXml xml={item.addressType ? item.addressType === 1 ? svgs.homeAddIcon(item.iconColor ? item.iconColor : colors.primary) : item.addressType === 2 ? svgs.bagIcon(item.iconColor ? item.iconColor : colors.primary) : svgs.relationIcon(item.iconColor ? item.iconColor : colors.primary) : svgs.plusIcon(item.iconColor ? item.iconColor : colors.primary)} />
+                            <SvgXml xml={item.addressType ? item.addressType === 1 ? svgs.homeAddIcon(item.iconColor ? item.iconColor : colors.primary) : item.addressType === 2 ? svgs.bagIcon(item.iconColor ? item.iconColor : colors.primary) : svgs.relationIcon(item.iconColor ? item.iconColor : colors.primary) : svgs.addOtherLocation(item.iconColor ? item.iconColor : colors.primary)} height={22} width={22} />
                             <View style={{ flexDirection: 'column', marginLeft: 10 }}>
                                 <Text fontFamily={"PoppinsMedium"} style={{ color: item.iconColor ? item.iconColor : colors.primary, fontSize: 16 }}>{item.addressTypeStr || 'Other'}</Text>
                                 {item.title && <Text numberOfLines={1} fontFamily={"PoppinsRegular"} style={{ color: colors.subTextGreyColor || item.iconColor, fontSize: 10, width: WIDTH * 0.8 }}>{item.title}</Text>}
@@ -81,8 +81,8 @@ export default (props) => {
     }
     return (
         <View style={{ marginBottom: 10 }} >
-            <Text style={{  color: colors.black, fontSize: 18, paddingLeft:20, paddingTop:15 }} fontFamily="PoppinsMedium" >Can you confirm if this is your location?</Text>
-            <TouchableOpacity style={{ flexDirection: 'row', padding: 10,paddingLeft:15, alignItems: 'center' }} onPress={() => onTitlePress(0)}>
+            <Text style={{ color: colors.black, fontSize: 18, paddingLeft: 20, paddingTop: 15 }} fontFamily="PoppinsMedium" >Can you confirm if this is your location?</Text>
+            <TouchableOpacity style={{ flexDirection: 'row', padding: 10, paddingLeft: 15, alignItems: 'center' }} onPress={() => onTitlePress(0)}>
                 <VectorIcon name="map-marker" type="FontAwesome" size={20} color={colors.primary} />
                 <View style={{ flexDirection: 'column', marginLeft: 10 }}>
                     <Text fontFamily={"PoppinsMedium"} style={{ color: colors.primary, fontSize: 16 }}>{'Use my current location'}</Text>
@@ -99,14 +99,14 @@ export default (props) => {
                 </View>
             </TouchableOpacity>
             <Button text="Confirm Button"
-             onPress={onConfirmAddress}
-             disabled={validate()}
-              textStyle={{
-                fontSize: 16,
-                fontFamily: FontFamily.Poppins.Regular,
-                color: colors.white
-            }} 
-            style={{ width: WIDTH * 0.95, height: HEIGHT / 15, alignSelf: 'center', marginVertical: 20 }} />
+                onPress={onConfirmAddress}
+                disabled={validate()}
+                textStyle={{
+                    fontSize: 16,
+                    fontFamily: FontFamily.Poppins.Regular,
+                    color: colors.white
+                }}
+                style={{ width: WIDTH * 0.95, height: HEIGHT / 15, alignSelf: 'center', marginVertical: 20 }} />
         </View>
     )
 }

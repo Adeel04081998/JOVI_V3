@@ -25,7 +25,6 @@ export default (props) => {
 
     /******************************************* START OF VARIABLE INITIALIZATION **********************************/
 
-    console.log('props ==>>>', props);
 
     const HEIGHT = constants.window_dimensions.height;
     const WIDTH = constants.window_dimensions.width;
