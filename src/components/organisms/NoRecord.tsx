@@ -68,7 +68,8 @@ const NoRecord = (props: Props) => {
                     <Button
                         style={{
                             backgroundColor: colors.primary,
-                            borderRadius:10,
+                            borderRadius: 10,
+
                         }}
                         text={props.buttonText}
                         onPress={props.onButtonPress} />
@@ -109,7 +110,6 @@ const stylesFunc = (colors: typeof initColors) => StyleSheet.create({
         fontSize: 13,
     },
     buttonContainer: {
-        backgroundColor: colors.primary,
         marginHorizontal: 30,
         marginTop: 30,
         width: "65%",

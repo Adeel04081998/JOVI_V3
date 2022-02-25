@@ -34,7 +34,7 @@ LogBox.ignoreLogs([
     "Animated: `useNativeDriver` was not specified.",
 ]);
 
-const SCROLL_HEADER_HEIGHT_LINE=60;
+const SCROLL_HEADER_HEIGHT_LINE = 60;
 
 export default ({ navigation, route }) => {
     const pitstopType = route?.params?.pitstopType ?? 4;
@@ -138,6 +138,7 @@ export default ({ navigation, route }) => {
                     }}
                 />
                 <NoRecord
+                    color={colors}
                     title={query.errorText}
                     buttonText={`Retry`}
                     onButtonPress={loadData} />
@@ -191,8 +192,8 @@ export default ({ navigation, route }) => {
                     titleStyle={{
                         color: colors.primary,
                         opacity: animScroll.interpolate({
-                            inputRange:[headerHeight-100, headerHeight],
-                            outputRange:[0,1]
+                            inputRange: [headerHeight - 100, headerHeight],
+                            outputRange: [0, 1]
                         }),
                     }}
                     leftIconName="chevron-back"
