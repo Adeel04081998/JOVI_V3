@@ -15,7 +15,8 @@ const INIT_CART_DATA = {
   estimateTime: 0,
   itemsCount: 0
 };
-const userReducer = (state = {}, action) => {
+
+const userReducer = (state = { prevOrders: [] }, action) => {
   switch (action.type) {
     case TYPES.SET_USER_ACTION:
       return { ...state, ...action.payload };
@@ -25,6 +26,10 @@ const userReducer = (state = {}, action) => {
       return {
         ...state, ...action.payload
       };
+      case TYPES.SET_PREV_ORDERS:
+        return {
+          ...state, prevOrders : [...state.prevOrders, action.payload]
+        };
     default:
       return { ...state };
   }

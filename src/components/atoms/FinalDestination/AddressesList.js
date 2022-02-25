@@ -54,7 +54,7 @@ export default (props) => {
 
     const onTitlePress = (index) => {
         dispatch(ReduxActions.setModalAction({ visible: false }))
-        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { onNavigateBack: (placeName) => props.finalDestFunc(placeName), index })
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { onNavigateBack: (placeName) => {}, index })
     }
 
     const validate = () =>{

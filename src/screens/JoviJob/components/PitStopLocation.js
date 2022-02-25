@@ -30,9 +30,10 @@ const PitStopLocation = (props) => {
                 onNearbyLocationPress={() => props.onNearbyLocationPress}
                 handleInputFocused={(index, isFocus) => props.handleInputFocused(index, isFocus)}
                 onSetFavClicked={props.handleSetFavClicked}
+                textToShow={props.textToShow}
                 isFavourite={''}
                 marginBottom={0}
-                locationVal={props.locationVal}
+                // locationVal={props.locationVal}
                 clearInputField={props.clearInputField}
                 inputStyles={{
                     borderWidth: 1,
@@ -57,7 +58,7 @@ const PitStopLocation = (props) => {
                     shadowOffset: { x: 0, y: 0 },
                     shadowRadius: 15,
                     marginTop: -10,
-                    width: WIDTH - 10,
+                    width: WIDTH - 50.5,
                     alignSelf: 'center',
                     maxHeight: HEIGHT * 0.18,
                     overflow: 'scroll',
@@ -77,7 +78,7 @@ const PitStopLocation = (props) => {
                         <VectorIcon name="pin-outline" type="MaterialCommunityIcons" size={20} color={colors.white} />
                     )
                 }}
-                style={[styles.locButton, { width: WIDTH - 50, height: 35, zIndex: -1 }]} />
+                style={[styles.locButton, { width: WIDTH - 70, height: 35, zIndex: -1 }]} />
             <TextInput
                 title="Name (Optional)"
                 placeholder="Please Add Your Pitstop Location"

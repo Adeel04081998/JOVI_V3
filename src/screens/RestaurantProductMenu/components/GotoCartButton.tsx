@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import Text from "../../../components/atoms/Text";
 import View from "../../../components/atoms/View";
 import Button, { ButtonProps } from "../../../components/molecules/Button";
@@ -138,8 +138,8 @@ const stylesFunc = (colors: typeof initColors, insets: EdgeInsets) => StyleSheet
     primaryContainer: {
         backgroundColor: colors.white,
         position: 'absolute',
-        paddingTop: getStatusBarHeight(true) + (insets.bottom > 0 ? insets.bottom * 0.7 : 10),
-        paddingBottom: getStatusBarHeight(true) + (insets.bottom > 0 ? insets.bottom * 0.7 : 10),
+        paddingTop: 20,
+        paddingBottom: getStatusBarHeight(true) + (insets.bottom > 0 ? insets.bottom * 0.1 : Platform.OS === "ios" ? 0 : 10),
         bottom: 0,
 
         width: "100%",

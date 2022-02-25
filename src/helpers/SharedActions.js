@@ -298,8 +298,7 @@ export const renderPrice = (price, prefix = "Rs. ", suffix = "", reg = Regex.pri
     prefix = `${prefix}`.trim();
     suffix = `${suffix}`.trim();
     price = `${price}`.trim().replace(reg, '').trim();
-    return suffix.length > 0 ? `${prefix} ${price}${suffix}` : `${prefix} ${price}`;
-    return parseInt(`${price}`) < 1 ? null : suffix.length > 0 ? `${prefix} ${price}${suffix}` : `${prefix} ${price}`;
+    return parseInt(`${price}`) < 1 ? '' : suffix.length > 0 ? `${prefix} ${price}${suffix}` : `${prefix} ${price}`;
 }
 
 export const isNextPage = (totalItem, itemPerRequest, currentRequestCount) => {

@@ -21,7 +21,7 @@ export default (props) => {
       dispatch(ReduxActions.setUserFinalDestAction({ finalDestObj }))
       NavigationService.NavigationActions.common_actions.goBack();
     } else if (props.route.params.index === 1) {
-      props.route.params.onNavigateBack && props.route.params.onNavigateBack(finalDestObj.title);
+      props.route.params.onNavigateBack && props.route.params.onNavigateBack(finalDestObj);
       NavigationService.NavigationActions.common_actions.goBack();
     }
     else if (props.route.params.index === 3) {

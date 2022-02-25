@@ -24,6 +24,8 @@ export default {
     // FILTERED_CATEGORIES_TAGS
     "SET_CATEGORIES_TAGS": "get_filtered_categories",
 
+    // PREVIOUS ORDERS
+    "SET_PREV_ORDERS": "set_prev_orders",
     //FCM Notification Action
     "SET_FCM_ACTION": "set_fcm_action"
 }

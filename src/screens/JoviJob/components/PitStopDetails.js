@@ -1,5 +1,5 @@
 import React, { } from 'react';
-import { Appearance} from 'react-native';
+import { Appearance, Keyboard } from 'react-native';
 import constants from '../../../res/constants';
 import Text from '../../../components/atoms/Text';
 import View from '../../../components/atoms/View';
@@ -21,7 +21,7 @@ const PitStopDetails = (props) => {
         <View style={{ marginVertical: 10 }} >
             <TextInput title="Pitstop Description"
                 placeholder="Please Add Your Description"
-                returnKeyType="next"
+                // returnKeyType= ""
                 style={{
                     height: 120,
                     textAlignVertical: 'top',
@@ -33,16 +33,17 @@ const PitStopDetails = (props) => {
                     }),
                 }}
                 containerStyle={{
-                    width: WIDTH - 40,
+                    width: WIDTH - 70,
                     alignSelf: 'center',
                     backgroundColor: colors.white,
-                    borderWidth:1, borderColor: colors.light_input_border,
+                    borderWidth: 1, borderColor: colors.light_input_border,
                     borderRadius: 10
                 }}
                 multiline={true}
                 titleStyle={{ opacity: 0.8, color: '#000', fontFamily: FontFamily.Poppins.Regular, fontSize: 12 }}
                 value={props.description}
                 onChangeText={props.onChangeDescription}
+                // onSubmitEditing={() => Keyboard.dismiss()}
             />
             <Text style={styles.attachment} >Attachments</Text>
             {props.children}
