@@ -62,12 +62,22 @@ export default (props) => {
 
   const getCurrentPosition = () => {
     navigator.geolocation.getCurrentPosition(({ coords: { latitude, longitude } }) => {
-      mapView?.current?.animateToRegion({
-        latitude,
-        longitude,
-        latitudeDelta: LATITUDE_DELTA,
-        longitudeDelta: LONGITUDE_DELTA,
-      });
+      if (props.route?.params?.latitude !== undefined && props.route?.params?.latitude !== null) {
+        mapView?.current?.animateToRegion({
+          latitude: props.route.params.latitude,
+          longitude: props.route.params.longitude,
+          latitudeDelta: LATITUDE_DELTA,
+          longitudeDelta: LONGITUDE_DELTA,
+        });
+        setPlaceName(props.route.params.title)
+      } else {
+        mapView?.current?.animateToRegion({
+          latitude,
+          longitude,
+          latitudeDelta: LATITUDE_DELTA,
+          longitudeDelta: LONGITUDE_DELTA,
+        });
+      }
     }, (error) => {
       mapView.current && mapView.current.animateToRegion(sharedStartingRegionPK);
       Toast.error("Location is either turned off or unresponsive!");
@@ -133,7 +143,7 @@ export default (props) => {
         paddingLeft: 5
       }}>
         <TouchableOpacity
-          onPress={() => NavigationService.NavigationActions.common_actions.goBack()}
+          onPress={() => props.onBackPress()}
           style={{
             height: ICON_BORDER.size,
             width: ICON_BORDER.size,
@@ -268,6 +278,7 @@ export default (props) => {
   }
 
   const cb = (loaderBool) => {
+    disabledRef.current = false
     setLoader(loaderBool)
   }
 
@@ -275,20 +286,20 @@ export default (props) => {
     return (
       <Button
         onPress={async () => {
-          if(disabledRef.current){
+          if (disabledRef.current) {
             return;
           }
           disabledRef.current = true
           const { latitude, longitude } = coordinatesRef.current
-          confirmServiceAvailabilityForLocation(postRequest, latitude, longitude,
+          confirmServiceAvailabilityForLocation(postRequest, latitude || props.route?.params?.latitude, longitude || props.route?.params?.longitude,
             async (resp) => {
-              let adrInfo = await addressInfo(latitude, longitude, cb)
+              let adrInfo = await addressInfo(latitude || props.route?.params?.latitude, longitude  || props.route?.params?.longitude, cb)
               placeNameRef.current = adrInfo.address
               setPlaceName(adrInfo.address)
               let placeObj = {
                 title: placeNameRef.current,
-                latitude,
-                longitude,
+                latitude: latitude || props.route?.params?.latitude ,
+                longitude: longitude  || props.route?.params?.longitude,
                 latitudeDelta: LATITUDE_DELTA,
                 longitudeDelta: LONGITUDE_DELTA,
                 city: adrInfo.city

@@ -12,10 +12,8 @@ import TouchableOpacity from '../TouchableOpacity';
 import { SvgXml } from 'react-native-svg';
 import constants from '../../../res/constants';
 import Toast from '../Toast';
-import LocationSearch from '../LocationSearch';
 import NavigationService from '../../../navigations/NavigationService';
-import ROUTES from '../../../navigations/ROUTES';
-import CustomHeader from '../../molecules/CustomHeader';
+
 
 
 const LATITUDE_DELTA = 0.01;
@@ -24,6 +22,7 @@ const LONGITUDE_DELTA = 0.01;
 export default (props) => {
 
     /******************************************* START OF VARIABLE INITIALIZATION **********************************/
+
 
     const HEIGHT = constants.window_dimensions.height;
     const WIDTH = constants.window_dimensions.width;
@@ -45,10 +44,6 @@ export default (props) => {
 
 
     /******************************************* END OF VARIABLE INITIALIZATION **********************************/
-
-
-
-
 
 
     /******************************************* START OF FUNCTIONS **********************************/
@@ -107,8 +102,7 @@ export default (props) => {
         }
         locationHandler();
         getCurrentPosition()
-    }, [ready]);
-
+    }, [ready,props.latitude]);
 
 
     /******************************************* END OF FUNCTIONS **********************************/
@@ -218,7 +212,13 @@ export default (props) => {
 
     const renderBackBtn = () => {
         return (
-            <TouchableOpacity style={styles.backBtn} onPress={() => NavigationService.NavigationActions.common_actions.goBack()} >
+            <TouchableOpacity style={styles.backBtn} onPress={() => {
+                if(props.onBackPress){
+                    props.onBackPress();
+                }else{
+                    NavigationService.NavigationActions.common_actions.goBack()
+                }
+            }} >
                 <VectorIcon
                     name={"keyboard-backspace"}
                     type={"MaterialIcons"}
