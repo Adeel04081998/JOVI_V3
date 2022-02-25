@@ -34,7 +34,7 @@ LogBox.ignoreLogs([
     "Animated: `useNativeDriver` was not specified.",
 ]);
 
-const SCROLL_HEADER_HEIGHT_LINE=60;
+const SCROLL_HEADER_HEIGHT_LINE = 60;
 
 export default ({ navigation, route }) => {
     const pitstopType = route?.params?.pitstopType ?? 4;
@@ -191,8 +191,8 @@ export default ({ navigation, route }) => {
                     titleStyle={{
                         color: colors.primary,
                         opacity: animScroll.interpolate({
-                            inputRange:[headerHeight-100, headerHeight],
-                            outputRange:[0,1]
+                            inputRange: [headerHeight - 100, headerHeight],
+                            outputRange: [0, 1]
                         }),
                     }}
                     leftIconName="chevron-back"
@@ -213,7 +213,7 @@ export default ({ navigation, route }) => {
             {/* ****************** Start of UPPER HEADER TILL RECENT ORDER ****************** */}
             <Animated.View style={{
                 ...StyleSheet.absoluteFill,
-                backgroundColor: colors.white,
+                backgroundColor: colors.screen_background,
                 transform: [{
                     translateY: headerTop
                 }],
@@ -242,7 +242,7 @@ export default ({ navigation, route }) => {
                 animatedScrollValue={animScroll}
                 headerHeight={headerHeight}
                 topHeaderStyle={{
-                    backgroundColor: colors.white,
+                    backgroundColor: colors.screen_background,
                     paddingTop: 10,
                     height: SCROLL_HEADER_HEIGHT_LINE,
                     transform: [{
@@ -255,7 +255,7 @@ export default ({ navigation, route }) => {
                 renderSectionHeader={(item, index) => {
                     if (item?.isTopDeal ?? false) return null;
                     return (
-                        <View style={sectionHeaderStyles.primaryContainer}>
+                        <View style={[sectionHeaderStyles.primaryContainer], { backgroundColor: colors.screen_background, paddingHorizontal: 10 }}>
                             <Text
                                 fontFamily='PoppinsMedium'
                                 style={sectionHeaderStyles.text}>{item.categoryName}</Text>
@@ -266,24 +266,28 @@ export default ({ navigation, route }) => {
                 renderItem={(parentItem, item, parentIndex, index) => {
                     if (parentItem?.isTopDeal ?? false) {
                         return (
-                            <ProductCard
-                                onItemPress={() => onItemPress(item)}
-                                color={colors}
-                                containerStyle={{
-                                    ...itemStyles.primaryContainer,
-                                    marginLeft: index === 0 ? 10 : 0,
-                                }}
-                                item={{
-                                    itemID: item.itemID,
-                                    image: { uri: renderFile(item.image) },
-                                    description: item.description,
-                                    title: item.name,
-                                    price: renderPrice(`${item.price}`)
-                                }} />
+                            <View style={{ backgroundColor: colors.screen_background }}>
+                                <ProductCard
+                                    onItemPress={() => onItemPress(item)}
+                                    color={colors}
+                                    containerStyle={{
+                                        ...itemStyles.primaryContainer,
+                                        marginLeft: index === 0 ? 10 : 0,
+                                    }}
+                                    item={{
+                                        itemID: item.itemID,
+                                        image: { uri: renderFile(item.image) },
+                                        description: item.description,
+                                        title: item.name,
+                                        price: renderPrice(`${item.price}`)
+                                    }} />
+
+                            </View>
+
                         )
                     }
                     return (
-                        <TouchableOpacity onPress={() => onItemPress(item)} style={itemStyles.primaryContainer2}>
+                        <TouchableOpacity onPress={() => onItemPress(item)} style={[itemStyles.primaryContainer2], { backgroundColor: colors.screen_background, paddingHorizontal: 10 }}>
                             {index !== 0 &&
                                 <View style={itemStyles.seperator} />
                             }
@@ -326,4 +330,5 @@ export default ({ navigation, route }) => {
         </SafeAreaView>
     )
 };//end of EXPORT DEFAULT
+
 

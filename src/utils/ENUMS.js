@@ -138,7 +138,7 @@ export default {
             "value": 3,
             "id": 3,
             "icon": null,
-            "price": "1000 - 2000"
+            "price": "1000 - 2000+"
 
 
         }
