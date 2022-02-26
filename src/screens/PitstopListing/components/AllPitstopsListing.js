@@ -90,6 +90,7 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
         }, {}, true);
     }
     const fetchDataWithUpdatedPageNumber = (onLoad = false) => {
+        if(isRequestSent.current) return;
         if (paginationInfo.current.totalItems && (ITEMS_PER_PAGE * paginationInfo.current.pageNumber) >= paginationInfo.current.totalItems) {
             return;
         }
@@ -101,6 +102,7 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
         getData();
     }
     const fetchDataWithResetedPageNumber = () => {
+        if(isRequestSent.current) return;
         paginationInfo.current = {
             pageNumber: 1,
             itemsPerPage: ITEMS_PER_PAGE
