@@ -903,8 +903,10 @@ export default ({ navigation, route }) => {
                                     nameval,
                                     imageData,
                                     voiceNote,
+                                    latitude:33.66741474674968,longitude: 73.07175878414293,
                                     estTime,
-                                    estimatePrice: parseInt(estVal)
+                                    estimatePrice: parseInt(estVal),
+                                    buyForMe: switchVal,
                                 }
                                 sharedAddUpdatePitstop(pitstopData, false, [], false, false, clearData);
                             }}

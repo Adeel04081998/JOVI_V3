@@ -164,7 +164,7 @@ export const sharedGetUserDetailsApi = () => {
     getRequest(
         Endpoints.GET_USER_DETAILS,
         res => {
-            // console.log("[getUserDetailsApi].res", res);
+            console.log("[getUserDetailsApi].res", res);
             dispatch(ReduxActions.setUserAction({ ...res.data.userDetails }));
         },
         err => {
@@ -435,13 +435,13 @@ export const sharedAddUpdatePitstop = (
                 pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIndex);
             } else {
                 console.log('[UPDATE JOVI PITSTOP]');
-                pitstops[pitstopIndex] = { ...pitstopDetails }; // TO RETAIN OLD PROPERTIES AS IT IS WITH UPDATED VAUES YOU NEED TO PASS SPREADED (...) OLD ITEM'S FULL DATA WITH UPDATED FIELDS
+                pitstops[pitstopIndex] = { ...pitstopDetails, isJoviJob: true, }; // TO RETAIN OLD PROPERTIES AS IT IS WITH UPDATED VAUES YOU NEED TO PASS SPREADED (...) OLD ITEM'S FULL DATA WITH UPDATED FIELDS
                 // pitstops[pitstopIndex] = { ...pitstops[index], ...pitstopDetails }; // ...pitstops[index] IF YOU DON'T HAVE ITEM'S PREVIOUS DATA (VERY RARE CASE)
             }
         } else {
             // ADD NEW PITSTOP
             console.log('[NEW CREATE]');
-            pitstops.push({ pitstopID: sharedUniqueIdGenerator(), ...pitstopDetails, isRestaurant: false });
+            pitstops.push({ ...pitstopDetails, pitstopID: sharedUniqueIdGenerator(), isJoviJob: true, isRestaurant: false });
         }
     } else {
         // VENDOR PITSTOPS HANDLING
@@ -498,7 +498,8 @@ export const sharedAddUpdatePitstop = (
                 pitstops.push({
                     ...pitstopDetails.vendorDetails,
                     isRestaurant: pitstopDetails.pitstopType === PITSTOP_TYPES.RESTAURANT,
-                    pitstopID: sharedUniqueIdGenerator(),
+                    pitstopID: pitstopDetails.vendorDetails.marketID ?? pitstopDetails.vendorDetails.pitstopID,
+                    // pitstopID: sharedUniqueIdGenerator(),
                     checkOutItemsListVM: [{ ...upcomingItemDetails, checkOutItemID: sharedUniqueIdGenerator() }],
                 });
             }
@@ -546,16 +547,37 @@ export const sharedGetPitstopData = (pitstop = {}, pitstopActionKey = "marketID"
     } else return null;
 }
 
-export const sharedGetServiceCharges = (payload = null) => {
+export const sharedGetServiceCharges = (payload = null,successCb=()=>{}) => {
     const cartReducer = store.getState().cartReducer;
+    const pitstopItems = [];
+    [...cartReducer.pitstops].map((item, i) => {
+        if (item.checkOutItemsListVM) {
+            item.checkOutItemsListVM.map((product, j) => {
+                pitstopItems.push({
+                    "itemPrice": product._itemPrice,
+                    "gstAddedPrice": product.gstAddedPrice + product.totalJoviDiscount + product._totalDiscount,
+                    "gstPercentage": product.gstPercentage,
+                    "itemDiscount": product.itemDiscount,
+                    "joviDiscount": product.joviDiscount,
+                    "actualPrice": product.gstAddedPrice + product.totalJoviDiscount + product._totalDiscount,
+                    "gstAmount": product._totalGst,
+                    "quantity": product.quantity,
+                    "pitStopType": item.pitstopType,
+                    "pitstopID": item.marketID,
+                    "pitstopItemID": product.pitStopItemID
+                });
+            });
+        }
+    });
     payload = payload ? payload : {
         "joviJobAmount": cartReducer.joviPitstopsTotal,
         "estimateTime": cartReducer.estimateTime || null,
         "pitstops": [...cartReducer.pitstops].map((_pitstop, pitIndex) => ({
             "isRestaurant": _pitstop.isRestaurant,
             "latLng": `${_pitstop.latitude},${_pitstop.longitude}`,
-            "pitStopType": _pitstop.pitstopType
+            "pitStopType": _pitstop.pitstopType,
         })),
+        pitstopItems,
         "skipEstAmountAndGst": true,
         // "hardwareID": "string",
         // "promoCodeApplied": "string",
@@ -563,17 +585,19 @@ export const sharedGetServiceCharges = (payload = null) => {
         // "isAdmin": true,
         // "orderID": 0
     }
+    console.log('payload--sharedGetServiceCharges',payload);
     postRequest(
         Endpoints.SERVICE_CHARGES,
         payload,
         (response) => {
-            const { statusCode, serviceCharge, discount } = response.data;
+            const { statusCode, serviceCharge,chargeBreakdown, discount } = response.data;
             console.log('service charges response -----', response);
             if (statusCode === 200)
                 // NEED TO MODIFY THESE LOGIC FOR FUTURE CASES LIKE CHECKOUT SCREEN...
                 if (!cartReducer.serviceCharges) {
-                    dispatch(ReduxActions.setCartAction({ serviceCharges: serviceCharge, total: cartReducer.total + serviceCharge }))
+                    dispatch(ReduxActions.setCartAction({ serviceCharges: serviceCharge, total: cartReducer.total + serviceCharge,chargeBreakdown:chargeBreakdown??{} }))
                 }
+                successCb(response);
         },
         (error) => {
             console.log('service charges error -----', error);
@@ -656,5 +680,20 @@ export const sharedSendFCMTokenToServer = async (postRequest, FcmToken) => {
         },
         {},
         false
+    );
+};
+
+export const sharedFetchOrder = (orderID = 0, successCb = () => { }, errCb = () => { }) => {
+    getRequest(
+        Endpoints.FetchOrder + '/' + orderID,
+        (response) => {
+            console.log('sharedFetchOrder', response);
+            successCb(response);
+        },
+        (error) => {
+            console.log(((error?.response) ? error.response : {}), error);
+            errCb(error);
+            sharedExceptionHandler(error);
+        }
     );
 };

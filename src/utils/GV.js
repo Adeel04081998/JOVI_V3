@@ -17,7 +17,7 @@ export const PITSTOP_TYPES_INVERTED = {
     1: 'SUPER_MARKET',
     2: 'JOVI',
     3: 'PHARMACY',
-    4: 'RESTAURANT',
+    4: 'RESTAURANT', 
     5: 'JOVI_MART',
     10: 'ALL',
 };

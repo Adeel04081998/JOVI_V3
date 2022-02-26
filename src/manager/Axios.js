@@ -13,7 +13,7 @@ Axios.interceptors.request.use(
             config.timeout = __DEV__ ? 60000 : 15000;
             config.timeoutErrorMessage = "Request Timeout..."
             config.headers['isNewApp'] = "true"; // for device and app info in future
-            config.headers['deviceInfo'] = JSON.stringify({}); // for device and app info in future
+            config.headers['deviceInfo'] = JSON.stringify({hardwareID:'1231dh1dh12'}); // for device and app info in future
             const userReducer = store.getState().userReducer;
             const authToken = userReducer?.token?.authToken; // [?.] Added becuase of before login api request when we dont have auth token...
             if (authToken) {

@@ -33,6 +33,9 @@ export default (props) => {
         'itemCount': 1,
         discountedPriceWithGst: 0,
         totalPriceWithoutDiscount: 0,
+        discountedPriceWithoutGstWithoutJovi: 0,
+        totalJoviDiscount: 0,
+
         totalAddOnPrice: 0,
         totalDiscount: 0,
         totalGst: 0,
@@ -74,23 +77,30 @@ export default (props) => {
             "pitstopType": pitstopType
         }, (res) => {
             console.log('if GET_PRODUCTDETAIL  res', res);
-            setState((pre) => ({
-                ...pre,
-                generalProductOrDealDetail: {
-                    ...res.data.generalProductOrDealDetail,
-                    // gstAmount: 40,
-                    // discountAmount: 20,
-                    // gstPercentage: 10,
-                    // gstAddedPrice: res.data.generalProductOrDealDetail.gstAddedPrice + 40
-                },
-                loading: false
-
-            }));
-            setEnable(pre => ({
-                ...pre,
-                enableBtn: (res.data.generalProductOrDealDetail.optionList ?? []).length < 1,
-                requiredIds: (res.data.generalProductOrDealDetail?.optionList ?? []).filter(item => item.isRequired === true).map((_, i) => (i))
-            }));
+            if(res.data.statusCode === 200){
+                setState((pre) => ({
+                    ...pre,
+                    generalProductOrDealDetail: {
+                        ...res.data.generalProductOrDealDetail,
+                        // joviDiscount: 20,
+                        // joviDiscountType: 2,
+                        // isJoviDiscount:true,
+                        // gstAmount: 40,
+                        // discountAmount: 20,
+                        // gstPercentage: 10,
+                        // gstAddedPrice: res.data.generalProductOrDealDetail.gstAddedPrice + 40
+                    },
+                    loading: false
+    
+                }));
+                setEnable(pre => ({
+                    ...pre,
+                    enableBtn: (res.data.generalProductOrDealDetail.optionList ?? []).length < 1,
+                    requiredIds: (res.data.generalProductOrDealDetail?.optionList ?? []).filter(item => item.isRequired === true).map((_, i) => (i))
+                }));
+            }else{
+                setState(pre=>({...pre,loading:false}));
+            }
 
 
         }, err => {
@@ -139,9 +149,16 @@ export default (props) => {
         enableDisable(updatedArr);
         const totalAddOnPrice = updatedArr.reduce((previousValue, currentValue) => { return parseInt(previousValue) + parseInt(currentValue.optionPrice) }, 0);
         const discountAmount = generalProductOrDealDetail.discountAmount;
+        const joviDiscountRate = generalProductOrDealDetail.joviDiscount ?? 0;
         let totalAmountWithoutGst = totalAddOnPrice + generalProductOrDealDetail.itemPrice;
         let totalDiscount = discountAmount > 0 ? totalAmountWithoutGst * (discountAmount / 100) : 0;
-        let discountedPriceWithoutGst = discountTypeCallbacks[1](totalAmountWithoutGst, discountAmount);
+        let totalJoviDiscount = 0;
+        let discountedPriceWithoutGstWithoutJovi = discountTypeCallbacks[1](totalAmountWithoutGst, discountAmount);
+        let discountedPriceWithoutGst = discountedPriceWithoutGstWithoutJovi;
+        if (generalProductOrDealDetail.isJoviDiscount) {
+            totalJoviDiscount = joviDiscountRate > 0 ? totalAmountWithoutGst * (joviDiscountRate / 100) : 0;
+            discountedPriceWithoutGst = totalJoviDiscount > discountedPriceWithoutGst ? discountedPriceWithoutGst : discountedPriceWithoutGst - totalJoviDiscount;
+        }
         const totalGst = ((generalProductOrDealDetail.gstPercentage / 100) * totalAmountWithoutGst);
         let discountedPriceWithGst = discountedPriceWithoutGst + totalGst;
         const totalPriceWithoutDiscount = discountedPriceWithGst + totalDiscount;
@@ -154,6 +171,8 @@ export default (props) => {
             totalPriceWithoutDiscount,
             totalDiscount,
             totalGst,
+            totalJoviDiscount,
+            discountedPriceWithoutGstWithoutJovi,
             generalProductOrDealDetail: {
                 ...pre.generalProductOrDealDetail,
                 // gstAddedPrice: discountedPrice,
@@ -172,14 +191,17 @@ export default (props) => {
                 notes,
                 gstAddedPrice: state.discountedPriceWithGst,
                 _itemPriceWithoutDiscount: state.totalPriceWithoutDiscount,
+                _itemPriceWithoutJoviDiscount: state.discountedPriceWithoutGstWithoutJovi,
                 _itemPrice: state.discountedPriceWithGst,
                 _totalGst: state.totalGst,
                 _totalDiscount: state.totalDiscount,
                 totalAddOnPrice,
                 actionKey: propItem.pitStopItemID ? "pitStopItemID" : "pitStopDealID",
-                estimatePrepTime: pitstopType === PITSTOP_TYPES.RESTAURANT ? generalProductOrDealDetail.estimateTime : ""
+                estimatePrepTime: pitstopType === PITSTOP_TYPES.RESTAURANT ? generalProductOrDealDetail.estimateTime : "",
+                totalJoviDiscount: state.totalJoviDiscount,
+
             },
-            vendorDetails: { ...propItem.vendorDetails, pitstopType, pitstopActionKey: "marketID" },
+            vendorDetails: { ...propItem.vendorDetails, pitstopType, pitstopActionKey: "marketID", productsDealsCategories: undefined },
         }
         setState((pre) => ({
             ...pre,
@@ -197,7 +219,7 @@ export default (props) => {
         sharedAddUpdatePitstop(dataToSend, false, [], true)
 
         // NavigationService.NavigationActions.common_actions.navigate({ dataToSend })
-        
+
         setEnable(pre => ({
             ...pre,
             enableBtn: optionsListArr.length < 1,
@@ -298,7 +320,7 @@ export default (props) => {
             />
         </View>
     }
-    const RenderPutItemInCartBox = ({addToCardAnimation}) => {
+    const RenderPutItemInCartBox = ({ addToCardAnimation }) => {
         const animateAddToCart = React.useRef(new Animated.Value(0)).current;
         const animateLoader = (toValue = 1) => {
             Animated.timing(animateAddToCart, {
@@ -313,12 +335,12 @@ export default (props) => {
             });
         }
         React.useEffect(() => {
-            if(addToCardAnimation === true){
+            if (addToCardAnimation === true) {
                 animateLoader();
             }
         }, [addToCardAnimation]);
         return (
-            <AnimatedView style={{ opacity: animateAddToCart,display:addToCardAnimation === true?'flex':'none', position: 'absolute', height: "100%", backgroundColor: 'rgba(0,0,1,0.5)', width: '100%', justifyContent: 'flex-start', alignContent: 'flex-start' }}>
+            <AnimatedView style={{ opacity: animateAddToCart, display: addToCardAnimation === true ? 'flex' : 'none', position: 'absolute', height: "100%", backgroundColor: 'rgba(0,0,1,0.5)', width: '100%', justifyContent: 'flex-start', alignContent: 'flex-start' }}>
                 <AnimatedLottieView
                     source={require('../../assets/gifs/Add To Cart.json')}
                     onAnimationFinish={() => {
@@ -397,7 +419,7 @@ export default (props) => {
                                     productDetailsStyles={productDetailsStyles}
                                     selectedOptions={state.selectedOptions}
                                 />
-                                {pitstopType === 4?<TextInput
+                                {pitstopType === 4 ? <TextInput
                                     containerStyle={{ backgroundColor: 'white', marginVertical: 30, margin: 0, }}
                                     placeholder="Types your notes"
                                     titleStyle={{ color: 'black', fontSize: 14, }}
@@ -411,14 +433,14 @@ export default (props) => {
                                     }}
                                     multiline={true} // ios fix for centering it at the top-left corner 
                                     numberOfLines={Platform.OS === "ios" ? null : numberOfLines}
-                                />:null}
+                                /> : null}
                             </AnimatedView>
                         </ScrollView>
                         {renderButtonsUi()}
                     </SafeAreaView>
 
             }
-            {<RenderPutItemInCartBox addToCardAnimation={state.addToCardAnimation}/> }
+            {<RenderPutItemInCartBox addToCardAnimation={state.addToCardAnimation} />}
 
         </View>
 

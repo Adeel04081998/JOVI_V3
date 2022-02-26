@@ -7,11 +7,19 @@ import Text from '../../../components/atoms/Text';
 import NavigationService from '../../../navigations/NavigationService';
 import ROUTES from '../../../navigations/ROUTES';
 import { PITSTOP_TYPES } from '../../../utils/GV';
+import { useSelector } from 'react-redux';
+import { Alert } from 'react-native';
 const CONTAINER_WIDTH = ((constants.screen_dimensions.width) * 0.22);
 const CONTAINER_HEIGHT = constants.screen_dimensions.width * 0.3;
 export default React.memo(({ homeStyles }) => {
     const categoryPressed = React.useRef(false);
+    const userReducer = useSelector(store => store.userReducer);
+    const finalDestination =  userReducer.finalDestObj;
     const cartOnPressHandler = (index, item) => {
+        if(!finalDestination?.latitude){
+            Alert.alert('Location Unavailable','Please Select Final Destination First');
+            return;
+        }
         if(categoryPressed.current){
             return;
         }

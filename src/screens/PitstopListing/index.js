@@ -132,8 +132,8 @@ const PistopListing = React.memo(({ route, }) => {
             onPressFilter(listing, { cuisines: updatedFilters.activeCusine });
             return;
         }
-        filtersRef.current.cuisines = [updatedFilters.activeCusine];
-        filtersRef.current.activeFilterBy = [updatedFilters.activeFilterBy];
+        filtersRef.current.cuisines = updatedFilters.activeCusine? [updatedFilters.activeCusine]:[];
+        filtersRef.current.activeFilterBy = updatedFilters.activeFilterBy?[updatedFilters.activeFilterBy]:[];
         filtersRef.current.averagePrice = updatedFilters.activeAvergePrice;
         setState(pre => ({
             ...pre,
@@ -146,7 +146,7 @@ const PistopListing = React.memo(({ route, }) => {
         }));
         const isAllDisSelected = filtersRef.current.averagePrice === null && filtersRef.current.cuisines.length === 0 && filtersRef.current.filter.length === 0;
         allRestaurantAnimation(isAllDisSelected ? 1 : 0);
-        console.log('updatedFilters', updatedFilters);
+        console.log('updatedFilters', updatedFilters,isAllDisSelected,filtersRef.current);
     }
     const goToFilters = () => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Filter.screen_name, { activeAvergePrice: filtersRef.current.averagePrice, activeCusine: filtersRef.current.cuisines[0], activeFilterBy: filtersRef.current.filter[0], backCB: backFromFiltersHandler });

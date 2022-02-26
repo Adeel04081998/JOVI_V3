@@ -46,7 +46,7 @@ Entypo.loadFont();
 EvilIcons.loadFont();
 Feather.loadFont();
 FontAwesome.loadFont();
-FontAwesome5.loadFont();
+// FontAwesome5.loadFont();
 Fontisto.loadFont();
 Ionicons.loadFont();
 MaterialCommunityIcons.loadFont();

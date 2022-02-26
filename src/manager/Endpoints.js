@@ -29,6 +29,12 @@ export default {
     //Arearestriction
     "AreaRestriction": "api/Common/AreaRestriction/Pitstop",
     "FirebaseTokenAddLog":"/api/Common/FireBase/AddLog",
+    //Add_Order
+    "CreateUpdateOrder":"api/Order/CreateUpdateOrderV2",
+    //Fetch Order Details
+    "FetchOrder":"api/Order/OrderDetail",
+    //Estimate Service Charge
+    "EstimateServiceCharge":'api/Order/EstimateServiceChargeV2',
 }
 
 

@@ -7,13 +7,15 @@ import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import OrderEstTimeCard from '../../components/organisms/Card/OrderEstTimeCard';
 import DashedLine from '../../components/organisms/DashedLine';
-import { renderPrice } from '../../helpers/SharedActions';
+import { renderPrice, sharedFetchOrder } from '../../helpers/SharedActions';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import { stylesFunc } from './styles';
 import { orderProcessingDummyData } from './StaticData';
+import AnimatedLottieView from 'lottie-react-native';
+import { useSelector } from 'react-redux';
 
 const DOUBLE_SPACING = constants.spacing_horizontal + 6;
 const IMAGE_SIZE = constants.window_dimensions.width * 0.3;
@@ -21,9 +23,16 @@ const IMAGE_SIZE = constants.window_dimensions.width * 0.3;
 export default ({ navigation, route }) => {
 
     // #region :: STYLES & THEME START's FROM HERE 
+    const userReducer = useSelector(store => store.userReducer);
     const pitstopType = route?.params?.pitstopType ?? PITSTOP_TYPES.JOVI;
+    const orderIDParam = route?.params?.orderID ?? PITSTOP_TYPES.JOVI;
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]], Appearance.getColorScheme() === "dark");
-
+    const [state, setState] = React.useState({
+        orderID: userReducer.orderList ? userReducer.orderList[0] : 0,
+        pitStopsList: [],
+        isLoading: true,
+        chargeBreakdown:{},
+    });
     const styles = stylesFunc(colors);
 
     // #endregion :: STYLES & THEME END's FROM HERE 
@@ -33,7 +42,10 @@ export default ({ navigation, route }) => {
         return (
             <SafeAreaView style={{ ...styles.primaryContainer, flex: 0, }}>
                 <CustomHeader
-                    rightIconName='home'
+                    leftIconName='home'
+                    hideFinalDestination
+                    title={'Processing'}
+                    rightIconName={null}
                     rightIconSize={22}
                     defaultColor={colors.primary} />
             </SafeAreaView>
@@ -54,6 +66,9 @@ export default ({ navigation, route }) => {
     // #endregion :: STATE's & REF's END's FROM HERE 
 
     React.useEffect(() => {
+        sharedFetchOrder(orderIDParam, (res) => {
+            setState(pre => ({ ...pre, ...res.data.order,isLoading:false }))
+        });
         let pitstopDataArr = orderProcessingDummyData.data.order.pitStopsList.slice(0, orderProcessingDummyData.data.order.pitStopsList.length - 1);
 
         pitstopDataArr = pitstopDataArr.map(e => {
@@ -96,8 +111,22 @@ export default ({ navigation, route }) => {
         return () => { };
     }, []);
 
-    if (query.isLoading) {
-        return <View />
+    if (state.isLoading) {
+        return <View style={styles.primaryContainer}>
+            {_renderHeader()}
+              <AnimatedLottieView
+                source={require('../../assets/gifs/Processingloading.json')}
+                autoPlay
+                loop
+                style={{
+                    height: '100%',
+                    width: "100%",
+                    alignSelf: "center",
+                    marginTop:10,
+                    marginBottom: 15,
+                }}
+            />
+        </View>
     }
 
     return (
@@ -108,30 +137,45 @@ export default ({ navigation, route }) => {
                 imageHeight={IMAGE_SIZE * 0.6}
                 color={colors}
                 middle={{
-                    value: `Now ${data.OrderEstimateTime.replace('min'.toLowerCase().trim(), 'min')}`
+                    value: state.orderEstimateTime
+                    // value: `Now ${data.OrderEstimateTime.replace('min'.toLowerCase().trim(), 'min')}`
                 }} />
 
 
 
             {/*  ****************** Start of IMAGE, TEXT & LOADING BAR LINE ****************** */}
-            <Image source={require('../../assets/gifs/OrderProcessing.gif')}
+            <AnimatedLottieView
+                source={require('../../assets/gifs/FoodProcessing.json')}
+                autoPlay
+                loop
+                style={{
+                    height: IMAGE_SIZE,
+                    width: IMAGE_SIZE,
+                    alignSelf: "center",
+                    // marginBottom: 15,
+                }}
+            />
+            {/* <Image source={require('../../assets/gifs/OrderProcessing.gif')}
                 style={{
                     height: IMAGE_SIZE,
                     width: IMAGE_SIZE,
                     alignSelf: "center",
                 }}
-            />
+            /> */}
 
-            <Text fontFamily='PoppinsMedium' style={{
+            {/* <Text fontFamily='PoppinsMedium' style={{
                 fontSize: 16,
                 color: colors.primary,
                 textAlign: "center",
                 alignItems: "center",
                 paddingTop: 0,
                 paddingBottom: 15,
-            }}>{`Processing order`}</Text>
-
-            <Image source={require('../../assets/gifs/OrderProcessingLoadingBar.gif')}
+            }}>{`Processing order`}</Text> */}
+          
+            <AnimatedLottieView
+                source={require('../../assets/gifs/Loadingbar.json')}
+                autoPlay
+                loop
                 style={{
                     height: 6,
                     width: "70%",
@@ -139,6 +183,14 @@ export default ({ navigation, route }) => {
                     marginBottom: 15,
                 }}
             />
+            {/* <Image source={require('../../assets/gifs/OrderProcessingLoadingBar.gif')}
+                style={{
+                    height: 6,
+                    width: "70%",
+                    alignSelf: "center",
+                    marginBottom: 15,
+                }}
+            /> */}
 
             {/*  ****************** End of IMAGE, TEXT & LOADING BAR LINE ****************** */}
 
@@ -162,8 +214,8 @@ export default ({ navigation, route }) => {
 
 
                     {/* ****************** Start of DELIVERY ADDRESS ****************** */}
-                    <OrderNumberUI colors={colors} orderNumber={`#${data.orderID}`} />
-                    <DeliveryAddressUI address={`${data.finalDestination?.title ?? ''}`} />
+                    <OrderNumberUI colors={colors} orderNumber={`#${state.orderID}`} />
+                    <DeliveryAddressUI address={`${state.pitStopsList[state.pitStopsList.length-1]?.title ?? ''}`} />
 
                     {/* ****************** End of DELIVERY ADDRESS ****************** */}
 
@@ -181,13 +233,17 @@ export default ({ navigation, route }) => {
 
 
                     {/* ****************** Start of PITSTOP DETAILS ****************** */}
-                    {query.pitstopData.map((item, index) => {
+                    {state.pitStopsList.map((item, index) => {
+                        if (index === state.pitStopsList.length - 1) return;
                         return (
                             <PitStopItemUI
                                 key={index}
                                 pitstopNumber={index + 1}
                                 pitstopTitle={item?.title ?? ''}
-                                data={item.data}
+                                isJoviJob={item.catID === '0'}
+                                data={item.jobItemsListViewModel ?? []}
+                                dataLeftKey={'productItemName'}
+                                dataRightKey={'price'}
                             />
                         )
                     })}
@@ -206,7 +262,7 @@ export default ({ navigation, route }) => {
                     {/* ****************** Start of GST ****************** */}
                     <OrderProcessingChargesUI
                         title='GST'
-                        value={renderPrice(data.chargeBreakdown.totalProductGST, '')} />
+                        value={renderPrice(data.chargeBreakdown.totalProductGST)} />
 
                     {/* ****************** End of GST ****************** */}
 
@@ -214,7 +270,7 @@ export default ({ navigation, route }) => {
                     {/* ****************** Start of SERVICE CHARGES ****************** */}
                     <OrderProcessingChargesUI
                         title={`Service Charges(Incl S.T ${renderPrice(data.chargeBreakdown.estimateServiceTax, '')})`}
-                        value={renderPrice(data.chargeBreakdown.totalEstimateCharge, '')} />
+                        value={renderPrice(state.serviceCharges)} />
                     <DashedLine />
 
                     {/* ****************** End of SERVICE CHARGES ****************** */}
@@ -222,7 +278,7 @@ export default ({ navigation, route }) => {
 
                     {/* ****************** Start of DISCOUNT ****************** */}
                     <OrderProcessingChargesUI title='Discount'
-                        value={parseInt(renderPrice(data.chargeBreakdown.discount, '')) > 0 ? renderPrice(data.chargeBreakdown.discount, '-') : renderPrice(data.chargeBreakdown.discount, '')} />
+                        value={parseInt(renderPrice(data.chargeBreakdown.discount)) > 0 ? renderPrice(data.chargeBreakdown.discount) : renderPrice(data.chargeBreakdown.discount)} />
                     <DashedLine />
 
                     {/* ****************** End of DISCOUNT ****************** */}
@@ -230,7 +286,7 @@ export default ({ navigation, route }) => {
 
 
                     {/* ****************** Start of ESTIMATED PRICE ****************** */}
-                    <OrderProcessingEstimatedTotalUI estimatedPrice={renderPrice(data.chargeBreakdown.estimateTotalAmount, '')} />
+                    <OrderProcessingEstimatedTotalUI estimatedPrice={renderPrice(state.totalAmount)} />
 
                     {/* ****************** End of ESTIMATED PRICE ****************** */}
 
@@ -249,7 +305,7 @@ export default ({ navigation, route }) => {
 
 
                     {/* ****************** Start of PAID WITH TOTAL PRICE ****************** */}
-                    <PaidWithUI price={renderPrice(data.chargeBreakdown.estimateTotalAmount)} />
+                    <PaidWithUI price={renderPrice(state.chargeBreakdown.estimateTotalAmount)} />
 
                     {/* ****************** End of PAID WITH TOTAL PRICE ****************** */}
 
@@ -342,7 +398,7 @@ export const OrderProcessingChargesUI = ({ title = '', value = '', }) => {
 // #endregion :: CHARGES, GST, DISCOUNT UI END's FROM HERE 
 
 // #region :: PITSTOP ITEM UI  START's FROM HERE 
-const PitStopItemUI = ({ pitstopTitle = '', pitstopNumber = 1, data = [], dataLeftKey = "title", dataRightKey = "value" }) => {
+const PitStopItemUI = ({ pitstopTitle = '', isJoviJob = false, pitstopNumber = 1, data = [], dataLeftKey = "title", dataRightKey = "value" }) => {
     return (
 
         <View style={{ marginVertical: 8, }}>
@@ -350,8 +406,20 @@ const PitStopItemUI = ({ pitstopTitle = '', pitstopNumber = 1, data = [], dataLe
                 color: "#272727",
                 fontSize: 13,
                 paddingHorizontal: DOUBLE_SPACING,
-            }} numberOfLines={2}>{`Pit Stop ${pitstopNumber} - ${pitstopTitle}`}</Text>
-
+            }} numberOfLines={2}>{`Pit Stop ${pitstopNumber} - ${isJoviJob ? 'Jovi Job' : pitstopTitle}`}</Text>
+            {
+                isJoviJob ?
+                    <View style={{ flexDirection: "row", alignItems: "center", }} >
+                        <Text style={{
+                            color: "#6B6B6B",
+                            fontSize: 12,
+                            paddingHorizontal: DOUBLE_SPACING * 1.5,
+                            width: "75%",
+                        }} numberOfLines={2}>{`${pitstopTitle}`}</Text>
+                    </View>
+                    :
+                    null
+            }
             {data.map((item, index) => {
                 return (
                     <View style={{ flexDirection: "row", alignItems: "center", }} key={index}>
@@ -368,7 +436,7 @@ const PitStopItemUI = ({ pitstopTitle = '', pitstopNumber = 1, data = [], dataLe
                             paddingHorizontal: DOUBLE_SPACING,
                             width: "25%",
                             textAlign: "right",
-                        }} numberOfLines={1}>{renderPrice(`${item[dataRightKey]}`, '')}</Text>
+                        }} numberOfLines={1}>{renderPrice(`${item[dataRightKey]}`)}</Text>
                     </View>
                 )
             })}

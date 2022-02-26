@@ -4,6 +4,7 @@ export default {
     app_version:'2.2',
     url_qa: "https://qa-api.jovi-app.com",
     url_qasprint_v1: "https://qasprintv1-api.jovi-app.com",
+    url_ngRok:"https://tabish.ngrok.io",
     url_dev: "https://dev-api.jovi-app.com",
     url_staging: "https://staging-api.jovi-app.com",
     url_live: "https://live-api.jovi-app.com",
