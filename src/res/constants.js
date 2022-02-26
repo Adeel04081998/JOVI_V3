@@ -1,7 +1,7 @@
 import { Dimensions } from "react-native";
 export default {
     DEFAULT_JOVI_IMAGE: require('../assets/Logo/image_default.png'),
-    app_version: '2.1',
+    app_version:'2.2',
     url_qa: "https://qa-api.jovi-app.com",
     url_qasprint_v1: "https://qasprintv1-api.jovi-app.com",
     url_dev: "https://dev-api.jovi-app.com",
@@ -21,6 +21,7 @@ export default {
         discounted_price_key: "discountedPrice",
         price_key: "gstAddedPrice",
     },
+    cart_icon: "shopping-bag",
     colors: {
         "name": "Default",
         "backgroundColor": "#1D1D1D",

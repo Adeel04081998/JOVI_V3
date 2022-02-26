@@ -12,7 +12,8 @@ const INIT_CART_DATA = {
   joviPrevOrdersPitstopsAmount: 0,
   joviCalculation: 0,
   gst: 0,
-  estimateTime: 0
+  estimateTime: 0,
+  itemsCount: 0
 };
 
 const userReducer = (state = { prevOrders: [] }, action) => {
@@ -37,7 +38,7 @@ const cartReducer = (state = INIT_CART_DATA, action) => {
   // console.log("action", action)
   switch (action.type) {
     case TYPES.SET_CART_ACTION:
-      return { ...state, ...action.payload };
+      return { ...state, ...action.payload, pitstops: [...action.payload.pitstops] };
     case TYPES.CLEAR_CART_ACTION:
       return {
         ...INIT_CART_DATA,
@@ -107,19 +108,19 @@ const categoriesTagsReducer = (state = {}, action) => {
   }
 }
 const fcmReducer = (state = { "notifications": [] }, action = {}) => {
-    const { type, payload } = action;
-    switch (type) {
-        case TYPES.SET_FCM_ACTION:
-            let notifications = [{ notifyClientID: state.notifications.length + 1, ...payload }, ...state.notifications];
-            if (state.notifications.length > 0) {
-                if (payload.notifyClientID) notifications = notifications.filter(n => n.notifyClientID !== payload.notifyClientID)
-                return { ...state, notifications };
-            } else {
-                return { ...state, notifications };
-            }
-        default:
-            return state;
-        }
+  const { type, payload } = action;
+  switch (type) {
+    case TYPES.SET_FCM_ACTION:
+      let notifications = [{ notifyClientID: state.notifications.length + 1, ...payload }, ...state.notifications];
+      if (state.notifications.length > 0) {
+        if (payload.notifyClientID) notifications = notifications.filter(n => n.notifyClientID !== payload.notifyClientID)
+        return { ...state, notifications };
+      } else {
+        return { ...state, notifications };
+      }
+    default:
+      return state;
+  }
 }
 //...Rest of the reducers would be here
 

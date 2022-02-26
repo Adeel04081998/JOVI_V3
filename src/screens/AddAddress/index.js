@@ -195,6 +195,8 @@ export default (props) => {
                     route={props.route}
                     showCurrentLocationBtn={false}
                     showContinueBtn={false}
+                    showDirections={false}
+                    showMarker={true}
                     mapHeight={(HEIGHT * 1.4) - HEIGHT}
                     markerStyle={{
                         zIndex: 3,
