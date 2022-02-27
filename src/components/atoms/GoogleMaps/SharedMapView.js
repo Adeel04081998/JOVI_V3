@@ -334,7 +334,7 @@ export default (props) => {
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <View style={styles.container}>
-                {rendermarkers()}
+                {/* {rendermarkers()} */}
                 {renderMap()}
                 {renderCurrentLocationButton()}
                 {renderContinueButton()}

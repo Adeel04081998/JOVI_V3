@@ -187,9 +187,9 @@ export default (props) => {
         <SafeAreaView style={styles.safeArea}>
             <View style={styles.container} >
                 <SharedMapView
-                onBackPress={()=>{
-                NavigationService.NavigationActions.stack_actions.popToTop();
-                }}
+                    // onBackPress={() => {
+                    //     NavigationService.NavigationActions.stack_actions.popToTop();
+                    // }}
                     latitude={props.route?.params?.finalDestObj.latitude}
                     longitude={props.route?.params?.finalDestObj.longitude}
                     route={props.route}
@@ -206,15 +206,18 @@ export default (props) => {
                         left: WIDTH / 2,
                         top: ((HEIGHT * 1.35) - HEIGHT) / 2,
                     }}
-                    onMapPress={() => { NavigationService.NavigationActions.stack_actions.push(ROUTES.APP_DRAWER_ROUTES.Map.screen_name,props.route.params.finalDestObj ) }} />
+                    onMapPress={() => {
+                        props.route.params.updateFinalDestination(props.route.params.finalDestObj);
+                        NavigationService.NavigationActions.stack_actions.pop(1);
+                    }} />
                 <View style={styles.modalView} >
                     <KeyboardAwareScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 15 }} >
 
                         <Text style={styles.mainText} fontFamily="PoppinsMedium" >Your current location</Text>
                         <View style={styles.inputContainer}>
                             <TouchableOpacity style={styles.touchableField} onPress={() => {
-                                    props.route.params.updateFinalDestination(props.route.params.finalDestObj);
-                                      NavigationService.NavigationActions.stack_actions.pop(1);
+                                props.route.params.updateFinalDestination(props.route.params.finalDestObj);
+                                NavigationService.NavigationActions.stack_actions.pop(1);
                             }} >
                                 <SvgXml xml={svgs.pinField()} />
                                 <View style={styles.touchableFieldTextContainer} >
