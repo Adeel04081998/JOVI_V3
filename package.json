@@ -10,7 +10,7 @@
     "dev_ios": "cd ios && pod install && cd .. && react-native run-ios",
     "dev_android": "cd android&&./gradlew clean&&./gradlew --stop&&cd - &&npx react-native run-android",
     "ipod": "npx react-native run-ios --simulator \"iPod touch (7th generation)\"",
-    "branch_change_new_packages": "yarn && npx react-native run-android && cd ios && pod install && cd .. && npx react-native run-ios",
+    "branch_change_new_packages": "yarn && cd android && ./gradlew clean && ./gradlew --stop && cd .. &&  npx react-native run-android && cd ios && pod install && cd .. && npx react-native run-ios",
     "build_android": "cd android&&./gradlew clean&&./gradlew --stop&& ./gradlew bundleRelease &&cd - &&yarn run:android:staging",
     "qa_codepush_ios_v2_staging": "appcenter codepush release-react -a cibaksolutionspk-gmail.com/JOVI-IOS-V3 -d Staging",
     "qa_codepush_ios_v2_production": "appcenter codepush release-react -a cibaksolutionspk-gmail.com/JOVI-IOS-V3 -d Production",
