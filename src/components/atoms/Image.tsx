@@ -87,7 +87,7 @@ const Image = (props: Props) => {
           onLoadEnd={() => { toggleLoading(false); toggleError(false) }}
           onError={() => toggleError(true)}
 
-          defaultSource={DEFAULT_IMAGE}
+          // defaultSource={DEFAULT_IMAGE}
 
           {...props}
         />
@@ -102,8 +102,8 @@ const Image = (props: Props) => {
           style={[
             loader ? {
               ...styles.defaultImage,
-              height: props.defaultIconSize,
-              width: props.defaultIconSize,
+              height: (props?.defaultIconSize ?? defaultProps.defaultIconSize) / 2,
+              width: (props?.defaultIconSize ?? defaultProps.defaultIconSize) / 2,
               position: 'absolute',
 
               borderColor: '#140c0c19',
