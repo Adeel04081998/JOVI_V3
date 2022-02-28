@@ -18,6 +18,7 @@ type Props = React.ComponentProps<typeof Animated.View> & {
     itemsScrollViewStyle?: StyleProp<ViewStyle>;
     animatedScrollValue: Animated.Value;
     itemsContainerStyle?: StyleProp<ViewStyle>;
+    renderItemColumnWrapperStyle?: StyleProp<ViewStyle>;
     itemListPropertyName: string;
     renderItem?: (parentItem: any, item: any, parentIndex: number, index: number) => React.Component;
     renderSectionHeader?: (item: any, index: number) => React.Component;
@@ -32,7 +33,7 @@ const defaultProps = {
 
 // #endregion :: INTERFACE END's FROM HERE 
 
-const INDICATOR_WIDTH_MINUS = 0;
+const INDICATOR_WIDTH_MINUS = 1;
 
 const ScrollableList = (props: Props) => {
     const style = stylesFunc(props.colors);
@@ -90,6 +91,20 @@ const ScrollableList = (props: Props) => {
     const handleScroll = (categoryID: any, name: any) => {
         const content = tabs.current.find((singleTab: any) => singleTab.categoryID === categoryID);
         scrollRef.current && scrollRef.current.scrollTo({ y: content.yy + 2 })
+
+        Animated.timing(value, {
+            toValue: content.x,
+            duration: 200,
+            easing: Easing.linear,
+            useNativeDriver: true
+        }).start();
+
+        Animated.timing(widthValue, {
+            toValue: content.width * INDICATOR_WIDTH_MINUS,
+            duration: 100,
+            useNativeDriver: false
+        }).start()
+
     }
 
     // #endregion :: ON HORIZONTAL ITEM PRESS  END's FROM HERE 
@@ -191,6 +206,9 @@ const ScrollableList = (props: Props) => {
                             <Animated.View style={[style.indicator, {
                                 width: widthValue,
                                 overflow: "hidden",
+                                // left: widthValue._value * 0.15,
+                                alignItems: "center",
+                                justifyContent: "center",
                             }]}>
                             </Animated.View>
                         </Animated.View>
@@ -231,6 +249,7 @@ const ScrollableList = (props: Props) => {
                                     flatlistProps={{
                                         numColumns: 3,
                                         showVerticalScrollIndicator: false,
+                                        columnWrapperStyle: props.renderItemColumnWrapperStyle,
                                     }}
                                     //@ts-ignore
                                     renderItem={(singleFood, index) => {

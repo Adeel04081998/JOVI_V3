@@ -1,5 +1,5 @@
 import React from 'react';
-import { GestureResponderEvent, ImageSourcePropType, ImageBackground as RNImageBackground, ImageURISource, StyleSheet } from 'react-native';
+import { GestureResponderEvent, ImageSourcePropType, ImageBackground as RNImageBackground, ImageURISource, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import svgs from '../../../assets/svgs';
 import ImageBackground from '../../../components/atoms/ImageBackground';
@@ -40,9 +40,11 @@ interface Props {
 
     seeAll?: boolean;
     additionalCount?: number;
+    itemContainerStyle?: StyleProp<ViewStyle>;
 }
 
 const defaultProps = {
+    itemContainerStyle: {},
     updateQuantity: undefined,
     onPress: undefined,
     disabled: false,
@@ -58,9 +60,9 @@ const ProductMenuItemCard = (props: Props) => {
     const itemStyles = itemStylesFunc(props.colors, ITEM_IMAGE_SIZE);
 
     return (
-        <TouchableScale wait={0} style={{
+        <TouchableScale wait={0} style={[{
             ...itemStyles.primaryContainer,
-        }} key={uniqueKeyExtractor()}
+        }, props.itemContainerStyle]} key={uniqueKeyExtractor()}
             onPress={(event) => {
                 props.onPress && props.onPress(event);
             }}
@@ -150,7 +152,12 @@ const ProductMenuItemCard = (props: Props) => {
                     <View style={{ flexDirection: "row", alignItems: "center", }}>
 
                         {(VALIDATION_CHECK(props.item.price) && parseInt(`${props.item.price}`) > 0) &&
-                            <Text style={itemStyles.discountPrice}>{renderPrice(props.item.price)}</Text>
+                            <Text style={{
+                                ...itemStyles.discountPrice,
+                                ...parseInt(`${props.item.discountType}`) !== parseInt(`${ENUMS.PROMO_VALUE_TYPE.Empty.value}`) && {
+                                    maxWidth: "50%",
+                                }
+                            }}>{renderPrice(props.item.price)}</Text>
                         }
 
 
@@ -203,11 +210,10 @@ export const itemStylesFunc = (colors: typeof initColors, ITEM_IMAGE_SIZE: numbe
     discountPrice: {
         color: "#C1C1C1",
         fontSize: 12,
-        maxWidth: "50%",
+        maxWidth: "100%",
         textDecorationLine: "line-through",
         textDecorationColor: '#C1C1C1',
-        textAlign: "right"
-        ,
+        textAlign: "center",
     },
     price: {
         color: "#272727",

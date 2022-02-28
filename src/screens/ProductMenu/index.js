@@ -221,7 +221,6 @@ export default ({ navigation, route }) => {
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     {(parentItem?.pitstopItemList ?? []).map((item, index) => {
                         const image = (item?.images ?? []).length > 0 ? item.images[0].joviImageThumbnail : '';
-                        console.log('item ', item);
                         let isOutOfStock = "isOutOfStock" in item ? item.isOutOfStock : false;
                         if (item.availabilityStatus === ENUMS.AVAILABILITY_STATUS.OutOfStock) {
                             isOutOfStock = true;
