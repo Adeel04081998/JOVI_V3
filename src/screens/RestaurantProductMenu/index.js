@@ -297,11 +297,11 @@ export default ({ navigation, route }) => {
 
                                 <View style={itemStyles.detailContainer}>
                                     {VALIDATION_CHECK(item.name) &&
-                                        <Text fontFamily='PoppinsBold' style={itemStyles.name}>{`${item.name}`}</Text>
+                                        <Text fontFamily='PoppinsBold' style={itemStyles.name} numberOfLines={1}>{`${item.name}`}</Text>
                                     }
 
                                     {VALIDATION_CHECK(item.description) &&
-                                        <Text style={itemStyles.description}>{`${item.description}`}</Text>
+                                        <Text style={itemStyles.description} numberOfLines={2}>{`${item.description}`}</Text>
                                     }
 
                                     {VALIDATION_CHECK(item.price) &&
