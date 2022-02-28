@@ -223,7 +223,7 @@ export const sharedGetUserAddressesApi = () => {
     getRequest(
         Endpoints.GET_USER_ADDRESSES,
         res => {
-            // console.log("[sharedGetHomeMsgsApi].res", res);
+            console.log("[sharedGetUserAddressesApi].res", res);
             dispatch(ReduxActions.setUserAction({ ...res.data }));
         },
         err => {

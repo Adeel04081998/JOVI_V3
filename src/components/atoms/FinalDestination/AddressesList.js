@@ -18,7 +18,7 @@ import FontFamily from '../../../res/FontFamily';
 
 
 export default (props) => {
-    const { enumsReducer, userReducer } = useSelector(state => state)
+    const { userReducer } = useSelector(state => state)
     let initState = {
         "addressList": userReducer && userReducer.addresses ? [
             ...userReducer.addresses
@@ -64,11 +64,19 @@ export default (props) => {
         if (adrObjRef.current === null) return true
         else return false
     }
-
+    React.useEffect(() => {
+        if (state.addressList.length < 1 && userReducer?.addresses?.length > 0) {
+            setState(pre => ({
+                ...pre, addressList: userReducer && userReducer.addresses ? [
+                    ...userReducer.addresses
+                ] : []
+            }));
+        }
+    }, [userReducer.addresses]);
     const renderAddressList = () => {
         return (
             <View style={{}}>
-                {state.addressList.slice(0,10).map((item, index) => {
+                {state.addressList.slice(0, 10).map((item, index) => {
                     return (
                         <TouchableOpacity activeOpacity={1} key={`addressList ${index}`} style={{ flexDirection: 'row', padding: 15, alignItems: 'center', backgroundColor: item.iconColor ? colors.light_primary_color : colors.white }} onPress={() => onAdressListPress(item, index)} >
                             <SvgXml xml={item.addressType ? item.addressType === 1 ? svgs.homeAddIcon(item.iconColor ? item.iconColor : colors.primary) : item.addressType === 2 ? svgs.bagIcon(item.iconColor ? item.iconColor : colors.primary) : svgs.relationIcon(item.iconColor ? item.iconColor : colors.primary) : svgs.addOtherLocation(item.iconColor ? item.iconColor : colors.primary)} height={22} width={22} />
@@ -111,7 +119,7 @@ export default (props) => {
                     fontFamily: FontFamily.Poppins.Regular,
                     color: colors.white
                 }}
-                style={{ width: WIDTH * 0.95, height: HEIGHT/13 , alignSelf: 'center', marginVertical: 20 }} />
+                style={{ width: WIDTH * 0.95, height: HEIGHT / 13, alignSelf: 'center', marginVertical: 20 }} />
         </View>
     )
 }
