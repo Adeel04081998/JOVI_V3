@@ -622,7 +622,7 @@
 				CODE_SIGN_ENTITLEMENTS = jovi/jovi.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = RPC8L48R33;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = jovi/Info.plist;
@@ -655,7 +655,7 @@
 				CODE_SIGN_ENTITLEMENTS = jovi/jovi.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = RPC8L48R33;
 				INFOPLIST_FILE = jovi/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
