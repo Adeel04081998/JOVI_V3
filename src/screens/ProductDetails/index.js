@@ -95,8 +95,8 @@ export default (props) => {
             }));
             setEnable(pre => ({
                 ...pre,
-                enableBtn: (res.data.generalProductOrDealDetail.optionList ?? []).length < 1,
-                requiredIds: (res.data.generalProductOrDealDetail?.optionList ?? []).filter(item => item.isRequired === true).map((_, i) => (i))
+                enableBtn: (res?.data?.generalProductOrDealDetail?.optionList ?? []).length < 1,
+                requiredIds: (res?.data?.generalProductOrDealDetail?.optionList ?? []).filter(item => item.isRequired === true).map((_, i) => (i))
             }));
 
 
