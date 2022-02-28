@@ -38,7 +38,7 @@ export default (props) => {
     /******************************************* START OF VARIABLE INITIALIZATION **********************************/
 
     console.log('props ==>>>', props);
-    const { showContinueBtn = false, showCurrentLocationBtn = true, showMarker = false, showDirections = true } = props;
+    const { showContinueBtn = false, selectFinalDestination = false,newFinalDestination=null, showCurrentLocationBtn = true, showMarker = false, showDirections = true } = props;
 
     const HEIGHT = constants.window_dimensions.height;
     const WIDTH = constants.window_dimensions.width;
@@ -118,7 +118,7 @@ export default (props) => {
         }
         locationHandler();
         getCurrentPosition()
-    }, [ready,props.latitude]);
+    }, [ready, props.latitude]);
 
 
     /******************************************* END OF FUNCTIONS **********************************/
@@ -185,11 +185,23 @@ export default (props) => {
                 {...props}
                 onLayout={(layout) => {
                     console.log("mapView.current", mapView.current.fitToCoordinates);
-                    mapView?.current?.fitToCoordinates(pitstops.map((_p, i) => ({ latitude: _p.latitude, longitude: _p.longitude })))
+                    if(!selectFinalDestination){
+                        mapView?.current?.fitToCoordinates(pitstops.map((_p, i) => ({ latitude: _p.latitude, longitude: _p.longitude })))
+                    }
                 }}
 
             >
                 {
+                    selectFinalDestination ? <View>
+                        <Marker identifier={`marker `} key={`marker-key`} coordinate={{ ...(newFinalDestination ?? userReducer.finalDestObj) }} anchor={{ x: 0.46, y: 0.7 }}>
+                            <View>
+                                <SvgXml xml={FINAL_DESTINATION_SVG} height={35} width={35} />
+                            </View>
+                        </Marker>
+                    </View>
+                        : null
+                }
+                {!selectFinalDestination ?
                     (pitstops || []).map((pitstop, index) => {
                         return <View>
                             <Marker identifier={`marker ${index + 1}`} key={`marker-key${index + 1}`} coordinate={pitstop} anchor={{ x: 0.46, y: 0.7 }}>
@@ -250,6 +262,8 @@ export default (props) => {
                             />
                         </View>
                     })
+                    :
+                    null
                 }
             </MapView>
         )
@@ -310,9 +324,9 @@ export default (props) => {
     const renderBackBtn = () => {
         return (
             <TouchableOpacity style={styles.backBtn} onPress={() => {
-                if(props.onBackPress){
+                if (props.onBackPress) {
                     props.onBackPress();
-                }else{
+                } else {
                     NavigationService.NavigationActions.common_actions.goBack()
                 }
             }} >

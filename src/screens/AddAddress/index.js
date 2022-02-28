@@ -38,7 +38,7 @@ export default (props) => {
     const styles = addressStyles(colors, HEIGHT, WIDTH)
     const { AddressTypeEnum } = useSelector(obj => obj.enumsReducer)
     const dispatch = useDispatch()
-
+    const finalDestinationObj = props?.route?.params?.finalDestObj ?? {};
     let initState = {
         "inputs": [
             {
@@ -206,6 +206,8 @@ export default (props) => {
                         left: WIDTH / 2,
                         top: ((HEIGHT * 1.35) - HEIGHT) / 2,
                     }}
+                    selectFinalDestination={true}
+                    newFinalDestination={finalDestinationObj}
                     onMapPress={() => {
                         props.route.params.updateFinalDestination(props.route.params.finalDestObj);
                         NavigationService.NavigationActions.stack_actions.pop(1);
