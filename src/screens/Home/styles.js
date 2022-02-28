@@ -1,4 +1,5 @@
 import { Platform, StyleSheet } from "react-native";
+import { option } from "yargs";
 import { initColors } from "../../res/colors";
 const SPACING_VERTICAL = 10;
 export default {
@@ -28,8 +29,9 @@ export default {
                 marginVertical: 5
             },
             greetingHeaderText: {
-                fontSize: 14,
-                color: '#272727'
+                fontSize: 16,
+                color: '#272727',
+                fontWeight:'normal',
 
             },
             greetingBodyText: {
@@ -39,26 +41,34 @@ export default {
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 borderRadius: 7,
-                backgroundColor: colors.BlueChalk || '#EEE5FF',
+                // backgroundColor: colors.BlueChalk || '#EEE5FF',
+                backgroundColor: 'rgba(238, 229, 255, 1)'
+               
+
             },
             alertMsgSecondaryContainer: {
-                flex: 1, flexDirection: 'column', justifyContent: 'center', padding: 10
+                flex: 1, flexDirection: 'column', justifyContent: 'center', padding: 10,
             },
             alertMsgHeaderText: {
                 fontSize: 14,
                 color: colors.BlueVoilet || "#6D51BB",
+                
 
             },
             alertMsgBodyText: {
                 fontSize: 10,
-                width: '90%',
-                color: colors.Bossanova || '#453463'
+                width: '80%',
+                color: colors.Bossanova || '#453463',
+                opacity: 1,
             },
-            alertMsgSvgView: {
-                flex: 0.5,
+            alertMsgSvgView: (height) => ({
+                // flex: 0.5,
                 flexDirection: 'column',
                 alignItems: 'center',
-            },
+                minHeight: 10,
+                minWidth: 80,
+
+            }),
             categoriesCardPrimaryContainer: {
                 flex: 0.8,
                 margin: 0

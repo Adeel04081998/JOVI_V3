@@ -36,17 +36,14 @@ export default (props) => {
     const enableDisableButton = (state[CUSINE_ACTIVE_INDEX] != null || state[Filter_ACTIVE_INDEX] != null || state[AV_PRICE_ACTIVE_INDEX] != null) ? false : true
     const _renderHeaderRightButton = () => {
         return (
-            <TouchableOpacity onPress={handleclearAllPress} >
-                <Text style={{ color: "#C1C1C1" }} fontFamily='PoppinsRegular'>{`Clear`}</Text>
+            <TouchableOpacity onPress={handleclearAllPress} style={{}} >
+                <Text style={{ color: "#C1C1C1" , fontSize:14,}} fontFamily='PoppinsRegular'>{`Clear`}</Text>
             </TouchableOpacity>
         )
     }
 
     const handleCrossPress = () => {
         NavigationService.NavigationActions.common_actions.goBack();
-        if (route.params.backCB) {
-            route.params.backCB({});
-        }
     }
     const handleclearAllPress = () => {
         setState((pre) => ({ ...pre, [Filter_ACTIVE_INDEX]: null, [AV_PRICE_ACTIVE_INDEX]: null, [CUSINE_ACTIVE_INDEX]: null }))
@@ -121,13 +118,16 @@ export default (props) => {
                     activeCusine={state.activeCusine}
                 />
             </ScrollView>
+            <View style={{width:'100%', justifyContent:'center', alignSelf:'center', }}>
+
             <Button
                 onPress={onApplyPress}
                 // disabled={enableDisableButton}
                 text='Apply'
-                style={{ width: "90%", alignSelf: "center", marginBottom: 10, backgroundColor: "#F94E41", borderRadius: 10 }}
+                style={{width:'90%',  alignSelf: "center", marginBottom: 10, backgroundColor: "#F94E41", borderRadius: 25 }}
 
             />
+            </View>
         </SafeAreaView>
     )
 }

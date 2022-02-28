@@ -100,10 +100,10 @@ class FCMService {
             console.log('[FCMService] new refresh token :', fcmToken);
             onRegister(fcmToken);
         })
-    };
+    }
 
     unRegister = () => {
-        this.messageListener()
+        // this.messageListener()
     }
 }
 export const fcmService = new FCMService()

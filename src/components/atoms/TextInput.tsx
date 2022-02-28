@@ -31,7 +31,7 @@ type Props = React.ComponentProps<typeof RNTextInput> & React.ComponentProps<typ
 };
 
 
-let defaultProps = {
+const defaultProps = {
     pattern: null,
     forcePattern: false,
     forceError: false,
@@ -71,7 +71,7 @@ const VALIDATION_CHECK = (text: any) => {
     }
 }
 
-const TextInput = (props: Props) => {
+const TextInput = React.forwardRef<RNTextInput, Props>((props: Props, ref: any) => {
 
     const [icon, updateIcon] = React.useState('');
 
@@ -104,6 +104,7 @@ const TextInput = (props: Props) => {
                 }, props.titleStyle,]}>{props.title}</Text>
             }
             <RNTextInput
+                ref={ref}
                 {...props}
                 {...VALIDATION_CHECK(props.pattern) && {
                     onChangeText: (text: string) => {
@@ -157,8 +158,10 @@ const TextInput = (props: Props) => {
         </View>
 
     );
-}//end of TextInput component
+});//end of TextInput component
 
+TextInput.displayName = 'TextInput';
+//@ts-ignore
 TextInput.defaultProps = defaultProps;
 export default TextInput;
 

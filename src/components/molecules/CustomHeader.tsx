@@ -5,6 +5,7 @@ import { VALIDATION_CHECK } from "../../helpers/SharedActions";
 import NavigationService from "../../navigations/NavigationService";
 import ROUTES from "../../navigations/ROUTES";
 import ReduxActions from "../../redux/actions";
+import constants from "../../res/constants";
 import AddressesList from "../atoms/FinalDestination/AddressesList";
 import Text from "../atoms/Text";
 import TouchableOpacity from "../atoms/TouchableOpacity";
@@ -86,12 +87,12 @@ const defaultProps = {
     rightDotTextStyle: {},
     rightContainerStyle: {},
 
-    rightIconName: "shopping-bag",
+    rightIconName: constants.cart_icon,
     rightIconType: Platform.OS === 'android' ? 'FontAwesome5' : 'FontAwesome',
     rightIconStyle: {},
     rightIconSize: 25,
-    rightIconColor: null,
-    onRightIconPress: () => NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name),
+    rightIconColor: "#272727",
+    onRightIconPress: undefined,
 
     //RIGHT SIDE PROP's ENDING 
 
@@ -114,6 +115,7 @@ const CustomHeader = (props: Props) => {
     const cartReducer = useSelector((store: any) => store.cartReducer);
     const userReducer = useSelector((store: any) => store.userReducer);
     const finalDestination = userReducer.finalDestObj ? userReducer.finalDestObj : { title: 'Set your location' };
+    const IS_CART_ICON = props.rightIconName === constants.cart_icon;
 
     // React.useEffect(()=>{
 
@@ -208,7 +210,12 @@ const CustomHeader = (props: Props) => {
                         {...props.onRightIconPress ? {
                             onPress: (event) => props.onRightIconPress && props.onRightIconPress(event)
                         } : {
-                            disabled: true
+                            onPress: () => {
+                                if(IS_CART_ICON && cartReducer.itemsCount > 0){
+                                    NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name)
+                                }
+},
+                            disabled: (cartReducer.itemsCount > 0 && IS_CART_ICON) ? false: true
                         }}>
                         {VALIDATION_CHECK(props.rightIconName) &&
                             <VectorIcon
@@ -217,7 +224,7 @@ const CustomHeader = (props: Props) => {
                                 color={props.rightIconColor || props.defaultColor}
                                 size={props.rightIconSize} />
                         }
-                        {VALIDATION_CHECK(cartReducer.itemsCount) && _renderDot(cartReducer.itemsCount, props.rightDotStyle, props.rightDotTextStyle)}
+                        {cartReducer.itemsCount > 0  && _renderDot(cartReducer.itemsCount, props.rightDotStyle, props.rightDotTextStyle)}
                         {/* {props.rightDot && _renderDot(props.rightDot, props.rightDotStyle, props.rightDotTextStyle)} */}
                     </TouchableScale>
                 }

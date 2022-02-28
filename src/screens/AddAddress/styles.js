@@ -32,7 +32,7 @@ export default (colors = initColors, width, height) => StyleSheet.create({
         backgroundColor: colors.light_grey,
         borderRadius: 15,
         width: '90%',
-        height: height * 0.7,
+        // height: height - (height / 3),
         marginLeft: 20,
         marginVertical: 5
     },
@@ -54,7 +54,7 @@ export default (colors = initColors, width, height) => StyleSheet.create({
     },
     addressText: {
         fontSize: 14,
-        color: colors.black
+        color: colors.black, width: width * 0.34
     },
     subAddressText: {
         color: colors.grey,

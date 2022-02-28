@@ -12,9 +12,11 @@ const INIT_CART_DATA = {
   joviPrevOrdersPitstopsAmount: 0,
   joviCalculation: 0,
   gst: 0,
-  estimateTime: 0
+  estimateTime: 0,
+  itemsCount: 0
 };
-const userReducer = (state = {}, action) => {
+
+const userReducer = (state = { prevOrders: [] }, action) => {
   switch (action.type) {
     case TYPES.SET_USER_ACTION:
       return { ...state, ...action.payload };
@@ -24,6 +26,10 @@ const userReducer = (state = {}, action) => {
       return {
         ...state, ...action.payload
       };
+      case TYPES.SET_PREV_ORDERS:
+        return {
+          ...state, prevOrders : [...state.prevOrders, action.payload]
+        };
     default:
       return { ...state };
   }
@@ -32,7 +38,7 @@ const cartReducer = (state = INIT_CART_DATA, action) => {
   // console.log("action", action)
   switch (action.type) {
     case TYPES.SET_CART_ACTION:
-      return { ...state, ...action.payload };
+      return { ...state, ...action.payload, pitstops: [...action.payload.pitstops] };
     case TYPES.CLEAR_CART_ACTION:
       return {
         ...INIT_CART_DATA,
@@ -42,13 +48,16 @@ const cartReducer = (state = INIT_CART_DATA, action) => {
       return { ...state };
   }
 };
-const modalReducer = (state = { visible: false,closeModal:false, ModalContent: null }, action) => {
+const modalReducer = (state = { visible: false, closeModal: false, ModalContent: null, }, action) => {
+  
   switch (action.type) {
     case TYPES.SET_MODAL:
-      return { ...state, ...action.payload, closeModal: false };
-    case TYPES.CLOSE_MODAL:{
-        return {...state, closeModal: true}
+      return { ...state, ...action.payload, closeModal: false, disabled: "disabled" in action.payload ? action.payload.disabled : false };
+    case TYPES.CLOSE_MODAL: {
+      return { ...state, closeModal: true, }
     }
+    case TYPES.CLEAR_MODAL_REDUCER:
+      return {visible: false, closeModal: false, ModalContent: null}
     default:
       return { ...state };
   }
@@ -99,19 +108,19 @@ const categoriesTagsReducer = (state = {}, action) => {
   }
 }
 const fcmReducer = (state = { "notifications": [] }, action = {}) => {
-    const { type, payload } = action;
-    switch (type) {
-        case TYPES.SET_FCM_ACTION:
-            let notifications = [{ notifyClientID: state.notifications.length + 1, ...payload }, ...state.notifications];
-            if (state.notifications.length > 0) {
-                if (payload.notifyClientID) notifications = notifications.filter(n => n.notifyClientID !== payload.notifyClientID)
-                return { ...state, notifications };
-            } else {
-                return { ...state, notifications };
-            }
-        default:
-            return state;
-        }
+  const { type, payload } = action;
+  switch (type) {
+    case TYPES.SET_FCM_ACTION:
+      let notifications = [{ notifyClientID: state.notifications.length + 1, ...payload }, ...state.notifications];
+      if (state.notifications.length > 0) {
+        if (payload.notifyClientID) notifications = notifications.filter(n => n.notifyClientID !== payload.notifyClientID)
+        return { ...state, notifications };
+      } else {
+        return { ...state, notifications };
+      }
+    default:
+      return state;
+  }
 }
 //...Rest of the reducers would be here
 

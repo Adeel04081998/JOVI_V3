@@ -20,10 +20,15 @@ const setModalAction = (payload = {}) => {
         payload: { ...payload }
     }
 }
+const clearModalAction = () => {
+    return {
+        type: TYPES.CLEAR_MODAL_REDUCER,
+    }
+}
 const closeModalAction = () => {
     return {
         type: TYPES.CLOSE_MODAL,
-        payload: { closeModal:true }
+        payload: { closeModal: true }
     }
 }
 const clearUserAction = (payload = {}) => {
@@ -86,6 +91,14 @@ const setCategoriesTagsAction = (payload = {}) => {
         payload: { ...payload }
     }
 }
+
+
+const setUserPrevOrdersAction = (payload = {}) => {
+    return {
+        type: TYPES.SET_PREV_ORDERS,
+        payload: { ...payload }
+    }
+}
 const fcmAction = (payload = {}) => {
     return {
         type: TYPES.SET_FCM_ACTION,
@@ -108,8 +121,10 @@ export default {
     showRobotAction,
     setCategoriesTagsAction,
     setModalAction,
+    clearModalAction,
     setUserFinalDestAction,
     closeModalAction,
+    setUserPrevOrdersAction,
     fcmAction,
     //...
 }

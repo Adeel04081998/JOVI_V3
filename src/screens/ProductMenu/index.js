@@ -28,7 +28,7 @@ const WINDOW_WIDTH = constants.window_dimensions.width;
 
 const ITEM_IMAGE_SIZE = WINDOW_WIDTH * 0.35;
 const VERTICAL_MAX_ITEM_PER_REQUEST = 10;
-const HORIZONTAL_MAX_ITEM_PER_REQUEST = 2;
+const HORIZONTAL_MAX_ITEM_PER_REQUEST = 4;
 const SHELVE_MAX_COUNT = 7;
 const DEFAULT_PAGINATION_INFO = { totalItem: 0, itemPerRequest: VERTICAL_MAX_ITEM_PER_REQUEST, currentRequestCount: 1 };
 const PITSTOPS = {
@@ -172,6 +172,7 @@ export default ({ navigation, route }) => {
                         zIndex: 999,
 
                     },
+                    zIndex: 999,
                     top: getStatusBarHeight(true),
                 }}
                 title={title}
@@ -222,10 +223,10 @@ export default ({ navigation, route }) => {
                         const image = (item?.images ?? []).length > 0 ? item.images[0].joviImageThumbnail : '';
                         console.log('item ', item);
                         let isOutOfStock = "isOutOfStock" in item ? item.isOutOfStock : false;
-                        if (item.availabilityStatus === ENUMS.PRODUCT_AVAILABILIITY_STATUS.OutOfStock) {
+                        if (item.availabilityStatus === ENUMS.AVAILABILITY_STATUS.OutOfStock) {
                             isOutOfStock = true;
                         }
-                        
+
                         return (
                             <View style={{
                                 marginLeft: index === 0 ? 10 : 0,
@@ -253,6 +254,7 @@ export default ({ navigation, route }) => {
                                         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, {
                                             propItem: {
                                                 itemDetails: {},
+                                                ...item,
                                                 vendorDetails: { ...route.params },
                                             },
                                             pitstopType: pitstopType
@@ -402,6 +404,7 @@ export default ({ navigation, route }) => {
             <>
                 {_renderHeader()}
                 <NoRecord
+                    color={colors}
                     title={query.errorText}
                     buttonText={`Retry`}
                     onButtonPress={() => { loadData(paginationInfo.currentRequestCount, false) }} />

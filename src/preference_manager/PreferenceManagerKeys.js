@@ -6,4 +6,5 @@ export default {
     "PERSIST_USER": "@PERSIST_USER",
     "PERSIST_CART": "@PERSIST_CART",
     "BASE_URL": "@BASE_URL",
+    "PERSIST_PREV_ORDERS": "@PERSIST_PREV_ORDERS",
 }

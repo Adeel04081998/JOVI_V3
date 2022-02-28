@@ -17,6 +17,7 @@ const persistCartConfig = {
     // whitelist: [""] // whitelist would be used if we want to persist specific keys of a reducer
 };
 
+
 const rootReducer = combineReducers({
     enumsReducer: Reducers.enumsReducer,
     messagesReducer: Reducers.messagesReducer,
@@ -24,7 +25,7 @@ const rootReducer = combineReducers({
     categoriesTagsReducer: Reducers.categoriesTagsReducer,
     userReducer: persistReducer(persistUserConfig, Reducers.userReducer),
     cartReducer: persistReducer(persistCartConfig, Reducers.cartReducer),
-    modalReducer: Reducers.modalReducer
+    modalReducer: Reducers.modalReducer,
     // cartReducer: Reducers.cartReducer,
 });
 

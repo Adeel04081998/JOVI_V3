@@ -10,23 +10,17 @@ import joviJobStyles from '../styles';
 import theme from '../../../res/theme';
 import GV from '../../../utils/GV';
 import TouchableOpacity from '../../../components/atoms/TouchableOpacity';
-import { PITSTOP_CARD_TYPES } from '..';
 
-const CardHeader = React.memo((props) => {
+export default React.memo((props) => {
     // colors.primary will recieve value from colors.js file's colors
     const WIDTH = constants.window_dimensions.width
     const HEIGHT = constants.window_dimensions.height
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
     const styles = joviJobStyles(colors, WIDTH, HEIGHT);
-
     return (
-        <TouchableOpacity activeOpacity={1} style={[styles.header]} onPress={() => {
-            if (props.onHeaderPress) {
-                props.onHeaderPress();
-            }
-        }
-
-        } >
+        <TouchableOpacity activeOpacity={1} style={[styles.header]}
+            disabled={props.disabled}
+            onPress={props.onHeaderPress}>
             <View style={styles.svg} >
                 <SvgXml xml={props.xmlSrc || svgs.pitstopPin()} height={HEIGHT * 0.07} width={WIDTH * 0.14} />
             </View>
@@ -38,15 +32,17 @@ const CardHeader = React.memo((props) => {
                 style={[styles.arrow, { backgroundColor: props.headerBackgroundColor ? props.headerBackgroundColor : colors.lightGreyBorder }]}
             >
                 <Animated.View style={{
-              
+
                 }}>
-                    <VectorIcon name={props.isOpened ?  "keyboard-arrow-down" : "keyboard-arrow-up"} type="MaterialIcons" color={colors.textColor} />
+                    <VectorIcon name={props.isOpened ? "keyboard-arrow-up" : "keyboard-arrow-down"} type="MaterialIcons" color={colors.textColor} />
                 </Animated.View>
             </View>
         </TouchableOpacity>
     );
-}, (next, prev) => next === prev)
-export default CardHeader;
+}, ((n, p) => {
+    return n===p
+    return (n.isOpened === p.isOpened && n.disabled === p.disabled && n.headerBackgroundColor === p.headerBackgroundColor)
+}))
 
 
 

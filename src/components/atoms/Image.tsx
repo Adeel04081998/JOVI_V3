@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Animated, Image as RNImage, ImageStyle, Modal, StyleProp, StyleSheet, ViewStyle } from "react-native";
+import { Animated, Image as RNImage, ImageStyle, Modal, StyleProp, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 import AnimatedView from "./AnimatedView";
 import FullImage from "./FullImage";
 import TouchableScale from "./TouchableScale";
@@ -65,10 +65,13 @@ const Image = (props: Props) => {
           props.onPress();
           return
         }
-        startFullAnimate(1);
-        toggleFullImage(true);
+        if (!fullImage) {
+          startFullAnimate(1);
+          toggleFullImage(true);
+        }
+
       }}
-      wait={0}
+        // wait={0}
         style={[props.containerStyle]}
         disabled={loader || !props.tapToOpen}>
 
@@ -109,18 +112,18 @@ const Image = (props: Props) => {
             } : {
               opacity: 0,
               overflow: 'hidden',
-            }, props.style,props.loadingImageStyle]}
+            }, props.style, props.loadingImageStyle]}
           source={DEFAULT_IMAGE}
         />
       }
 
-      {fullImage && 
-    <FullImage
-      source={props.source}
-      toggleFullImage={() => {
-        startFullAnimate(0);
-      }} />
-}
+      {fullImage &&
+        <FullImage
+          source={props.source}
+          toggleFullImage={() => {
+            startFullAnimate(0);
+          }} />
+      }
     </>
 
   );

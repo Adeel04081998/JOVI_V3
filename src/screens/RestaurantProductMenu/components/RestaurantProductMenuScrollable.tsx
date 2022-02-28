@@ -177,7 +177,8 @@ const RestaurantProductMenuScrollable = (props: Props) => {
                                     style={{
                                         backgroundColor: "#F2F1F6",
                                         borderWidth: 0.2,
-                                        borderColor: "#F2F1F6",
+                                        // borderColor: "#F2F1F6",
+                                        borderColor: "#707070",
                                         marginRight: 6,
                                         borderRadius: 26,
                                     }}

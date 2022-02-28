@@ -14,6 +14,8 @@ import Regex from '../utils/Regex';
 import GV, { PITSTOP_TYPES } from '../utils/GV';
 import constants from '../res/constants';
 import NavigationService from '../navigations/NavigationService';
+import actions from '../redux/actions';
+import preference_manager from '../preference_manager';
 const dispatch = store.dispatch;
 export const sharedGetDeviceInfo = async () => {
     let model = DeviceInfo.getModel();
@@ -221,7 +223,7 @@ export const sharedGetUserAddressesApi = () => {
     getRequest(
         Endpoints.GET_USER_ADDRESSES,
         res => {
-            // console.log("[sharedGetHomeMsgsApi].res", res);
+            console.log("[sharedGetUserAddressesApi].res", res);
             dispatch(ReduxActions.setUserAction({ ...res.data }));
         },
         err => {
@@ -297,8 +299,14 @@ export const renderPrice = (price, prefix = "Rs. ", suffix = "", reg = Regex.pri
     prefix = `${prefix}`.trim();
     suffix = `${suffix}`.trim();
     price = `${price}`.trim().replace(reg, '').trim();
-    return suffix.length > 0 ? `${prefix} ${price}${suffix}` : `${prefix} ${price}`;
-    return parseInt(`${price}`) < 1 ? null : suffix.length > 0 ? `${prefix} ${price}${suffix}` : `${prefix} ${price}`;
+    return parseInt(`${price}`) < 1 ? '' : suffix.length > 0 ? `${prefix} ${price}${suffix}` : `${prefix} ${price}`;
+}
+
+export const renderDistance = (distance, suffix = "m",prefix = "",  reg = Regex.distanceM,) => {
+    prefix = `${prefix}`.trim();
+    suffix = `${suffix}`.trim();
+    distance = `${distance}`.trim().replace(reg, '').trim();
+    return prefix.length > 0 ? `${prefix} ${distance}${suffix}` : `${distance}${suffix}`;
 }
 
 export const isNextPage = (totalItem, itemPerRequest, currentRequestCount) => {
@@ -346,8 +354,9 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
             joviPitstopsTotal += _pitstop.estimatePrice || 0;
         } else {
             let _pitTotal = 0
-            itemsCount += _pitstop.checkOutItemsListVM.length;
-            vendorMaxEstTime = sharedCalculateMaxTime(_pitstop.pitstopType === PITSTOP_TYPES.RESTAURANT ? _pitstop.checkOutItemsListVM : [], "estimatePrepTime")
+            // itemsCount += _pitstop.checkOutItemsListVM.length;
+            vendorMaxEstTime = sharedCalculateMaxTime(_pitstop.pitstopType === PITSTOP_TYPES.RESTAURANT ? _pitstop.checkOutItemsListVM : [], "estimatePrepTime");
+            console.log("vendorMaxEstTime", vendorMaxEstTime);
             _pitstop.vendorMaxEstTime = vendorMaxEstTime;
             _pitstop.checkOutItemsListVM.map((product, j) => {
 
@@ -359,6 +368,8 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
                 discount += product._totalDiscount * product.quantity;
                 _pitTotal = product._itemPrice * product.quantity;
                 subTotal += _pitTotal + discount;
+                itemsCount += product.quantity;
+
             })
             _pitstop.individualPitstopTotal = _pitTotal;
         }
@@ -371,9 +382,10 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
     joviRemainingAmount = joviCalculation <= 0 ? 0 : joviCalculation;
     // console.log('[TO STORE DATA => PITSTOPS,joviRemainingAmount, subTotal,discount, total,itemsCount, serviceCharges]', pitstops, joviRemainingAmount, subTotal, discount, total, itemsCount, serviceCharges);
     if (!pitstops.length) {
-        // NavigationService.NavigationActions.common_actions.goBack();
         dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
-    } else dispatch(ReduxActions.setCartAction({ pitstops, joviRemainingAmount, subTotal, itemsCount, joviPitstopsTotal, joviPrevOrdersPitstopsAmount, joviCalculation, total, estimateTime, gst, discount }));
+    } else {
+        dispatch(ReduxActions.setCartAction({ pitstops, joviRemainingAmount, subTotal, itemsCount, joviPitstopsTotal, joviPrevOrdersPitstopsAmount, joviCalculation, total, estimateTime, gst, discount }));
+    }
 };
 export const sharedDiscountsCalculator = (
     originalPrice = 0,
@@ -410,24 +422,15 @@ export const sharedAddUpdatePitstop = (
     cb = () => { }
 ) => {
     if (false) return dispatch(ReduxActionss.clearCartAction({}));
-    if (swappedArray.length) return sharedCalculateCartTotals(swappedArray)
-    // FOR JOVI PITSTOPS
-    // {
-    //      GIVE ONLY ITEM OBJECT TO ADD NEW PITSTOP
-    //      GIVE ITEM AND INDEX TO UPDATE
-    //      GIVE INDEX >= 0 AND ISDELETE AS TRUE TO DELETE PITSTOP
-    // }
-    // **********
-    // FOR VENDOR PITSTOP
     const cartReducer = store.getState().cartReducer;
+    if (swappedArray.length) return sharedCalculateCartTotals(swappedArray, cartReducer);
     let pitstops = cartReducer.pitstops;
-    const pitstopIndex = (pitstopDetails.pitstopIndex !== undefined && pitstopDetails.pitstopIndex !== null ? pitstopDetails.pitstopIndex : null);
+    const pitstopIndex = (pitstopDetails?.pitstopIndex >= 0 ? pitstopDetails.pitstopIndex : null);
     if (pitstopIndex !== null && isDeletePitstop) {
         console.log('[DELETE PITSTOP FROM CART]');
         pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIndex);
     } else if (pitstopDetails.pitstopType === PITSTOP_TYPES.JOVI) {
         console.log('[JOVI PITSTOP]');
-        // JOVI PITSTOPS HANDLING
         if (pitstopIndex !== null) {
             console.log('[INDEX] EXIST');
             if (false) {
@@ -451,58 +454,52 @@ export const sharedAddUpdatePitstop = (
         const pitstopActionKey = upcomingVendorDetails.actionKey || 'marketID'; //
         console.log('[PITSTOP IDACTION KEY]', pitstopActionKey);
         console.log('[ITEM ID ACTION KEY]', actionKey);
-        if (false) {
-            console.log('[DELETE PITSTOP FROM CART]');
-            pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIndex);
-        } else {
-            const pitstopIdx = pitstops.findIndex(x => x[pitstopActionKey] === upcomingVendorDetails[pitstopActionKey]); //(x.pitstopID === pitstopDetails.pitstopID || x.smid === pitstopDetails.smid))
-            if (pitstopIdx !== -1) {
-                console.log('[PITSTOP FOUND]', pitstops[pitstopIdx]);
-                let currentPitstopItems = pitstops[pitstopIdx].checkOutItemsListVM;
-                let itemIndex = currentPitstopItems.findIndex(item => item[actionKey] === upcomingItemDetails[actionKey]);
-                if (!fromCart && upcomingItemDetails.selectedOptions) {
-                    upcomingItemDetails = checkSameProduct(currentPitstopItems, upcomingItemDetails);
+        const pitstopIdx = pitstops.findIndex(x => x[pitstopActionKey] === upcomingVendorDetails[pitstopActionKey]); //(x.pitstopID === pitstopDetails.pitstopID || x.smid === pitstopDetails.smid))
+        if (pitstopIdx !== -1) {
+            console.log('[PITSTOP FOUND]', pitstops[pitstopIdx]);
+            let currentPitstopItems = pitstops[pitstopIdx].checkOutItemsListVM;
+            let itemIndex = currentPitstopItems.findIndex(item => item[actionKey] === upcomingItemDetails[actionKey]);
+            if (!fromCart && upcomingItemDetails.selectedOptions) {
+                upcomingItemDetails = checkSameProduct(currentPitstopItems, upcomingItemDetails);
+            }
+            if (upcomingItemDetails.alreadyExisted) {
+                itemIndex = upcomingItemDetails.checkoutIndex;
+                console.log('[Update EXISTING CHECKOUT ITEMS]');
+                if (!upcomingItemDetails.quantity) {
+                    console.log('[QUANTITY LESS THAN OR EQUAL TO ZERO]');
+                    if ((currentPitstopItems.length - 1) <= 0) pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIdx);
+                } else {
+                    currentPitstopItems[itemIndex] = { ...upcomingItemDetails, alreadyExisted: undefined, checkoutIndex: undefined, checkOutItemID: currentPitstopItems[itemIndex].checkOutItemID };
+                    pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
                 }
-                if (upcomingItemDetails.alreadyExisted) {
-                    itemIndex = upcomingItemDetails.checkoutIndex;
-                    console.log('[Update EXISTING CHECKOUT ITEMS]');
-                    if (!upcomingItemDetails.quantity) {
-                        console.log('[QUANTITY LESS THAN OR EQUAL TO ZERO]');
-                        if ((currentPitstopItems.length - 1) <= 0) pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIdx);
-                    } else {
-                        currentPitstopItems[itemIndex] = { ...upcomingItemDetails, alreadyExisted: undefined, checkoutIndex: undefined, checkOutItemID: currentPitstopItems[itemIndex].checkOutItemID };
-                        pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
-                    }
-                } else if (itemIndex !== -1 && !forceAddNewItem) {
-                    if (!upcomingItemDetails.quantity) {
-                        console.log('[QUANTITY LESS THAN OR EQUAL TO ZERO]');
-                        if ((currentPitstopItems.length - 1) <= 0) pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIdx);
-                        else {
-                            console.log('[REMOVE SINGLE ITEM FROM CHECKOUT LIST..]');
-                            currentPitstopItems = currentPitstopItems.filter((_item, idx) => idx !== itemIndex);
-                            pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
-                        }
-                    } else {
-                        console.log('[INCREAMETN DECREACMENT QUANTITY]');
-                        currentPitstopItems[itemIndex] = { ...upcomingItemDetails, checkOutItemID: currentPitstopItems[itemIndex].checkOutItemID };
+            } else if (itemIndex !== -1 && !forceAddNewItem) {
+                if (!upcomingItemDetails.quantity) {
+                    console.log('[QUANTITY LESS THAN OR EQUAL TO ZERO]');
+                    if ((currentPitstopItems.length - 1) <= 0) pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIdx);
+                    else {
+                        console.log('[REMOVE SINGLE ITEM FROM CHECKOUT LIST..]');
+                        currentPitstopItems = currentPitstopItems.filter((_item, idx) => idx !== itemIndex);
                         pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
                     }
                 } else {
-                    console.log('[ADD NEW ITEM TO EXISTING CHECKOUT ITEMS]');
-                    currentPitstopItems.push({ checkOutItemID: sharedUniqueIdGenerator(), ...upcomingItemDetails, });
+                    console.log('[INCREAMETN DECREACMENT QUANTITY]');
+                    currentPitstopItems[itemIndex] = { ...upcomingItemDetails, checkOutItemID: currentPitstopItems[itemIndex].checkOutItemID };
                     pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
                 }
             } else {
-                // ADD NEW PITSTOP (DONE)
-                console.log('[PITSTOP NOT FOUND AND ADD NEW PITSTOP]');
-                pitstops.push({
-                    ...pitstopDetails.vendorDetails,
-                    isRestaurant: pitstopDetails.pitstopType === PITSTOP_TYPES.RESTAURANT,
-                    pitstopID: pitstopDetails.vendorDetails.marketID ?? pitstopDetails.vendorDetails.pitstopID,
-                    // pitstopID: sharedUniqueIdGenerator(),
-                    checkOutItemsListVM: [{ ...upcomingItemDetails, checkOutItemID: sharedUniqueIdGenerator() }],
-                });
+                console.log('[ADD NEW ITEM TO EXISTING CHECKOUT ITEMS]');
+                currentPitstopItems.push({ checkOutItemID: sharedUniqueIdGenerator(), ...upcomingItemDetails, });
+                pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
             }
+        } else {
+            // ADD NEW PITSTOP (DONE)
+            console.log('[PITSTOP NOT FOUND AND ADD NEW PITSTOP]');
+            pitstops.push({
+                ...pitstopDetails.vendorDetails,
+                isRestaurant: pitstopDetails.pitstopType === PITSTOP_TYPES.RESTAURANT,
+                pitstopID: sharedUniqueIdGenerator(),
+                checkOutItemsListVM: [{ ...upcomingItemDetails, checkOutItemID: sharedUniqueIdGenerator() }],
+            });
         }
     }
     console.log('[TO CALCULATE PITSTOPS]', pitstops);
@@ -697,3 +694,6 @@ export const sharedFetchOrder = (orderID = 0, successCb = () => { }, errCb = () 
         }
     );
 };
+export const sharedClearReducers = () => {
+    dispatch(actions.clearModalAction());
+}

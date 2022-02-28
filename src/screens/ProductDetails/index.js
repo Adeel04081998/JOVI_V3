@@ -1,7 +1,7 @@
 import lodash from 'lodash'; // 4.0.8
 import AnimatedLottieView from "lottie-react-native";
 import React, { useEffect, useState } from "react";
-import { Animated, Appearance, Easing, Platform, ScrollView } from "react-native";
+import { Animated, Appearance, Easing, Platform, ScrollView, TextInput as RNTextInput } from "react-native";
 import LinearGradient from 'react-native-linear-gradient';
 import AnimatedView from "../../components/atoms/AnimatedView";
 import SafeAreaView from "../../components/atoms/SafeAreaView";
@@ -13,7 +13,7 @@ import View from "../../components/atoms/View";
 import Button from "../../components/molecules/Button";
 import CustomHeader from "../../components/molecules/CustomHeader";
 import ImageCarousel from "../../components/molecules/ImageCarousel";
-import { sharedAddUpdatePitstop, sharedExceptionHandler } from "../../helpers/SharedActions";
+import { renderPrice, sharedAddUpdatePitstop, sharedExceptionHandler } from "../../helpers/SharedActions";
 import { postRequest } from "../../manager/ApiManager";
 import Endpoints from "../../manager/Endpoints";
 import NavigationService from "../../navigations/NavigationService";
@@ -22,9 +22,14 @@ import GV, { PITSTOP_TYPES } from "../../utils/GV";
 import Regex from "../../utils/Regex";
 import RadioButton from "./components/RadioButton";
 import styleSheet from "./style";
+import Image from '../../components/atoms/Image';
+import deviceInfoModule from 'react-native-device-info';
+import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-aware-scroll-view';
+
 
 
 export default (props) => {
+    console.log("props product Details=>>", props);
     // const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark"
     let initialState = {
 
@@ -48,16 +53,17 @@ export default (props) => {
         enableBtn: false,
         requiredIds: [],
     });
-    const { itemCount, generalProductOrDealDetail, discountedPriceWithGst, selectedOptions, notes, totalAddOnPrice, loading, } = state;
+    const { itemCount, generalProductOrDealDetail, discountedPriceWithGst, selectedOptions, notes, totalAddOnPrice, loading, addToCardAnimation } = state;
     const { data } = props;
-    const pitstopType = props.route.params.pitstopType ?? 4;
-    const propItem = props.route.params.propItem
+    const pitstopType = props.route.params?.pitstopType ?? 4;
+    const propItem = props.route.params?.propItem ?? {};
     const colors = theme.getTheme(GV.THEME_VALUES[lodash.invert(PITSTOP_TYPES)[pitstopType]], Appearance.getColorScheme() === "dark");
     const productDetailsStyles = styleSheet.styles(colors)
     let productName = generalProductOrDealDetail.pitStopItemName || ""
     let productDetails = generalProductOrDealDetail.description || ""
     let gstAddedPrice = generalProductOrDealDetail.gstAddedPrice || ""
     let productPrice = generalProductOrDealDetail.discountedPrice || gstAddedPrice || ""
+    let discountedPrice = generalProductOrDealDetail.discountedPrice || ""
     let optionsListArr = generalProductOrDealDetail.optionList ?? []
     let images = generalProductOrDealDetail.images ?? []
     let numberOfLines = 4
@@ -71,9 +77,10 @@ export default (props) => {
 
 
     const loadProductDetails = () => {
+
         postRequest(Endpoints.PRODUCT_DETAILS, {
-            "pitstopProductID": propItem?.pitStopItemID ?? 55278,
-            "pitstopDealID": propItem?.pitstopDealID ?? 0,
+            "pitstopProductID": propItem?.pitStopItemID,
+            "pitstopDealID": propItem?.pitStopDealID,
             "pitstopType": pitstopType
         }, (res) => {
             console.log('if GET_PRODUCTDETAIL  res', res);
@@ -308,6 +315,7 @@ export default (props) => {
         )
 
     }
+
     const renderLoader = () => {
         return <View style={{ flex: 1 }}>
             <AnimatedLottieView
@@ -335,13 +343,31 @@ export default (props) => {
             });
         }
         React.useEffect(() => {
+
+            let timeToshowGif = Platform.OS === 'ios' ? (deviceInfoModule.hasNotch() ? 2800 : 4000) : 6000
             if (addToCardAnimation === true) {
+                console.log("if here", addToCardAnimation);
                 animateLoader();
+                setTimeout(() => {
+                    animateLoader(0)
+                }, timeToshowGif);
+
             }
+
         }, [addToCardAnimation]);
         return (
             <AnimatedView style={{ opacity: animateAddToCart, display: addToCardAnimation === true ? 'flex' : 'none', position: 'absolute', height: "100%", backgroundColor: 'rgba(0,0,1,0.5)', width: '100%', justifyContent: 'flex-start', alignContent: 'flex-start' }}>
-                <AnimatedLottieView
+
+                <Animated.Image
+                    source={require('../../assets/gifs/AddToCart.gif')}
+                    resizeMethod={'auto'}
+                    resizeMode={'contain'}
+                    style={{ justifyContent: 'flex-end', alignContent: 'center', alignSelf: 'center', width: "90%" }}
+                    height={70}
+                    width={40}
+                />
+
+                {/* <AnimatedLottieView
                     source={require('../../assets/gifs/Add To Cart.json')}
                     onAnimationFinish={() => {
                         animateLoader(0);
@@ -351,7 +377,7 @@ export default (props) => {
                     }}
                     resizeMode={'contain'}
                     autoPlay loop={false}
-                />
+                /> */}
             </AnimatedView>
         )
     }
@@ -359,6 +385,8 @@ export default (props) => {
         loadProductDetails()
 
     }, [])
+
+    const inputRef = React.useRef(null);
     return (
         <View style={{ flex: 1 }} >
 
@@ -377,9 +405,21 @@ export default (props) => {
                             rightContainerStyle={productDetailsStyles.customHeaderLeftRightContainer}
                             rightIconColor={productDetailsStyles.customHeaderLeftRightIconColor}
                         />
-                        <ScrollView showsVerticalScrollIndicator={false}>
-
-                            <View>
+                        <KeyboardAwareScrollView
+                            showsVerticalScrollIndicator={false}
+                            enableOnAndroid
+                            keyboardDismissMode="interactive"
+                            keyboardShouldPersistTaps="handled"
+                            {...Platform.OS === "ios" && {
+                                getTextInputRefs: () => {
+                                    return [
+                                        inputRef.current,
+                                    ];
+                                }
+                            }
+                            }>
+<RenderProductImages colors={colors} images={images} />
+                            {/* <View>
                                 <ImageCarousel
                                     data={images}
                                     containerStyle={{
@@ -391,56 +431,72 @@ export default (props) => {
                                     imageStyle={{ borderRadius: 0 }}
                                     paginationDotStyle={{ borderColor: 'red', backgroundColor: colors.primary, }}
                                     uriKey="joviImage"
-                                    height={180}
+                                    // height={180}
+                                    height={330}
+
 
                                 />
                             </View>
                             <LinearGradient
+                                // colors={['#F6F5FA00', '#F6F5FA00', '#F6F5FA', '#F6F5FA']}
                                 colors={['#F6F5FA00', '#F6F5FA00', '#F6F5FA', '#F6F5FA']}
-                                style={{ top: 150, width: '100%', height: 40, position: 'absolute', }}
+                                // style={{ top: 150, width: '100%', height: 40, position: 'absolute', }}
+                                style={{ top: 280, width: '100%', height: 60, position: 'absolute', }}
                             >
-                            </LinearGradient>
+                            </LinearGradient> */}
 
                             <AnimatedView style={[productDetailsStyles.primaryContainer]}>
                                 <Text style={productDetailsStyles.productNametxt} numberOfLines={1} fontFamily="PoppinsMedium">{productName}</Text>
-                                {productDetails ? <Text style={productDetailsStyles.productDescriptionTxt} fontFamily="PoppinsRegular">{productDetails}</Text> : null}
+                                {productDetails ? <Text style={productDetailsStyles.productDescriptionTxt} fontFamily="PoppinsRegular" numberOfLines={2}>{`${productDetails}`}</Text> : null}
                                 <AnimatedView style={productDetailsStyles.productPriceContainer}>
                                     <Text style={productDetailsStyles.productPricelabel} fontFamily="PoppinsRegular">Price:</Text>
                                     <Text style={productDetailsStyles.productPricetxt}
                                         fontFamily='PoppinsRegular'
-                                    >{` PKR - ${productPrice}`}</Text>
+                                    >{` ${renderPrice(productPrice)}`}</Text>
+                                    {
+                                        discountedPrice.length > 0?
+                                            <Text style={[productDetailsStyles.productPricetxt, { paddingHorizontal: 5, textDecorationLine: "line-through", color: colors.grey }]}
+                                                fontFamily='PoppinsRegular'
+                                            >{`${renderPrice(gstAddedPrice, '')}`}</Text>
+                                            : null
+
+                                    }
                                 </AnimatedView>
-                                <Text style={[productDetailsStyles.productPricetxt, { paddingHorizontal: 5, textDecorationLine: "line-through", color: colors.grey }]}
-                                    fontFamily='PoppinsRegular'
-                                >{`${gstAddedPrice}`}</Text>
+
                                 <RadioButton
                                     data={optionsListArr}
                                     onPressCb={onPressHandler}
                                     productDetailsStyles={productDetailsStyles}
                                     selectedOptions={state.selectedOptions}
                                 />
-                                {pitstopType === 4 ? <TextInput
-                                    containerStyle={{ backgroundColor: 'white', marginVertical: 30, margin: 0, }}
-                                    placeholder="Types your notes"
-                                    titleStyle={{ color: 'black', fontSize: 14, }}
-                                    title="Please add your instructions"
-                                    textAlignVertical='top'
-                                    style={{ textAlign: "left", backgroundColor: '#0000002E', borderColor: '#0000002E', opacity: 0.3, margin: 10, borderRadius: 10, minHeight: minHeight, }}
-                                    placeholder="Types your notes"
-                                    onChangeText={(text) => {
-                                        if (Regex.Space_Regex.test(text)) return
-                                        setState((pre) => ({ ...pre, notes: text }))
-                                    }}
-                                    multiline={true} // ios fix for centering it at the top-left corner 
-                                    numberOfLines={Platform.OS === "ios" ? null : numberOfLines}
-                                /> : null}
+                                {pitstopType === 4 ?
+                                    <View style={{ marginVertical: 25, }}>
+                                        <TextInput
+                                            ref={inputRef}
+                                            containerStyle={{ backgroundColor: 'white', margin: 0, }}
+                                            placeholder="Types your instructions"
+                                            placeholderTextColor={"#CFCFCF"}
+                                            titleStyle={{ color: 'black', fontSize: 14, marginVertical: -8 }}
+                                            title="Please add your instructions"
+                                            textAlignVertical='top'
+                                            style={{ textAlign: "left", backgroundColor: colors.drWhite, borderColor: 'rgba(112, 112, 112, 0.1)', borderWidth: 1, color: 'black', margin: 10, borderRadius: 10, minHeight: minHeight, }}
+                                            onChangeText={(text) => {
+                                                if (Regex.Space_Regex.test(text)) return
+                                                setState((pre) => ({ ...pre, notes: text }))
+                                            }}
+                                            multiline={true} // ios fix for centering it at the top-left corner 
+                                            numberOfLines={Platform.OS === "ios" ? null : numberOfLines}
+                                            returnKeyType='done'
+                                        />
+                                    </View>
+                                    : null}
                             </AnimatedView>
-                        </ScrollView>
+                        </KeyboardAwareScrollView>
                         {renderButtonsUi()}
                     </SafeAreaView>
 
             }
-            {<RenderPutItemInCartBox addToCardAnimation={state.addToCardAnimation} />}
+            {state.addToCardAnimation ? <RenderPutItemInCartBox addToCardAnimation={state.addToCardAnimation} /> : <View />}
 
         </View>
 
@@ -450,3 +506,34 @@ export default (props) => {
 
 
 
+const RenderProductImages = React.memo(({ images, colors }) => {
+
+    return <>
+        <View>
+            <ImageCarousel
+                data={images}
+                containerStyle={{
+                    borderRadius: 0,
+                    borderBottomWidth: 0,
+                    marginVertcal: 4,
+                    marginHorizontal: 0,
+                }}
+                imageStyle={{ borderRadius: 0 }}
+                paginationDotStyle={{ borderColor: 'red', backgroundColor: colors.primary, }}
+                uriKey="joviImage"
+                // height={180}
+                height={330}
+                pagination={images.length > 1 ? true : false}
+
+
+            />
+        </View>
+        <LinearGradient
+            // colors={['#F6F5FA00', '#F6F5FA00', '#F6F5FA', '#F6F5FA']}
+            colors={['#F6F5FA00', '#F6F5FA00', '#F6F5FA', '#F6F5FA']}
+            // style={{ top: 150, width: '100%', height: 40, position: 'absolute', }}
+            style={{ top: 280, width: '100%', height: 60, position: 'absolute', }}
+        >
+        </LinearGradient>
+    </>
+}, (n, p) => n !== p);

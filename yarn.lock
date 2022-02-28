@@ -1288,10 +1288,24 @@
   dependencies:
     invariant "^2.2.4"
 
-"@react-native-community/slider@^4.2.0":
+"@react-native-community/slider@^4.1.7":
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/@react-native-community/slider/-/slider-4.2.0.tgz#47fa146b2f2c92e45c35c154b1df8a66e71b8048"
   integrity sha512-7LUDk63cbkDgmTqHBWn0pXzwF/VY9I3wDTnLWNehgQu7GlluHDn02qHgINxS9dRoG96JOqLFxRxnCEKkg5zcmQ==
+
+"@react-native-firebase/app@^14.5.0":
+  version "14.5.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-14.5.0.tgz#677a3965d172d3bde12690bcc993176943f3a99d"
+  integrity sha512-pMTYZA4gQl/m4+9tYE9/3YpGVfuqePg2RF1Fj+/6EUyt6w8y8ADvJyTXzFmJwEkG5CdyWaqvtEyZmsifInUp3w==
+  dependencies:
+    "@expo/config-plugins" "^4.0.18"
+    opencollective-postinstall "^2.0.1"
+    superstruct "^0.6.2"
+
+"@react-native-firebase/messaging@^14.5.0":
+  version "14.5.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/messaging/-/messaging-14.5.0.tgz#ae4d2c8ef6432f6bbd541015817343e8703504ea"
+  integrity sha512-kLA5lx0xoHwMo1fPQWE5IzIKOrmmSYRAfxKQqCETEmCEv/TSa/siiKAWvB8BzSvNUJeZkFFWwv77MxfArtZsyg==
 
 "@react-native-firebase/app@^14.5.0":
   version "14.5.0"
@@ -5040,6 +5054,11 @@ lodash.debounce@^4.0.8:
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
   integrity sha1-gteb/zCmfEAF/9XiUVMArZyk168=
 
+lodash.isequal@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
+  integrity sha1-QVxEePK8wwEgwizhDtMib30+GOA=
+
 lodash.throttle@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/lodash.throttle/-/lodash.throttle-4.1.1.tgz#c23e91b710242ac70c37f1e1cda9274cc39bf2f4"
@@ -6189,7 +6208,7 @@ prop-types@15.7.2:
     object-assign "^4.1.1"
     react-is "^16.8.1"
 
-prop-types@^15.5.10, prop-types@^15.7.2:
+prop-types@^15.5.10, prop-types@^15.6.0, prop-types@^15.7.2:
   version "15.8.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -6384,6 +6403,11 @@ react-native-image-crop-picker@^0.37.2:
   resolved "https://registry.yarnpkg.com/react-native-image-crop-picker/-/react-native-image-crop-picker-0.37.2.tgz#3aadc4ae4812c9975c49a294d9a17ffae057dbb4"
   integrity sha512-YwZXW21Km8+3tSt0smTaLVgY4398c0/OJcpcH6EP0JDOt1BNNxl/R8m6qdvnwdXdIoa0CCnMVW6TL9IN5ia9OA==
 
+react-native-image-picker@^4.7.3:
+  version "4.7.3"
+  resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-4.7.3.tgz#f5863b27bf2e76c83649dd8efea4598426bd04e8"
+  integrity sha512-eRKm4wlsmZHmsWFyv77kYc2F+ZyEVqe0m7mqhsMzWk6TQT4FBDtEDxmRDDFq+ivCu/1QD+EPhmYcAIpeGr7Ekg==
+
 react-native-keyboard-aware-scrollview@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/react-native-keyboard-aware-scrollview/-/react-native-keyboard-aware-scrollview-2.1.0.tgz#418a6b868f4cf2f9d28e77914f11ecbf8ae8e556"
@@ -6393,6 +6417,14 @@ react-native-linear-gradient@^2.5.6:
   version "2.5.6"
   resolved "https://registry.yarnpkg.com/react-native-linear-gradient/-/react-native-linear-gradient-2.5.6.tgz#96215cbc5ec7a01247a20890888aa75b834d44a0"
   integrity sha512-HDwEaXcQIuXXCV70O+bK1rizFong3wj+5Q/jSyifKFLg0VWF95xh8XQgfzXwtq0NggL9vNjPKXa016KuFu+VFg==
+
+react-native-maps-directions@^1.8.0:
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/react-native-maps-directions/-/react-native-maps-directions-1.8.0.tgz#ced452efeb153e54dfb9315480b0ae9539dfbcc7"
+  integrity sha512-7KWfPrvPLU8VP2nEqsnrWlOuylidlRWWDdk3lqT5Nb1q87FeyzNgA7Ib7n6cZlQwH4usTRlJSnzNo/yQ3u4AZw==
+  dependencies:
+    lodash.isequal "^4.5.0"
+    prop-types "^15.6.0"
 
 react-native-maps@^0.30.1:
   version "0.30.1"

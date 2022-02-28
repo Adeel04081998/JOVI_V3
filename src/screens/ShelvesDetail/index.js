@@ -230,7 +230,7 @@ export default ({ navigation, route }) => {
 
     // #endregion :: QUANTITY HANDLER END's FROM HERE 
 
-    const onViewMorePress=(item)=>{
+    const onViewMorePress = (item) => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductMenuItem.screen_name, { pitstopType, marketID, item: item });
     };//end of onViewMorePress
 
@@ -314,16 +314,28 @@ export default ({ navigation, route }) => {
 
                         const productTotalItem = parentItem?.productsPaginationInfo?.totalItems ?? 0;
                         const additionalCount = productTotalItem - PITSTOP_ITEM_LIST_MAX_COUNT;
+                        const isSeeAll = index === parentItem["pitstopItemListSliced"].length - 1;
 
                         return (
                             <View style={{
                                 marginTop: 0, flexDirection: "row", marginBottom: 10,
                                 marginLeft: index % 3 === 0 ? constants.spacing_horizontal : 0,
-                                alignItems: "center",
-                                justifyContent: "center",
+                                ...!isSeeAll && {
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                },
                             }} key={uniqueKeyExtractor()}>
                                 <ProductMenuItemCard
-                                    onPress={() => { }}
+                                    onPress={() => {
+                                        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, {
+                                            propItem: {
+                                                itemDetails: {},
+                                                ...item,
+                                                vendorDetails: { ...route.params },
+                                            },
+                                            pitstopType: pitstopType
+                                        })
+                                    }}
                                     colors={colors}
                                     index={index}
                                     itemImageSize={ITEM_IMAGE_SIZE}
@@ -341,9 +353,9 @@ export default ({ navigation, route }) => {
                                         discountType: item.discountType,
                                     }}
                                 />
-                                {index === parentItem["pitstopItemListSliced"].length - 1 &&
+                                {isSeeAll &&
                                     <ProductMenuItemCard
-                                        onPress={() => {onViewMorePress(parentItem); }}
+                                        onPress={() => { onViewMorePress(parentItem); }}
                                         colors={colors}
                                         index={index}
                                         itemImageSize={ITEM_IMAGE_SIZE}

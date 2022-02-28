@@ -116,6 +116,7 @@ const ProductMenuItemCard = (props: Props) => {
                                     ...StyleSheet.absoluteFillObject,
                                     backgroundColor: 'black',
                                     opacity: 0.5,
+                                    borderRadius: 8,
                                 }} />
                             }
                             <ProductQuantityCard
@@ -135,7 +136,7 @@ const ProductMenuItemCard = (props: Props) => {
                     {/* ****************** End of IMAGE & QUANTITY ****************** */}
 
                     {/* ****************** Start of NAME/TITLE ****************** */}
-                    <Text style={itemStyles.name} numberOfLines={2}>{`${props.item.name}`.repeat(100)}</Text>
+                    <Text style={itemStyles.name} numberOfLines={2}>{`${props.item.name}`}</Text>
 
                     {/* ****************** End of NAME/TITLE ****************** */}
 
@@ -146,7 +147,7 @@ const ProductMenuItemCard = (props: Props) => {
                     {/* ****************** End of PRICE & DISCOUNT ****************** */}
 
 
-                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", }}>
 
                         {(VALIDATION_CHECK(props.item.price) && parseInt(`${props.item.price}`) > 0) &&
                             <Text style={itemStyles.discountPrice}>{renderPrice(props.item.price)}</Text>
@@ -189,7 +190,8 @@ export const itemStylesFunc = (colors: typeof initColors, ITEM_IMAGE_SIZE: numbe
     discountTypeContainer: {
         flexDirection: "row",
         alignItems: "center",
-        marginTop: -6,
+        // marginTop: -6,
+        marginLeft: 10,
     },
     name: {
         color: "#6B6B6B",

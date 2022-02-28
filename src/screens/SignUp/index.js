@@ -74,15 +74,15 @@ export default () => {
             setState(pre => ({ ...pre, inputsArr }))
         } else { dispatch(ReduxActions.setUserAction({ ...loginResult, isLoggedIn: true, introScreenViewed: true })); }
     }
-    const signUpErrorHandler = (err) => { 
-        sharedExceptionHandler(err) 
+    const signUpErrorHandler = (err) => {
+        sharedExceptionHandler(err)
         setState((pre) => ({ ...pre, isLoading: false }))
     }
     const _showValidations = () => {
         let arr = inputsArr.map(x => {
             let showError = (!String(x.value).length || !x.isValid) ? true : false;
             return { ...x, showError }
- })
+        })
         setState(pre => ({ ...pre, inputsArr: arr, }))
 
     }
@@ -121,7 +121,8 @@ export default () => {
                     signUpErrorHandler(err);
                 },
                 {})
-        }}
+        }
+    }
 
     const editable = (item) => {
         if (item.id === 3) return true; // email
@@ -148,7 +149,7 @@ export default () => {
                 <Text style={styles.headerTittle}>{'Registration'}</Text>
             </View>
 
-            <KeyboardAwareScrollView contentContainerStyle={{ flexGrow: 1, marginTop: 30 }} keyboardShouldPersistTaps="always">
+            <KeyboardAwareScrollView  >
                 <View style={{ flex: 1, }}>
                     {inputsArr.map((x, i) => {
                         const isError = x.id !== 4 && x.showError; // mob no
@@ -169,7 +170,7 @@ export default () => {
                                 forceError={isError}
                                 titleStyle={{ top: -30, color: 'black', fontSize: 17 }}
                                 containerStyle={{ borderColor: isError ? "red" : "#E2E2E2", backgroundColor: x.backgroundColor, borderWidth: 1 }}
-                                editable={x.field === "Mobile" ? editable(x) : null}
+                                editable={x.field === "Mobile" ? false : true}
                                 errorTextStyle={[styles.errorText, { fontSize: 12 }]}
                                 maxLength={x.maxLength}
                                 iconName={VALID_ICON}
@@ -204,21 +205,20 @@ export default () => {
                         <Text style={{ color: 'black', fontSize: 14, width: '100%', paddingTop: Platform.OS === 'android' ? 5 : 0, }} numberOfLines={2}>{"Receive news, updates, and offers from JOVI"}</Text>
                     </View>
                 </View>
-                <Button
-                    text="Sign Up"
-                    onPress={_signUpHandler}
-                    disabled={isLoading}
-                    isLoading={isLoading}
-                    textStyle={{ fontSize: 16, color: '#fff', }}
-                    style={{
-                        width: "90%", alignSelf: "center", marginBottom: 10,
-                        backgroundColor: !enableSubmit() ? "#D3D3D3" : "#7359BE",
-                        borderRadius: 10
-                    }}
-                />
             </KeyboardAwareScrollView >
 
-
+            <Button
+                text="Sign Up"
+                onPress={_signUpHandler}
+                disabled={isLoading}
+                isLoading={isLoading}
+                textStyle={{ fontSize: 16, color: '#fff', }}
+                style={{
+                    width: "90%", alignSelf: "center", marginBottom: 10,
+                    backgroundColor: !enableSubmit() ? "#D3D3D3" : "#7359BE",
+                    borderRadius: 10, position: 'absolute', bottom: 0
+                }}
+            />
         </SafeAreaView >
 
     )

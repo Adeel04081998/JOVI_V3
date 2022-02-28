@@ -13,7 +13,7 @@ import TextInput from '../../../components/atoms/TextInput';
 import Button from '../../../components/molecules/Button';
 import Switch from '../../../components/atoms/Switch';
 
-const PitStopBuy = (props) => {
+export default React.memo((props) => {
     // colors.primary will recieve value from colors.js file's colors
     const WIDTH = constants.window_dimensions.width
     const HEIGHT = constants.window_dimensions.height
@@ -34,8 +34,10 @@ const PitStopBuy = (props) => {
                 </>
 
     );
-}
-export default PitStopBuy;
+},((n,p)=>{
+    return (n.isOpened===p.isOpened&&n.switchVal===p.switchVal)
+}));
+
 
 
 
