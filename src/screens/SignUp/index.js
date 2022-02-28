@@ -151,7 +151,7 @@ export default () => {
 
             <KeyboardAwareScrollView  >
                 <View style={{ flex: 1, }}>
-                    {[...inputsArr, ...inputsArr].map((x, i) => {
+                    {inputsArr.map((x, i) => {
                         const isError = x.id !== 4 && x.showError; // mob no
                         return <View style={{ marginTop: 25 }} key={`key-${i}`}>
                             <TextInput
