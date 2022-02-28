@@ -125,7 +125,7 @@ const ProductMenuHeader = (props: Props) => {
                                             color={colors}
                                             seeAll
                                             onItemPress={() => {
-                                                const allData: any = props?.data ?? [];
+                                                const allData: any = props?.data ? [...props?.data] : [];
                                                 if (Math.abs(allData.length % 2) === 1) {
                                                     //WHEN ODD
                                                     allData.push({
@@ -134,7 +134,7 @@ const ProductMenuHeader = (props: Props) => {
                                                     })
                                                 }
 
-                                                NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Shelves.screen_name, { shelveData: allData, pitstopType: props.pitstopType, marketID: props.marketID ,  categoryName: props.headerItem?.title ?? '',})
+                                                NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Shelves.screen_name, { shelveData: allData, pitstopType: props.pitstopType, marketID: props.marketID, categoryName: props.headerItem?.title ?? '', })
                                             }}
                                         />
                                     }
