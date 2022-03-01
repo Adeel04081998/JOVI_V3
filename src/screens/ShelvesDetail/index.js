@@ -1,6 +1,7 @@
 import AnimatedLottieView from 'lottie-react-native';
 import React from 'react';
 import { Animated, Appearance, FlatList, SafeAreaView, ScrollView } from 'react-native';
+import { useSelector } from 'react-redux';
 import Text from '../../components/atoms/Text';
 import TouchableScale from '../../components/atoms/TouchableScale';
 import View from '../../components/atoms/View';
@@ -49,9 +50,9 @@ export default ({ navigation, route }) => {
     // #endregion :: STYLES & THEME END's FROM HERE 
 
     // #region :: STATE's & REF's START's FROM HERE 
-    const animScroll = React.useRef(new Animated.Value(0)).current
-
-    const [finalDestination, updateFinalDestination] = React.useState(store.getState().userReducer?.finalDestination ?? {});
+    const animScroll = React.useRef(new Animated.Value(0)).current;
+    const userReducer = useSelector(store => store.userReducer);
+    const [finalDestination, updateFinalDestination] = React.useState(userReducer.finalDestObj);
 
     const [shelveData, updateShelveData] = React.useState(shelveArr);
     const [shelveMetaData, toggleShelveMetaData] = React.useState(false);
@@ -84,8 +85,8 @@ export default ({ navigation, route }) => {
             error: false,
         });
         const params = {
-            "latitude": finalDestination?.latitude ?? 33.654227,
-            "longitude": finalDestination?.longitude ?? 73.044831,
+            "latitude": finalDestination.latitude,
+            "longitude": finalDestination.longitude,
             "searchItem": "",
             "categoryID": 0,
             "tagID": tagID,

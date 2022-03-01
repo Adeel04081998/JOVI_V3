@@ -10,7 +10,7 @@ Axios.interceptors.request.use(
         try {
             if (!GV.NET_INFO_REF?.current?.isConnected) return Toast.info("No Internet connection!", 5000);
             config.baseURL = GV.BASE_URL.current;
-            config.timeout = __DEV__ ? 60000 : 15000;
+            config.timeout = 60 * 1000; // 1 MINUTE
             config.timeoutErrorMessage = "Request Timeout..."
             config.headers['isNewApp'] = "true"; // for device and app info in future
             config.headers['deviceInfo'] = JSON.stringify({}); // for device and app info in future

@@ -21,10 +21,14 @@ import CardLoader from './components/CardLoader';
 import Categories from './components/Categories';
 import ROUTES from '../../navigations/ROUTES';
 import Card from './components/Card';
+import { useSelector } from 'react-redux';
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 const SPACING_VERTICAL = 10;
 const ITEMS_PER_PAGE = 10;
 const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
+    const userReducer = useSelector(store => store.userReducer);
+    // console.log("[PitstopsVerticalList].userReducer", userReducer);
+    const finalDestination = userReducer.finalDestObj;
     const pitstopType = route.params.pitstopType ?? 4;
     const [state, setState] = React.useState({
         vendorCategoryViewModel: {
@@ -95,7 +99,9 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
             "pageNumber": paginationInfo.current.pageNumber,
             "itemsPerPage": paginationInfo.current.itemsPerPage,
             "vendorDashboardCatID": listingObj.vendorDashboardCatID,
-            "categoryID": filtersRef.current.cuisines[0] ?? ''
+            "categoryID": filtersRef.current.cuisines[0] ?? '',
+            "latitude": finalDestination.latitude,
+            "longitude": finalDestination.longitude,
         }, (res) => {
             setTimeout(() => {
                 isRequestSent.current = false;
@@ -235,7 +241,7 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
     return (
         <View style={styles.container}>
             <SafeAreaView style={{ flex: 1, }}>
-                <CustomHeader defaultColor={colors.primary} onLeftIconPress={onBackPress}  />
+                <CustomHeader defaultColor={colors.primary} onLeftIconPress={onBackPress} />
                 <View style={{ margin: SPACING_VERTICAL, paddingBottom: 160 }}>
                     <View style={{ ...styles.container, marginVertical: SPACING_VERTICAL }} >
                         <Text style={styles.mainText} >{listingObj?.header ?? 'Vendors'}</Text>
@@ -265,8 +271,8 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
                         }
                     />
                     {
-                        state.vendorCategoryViewModel.vendorList.length < 1 && state.isLoading === false ? <Text style={{marginTop:50,alignSelf:'center',color:colors.grey}} fontFamily={'PoppinsMedium'}>
-                            No {pitstopType === 4 ? 'Restaurants':'Supermarkets'} Found
+                        state.vendorCategoryViewModel.vendorList.length < 1 && state.isLoading === false ? <Text style={{ marginTop: 50, alignSelf: 'center', color: colors.grey }} fontFamily={'PoppinsMedium'}>
+                            No {pitstopType === 4 ? 'Restaurants' : 'Supermarkets'} Found
                         </Text> : null
                     }
                     {/* <ScrollView showsVerticalScrollIndicator={false} scrollEventThrottle={16} style={{ marginTop: SPACING_VERTICAL, marginBottom: pitstopType === 4 ? 100 : 0 }} onScroll={(event) => {

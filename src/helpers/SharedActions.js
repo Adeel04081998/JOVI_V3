@@ -661,3 +661,10 @@ export const sharedSendFCMTokenToServer = async (postRequest, FcmToken) => {
 export const sharedClearReducers = () => {
     dispatch(actions.clearModalAction());
 }
+export const sharedHandleInfinityScroll = (event) => {
+    let mHeight = event.nativeEvent.layoutMeasurement.height;
+    let cSize = event.nativeEvent.contentSize.height;
+    let Y = event.nativeEvent.contentOffset.y;
+    if (Math.ceil(mHeight + Y) >= cSize) return true;
+    return false;
+}
