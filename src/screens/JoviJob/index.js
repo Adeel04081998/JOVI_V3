@@ -654,20 +654,13 @@ export default ({ navigation, route }) => {
 
                     if (idx === 2 && isOpened) { //AHMED KH RHA KOI 2 ko change nh kry ga... ;-P
                         //WHEN DESCRIPTION TOGGLE  
-                        console.log('micPress ',micPress);
                         if (micPress) {
-                            console.log('if isOpened ==>>> micPress');
-
                             recordingPress(true);
                         } else {
-                            console.log('else isOpened ==>>> micPress');
-
                             setForceDeleted(true);
                             updateStateaaa();
                         }
-                        console.log('if isOpened');
                     } else {
-                        console.log('else ==>>>> isOpened');
                         updateCardOnHeaderPress(updateCardOnHeaderPressItem);
                     }
 

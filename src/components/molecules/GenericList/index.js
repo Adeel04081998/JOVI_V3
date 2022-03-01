@@ -102,16 +102,15 @@ export default React.memo(({ vendorType = 0,pitstopType = 2, imageStyles = {}, t
         <View style={{ paddingBottom: SPACING_BOTTOM }}>
             {
                 data.map((item, index) => (
-                    <React.Fragment key={`generic-item-key-${index}`}>
+                    <React.Fragment key={`generic-item-key-${index}`} >
                         <View style={styles.container} >
-                            <Text style={styles.mainText} >{item.header}</Text>
+                            <Text fontFamily="PoppinsMedium" style={styles.mainText} >{item.header}</Text>
                             <TouchableOpacity onPress={()=>onPressViewMore(item)}>
                                 <Text style={styles.viewMoreBtn} >{showMoreBtnText || `View More`}</Text>
                             </TouchableOpacity>
                         </View>
 
                         <AnimatedFlatlist
-
                             data={item.vendorList}
                             renderItem={cardTypeUI[item.cardType ?? 1]}
                             itemContainerStyle={item.cardType === 1 ? styles.itemContainerSmall : { ...styles.itemContainer }}
@@ -119,7 +118,7 @@ export default React.memo(({ vendorType = 0,pitstopType = 2, imageStyles = {}, t
                             horizontal={true}
                             flatlistProps={{
                                 showsHorizontalScrollIndicator: false,
-                                // contentContainerStyle: { paddingBottom: 40 }
+                                contentContainerStyle: { marginLeft: 0 }
                             }}
                         />
                     </React.Fragment>
@@ -137,12 +136,12 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
     container: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingHorizontal: 10,
+        paddingHorizontal: 0,
         paddingVertical: 5
     },
     mainText: {
         color: colors.text,
-        fontSize: 16
+        fontSize: 16,
     },
     viewMoreBtn: {
         color: colors.primary || '#6D51BB', // colors.primary here should be the theme color of specific category
@@ -152,11 +151,12 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
         ...sharedStyles._styles(colors).shadow,
         backgroundColor: colors.white || '#fff',
         borderRadius: 10,
-        marginHorizontal: 5,
+        // marginHorizontal: 5,
+        marginRight: 10,
         flex: 1,
         paddingHorizontal: 10,
         paddingVertical: 10,
-        marginVertical: 5
+        marginVertical: 5,
     },
     itemContainerSmall: {
         ...sharedStyles._styles(colors).shadow,
@@ -164,11 +164,12 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
         height:200,
         width:180,
         borderRadius: 10,
-        marginHorizontal: 5,
+        marginRight: 10,
+        // marginHorizontal: 5,
         flex: 1,
         // paddingHorizontal: 10,
         // paddingVertical: 10,
-        marginVertical: 5
+        marginVertical: 5,
     },
     image: {
         height: height,
