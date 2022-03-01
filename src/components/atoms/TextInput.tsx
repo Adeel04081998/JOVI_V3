@@ -133,7 +133,7 @@ const TextInput = React.forwardRef<RNTextInput, Props>((props: Props, ref: any) 
                 }}
                 placeholder={props.placeholder}
                 placeholderTextColor={props.placeholderTextColor}
-
+                autoCorrect={props?.autoCorrect ?? false}
                 style={[{
                     flex: 1,
                     padding: 10,

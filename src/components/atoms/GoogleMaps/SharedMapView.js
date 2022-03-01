@@ -193,7 +193,7 @@ export default (props) => {
             >
                 {
                     selectFinalDestination ? <View>
-                        <Marker identifier={`marker `} key={`marker-key`} coordinate={{ ...(newFinalDestination ?? userReducer.finalDestObj) }} anchor={{ x: 0.46, y: 0.7 }}>
+                        <Marker identifier={`marker `} key={`marker-key`} coordinate={{ ...(newFinalDestination ?? userReducer.finalDestObj) }} anchor={{ x: 0.20, y: 0.9 }}>
                             <View>
                                 <SvgXml xml={FINAL_DESTINATION_SVG} height={35} width={35} />
                             </View>
@@ -285,7 +285,7 @@ export default (props) => {
     const renderCurrentLocationButton = () => {
         if (showCurrentLocationBtn) {
             return (
-                <TouchableOpacity onPress={getCurrentPosition} style={{ bottom: HEIGHT * 0.1, position: "absolute", right: 10, zIndex: 6 }} >
+                <TouchableOpacity onPress={getCurrentPosition} style={{ bottom: HEIGHT * 0.03, position: "absolute", right: 20, zIndex: 6 }} >
                     <View style={styles.headerLeftIconView} >
                         <SvgXml style={{ alignSelf: 'center', marginTop: 1.5 }} xml={svgs.locateMeIcon()} height={18} width={18} />
                     </View>

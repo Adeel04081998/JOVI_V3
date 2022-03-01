@@ -121,6 +121,8 @@ const CustomHeader = (props: Props) => {
 
     // },[cartReducer.itemsCount])
 
+    
+
     const _renderFinalDestination = () => {
         return props.hideFinalDestination ? <></> : (
             <TouchableOpacity style={{ alignItems: "center" }} activeOpacity={0.5}
@@ -212,6 +214,7 @@ const CustomHeader = (props: Props) => {
                         } : {
                             onPress: () => {
                                 if(IS_CART_ICON && cartReducer.itemsCount > 0){
+                                    // NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name)
                                     NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name)
                                 }
 },

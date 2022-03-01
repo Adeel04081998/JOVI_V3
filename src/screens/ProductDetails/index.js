@@ -396,7 +396,7 @@ export default (props) => {
                                 }
                             }
                             }>
-<RenderProductImages colors={colors} images={images} />
+                            <RenderProductImages colors={colors} images={images} />
                             {/* <View>
                                 <ImageCarousel
                                     data={images}
@@ -432,7 +432,7 @@ export default (props) => {
                                         fontFamily='PoppinsRegular'
                                     >{` ${renderPrice(productPrice)}`}</Text>
                                     {
-                                        discountedPrice.length > 0?
+                                        discountedPrice.length > 0 ?
                                             <Text style={[productDetailsStyles.productPricetxt, { paddingHorizontal: 5, textDecorationLine: "line-through", color: colors.grey }]}
                                                 fontFamily='PoppinsRegular'
                                             >{`${renderPrice(gstAddedPrice, '')}`}</Text>

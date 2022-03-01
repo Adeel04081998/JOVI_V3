@@ -468,7 +468,7 @@ export default ({ navigation, route }) => {
                     <ActivityIndicator size="large" color={colors.primary}
                         style={{
                             opacity: query.refreshing ? 1 : 0,
-                            marginTop: 10
+                            marginBottom: 20
                         }} />
                 }
             />

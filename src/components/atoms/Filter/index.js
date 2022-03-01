@@ -13,6 +13,7 @@ import Cuisine from './components/Cuisine';
 import Button from '../../molecules/Button';
 import NavigationService from '../../../navigations/NavigationService';
 import ROUTES from '../../../navigations/ROUTES';
+import constants from '../../../res/constants';
 const CUSINE_ACTIVE_INDEX = "activeCusine";
 const Filter_ACTIVE_INDEX = "activeFilterBy";
 const AV_PRICE_ACTIVE_INDEX = "activeAvergePrice";
@@ -22,6 +23,8 @@ export default (props) => {
     const cuisineList = vendorFilterViewModel?.cuisine ?? {}
     const filterList = vendorFilterViewModel?.filtersList ?? {}
     const averagePriceList = ENUMS.AVERAGE_PRICE_FILTERS ?? {}
+    const WIDTH = constants.window_dimensions.width
+    const HEIGHT = constants.window_dimensions.height
     const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark")
     const filterType = null
     const initState = {
@@ -124,8 +127,9 @@ export default (props) => {
                 onPress={onApplyPress}
                 // disabled={enableDisableButton}
                 text='Apply'
-                style={{width:'90%',  alignSelf: "center", marginBottom: 10, backgroundColor: "#F94E41", borderRadius: 25 }}
-
+                textStyle={{fontSize: 14, color: colors.white}}
+                style={{width: WIDTH * 0.75, height: HEIGHT * 0.065,  alignSelf: "center", marginBottom: 10, backgroundColor: "#ED4C42", borderRadius: 25 }}
+                
             />
             </View>
         </SafeAreaView>

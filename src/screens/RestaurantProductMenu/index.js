@@ -22,6 +22,7 @@ import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
+import {  useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const WINDOW_HEIGHT = constants.window_dimensions.height;
 const PITSTOPS = {
@@ -37,6 +38,7 @@ LogBox.ignoreLogs([
 const SCROLL_HEADER_HEIGHT_LINE = 60;
 
 export default ({ navigation, route }) => {
+    const insets = useSafeAreaInsets();
     const pitstopType = route?.params?.pitstopType ?? 4;
     const colors = theme.getTheme(GV.THEME_VALUES[lodash.invert(PITSTOPS)[pitstopType]], Appearance.getColorScheme() === "dark");
     const styles = stylesFunc(colors);
@@ -63,8 +65,9 @@ export default ({ navigation, route }) => {
         useNativeDriver: true
     });
 
+    const inputRange = headerHeight - ((SCROLL_HEADER_HEIGHT_LINE * 2) + 20);
     const tabTop = animScroll.interpolate({
-        inputRange: [0, headerHeight - ((SCROLL_HEADER_HEIGHT_LINE * 2) + 20)],
+        inputRange: [0, inputRange > 0 ? inputRange : inputRange * -1],
         outputRange: [headerHeight + 20, SCROLL_HEADER_HEIGHT_LINE],
         extrapolate: "clamp",
         useNativeDriver: true
@@ -183,7 +186,7 @@ export default ({ navigation, route }) => {
     };
 
     return (
-        <SafeAreaView style={{ flex: 1, top: getStatusBarHeight(true), backgroundColor: colors.white, }}>
+        <SafeAreaView style={{ flex: 1, top: getStatusBarHeight(true) }}>
             <StatusBar backgroundColor={colors.white} />
             <Animated.View style={{ position: 'absolute', top: 0, zIndex: 9999, }}>
                 <CustomHeader
@@ -192,7 +195,7 @@ export default ({ navigation, route }) => {
                     titleStyle={{
                         color: colors.primary,
                         opacity: animScroll.interpolate({
-                            inputRange: [headerHeight - 100, headerHeight],
+                            inputRange: [0, headerHeight],
                             outputRange: [0, 1]
                         }),
                     }}
@@ -326,8 +329,7 @@ export default ({ navigation, route }) => {
                 )}
             />
 
-            <GotoCartButton colors={colors} onPress={() => { }} />
-
+            <GotoCartButton colors={colors} onPress={() => { }} bottom={insets.bottom > 0 ? insets.bottom : getStatusBarHeight()*0.01} />
         </SafeAreaView>
     )
 };//end of EXPORT DEFAULT
