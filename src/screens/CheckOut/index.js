@@ -32,7 +32,7 @@ const CARD_WIDTH = WINDOW_WIDTH * 0.3;
 const CARD_HEIGHT = CARD_WIDTH * 0.4;
 const TOPSPACING = 10
 
-
+const IMAGE_SIZE = constants.window_dimensions.width * 0.3;
 export default () => {
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED['10']], Appearance.getColorScheme() === "dark");
     const checkOutStyles = StyleSheet.styles(colors)
@@ -133,25 +133,43 @@ export default () => {
                 title='Checkout'
                 titleStyle={{ fontSize: 16, fontFamily: FontFamily.Poppins.SemiBold, color: '#6D51BB' }}
                 onLeftIconPress={goBack}
-                rightIconName=''
+                // rightIconName=''
                 containerStyle={{ borderBottomWidth: 0 }}
+
+                rightIconName='home'
+                rightIconSize={22}
+                rightIconColor={colors.primary}
+            // defaultColor={colors.primary} 
             />
-            <View style={{ top: -10 }}>
+            <View style={{ top: -10 ,}}>
                 <StepProgress maxHighlight={3} />
             </View>
-            <ScrollView style={{ flex: 1, }} showsVerticalScrollIndicator={false}>
-                <OrderEstTimeCard
+            <ScrollView style={{ flex: 1,bottom:15, }} showsVerticalScrollIndicator={false}>
+                {/* <OrderEstTimeCard
                     color={colors}
                     middle={{ value: estimatedDeliveryTime }}
                     right={{ value: totalPitstop }}
                     contentContainerStyle={{ marginBottom: 0, marginVertical: 0, marginTop: -3 }}
                     middleContainerStyle={{ flex: 2 }}
-                    isShow={true}
+                isShow={true}
+                /> */}
+                <OrderEstTimeCard
+                    imageHeight={IMAGE_SIZE * 0.6}
+                    color={colors}
+                    right={{ value: totalPitstop }}
+                    middle={{ value: estimatedDeliveryTime }}
+                    contentContainerStyle={{ marginBottom: 0, marginVertical: 0, marginTop: 10, }}
+                    rightContainerStyle={{}}
+                    middleContainerStyle={{ flex: 2 }}
+                    leftContainerStyle={{ paddingRight: 15 }}
                 />
+
+
                 <DeliveryAddress
-                    contianerStyle={{ margin: TOPSPACING, marginBottom: 2, padding: 0, }}
+                    contianerStyle={{ margin: TOPSPACING, marginBottom: 2, padding: 0, borderRadius: 8 }}
                     addressTxtStyle={{ fontSize: 14, color: "#6D51BB", paddingHorizontal: 10 }}
                     instructions={instructionForRider}
+                    editIconStyle={{ marginHorizontal: 10 }}
                 />
                 {RenderPaymentMethodCardUi()}
                 <VouchersUi checkOutStyles={checkOutStyles} />

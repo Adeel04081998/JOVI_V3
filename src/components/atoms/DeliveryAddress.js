@@ -7,6 +7,7 @@ import { initColors } from "../../res/colors";
 import sharedStyles from "../../res/sharedStyles";
 import Text from "./Text";
 import TouchableScale from "./TouchableScale";
+import VectorIcon from "./VectorIcon";
 import View from "./View";
 
 const pin_icon = () => `<svg xmlns="http://www.w3.org/2000/svg" width="14.948" height="20.99" viewBox="0 0 14.948 20.99">
@@ -33,7 +34,7 @@ const BottomLine = () => (
         }}
     />
 );
-export default ({ instructions = "", contianerStyle = {}, addressTxtStyle = {} }) => {
+export default ({ instructions = "", contianerStyle = {}, addressTxtStyle = {}, editIconStyle = {}, }) => {
     const SPACING = 10;
     const ICON_HEIGHT = 20;
     const ICON_WIDTH = 20;
@@ -71,7 +72,7 @@ export default ({ instructions = "", contianerStyle = {}, addressTxtStyle = {} }
                     </Text>
 
                 </View>
-                <TouchableScale onPress={() => dispatch(ReduxActions.setModalAction({ visible: true }))}>
+                <TouchableScale onPress={() => dispatch(ReduxActions.setModalAction({ visible: true }))} style={editIconStyle}>
                     <SvgXml xml={edit_icon()} height={20} width={20} />
                 </TouchableScale>
             </View>
@@ -100,9 +101,20 @@ export default ({ instructions = "", contianerStyle = {}, addressTxtStyle = {} }
                                 numberOfLines={1}>
                                 Instruction for rider
                             </Text>
-                            <Text style={{ color: colors.black, fontSize: 11 }} numberOfLines={2} fontFamily='PoppinsRegular'>
-                                {instructions}
-                            </Text>
+                            <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between', }}>
+                                <Text style={{ color: colors.black, fontSize: 11, textAlign: 'auto' }} numberOfLines={2} fontFamily='PoppinsRegular'>
+                                    {instructions}
+                                </Text>
+                                <VectorIcon
+                                    name="chevron-forward"
+                                    type="Ionicons"
+                                    size={17}
+                                    color={"#6D51BB"}
+
+                                />
+
+                            </View>
+
                         </View>
                     </>
                     : null
