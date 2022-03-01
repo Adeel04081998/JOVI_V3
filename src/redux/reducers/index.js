@@ -38,7 +38,7 @@ const cartReducer = (state = INIT_CART_DATA, action) => {
   // console.log("action", action)
   switch (action.type) {
     case TYPES.SET_CART_ACTION:
-      return { ...state, ...action.payload, pitstops: [...action.payload.pitstops] };
+      return { ...state, ...action.payload, pitstops: [...(action.payload.pitstops??state.pitstops)] };
     case TYPES.CLEAR_CART_ACTION:
       return {
         ...INIT_CART_DATA,

@@ -16,6 +16,7 @@ import constants from '../res/constants';
 import NavigationService from '../navigations/NavigationService';
 import actions from '../redux/actions';
 import preference_manager from '../preference_manager';
+import ROUTES from '../navigations/ROUTES';
 const dispatch = store.dispatch;
 export const sharedGetDeviceInfo = async () => {
     let model = DeviceInfo.getModel();
@@ -302,7 +303,7 @@ export const renderPrice = (price, prefix = "Rs. ", suffix = "", reg = Regex.pri
     return parseInt(`${price}`) < 1 ? '' : suffix.length > 0 ? `${prefix} ${price}${suffix}` : `${prefix} ${price}`;
 }
 
-export const renderDistance = (distance, suffix = "m",prefix = "",  reg = Regex.distanceM,) => {
+export const renderDistance = (distance, suffix = "m", prefix = "", reg = Regex.distanceM,) => {
     prefix = `${prefix}`.trim();
     suffix = `${suffix}`.trim();
     distance = `${distance}`.trim().replace(reg, '').trim();
@@ -497,7 +498,7 @@ export const sharedAddUpdatePitstop = (
             pitstops.push({
                 ...pitstopDetails.vendorDetails,
                 isRestaurant: pitstopDetails.pitstopType === PITSTOP_TYPES.RESTAURANT,
-                pitstopID: sharedUniqueIdGenerator(),
+                pitstopID: pitstopDetails.vendorDetails.marketID ?? pitstopDetails.vendorDetails.pitstopID,
                 checkOutItemsListVM: [{ ...upcomingItemDetails, checkOutItemID: sharedUniqueIdGenerator() }],
             });
         }
@@ -544,8 +545,10 @@ export const sharedGetPitstopData = (pitstop = {}, pitstopActionKey = "marketID"
     } else return null;
 }
 
-export const sharedGetServiceCharges = (payload = null,successCb=()=>{}) => {
+export const sharedGetServiceCharges = (payload = null, successCb = () => { }) => {
     const cartReducer = store.getState().cartReducer;
+    const userReducer = store.getState().userReducer;
+    console.log('userReducer', userReducer);
     const pitstopItems = [];
     [...cartReducer.pitstops].map((item, i) => {
         if (item.checkOutItemsListVM) {
@@ -569,7 +572,7 @@ export const sharedGetServiceCharges = (payload = null,successCb=()=>{}) => {
     payload = payload ? payload : {
         "joviJobAmount": cartReducer.joviPitstopsTotal,
         "estimateTime": cartReducer.estimateTime || null,
-        "pitstops": [...cartReducer.pitstops].map((_pitstop, pitIndex) => ({
+        "pitstops": [...cartReducer.pitstops, { ...(userReducer?.finalDestObj ?? {}) }].map((_pitstop, pitIndex) => ({
             "isRestaurant": _pitstop.isRestaurant,
             "latLng": `${_pitstop.latitude},${_pitstop.longitude}`,
             "pitStopType": _pitstop.pitstopType,
@@ -582,19 +585,19 @@ export const sharedGetServiceCharges = (payload = null,successCb=()=>{}) => {
         // "isAdmin": true,
         // "orderID": 0
     }
-    console.log('payload--sharedGetServiceCharges',payload);
+    console.log('payload--sharedGetServiceCharges', payload);
     postRequest(
         Endpoints.SERVICE_CHARGES,
         payload,
         (response) => {
-            const { statusCode, serviceCharge,chargeBreakdown, discount } = response.data;
+            const { statusCode, serviceCharge, chargeBreakdown, discount } = response.data;
             console.log('service charges response -----', response);
             if (statusCode === 200)
                 // NEED TO MODIFY THESE LOGIC FOR FUTURE CASES LIKE CHECKOUT SCREEN...
                 if (!cartReducer.serviceCharges) {
-                    dispatch(ReduxActions.setCartAction({ serviceCharges: serviceCharge, total: cartReducer.total + serviceCharge,chargeBreakdown:chargeBreakdown??{} }))
+                    dispatch(ReduxActions.setCartAction({ serviceCharges: serviceCharge, total: cartReducer.total + serviceCharge, chargeBreakdown: chargeBreakdown ?? {} }))
                 }
-                successCb(response);
+            successCb(response);
         },
         (error) => {
             console.log('service charges error -----', error);
@@ -696,4 +699,29 @@ export const sharedFetchOrder = (orderID = 0, successCb = () => { }, errCb = () 
 };
 export const sharedClearReducers = () => {
     dispatch(actions.clearModalAction());
+}
+export const sharedHandleInfinityScroll = (event) => {
+    let mHeight = event.nativeEvent.layoutMeasurement.height;
+    let cSize = event.nativeEvent.contentSize.height;
+    let Y = event.nativeEvent.contentOffset.y;
+    if (Math.ceil(mHeight + Y) >= cSize) return true;
+    return false;
+}
+export const sharedOrderNavigation = (orderID = null,orderStatus = null) => {
+    const goToOrderProcessing = () => NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name,{orderID});
+    const goToOrderProcessingError = () => NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.OrderProcessingError.screen_name,{orderID});
+    const goToOrderTracking = () => NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name,{orderID});
+    const orderStatusEnum = {
+        'VendorApproval':goToOrderProcessing,
+        'VendorProblem':goToOrderProcessing,
+        'CustomerApproval':goToOrderProcessingError,
+        'CustomerProblem':goToOrderProcessingError,
+        'FindingRider':goToOrderTracking,
+        'Initiated':goToOrderTracking,
+        'Processing':goToOrderTracking,
+        'RiderFound':goToOrderTracking,
+        'RiderProblem':goToOrderTracking,
+        'TransferProblem':goToOrderTracking,
+    };
+    orderStatusEnum[orderStatus??'']();
 }

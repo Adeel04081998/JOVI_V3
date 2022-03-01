@@ -16,6 +16,8 @@ import { stylesFunc } from './styles';
 import { orderProcessingDummyData } from './StaticData';
 import AnimatedLottieView from 'lottie-react-native';
 import { useSelector } from 'react-redux';
+import ROUTES from '../../navigations/ROUTES';
+import NavigationService from '../../navigations/NavigationService';
 
 const DOUBLE_SPACING = constants.spacing_horizontal + 6;
 const IMAGE_SIZE = constants.window_dimensions.width * 0.3;
@@ -23,15 +25,14 @@ const IMAGE_SIZE = constants.window_dimensions.width * 0.3;
 export default ({ navigation, route }) => {
 
     // #region :: STYLES & THEME START's FROM HERE 
-    const userReducer = useSelector(store => store.userReducer);
     const pitstopType = route?.params?.pitstopType ?? PITSTOP_TYPES.JOVI;
-    const orderIDParam = route?.params?.orderID ?? PITSTOP_TYPES.JOVI;
+    const orderIDParam = route?.params?.orderID ?? 0;
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]], Appearance.getColorScheme() === "dark");
     const [state, setState] = React.useState({
-        orderID: userReducer.orderList ? userReducer.orderList[0] : 0,
+        orderID: orderIDParam ?? 0,
         pitStopsList: [],
         isLoading: true,
-        chargeBreakdown:{},
+        chargeBreakdown: {},
     });
     const styles = stylesFunc(colors);
 
@@ -42,11 +43,15 @@ export default ({ navigation, route }) => {
         return (
             <SafeAreaView style={{ ...styles.primaryContainer, flex: 0, }}>
                 <CustomHeader
-                    leftIconName='home'
+                    rightIconName='home'
                     hideFinalDestination
                     title={'Processing'}
-                    rightIconName={null}
+                    leftIconName={null}
+                    rightIconColor={colors.primary}
                     rightIconSize={22}
+                    onRightIconPress={() => {
+                        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
+                    }}
                     defaultColor={colors.primary} />
             </SafeAreaView>
         )
@@ -67,54 +72,54 @@ export default ({ navigation, route }) => {
 
     React.useEffect(() => {
         sharedFetchOrder(orderIDParam, (res) => {
-            setState(pre => ({ ...pre, ...res.data.order,isLoading:false }))
+            setState(pre => ({ ...pre, ...res.data.order, isLoading: false }))
         });
-        let pitstopDataArr = orderProcessingDummyData.data.order.pitStopsList.slice(0, orderProcessingDummyData.data.order.pitStopsList.length - 1);
+        // let pitstopDataArr = orderProcessingDummyData.data.order.pitStopsList.slice(0, orderProcessingDummyData.data.order.pitStopsList.length - 1);
 
-        pitstopDataArr = pitstopDataArr.map(e => {
-            const ptItemData = [];
-            if (e.pitstopType === PITSTOP_TYPES.SUPER_MARKET || e.pitstopType === PITSTOP_TYPES.RESTAURANT) {
-                //RESTURANT AND SUPERMARKET
-                (e?.jobItemsListViewModel ?? []).map((f, index) => {
-                    ptItemData.push({
-                        id: e?.jobItemID ?? index,
-                        title: f?.productItemName ?? '',
-                        value: f?.price ?? '',
-                    })
-                    return
-                })
-            } else {
-                //JOVI JOB
-                ptItemData.push({
-                    id: 1,
-                    title: e?.description ?? '',
-                    value: e?.jobAmount ?? '',
-                });
+        // pitstopDataArr = pitstopDataArr.map(e => {
+        //     const ptItemData = [];
+        //     if (e.pitstopType === PITSTOP_TYPES.SUPER_MARKET || e.pitstopType === PITSTOP_TYPES.RESTAURANT) {
+        //         //RESTURANT AND SUPERMARKET
+        //         (e?.jobItemsListViewModel ?? []).map((f, index) => {
+        //             ptItemData.push({
+        //                 id: e?.jobItemID ?? index,
+        //                 title: f?.productItemName ?? '',
+        //                 value: f?.price ?? '',
+        //             })
+        //             return
+        //         })
+        //     } else {
+        //         //JOVI JOB
+        //         ptItemData.push({
+        //             id: 1,
+        //             title: e?.description ?? '',
+        //             value: e?.jobAmount ?? '',
+        //         });
 
-            }
-            return {
-                ...e,
-                data: ptItemData,
-            }
-        });
+        //     }
+        //     return {
+        //         ...e,
+        //         data: ptItemData,
+        //     }
+        // });
 
 
 
-        updateQuery({
-            data: {
-                ...orderProcessingDummyData.data.order,
-                finalDestination: orderProcessingDummyData.data.order.pitStopsList[orderProcessingDummyData.data.order.pitStopsList.length - 1],
-            },
-            pitstopData: pitstopDataArr,
-            isLoading: false,
-        })
+        // updateQuery({
+        //     data: {
+        //         ...orderProcessingDummyData.data.order,
+        //         finalDestination: orderProcessingDummyData.data.order.pitStopsList[orderProcessingDummyData.data.order.pitStopsList.length - 1],
+        //     },
+        //     pitstopData: pitstopDataArr,
+        //     isLoading: false,
+        // })
         return () => { };
     }, []);
 
     if (state.isLoading) {
         return <View style={styles.primaryContainer}>
             {_renderHeader()}
-              <AnimatedLottieView
+            <AnimatedLottieView
                 source={require('../../assets/gifs/Processingloading.json')}
                 autoPlay
                 loop
@@ -122,7 +127,7 @@ export default ({ navigation, route }) => {
                     height: '100%',
                     width: "100%",
                     alignSelf: "center",
-                    marginTop:10,
+                    marginTop: 10,
                     marginBottom: 15,
                 }}
             />
@@ -171,7 +176,7 @@ export default ({ navigation, route }) => {
                 paddingTop: 0,
                 paddingBottom: 15,
             }}>{`Processing order`}</Text> */}
-          
+
             <AnimatedLottieView
                 source={require('../../assets/gifs/Loadingbar.json')}
                 autoPlay
@@ -215,7 +220,7 @@ export default ({ navigation, route }) => {
 
                     {/* ****************** Start of DELIVERY ADDRESS ****************** */}
                     <OrderNumberUI colors={colors} orderNumber={`#${state.orderID}`} />
-                    <DeliveryAddressUI address={`${state.pitStopsList[state.pitStopsList.length-1]?.title ?? ''}`} />
+                    <DeliveryAddressUI address={`${state.pitStopsList[state.pitStopsList.length - 1]?.title ?? ''}`} />
 
                     {/* ****************** End of DELIVERY ADDRESS ****************** */}
 
@@ -262,14 +267,14 @@ export default ({ navigation, route }) => {
                     {/* ****************** Start of GST ****************** */}
                     <OrderProcessingChargesUI
                         title='GST'
-                        value={renderPrice(data.chargeBreakdown.totalProductGST)} />
+                        value={renderPrice(state.chargeBreakdown.totalProductGST)} />
 
                     {/* ****************** End of GST ****************** */}
 
 
                     {/* ****************** Start of SERVICE CHARGES ****************** */}
                     <OrderProcessingChargesUI
-                        title={`Service Charges(Incl S.T ${renderPrice(data.chargeBreakdown.estimateServiceTax, '')})`}
+                        title={`Service Charges(Incl S.T ${renderPrice(state.chargeBreakdown.estimateServiceTax, '')})`}
                         value={renderPrice(state.serviceCharges)} />
                     <DashedLine />
 
@@ -278,7 +283,8 @@ export default ({ navigation, route }) => {
 
                     {/* ****************** Start of DISCOUNT ****************** */}
                     <OrderProcessingChargesUI title='Discount'
-                        value={parseInt(renderPrice(data.chargeBreakdown.discount)) > 0 ? renderPrice(data.chargeBreakdown.discount) : renderPrice(data.chargeBreakdown.discount)} />
+                        value={renderPrice(state.chargeBreakdown.discount)} />
+                    {/* value={parseInt(renderPrice(state.chargeBreakdown.discount)) > 0 ? renderPrice(state.chargeBreakdown?.discount) : renderPrice(state.chargeBreakdown.discount)} /> */}
                     <DashedLine />
 
                     {/* ****************** End of DISCOUNT ****************** */}

@@ -13,6 +13,7 @@ import ROUTES from '../../../navigations/ROUTES';
 import Card from './Card';
 import CardLoader from "./CardLoader";
 import { useSelector } from 'react-redux';
+import { useIsFocused } from '@react-navigation/native';
 
 const ITEMS_PER_PAGE = 20;
 
@@ -24,6 +25,7 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
         isLoading: false
     });
     const userReducer = useSelector(store => store.userReducer);
+    const isFocused = useIsFocused();
     console.log('userReducer',userReducer);
     const finalDestination =  userReducer.finalDestObj??{};
     const isRequestSent = React.useRef(false);
@@ -90,7 +92,7 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
         }, {}, true);
     }
     const fetchDataWithUpdatedPageNumber = (onLoad = false) => {
-        if(isRequestSent.current) return;
+        if(isRequestSent.current||!isFocused) return;
         if (paginationInfo.current.totalItems && (ITEMS_PER_PAGE * paginationInfo.current.pageNumber) >= paginationInfo.current.totalItems) {
             return;
         }
@@ -102,7 +104,8 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
         getData();
     }
     const fetchDataWithResetedPageNumber = () => {
-        if(isRequestSent.current) return;
+        if(!isFocused) return;
+        if(isRequestSent.current||!isFocused) return;
         paginationInfo.current = {
             pageNumber: 1,
             itemsPerPage: ITEMS_PER_PAGE

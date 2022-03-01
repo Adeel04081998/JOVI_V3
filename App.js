@@ -17,7 +17,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import RNSplashScreen from './NativeModules/RNSplashScreen';
 import BottomAllignedModal from './src/components/atoms/BottomAllignedModal';
 import View from './src/components/atoms/View';
@@ -170,6 +170,7 @@ const App = () => {
 export default App;
 const SharedGetApis = ({ }) => {
     const { isLoggedIn } = useSelector(state => state.userReducer);
+    const dispatch = useDispatch();
     React.useEffect(() => {
         sharedGetEnumsApi();
         // sharedLogoutUser();

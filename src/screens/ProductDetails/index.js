@@ -155,7 +155,7 @@ export default (props) => {
         }
         enableDisable(updatedArr);
         const totalAddOnPrice = updatedArr.reduce((previousValue, currentValue) => { return parseInt(previousValue) + parseInt(currentValue.optionPrice) }, 0);
-        const discountAmount = generalProductOrDealDetail.discountAmount;
+        const discountAmount = generalProductOrDealDetail.itemDiscount;
         const joviDiscountRate = generalProductOrDealDetail.joviDiscount ?? 0;
         let totalAmountWithoutGst = totalAddOnPrice + generalProductOrDealDetail.itemPrice;
         let totalDiscount = discountAmount > 0 ? totalAmountWithoutGst * (discountAmount / 100) : 0;

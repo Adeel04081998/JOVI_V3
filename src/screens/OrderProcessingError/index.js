@@ -1,3 +1,4 @@
+import AnimatedLottieView from 'lottie-react-native';
 import * as React from 'react';
 import { Appearance, SafeAreaView } from 'react-native';
 import Text from '../../components/atoms/Text';
@@ -8,7 +9,9 @@ import Button from '../../components/molecules/Button';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import OrderEstTimeCard from '../../components/organisms/Card/OrderEstTimeCard';
 import DashedLine from '../../components/organisms/DashedLine';
-import { renderPrice, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { renderPrice, sharedFetchOrder, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import NavigationService from '../../navigations/NavigationService';
+import ROUTES from '../../navigations/ROUTES';
 import constants from '../../res/constants';
 import FontFamily from '../../res/FontFamily';
 import theme from '../../res/theme';
@@ -25,9 +28,14 @@ export default ({ navigation, route }) => {
     // #region :: STYLES & THEME START's FROM HERE  
     const pitstopType = route?.params?.pitstopType ?? PITSTOP_TYPES.JOVI;
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]], Appearance.getColorScheme() === "dark");
-
+    const orderIDParam = route?.params?.orderID ?? 0;
     const styles = stylesFunc(colors);
-
+    const [state, setState] = React.useState({
+        orderID: orderIDParam ?? 0,
+        pitStopsList: [],
+        isLoading: true,
+        chargeBreakdown: {},
+    });
     // #endregion :: STYLES & THEME END's FROM HERE 
 
     // #region :: RENDER HEADER START's FROM HERE 
@@ -35,9 +43,18 @@ export default ({ navigation, route }) => {
         return (
             <SafeAreaView style={{ ...styles.primaryContainer, flex: 0, }}>
                 <CustomHeader
+
                     rightIconName='home'
+                    hideFinalDestination
+                    title={'Approval'}
+                    leftIconName={null}
+                    rightIconColor={colors.primary}
                     rightIconSize={22}
-                    defaultColor={colors.primary} />
+                    onRightIconPress={() => {
+                        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
+                    }}
+                    defaultColor={colors.primary}
+                    />
             </SafeAreaView>
         )
     }
@@ -57,6 +74,9 @@ export default ({ navigation, route }) => {
     // #endregion :: STATE's & REF's END's FROM HERE 
 
     React.useEffect(() => {
+        sharedFetchOrder(orderIDParam, (res) => {
+            setState(pre => ({ ...pre, ...res.data.order, isLoading: false }))
+        });
         let pitstopDataArr = orderProcessingDummyData.data.order.pitStopsList.slice(0, orderProcessingDummyData.data.order.pitStopsList.length - 1);
 
         pitstopDataArr = pitstopDataArr.map(e => {
@@ -145,8 +165,22 @@ export default ({ navigation, route }) => {
         )
     }
 
-    if (query.isLoading) {
-        return <View />
+    if (state.isLoading) {
+        return <View style={styles.primaryContainer}>
+            {_renderHeader()}
+            <AnimatedLottieView
+                source={require('../../assets/gifs/Processingloading.json')}
+                autoPlay
+                loop
+                style={{
+                    height: '100%',
+                    width: "100%",
+                    alignSelf: "center",
+                    marginTop: 10,
+                    marginBottom: 15,
+                }}
+            />
+        </View>
     }
 
     return (
@@ -157,11 +191,11 @@ export default ({ navigation, route }) => {
                 imageHeight={IMAGE_SIZE * 0.6}
                 color={colors}
                 middle={{
-                    value: `Now ${data.OrderEstimateTime.replace('min'.toLowerCase().trim(), 'min')}`,
+                    value: state.orderEstimateTime,
                 }} />
 
             <AnimatedFlatlist
-                data={query.pitstopData}
+                data={state.pitStopsList}
                 flatlistProps={{
                     contentContainerStyle: {
                         paddingBottom: 75,
@@ -171,8 +205,8 @@ export default ({ navigation, route }) => {
                     </View>
                 }}
                 renderItem={(item, index) => {
-                    if (!item.hasError) return null;
-
+                    // if (!item.hasError) return null;
+                    if (index === state.pitStopsList.length - 1) return;
                     return (
                         <View style={styles.cardContainer} key={index}>
                             <CardTitle
@@ -182,12 +216,28 @@ export default ({ navigation, route }) => {
                                 strikethrough={item.joviJobStatus === ENUMS.JOVI_JOB_STATUS.Cancel || (item?.forceStrikethrough ?? false)}
                             />
                             <DashedLine />
-
-                            {item.data.cancelledData.length > 0 &&
+                            {
+                                item.isSkipped && <>
+                                     <CardSubTitle type={CARD_SUB_TITLE_TYPES.cancelled} />
+                                     <View style={styles.greyCardContainer}>
+                                        {item.jobItemsListViewModel.map((childItem, childIndex) => {
+                                            return (
+                                                <CardText
+                                                    key={childIndex}
+                                                    title={childItem.productItemName}
+                                                    price={childItem.price}
+                                                    type={CARD_SUB_TITLE_TYPES.cancelled}
+                                                />
+                                            )
+                                        })}
+                                    </View>
+                                </>
+                            }
+                            {item.cancelledData > 0 &&
                                 <>
                                     <CardSubTitle type={CARD_SUB_TITLE_TYPES.cancelled} />
 
-                                    <View style={styles.greyCardContainer}>
+                                    {/* <View style={styles.greyCardContainer}>
                                         {item.data.cancelledData.map((childItem, childIndex) => {
                                             return (
                                                 <CardText
@@ -198,11 +248,11 @@ export default ({ navigation, route }) => {
                                                 />
                                             )
                                         })}
-                                    </View>
+                                    </View> */}
                                 </>
                             }
 
-                            {item.data.outOfStockData.length > 0 &&
+                            {item.outOfStockData > 0 &&
                                 <>
                                     <CardSubTitle type={CARD_SUB_TITLE_TYPES.outOfStock} />
 
@@ -221,7 +271,7 @@ export default ({ navigation, route }) => {
                                 </>
                             }
 
-                            {item.data.replacedData.length > 0 &&
+                            {item.replacedData> 0 &&
                                 <>
                                     <CardSubTitle type={CARD_SUB_TITLE_TYPES.replaced} />
 
@@ -371,16 +421,24 @@ const CARD_SUB_TITLE_TYPES = {
     "cancelled": 1,
     "outOfStock": 2,
     "replaced": 3,
+    "accepted": 4,
 }
 const CardSubTitle = ({ type = CARD_SUB_TITLE_TYPES.cancelled }) => {
     let color = "#D80D30";//DEFAULT IS CANCELLED
     let text = "Vendor was unable to fulfil your order";
+    let icon = 'shopping-bag';
+    let iconType = 'FontAwesome5';
     if (type === CARD_SUB_TITLE_TYPES.outOfStock) {
         color = "#F98500";
         text = "Out of stock";
     } else if (type === CARD_SUB_TITLE_TYPES.replaced) {
         color = "#2D5AD5";
         text = "Replaced";
+    }else if(type === CARD_SUB_TITLE_TYPES.accepted){
+        color = "green";
+        text = "Vendor has accepted your order";
+        icon = "checkcircle";
+        iconType = 'AntDesign';
     }
     return (
         <View style={{
@@ -389,7 +447,7 @@ const CardSubTitle = ({ type = CARD_SUB_TITLE_TYPES.cancelled }) => {
             paddingHorizontal: constants.spacing_horizontal,
             paddingTop: constants.spacing_vertical,
         }}>
-            <VectorIcon name='shopping-bag' type='FontAwesome5' color={color} />
+            <VectorIcon name={icon} type={iconType} color={color} />
             <Text fontFamily='PoppinsSemiBold' style={{
                 paddingLeft: 6,
                 color: "#272727",

@@ -53,7 +53,8 @@ export default () => {
     const walletAmount = userReducer.wallet || "1500"
     const instructionForRider = cartReducer.riderInstructions || "Call me when you reach on the address"
     const [state, setState] = React.useState({
-        chargeBreakdown: null
+        chargeBreakdown: null,
+        isLoading:false,
     });
     console.log('cartReducer,', cartReducer);
     // const estimateServiceCharge = () => {
@@ -87,6 +88,7 @@ export default () => {
     // }
     const onPlaceOrder = () => {
         const placeOrder = async () => {
+            setState(pre => ({ ...pre, isLoading: true }));
             const finalPitstops = [...cartReducer.pitstops || [], { ...userReducer.finalDestObj, isDestinationPitstop: true }];
             const finalOrder = {
                 "pitStopsList": finalPitstops.map((item, index) => {
@@ -106,7 +108,7 @@ export default () => {
                             "longitudeDelta": item.longitudeDelta ?? 6,
                             "addressID": item.addressID ? item.addressID : null,
                             "buyForMe": item.buyForMe ? true : false,
-                            "estimateTime": '00:20',
+                            "estimateTime": '00:20',//to be removed from backend, because according to new design, it will be min estimate time and max estimate time
                             "minEstimateTime": minEstimateTime,
                             "maxEstimateTime": maxEstimateTime,
                             // "estimateTime": item.estTime.value,
@@ -149,7 +151,6 @@ export default () => {
                                 //new Keys added for new create update order
                                 "actualPrice": obj.itemPrice,
                                 "Price": obj._itemPrice,
-                                "DiscountRate": obj.discountAmount,
                                 "DiscountType": obj.discountType,
                                 "DiscountRate": obj.discountAmount,
                                 "DiscountedPrice": obj.itemPrice - obj._totalDiscount,
@@ -189,7 +190,7 @@ export default () => {
                             null
                         ),
                         "catID": (!item.isDestinationPitstop) ? item?.pitstopType.toString() : "0",
-                        "catTitle": (!item.isDestinationPitstop) ? PITSTOP_TYPES_INVERTED[item.pitstopType] : ""
+                        "catTitle": (!item.isDestinationPitstop) ? PITSTOP_TYPES_INVERTED[item.pitstopType] : "Final Destination"
                     }
                 }),
                 // "promotionCode": state.promoCodeApplied,
@@ -210,13 +211,17 @@ export default () => {
                 console.log('order place res', res);
                 if (res.data.statusCode === 200) {
                     Toast.success('Order Placed!!');
+                    dispatch(actions.clearCartAction());
                     dispatch(actions.setUserAction({
                         ordersList: [res.data.createUpdateOrderVM.orderID]
                     }));
                     NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name, { orderID: res.data?.createUpdateOrderVM?.orderID ?? null });
+                } else {
+                    setState(pre => ({ ...pre, isLoading: false }));
                 }
             }, err => {
                 // NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name, {});
+                setState(pre => ({ ...pre, isLoading: false }));
                 console.log(err);
                 sharedExceptionHandler(err);
             }, {}, true);
@@ -362,6 +367,7 @@ export default () => {
                     onPress={() => onPlaceOrder()}
                     text='Place Order'
                     style={{ height: 60 }}
+                    isLoading={state.isLoading}
                     textStyle={{}}
                 />
             </AnimatedView>

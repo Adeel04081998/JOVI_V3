@@ -318,14 +318,14 @@ export default () => {
                 <Text
                   style={{ color: dynamiColors.primary, fontSize: 12 }}
                   fontFamily="PoppinsMedium">
-                  {renderPrice(_itemPriceWithoutDiscount)}
+                  {renderPrice(_itemPrice)}
                 </Text>
                 {
                   _totalDiscount > 0 &&
                   <Text
                     style={{ color: dynamiColors.grey, fontSize: 12, textDecorationLine: "line-through" }}
                     fontFamily="PoppinsMedium">
-                    {renderPrice(_itemPrice)}
+                    {renderPrice(_itemPriceWithoutDiscount)}
                   </Text>
                 }
               </View>
@@ -431,8 +431,7 @@ export default () => {
       <View style={{ top: -10 }}>
         <SetpProgress maxHighlight={2} />
       </View>
-
-      <ScrollView contentContainerStyle={{ padding: 10 }} style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={{ padding: 10 }} nestedScrollEnabled style={{ flex: 1 }}>
         <View style={{ marginHorizontal: 0 }}>
           <DeliveryAddress />
           <Text style={{ padding: 10, fontSize: 12 }} fontFamily="PoppinsLight">{'Hold and drag to rearrange your pitstops to get the better route and less service charges.'}</Text>

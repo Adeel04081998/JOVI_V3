@@ -14,7 +14,11 @@ import CustomHeader from '../../components/molecules/CustomHeader';
 import GenericList from '../../components/molecules/GenericList';
 import ImageCarousel from '../../components/molecules/ImageCarousel';
 import BottomBarComponent from '../../components/organisms/BottomBarComponent';
-import { sharedConfirmationAlert, sharedLogoutUser } from "../../helpers/SharedActions";
+import { sharedConfirmationAlert, sharedExceptionHandler, sharedLogoutUser, sharedOrderNavigation } from "../../helpers/SharedActions";
+import { getRequest } from "../../manager/ApiManager";
+import Endpoints from "../../manager/Endpoints";
+import NavigationService from "../../navigations/NavigationService";
+import ROUTES from "../../navigations/ROUTES";
 import preference_manager from "../../preference_manager";
 import ReduxActions from '../../redux/actions';
 import theme from "../../res/theme";
@@ -39,7 +43,6 @@ export default () => {
     const homeFadeIn = React.useRef(new Animated.Value(0)).current;
     const [state, setState] = useState(initState)
     const { modalVisible, finalDestTitle } = state
-
     // #region :: SELECTING FINAL DESTINATION IF NOT SELECTED START's FROM HERE 
     const gotoFinalDestinationModal = () => {
         dispatch(ReduxActions.setModalAction({
@@ -48,9 +51,18 @@ export default () => {
             disabled: true, //DISABLING OUTSIDE TOUCH
         }))
     };
-
+    const onOrderPress = (order) => {
+        sharedOrderNavigation(order.orderID,order.subStatusName);
+    }
     useFocusEffect(
         React.useCallback(() => {
+            getRequest(Endpoints.GetOpenOrders,(res)=>{
+                console.log('[GetOpenOrders] res',res);
+                if(res.data.statusCode === 200){
+                    const openOrders = res.data?.getOpenOrderDetails?.openOrderList??[];
+                    dispatch(ReduxActions.setUserAction({ openOrders,noOfOpenOrders:openOrders.length }));
+                }
+            },(err)=>{sharedExceptionHandler(err);});
             if (!(!!userReducer?.finalDestObj)) {
                 gotoFinalDestinationModal();
             }
@@ -119,6 +131,13 @@ export default () => {
                 }}>
                     <KeyboardAwareScrollView style={{}} showsVerticalScrollIndicator={false}>
                         <Greetings messagesReducer={messagesReducer} homeStyles={homeStyles} userReducer={userReducer} colors={colors} />
+                        {
+                            userReducer.openOrders && userReducer.openOrders.map((item,i)=>{
+                                return <Text style={{width:60,marginLeft:40,marginVertical:10,height:20,backgroundColor:'red'}} onPress={()=>{
+                                    onOrderPress(item);
+                                }}>{item.orderID}</Text>
+                            })
+                        }
                         <ImageCarousel
                             // aspectRatio={16 / 7}
                             data={promotionsReducer?.dashboardContentListViewModel?.dashboardPromoListVM ??

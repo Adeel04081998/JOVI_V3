@@ -85,7 +85,7 @@ const options = () => ({
         open: { animation: "timing", config: { duration: 400 } },
         close: { animation: "timing", config: { duration: 400 } }
     },
-    cardStyleInterpolator: forSlide
+    // cardStyleInterpolator: forSlide
 })
 const forSlide = ({ current, next, inverted, layouts: { screen } }) => {
     //current targets the current active screen, next is the screen which will be rendered after transition
