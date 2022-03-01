@@ -109,7 +109,7 @@ const RestaurantProductMenuScrollable = (props: Props) => {
         const currentTabAnimation = (tab: any, i: any) => {
             if (tab.anim) return
             currentTabRef.current = tab;
-            const scrollTo = tab.x;// Platform.OS === "ios" ? tab.x : tabs.current[i - 1] ? tabs.current[i - 1].x + tab.x : 0
+            const scrollTo = tabs.current[i > 0 ? i - 1 : 0].x;// Platform.OS === "ios" ? tab.x : tabs.current[i - 1] ? tabs.current[i - 1].x + tab.x : 0
 
             Animated.timing(value, {
                 toValue: tab.x,
