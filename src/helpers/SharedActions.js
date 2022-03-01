@@ -653,3 +653,9 @@ export const sharedSendFCMTokenToServer = async (postRequest, FcmToken) => {
 export const sharedClearReducers = () => {
     dispatch(actions.clearModalAction());
 }
+export const sleep=(second= 1)=> {
+    return new Promise(resolve => {
+        let ms = Number(second) * Number(1000);
+        setTimeout(resolve, ms)
+    });
+};//end of sleep

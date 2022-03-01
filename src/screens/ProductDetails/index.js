@@ -13,7 +13,7 @@ import View from "../../components/atoms/View";
 import Button from "../../components/molecules/Button";
 import CustomHeader from "../../components/molecules/CustomHeader";
 import ImageCarousel from "../../components/molecules/ImageCarousel";
-import { renderPrice, sharedAddUpdatePitstop, sharedExceptionHandler } from "../../helpers/SharedActions";
+import { renderPrice, sharedAddUpdatePitstop, sharedExceptionHandler, sharedInteval, sleep } from "../../helpers/SharedActions";
 import { postRequest } from "../../manager/ApiManager";
 import Endpoints from "../../manager/Endpoints";
 import NavigationService from "../../navigations/NavigationService";
@@ -317,6 +317,8 @@ export default (props) => {
             }).start(finished => {
                 if (finished && toValue === 0) {
                     setState(pre => ({ ...pre, addToCardAnimation: false }))
+                    NavigationService.NavigationActions.common_actions.goBack()
+
                 }
             });
         }
@@ -326,9 +328,9 @@ export default (props) => {
             if (addToCardAnimation === true) {
                 console.log("if here", addToCardAnimation);
                 animateLoader();
-                setTimeout(() => {
-                    animateLoader(0)
-                }, timeToshowGif);
+                // setTimeout(() => {
+                //     animateLoader(0)
+                // }, timeToshowGif);
 
             }
 
@@ -343,6 +345,10 @@ export default (props) => {
                     style={{ justifyContent: 'flex-end', alignContent: 'center', alignSelf: 'center', width: "90%" }}
                     height={70}
                     width={40}
+                    onLoadEnd={async () => {
+                        await sleep(Platform.OS === 'ios' ? 2 : 1);
+                        animateLoader(0)
+                    }}
                 />
 
                 {/* <AnimatedLottieView
@@ -396,7 +402,7 @@ export default (props) => {
                                 }
                             }
                             }>
-<RenderProductImages colors={colors} images={images} />
+                            <RenderProductImages colors={colors} images={images} />
                             {/* <View>
                                 <ImageCarousel
                                     data={images}
@@ -432,7 +438,7 @@ export default (props) => {
                                         fontFamily='PoppinsRegular'
                                     >{` ${renderPrice(productPrice)}`}</Text>
                                     {
-                                        discountedPrice.length > 0?
+                                        discountedPrice > 0 ?
                                             <Text style={[productDetailsStyles.productPricetxt, { paddingHorizontal: 5, textDecorationLine: "line-through", color: colors.grey }]}
                                                 fontFamily='PoppinsRegular'
                                             >{`${renderPrice(gstAddedPrice, '')}`}</Text>

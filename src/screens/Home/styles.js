@@ -47,7 +47,9 @@ export default {
 
             },
             alertMsgSecondaryContainer: {
-                flex: 1, flexDirection: 'column', justifyContent: 'center', padding: 10,
+                flex: 1, flexDirection: 'column', justifyContent: 'center',
+                //  padding: 10,
+                paddingVertical:10, paddingHorizontal:14
             },
             alertMsgHeaderText: {
                 fontSize: 14,
@@ -63,10 +65,15 @@ export default {
             },
             alertMsgSvgView: (height) => ({
                 // flex: 0.5,
+                // flexDirection: 'column',
+                // alignItems: 'center',
+                // minHeight: 10,
+                // minWidth: 80,
                 flexDirection: 'column',
                 alignItems: 'center',
-                minHeight: 10,
-                minWidth: 80,
+                alignSelf:'center',
+                height: 70,
+                width: '25%',
 
             }),
             categoriesCardPrimaryContainer: {

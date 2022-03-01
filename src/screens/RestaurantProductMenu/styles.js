@@ -21,10 +21,12 @@ export const itemStylesFunc = (colors) => StyleSheet.create({
         color: "#6B6B6B",
         fontSize: 12,
         marginBottom: 10,
+        paddingRight:9
     },
     name: {
         color: "#272727",
         fontSize: 16,
+        paddingRight: 9, paddingVertical: 5
     },
     detailContainer: {
         flex: 1,
