@@ -82,20 +82,30 @@ export default ({ navigation, route }) => {
             "catItemsPerPage": 1,
             "productPageNumber": currentRequestNumber,
             "productItemsPerPage": paginationInfo.itemPerRequest,
-            "marketID": marketID
+            "marketID": marketID,
+            "skipCatPagination": true,
         };
 
         console.log('PARAM ', params);
         postRequest(Endpoints.GET_PRODUCT_MENU_LIST, params, (res) => {
             console.log('res ', res);
-            if (res.data.statusCode === 404 && data.length < 1) {
-                updateQuery({
-                    errorText: res.data.message,
-                    isLoading: false,
-                    error: true,
-                    refreshing: false,
-                });
-                updateData([]);
+            if (res.data.statusCode === 404) {
+                if (data.length < 1) {
+                    updateQuery({
+                        errorText: res.data.message,
+                        isLoading: false,
+                        error: true,
+                        refreshing: false,
+                    });
+                    updateData([]);
+                } else {
+                    updateQuery({
+                        errorText: res.data.message,
+                        isLoading: false,
+                        error: false,
+                        refreshing: false,
+                    });
+                }
                 return
             }
             const pitstopStockView = res?.data?.pitstopStockViewModel ?? {};
@@ -194,6 +204,18 @@ export default ({ navigation, route }) => {
 
     // #endregion :: QUANTITY HANDLER END's FROM HERE 
 
+    // #region :: GETTING PRODUCT MENU PRICE FROM ITEM START's FROM HERE 
+    const getPricesForProductMenuItemCard = (item) => {
+        return {
+            discountedPrice: item.discountedPrice || item.gstAddedPrice || item.itemPrice, //MAIN PRICE
+            price: item.gstAddedPrice || item.itemPrice, //ACTUAL PRICE BEFORE DISCOUNT
+            discountAmount: item.discountAmount, //PERCENTAGE OF DISCOUNT
+            discountType: item.discountType, //DISCOUNT TYPE FIXED OR PERCENATAGE
+        }
+    };
+    // #endregion :: GETTING PRODUCT MENU PRICE FROM ITEM END's FROM HERE 
+
+
     // #region :: RENDER ITEM START's FROM HERE 
     const _renderItem = ({ item, index }) => {
         const image = (item?.images ?? []).length > 0 ? item.images[0].joviImageThumbnail : '';
@@ -201,7 +223,7 @@ export default ({ navigation, route }) => {
         return (
             <View style={{
                 marginTop: 20,
-            }} key={uniqueKeyExtractor()}>
+            }}>
                 <ProductMenuItemCard
                     itemContainerStyle={{
                         marginRight: 0,
@@ -217,11 +239,8 @@ export default ({ navigation, route }) => {
                         image: { uri: renderFile(`${image}`) },
                         isOutOfStock: isOutOfStock,
                         name: item.pitStopItemName,
-                        discountedPrice: item.discountedPrice || item.gstAddedPrice || item.itemPrice,
-                        price: item.gstAddedPrice || item.itemPrice,
                         quantity: item.quantity,
-                        discountAmount: item.discountAmount,
-                        discountType: item.discountType,
+                        ...getPricesForProductMenuItemCard(item),
                     }}
                 />
             </View>

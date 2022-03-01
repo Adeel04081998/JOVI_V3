@@ -234,6 +234,18 @@ export default ({ navigation, route }) => {
 
     // #endregion :: QUANTITY HANDLER END's FROM HERE 
 
+    // #region :: GETTING PRODUCT MENU PRICE FROM ITEM START's FROM HERE 
+    const getPricesForProductMenuItemCard = (item) => {
+        return {
+            discountedPrice: item.discountedPrice || item.gstAddedPrice || item.itemPrice, //MAIN PRICE
+            price: item.gstAddedPrice || item.itemPrice, //ACTUAL PRICE BEFORE DISCOUNT
+            discountAmount: item.discountAmount, //PERCENTAGE OF DISCOUNT
+            discountType: item.discountType, //DISCOUNT TYPE FIXED OR PERCENATAGE
+        }
+    };
+    // #endregion :: GETTING PRODUCT MENU PRICE FROM ITEM END's FROM HERE 
+
+
     const onViewMorePress = (item) => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductMenuItem.screen_name, { pitstopType, marketID, item: item });
     };//end of onViewMorePress
@@ -266,7 +278,7 @@ export default ({ navigation, route }) => {
                             alignItems: "center",
                             justifyContent: "center",
                         }} key={uniqueKeyExtractor()}
-                        disabled={item.isSelected}
+                            disabled={item.isSelected}
                             onPress={() => { onChangeShelvePress(index) }}>
                             <Text fontFamily='PoppinsMedium' style={{
                                 color: item.isSelected ? colors.white : "#272727",
@@ -361,11 +373,8 @@ export default ({ navigation, route }) => {
                                             image: { uri: renderFile(`${image}`) },
                                             isOutOfStock: isOutOfStock,
                                             name: item.pitStopItemName,
-                                            discountedPrice: item.discountedPrice || item.gstAddedPrice || item.itemPrice,
-                                            price: item.gstAddedPrice || item.itemPrice,
                                             quantity: item.quantity,
-                                            discountAmount: item.discountAmount,
-                                            discountType: item.discountType,
+                                            ...getPricesForProductMenuItemCard(item),
                                         }
                                     }}
 

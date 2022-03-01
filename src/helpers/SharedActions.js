@@ -296,13 +296,21 @@ export const renderFile = picturePath => {
 };
 
 export const renderPrice = (price, prefix = "Rs. ", suffix = "", reg = Regex.price,) => {
+    let showZero = false;
+    if (typeof price === "object") {
+        if ('showZero' in price) {
+            showZero = price.showZero;
+        }
+        price = price?.price ?? 0;
+    }
+
     prefix = `${prefix}`.trim();
     suffix = `${suffix}`.trim();
     price = `${price}`.trim().replace(reg, '').trim();
-    return parseInt(`${price}`) < 1 ? '' : suffix.length > 0 ? `${prefix} ${price}${suffix}` : `${prefix} ${price}`;
+    return parseInt(`${price}`) < 1 ? showZero ? `${prefix} ${price}${suffix}` : '' : suffix.length > 0 ? `${prefix} ${price}${suffix}` : `${prefix} ${price}`;
 }
 
-export const renderDistance = (distance, suffix = "m",prefix = "",  reg = Regex.distanceM,) => {
+export const renderDistance = (distance, suffix = "m", prefix = "", reg = Regex.distanceM,) => {
     prefix = `${prefix}`.trim();
     suffix = `${suffix}`.trim();
     distance = `${distance}`.trim().replace(reg, '').trim();

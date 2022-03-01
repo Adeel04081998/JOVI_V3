@@ -256,7 +256,7 @@ export default ({ navigation, route }) => {
                 renderSectionHeader={(item, index) => {
                     if (item?.isTopDeal ?? false) return null;
                     return (
-                        <View style={[sectionHeaderStyles.primaryContainer], { backgroundColor: colors.screen_background, paddingHorizontal: 10 }}>
+                        <View style={[sectionHeaderStyles.primaryContainer, { backgroundColor: colors.screen_background, paddingHorizontal: 10 }]}>
                             <Text
                                 fontFamily='PoppinsMedium'
                                 style={sectionHeaderStyles.text}>{item.categoryName}</Text>
@@ -265,6 +265,7 @@ export default ({ navigation, route }) => {
                     )
                 }}
                 renderItem={(parentItem, item, parentIndex, index) => {
+                    const price=(item?.hasOptions ?? false) ?renderPrice(item.price, 'from Rs.') : renderPrice(`${item.price}`);
                     if (parentItem?.isTopDeal ?? false) {
                         return (
                             <View style={{ backgroundColor: colors.screen_background }}>
@@ -279,8 +280,8 @@ export default ({ navigation, route }) => {
                                         itemID: item.itemID,
                                         image: { uri: renderFile(item.image) },
                                         description: item.description,
-                                        title: item.name,
-                                        price: renderPrice(`${item.price}`)
+                                        title: item.name, 
+                                        price: price,
                                     }} />
 
                             </View>
@@ -288,7 +289,7 @@ export default ({ navigation, route }) => {
                         )
                     }
                     return (
-                        <TouchableOpacity onPress={() => onItemPress(item)} style={[itemStyles.primaryContainer2], { backgroundColor: colors.screen_background, paddingHorizontal: 10 }}>
+                        <TouchableOpacity onPress={() => onItemPress(item)} style={[itemStyles.primaryContainer2, { backgroundColor: colors.screen_background, paddingHorizontal: 10 }]}>
                             {index !== 0 &&
                                 <View style={itemStyles.seperator} />
                             }
@@ -305,7 +306,7 @@ export default ({ navigation, route }) => {
                                     }
 
                                     {VALIDATION_CHECK(item.price) &&
-                                        <Text fontFamily='PoppinsMedium' style={itemStyles.price}>{renderPrice(item.price, 'from Rs.')}</Text>
+                                        <Text fontFamily='PoppinsMedium' style={itemStyles.price}>{price}</Text>
                                     }
                                 </View>
 

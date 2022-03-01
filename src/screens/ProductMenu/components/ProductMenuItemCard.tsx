@@ -26,6 +26,7 @@ interface ProductMenuItemCardItem {
     discountedPrice?: any,
     name: string,
     discountType?: any,
+    /** PERCENTAGE OF DISCOUNT  */
     discountAmount?: any,
 }
 interface Props {
@@ -143,31 +144,40 @@ const ProductMenuItemCard = (props: Props) => {
                     {/* ****************** End of NAME/TITLE ****************** */}
 
 
-                    {/* ****************** Start of PRICE & DISCOUNT ****************** */}
+                    {/* ****************** Start of MAIN PRICE  ****************** */}
                     <Text fontFamily='PoppinsBold' style={itemStyles.price}>{renderPrice(props.item.discountedPrice)}</Text>
 
-                    {/* ****************** End of PRICE & DISCOUNT ****************** */}
+                    {/* ****************** End of MAIN PRICE  ****************** */}
 
 
                     <View style={{ flexDirection: "row", alignItems: "center", }}>
 
-                        {(VALIDATION_CHECK(props.item.price) && parseInt(`${props.item.price}`) > 0) &&
+
+                        {/* ****************** Start of ACTUAL PRICE BEFORE DISCOUNT ****************** */}
+                        {(VALIDATION_CHECK(props.item.price) && parseInt(`${props.item.price}`) > 0 && parseInt(`${props.item.discountType}`) !== parseInt(`${ENUMS.PROMO_VALUE_TYPE.Empty.value}`)) &&
                             <Text style={{
                                 ...itemStyles.discountPrice,
                                 ...parseInt(`${props.item.discountType}`) !== parseInt(`${ENUMS.PROMO_VALUE_TYPE.Empty.value}`) && {
                                     maxWidth: "50%",
                                 }
-                            }}>{renderPrice(props.item.price)}</Text>
+                            }} numberOfLines={1}>{renderPrice(props.item.price)}</Text>
                         }
+
+                        {/* ****************** End of ACTUAL PRICE BEFORE DISCOUNT ****************** */}
+
 
 
                         {/* ****************** Start of DISCOUNT TYPE ****************** */}
                         {parseInt(`${props.item.discountType}`) !== parseInt(`${ENUMS.PROMO_VALUE_TYPE.Empty.value}`) &&
                             <View style={itemStyles.discountTypeContainer}>
-                                {parseInt(`${props.item.discountType}`) === parseInt(`${ENUMS.PROMO_VALUE_TYPE.Percentage.value}`) &&
-                                    <SvgXml xml={svgs.discount(props.colors.primary)} height={15} width={15} style={itemStyles.discountTypeIcon} />
+                                {parseInt(`${props.item.discountType}`) === parseInt(`${ENUMS.PROMO_VALUE_TYPE.Percentage.value}`) && (
+                                    <>
+                                        <SvgXml xml={svgs.discount(props.colors.primary)} height={15} width={15} style={itemStyles.discountTypeIcon} />
+                                        <Text style={itemStyles.discountTypeText} numberOfLines={1}>{`${renderPrice(props.item.discountAmount, '-', '%', /[^\d.]/g)}`}</Text>
+                                    </>
+                                )
+
                                 }
-                                <Text style={itemStyles.discountTypeText}>{`${renderPrice(props.item.discountAmount, '-', '%', /[^\d.]/g)}`}</Text>
                             </View>
                         }
 
@@ -192,6 +202,10 @@ export const itemStylesFunc = (colors: typeof initColors, ITEM_IMAGE_SIZE: numbe
         color: colors.primary,
         fontSize: 10,
         maxWidth: "90%",
+    },
+    discountTypeText1: {
+        color: colors.primary,
+        fontSize: 10,
     },
     discountTypeIcon: { marginRight: 4, },
     discountTypeContainer: {

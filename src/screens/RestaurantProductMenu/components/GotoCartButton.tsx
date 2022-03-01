@@ -43,6 +43,7 @@ const GotoCartButton = (props: Props) => {
     const price = props?.price ?? subTotal;
     const count = props?.count ?? itemsCount;
 
+    console.log('countcountcount ', count);
 
     if (!VALIDATION_CHECK(count)) return null;
     return (
@@ -54,25 +55,29 @@ const GotoCartButton = (props: Props) => {
                 //@ts-ignore
                 textStyle={[styles.textStyle, props.textStyle]}
                 text={propText}
-                {...VALIDATION_CHECK(count) && {
+                {...(VALIDATION_CHECK(count)) && {
                     leftComponent: () => (
                         <View style={styles.leftContainer}>
-                            <View style={{
-                                backgroundColor: colors.white,
-                                borderRadius: 6,
-                                paddingVertical: 1,
-                                paddingHorizontal: 12,
-                            }}>
-                                <Text style={styles.leftText}>{count}</Text>
-                            </View>
+                            {parseInt(`${VALIDATION_CHECK(count)}`) > 0 &&
+                                <View style={{
+                                    backgroundColor: colors.white,
+                                    borderRadius: 6,
+                                    paddingVertical: 1,
+                                    paddingHorizontal: 12,
+                                }}>
+                                    <Text style={styles.leftText}>{count}</Text>
+                                </View>
+                            }
                         </View>
                     )
                 }}
 
-                {...VALIDATION_CHECK(price) && {
+                {...(VALIDATION_CHECK(price) || VALIDATION_CHECK(count)) && {
                     rightComponent: () => (
                         <View style={styles.rightContainer}>
-                            <Text style={styles.rightText}>{renderPrice(price)}</Text>
+                            {VALIDATION_CHECK(price) &&
+                                <Text style={styles.rightText}>{renderPrice(price)}</Text>
+                            }
                         </View>
                     )
                 }}

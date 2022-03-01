@@ -40,7 +40,8 @@ export default ({ data = [], selectedOptions = [], onPressCb, productDetailsStyl
                             </View>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1 }}>
                                 <Text style={{ color: '#212121', fontSize: 14 }} fontFamily="PoppinsRegular">{`${attributeName}`}</Text>
-                                {attributeOptionPrice ? <Text style={{ color: '#212121', fontSize: 14 }} fontFamily="PoppinsRegular">{`${renderPrice(attributeOptionPrice)}`}</Text> : null}
+                                {/* {attributeOptionPrice ? <Text style={{ color: '#212121', fontSize: 14 }} fontFamily="PoppinsRegular">{`${renderPrice(attributeOptionPrice)}`}</Text> : null} */}
+                                <Text style={{ color: '#212121', fontSize: 14 }} fontFamily="PoppinsRegular">{`${attributeOptionPrice ? renderPrice(attributeOptionPrice) : renderPrice({ showZero: true, price: 0 })}`}</Text>
                             </View>
                         </TouchableOpacity>
                     })

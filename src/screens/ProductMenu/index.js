@@ -192,6 +192,17 @@ export default ({ navigation, route }) => {
 
     // #endregion :: RENDER HEADER END's FROM HERE 
 
+    // #region :: GETTING PRODUCT MENU PRICE FROM ITEM START's FROM HERE 
+    const getPricesForProductMenuItemCard = (item) => {
+        return {
+            discountedPrice: item.discountedPrice || item.gstAddedPrice || item.itemPrice, //MAIN PRICE
+            price: item.gstAddedPrice || item.itemPrice, //ACTUAL PRICE BEFORE DISCOUNT
+            discountAmount: item.discountAmount, //PERCENTAGE OF DISCOUNT
+            discountType: item.discountType, //DISCOUNT TYPE FIXED OR PERCENATAGE
+        }
+    };
+    // #endregion :: GETTING PRODUCT MENU PRICE FROM ITEM END's FROM HERE 
+
     // #region :: RENDER VERTICAL & HORIZONTAL SCROLL ITEM START's FROM HERE 
     const _renderParentItem = ({ item: parentItem, index: parentIndex }) => {
         const productTotalItem = parentItem?.productsPaginationInfo?.totalItems ?? 0;
@@ -243,11 +254,8 @@ export default ({ navigation, route }) => {
                                         image: { uri: renderFile(`${image}`) },
                                         isOutOfStock: isOutOfStock,
                                         name: item.pitStopItemName,
-                                        discountedPrice: item.discountedPrice || item.gstAddedPrice || item.itemPrice,
-                                        price: item.gstAddedPrice || item.itemPrice,
                                         quantity: item.quantity,
-                                        discountAmount: item.discountAmount,
-                                        discountType: item.discountType,
+                                        ...getPricesForProductMenuItemCard(item),
                                     }}
                                     onPress={() => {
                                         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, {
