@@ -5,7 +5,7 @@ export default {
     // MODAL ACTIONS
     "SET_MODAL": "set_modal",
     "CLOSE_MODAL": "close_modal",
-    "CLEAR_MODAL_REDUCER":"clear_modal_reducer",
+    "CLEAR_MODAL_REDUCER": "clear_modal_reducer",
     // CART ACTIONS
     "SET_CART_ACTION": "set_cart",
     "CLEAR_CART_ACTION": "clear_clear",
@@ -29,4 +29,6 @@ export default {
     "SET_PREV_ORDERS": "set_prev_orders",
     //FCM Notification Action
     "SET_FCM_ACTION": "set_fcm_action",
+    //USED IN SHARED ACTION FOR GETTING CATEGORY ID's AND STORING IN REDUCER
+    "SET_VENDOR_DASHBOARD_CATEGORY_ID_ACTION": "set_vendor_dashboard_category_id_action",
 }

@@ -28,7 +28,7 @@ export default React.memo(({ vendorType = 0,pitstopType = 2, imageStyles = {}, t
             res => {
                 console.log("GENERIC_LIST.RESPONSE", res);
                 if (res.data.statusCode !== 200) return;
-                setData(res.data.vendorCategoriesViewModel.vendorList.map((item,i)=>{return {...item,cardType:!i%2===0?2:1}}));
+                setData(res.data.vendorCategoriesViewModel.vendorList.map((item,i)=>{return {...item,}}));
             },
             err => {
                 sharedExceptionHandler(err)

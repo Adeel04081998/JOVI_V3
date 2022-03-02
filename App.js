@@ -22,7 +22,7 @@ import RNSplashScreen from './NativeModules/RNSplashScreen';
 import BottomAllignedModal from './src/components/atoms/BottomAllignedModal';
 import View from './src/components/atoms/View';
 import Robot from './src/components/organisms/Robot';
-import { sharedClearReducers, sharedGetEnumsApi, sharedGetFilters, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser, sharedSendFCMTokenToServer } from './src/helpers/SharedActions';
+import { sharedClearReducers, sharedGetDashboardCategoryIApi, sharedGetEnumsApi, sharedGetFilters, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser, sharedSendFCMTokenToServer } from './src/helpers/SharedActions';
 import useNetInfo from './src/hooks/useNetInfo';
 import RootStack from "./src/navigations";
 import { _NavgationRef } from './src/navigations/NavigationService';
@@ -183,6 +183,7 @@ const SharedGetApis = ({ }) => {
     React.useEffect(() => {
         if (isLoggedIn) {
             sharedGetUserDetailsApi();
+            sharedGetDashboardCategoryIApi();
             sharedGetHomeMsgsApi();
             sharedGetUserAddressesApi();
             sharedGetPromotions();
