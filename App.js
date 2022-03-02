@@ -169,6 +169,9 @@ const App = () => {
 };
 export default App;
 const SharedGetApis = ({ }) => {
+    const [state,setState] = React.useState({
+        appLoaded:false
+    });
     const { isLoggedIn } = useSelector(state => state.userReducer);
     const dispatch = useDispatch();
     React.useEffect(() => {
@@ -240,6 +243,7 @@ const SharedGetApis = ({ }) => {
             fcmService.registerAppWithFCM();
             fcmService.register(onRegister, onNotification, onOpenNotification)
             localNotificationService.configure(onRegister, onRegistrationError, onOpenNotification, onAction);
+            setState(pre=>({...pre,appLoaded:true}));
         }
     }, [isLoggedIn])
     return (<></>);

@@ -221,7 +221,7 @@ export default () => {
     product,
     incDecDelHandler,
   }) => {
-    const { title, estimatePrice, description, notes, images, _itemPriceWithoutDiscount, _totalDiscount, _itemPrice, quantity } = product;
+    const { title, estimatePrice, description,discountedPrice, notes, images, _itemPriceWithoutDiscount, _totalDiscount, _itemPrice, quantity } = product;
     if (isJOVI) {
       return <View style={{ flexDirection: 'row' }}>
         <View style={{ height: 70, width: 70, borderRadius: 10, margin: 5 }}>
@@ -318,7 +318,7 @@ export default () => {
                 <Text
                   style={{ color: dynamiColors.primary, fontSize: 12 }}
                   fontFamily="PoppinsMedium">
-                  {renderPrice(_itemPrice)}
+                  {renderPrice(_itemPrice??discountedPrice)}
                 </Text>
                 {
                   _totalDiscount > 0 &&

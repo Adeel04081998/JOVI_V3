@@ -7,7 +7,7 @@ import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import OrderEstTimeCard from '../../components/organisms/Card/OrderEstTimeCard';
 import DashedLine from '../../components/organisms/DashedLine';
-import { renderPrice, sharedFetchOrder } from '../../helpers/SharedActions';
+import { renderPrice, sharedFetchOrder, sharedOrderNavigation } from '../../helpers/SharedActions';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
@@ -28,12 +28,7 @@ export default ({ navigation, route }) => {
     const pitstopType = route?.params?.pitstopType ?? PITSTOP_TYPES.JOVI;
     const orderIDParam = route?.params?.orderID ?? 0;
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]], Appearance.getColorScheme() === "dark");
-    const [state, setState] = React.useState({
-        orderID: orderIDParam ?? 0,
-        pitStopsList: [],
-        isLoading: true,
-        chargeBreakdown: {},
-    });
+
     const styles = stylesFunc(colors);
 
     // #endregion :: STYLES & THEME END's FROM HERE 
@@ -60,20 +55,30 @@ export default ({ navigation, route }) => {
     // #endregion :: RENDER HEADER END's FROM HERE 
 
     // #region :: STATE's & REF's START's FROM HERE 
-
-    const [query, updateQuery] = React.useState({
-        data: {},
-        pitstopData: [],
+    const [state, setState] = React.useState({
+        orderID: orderIDParam ?? 0,
+        pitStopsList: [],
         isLoading: true,
+        chargeBreakdown: {},
     });
 
-    const data = query.data;
     // #endregion :: STATE's & REF's END's FROM HERE 
-
-    React.useEffect(() => {
+    const fetchOrderDetails = () => {
         sharedFetchOrder(orderIDParam, (res) => {
-            setState(pre => ({ ...pre, ...res.data.order, isLoading: false }))
+            if (res.data.statusCode === 200) {
+                let allowedOrderStatuses = ['VendorApproval', 'VendorProblem', 'Initiated'];
+                if (!allowedOrderStatuses.includes(res.data.order.subStatusName)) {
+                    sharedOrderNavigation(orderIDParam, res.data.order.subStatusName, ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name);
+                    return;
+                }
+                setState(pre => ({ ...pre, ...res.data.order, isLoading: false }))
+            } else {
+                setState(pre => ({ ...pre, isLoading: false }))
+            }
         });
+    }
+    React.useEffect(() => {
+        fetchOrderDetails();
         // let pitstopDataArr = orderProcessingDummyData.data.order.pitStopsList.slice(0, orderProcessingDummyData.data.order.pitStopsList.length - 1);
 
         // pitstopDataArr = pitstopDataArr.map(e => {
@@ -275,7 +280,7 @@ export default ({ navigation, route }) => {
                     {/* ****************** Start of SERVICE CHARGES ****************** */}
                     <OrderProcessingChargesUI
                         title={`Service Charges(Incl S.T ${renderPrice(state.chargeBreakdown.estimateServiceTax, '')})`}
-                        value={renderPrice(state.serviceCharges)} />
+                        value={renderPrice(state.chargeBreakdown.estimateServiceTax+state.chargeBreakdown.totalEstimateCharge)} />
                     <DashedLine />
 
                     {/* ****************** End of SERVICE CHARGES ****************** */}
@@ -292,7 +297,7 @@ export default ({ navigation, route }) => {
 
 
                     {/* ****************** Start of ESTIMATED PRICE ****************** */}
-                    <OrderProcessingEstimatedTotalUI estimatedPrice={renderPrice(state.totalAmount)} />
+                    <OrderProcessingEstimatedTotalUI estimatedPrice={renderPrice(state.chargeBreakdown.estimateTotalAmount)} />
 
                     {/* ****************** End of ESTIMATED PRICE ****************** */}
 

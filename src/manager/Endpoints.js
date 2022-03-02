@@ -36,7 +36,9 @@ export default {
     //Estimate Service Charge
     "EstimateServiceCharge": 'api/Order/EstimateServiceChargeV2',
     //Get Open Orders
-    "GetOpenOrders": "/api/Dashboard/GetOpenOrderDetails/List"
+    "GetOpenOrders": "/api/Dashboard/GetOpenOrderDetails/List",
+    //Accept Reject Order
+    "AcceptRejectOrder":"/api/Order/VendorJob/ConfirmStatus/Update",
 }
 
 

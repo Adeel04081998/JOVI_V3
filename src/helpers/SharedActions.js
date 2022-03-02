@@ -555,11 +555,11 @@ export const sharedGetServiceCharges = (payload = null, successCb = () => { }) =
             item.checkOutItemsListVM.map((product, j) => {
                 pitstopItems.push({
                     "itemPrice": product._itemPrice,
-                    "gstAddedPrice": product.gstAddedPrice + product.totalJoviDiscount + product._totalDiscount,
+                    "gstAddedPrice": item.pitstopType === 1 ? product.gstAddedPrice : product.gstAddedPrice + product.totalJoviDiscount + product._totalDiscount,
                     "gstPercentage": product.gstPercentage,
                     "itemDiscount": product.itemDiscount,
                     "joviDiscount": product.joviDiscount,
-                    "actualPrice": product.gstAddedPrice + product.totalJoviDiscount + product._totalDiscount,
+                    "actualPrice": item.pitstopType === 1 ? product.actualPrice : product.gstAddedPrice + product.totalJoviDiscount + product._totalDiscount,
                     "gstAmount": product._totalGst,
                     "quantity": product.quantity,
                     "pitStopType": item.pitstopType,
@@ -578,7 +578,7 @@ export const sharedGetServiceCharges = (payload = null, successCb = () => { }) =
             "pitStopType": _pitstop.pitstopType,
         })),
         pitstopItems,
-        "skipEstAmountAndGst": true,
+        "skipEstAmountAndGst": cartReducer.pitstops.every(pt => pt.pitstopType === 2) ? true : false,
         // "hardwareID": "string",
         // "promoCodeApplied": "string",
         // "adminID": "string",
@@ -688,6 +688,10 @@ export const sharedFetchOrder = (orderID = 0, successCb = () => { }, errCb = () 
         Endpoints.FetchOrder + '/' + orderID,
         (response) => {
             console.log('sharedFetchOrder', response);
+            if(response.data.order.orderStatus === 3){
+                NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
+                return;
+            }
             successCb(response);
         },
         (error) => {
@@ -707,21 +711,29 @@ export const sharedHandleInfinityScroll = (event) => {
     if (Math.ceil(mHeight + Y) >= cSize) return true;
     return false;
 }
-export const sharedOrderNavigation = (orderID = null,orderStatus = null) => {
-    const goToOrderProcessing = () => NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name,{orderID});
-    const goToOrderProcessingError = () => NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.OrderProcessingError.screen_name,{orderID});
-    const goToOrderTracking = () => NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name,{orderID});
-    const orderStatusEnum = {
-        'VendorApproval':goToOrderProcessing,
-        'VendorProblem':goToOrderProcessing,
-        'CustomerApproval':goToOrderProcessingError,
-        'CustomerProblem':goToOrderProcessingError,
-        'FindingRider':goToOrderTracking,
-        'Initiated':goToOrderTracking,
-        'Processing':goToOrderTracking,
-        'RiderFound':goToOrderTracking,
-        'RiderProblem':goToOrderTracking,
-        'TransferProblem':goToOrderTracking,
+export const sharedOrderNavigation = (orderID = null, orderStatus = null, replacingRoute = null) => {
+    console.log('orderID', orderID);
+    const navigationLogic = (route) => {
+        if (replacingRoute) {
+            NavigationService.NavigationActions.stack_actions.replace(route, { orderID }, replacingRoute);
+        } else {
+            NavigationService.NavigationActions.common_actions.navigate(route, { orderID });
+        }
     };
-    orderStatusEnum[orderStatus??'']();
+    const goToOrderProcessing = () => navigationLogic(ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name);
+    const goToOrderProcessingError = () => navigationLogic(ROUTES.APP_DRAWER_ROUTES.OrderProcessingError.screen_name);
+    const goToOrderTracking = () => navigationLogic(ROUTES.APP_DRAWER_ROUTES.OrderProcessingError.screen_name);
+    const orderStatusEnum = {
+        'VendorApproval': goToOrderProcessing,
+        'VendorProblem': goToOrderProcessing,
+        'CustomerApproval': goToOrderProcessingError,
+        'CustomerProblem': goToOrderProcessingError,
+        'FindingRider': goToOrderTracking,
+        'Initiated': goToOrderTracking,
+        'Processing': goToOrderTracking,
+        'RiderFound': goToOrderTracking,
+        'RiderProblem': goToOrderTracking,
+        'TransferProblem': goToOrderTracking,
+    };
+    orderStatusEnum[orderStatus ?? '']();
 }

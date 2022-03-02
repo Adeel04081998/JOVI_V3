@@ -9,7 +9,9 @@ import Button from '../../components/molecules/Button';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import OrderEstTimeCard from '../../components/organisms/Card/OrderEstTimeCard';
 import DashedLine from '../../components/organisms/DashedLine';
-import { renderPrice, sharedFetchOrder, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { renderPrice, sharedConfirmationAlert, sharedExceptionHandler, sharedFetchOrder, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { postRequest } from '../../manager/ApiManager';
+import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import constants from '../../res/constants';
@@ -30,12 +32,7 @@ export default ({ navigation, route }) => {
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]], Appearance.getColorScheme() === "dark");
     const orderIDParam = route?.params?.orderID ?? 0;
     const styles = stylesFunc(colors);
-    const [state, setState] = React.useState({
-        orderID: orderIDParam ?? 0,
-        pitStopsList: [],
-        isLoading: true,
-        chargeBreakdown: {},
-    });
+
     // #endregion :: STYLES & THEME END's FROM HERE 
 
     // #region :: RENDER HEADER START's FROM HERE 
@@ -54,7 +51,7 @@ export default ({ navigation, route }) => {
                         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
                     }}
                     defaultColor={colors.primary}
-                    />
+                />
             </SafeAreaView>
         )
     }
@@ -63,104 +60,93 @@ export default ({ navigation, route }) => {
 
 
     // #region :: STATE's & REF's START's FROM HERE 
-
-    const [query, updateQuery] = React.useState({
-        data: {},
-        pitstopData: [],
+    const [state, setState] = React.useState({
+        orderID: orderIDParam ?? 0,
+        pitStopsList: [],
         isLoading: true,
+        orderActionLoading: false,
+        chargeBreakdown: {},
     });
 
-    const data = query.data;
     // #endregion :: STATE's & REF's END's FROM HERE 
 
     React.useEffect(() => {
         sharedFetchOrder(orderIDParam, (res) => {
-            setState(pre => ({ ...pre, ...res.data.order, isLoading: false }))
+            let updatedPitstops = res.data.order.pitStopsList.map((item, i) => {
+                let updatedPitstop = { ...item };
+                if (item.jobItemsListViewModel && item.jobItemsListViewModel.length > 0) {
+                    let outOfStockItems = [];
+                    let replacedItems = [];
+                    let availableItems = [];
+                    item.jobItemsListViewModel.map((pitstopItem, j) => {
+                        if (pitstopItem.pitStopItemStatus === 1) {
+                            availableItems.push(pitstopItem);
+                        } else if (pitstopItem.pitStopItemStatus === 2) {
+                            outOfStockItems.push(pitstopItem);
+                        } else if (pitstopItem.pitStopItemStatus === 4) {
+                            replacedItems.push(pitstopItem);
+                        }
+                    });
+                    updatedPitstop = { ...updatedPitstop, outOfStockItems, replacedItems, availableItems };
+                }
+                return { ...updatedPitstop }
+            });
+            setState(pre => ({ ...pre, ...res.data.order, pitStopsList: updatedPitstops, isLoading: false }));
+
         });
-        let pitstopDataArr = orderProcessingDummyData.data.order.pitStopsList.slice(0, orderProcessingDummyData.data.order.pitStopsList.length - 1);
-
-        pitstopDataArr = pitstopDataArr.map(e => {
-            const ptItemData = [];
-            if (e.pitstopType === PITSTOP_TYPES.SUPER_MARKET || e.pitstopType === PITSTOP_TYPES.RESTAURANT) {
-                //RESTURANT AND SUPERMARKET
-                (e?.jobItemsListViewModel ?? []).map((f, index) => {
-
-                    let type = CARD_SUB_TITLE_TYPES.available;
-
-                    if (f.pitStopItemStatus === ENUMS.AVAILABILITY_STATUS.OutOfStock || f.pitStopItemStatus === ENUMS.AVAILABILITY_STATUS.NotAvailable) {
-                        //OUT OF STOCK
-                        type = CARD_SUB_TITLE_TYPES.outOfStock;
-                    } else if (f.pitStopItemStatus === ENUMS.AVAILABILITY_STATUS.Replaced) {
-                        //REPLACED
-                        type = CARD_SUB_TITLE_TYPES.replaced;
-                    }
-
-                    ptItemData.push({
-                        id: e?.jobItemID ?? index,
-                        title: f?.productItemName ?? '',
-                        value: f?.price ?? '',
-                        type,
-                    })
-                    return
-                })
-            } else {
-                //JOVI JOB
-                ptItemData.push({
-                    id: 1,
-                    title: e?.description ?? '',
-                    value: e?.jobAmount ?? '',
-                    type: CARD_SUB_TITLE_TYPES.available,
-                });
-            }
-
-
-            const CANCELLED_ARRAY = ptItemData.filter(i => i.type === CARD_SUB_TITLE_TYPES.outOfStock && e.jobItemsListViewModel.length < 2);
-            const OUTOFSTOCK_ARRAY = ptItemData.filter(i => i.type === CARD_SUB_TITLE_TYPES.outOfStock && !(e.jobItemsListViewModel.length < 2));
-            const REPLACED_ARRAY = ptItemData.filter(i => i.type === CARD_SUB_TITLE_TYPES.replaced);
-
-
-            return {
-                ...e,
-                data: {
-                    cancelledData: CANCELLED_ARRAY,
-                    outOfStockData: OUTOFSTOCK_ARRAY,
-                    replacedData: REPLACED_ARRAY,
-                },
-                forceStrikethrough: CANCELLED_ARRAY.length > 0,
-                hasError: CANCELLED_ARRAY.length > 0 || OUTOFSTOCK_ARRAY.length > 0 || REPLACED_ARRAY.length > 0,
-            }
-        });
-
-
-        updateQuery({
-            data: {
-                ...orderProcessingDummyData.data.order,
-                finalDestination: orderProcessingDummyData.data.order.pitStopsList[orderProcessingDummyData.data.order.pitStopsList.length - 1],
-            },
-            pitstopData: pitstopDataArr,
-            isLoading: false,
-        })
         return () => { };
     }, []);
 
-
+    const orderDecision = isConfirm => {
+        setState((pre) => ({ ...pre, orderActionLoading: isConfirm ?'accept':'cancel', }));
+        postRequest(
+            Endpoints.AcceptRejectOrder,
+            {
+                "orderID": orderIDParam,
+                "isConfirm": isConfirm
+            },
+            (response) => {
+                console.log("[AcceptRejectOrder].respone", response);
+                const { statusCode, orderStatusVM } = response.data;
+                if (statusCode === 200) {
+                    NavigationService.NavigationActions.common_actions.goBack();
+                }
+            },
+            (error) => {
+                sharedExceptionHandler(error);
+                setState((pre) => ({ ...pre, orderActionLoading: false }));
+            },
+        );
+    }
+    const verifyCustomerDecision = (isConfirm) => {
+        sharedConfirmationAlert("Confirm!", `Are you sure you want to ${isConfirm ? "continue" : "cancel"} this order?`, [
+            {
+                text: "No",
+                onPress: () => console.log('Cancel Pressed')
+            },
+            {
+                text: "Yes",
+                onPress: () => orderDecision(isConfirm)
+            },
+        ]);
+    }
     const _renderFooter = () => {
         return (
             <>
                 <OrderProcessingChargesUI
                     title='GST'
-                    value={renderPrice(data.chargeBreakdown.totalProductGST, '')} />
+                    value={renderPrice(state.chargeBreakdown.totalProductGST, '')} />
 
                 <OrderProcessingChargesUI
-                    title={`Service Charges(Incl S.T ${renderPrice(data.chargeBreakdown.estimateServiceTax, '')})`}
-                    value={renderPrice(data.chargeBreakdown.totalEstimateCharge, '')} />
+                    title={`Service Charges(Incl S.T ${renderPrice(state.chargeBreakdown.estimateServiceTax, '')})`}
+                    value={renderPrice(state.chargeBreakdown.estimateServiceTax + state.chargeBreakdown.totalEstimateCharge, '')} />
                 <DashedLine />
                 <OrderProcessingChargesUI
                     title='Discount'
-                    value={parseInt(renderPrice(data.chargeBreakdown.discount, '')) > 0 ? renderPrice(data.chargeBreakdown.discount, '-') : renderPrice(data.chargeBreakdown.discount, '')} />
+                    value={parseInt(renderPrice(state.chargeBreakdown.discount, '')) > 0 ? renderPrice(state.chargeBreakdown.discount, '-') : renderPrice(state.chargeBreakdown.discount, '')} />
                 <DashedLine />
 
-                <OrderProcessingEstimatedTotalUI estimatedPrice={renderPrice(data.chargeBreakdown.estimateTotalAmount, '')} />
+                <OrderProcessingEstimatedTotalUI estimatedPrice={renderPrice(state.chargeBreakdown.estimateTotalAmount, '')} />
             </>
         )
     }
@@ -207,19 +193,20 @@ export default ({ navigation, route }) => {
                 renderItem={(item, index) => {
                     // if (!item.hasError) return null;
                     if (index === state.pitStopsList.length - 1) return;
+                    const isJoviJob = item.catID === '0';
                     return (
                         <View style={styles.cardContainer} key={index}>
                             <CardTitle
-                                pitstopType={item.pitstopType}
+                                pitstopType={isJoviJob ? 2 : item.catID}
                                 pitstopNumber={`${index + 1}`}
-                                title={item.title}
+                                title={isJoviJob ? 'Jovi Job' : item.title}
                                 strikethrough={item.joviJobStatus === ENUMS.JOVI_JOB_STATUS.Cancel || (item?.forceStrikethrough ?? false)}
                             />
                             <DashedLine />
                             {
-                                item.isSkipped && <>
-                                     <CardSubTitle type={CARD_SUB_TITLE_TYPES.cancelled} />
-                                     <View style={styles.greyCardContainer}>
+                                item.isSkipped ? <>
+                                    <CardSubTitle type={CARD_SUB_TITLE_TYPES.cancelled} />
+                                    <View style={styles.greyCardContainer}>
                                         {item.jobItemsListViewModel.map((childItem, childIndex) => {
                                             return (
                                                 <CardText
@@ -232,37 +219,46 @@ export default ({ navigation, route }) => {
                                         })}
                                     </View>
                                 </>
+                                    :
+                                    !item.isSkipped && !isJoviJob && <>
+                                        <CardSubTitle type={CARD_SUB_TITLE_TYPES.accepted} />
+                                        <View style={styles.greyCardContainer}>
+                                            {item.jobItemsListViewModel.map((childItem, childIndex) => {
+                                                return (
+                                                    <CardText
+                                                        key={childIndex}
+                                                        title={childItem.productItemName}
+                                                        price={childItem.price}
+                                                        type={CARD_SUB_TITLE_TYPES.available}
+                                                    />
+                                                )
+                                            })}
+                                        </View>
+                                    </>
                             }
-                            {item.cancelledData > 0 &&
-                                <>
-                                    <CardSubTitle type={CARD_SUB_TITLE_TYPES.cancelled} />
+                            {
 
-                                    {/* <View style={styles.greyCardContainer}>
-                                        {item.data.cancelledData.map((childItem, childIndex) => {
-                                            return (
-                                                <CardText
-                                                    key={childIndex}
-                                                    title={childItem.title}
-                                                    price={childItem.value}
-                                                    type={CARD_SUB_TITLE_TYPES.cancelled}
-                                                />
-                                            )
-                                        })}
-                                    </View> */}
+                                isJoviJob && <>
+                                    <View style={styles.greyCardContainer}>
+                                        <CardText
+                                            title={item.title}
+                                            price={item.estimatePrice}
+                                            type={CARD_SUB_TITLE_TYPES.available}
+                                        />
+                                    </View>
                                 </>
                             }
-
-                            {item.outOfStockData > 0 &&
+                            {item.outOfStockItems?.length > 0 &&
                                 <>
                                     <CardSubTitle type={CARD_SUB_TITLE_TYPES.outOfStock} />
 
                                     <View style={styles.greyCardContainer}>
-                                        {item.data.outOfStockData.map((childItem, childIndex) => {
+                                        {item.outOfStockItems.map((childItem, childIndex) => {
                                             return (
                                                 <CardText
                                                     key={childIndex}
-                                                    title={childItem.title}
-                                                    price={childItem.value}
+                                                    title={childItem.productItemName}
+                                                    price={childItem.price}
                                                     type={CARD_SUB_TITLE_TYPES.outOfStock}
                                                 />
                                             )
@@ -271,25 +267,32 @@ export default ({ navigation, route }) => {
                                 </>
                             }
 
-                            {item.replacedData> 0 &&
+                            {item.replacedItems?.length > 0 &&
                                 <>
                                     <CardSubTitle type={CARD_SUB_TITLE_TYPES.replaced} />
 
                                     <View style={styles.greyCardContainer}>
-                                        {item.data.replacedData.map((childItem, childIndex) => {
+                                        {item.replacedItems.map((childItem, childIndex) => {
                                             return (
-                                                <CardText
+                                                <View
                                                     key={childIndex}
-                                                    title={childItem.title}
-                                                    price={childItem.value}
-                                                    type={CARD_SUB_TITLE_TYPES.replaced}
-                                                />
+                                                >
+                                                    <CardText
+                                                        title={childItem.replacedItemName}
+                                                        price={childItem.replacedItemPrice}
+                                                        type={CARD_SUB_TITLE_TYPES.outOfStock}
+                                                    />
+                                                    <CardText
+                                                        title={childItem.productItemName}
+                                                        price={childItem.price}
+                                                        type={CARD_SUB_TITLE_TYPES.available}
+                                                    />
+                                                </View>
                                             )
                                         })}
                                     </View>
                                 </>
                             }
-
                         </View>
                     )
                 }} />
@@ -310,8 +313,10 @@ export default ({ navigation, route }) => {
                 paddingVertical: constants.spacing_vertical,
             }}>
                 <Button
-                    onPress={() => { }}
+                    onPress={() => verifyCustomerDecision(false)}
                     text="Cancel"
+                    isLoading={state.orderActionLoading === 'cancel'}
+                    disabled={state.orderActionLoading === 'accept'}
                     style={{
                         width: "30%",
                         backgroundColor: colors.white,
@@ -328,8 +333,10 @@ export default ({ navigation, route }) => {
                     }} />
 
                 <Button
-                    onPress={() => { }}
+                    onPress={() => verifyCustomerDecision(true)}
                     // disabled={enableDisableButton}
+                    disabled={state.orderActionLoading === 'cancel'}
+                    isLoading={state.orderActionLoading === 'accept'}
                     text='Continue with your order'
                     style={{
                         width: "68%",
@@ -380,24 +387,6 @@ const CardText = ({ title = '', price = '', type }) => {
                 <Text fontFamily='PoppinsMedium' style={{
                     maxWidth: "70%",
                     fontSize: 12,
-                    color: "#B1B1B1",
-                    textDecorationLine: "line-through",
-                    textDecorationColor: "#B1B1B1",
-
-                }} numberOfLines={1}>{`${title}`}</Text>
-                <Text fontFamily='PoppinsMedium' style={{
-                    maxWidth: "30%",
-                    fontSize: 12,
-                    color: "#B1B1B1",
-                    textDecorationLine: "line-through",
-                    textDecorationColor: "#B1B1B1",
-                }} numberOfLines={1}>{`${renderPrice(`${price}`)}`}</Text>
-            </View>
-
-            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-                <Text fontFamily='PoppinsMedium' style={{
-                    maxWidth: "70%",
-                    fontSize: 12,
                     color: "#272727",
 
                 }} numberOfLines={1}>{`${title}`}</Text>
@@ -434,7 +423,7 @@ const CardSubTitle = ({ type = CARD_SUB_TITLE_TYPES.cancelled }) => {
     } else if (type === CARD_SUB_TITLE_TYPES.replaced) {
         color = "#2D5AD5";
         text = "Replaced";
-    }else if(type === CARD_SUB_TITLE_TYPES.accepted){
+    } else if (type === CARD_SUB_TITLE_TYPES.accepted) {
         color = "green";
         text = "Vendor has accepted your order";
         icon = "checkcircle";

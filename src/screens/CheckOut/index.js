@@ -17,7 +17,7 @@ import Switch from '../../components/atoms/Switch'
 import TouchableOpacity from '../../components/atoms/TouchableOpacity'
 import { getRequest, postRequest } from '../../manager/ApiManager'
 import Endpoints from '../../manager/Endpoints'
-import { sharedExceptionHandler, sharedGetDeviceInfo, sharedGetServiceCharges } from '../../helpers/SharedActions'
+import { sharedExceptionHandler, sharedGetDeviceInfo, sharedGetServiceCharges, sharedOrderNavigation } from '../../helpers/SharedActions'
 import Button from '../../components/molecules/Button'
 import OrderRecipt from './components/OrderRecipt'
 import { useDispatch, useSelector } from 'react-redux'
@@ -154,14 +154,14 @@ export default () => {
                                 "DiscountType": obj.discountType,
                                 "DiscountRate": obj.discountAmount,
                                 "DiscountedPrice": obj.itemPrice - obj._totalDiscount,
-                                "Description": obj.notes,
+                                "Description": obj.notes??obj.description,
 
-                                "IsJoviDiscount": obj.isJoviDiscount,
-                                "JoviDiscount": obj.joviDiscount,
-                                "JoviDiscountType": obj.joviDiscountType,
-                                "joviDiscountedPrice": obj.totalJoviDiscount,
+                                "IsJoviDiscount": obj.isJoviDiscount??0,
+                                "JoviDiscount": obj.joviDiscount??0,
+                                "JoviDiscountType": obj.joviDiscountType??0,
+                                "joviDiscountedPrice": obj.totalJoviDiscount??0,
                                 //End New Keys
-                                "estimateTime": obj.estimatePrepTime,
+                                "estimateTime": obj.estimatePrepTime??0,
                                 "gstPercentage": obj.gstPercentage,
                                 "gstAddedPrice": obj.gstAddedPrice + obj.totalJoviDiscount + obj._totalDiscount,//backend is expecting gst added price without discounts, due to deadline, it couldn't be calculated from backend,
                                 "restaurantProductNotFound": (obj.isRestaurant && obj.restaurantProductNotFound) ? obj.restaurantProductNotFound : 0,
@@ -215,7 +215,7 @@ export default () => {
                     dispatch(actions.setUserAction({
                         ordersList: [res.data.createUpdateOrderVM.orderID]
                     }));
-                    NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name, { orderID: res.data?.createUpdateOrderVM?.orderID ?? null });
+                    sharedOrderNavigation(res.data?.createUpdateOrderVM?.orderID ?? 0,res.data?.createUpdateOrderVM?.subStatusName??'');
                 } else {
                     setState(pre => ({ ...pre, isLoading: false }));
                 }
