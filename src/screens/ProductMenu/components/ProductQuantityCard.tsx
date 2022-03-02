@@ -113,7 +113,7 @@ const ProductQuantityCard = (props: Props) => {
 };//end of ProductQuantityCard
 
 ProductQuantityCard.defaultProps = defaultProps;
-export default React.memo(ProductQuantityCard);
+export default ProductQuantityCard;//React.memo(ProductQuantityCard, (n, p) => n === p);
 
 export const stylesFunc = (colors: typeof initColors, ITEM_SIZE: number = defaultProps.size) => StyleSheet.create({
 

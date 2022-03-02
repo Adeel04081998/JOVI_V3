@@ -53,7 +53,7 @@ const styles = (colors, checkSelectedFilter) => {
             borderColor: 'rgba(0,0,0,0.4)',
             justifyContent: 'center',
             paddingHorizontal: 8,
-            marginHorizontal: 5,
+            // marginHorizontal: 5,
             borderRadius: checkSelectedFilter(x) ? 4 : 1,
             backgroundColor: checkSelectedFilter(x) ? colors.primary + '20' : '#fff',
             borderColor: checkSelectedFilter(x) ? colors.primary : '',
@@ -84,7 +84,7 @@ const styles = (colors, checkSelectedFilter) => {
 
             elevation: 6,
         },
-        parentContainer: { width: '100%', paddingTop: 10, display: 'flex', justifyContent: 'center', alignContent: 'center' },
+        parentContainer: { width: '100%', paddingTop: 10, display: 'flex', justifyContent: 'center', alignContent: 'center', },
         filterTitle: { fontSize: 15, color: "#272727", paddingVertical: SPACING_VERTICAL },
     });
 }

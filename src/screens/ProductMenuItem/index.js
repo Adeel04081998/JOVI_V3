@@ -19,12 +19,8 @@ import { ProductDummyData1 } from '../RestaurantProductMenu/components/ProductDu
 import { stylesFunc } from './styles';
 
 const WINDOW_WIDTH = constants.screen_dimensions.width;
-
 const ITEM_IMAGE_SIZE = WINDOW_WIDTH * 0.29;
-const DATA = new Array(10).fill(ProductDummyData1).flat();
-
 const VERTICAL_MAX_ITEM_PER_REQUEST = 10;
-
 const DEFAULT_PAGINATION_INFO = { totalItem: 0, itemPerRequest: VERTICAL_MAX_ITEM_PER_REQUEST, currentRequestCount: 1 };
 
 export default ({ navigation, route }) => {
@@ -86,18 +82,30 @@ export default ({ navigation, route }) => {
             "catItemsPerPage": 1,
             "productPageNumber": currentRequestNumber,
             "productItemsPerPage": paginationInfo.itemPerRequest,
-            "marketID": marketID
+            "marketID": marketID,
+            "skipCatPagination": true,
         };
 
+        console.log('PARAM ', params);
         postRequest(Endpoints.GET_PRODUCT_MENU_LIST, params, (res) => {
+            console.log('res ', res);
             if (res.data.statusCode === 404) {
-                updateQuery({
-                    errorText: res.data.message,
-                    isLoading: false,
-                    error: true,
-                    refreshing: false,
-                });
-                updateData([]);
+                if (data.length < 1) {
+                    updateQuery({
+                        errorText: res.data.message,
+                        isLoading: false,
+                        error: true,
+                        refreshing: false,
+                    });
+                    updateData([]);
+                } else {
+                    updateQuery({
+                        errorText: res.data.message,
+                        isLoading: false,
+                        error: false,
+                        refreshing: false,
+                    });
+                }
                 return
             }
             const pitstopStockView = res?.data?.pitstopStockViewModel ?? {};
@@ -147,10 +155,9 @@ export default ({ navigation, route }) => {
 
     // #endregion :: API IMPLEMENTATION END's FROM HERE 
 
-
     // #region :: ON END REACHED START's FROM HERE 
     const onEndReached = () => {
-
+        if (query.refreshing) return
         if (isNextPage(paginationInfo.totalItem, paginationInfo.itemPerRequest, paginationInfo.currentRequestCount)) {
             updateQuery(pre => ({
                 ...pre,
@@ -158,21 +165,20 @@ export default ({ navigation, route }) => {
             }))
 
 
-            setTimeout(() => {
-                loadData(paginationInfo.currentRequestCount + 1, true);
+            // setTimeout(() => {
+            loadData(paginationInfo.currentRequestCount + 1, true);
 
-                updatePaginationInfo(pre => ({
-                    ...pre,
-                    currentRequestCount: pre.currentRequestCount + 1,
-                }))
+            updatePaginationInfo(pre => ({
+                ...pre,
+                currentRequestCount: pre.currentRequestCount + 1,
+            }))
 
-            }, 5000);
+            // }, 5000);
             return
         }
     };//end of onEndReached
 
     // #endregion :: ON END REACHED END's FROM HERE 
-
 
     // #region :: QUANTITY HANDLER START's FROM HERE 
     const updateQuantity = (index, quantity) => {
@@ -198,13 +204,30 @@ export default ({ navigation, route }) => {
 
     // #endregion :: QUANTITY HANDLER END's FROM HERE 
 
+    // #region :: GETTING PRODUCT MENU PRICE FROM ITEM START's FROM HERE 
+    const getPricesForProductMenuItemCard = (item) => {
+        return {
+            discountedPrice: item.discountedPrice || item.gstAddedPrice || item.itemPrice, //MAIN PRICE
+            price: item.gstAddedPrice || item.itemPrice, //ACTUAL PRICE BEFORE DISCOUNT
+            discountAmount: item.discountAmount, //PERCENTAGE OF DISCOUNT
+            discountType: item.discountType, //DISCOUNT TYPE FIXED OR PERCENATAGE
+        }
+    };
+    // #endregion :: GETTING PRODUCT MENU PRICE FROM ITEM END's FROM HERE 
+
+
     // #region :: RENDER ITEM START's FROM HERE 
     const _renderItem = ({ item, index }) => {
         const image = (item?.images ?? []).length > 0 ? item.images[0].joviImageThumbnail : '';
         const isOutOfStock = "isOutOfStock" in item ? item.isOutOfStock : false;
         return (
-            <View style={{ marginTop: 20, marginLeft: index % 3 === 0 ? 10 : 0, }} key={uniqueKeyExtractor()}>
+            <View style={{
+                marginTop: 20,
+            }}>
                 <ProductMenuItemCard
+                    itemContainerStyle={{
+                        marginRight: 0,
+                    }}
                     onPress={() => { }}
                     colors={colors}
                     index={index}
@@ -216,11 +239,8 @@ export default ({ navigation, route }) => {
                         image: { uri: renderFile(`${image}`) },
                         isOutOfStock: isOutOfStock,
                         name: item.pitStopItemName,
-                        discountedPrice: item.discountedPrice || item.gstAddedPrice || item.itemPrice,
-                        price: item.gstAddedPrice || item.itemPrice,
                         quantity: item.quantity,
-                        discountAmount: item.discountAmount,
-                        discountType: item.discountType,
+                        ...getPricesForProductMenuItemCard(item),
                     }}
                 />
             </View>
@@ -256,6 +276,8 @@ export default ({ navigation, route }) => {
     }
 
     // #endregion :: RENDER HEADER END's FROM HERE 
+
+    // #region :: ERROR AND LOADING START's FROM HERE 
     if (query.error) {
         return (
             <>
@@ -264,7 +286,14 @@ export default ({ navigation, route }) => {
                     color={colors}
                     title={query.errorText}
                     buttonText={`Retry`}
-                    onButtonPress={() => { loadData(paginationInfo.currentRequestCount, false) }} />
+                    onButtonPress={() => {
+                        loadData(1, true);
+
+                        updatePaginationInfo(pre => ({
+                            ...pre,
+                            currentRequestCount: 1,
+                        }));
+                    }} />
             </>
         )
     }
@@ -284,54 +313,52 @@ export default ({ navigation, route }) => {
         )
     }
 
+    // #endregion :: ERROR AND LOADING END's FROM HERE 
+
     return (
         <SafeAreaView style={styles.primaryContainer}>
             {_renderHeader()}
 
-            <View style={{
-                alignItems: "center",
-                justifyContent: "center",
 
-            }}>
-                <FlatList
-                    data={data}
-                    extraData={metaData}
-                    numColumns={3}
-                    showsVerticalScrollIndicator={false}
-                    columnWrapperStyle={{
+            <FlatList
+                data={data}
+                extraData={metaData}
+                numColumns={3}
+                showsVerticalScrollIndicator={false}
+                columnWrapperStyle={{
+                    justifyContent: "space-between",
+                    paddingHorizontal: constants.spacing_horizontal,
+                }}
+                contentContainerStyle={{
+                    paddingBottom: 60,
+                }}
+
+                flatlistProps={{
+                    numColumns: 3,
+                    columnWrapperStyle: {
                         paddingHorizontal: constants.spacing_horizontal / 2,
-                    }}
-                    contentContainerStyle={{
+                    },
+                    contentContainerStyle: {
                         paddingBottom: 60,
-                    }}
-
-                    flatlistProps={{
-                        numColumns: 3,
-                        columnWrapperStyle: {
-                            paddingHorizontal: constants.spacing_horizontal / 2,
-                        },
-                        contentContainerStyle: {
-                            paddingBottom: 60,
-                        },
-                        showsVerticalScrollIndicator: false,
-                    }}
-                    renderItem={_renderItem}
-                    onEndReachedThreshold={0.6}
-                    onEndReached={onEndReached}
-                    initialNumToRender={3}
-                    maxToRenderPerBatch={10}
-                    ListFooterComponent={
-                        <ActivityIndicator
-                            size="large"
-                            color={colors.primary}
-                            style={{
-                                opacity: query.refreshing ? 1 : 0,
-                                marginTop: 20,
-                                marginBottom: 20,
-                            }} />
-                    }
-                />
-            </View>
+                    },
+                    showsVerticalScrollIndicator: false,
+                }}
+                renderItem={_renderItem}
+                onEndReachedThreshold={0.6}
+                onEndReached={onEndReached}
+                initialNumToRender={3}
+                maxToRenderPerBatch={10}
+                ListFooterComponent={
+                    <ActivityIndicator
+                        size="large"
+                        color={colors.primary}
+                        style={{
+                            opacity: query.refreshing ? 1 : 0,
+                            marginTop: 20,
+                            marginBottom: 20,
+                        }} />
+                }
+            />
         </SafeAreaView>
     )
 };//end of EXPORT DEFAULT

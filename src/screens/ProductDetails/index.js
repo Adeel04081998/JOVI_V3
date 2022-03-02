@@ -95,8 +95,8 @@ export default (props) => {
             }));
             setEnable(pre => ({
                 ...pre,
-                enableBtn: (res.data.generalProductOrDealDetail.optionList ?? []).length < 1,
-                requiredIds: (res.data.generalProductOrDealDetail?.optionList ?? []).filter(item => item.isRequired === true).map((_, i) => (i))
+                enableBtn: (res?.data?.generalProductOrDealDetail?.optionList ?? []).length < 1,
+                requiredIds: (res?.data?.generalProductOrDealDetail?.optionList ?? []).filter(item => item.isRequired === true).map((_, i) => (i))
             }));
 
 
@@ -280,7 +280,7 @@ export default (props) => {
                     <Button
                         disabled={!enable.enableBtn}
                         onPress={() => addToCartHandler()}
-                        text={`Add to cart${optionsListArr.length > 0 ? ' - ' + discountedPriceWithGst : ''}`}
+                        text={`Add to cart ${optionsListArr.length > 0 ? renderPrice(discountedPriceWithGst,'-','',/[pkr|rs|rs.|pkr.|-]{1,}/i) : ''}`}
                         // text={`Add to cart ${productPrice ? '- ' + (parseInt(productPrice) + parseInt(state.totalAddOnPrice)) : ''}`}
                         textStyle={{ textAlign: 'center', fontSize: 16 }}
                         style={{ paddingHorizontal: 16, alignSelf: "center", paddingVertical: 10, borderRadius: 10, backgroundColor: colors.primary, justifyContent: 'center', alignItems: 'center' }}

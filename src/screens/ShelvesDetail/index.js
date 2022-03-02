@@ -1,12 +1,13 @@
 import AnimatedLottieView from 'lottie-react-native';
 import React from 'react';
 import { Animated, Appearance, FlatList, SafeAreaView, ScrollView } from 'react-native';
+import { useSelector } from 'react-redux';
 import Text from '../../components/atoms/Text';
 import TouchableScale from '../../components/atoms/TouchableScale';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import NoRecord from '../../components/organisms/NoRecord';
-import { isNextPage, renderFile, sharedAddUpdatePitstop, sharedExceptionHandler, uniqueKeyExtractor } from '../../helpers/SharedActions';
+import { getRandomInt, isNextPage, renderFile, sharedAddUpdatePitstop, sharedExceptionHandler, uniqueKeyExtractor } from '../../helpers/SharedActions';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
@@ -49,9 +50,9 @@ export default ({ navigation, route }) => {
     // #endregion :: STYLES & THEME END's FROM HERE 
 
     // #region :: STATE's & REF's START's FROM HERE 
-    const animScroll = React.useRef(new Animated.Value(0)).current
-
-    const [finalDestination, updateFinalDestination] = React.useState(store.getState().userReducer?.finalDestination ?? {});
+    const animScroll = React.useRef(new Animated.Value(0)).current;
+    const userReducer = useSelector(store => store.userReducer);
+    const [finalDestination, updateFinalDestination] = React.useState(userReducer.finalDestObj);
 
     const [shelveData, updateShelveData] = React.useState(shelveArr);
     const [shelveMetaData, toggleShelveMetaData] = React.useState(false);
@@ -84,8 +85,8 @@ export default ({ navigation, route }) => {
             error: false,
         });
         const params = {
-            "latitude": finalDestination?.latitude ?? 33.654227,
-            "longitude": finalDestination?.longitude ?? 73.044831,
+            "latitude": finalDestination.latitude,
+            "longitude": finalDestination.longitude,
             "searchItem": "",
             "categoryID": 0,
             "tagID": tagID,
@@ -120,6 +121,8 @@ export default ({ navigation, route }) => {
                     }
                 })
                 const pitstopItemListSliced = (newpitstopItemListArr ?? []).slice(0, PITSTOP_ITEM_LIST_MAX_COUNT);
+                pitstopItemListSliced.push({ id: getRandomInt(), isSeeAll: true, })
+
                 return {
                     ...pitem,
                     pitstopItemList: newpitstopItemListArr,
@@ -132,6 +135,8 @@ export default ({ navigation, route }) => {
                 isLoading: false,
                 error: false,
             });
+
+
             updateData(newData)
             toggleMetaData(!metaData);
 
@@ -230,6 +235,18 @@ export default ({ navigation, route }) => {
 
     // #endregion :: QUANTITY HANDLER END's FROM HERE 
 
+    // #region :: GETTING PRODUCT MENU PRICE FROM ITEM START's FROM HERE 
+    const getPricesForProductMenuItemCard = (item) => {
+        return {
+            discountedPrice: item.discountedPrice || item.gstAddedPrice || item.itemPrice, //MAIN PRICE
+            price: item.gstAddedPrice || item.itemPrice, //ACTUAL PRICE BEFORE DISCOUNT
+            discountAmount: item.discountAmount, //PERCENTAGE OF DISCOUNT
+            discountType: item.discountType, //DISCOUNT TYPE FIXED OR PERCENATAGE
+        }
+    };
+    // #endregion :: GETTING PRODUCT MENU PRICE FROM ITEM END's FROM HERE 
+
+
     const onViewMorePress = (item) => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductMenuItem.screen_name, { pitstopType, marketID, item: item });
     };//end of onViewMorePress
@@ -244,7 +261,7 @@ export default ({ navigation, route }) => {
                 data={shelveData}
                 extraData={shelveMetaData}
                 style={{ flexGrow: 0, }}
-                contentContainerStyle={{ paddingBottom: 40, }}
+                contentContainerStyle={{ paddingBottom: data.length === 1 ? 10 : 40, }}
                 showsHorizontalScrollIndicator={false}
                 horizontal
                 renderItem={({ item, index }) => {
@@ -262,6 +279,7 @@ export default ({ navigation, route }) => {
                             alignItems: "center",
                             justifyContent: "center",
                         }} key={uniqueKeyExtractor()}
+                            disabled={item.isSelected}
                             onPress={() => { onChangeShelvePress(index) }}>
                             <Text fontFamily='PoppinsMedium' style={{
                                 color: item.isSelected ? colors.white : "#272727",
@@ -308,66 +326,62 @@ export default ({ navigation, route }) => {
                             </View>
                         )
                     }}
+
+                    renderItemColumnWrapperStyle={{
+                        justifyContent: "space-between",
+                        paddingHorizontal: constants.spacing_horizontal,
+                    }}
                     renderItem={(parentItem, item, parentIndex, index) => {
                         const image = (item?.images ?? []).length > 0 ? item.images[0].joviImageThumbnail : '';
                         const isOutOfStock = "isOutOfStock" in item ? item.isOutOfStock : false;
 
                         const productTotalItem = parentItem?.productsPaginationInfo?.totalItems ?? 0;
                         const additionalCount = productTotalItem - PITSTOP_ITEM_LIST_MAX_COUNT;
-                        const isSeeAll = index === parentItem["pitstopItemListSliced"].length - 1;
+                        const isSeeAll = "isSeeAll" in item ? true : false;
 
                         return (
-                            <View style={{
-                                marginTop: 0, flexDirection: "row", marginBottom: 10,
-                                marginLeft: index % 3 === 0 ? constants.spacing_horizontal : 0,
-                                ...!isSeeAll && {
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                },
-                            }} key={uniqueKeyExtractor()}>
-                                <ProductMenuItemCard
-                                    onPress={() => {
-                                        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, {
-                                            propItem: {
-                                                itemDetails: {},
-                                                ...item,
-                                                vendorDetails: { ...route.params },
-                                            },
-                                            pitstopType: pitstopType
-                                        })
-                                    }}
-                                    colors={colors}
-                                    index={index}
-                                    itemImageSize={ITEM_IMAGE_SIZE}
-                                    updateQuantity={(quantity) => {
-                                        updateQuantity(parentIndex, index, quantity);
-                                    }}
-                                    item={{
-                                        image: { uri: renderFile(`${image}`) },
-                                        isOutOfStock: isOutOfStock,
-                                        name: item.pitStopItemName,
-                                        discountedPrice: item.discountedPrice || item.gstAddedPrice || item.itemPrice,
-                                        price: item.gstAddedPrice || item.itemPrice,
-                                        quantity: item.quantity,
-                                        discountAmount: item.discountAmount,
-                                        discountType: item.discountType,
-                                    }}
-                                />
-                                {isSeeAll &&
-                                    <ProductMenuItemCard
-                                        onPress={() => { onViewMorePress(parentItem); }}
-                                        colors={colors}
-                                        index={index}
-                                        itemImageSize={ITEM_IMAGE_SIZE}
-                                        seeAll
-                                        additionalCount={additionalCount}
-                                    />
-                                }
+                            <ProductMenuItemCard
+                                onPress={() => {
+                                    if (isSeeAll) {
+                                        onViewMorePress(parentItem);
+                                        return
+                                    }
+                                    NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, {
+                                        propItem: {
+                                            itemDetails: {},
+                                            ...item,
+                                            vendorDetails: { ...route.params },
+                                        },
+                                        pitstopType: pitstopType
+                                    })
+                                }}
+                                itemContainerStyle={{
+                                    marginRight: 0,
+                                }}
+                                colors={colors}
+                                index={index}
+                                itemImageSize={ITEM_IMAGE_SIZE}
+                                updateQuantity={(quantity) => {
+                                    updateQuantity(parentIndex, index, quantity);
+                                }}
 
-                            </View>
+                                {...isSeeAll ? {
+                                    additionalCount: additionalCount,
+                                    seeAll: true
+                                } :
+                                    {
+                                        item: {
+                                            image: { uri: renderFile(`${image}`) },
+                                            isOutOfStock: isOutOfStock,
+                                            name: item.pitStopItemName,
+                                            quantity: item.quantity,
+                                            ...getPricesForProductMenuItemCard(item),
+                                        }
+                                    }}
 
-
+                            />
                         )
+
                     }}
                 />
 
