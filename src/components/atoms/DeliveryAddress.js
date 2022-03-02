@@ -34,10 +34,11 @@ const BottomLine = () => (
         }}
     />
 );
-export default ({ instructions = "", contianerStyle = {}, addressTxtStyle = {}, editIconStyle = {}, }) => {
+export default ({ instructions = "", contianerStyle = {}, addressTxtStyle = {}, editIconStyle = {}, edit_icon_Height = 0 }) => {
     const SPACING = 10;
     const ICON_HEIGHT = 20;
     const ICON_WIDTH = 20;
+    const editAdress_icon_Height = edit_icon_Height || 20
     const styles = _styles(colors);
     const colors = initColors;
     const userReducer = useSelector(store => store.userReducer);
@@ -58,9 +59,10 @@ export default ({ instructions = "", contianerStyle = {}, addressTxtStyle = {}, 
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                     alignItems: 'center',
+                   
                 }}>
-                <View style={{ flexDirection: 'row', padding: SPACING }}>
-                    <SvgXml xml={pin_icon()} height={ICON_HEIGHT} width={ICON_WIDTH} />
+                <View style={{ flexDirection: 'row', padding: SPACING ,}}>
+                    <SvgXml xml={pin_icon()} height={ICON_HEIGHT} width={ICON_WIDTH} styl={{borderWidth:1}}/>
                     <Text
                         style={[{
                             paddingHorizontal: 10,
@@ -73,7 +75,7 @@ export default ({ instructions = "", contianerStyle = {}, addressTxtStyle = {}, 
 
                 </View>
                 <TouchableScale onPress={() => dispatch(ReduxActions.setModalAction({ visible: true }))} style={editIconStyle}>
-                    <SvgXml xml={edit_icon()} height={20} width={20} />
+                    <SvgXml xml={edit_icon()} height={editAdress_icon_Height} width={20} />
                 </TouchableScale>
             </View>
 

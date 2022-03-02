@@ -27,6 +27,7 @@ import VouchersUi from './components/VouchersUi'
 import NavigationService from '../../navigations/NavigationService'
 import DeliveryAddress from '../../components/atoms/DeliveryAddress'
 import StepProgress from '../../components/atoms/StepProgress'
+import ROUTES from '../../navigations/ROUTES'
 const WINDOW_WIDTH = constants.screen_dimensions.width;
 const CARD_WIDTH = WINDOW_WIDTH * 0.3;
 const CARD_HEIGHT = CARD_WIDTH * 0.4;
@@ -137,7 +138,10 @@ export default () => {
                 rightIconName='home'
                 rightIconSize={22}
                 rightIconColor={colors.primary}
-        //  /   defaultColor={colors.primary} 
+                onRightIconPress={() => {
+                    NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name)
+                }}
+            //  /   defaultColor={colors.primary} 
             />
             <View style={{ top: -10, }}>
                 <StepProgress maxHighlight={3} />
@@ -156,7 +160,7 @@ export default () => {
                     color={colors}
                     right={{ value: totalPitstop }}
                     middle={{ value: estimatedDeliveryTime }}
-                    contentContainerStyle={{ marginBottom: 0, marginVertical: 0, marginTop: 10,borderRadius:8 }}
+                    contentContainerStyle={{ marginBottom: 0, marginVertical: 0, marginTop: 10, borderRadius: 8 }}
                     rightContainerStyle={{}}
                     middleContainerStyle={{ flex: 2 }}
                     leftContainerStyle={{ paddingRight: 15 }}
@@ -165,13 +169,15 @@ export default () => {
                     contianerStyle={{ margin: TOPSPACING, marginBottom: 2, padding: 0, borderRadius: 8 }}
                     addressTxtStyle={{ fontSize: 14, color: "#6D51BB", paddingHorizontal: 10 }}
                     instructions={instructionForRider}
-                    editIconStyle={{ marginHorizontal: 10 }}
+                    // editIconStyle={{ marginHorizontal: 10 }}
+                    editIconStyle={{ justifyContent: 'center', alignSelf: 'center', alignItems: 'center', marginHorizontal: 12 }}
+                    edit_icon_Height={25}
                 />
                 {RenderPaymentMethodCardUi()}
                 <VouchersUi checkOutStyles={checkOutStyles} />
                 <OrderRecipt checkOutStyles={checkOutStyles} cartReducer={cartReducer} colors={colors} />
             </ScrollView>
-            <AnimatedView style={{  backgroundColor: colors.white,  alignItems: "center", justifyContent: "center", paddingHorizontal:10,paddingVertical:3 }}>
+            <AnimatedView style={{ backgroundColor: colors.white, alignItems: "center", justifyContent: "center", paddingHorizontal: 10, paddingVertical: 3 }}>
                 <Button
                     onPress={() => { }}
                     text='Place Order'
@@ -179,7 +185,6 @@ export default () => {
                     textStyle={{}}
                 />
             </AnimatedView>
-
         </SafeAreaView>
     )
 }
