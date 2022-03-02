@@ -41,6 +41,8 @@ const SPACING_VERTICAL = 10;
 let scrollEvent = null;
 const PistopListing = React.memo(({ route, }) => {
     const { pitstopType } = route.params;
+    const vendorDashboardCategoryIDReducer = useSelector(s => s.vendorDashboardCategoryIDReducer)?.data ?? [];
+
     console.log('pitstopType', pitstopType);
     const [state, setState] = React.useState({
         filters: {
@@ -226,7 +228,12 @@ const PistopListing = React.memo(({ route, }) => {
             theme={colors}
         />
         <View style={{ ...listingStyles.wrapper, paddingBottom: SPACING_VERTICAL }}>
-            <GenericList themeColors={colors} pitstopType={pitstopType} />
+        {vendorDashboardCategoryIDReducer.map((item, index) => {
+                                return (
+                                    <GenericList themeColors={colors} pitstopType={pitstopType} vendorDashboardCatID={item.vendorDashboardCatID}/>
+                                    )
+                            })}
+            
         </View>
     </Animated.View>);
     const renderAllRestaurantsListing = () => (<Animated.View style={{

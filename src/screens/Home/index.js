@@ -32,7 +32,7 @@ export default () => {
     const promotionsReducer = useSelector(state => state.promotionsReducer);
     const messagesReducer = useSelector(state => state.messagesReducer);
     const userReducer = useSelector(state => state.userReducer);
-    const vendorDashboardCategoryIDReducer=useSelector(s=>s.vendorDashboardCategoryIDReducer)?.data ?? [];
+    const vendorDashboardCategoryIDReducer = useSelector(s => s.vendorDashboardCategoryIDReducer)?.data ?? [];
 
     const dispatch = useDispatch();
     const loaderVisible = !promotionsReducer?.statusCode || !messagesReducer.statusCode;
@@ -136,8 +136,12 @@ export default () => {
                             <Search colors={colors} homeStyles={homeStyles} />
                             <Categories homeStyles={homeStyles} />
                             <AvatarAlert messagesReducer={messagesReducer} homeStyles={homeStyles} />
-                            {/* <RecentOrders /> AS PER PM WE HAVE TO REMOVE RECENT ORDER FOR NOW*/} 
-                            <GenericList />
+                            {/* <RecentOrders /> AS PER PM WE HAVE TO REMOVE RECENT ORDER FOR NOW*/}
+                            {vendorDashboardCategoryIDReducer.map((item, index) => {
+                                return (
+                                    <GenericList vendorDashboardCatID={item.vendorDashboardCatID} />
+                                )
+                            })}
                         </View>
                     </KeyboardAwareScrollView>
                 </Animated.View>}
