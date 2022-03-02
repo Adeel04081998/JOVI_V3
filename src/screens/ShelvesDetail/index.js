@@ -261,7 +261,7 @@ export default ({ navigation, route }) => {
                 data={shelveData}
                 extraData={shelveMetaData}
                 style={{ flexGrow: 0, }}
-                contentContainerStyle={{ paddingBottom: 40, }}
+                contentContainerStyle={{ paddingBottom: data.length === 1 ? 10 : 40, }}
                 showsHorizontalScrollIndicator={false}
                 horizontal
                 renderItem={({ item, index }) => {

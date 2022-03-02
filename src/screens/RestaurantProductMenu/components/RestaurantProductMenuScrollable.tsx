@@ -61,7 +61,7 @@ const RestaurantProductMenuScrollable = (props: Props) => {
         layout.anim = false;
         layout.id = new Date().getTime();
         if (widthValue._value === 0) {
-            widthValue.setValue(layout.width * INDICATOR_WIDTH_MINUS);
+            widthValue.setValue(layout.width);
         }
 
         let index = tabs.current.findIndex((stab: any) => stab.categoryID === categoryID);
@@ -105,7 +105,7 @@ const RestaurantProductMenuScrollable = (props: Props) => {
         }).start();
 
         Animated.timing(widthValue, {
-            toValue: content.width * INDICATOR_WIDTH_MINUS,
+            toValue: content.width,
             duration: 100,
             useNativeDriver: false
         }).start()
@@ -141,7 +141,7 @@ const RestaurantProductMenuScrollable = (props: Props) => {
                 useNativeDriver: true
             }).start();
             Animated.timing(widthValue, {
-                toValue: tab.width - INDICATOR_WIDTH_MINUS,
+                toValue: tab.width,
                 duration: 100,
                 useNativeDriver: false
             }).start()
@@ -222,10 +222,14 @@ const RestaurantProductMenuScrollable = (props: Props) => {
                         height: 45,
                         borderRadius: 26,
                         top: -44,
+                        alignItems: "center",
+                        justifyContent: "center",
                         // overflow: "hidden",
                     }]}>
-                        <Text style={[style.tab, {
-                            color: 'white'
+                        <Text style={[{
+                            fontSize: 12,
+                            textAlign: "center",
+                            color: 'white',
                         }]} >{currentTabState?.categoryName ?? currentTabState?.name}</Text>
                     </Animated.View>
                 </Animated.View>
