@@ -224,7 +224,7 @@ const CustomHeader = (props: Props) => {
                                 color={props.rightIconColor || props.defaultColor}
                                 size={props.rightIconSize} />
                         }
-                        {cartReducer.itemsCount > 0  && _renderDot(cartReducer.itemsCount, props.rightDotStyle, props.rightDotTextStyle)}
+                        {cartReducer.itemsCount > 0  &&  IS_CART_ICON && _renderDot(cartReducer.itemsCount, props.rightDotStyle, props.rightDotTextStyle)}
                         {/* {props.rightDot && _renderDot(props.rightDot, props.rightDotStyle, props.rightDotTextStyle)} */}
                     </TouchableScale>
                 }

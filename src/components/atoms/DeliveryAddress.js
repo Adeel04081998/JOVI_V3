@@ -94,14 +94,14 @@ export default ({ instructions = "", contianerStyle = {}, addressTxtStyle = {}, 
                 instructions ?
                     <>
                         <BottomLine />
-                        <View style={{ padding: SPACING - 5, paddingLeft: SPACING + 20 }}>
+                        <View style={{ padding: SPACING - 5, paddingLeft: SPACING + 20, bottom:5, }}>
                             <Text
                                 style={{ color: colors.primary, fontSize: 14 }}
                                 fontFamily="PoppinsSemiBold"
                                 numberOfLines={1}>
                                 Instruction for rider
                             </Text>
-                            <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between', }}>
+                            <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between',paddingBottom:5}}>
                                 <Text style={{ color: colors.black, fontSize: 11, textAlign: 'auto' }} numberOfLines={2} fontFamily='PoppinsRegular'>
                                     {instructions}
                                 </Text>
