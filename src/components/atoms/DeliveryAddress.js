@@ -3,6 +3,7 @@ import { StyleSheet } from "react-native";
 import { SvgXml } from "react-native-svg";
 import { useDispatch, useSelector } from "react-redux";
 import ReduxActions from "../../redux/actions";
+import AppStyles from "../../res/AppStyles";
 import { initColors } from "../../res/colors";
 import sharedStyles from "../../res/sharedStyles";
 import Text from "./Text";
@@ -25,16 +26,17 @@ const edit_icon = () => `<svg xmlns="http://www.w3.org/2000/svg" width="19.97" h
 </svg>
 `
 
-const BottomLine = () => (
+const BottomLine = ({ lineStyle = {} }) => (
     <View
-        style={{
+        style={[{
             borderBottomColor: '#0000001A',
             borderWidth: 0.5,
             marginVertical: 5,
-        }}
+
+        }, lineStyle]}
     />
 );
-export default ({ instructions = "", contianerStyle = {}, addressTxtStyle = {}, editIconStyle = {}, edit_icon_Height = 0 }) => {
+export default ({ instructions = "", contianerStyle = {}, addressTxtStyle = {}, editIconStyle = {}, edit_icon_Height = 0, isShowLine = true, finalDestinationPrimaryContainer = {} }) => {
     const SPACING = 10;
     const ICON_HEIGHT = 20;
     const ICON_WIDTH = 20;
@@ -59,10 +61,11 @@ export default ({ instructions = "", contianerStyle = {}, addressTxtStyle = {}, 
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                   
+
+
                 }}>
-                <View style={{ flexDirection: 'row', padding: SPACING ,}}>
-                    <SvgXml xml={pin_icon()} height={ICON_HEIGHT} width={ICON_WIDTH} styl={{borderWidth:1}}/>
+                <View style={{ flexDirection: 'row', padding: SPACING, }}>
+                    <SvgXml xml={pin_icon()} height={ICON_HEIGHT} width={ICON_WIDTH} />
                     <Text
                         style={[{
                             paddingHorizontal: 10,
@@ -79,8 +82,8 @@ export default ({ instructions = "", contianerStyle = {}, addressTxtStyle = {}, 
                 </TouchableScale>
             </View>
 
-            <BottomLine />
-            <View style={{ padding: SPACING - 5, paddingLeft: SPACING + 20 }}>
+            {isShowLine ? <BottomLine /> : <View />}
+            <View style={[{ padding: SPACING - 5, paddingLeft: SPACING + 20 }, finalDestinationPrimaryContainer]}>
                 <Text
                     style={{ color: colors.primary, fontSize: 14 }}
                     fontFamily="PoppinsSemiBold"
@@ -95,23 +98,24 @@ export default ({ instructions = "", contianerStyle = {}, addressTxtStyle = {}, 
             {
                 instructions ?
                     <>
-                        <BottomLine />
-                        <View style={{ padding: SPACING - 5, paddingLeft: SPACING + 20, bottom:5, }}>
+                        <BottomLine lineStyle={{  marginHorizontal: 18, borderBottomColor: '#DFDFDF', borderLeftWidth: 0, borderRightWidth: 0 }} />
+                        <View style={{ padding: SPACING - 5, paddingLeft: SPACING + 8, bottom: 5, }}>
                             <Text
-                                style={{ color: colors.primary, fontSize: 14 }}
+                                style={{ color: colors.primary, fontSize: 14,  }}
                                 fontFamily="PoppinsSemiBold"
                                 numberOfLines={1}>
                                 Instruction for rider
                             </Text>
-                            <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between',paddingBottom:5}}>
-                                <Text style={{ color: colors.black, fontSize: 11, textAlign: 'auto' }} numberOfLines={2} fontFamily='PoppinsRegular'>
+                            <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between', paddingBottom: 5, }}>
+                                <Text style={{ color: colors.black, fontSize: 11, textAlign: 'auto', paddingVertical:3}} numberOfLines={2} fontFamily='PoppinsRegular'>
                                     {instructions}
                                 </Text>
                                 <VectorIcon
                                     name="chevron-forward"
                                     type="Ionicons"
-                                    size={17}
+                                    size={19}
                                     color={"#6D51BB"}
+                                    style={{right:5}}
 
                                 />
 
