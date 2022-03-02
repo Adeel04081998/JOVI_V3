@@ -43,8 +43,6 @@ const GotoCartButton = (props: Props) => {
     const price = props?.price ?? subTotal;
     const count = props?.count ?? itemsCount;
 
-    console.log('countcountcount ', count);
-
     if (!VALIDATION_CHECK(count)) return null;
     return (
         <View style={{
@@ -58,7 +56,7 @@ const GotoCartButton = (props: Props) => {
                 {...(VALIDATION_CHECK(count)) && {
                     leftComponent: () => (
                         <View style={styles.leftContainer}>
-                            {parseInt(`${VALIDATION_CHECK(count)}`) > 0 &&
+                            {parseInt(`${count}`) > 0 &&
                                 <View style={{
                                     backgroundColor: colors.white,
                                     borderRadius: 6,

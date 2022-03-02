@@ -39,13 +39,13 @@ const PITSTOPS = {
 }
 export default ({ navigation, route }) => {
     const pitstopType = route?.params?.pitstopType ?? PITSTOP_TYPES.SUPER_MARKET;
+
     // #region :: STYLES & THEME START's FROM HERE 
     const colors = theme.getTheme(GV.THEME_VALUES[lodash.invert(PITSTOPS)[pitstopType]], Appearance.getColorScheme() === "dark");
     const styles = stylesFunc(colors);
     const itemStyles = itemStylesFunc(colors, ITEM_IMAGE_SIZE);
 
     // #endregion :: STYLES & THEME END's FROM HERE 
-    const cartReducer = useSelector(store => store.cartReducer);
     const marketID = route.params?.pitstopID ?? 0;// 4613,4609, 4521;
     const headerTitle = route.params?.title ?? '';
 
@@ -270,70 +270,6 @@ export default ({ navigation, route }) => {
                                 />
                             </View>
                         )
-                        // return (
-                        //     <View style={{
-                        //         marginLeft: index === 0 ? 10 : 0,
-                        //         ...itemStyles.primaryContainer,
-                        //     }} key={uniqueKeyExtractor()}>
-
-                        //         {/* ****************** Start of IMAGE & QUANTITY ****************** */}
-                        //         <View style={itemStyles.imageContainer}>
-                        //             <ImageBackground
-                        //                 source={{ uri: renderFile(`${image}`) }}
-                        //                 style={itemStyles.image}
-                        //                 borderRadius={8}
-                        //                 tapToOpen={false}>
-
-                        //                 <ProductQuantityCard
-                        //                     outOfStock={isOutOfStock}
-                        //                     initialQuantity={item.quantity}
-                        //                     colors={colors}
-                        //                     size={ITEM_IMAGE_SIZE}
-                        //                     updateQuantity={(quantity) => {
-                        //                         updateQuantity(parentIndex, index, quantity);
-                        //                     }}
-                        //                 />
-
-
-                        //             </ImageBackground>
-                        //         </View>
-
-                        //         {/* ****************** End of IMAGE & QUANTITY ****************** */}
-
-
-                        //         {/* ****************** Start of PRICE & DISCOUNT ****************** */}
-                        //         <View style={itemStyles.priceDiscountContainer}>
-                        //             <Text fontFamily='PoppinsBold' style={itemStyles.price}>{renderPrice(item.gstAddedPrice)}</Text>
-
-                        //             {(VALIDATION_CHECK(item.discountedPrice) && parseInt(`${item.discountedPrice}`) > 0) &&
-                        //                 <Text style={itemStyles.discountPrice}>{renderPrice(item.discountedPrice)}</Text>
-                        //             }
-
-                        //         </View>
-
-                        //         {/* ****************** End of PRICE & DISCOUNT ****************** */}
-
-
-                        //         {/* ****************** Start of NAME/TITLE ****************** */}
-                        //         <Text style={itemStyles.name}>{item.pitStopItemName}</Text>
-
-                        //         {/* ****************** End of NAME/TITLE ****************** */}
-
-                        //         {/* ****************** Start of DISCOUNT TYPE ****************** */}
-                        //         {parseInt(`${item.discountType}`) !== parseInt(`${ENUMS.PROMO_VALUE_TYPE.Empty.value}`) &&
-                        //             <View style={itemStyles.discountTypeContainer}>
-                        //                 {parseInt(`${item.discountType}`) === parseInt(`${ENUMS.PROMO_VALUE_TYPE.Percentage.value}`) &&
-                        //                     <SvgXml xml={svgs.discount(colors.primary)} height={15} width={15} style={itemStyles.discountTypeIcon} />
-                        //                 }
-                        //                 <Text style={itemStyles.discountTypeText}>{`${renderPrice(item.discountAmount, '-', '%', /[^\d.]/g)}`}</Text>
-                        //             </View>
-                        //         }
-
-                        //         {/* ****************** End of DISCOUNT TYPE ****************** */}
-
-
-                        //     </View>
-                        // )
                     })}
                 </ScrollView>
 

@@ -194,7 +194,7 @@ const ProductMenuItemCard = (props: Props) => {
 };//end of ProductMenuItemCard
 
 ProductMenuItemCard.defaultProps = defaultProps;
-export default React.memo(ProductMenuItemCard);
+export default ProductMenuItemCard; // React.memo(ProductMenuItemCard, (n, p) => n === p);
 
 
 export const itemStylesFunc = (colors: typeof initColors, ITEM_IMAGE_SIZE: number) => StyleSheet.create({
