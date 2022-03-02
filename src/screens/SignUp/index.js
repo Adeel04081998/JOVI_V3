@@ -135,6 +135,11 @@ export default () => {
     const onCrossHandler = () => {
         NavigationService.NavigationActions.common_actions.goBack();
     }
+const IS_DISABLED = inputsArr[0].value !== '' && inputsArr[1].value !== ''  && inputsArr[2].value !== '';
+    const validationCheck = () => {
+        if (IS_DISABLED) return false
+        else return true
+    }
 
     return (
         <SafeAreaView style={[styles.container]}>
@@ -210,7 +215,7 @@ export default () => {
             <Button
                 text="Sign Up"
                 onPress={_signUpHandler}
-                disabled={isLoading}
+                disabled={validationCheck()}
                 isLoading={isLoading}
                 textStyle={{ fontSize: 16, color: '#fff', }}
                 style={{

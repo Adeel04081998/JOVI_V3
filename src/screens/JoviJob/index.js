@@ -156,7 +156,7 @@ export default ({ navigation, route }) => {
         React.useRef(new Animated.Value(0)).current,
 
     ]//currently animated Tabs are here in array, due to some issue, dynamic animated tabs couldn't be used right now, in future it will be implemented IA
-    const loadEach = (index) => {
+    const loadEach = (index) => {  
         setTimeout(() => {
             Animated.timing(animatedValues[index], {
                 toValue: 1,

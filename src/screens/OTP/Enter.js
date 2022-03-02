@@ -162,7 +162,7 @@ export default () => {
                 <Button
                     style={styles.continueButton}
                     text={'Continue'}
-                    textStyle={{ color: '#fff', ...styles.textAlignCenter, fontSize: 14, }}
+                    textStyle={{ color: '#fff', ...styles.textAlignCenter, fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
                     onPress={onPress}
                     isLoading={isLoading}
                     disabled={disbleContinueButton || isLoading}
