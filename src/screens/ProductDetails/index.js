@@ -25,6 +25,8 @@ import styleSheet from "./style";
 import Image from '../../components/atoms/Image';
 import deviceInfoModule from 'react-native-device-info';
 import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-aware-scroll-view';
+import constants from '../../res/constants';
+import AppStyles from '../../res/AppStyles';
 
 
 
@@ -84,7 +86,7 @@ export default (props) => {
             "pitstopType": pitstopType
         }, (res) => {
             console.log('if GET_PRODUCTDETAIL  res', res);
-            if(res.data.statusCode === 200){
+            if (res.data.statusCode === 200) {
                 setState((pre) => ({
                     ...pre,
                     generalProductOrDealDetail: {
@@ -98,15 +100,15 @@ export default (props) => {
                         // gstAddedPrice: res.data.generalProductOrDealDetail.gstAddedPrice + 40
                     },
                     loading: false
-    
+
                 }));
                 setEnable(pre => ({
                     ...pre,
                     enableBtn: (res.data.generalProductOrDealDetail.optionList ?? []).length < 1,
                     requiredIds: (res.data.generalProductOrDealDetail?.optionList ?? []).filter(item => item.isRequired === true).map((_, i) => (i))
                 }));
-            }else{
-                setState(pre=>({...pre,loading:false}));
+            } else {
+                setState(pre => ({ ...pre, loading: false }));
             }
 
 
@@ -260,10 +262,50 @@ export default (props) => {
 
     }
 
+    const _renderQuantityCard = () => {
+        return (
+            <View style={{
+                ...AppStyles.shadow,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                paddingHorizontal: constants.spacing_horizontal,
+                paddingVertical: constants.spacing_vertical,
+                borderRadius: 30,
+                backgroundColor: colors.white,
+                width: "35%",
+            }}>
+
+                <TouchableScale
+                    wait={0}
+                    onPress={() => { itemCountOnPress("minus") }}>
+                    <VectorIcon
+                        name="minus"
+                        type="MaterialCommunityIcons"
+                        size={25}
+                        color={"black"}
+                    />
+                </TouchableScale>
+                <Text fontFamily='PoppinsBold' style={{ fontSize: 18, justifyContent: 'center', alignItems: 'center', color: colors.black, }}>{itemCount}</Text>
+                <TouchableScale
+                    wait={0}
+                    onPress={() => { itemCountOnPress("plus") }}>
+                    <VectorIcon
+                        name="plus"
+                        type="MaterialCommunityIcons"
+                        size={25}
+                        color={"black"}
+                    />
+                </TouchableScale>
+            </View>
+        )
+    }
+
     const renderButtonsUi = () => {
         return (
             <AnimatedView style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, alignItems: 'center', marginHorizontal: 12, height: 80 }}>
-                <View style={{
+                {_renderQuantityCard()}
+                {/* <View style={{
                     flexDirection: 'row', alignSelf: 'center', backgroundColor: 'white', borderRadius: 30, alignItems: 'center', paddingHorizontal: Platform.OS === "android" ? 6 : 20, paddingVertical: 5,
                     shadowColor: "#000",
                     shadowOffset: { width: 0, height: 2, },
@@ -298,7 +340,7 @@ export default (props) => {
                             color={"black"}
                         />
                     </TouchableScale>
-                </View>
+                </View> */}
                 <View style={{ marginLeft: 9, width: '65%' }}>
                     <Button
                         disabled={!enable.enableBtn}
