@@ -36,7 +36,7 @@ const CARD_WIDTH = WINDOW_WIDTH * 0.3;
 const CARD_HEIGHT = CARD_WIDTH * 0.4;
 const TOPSPACING = 10
 
-
+const IMAGE_SIZE = constants.window_dimensions.width * 0.3;
 export default () => {
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED['10']], Appearance.getColorScheme() === "dark");
     const checkOutStyles = StyleSheet.styles(colors)
@@ -284,9 +284,9 @@ export default () => {
                                 // onToggleSwitch(bool) 
                                 setSwitchVal(bool)
                             }}
-                                width={44} height={24}
+                                width={30} height={18}
                                 switchContainerActive={{
-                                    backgroundColor: '#27C787',
+                                    backgroundColor: '#48EA8B',
                                     borderRadius: 20,
                                     justifyContent: 'center',
                                 }}
@@ -296,24 +296,22 @@ export default () => {
                                     justifyContent: 'center',
                                 }}
                                 subSwitchContainerActive={{
-                                    width: 18,
-                                    height: 18,
-                                    borderRadius: 20,
+                                    width: 13,
+                                    height: 13,
+                                    borderRadius: 10,
                                     borderColor: 'white',
                                     borderWidth: 0,
-                                    // marginHorizontal: 2,
-                                    backgroundColor: 'white'
+                                    right: 2,
+                                    backgroundColor: 'white',
                                 }}
                                 subSwitchContainerInActive={{
-                                    width: 18,
-                                    height: 18,
-                                    borderRadius: 20,
+                                    width: 13,
+                                    height: 13,
+                                    borderRadius: 10,
                                     borderColor: 'white',
                                     backgroundColor: 'white',
                                     borderWidth: 0,
-                                    marginHorizontal: 2,
-                                    marginHorizontal: 2,
-
+                                    right: 1,
                                 }}
 
                             />
@@ -333,36 +331,55 @@ export default () => {
         });
     }, []);
     return (
-        <SafeAreaView style={checkOutStyles.mainContainer} >
+        <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }} >
             <CustomHeader
                 title='Checkout'
                 titleStyle={{ fontSize: 16, fontFamily: FontFamily.Poppins.SemiBold, color: '#6D51BB' }}
                 onLeftIconPress={goBack}
-                rightIconName=''
+                // rightIconName=''
                 containerStyle={{ borderBottomWidth: 0 }}
+
+                rightIconName='home'
+                rightIconSize={22}
+                rightIconColor={colors.primary}
+                onRightIconPress={() => {
+                    NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name)
+                }}
+            //  /   defaultColor={colors.primary} 
             />
-            <View style={{ top: -10 }}>
-                <StepProgress maxHighlight={3} />
+            <View style={{ backgroundColor: colors.screen_background, flex: 1 }}>
+                <View style={{ top: -10 }}>
+                    <StepProgress maxHighlight={3} />
+                </View>
+                <ScrollView style={{ flex: 1, }} showsVerticalScrollIndicator={false}>
+
+                    <OrderEstTimeCard
+                        imageHeight={IMAGE_SIZE * 0.6}
+                        color={colors}
+                        right={{ value: totalPitstop }}
+                        middle={{ value: estimatedDeliveryTime }}
+                        contentContainerStyle={{ marginBottom: 0, marginVertical: 0, marginTop: 10, borderRadius: 8 }}
+                        rightContainerStyle={{}}
+                        middleContainerStyle={{ flex: 2 }}
+                        leftContainerStyle={{ paddingRight: 15 }}
+                    />
+                    <DeliveryAddress
+                        contianerStyle={{ margin: TOPSPACING, marginBottom: 2, padding: 0, borderRadius: 8 }}
+                        addressTxtStyle={{ fontSize: 14, color: "#6D51BB", paddingHorizontal: 10 }}
+                        instructions={instructionForRider}
+                        // editIconStyle={{ marginHorizontal: 10 }}
+                        editIconStyle={{ justifyContent: 'center', alignSelf: 'center', alignItems: 'center', marginHorizontal: 12 }}
+                        edit_icon_Height={18}
+                        isShowLine={false}
+                        finalDestinationPrimaryContainer={{ paddingLeft: 18, paddingVertical: 0, bottom: 3 }}
+                    />
+                    {RenderPaymentMethodCardUi()}
+                    <VouchersUi checkOutStyles={checkOutStyles} />
+                    <OrderRecipt checkOutStyles={checkOutStyles} cartReducer={cartReducer} colors={colors} />
+
+                </ScrollView>
             </View>
-            <ScrollView style={{ flex: 1, }} showsVerticalScrollIndicator={false}>
-                <OrderEstTimeCard
-                    color={colors}
-                    middle={{ value: estimatedDeliveryTime }}
-                    right={{ value: totalPitstop }}
-                    contentContainerStyle={{ marginBottom: 0, marginVertical: 0, marginTop: -3 }}
-                    middleContainerStyle={{ flex: 2 }}
-                    isShow={true}
-                />
-                <DeliveryAddress
-                    contianerStyle={{ margin: TOPSPACING, marginBottom: 2, padding: 0, }}
-                    addressTxtStyle={{ fontSize: 14, color: "#6D51BB", paddingHorizontal: 10 }}
-                    instructions={instructionForRider}
-                />
-                {RenderPaymentMethodCardUi()}
-                <VouchersUi checkOutStyles={checkOutStyles} />
-                <OrderRecipt checkOutStyles={checkOutStyles} cartReducer={cartReducer} colors={colors} />
-            </ScrollView>
-            <AnimatedView style={{ width: '100%', paddingHorizontal: 10, paddingVertical: 5, bottom: 0, ...AppStyles.shadow, elevation: 4 }}>
+            <AnimatedView style={{ backgroundColor: colors.white, opacity: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 10, paddingVertical: 5, paddingBottom:5, width: '100%', ...AppStyles.shadow ,marginBottom:3 }}>
                 <Button
                     onPress={() => onPlaceOrder()}
                     text='Place Order'

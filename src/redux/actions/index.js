@@ -107,6 +107,12 @@ const fcmAction = (payload = {}) => {
 }
 //...Rest of the actions would be here
 
+const setvendorDashboardCategoryIDAction = (payload = []) => {
+    return {
+        type: TYPES.SET_VENDOR_DASHBOARD_CATEGORY_ID_ACTION,
+        payload: payload 
+    }
+}
 
 export default {
     setUserAction,
@@ -126,5 +132,6 @@ export default {
     closeModalAction,
     setUserPrevOrdersAction,
     fcmAction,
+    setvendorDashboardCategoryIDAction,
     //...
 }

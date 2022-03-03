@@ -26,10 +26,10 @@ const userReducer = (state = { prevOrders: [] }, action) => {
       return {
         ...state, ...action.payload
       };
-      case TYPES.SET_PREV_ORDERS:
-        return {
-          ...state, prevOrders : [...state.prevOrders, action.payload]
-        };
+    case TYPES.SET_PREV_ORDERS:
+      return {
+        ...state, prevOrders: [...state.prevOrders, action.payload]
+      };
     default:
       return { ...state };
   }
@@ -49,7 +49,7 @@ const cartReducer = (state = INIT_CART_DATA, action) => {
   }
 };
 const modalReducer = (state = { visible: false, closeModal: false, ModalContent: null, }, action) => {
-  
+
   switch (action.type) {
     case TYPES.SET_MODAL:
       return { ...state, ...action.payload, closeModal: false, disabled: "disabled" in action.payload ? action.payload.disabled : false };
@@ -57,7 +57,7 @@ const modalReducer = (state = { visible: false, closeModal: false, ModalContent:
       return { ...state, closeModal: true, }
     }
     case TYPES.CLEAR_MODAL_REDUCER:
-      return {visible: false, closeModal: false, ModalContent: null}
+      return { visible: false, closeModal: false, ModalContent: null }
     default:
       return { ...state };
   }
@@ -124,6 +124,16 @@ const fcmReducer = (state = { "notifications": [] }, action = {}) => {
 }
 //...Rest of the reducers would be here
 
+const vendorDashboardCategoryIDReducer = (state = {data:[]}, action) => {
+  switch (action.type) {
+    case TYPES.SET_VENDOR_DASHBOARD_CATEGORY_ID_ACTION:
+      const data=[...action.payload];
+      return { ...state, data };
+    default:
+      return { ...state };
+  }
+}
+
 export default {
   userReducer,
   cartReducer,
@@ -134,4 +144,5 @@ export default {
   modalReducer,
   fcmReducer,
   //...
+  vendorDashboardCategoryIDReducer,
 }

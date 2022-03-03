@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Alert, Appearance, ScrollView } from 'react-native'
+import { Alert, Appearance, PixelRatio, ScrollView } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
 import { SvgXml } from 'react-native-svg';
 import { useDispatch, useSelector } from 'react-redux';
@@ -32,8 +32,14 @@ const LONGITUDE_DELTA = 0.01;
 
 export default (props) => {
 
+    const baseHeight = 550
+    const WINDOW_HEIGHT = constants.window_dimensions.height;
+
     const HEIGHT = constants.screen_dimensions.height;
     const WIDTH = constants.screen_dimensions.width;
+
+    const SCALED_HEIGHT = PixelRatio.roundToNearestPixel(WINDOW_HEIGHT * (WINDOW_HEIGHT / baseHeight));
+
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
     const styles = addressStyles(colors, HEIGHT, WIDTH)
     const { AddressTypeEnum } = useSelector(obj => obj.enumsReducer)
@@ -113,6 +119,7 @@ export default (props) => {
     }
 
     const onPressSaveAndContinue = () => {
+        const finalDestObj = props.route?.params?.finalDestObj
         confirmServiceAvailabilityForLocation(postRequest, props.route?.params?.finalDestObj.latitude, props.route?.params?.finalDestObj.longitude,
             (resp) => {
                 let addressType = addressTypeList.filter(x => x.selected === true)
@@ -132,9 +139,9 @@ export default (props) => {
                     res => {
                         console.log("ADDorUPDATE ADDRESS.RESPONSE", res);
                         if (res.data.statusCode === 200) {
-                            dispatch(ReduxActions.setUserFinalDestAction({ ...props.route.params.finalDestObj }))
                             sharedGetUserAddressesApi();
-                            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name)
+                            dispatch(ReduxActions.setUserFinalDestAction({ finalDestObj }))
+                            onBackPress(true);
                         }
                     },
                     err => {
@@ -165,8 +172,7 @@ export default (props) => {
             } else return { ...object, selected: false }
 
         })
-
-        if (index === 3) inputs[3].shown = true
+        if (index === 3) inputs[3].shown = !inputs[3].shown
         else inputs[3].shown = false
         setState(pre => ({
             ...pre,
@@ -182,14 +188,20 @@ export default (props) => {
         }))
     }
 
+    const onBackPress = (forcePop = false) => {
+        const isFromEdit = props.route.params?.isFromEdit ?? false;
+        if (isFromEdit || forcePop) {
+            NavigationService.NavigationActions.stack_actions.pop(2);
+        } else {
+            NavigationService.NavigationActions.common_actions.goBack();
+        }
+    };
 
     return (
         <SafeAreaView style={styles.safeArea}>
             <View style={styles.container} >
                 <SharedMapView
-                    // onBackPress={() => {
-                    //     NavigationService.NavigationActions.stack_actions.popToTop();
-                    // }}
+                    onBackPress={() => { onBackPress() }}
                     latitude={props.route?.params?.finalDestObj.latitude}
                     longitude={props.route?.params?.finalDestObj.longitude}
                     route={props.route}
@@ -197,15 +209,18 @@ export default (props) => {
                     showContinueBtn={false}
                     showDirections={false}
                     showMarker={true}
-                    mapHeight={(HEIGHT * 1.4) - HEIGHT}
+                    mapHeight={SCALED_HEIGHT * 0.27}
                     markerStyle={{
                         zIndex: 3,
                         position: 'absolute',
                         marginTop: -15,
                         marginLeft: -11,
                         left: WIDTH / 2,
-                        top: ((HEIGHT * 1.35) - HEIGHT) / 2,
+                        top: ((SCALED_HEIGHT * 1.3) - SCALED_HEIGHT) / 2,
                     }}
+                    pitchEnabled={false}
+                    zoomEnabled={false}
+                    scrollEnabled={false}
                     selectFinalDestination={true}
                     newFinalDestination={finalDestinationObj}
                     onMapPress={() => {

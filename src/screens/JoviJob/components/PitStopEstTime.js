@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Appearance, StyleSheet } from 'react-native';
+import { Appearance, PixelRatio, Platform, StyleSheet } from 'react-native';
 import constants from '../../../res/constants';
 import VectorIcon from '../../../components/atoms/VectorIcon';
 import Text from '../../../components/atoms/Text';
@@ -13,8 +13,17 @@ import ENUMS from '../../../utils/ENUMS';
 
 const PitStopEstTime = (props) => {
     // colors.primary will recieve value from colors.js file's colors
+    // const baseWidth = Platform.OS === "android" ? 282 : 285
+    // const MAX_WIDTH = 300 
+    // const WINDOW_WIDTH = constants.screen_dimensions.width;
+
+    const SCALING_VARIABLE = Platform.OS === "android" ? 47.5 : 50
+
     const WIDTH = constants.window_dimensions.width
     const HEIGHT = constants.window_dimensions.height
+
+    const SCALED_WIDTH = WIDTH - SCALING_VARIABLE
+
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
     const styles = joviJobStyles(colors, WIDTH, HEIGHT);
     const [disabled, setDisabled] = useState(false);
@@ -34,20 +43,20 @@ const PitStopEstTime = (props) => {
                     if (type === 0) setDisabled(true)
                     else setDisabled(false)
                 }}
-                scrollViewStyles={{ top: 68, width: WIDTH * 0.82, alignSelf: 'center'}}
+                scrollViewStyles={{ top: Platform.OS === "android" ? 76 : 68 , width: SCALED_WIDTH * 0.936, alignSelf: 'center'}}
                 options={ENUMS.ESTIMATED_TIME}
                 itemUI={(item, index, collapsed) =>
                     <TouchableOpacity key={`estTime-key-${index}`}
                         style={{
                             paddingVertical: 4,
-                            borderWidth: 0.5,
+                            borderBottomWidth: index === 4 ? 0 : 1 ,
                             borderTopWidth: 0,
                             borderColor: 'rgba(0,0,0,0.3)',
-                            width: WIDTH * 0.82,
+                            width: SCALED_WIDTH * 0.936,
                             backgroundColor: 'white',
                             borderBottomRightRadius: index === ENUMS.ESTIMATED_TIME.length - 1 ? 12 : 0,
                             borderBottomLeftRadius: index === ENUMS.ESTIMATED_TIME.length - 1 ? 12 : 0,
-                            alignSelf: 'center'
+                            alignSelf: 'center',
                         }}
                         disabled={disabled}
                         onPress={() => props.onEstTimePress(item)}

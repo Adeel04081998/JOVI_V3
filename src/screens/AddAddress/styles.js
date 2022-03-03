@@ -54,7 +54,7 @@ export default (colors = initColors, width, height) => StyleSheet.create({
     },
     addressText: {
         fontSize: 14,
-        color: colors.black, width: width * 0.34
+        color: colors.black, width: width * 0.25
     },
     subAddressText: {
         color: colors.grey,

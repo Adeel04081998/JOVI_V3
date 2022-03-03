@@ -21,6 +21,7 @@ interface Props extends ButtonProps {
     text?: string;
     count?: any;
     price?: any;
+    bottom?: any;
 }
 
 
@@ -28,6 +29,7 @@ const defaultProps = {
     text: "Go to cart",
     count: null,
     price: null,
+    bottom:0
 };
 // #endregion :: INTERFACE END's FROM HERE 
 
@@ -36,13 +38,12 @@ const GotoCartButton = (props: Props) => {
     const colors = props.colors;
 
     const insets = useSafeAreaInsets();
-    const styles = stylesFunc(colors, insets);
+    const styles = stylesFunc(colors, insets, props);
 
     const cartReducer = useSelector((store: any) => store.cartReducer);
     const { itemsCount, subTotal } = cartReducer;
     const price = props?.price ?? subTotal;
     const count = props?.count ?? itemsCount;
-
 
     if (!VALIDATION_CHECK(count)) return null;
     return (
@@ -54,25 +55,29 @@ const GotoCartButton = (props: Props) => {
                 //@ts-ignore
                 textStyle={[styles.textStyle, props.textStyle]}
                 text={propText}
-                {...VALIDATION_CHECK(count) && {
+                {...(VALIDATION_CHECK(count)) && {
                     leftComponent: () => (
                         <View style={styles.leftContainer}>
-                            <View style={{
-                                backgroundColor: colors.white,
-                                borderRadius: 6,
-                                paddingVertical: 1,
-                                paddingHorizontal: 12,
-                            }}>
-                                <Text style={styles.leftText}>{count}</Text>
-                            </View>
+                            {parseInt(`${count}`) > 0 &&
+                                <View style={{
+                                    backgroundColor: colors.white,
+                                    borderRadius: 6,
+                                    paddingVertical: 1,
+                                    paddingHorizontal: 12,
+                                }}>
+                                    <Text style={styles.leftText}>{count}</Text>
+                                </View>
+                            }
                         </View>
                     )
                 }}
 
-                {...VALIDATION_CHECK(price) && {
+                {...(VALIDATION_CHECK(price) || VALIDATION_CHECK(count)) && {
                     rightComponent: () => (
                         <View style={styles.rightContainer}>
-                            <Text style={styles.rightText}>{renderPrice(price)}</Text>
+                            {VALIDATION_CHECK(price) &&
+                                <Text style={styles.rightText}>{renderPrice(price)}</Text>
+                            }
                         </View>
                     )
                 }}
@@ -93,7 +98,7 @@ export default GotoCartButton;
 
 // #region :: STYLES START's FROM HERE 
 
-const stylesFunc = (colors: typeof initColors, insets: EdgeInsets) => StyleSheet.create({
+const stylesFunc = (colors: typeof initColors, insets: EdgeInsets, props: Props) => StyleSheet.create({
     rightText: {
         color: colors.white,
         fontSize: 16,
@@ -138,9 +143,9 @@ const stylesFunc = (colors: typeof initColors, insets: EdgeInsets) => StyleSheet
     primaryContainer: {
         backgroundColor: colors.white,
         position: 'absolute',
-        paddingTop: 20,
-        paddingBottom: insets.bottom > 0 ? insets.bottom : getStatusBarHeight() * 0.7,
-        bottom: 0,
+        paddingTop: 10,
+        paddingBottom: insets.bottom > 0 ? insets.bottom : getStatusBarHeight() * 0.4,
+        bottom: props?.bottom,
 
         width: "100%",
     },

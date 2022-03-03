@@ -68,14 +68,14 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                     <View style={checkOutStyles.gstPrimaryContainer}>
                         <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular'>GST</Text>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
-                            <Text style={checkOutStyles.gstCommonPriceTxtStyle} fontFamily='PoppinsRegular'>{`${renderPrice(gst, '')}`}</Text>
+                            <Text style={checkOutStyles.gstCommonPriceTxtStyle} fontFamily='PoppinsRegular'>{`${renderPrice({ showZero: true, price: gst })}`}</Text>
                         </View>
                     </View>
                     <View style={checkOutStyles.gstPrimaryContainer}>
                         <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular' >Service Charges</Text>
                         <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular'>{`(incl S.T ${renderPrice(st, '')})`}</Text>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
-                            <Text style={checkOutStyles.gstCommonPriceTxtStyle} fontFamily='PoppinsRegular'>{`${renderPrice(serviceCharges)}`}</Text>
+                            <Text style={checkOutStyles.gstCommonPriceTxtStyle} fontFamily='PoppinsRegular'>{`${renderPrice({ showZero: true, price: serviceCharges })}`}</Text>
                         </View>
                     </View>
 
@@ -87,7 +87,7 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                     <View style={{ flexDirection: "row", flex: 1 }}>
                         <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular'>Discount</Text>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
-                            {discount ? <Text style={checkOutStyles.gstCommonPriceTxtStyle} fontFamily='PoppinsRegular'>{`-${discount}`}</Text> : null}
+                            {<Text style={checkOutStyles.gstCommonPriceTxtStyle} fontFamily='PoppinsRegular'>{`${renderPrice({ showZero: true, price: discount },'Rs -')}`}</Text>}
                         </View>
                     </View>
                 </View>
@@ -98,7 +98,7 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                     <View style={{ flexDirection: "row", }}>
                         <Text style={{ fontSize: 16, color: "#272727" }} fontFamily='PoppinsSemiBold'>Estimated Total</Text>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
-                            <Text style={{ fontSize: 16, color: "#272727" }} fontFamily='PoppinsSemiBold' >{`${estimatedTotal}`}</Text>
+                            <Text style={{ fontSize: 16, color: "#272727" }} fontFamily='PoppinsSemiBold' >{`${renderPrice(estimatedTotal)}`}</Text>
                         </View>
                     </View>
                 </View>
@@ -144,7 +144,7 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                                     <Text style={checkOutStyles.reciptMainDetailsPitstopName} fontFamily='PoppinsMedium' numberOfLines={1}>{String(pitstopName).substring(0, 25)}</Text>
                                     {!showDetails &&
                                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
-                                            <Text style={checkOutStyles.reciptMainDetailsindividualPitstopTotal} fontFamily='PoppinsMedium'>{`${renderPrice(individualPitstopTotal, '')}`}</Text>
+                                            <Text style={checkOutStyles.reciptMainDetailsindividualPitstopTotal} fontFamily='PoppinsMedium'>{`${renderPrice({ showZero: true, price: individualPitstopTotal })}`}</Text>
                                         </View>
                                     }
                                 </View>

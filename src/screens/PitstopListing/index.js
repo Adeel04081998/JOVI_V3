@@ -1,8 +1,10 @@
+import { useFocusEffect } from '@react-navigation/native';
 import lodash from 'lodash'; // 4.0.8
 import LottieView from "lottie-react-native";
 import React from 'react';
 import { Animated, Appearance, Easing, SafeAreaView, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
+import Text from '../../components/atoms/Text';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import GenericList from '../../components/molecules/GenericList';
@@ -35,8 +37,12 @@ const SPACING_VERTICAL = 10;
 //         />
 //     </View>
 // }
+
+let scrollEvent = null;
 const PistopListing = React.memo(({ route, }) => {
     const { pitstopType } = route.params;
+    const vendorDashboardCategoryIDReducer = useSelector(s => s.vendorDashboardCategoryIDReducer)?.data ?? [];
+
     console.log('pitstopType', pitstopType);
     const [state, setState] = React.useState({
         filters: {
@@ -71,7 +77,7 @@ const PistopListing = React.memo(({ route, }) => {
             pitstopListingTitle: 'All Restaurants'
         },
         [PITSTOP_TYPES.SUPER_MARKET]: {
-            filterTitleShown: false,
+            filterTitleShown: true,
             filterScreenIcon: false,
             searchPlaceHolder: 'What do you want to order?',
             categorySection: false,
@@ -132,8 +138,8 @@ const PistopListing = React.memo(({ route, }) => {
             onPressFilter(listing, { cuisines: updatedFilters.activeCusine });
             return;
         }
-        filtersRef.current.cuisines = updatedFilters.activeCusine? [updatedFilters.activeCusine]:[];
-        filtersRef.current.activeFilterBy = updatedFilters.activeFilterBy?[updatedFilters.activeFilterBy]:[];
+        filtersRef.current.cuisines = updatedFilters.activeCusine ? [updatedFilters.activeCusine] : [];
+        filtersRef.current.activeFilterBy = updatedFilters.activeFilterBy ? [updatedFilters.activeFilterBy] : [];
         filtersRef.current.averagePrice = updatedFilters.activeAvergePrice;
         setState(pre => ({
             ...pre,
@@ -170,6 +176,7 @@ const PistopListing = React.memo(({ route, }) => {
         }, err => { sharedExceptionHandler(err); });
     }
     React.useEffect(() => {
+        scrollEvent = null;
         getAdvertisements();
     }, [])
     const renderFilters = () => (<View style={{ ...listingStyles.wrapper, paddingBottom: 0, zIndex: 100, paddingTop: SPACING_VERTICAL }}>
@@ -179,6 +186,7 @@ const PistopListing = React.memo(({ route, }) => {
             homeStyles={listingStyles}
             onSearch={onSearchHandler}
         />
+        
         <Filters
             colors={colors}
             filterConfig={currentPitstopType}
@@ -186,6 +194,7 @@ const PistopListing = React.memo(({ route, }) => {
             parentFilterHandler={onPressFilter}
             filtersData={categoriesTagsReducer?.vendorFilterViewModel?.filtersList}
             goToFilters={goToFilters} />
+
         {currentPitstopType.categorySection &&
             <Categories
                 parentCategoryHandler={onFilterChange}
@@ -219,7 +228,12 @@ const PistopListing = React.memo(({ route, }) => {
             theme={colors}
         />
         <View style={{ ...listingStyles.wrapper, paddingBottom: SPACING_VERTICAL }}>
-            <GenericList themeColors={colors} pitstopType={pitstopType} />
+        {vendorDashboardCategoryIDReducer.map((item, index) => {
+                                return (
+                                    <GenericList themeColors={colors} pitstopType={pitstopType} vendorDashboardCatID={item.vendorDashboardCatID}/>
+                                    )
+                            })}
+            
         </View>
     </Animated.View>);
     const renderAllRestaurantsListing = () => (<Animated.View style={{
@@ -236,6 +250,17 @@ const PistopListing = React.memo(({ route, }) => {
             filters={state.filters}
         />
     </Animated.View>);
+
+    const scrollRef = React.useRef(null);
+
+    useFocusEffect(React.useCallback(() => {
+        if (scrollEvent) {
+            const yAxis = scrollEvent?.y ?? 0;
+            const xAxis = scrollEvent?.x ?? 0;
+            scrollRef.current && scrollRef.current.scrollTo({ y: yAxis, x: xAxis, animated: true });
+        }
+    }, [scrollEvent]));
+
     return (
         <View style={listingStyles.container}>
             <SafeAreaView style={{ flex: 1 }}>
@@ -243,15 +268,22 @@ const PistopListing = React.memo(({ route, }) => {
                     // leftIconType={'AntDesign'} leftIconName={'left'}
                     leftIconSize={30}
                 />
-                {isLoading ? <CardLoader styles={listingStyles} /> : <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false} scrollEventThrottle={16} onScroll={(event) => {
-                    if (handleInfinityScroll(event)) {
-                        setFetchDataUseEffect(Math.random());
-                    }
-                }}>
-                    {renderFilters()}
-                    {renderCarouselNdListing()}
-                    {renderAllRestaurantsListing()}
-                </ScrollView>}
+                {isLoading ? <CardLoader styles={listingStyles} /> :
+                    <ScrollView
+                        ref={scrollRef}
+                        nestedScrollEnabled showsVerticalScrollIndicator={false} scrollEventThrottle={16}
+                        onScroll={(event) => {
+                            const yAxis = event?.nativeEvent?.contentOffset.y ?? 0;
+                            if (yAxis > 0)
+                                scrollEvent = event.nativeEvent.contentOffset;
+                            if (handleInfinityScroll(event)) {
+                                setFetchDataUseEffect(Math.random());
+                            }
+                        }}>
+                        {renderFilters()}
+                        {renderCarouselNdListing()}
+                        {renderAllRestaurantsListing()}
+                    </ScrollView>}
                 <BottomBarComponent colors={colors} leftData={[{ id: 1, iconName: "home", title: "Home" }, { id: 2, iconName: "person", title: "Profile" }]} rightData={[{ id: 3, iconName: "wallet", title: "Wallet" }, { id: 4, iconName: "pin", title: "Location" }]} />
             </SafeAreaView>
         </View>

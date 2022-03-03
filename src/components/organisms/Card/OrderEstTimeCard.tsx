@@ -41,7 +41,7 @@ interface Props {
 const defaultProps = {
     xmlImage: svgs.orderProcessing_jovi_box(),
     middle: { title: `Estimated Delivery Time`, value: undefined },
-    right: { title: `Total pitstops`, value: undefined },
+    right: { title: `Total Pitstops`, value: undefined },
 
     imageWidth: "90%",
     imageHeight: 80,

@@ -25,10 +25,11 @@ const DraggableFlatList = (props: Props) => {
   const MyrenderItem = (itemProps: RenderItemParams<unknown>) => {
     return <ScaleDecorator>
       <TouchableOpacity
+      activeOpacity={.8}
         onLongPress={itemProps.drag}
         disabled={itemProps.isActive}
         style={itemProps.isActive ? {
-    // backgroundColor: "#fff",
+        // backgroundColor: "rgba(0,0,0,0.3)",
           opacity: 1,
         } : {
           // backgroundColor:activatedIndex.current!==-1 ? `rgba(0,0,0,0.3)` : '#fff',
@@ -47,12 +48,12 @@ const DraggableFlatList = (props: Props) => {
         keyExtractor={(item, index) => `${index}`}
         extraData={activated}
         onDragBegin={(index) => {
-          activatedIndex.current = index;
-          setActivated(true);
+          // activatedIndex.current = index;
+          // setActivated(true);
         }}
         onDragEnd={({ data }) => {
-          activatedIndex.current = -1;
-          setActivated(false);
+          // activatedIndex.current = -1;
+          // setActivated(false);
           props.updateData && props.updateData(data)
         }}
 

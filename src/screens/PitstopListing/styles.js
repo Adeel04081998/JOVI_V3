@@ -76,10 +76,11 @@ export default {
 
             },
             search_container: {
-                flexDirection: "row", alignItems: "center", backgroundColor: "#fff", borderRadius: 10, height: 55, justifyContent: "space-between", overflow: 'hidden',
+                flexDirection: "row", alignItems: "center", backgroundColor: "#F2F1F6", borderRadius: 10, height: 50, justifyContent: "space-between", overflow: 'hidden',
+                borderWidth:1, borderColor:'#EBEAEE'
             },
             search_input: {
-                alignSelf: 'center', backgroundColor: "#fff"
+                alignSelf: 'center', backgroundColor: "#F2F1F6"
             },
             cat_item_container: {
                 marginHorizontal: 3, justifyContent: 'center', borderRadius: 10

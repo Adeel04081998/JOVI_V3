@@ -15,20 +15,28 @@ import Endpoints from '../../../manager/Endpoints';
 import sharedStyles from '../../../res/sharedStyles';
 import NavigationService from '../../../navigations/NavigationService';
 import ROUTES from '../../../navigations/ROUTES';
+import { useSelector } from 'react-redux';
 
-export default React.memo(({ vendorType = 0,pitstopType = 2, imageStyles = {}, themeColors = null, showMoreBtnText = "", }) => {
+export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCatID = 0, imageStyles = {}, themeColors = null, showMoreBtnText = "", }) => {
     const SPACING_BOTTOM = 0;
-    const [data, setData] = React.useState([]);
+    const [data, setData] = React.useState(null);
     const [isLoading, setIsLoading] = React.useState(true);
+    const userReducer = useSelector(store => store.userReducer);
+    const finalDestination = userReducer?.finalDestObj ?? { latitude: 0, longitude: 0 };
+
     const fetchData = () => {
-        postRequest(Endpoints.GET_VENDORS_GENERIC_LIST,
+        postRequest(Endpoints.GET_VENDOR_DASHBOARD_CATEGORY_ID_DETAIL,
             {
-                "vendorType": vendorType
+                "vendorType": vendorType,
+                "pageNumber": 1,
+                "itemsPerPage": 10,
+                "vendorDashboardCatID": vendorDashboardCatID,
+                "latitude": finalDestination.latitude,
+                "longitude": finalDestination.longitude
             },
             res => {
-                console.log("GENERIC_LIST.RESPONSE", res);
                 if (res.data.statusCode !== 200) return;
-                setData(res.data.vendorCategoriesViewModel.vendorList.map((item,i)=>{return {...item,cardType:!i%2===0?2:1}}));
+                setData(res.data.vendorCategoryViewModel);
             },
             err => {
                 sharedExceptionHandler(err)
@@ -95,36 +103,38 @@ export default React.memo(({ vendorType = 0,pitstopType = 2, imageStyles = {}, t
             )
         }
     }
-    const onPressViewMore = (item) => {
-        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.PitstopsVerticalList.screen_name,{pitstopType:pitstopType,listingObj:{...item}});
+    const onPressViewMore = () => {
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.PitstopsVerticalList.screen_name, { pitstopType: pitstopType, listingObj: { ...data } });
     }
+    if(!data)
+    return null
     return (
         <View style={{ paddingBottom: SPACING_BOTTOM }}>
-            {
-                data.map((item, index) => (
-                    <React.Fragment key={`generic-item-key-${index}`}>
+            {/* {
+                data.map((item, index) => ( */}
+                    <React.Fragment key={`generic-item-key-${'index'}`}>
                         <View style={styles.container} >
-                            <Text style={styles.mainText} >{item.header}</Text>
-                            <TouchableOpacity onPress={()=>onPressViewMore(item)}>
+                            <Text style={styles.mainText} >{data?.header}</Text>
+                            <TouchableOpacity onPress={() => onPressViewMore()}>
                                 <Text style={styles.viewMoreBtn} >{showMoreBtnText || `View More`}</Text>
                             </TouchableOpacity>
                         </View>
 
                         <AnimatedFlatlist
 
-                            data={item.vendorList}
-                            renderItem={cardTypeUI[item.cardType ?? 1]}
-                            itemContainerStyle={item.cardType === 1 ? styles.itemContainerSmall : { ...styles.itemContainer }}
+                            data={data?.vendorList??[]}
+                            renderItem={cardTypeUI[data?.cardType ?? 1]}
+                            itemContainerStyle={data?.cardType === 1 ? styles.itemContainerSmall : { ...styles.itemContainer }}
                             // itemContainerStyle={item.cardType !== 1?styles.itemContainerSmall:{ ...styles.itemContainer }}
                             horizontal={true}
                             flatlistProps={{
                                 showsHorizontalScrollIndicator: false,
-                                // contentContainerStyle: { paddingBottom: 40 }
+                                contentContainerStyle: { marginLeft: 0 }
                             }}
                         />
                     </React.Fragment>
-                ))
-            }
+                {/* )) */}
+            {/* } */}
 
         </View>
     );
@@ -137,12 +147,12 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
     container: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingHorizontal: 10,
+        paddingHorizontal: 0,
         paddingVertical: 5
     },
     mainText: {
         color: colors.text,
-        fontSize: 16
+        fontSize: 16,
     },
     viewMoreBtn: {
         color: colors.primary || '#6D51BB', // colors.primary here should be the theme color of specific category
@@ -152,23 +162,25 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
         ...sharedStyles._styles(colors).shadow,
         backgroundColor: colors.white || '#fff',
         borderRadius: 10,
-        marginHorizontal: 5,
+        // marginHorizontal: 5,
+        marginRight: 10,
         flex: 1,
         paddingHorizontal: 10,
         paddingVertical: 10,
-        marginVertical: 5
+        marginVertical: 5,
     },
     itemContainerSmall: {
         ...sharedStyles._styles(colors).shadow,
         backgroundColor: colors.white || '#fff',
-        height:200,
-        width:180,
+        height: 200,
+        width: 180,
         borderRadius: 10,
-        marginHorizontal: 5,
+        marginRight: 10,
+        // marginHorizontal: 5,
         flex: 1,
         // paddingHorizontal: 10,
         // paddingVertical: 10,
-        marginVertical: 5
+        marginVertical: 5,
     },
     image: {
         height: height,

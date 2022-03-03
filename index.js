@@ -9,7 +9,6 @@ import { Provider } from 'react-redux';
 import { store, persistor } from './src/redux/store';
 import { PersistGate } from 'redux-persist/integration/react';
 
-Text.defaultProps = Text.defaultProps || {};
 
 ScrollView.defaultProps = ScrollView.defaultProps || {};
 FlatList.defaultProps = FlatList.defaultProps || {};
@@ -17,7 +16,7 @@ FlatList.defaultProps = FlatList.defaultProps || {};
 Animated.FlatList.defaultProps = Animated.FlatList.defaultProps || {};
 Animated.ScrollView.defaultProps = Animated.ScrollView.defaultProps || {};
 
-
+Text.defaultProps = Text.defaultProps || {};
 Text.defaultProps.allowFontScaling = false;
 
 Animated.FlatList.defaultProps.showsHorizontalScrollIndicator = false;

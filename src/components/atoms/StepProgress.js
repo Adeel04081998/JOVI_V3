@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native'
+import { Platform, StyleSheet } from 'react-native'
 import React from 'react'
 import constants from '../../res/constants'
 import { initColors } from '../../res/colors';
@@ -37,9 +37,9 @@ export default ({ maxHighlight = 0 }) => {
             <View style={{ flexDirection: "row", alignItems: "center", paddingVertical: 5 }}>
                 {
                     DATA.map((p, i) => (
-                        <React.Fragment key={`progress-key-${i}`}>
+                        <React.Fragment key={`progress-key-${i}`} >
                             <View style={{ width: (width + (CIRCLE_HEIGHT * 2)) / 7 }} />
-                            <Text style={{ color: highlight(i), fontSize: 12, paddingLeft: 2 }} fontFamily="PoppinsRegular">{StrEnum[i]}</Text>
+                            <Text style={{ color: highlight(i), fontSize: 12, paddingLeft: Platform.OS === 'android' ? 0 : 2 }} fontFamily="PoppinsRegular">{StrEnum[i]}</Text>
                         </React.Fragment>
                     ))
                 }

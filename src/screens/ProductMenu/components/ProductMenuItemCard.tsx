@@ -1,5 +1,5 @@
 import React from 'react';
-import { GestureResponderEvent, ImageSourcePropType, ImageBackground as RNImageBackground, ImageURISource, StyleSheet } from 'react-native';
+import { GestureResponderEvent, ImageSourcePropType, ImageBackground as RNImageBackground, ImageURISource, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import svgs from '../../../assets/svgs';
 import ImageBackground from '../../../components/atoms/ImageBackground';
@@ -26,6 +26,7 @@ interface ProductMenuItemCardItem {
     discountedPrice?: any,
     name: string,
     discountType?: any,
+    /** PERCENTAGE OF DISCOUNT  */
     discountAmount?: any,
 }
 interface Props {
@@ -40,9 +41,11 @@ interface Props {
 
     seeAll?: boolean;
     additionalCount?: number;
+    itemContainerStyle?: StyleProp<ViewStyle>;
 }
 
 const defaultProps = {
+    itemContainerStyle: {},
     updateQuantity: undefined,
     onPress: undefined,
     disabled: false,
@@ -58,9 +61,9 @@ const ProductMenuItemCard = (props: Props) => {
     const itemStyles = itemStylesFunc(props.colors, ITEM_IMAGE_SIZE);
 
     return (
-        <TouchableScale wait={0} style={{
+        <TouchableScale wait={0} style={[{
             ...itemStyles.primaryContainer,
-        }} key={uniqueKeyExtractor()}
+        }, props.itemContainerStyle]} key={uniqueKeyExtractor()}
             onPress={(event) => {
                 props.onPress && props.onPress(event);
             }}
@@ -141,26 +144,40 @@ const ProductMenuItemCard = (props: Props) => {
                     {/* ****************** End of NAME/TITLE ****************** */}
 
 
-                    {/* ****************** Start of PRICE & DISCOUNT ****************** */}
+                    {/* ****************** Start of MAIN PRICE  ****************** */}
                     <Text fontFamily='PoppinsBold' style={itemStyles.price}>{renderPrice(props.item.discountedPrice)}</Text>
 
-                    {/* ****************** End of PRICE & DISCOUNT ****************** */}
+                    {/* ****************** End of MAIN PRICE  ****************** */}
 
 
                     <View style={{ flexDirection: "row", alignItems: "center", }}>
 
-                        {(VALIDATION_CHECK(props.item.price) && parseInt(`${props.item.price}`) > 0) &&
-                            <Text style={itemStyles.discountPrice}>{renderPrice(props.item.price)}</Text>
+
+                        {/* ****************** Start of ACTUAL PRICE BEFORE DISCOUNT ****************** */}
+                        {(VALIDATION_CHECK(props.item.price) && parseInt(`${props.item.price}`) > 0 && parseInt(`${props.item.discountType}`) !== parseInt(`${ENUMS.PROMO_VALUE_TYPE.Empty.value}`)) &&
+                            <Text style={{
+                                ...itemStyles.discountPrice,
+                                ...parseInt(`${props.item.discountType}`) !== parseInt(`${ENUMS.PROMO_VALUE_TYPE.Empty.value}`) && {
+                                    maxWidth: "50%",
+                                }
+                            }} numberOfLines={1}>{renderPrice(props.item.price)}</Text>
                         }
+
+                        {/* ****************** End of ACTUAL PRICE BEFORE DISCOUNT ****************** */}
+
 
 
                         {/* ****************** Start of DISCOUNT TYPE ****************** */}
                         {parseInt(`${props.item.discountType}`) !== parseInt(`${ENUMS.PROMO_VALUE_TYPE.Empty.value}`) &&
                             <View style={itemStyles.discountTypeContainer}>
-                                {parseInt(`${props.item.discountType}`) === parseInt(`${ENUMS.PROMO_VALUE_TYPE.Percentage.value}`) &&
-                                    <SvgXml xml={svgs.discount(props.colors.primary)} height={15} width={15} style={itemStyles.discountTypeIcon} />
+                                {parseInt(`${props.item.discountType}`) === parseInt(`${ENUMS.PROMO_VALUE_TYPE.Percentage.value}`) && (
+                                    <>
+                                        <SvgXml xml={svgs.discount(props.colors.primary)} height={15} width={15} style={itemStyles.discountTypeIcon} />
+                                        <Text style={itemStyles.discountTypeText} numberOfLines={1}>{`${renderPrice(props.item.discountAmount, '-', '%', /[^\d.]/g)}`}</Text>
+                                    </>
+                                )
+
                                 }
-                                <Text style={itemStyles.discountTypeText}>{`${renderPrice(props.item.discountAmount, '-', '%', /[^\d.]/g)}`}</Text>
                             </View>
                         }
 
@@ -177,7 +194,7 @@ const ProductMenuItemCard = (props: Props) => {
 };//end of ProductMenuItemCard
 
 ProductMenuItemCard.defaultProps = defaultProps;
-export default React.memo(ProductMenuItemCard);
+export default ProductMenuItemCard; // React.memo(ProductMenuItemCard, (n, p) => n === p);
 
 
 export const itemStylesFunc = (colors: typeof initColors, ITEM_IMAGE_SIZE: number) => StyleSheet.create({
@@ -185,6 +202,10 @@ export const itemStylesFunc = (colors: typeof initColors, ITEM_IMAGE_SIZE: numbe
         color: colors.primary,
         fontSize: 10,
         maxWidth: "90%",
+    },
+    discountTypeText1: {
+        color: colors.primary,
+        fontSize: 10,
     },
     discountTypeIcon: { marginRight: 4, },
     discountTypeContainer: {
@@ -203,11 +224,10 @@ export const itemStylesFunc = (colors: typeof initColors, ITEM_IMAGE_SIZE: numbe
     discountPrice: {
         color: "#C1C1C1",
         fontSize: 12,
-        maxWidth: "50%",
+        maxWidth: "100%",
         textDecorationLine: "line-through",
         textDecorationColor: '#C1C1C1',
-        textAlign: "right"
-        ,
+        textAlign: "center",
     },
     price: {
         color: "#272727",
@@ -238,7 +258,15 @@ export const itemStylesFunc = (colors: typeof initColors, ITEM_IMAGE_SIZE: numbe
         borderWidth: 0,
         borderColor: '#C0C0C0',
         borderRadius: 8,
-        ...AppStyles.shadow,
+        // shadowColor: "#000",
+        // shadowOffset: {
+        //     width: 0,
+        //     height: 1,
+        // },
+        // shadowOpacity: 0.20,
+        // shadowRadius: 1.41,
+
+        // elevation: 2,
         backgroundColor: colors.white,
     },
     imageContainer: {

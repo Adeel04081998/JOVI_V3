@@ -34,7 +34,7 @@ const defaultProps = {
 
 // #endregion :: INTERFACE END's FROM HERE 
 
-const INDICATOR_WIDTH_MINUS = 0;
+const INDICATOR_WIDTH_MINUS = 0.8;
 
 const RestaurantProductMenuScrollable = (props: Props) => {
     const HEADER_HEIGHT = props?.headerHeight ?? defaultProps.headerHeight;
@@ -61,7 +61,7 @@ const RestaurantProductMenuScrollable = (props: Props) => {
         layout.anim = false;
         layout.id = new Date().getTime();
         if (widthValue._value === 0) {
-            widthValue.setValue(layout.width - INDICATOR_WIDTH_MINUS);
+            widthValue.setValue(layout.width);
         }
 
         let index = tabs.current.findIndex((stab: any) => stab.categoryID === categoryID);
@@ -96,6 +96,20 @@ const RestaurantProductMenuScrollable = (props: Props) => {
         const content = tabs.current.find((singleTab: any) => singleTab.categoryID === categoryID);
         currentTabRef.current = content;
         scrollRef.current && scrollRef.current.scrollTo({ y: content.yy + 2 })
+
+        Animated.timing(value, {
+            toValue: content.x,
+            duration: 200,
+            easing: Easing.linear,
+            useNativeDriver: true
+        }).start();
+
+        Animated.timing(widthValue, {
+            toValue: content.width,
+            duration: 100,
+            useNativeDriver: false
+        }).start()
+
     }
 
     // #endregion :: ON HORIZONTAL ITEM PRESS  END's FROM HERE 
@@ -127,7 +141,7 @@ const RestaurantProductMenuScrollable = (props: Props) => {
                 useNativeDriver: true
             }).start();
             Animated.timing(widthValue, {
-                toValue: tab.width - INDICATOR_WIDTH_MINUS,
+                toValue: tab.width,
                 duration: 100,
                 useNativeDriver: false
             }).start()
@@ -208,10 +222,14 @@ const RestaurantProductMenuScrollable = (props: Props) => {
                         height: 45,
                         borderRadius: 26,
                         top: -44,
+                        alignItems: "center",
+                        justifyContent: "center",
                         // overflow: "hidden",
                     }]}>
-                        <Text style={[style.tab, {
-                            color: 'white'
+                        <Text style={[{
+                            fontSize: 12,
+                            textAlign: "center",
+                            color: 'white',
                         }]} >{currentTabState?.categoryName ?? currentTabState?.name}</Text>
                     </Animated.View>
                 </Animated.View>
@@ -231,10 +249,15 @@ const RestaurantProductMenuScrollable = (props: Props) => {
 
                     {/* <Animated.View style={[{
                             transform: [{ translateX: value }],
+
                         }]}>
                             <Animated.View style={[style.indicator, {
                                 width: widthValue,
+                                left: widthValue._value * 0.15,
+                                // marginRight: widthValue._value * 0.5,
                                 overflow: "hidden",
+                                alignItems: "center",
+                                justifyContent: "center",
                             }]}>
                             </Animated.View>
                         </Animated.View> */}
@@ -258,7 +281,7 @@ const RestaurantProductMenuScrollable = (props: Props) => {
 
                 {props.renderAboveItems && props.renderAboveItems()}
 
-                <View style={{ paddingHorizontal: 0, backgroundColor: "white" }}>
+                <View style={{ paddingHorizontal: 0,paddingBottom:40}}>
                     {props.data && props.data.map((food: any, parentIndex: number) => {
                         return (
                             <View

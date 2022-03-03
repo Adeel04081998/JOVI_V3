@@ -27,6 +27,7 @@ const rootReducer = combineReducers({
     cartReducer: persistReducer(persistCartConfig, Reducers.cartReducer),
     modalReducer: Reducers.modalReducer,
     fcmReducer: Reducers.fcmReducer,
+    vendorDashboardCategoryIDReducer: Reducers.vendorDashboardCategoryIDReducer,
     // cartReducer: Reducers.cartReducer,
 });
 

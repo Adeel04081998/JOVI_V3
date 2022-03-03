@@ -121,6 +121,8 @@ const CustomHeader = (props: Props) => {
 
     // },[cartReducer.itemsCount])
 
+    
+
     const _renderFinalDestination = () => {
         return props.hideFinalDestination ? <></> : (
             <TouchableOpacity style={{ alignItems: "center" }} activeOpacity={0.5}
@@ -212,6 +214,7 @@ const CustomHeader = (props: Props) => {
                         } : {
                             onPress: () => {
                                 if(IS_CART_ICON && cartReducer.itemsCount > 0){
+                                    // NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name)
                                     NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name)
                                 }
 },
@@ -224,7 +227,7 @@ const CustomHeader = (props: Props) => {
                                 color={props.rightIconColor || props.defaultColor}
                                 size={props.rightIconSize} />
                         }
-                        {cartReducer.itemsCount > 0  && _renderDot(cartReducer.itemsCount, props.rightDotStyle, props.rightDotTextStyle)}
+                        {cartReducer.itemsCount > 0  &&  IS_CART_ICON && _renderDot(cartReducer.itemsCount, props.rightDotStyle, props.rightDotTextStyle)}
                         {/* {props.rightDot && _renderDot(props.rightDot, props.rightDotStyle, props.rightDotTextStyle)} */}
                     </TouchableScale>
                 }

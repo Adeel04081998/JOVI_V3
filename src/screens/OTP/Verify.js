@@ -1,5 +1,5 @@
 import React, { createRef, useEffect, useRef, useState } from 'react';
-import { Appearance, Keyboard, TextInput } from 'react-native';
+import { Appearance, Keyboard, Platform, TextInput } from 'react-native';
 import { useDispatch } from 'react-redux';
 import Button from '../../components/molecules/Button';
 import Text from '../../components/atoms/Text';
@@ -43,6 +43,7 @@ export default (props) => {
     const inputRef = useRef([]);
     const _requestAgainSmsRef = useRef(true)
     const [requestAgain, setRequestAgain] = React.useState(true);
+    const isRequestSent = React.useRef(false);
 
 
     const dispatch = useDispatch()
@@ -71,11 +72,12 @@ export default (props) => {
         }
     }, [runInterval])
     React.useEffect(() => {
-        Sms.requestReadSmsPermission()
-            .then(async res => {
-                _onSmsListener();
-            })
-            .catch(err => console.log("err...", err));
+        _onSmsListener()
+        // Sms.requestReadSmsPermission()
+        //     .then(async res => {
+        //         _onSmsListener();
+        //     })
+        //     .catch(err => console.log("err...", err));
         return () => {
             resetInterval()
             RNOtpVerify.removeListener()
@@ -98,41 +100,45 @@ export default (props) => {
     useEffect(_customEffect, []);
 
 
-
-    const verifyOtpToServer = async (otpCode = inputs.join('')) => {
-        const payload = {
-            "code": parseInt(otpCode),
-            "phoneNumber": params.payload.phoneNumber,
-            "userType": 1,
-            "imei": sharedGetDeviceInfo().deviceID,
-            "smartPhone": sharedGetDeviceInfo().model,
-            "hardwareID": sharedGetDeviceInfo().deviceID
-        };
-        postRequest(Endpoints.OTP_VERIFY, payload, res => {
-            const { statusCode, message, otpResult } = res.data;
-            if (statusCode === 417) return Toast.error(message);
-            resetInterval()
-            try {
-                dispatch(ReduxAction.setUserAction({ ...otpResult, ...params.payload, isLoggedIn: otpResult.newUser ? false : true, introScreenViewed: otpResult.newUser ? false : true }))
-                if (otpResult.newUser) {
-                    NavigationService.NavigationActions.stack_actions.replace(ROUTES.AUTH_ROUTES.SignUp.screen_name, {}, ROUTES.AUTH_ROUTES.VerifyOTP.screen_name)
+    const verifyOtpToServer = async (otpCode = inputs.join(''), tempStr) => {
+        if (!isRequestSent.current) {
+            isRequestSent.current = true;
+            const payload = {
+                "code": parseInt(otpCode),
+                "phoneNumber": params.payload.phoneNumber,
+                "userType": 1,
+                "imei": sharedGetDeviceInfo().deviceID,
+                "smartPhone": sharedGetDeviceInfo().model,
+                "hardwareID": sharedGetDeviceInfo().deviceID
+            };
+            postRequest(Endpoints.OTP_VERIFY, payload, res => {
+                const { statusCode, message, otpResult } = res.data;
+                if (statusCode === 417) return Toast.error(message);
+                resetInterval()
+                try {
+                    dispatch(ReduxAction.setUserAction({ ...otpResult, ...params.payload, isLoggedIn: otpResult.newUser ? false : true, introScreenViewed: otpResult.newUser ? false : true }))
+                    if (otpResult.newUser) {
+                        NavigationService.NavigationActions.stack_actions.replace(ROUTES.AUTH_ROUTES.SignUp.screen_name, {}, ROUTES.AUTH_ROUTES.VerifyOTP.screen_name)
+                        // NavigationService.NavigationActions.common_actions.reset(null,[{name: ROUTES.AUTH_ROUTES.SignUp.screen_name}])
+                    }
                 }
-            }
-            catch (error) {
-                console.log('[verifyOtpToServer].error', error);
-            }
+                catch (error) {
+                    console.log('[verifyOtpToServer].error', error);
+                }
 
-        },
-            err => {
-                setInputs(["", "", "", ""])
-                setTypedCode('')
-                sharedExceptionHandler(err)
-                // resetInterval()
             },
-            {},
-            true,
-            (loader) => setIsLoading(loader)
-        );
+                err => {
+                    isRequestSent.current = false;
+                    setInputs(["", "", "", ""])
+                    setTypedCode('')
+                    sharedExceptionHandler(err)
+                    // resetInterval()
+                },
+                {},
+                true,
+                (loader) => setIsLoading(loader)
+            );
+        } else console.log(" isRequestSent.current", isRequestSent.current);
     };
     const resendOtp = () => {
         setRequestAgain(true)
@@ -177,7 +183,7 @@ export default (props) => {
                     let parsedValue = parseInt(stringify[0]);
                     let commaSplittedArray = stringify[0].split('');
                     setInputs(commaSplittedArray)
-                    if (commaSplittedArray.length === 4) verifyOtpToServer(stringify[0])
+                    if (commaSplittedArray.length === 4) verifyOtpToServer(stringify[0], 'from sms listener if')
                     RNOtpVerify.removeListener()
 
                     // SmsRetriever.removeSmsListener();
@@ -211,7 +217,7 @@ export default (props) => {
                 setInputs(arrRef.current)
                 let tempArr = arrRef.current.toString()
                 let tempStr = tempArr.replace(/,/g, '')
-                verifyOtpToServer(tempStr);
+                verifyOtpToServer(tempStr, 'from focus next field');
             }
 
         }
@@ -225,7 +231,7 @@ export default (props) => {
                 arr.push(val[index])
             }
             setInputs(arr)
-            verifyOtpToServer(val);
+            verifyOtpToServer(val, 'from first if');
         }
         else {
             val = val.trim();
@@ -240,12 +246,12 @@ export default (props) => {
             setTypedCode(newVal)
             setInputs(inputs)
             if (newVal.length === 4) {
-                verifyOtpToServer(newVal);
+                verifyOtpToServer(newVal, 'from second if');
             }
         }
     };
     return <SafeAreaView style={{ flex: 1, backgroundColor: "#F6F5FA" }}>
-        <View style={{marginVertical:30}} >
+        <View style={{ marginVertical: 30 }} >
             <Text style={{ textAlign: "center", color: '#000', fontWeight: 'bold', paddingVertical: 10 }}  >Verify Phone Number</Text>
             <Text style={{ textAlign: "center", color: '#7D7D7D' }}>{`Code is sent to ${cellNo}`}</Text>
         </View>

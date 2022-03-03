@@ -38,7 +38,7 @@ export default (props) => {
     /******************************************* START OF VARIABLE INITIALIZATION **********************************/
 
     console.log('props ==>>>', props);
-    const { showContinueBtn = false, selectFinalDestination = false,newFinalDestination=null, showCurrentLocationBtn = true, showMarker = false, showDirections = true } = props;
+    const { showContinueBtn = false, selectFinalDestination = false, newFinalDestination = null, showCurrentLocationBtn = true, showMarker = false, showDirections = true } = props;
 
     const HEIGHT = constants.window_dimensions.height;
     const WIDTH = constants.window_dimensions.width;
@@ -56,13 +56,91 @@ export default (props) => {
     const [ready, setMapReady] = useState(false)
     const [region, setRegion] = useState(sharedStartingRegionPK)
 
-    const styles = mapStyles(colors, HEIGHT, WIDTH, props)
-
+    const styles = mapStyles(colors, HEIGHT, WIDTH, props);
+    const { cartReducer, userReducer } = useSelector(store => store);
+    const pitstops = [...cartReducer.pitstops, { ...userReducer.finalDestObj, isFinalDestination: true }];
 
     /******************************************* END OF VARIABLE INITIALIZATION **********************************/
 
 
     /******************************************* START OF FUNCTIONS **********************************/
+
+    const _Direction = () => {
+        console.log("[_Direction].pitstops", pitstops);
+        if (showDirections) {
+            return (pitstops || []).map((pitstop, index) => {
+                return <View>
+                    <Marker identifier={`marker ${index + 1}`} key={`marker-key${index + 1}`} coordinate={pitstop} anchor={{ x: 0.46, y: 0.7 }}>
+                        {
+                            pitstop.isFinalDestination ? <View>
+                                <SvgXml xml={FINAL_DESTINATION_SVG} height={35} width={35} />
+                            </View>
+                                :
+                                <View style={{
+                                    backgroundColor: "#fff",
+                                    borderRadius: 10,
+                                    width: 30,
+                                    height: 30,
+                                    shadowColor: '#7359BE',
+                                    shadowOffset: {
+                                        width: 0,
+                                        height: 2,
+                                    },
+                                    borderWidth: 2,
+                                    shadowOpacity: 0.25,
+                                    shadowRadius: 3.84,
+                                    elevation: 5,
+                                    borderColor: initColors.primary
+                                }}>
+                                    <Text style={{
+                                        paddingVertical: 2.5,
+                                        fontWeight: "bold",
+                                        alignSelf: "center",
+                                        fontSize: 16,
+                                        color: initColors.primary
+                                    }}>{index + 1}</Text>
+                                </View>
+                        }
+                    </Marker>
+                    <Directions
+                        key={index}
+                        {
+                        ...pitstop.isFinalDestination ? {
+                            origin: pitstops[index - 1],
+                            destination: { ...userReducer.finalDestObj }
+                        } : {
+                            origin: pitstops[index],
+                            destination: pitstops[index + 1]
+                        }
+                        }
+                        apikey={env.GOOGLE_API_KEY}
+                        strokeWidth={3.5}
+                        strokeColor={initColors.primary}
+                        optimizeWaypoints={false}
+                        mode="DRIVING"
+                        // strokeColors={["#000"]}
+                        // origin={origin}
+                        // destination={destination}
+                        // waypoints={[origin, destination]}
+                        onStart={(param) => console.log("param", param)}
+                        onReady={(param) => console.log("param", param)}
+                        onError={(error) => console.log("[Directions].error", error)}
+                    />
+                </View>
+            })
+        } else return null;
+    }
+
+    const FinalDestination = () => {
+        if (selectFinalDestination) return <View>
+            <Marker identifier={`marker `} key={`marker-key`} coordinate={{ ...(newFinalDestination ?? userReducer.finalDestObj) }} anchor={{ x: 0.46, y: 0.7 }}>
+                <View>
+                    <SvgXml xml={FINAL_DESTINATION_SVG} height={35} width={35} />
+                </View>
+            </Marker>
+        </View>
+        else return null;
+    }
 
 
     const getCurrentPosition = () => {
@@ -155,12 +233,8 @@ export default (props) => {
 
 
     const renderMap = () => {
-        const { cartReducer, userReducer } = useSelector(store => store);
-        console.log("[renderMap].cartReducer", cartReducer);
-        console.log("[renderMap].userReducer", userReducer);
-        const pitstops = [...cartReducer.pitstops, { ...userReducer.finalDestObj, isFinalDestination: true }];
-        const origin = { latitude: 33.6685534, longitude: 73.0727673 };
-        const destination = { latitude: 33.64770, longitude: 73.03891 };
+        // const origin = { latitude: 33.6685534, longitude: 73.0727673 };
+        // const destination = { latitude: 33.64770, longitude: 73.03891 };
         return (
 
             <MapView
@@ -185,86 +259,14 @@ export default (props) => {
                 {...props}
                 onLayout={(layout) => {
                     console.log("mapView.current", mapView.current.fitToCoordinates);
-                    if(!selectFinalDestination){
+                    if (!selectFinalDestination) {
                         mapView?.current?.fitToCoordinates(pitstops.map((_p, i) => ({ latitude: _p.latitude, longitude: _p.longitude })))
                     }
                 }}
 
             >
-                {
-                    selectFinalDestination ? <View>
-                        <Marker identifier={`marker `} key={`marker-key`} coordinate={{ ...(newFinalDestination ?? userReducer.finalDestObj) }} anchor={{ x: 0.46, y: 0.7 }}>
-                            <View>
-                                <SvgXml xml={FINAL_DESTINATION_SVG} height={35} width={35} />
-                            </View>
-                        </Marker>
-                    </View>
-                        : null
-                }
-                {!selectFinalDestination ?
-                    (pitstops || []).map((pitstop, index) => {
-                        return <View>
-                            <Marker identifier={`marker ${index + 1}`} key={`marker-key${index + 1}`} coordinate={pitstop} anchor={{ x: 0.46, y: 0.7 }}>
-                                {
-                                    pitstop.isFinalDestination ? <View>
-                                        <SvgXml xml={FINAL_DESTINATION_SVG} height={35} width={35} />
-                                    </View>
-                                        :
-                                        <View style={{
-                                            backgroundColor: "#fff",
-                                            borderRadius: 10,
-                                            width: 30,
-                                            height: 30,
-                                            shadowColor: '#7359BE',
-                                            shadowOffset: {
-                                                width: 0,
-                                                height: 2,
-                                            },
-                                            borderWidth: 2,
-                                            shadowOpacity: 0.25,
-                                            shadowRadius: 3.84,
-                                            elevation: 5,
-                                            borderColor: initColors.primary
-                                        }}>
-                                            <Text style={{
-                                                paddingVertical: 2.5,
-                                                fontWeight: "bold",
-                                                alignSelf: "center",
-                                                fontSize: 16,
-                                                color: initColors.primary
-                                            }}>{index + 1}</Text>
-                                        </View>
-                                }
-                            </Marker>
-                            <Directions
-                                key={index}
-                                {
-                                ...pitstop.isFinalDestination ? {
-                                    origin: pitstops[index - 1],
-                                    destination: { ...userReducer.finalDestObj }
-                                } : {
-                                    origin: pitstops[index],
-                                    destination: pitstops[index + 1]
-                                }
-                                }
-                                apikey={env.GOOGLE_API_KEY}
-                                strokeWidth={3.5}
-                                strokeColor={initColors.primary}
-                                optimizeWaypoints={false}
-                                mode="DRIVING"
-                                // strokeColors={["#000"]}
-                                // origin={origin}
-                                // destination={destination}
-                                // waypoints={[origin, destination]}
-                                onStart={(param) => console.log("param", param)}
-                                onReady={(param) => console.log("param", param)}
-                                onError={(error) => console.log("[Directions].error", error)}
-                            />
-                        </View>
-                    })
-                    :
-                    null
-                }
+                <FinalDestination />
+                <_Direction />
             </MapView>
         )
     }
@@ -285,7 +287,7 @@ export default (props) => {
     const renderCurrentLocationButton = () => {
         if (showCurrentLocationBtn) {
             return (
-                <TouchableOpacity onPress={getCurrentPosition} style={{ bottom: HEIGHT * 0.1, position: "absolute", right: 10, zIndex: 6 }} >
+                <TouchableOpacity onPress={getCurrentPosition} style={{ bottom: HEIGHT * 0.03, position: "absolute", right: 20, zIndex: 6 }} >
                     <View style={styles.headerLeftIconView} >
                         <SvgXml style={{ alignSelf: 'center', marginTop: 1.5 }} xml={svgs.locateMeIcon()} height={18} width={18} />
                     </View>

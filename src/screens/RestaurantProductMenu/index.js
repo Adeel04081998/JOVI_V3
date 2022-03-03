@@ -22,6 +22,7 @@ import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
+import {  useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const WINDOW_HEIGHT = constants.window_dimensions.height;
 const PITSTOPS = {
@@ -37,6 +38,7 @@ LogBox.ignoreLogs([
 const SCROLL_HEADER_HEIGHT_LINE = 60;
 
 export default ({ navigation, route }) => {
+    const insets = useSafeAreaInsets();
     const pitstopType = route?.params?.pitstopType ?? 4;
     const colors = theme.getTheme(GV.THEME_VALUES[lodash.invert(PITSTOPS)[pitstopType]], Appearance.getColorScheme() === "dark");
     const styles = stylesFunc(colors);
@@ -62,9 +64,10 @@ export default ({ navigation, route }) => {
         extrapolate: "clamp",
         useNativeDriver: true
     });
+
     const inputRange = headerHeight - ((SCROLL_HEADER_HEIGHT_LINE * 2) + 20);
     const tabTop = animScroll.interpolate({
-        inputRange: [0,inputRange>0?inputRange:200 ],
+        inputRange: [0, inputRange > 0 ? inputRange : inputRange * -1],
         outputRange: [headerHeight + 20, SCROLL_HEADER_HEIGHT_LINE],
         extrapolate: "clamp",
         useNativeDriver: true
@@ -183,7 +186,7 @@ export default ({ navigation, route }) => {
     };
 
     return (
-        <SafeAreaView style={{ flex: 1, top: getStatusBarHeight(true), backgroundColor: colors.white, }}>
+        <SafeAreaView style={{ flex: 1, top: getStatusBarHeight(true) }}>
             <StatusBar backgroundColor={colors.white} />
             <Animated.View style={{ position: 'absolute', top: 0, zIndex: 9999, }}>
                 <CustomHeader
@@ -192,7 +195,7 @@ export default ({ navigation, route }) => {
                     titleStyle={{
                         color: colors.primary,
                         opacity: animScroll.interpolate({
-                            inputRange: [headerHeight - 100, headerHeight],
+                            inputRange: [0, headerHeight],
                             outputRange: [0, 1]
                         }),
                     }}
@@ -256,7 +259,7 @@ export default ({ navigation, route }) => {
                 renderSectionHeader={(item, index) => {
                     if (item?.isTopDeal ?? false) return null;
                     return (
-                        <View style={[sectionHeaderStyles.primaryContainer], { backgroundColor: colors.screen_background, paddingHorizontal: 10 }}>
+                        <View style={[sectionHeaderStyles.primaryContainer, { backgroundColor: colors.screen_background, paddingHorizontal: 10 }]}>
                             <Text
                                 fontFamily='PoppinsMedium'
                                 style={sectionHeaderStyles.text}>{item.categoryName}</Text>
@@ -265,6 +268,7 @@ export default ({ navigation, route }) => {
                     )
                 }}
                 renderItem={(parentItem, item, parentIndex, index) => {
+                    const price=(item?.hasOptions ?? false) ?renderPrice(item.price, 'from Rs.') : renderPrice(`${item.price}`);
                     if (parentItem?.isTopDeal ?? false) {
                         return (
                             <View style={{ backgroundColor: colors.screen_background }}>
@@ -279,8 +283,8 @@ export default ({ navigation, route }) => {
                                         itemID: item.itemID,
                                         image: { uri: renderFile(item.image) },
                                         description: item.description,
-                                        title: item.name,
-                                        price: renderPrice(`${item.price}`)
+                                        title: item.name, 
+                                        price: price,
                                     }} />
 
                             </View>
@@ -288,7 +292,7 @@ export default ({ navigation, route }) => {
                         )
                     }
                     return (
-                        <TouchableOpacity onPress={() => onItemPress(item)} style={[itemStyles.primaryContainer2], { backgroundColor: colors.screen_background, paddingHorizontal: 10 }}>
+                        <TouchableOpacity onPress={() => onItemPress(item)} style={[itemStyles.primaryContainer2, { backgroundColor: colors.screen_background, paddingHorizontal: 10 }]}>
                             {index !== 0 &&
                                 <View style={itemStyles.seperator} />
                             }
@@ -297,15 +301,15 @@ export default ({ navigation, route }) => {
 
                                 <View style={itemStyles.detailContainer}>
                                     {VALIDATION_CHECK(item.name) &&
-                                        <Text fontFamily='PoppinsBold' style={itemStyles.name}>{`${item.name}`}</Text>
+                                        <Text fontFamily='PoppinsBold' style={itemStyles.name} numberOfLines={1}>{`${item.name}`}</Text>
                                     }
 
                                     {VALIDATION_CHECK(item.description) &&
-                                        <Text style={itemStyles.description}>{`${item.description}`}</Text>
+                                        <Text style={itemStyles.description} numberOfLines={2}>{`${item.description}`}</Text>
                                     }
 
                                     {VALIDATION_CHECK(item.price) &&
-                                        <Text fontFamily='PoppinsMedium' style={itemStyles.price}>{renderPrice(item.price, 'from Rs.')}</Text>
+                                        <Text fontFamily='PoppinsMedium' style={itemStyles.price}>{price}</Text>
                                     }
                                 </View>
 
@@ -326,8 +330,7 @@ export default ({ navigation, route }) => {
                 )}
             />
 
-            <GotoCartButton colors={colors} onPress={() => { }} />
-
+            <GotoCartButton colors={colors} onPress={() => { }} bottom={insets.bottom > 0 ? insets.bottom : getStatusBarHeight()*0.01} />
         </SafeAreaView>
     )
 };//end of EXPORT DEFAULT
