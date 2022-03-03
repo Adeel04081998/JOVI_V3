@@ -436,7 +436,8 @@ export const sharedAddUpdatePitstop = (
     swappedArray = [],
     forceAddNewItem = false,
     fromCart = false,
-    cb = () => { }
+    cb = () => { },
+    forceUpdate = false,
 ) => {
     console.log("pitstopDetails", pitstopDetails);
     if (false) return dispatch(ReduxActionss.clearCartAction({}));
@@ -522,6 +523,8 @@ export const sharedAddUpdatePitstop = (
     }
     console.log('[TO CALCULATE PITSTOPS]', pitstops);
     cb();
+    
+    cartReducer.forceUpdate = forceUpdate;
     sharedCalculateCartTotals(pitstops, cartReducer)
 
 };

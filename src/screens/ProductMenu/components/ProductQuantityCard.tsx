@@ -1,5 +1,7 @@
+import { useIsFocused } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet } from 'react-native';
+import { useSelector } from 'react-redux';
 import Text from '../../../components/atoms/Text';
 import TouchableOpacity from '../../../components/atoms/TouchableOpacity';
 import VectorIcon from '../../../components/atoms/VectorIcon';
@@ -16,6 +18,8 @@ interface Props {
     initialQuantity?: string | number;
     outOfStock?: boolean;
     outOfStockText?: string;
+    pitstopItemID: number | string;
+    marketID: number | string;
 }
 
 const defaultProps = {
@@ -30,8 +34,8 @@ const defaultProps = {
 
 const ProductQuantityCard = (props: Props) => {
     const ITEM_SIZE = props?.size ?? defaultProps.size;
-
-
+    const cartReducer = useSelector((store: any) => { return store.cartReducer; });
+    const isFocused = useIsFocused();
     const colors = props.colors;
     const styles = stylesFunc(colors, ITEM_SIZE);
 
@@ -57,6 +61,25 @@ const ProductQuantityCard = (props: Props) => {
         }, 800);
 
     }, [state.quantity])
+
+    React.useEffect(() => {
+        const forceUpdate = cartReducer.pitstops.length < 1 ? true : cartReducer?.forceUpdate ?? false;
+        if ((!isFocused && state.quantity > 0) || forceUpdate) {
+            const pitstops = cartReducer.pitstops;
+            let updatedQuantity = 0;//state.quantity;
+
+            const currentPitstop = pitstops.find((item: any) => `${item.pitstopID}` === `${props.marketID}`);
+            (currentPitstop?.checkOutItemsListVM ?? []).map((item: any) => {
+                if (`${item["pitStopItemID"]}` === `${props.pitstopItemID}`) {
+                    updatedQuantity = item.quantity;
+                }
+            });
+            if ((updatedQuantity < 1)) {
+                skipEffect.current = true;
+            }
+            setState(pre => ({ ...pre, quantity: updatedQuantity }));
+        }
+    }, [cartReducer]);
 
 
 
