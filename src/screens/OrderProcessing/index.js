@@ -15,18 +15,21 @@ import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import { stylesFunc } from './styles';
 import { orderProcessingDummyData } from './StaticData';
 import AnimatedLottieView from 'lottie-react-native';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ROUTES from '../../navigations/ROUTES';
 import NavigationService from '../../navigations/NavigationService';
+import actions from '../../redux/actions';
 
 const DOUBLE_SPACING = constants.spacing_horizontal + 6;
 const IMAGE_SIZE = constants.window_dimensions.width * 0.3;
 
 export default ({ navigation, route }) => {
 
-    // #region :: STYLES & THEME START's FROM HERE 
     const pitstopType = route?.params?.pitstopType ?? PITSTOP_TYPES.JOVI;
+    const fcmReducer = useSelector(store => store.fcmReducer);
+    const dispatch = useDispatch();
     const orderIDParam = route?.params?.orderID ?? 0;
+    // #region :: STYLES & THEME START's FROM HERE 
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]], Appearance.getColorScheme() === "dark");
 
     const styles = stylesFunc(colors);
@@ -77,50 +80,52 @@ export default ({ navigation, route }) => {
             }
         });
     }
+    const goToHome = () => {
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
+    }
+    const orderCancelledOrCompleted = () => {
+        goToHome();
+    }
     React.useEffect(() => {
         fetchOrderDetails();
-        // let pitstopDataArr = orderProcessingDummyData.data.order.pitStopsList.slice(0, orderProcessingDummyData.data.order.pitStopsList.length - 1);
-
-        // pitstopDataArr = pitstopDataArr.map(e => {
-        //     const ptItemData = [];
-        //     if (e.pitstopType === PITSTOP_TYPES.SUPER_MARKET || e.pitstopType === PITSTOP_TYPES.RESTAURANT) {
-        //         //RESTURANT AND SUPERMARKET
-        //         (e?.jobItemsListViewModel ?? []).map((f, index) => {
-        //             ptItemData.push({
-        //                 id: e?.jobItemID ?? index,
-        //                 title: f?.productItemName ?? '',
-        //                 value: f?.price ?? '',
-        //             })
-        //             return
-        //         })
-        //     } else {
-        //         //JOVI JOB
-        //         ptItemData.push({
-        //             id: 1,
-        //             title: e?.description ?? '',
-        //             value: e?.jobAmount ?? '',
-        //         });
-
-        //     }
-        //     return {
-        //         ...e,
-        //         data: ptItemData,
-        //     }
-        // });
-
-
-
-        // updateQuery({
-        //     data: {
-        //         ...orderProcessingDummyData.data.order,
-        //         finalDestination: orderProcessingDummyData.data.order.pitStopsList[orderProcessingDummyData.data.order.pitStopsList.length - 1],
-        //     },
-        //     pitstopData: pitstopDataArr,
-        //     isLoading: false,
-        // })
         return () => { };
     }, []);
-
+    React.useEffect(() => {
+        // console.log("[Order Processing].fcmReducer", fcmReducer);
+        // '1',  For job related notification
+        // '11',  For rider allocated related notification
+        // '12', For order cancelled by admin
+        // '13' For order cancelled by system
+        // '14' out of stock
+        // '18' replaced
+        const notificationTypes = ["1", "11", "12", "13", "14", "18"]
+        console.log('fcmReducer------OrderProcessing',fcmReducer);
+        const jobNotify = fcmReducer.notifications?.find(x => (x.data && (notificationTypes.includes(`${x.data.NotificationType}`))) ? x : false) ?? false;
+        if (jobNotify) {
+            console.log(`[jobNotify]`, jobNotify)
+            const { data, notifyClientID } = jobNotify;
+            // const results = sharedCheckNotificationExpiry(data.ExpiryDate);
+            // if (results.isSameOrBefore) {
+            if (data.NotificationType == notificationTypes[1] || data.NotificationType == notificationTypes[0]) {
+                // console.log("[Order Processing] Rider Assigned By Firbase...");
+                fetchOrderDetails();
+            }
+            if (data.NotificationType == notificationTypes[2] || data.NotificationType == notificationTypes[3]) {
+                // console.log("[Order Processing] Order Cancelled By Firbase...");
+                orderCancelledOrCompleted();
+            }
+            if (data.NotificationType == notificationTypes[4] || data.NotificationType == notificationTypes[5]) {
+                fetchOrderDetails()
+            }
+            else {
+               
+            }
+            //  To remove old notification
+            dispatch(actions.fcmAction({ notifyClientID }));
+        } else console.log("[Order Processing] Job notification not found!!");
+        return () => {
+        }
+    }, [fcmReducer]);
     if (state.isLoading) {
         return <View style={styles.primaryContainer}>
             {_renderHeader()}

@@ -150,7 +150,7 @@ export default () => {
                                 "amount": obj.itemPrice,
                                 //new Keys added for new create update order
                                 "actualPrice": obj.itemPrice,
-                                "Price": obj._itemPrice,
+                                "Price": obj._itemPrice || obj.itemPrice,
                                 "DiscountType": obj.discountType,
                                 "DiscountRate": obj.discountAmount,
                                 "DiscountedPrice": obj.itemPrice - obj._totalDiscount,
