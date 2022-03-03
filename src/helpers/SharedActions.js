@@ -674,3 +674,17 @@ export const sharedHandleInfinityScroll = (event) => {
     if (Math.ceil(mHeight + Y) >= cSize) return true;
     return false;
 }
+
+export const sharedGetDashboardCategoryIApi = () => {
+    getRequest(
+        Endpoints.GET_VENDOR_DASHBOARD_CATEGORY_ID,
+        res => {
+            dispatch(ReduxActions.setvendorDashboardCategoryIDAction(res.data?.vendorDashboardCatIDViewModelList ?? [] ));
+        },
+        err => {
+            sharedExceptionHandler(err);
+        },
+        {},
+        false,
+    );
+};
