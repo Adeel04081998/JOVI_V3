@@ -30,15 +30,21 @@ export const sharedExceptionHandler = err => {
     // console.log("[sharedExceptionHandler].err", err);
     const TOAST_SHOW = 3000;
     if (err) {
-        if (err.data && err.data.errors) {
-            var errorKeys = Object.keys(err.data.errors),
-                errorStr = "";
-            for (let index = 0; index < errorKeys.length; index++) {
-                if (index > 0) errorStr += err.data.errors[errorKeys[index]][0] + "\n"
-                else errorStr += err.data.errors[errorKeys[index]][0]
+        if (err.data) {
+            if (err.data.errors) {
+                var errorKeys = Object.keys(err.data.errors),
+                    errorStr = "";
+                for (let index = 0; index < errorKeys.length; index++) {
+                    if (index > 0) errorStr += err.data.errors[errorKeys[index]][0] + "\n"
+                    else errorStr += err.data.errors[errorKeys[index]][0]
+                }
+                Toast.error(errorStr, TOAST_SHOW);
+                return errorStr;
             }
-            Toast.error(errorStr, TOAST_SHOW);
-            return errorStr;
+            else if (err.data.message && typeof err.data.message === "string") {
+                Toast.error(err.data.message, TOAST_SHOW);
+                return err.data.message;
+            }
         }
         else if (err.errors && typeof err.errors === "object") {
             var errorKeys = Object.keys(err.errors),
@@ -302,7 +308,7 @@ export const renderPrice = (price, prefix = "Rs. ", suffix = "", reg = Regex.pri
     return parseInt(`${price}`) < 1 ? '' : suffix.length > 0 ? `${prefix} ${price}${suffix}` : `${prefix} ${price}`;
 }
 
-export const renderDistance = (distance, suffix = "m",prefix = "",  reg = Regex.distanceM,) => {
+export const renderDistance = (distance, suffix = "m", prefix = "", reg = Regex.distanceM,) => {
     prefix = `${prefix}`.trim();
     suffix = `${suffix}`.trim();
     distance = `${distance}`.trim().replace(reg, '').trim();
@@ -343,7 +349,8 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
         estimateTime = "",
         gst = 0,
         total = 0;
-    pitstops.map((_pitstop, index) => {
+    pitstops.map((pitstop, index) => {
+        let _pitstop = { ...pitstop }
         if (_pitstop.pitstopType === PITSTOP_TYPES.JOVI) {
             itemsCount += 1;
             _pitstop.individualPitstopTotal = _pitstop.estimatePrice || 0;
@@ -366,7 +373,7 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
 
                 gst += product._totalGst * product.quantity;
                 discount += product._totalDiscount * product.quantity;
-                _pitTotal = product._itemPrice * product.quantity;
+                _pitTotal += product._itemPrice * product.quantity;
                 subTotal += _pitTotal + discount;
                 itemsCount += product.quantity;
 
@@ -421,6 +428,7 @@ export const sharedAddUpdatePitstop = (
     fromCart = false,
     cb = () => { }
 ) => {
+    console.log("pitstopDetails", pitstopDetails);
     if (false) return dispatch(ReduxActionss.clearCartAction({}));
     const cartReducer = store.getState().cartReducer;
     if (swappedArray.length) return sharedCalculateCartTotals(swappedArray, cartReducer);
@@ -450,10 +458,10 @@ export const sharedAddUpdatePitstop = (
         console.log('[ITEM ID ACTION KEY]', actionKey);
         const pitstopIdx = pitstops.findIndex(x => x[pitstopActionKey] === upcomingVendorDetails[pitstopActionKey]); //(x.pitstopID === pitstopDetails.pitstopID || x.smid === pitstopDetails.smid))
         if (pitstopIdx !== -1) {
-            console.log('[PITSTOP FOUND]', pitstops[pitstopIdx]);
             let currentPitstopItems = pitstops[pitstopIdx].checkOutItemsListVM;
+            console.log('[PITSTOP FOUND]', upcomingItemDetails.selectedOptions, pitstops[pitstopIdx]);
             let itemIndex = currentPitstopItems.findIndex(item => item[actionKey] === upcomingItemDetails[actionKey]);
-            if (!fromCart && upcomingItemDetails.selectedOptions) {
+            if (!fromCart && upcomingItemDetails.selectedOptions?.length) {
                 upcomingItemDetails = checkSameProduct(currentPitstopItems, upcomingItemDetails);
             }
             if (upcomingItemDetails.alreadyExisted) {
@@ -499,6 +507,7 @@ export const sharedAddUpdatePitstop = (
     console.log('[TO CALCULATE PITSTOPS]', pitstops);
     cb();
     sharedCalculateCartTotals(pitstops, cartReducer)
+
 };
 
 export const getRandomInt = (min = 10, max = 10000) => {
@@ -659,4 +668,27 @@ export const sharedHandleInfinityScroll = (event) => {
     let Y = event.nativeEvent.contentOffset.y;
     if (Math.ceil(mHeight + Y) >= cSize) return true;
     return false;
+}
+
+export const sharedSubStringText = (str = "", start = 0, end = 14) => {
+    let _string = String(str).substring(start, end);
+    _string = _string.length > end ? _string + "..." : _string
+    return _string;
+}
+
+export const sharedAddToCartKeys = (restaurant = null, item = null) => {
+    if (restaurant) {
+
+    }
+    if (item) {
+        item._itemPrice = item.gstAddedPrice;
+        item._itemPriceWithoutDiscount = item.gstAddedPrice - item.discountAmount;
+        item._totalDiscount = item.discountAmount;
+        item._totalGst = item.gstAmount;
+    }
+    return {
+        restaurant,
+        item
+    }
+
 }

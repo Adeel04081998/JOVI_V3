@@ -132,7 +132,7 @@ export default () => {
                         />
                         <View style={homeStyles.wrapper}>
                             <Search colors={colors} homeStyles={homeStyles} />
-                            <Categories homeStyles={homeStyles} />
+                        <Categories homeStyles={homeStyles} />
                             <AvatarAlert messagesReducer={messagesReducer} homeStyles={homeStyles} />
                             <RecentOrders />
                             <GenericList />

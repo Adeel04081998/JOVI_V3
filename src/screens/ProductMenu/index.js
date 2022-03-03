@@ -221,7 +221,6 @@ export default ({ navigation, route }) => {
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     {(parentItem?.pitstopItemList ?? []).map((item, index) => {
                         const image = (item?.images ?? []).length > 0 ? item.images[0].joviImageThumbnail : '';
-                        console.log('item ', item);
                         let isOutOfStock = "isOutOfStock" in item ? item.isOutOfStock : false;
                         if (item.availabilityStatus === ENUMS.AVAILABILITY_STATUS.OutOfStock) {
                             isOutOfStock = true;
@@ -253,9 +252,10 @@ export default ({ navigation, route }) => {
                                     onPress={() => {
                                         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, {
                                             propItem: {
-                                                itemDetails: {},
+                                                itemDetails: { ...item },
                                                 ...item,
-                                                vendorDetails: { ...route.params },
+                                                vendorDetails: { ...data[parentIndex], pitstopItemList: null, marketID, actionKey: "marketID", pitstopName: allData.pitstopName, pitstopIndex: null, pitstopType, ...route.params },
+                                                // vendorDetails: { ...route.params, allData },
                                             },
                                             pitstopType: pitstopType
                                         })

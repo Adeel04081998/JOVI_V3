@@ -7,7 +7,7 @@ import TouchableScale from '../../components/atoms/TouchableScale';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import NoRecord from '../../components/organisms/NoRecord';
-import { isNextPage, renderFile, sharedAddUpdatePitstop, sharedExceptionHandler, uniqueKeyExtractor } from '../../helpers/SharedActions';
+import { isNextPage, renderFile, sharedAddToCartKeys, sharedAddUpdatePitstop, sharedExceptionHandler, uniqueKeyExtractor } from '../../helpers/SharedActions';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
@@ -51,6 +51,7 @@ export default ({ navigation, route }) => {
 
     // #region :: STATE's & REF's START's FROM HERE 
     const animScroll = React.useRef(new Animated.Value(0)).current;
+    const _apiRes = React.useRef({});
     const userReducer = useSelector(store => store.userReducer);
     const [finalDestination, updateFinalDestination] = React.useState(userReducer.finalDestObj);
 
@@ -99,6 +100,8 @@ export default ({ navigation, route }) => {
         };
 
         postRequest(Endpoints.GET_PRODUCT_MENU_LIST, params, (res) => {
+            console.log("GET_PRODUCT_MENU_LIST", res);
+
 
             if (res.data.statusCode === 404) {
                 updateQuery({
@@ -109,6 +112,7 @@ export default ({ navigation, route }) => {
                 updateData([]);
                 return
             }
+            _apiRes.current = { ...res.data.pitstopStockViewModel, categoryWithItems: null, shelves: null, categoryPaginationInfo: null };
             const pitstopStockView = res?.data?.pitstopStockViewModel ?? {};
 
 
@@ -210,11 +214,23 @@ export default ({ navigation, route }) => {
 
     // #region :: QUANTITY HANDLER START's FROM HERE 
     const updateQuantity = (parentIndex, index, quantity) => {
-        data[parentIndex].pitstopItemList[index].quantity = quantity;
+        let currentItem = data[parentIndex].pitstopItemList[index];
+        currentItem.quantity = quantity;
         const pitstopDetails = {
             pitstopType: PITSTOP_TYPES.SUPER_MARKET,
-            vendorDetails: { ...data[parentIndex], pitstopItemList: null, marketID, actionKey: "marketID" },
-            itemDetails: { ...data[parentIndex].pitstopItemList[index], actionKey: "pitStopItemID" },
+            vendorDetails: {
+                ...data[parentIndex],
+                pitstopItemList: null,
+                marketID,
+                actionKey: "marketID",
+                ..._apiRes.current,
+                ...sharedAddToCartKeys({ ..._apiRes.current, marketID, pitstopItemList: null }, null).restaurant
+            },
+            itemDetails: {
+                ...data[parentIndex].pitstopItemList[index],
+                ...sharedAddToCartKeys(null, currentItem).item,
+                actionKey: "pitStopItemID"
+            },
         }
 
         sharedAddUpdatePitstop(pitstopDetails,)
@@ -234,6 +250,7 @@ export default ({ navigation, route }) => {
     const onViewMorePress = (item) => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductMenuItem.screen_name, { pitstopType, marketID, item: item });
     };//end of onViewMorePress
+    console.log("shelveData", data);
 
     return (
         <SafeAreaView style={styles.primaryContainer}>
@@ -332,7 +349,7 @@ export default ({ navigation, route }) => {
                                             propItem: {
                                                 itemDetails: {},
                                                 ...item,
-                                                vendorDetails: { ...route.params },
+                                                vendorDetails: { ...route.params, ..._apiRes.current },
                                             },
                                             pitstopType: pitstopType
                                         })

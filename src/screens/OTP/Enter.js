@@ -95,7 +95,7 @@ export default () => {
 
     const disbleContinueButton = network.value <= 0 || cellNo.length < 10;
     return <SafeAreaView style={styles.otpSafeArea}>
-        <KeyboardAwareScrollView>
+        <KeyboardAwareScrollView keyboardShouldPersistTaps="handled">
             <SvgXml xml={svgs.otp()} height={120} width={120} style={{ alignSelf: "center", marginBottom: 20, }} />
             <Text fontFamily={'PoppinsMedium'} style={{ fontSize: 14, paddingLeft: 25, color: 'black', marginBottom: -3 }}>Enter your Mobile Number</Text>
             <View style={styles.otpDropdownParentView}>

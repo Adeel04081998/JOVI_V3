@@ -6,7 +6,7 @@ import View from '../../components/atoms/View';
 import AnimatedFlatlist from '../../components/molecules/AnimatedScrolls/AnimatedFlatlist';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import NoRecord from '../../components/organisms/NoRecord';
-import { getKeyByValue, isNextPage, renderFile, sharedAddUpdatePitstop, sharedExceptionHandler, uniqueKeyExtractor } from '../../helpers/SharedActions';
+import { getKeyByValue, isNextPage, renderFile, sharedAddToCartKeys, sharedAddUpdatePitstop, sharedExceptionHandler, uniqueKeyExtractor } from '../../helpers/SharedActions';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
@@ -176,12 +176,23 @@ export default ({ navigation, route }) => {
 
     // #region :: QUANTITY HANDLER START's FROM HERE 
     const updateQuantity = (index, quantity) => {
-
-        data[index].quantity = quantity;
+        let currentItem = data[index]
+        currentItem.quantity = quantity;
+        console.log("currentItem", currentItem);
         const pitstopDetails = {
             pitstopType: PITSTOP_TYPES.SUPER_MARKET,
-            vendorDetails: { ...route?.params?.item, pitstopItemList: null, marketID, actionKey: "marketID" },
-            itemDetails: { ...data[index], actionKey: "pitStopItemID" },
+            vendorDetails: {
+                ...route?.params?.item,
+                pitstopItemList: null,
+                marketID,
+                ...sharedAddToCartKeys(null, null).restaurant,
+                actionKey: "marketID"
+            },
+            itemDetails: {
+                ...data[index],
+                ...sharedAddToCartKeys(null, currentItem).item,
+                actionKey: "pitStopItemID"
+            },
         }
 
         sharedAddUpdatePitstop(pitstopDetails,)

@@ -13,7 +13,7 @@ import View from "../../components/atoms/View";
 import Button from "../../components/molecules/Button";
 import CustomHeader from "../../components/molecules/CustomHeader";
 import ImageCarousel from "../../components/molecules/ImageCarousel";
-import { renderPrice, sharedAddUpdatePitstop, sharedExceptionHandler } from "../../helpers/SharedActions";
+import { renderPrice, sharedAddToCartKeys, sharedAddUpdatePitstop, sharedExceptionHandler } from "../../helpers/SharedActions";
 import { postRequest } from "../../manager/ApiManager";
 import Endpoints from "../../manager/Endpoints";
 import NavigationService from "../../navigations/NavigationService";
@@ -184,7 +184,9 @@ export default (props) => {
                 _totalDiscount: state.totalDiscount,
                 totalAddOnPrice,
                 actionKey: propItem.pitStopItemID ? "pitStopItemID" : "pitStopDealID",
-                estimatePrepTime: pitstopType === PITSTOP_TYPES.RESTAURANT ? generalProductOrDealDetail.estimateTime : ""
+                estimatePrepTime: pitstopType === PITSTOP_TYPES.RESTAURANT ? generalProductOrDealDetail.estimateTime : "",
+                ...pitstopType === PITSTOP_TYPES.SUPER_MARKET ? { ...sharedAddToCartKeys(null, state.generalProductOrDealDetail).item } : {},
+
             },
             vendorDetails: { ...propItem.vendorDetails, pitstopType, pitstopActionKey: "marketID" },
         }
@@ -396,7 +398,7 @@ export default (props) => {
                                 }
                             }
                             }>
-<RenderProductImages colors={colors} images={images} />
+                            <RenderProductImages colors={colors} images={images} />
                             {/* <View>
                                 <ImageCarousel
                                     data={images}
@@ -432,7 +434,7 @@ export default (props) => {
                                         fontFamily='PoppinsRegular'
                                     >{` ${renderPrice(productPrice)}`}</Text>
                                     {
-                                        discountedPrice.length > 0?
+                                        discountedPrice.length > 0 ?
                                             <Text style={[productDetailsStyles.productPricetxt, { paddingHorizontal: 5, textDecorationLine: "line-through", color: colors.grey }]}
                                                 fontFamily='PoppinsRegular'
                                             >{`${renderPrice(gstAddedPrice, '')}`}</Text>
