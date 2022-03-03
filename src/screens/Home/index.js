@@ -133,13 +133,13 @@ export default () => {
                 }}>
                     <KeyboardAwareScrollView style={{}} showsVerticalScrollIndicator={false}>
                         <Greetings messagesReducer={messagesReducer} homeStyles={homeStyles} userReducer={userReducer} colors={colors} />
-                        {
+                        {/* {
                             userReducer.openOrders && userReducer.openOrders.map((item,i)=>{
                                 return <Text style={{width:60,marginLeft:40,marginVertical:10,height:20,backgroundColor:'red'}} onPress={()=>{
                                     onOrderPress(item);
                                 }}>{item.orderID}</Text>
                             })
-                        }
+                        } */}
                         <ImageCarousel
                             // aspectRatio={16 / 7}
                             data={promotionsReducer?.dashboardContentListViewModel?.dashboardPromoListVM ??
