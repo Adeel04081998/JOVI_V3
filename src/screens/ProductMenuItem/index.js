@@ -1,7 +1,7 @@
 import lodash from 'lodash'; // 4.0.8
 import AnimatedLottieView from 'lottie-react-native';
 import React from 'react';
-import { ActivityIndicator, Appearance, FlatList, SafeAreaView } from 'react-native';
+import { ActivityIndicator, Alert, Appearance, FlatList, SafeAreaView } from 'react-native';
 import View from '../../components/atoms/View';
 import AnimatedFlatlist from '../../components/molecules/AnimatedScrolls/AnimatedFlatlist';
 import CustomHeader from '../../components/molecules/CustomHeader';

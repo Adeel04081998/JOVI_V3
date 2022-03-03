@@ -3,7 +3,7 @@
 // * Get Service charges from server on swapped array
 
 import React from 'react';
-import { Appearance, ScrollView } from 'react-native';
+import { Alert, Appearance, ScrollView } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { useDispatch, useSelector } from 'react-redux';
 import svgs from '../../assets/svgs';
@@ -30,8 +30,9 @@ import ReduxActions from '../../redux/actions';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
 import DraggableFlatList from '../../components/molecules/DraggableFlatList';
 import constants from '../../res/constants';
-
-
+import DashedLine from '../../components/organisms/DashedLine';
+import ProductQuantityCard from '../ProductMenu/components/ProductQuantityCard';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 const BottomLine = () => (
   <View
     style={{
@@ -41,19 +42,18 @@ const BottomLine = () => (
     }}
   />
 );
-const DashedLines = () => {
-  return <View style={{ flexDirection: "row", overflow: "hidden" }}>
-    {Array(200).fill("-").map((line, idx) => <Text style={{ color: initColors.grey }}>{line}</Text>)}
-  </View>
+// const DashedLines = () => {
+//   return <View style={{ flexDirection: "row", overflow: "hidden" }}>
+//     {Array(200).fill("-").map((line, idx) => <Text style={{ color: initColors.grey }}>{line}</Text>)}
+//   </View>
 
-}
+// }
 export default () => {
   const cartReducer = useSelector(store => store.cartReducer);
   const dispatch = useDispatch();
   console.log('[CART_SCREEN] cartReducer', cartReducer);
   const [expanded, setExpanded] = React.useState([0]);
   const [data, setData] = React.useState([...cartReducer.pitstops])
-  const _instructionsRef = React.createRef("");
   const colors = theme.getTheme(
     GV.THEME_VALUES.DEFAULT,
     Appearance.getColorScheme() === 'dark',
@@ -67,13 +67,12 @@ export default () => {
   };
   const expandCollapeHanlder = (idx) => {
     let _list = [...expanded];
-    const _idx = expanded.findIndex(_num => _num === idx);
-    if (_idx !== -1) _list = _list.filter(i => i !== _idx);
+    const _idx = _list.findIndex(_num => _num === idx);
+    if (_idx >= 0) _list = _list.filter(i => i !== idx);
     else _list.push(idx);
     setExpanded(_list)
   }
   const PitstopsCard = ({ pitstop }) => {
-    console.log("pitstop", pitstop);
     const {
       pitstopIndex, // from cart pitstops
       pitstopID, // from cart pitstops
@@ -87,7 +86,7 @@ export default () => {
       if (isJOVI) return <>
         <View
           style={{
-            borderBottomColor: '#000',
+            borderBottomColor: colors.grey,
             borderWidth: 0.2,
             marginVertical: 5,
             borderColor: colors.grey,
@@ -97,24 +96,29 @@ export default () => {
           key={`jovi-product-key`}
           dynamiColors={dynamiColors}
           isJOVI={isJOVI}
-          product={pitstop}
+          product={{ ...pitstop, pitstopType }}
         />
       </>
       else return (checkOutItemsListVM || []).map((product, idx) => (
+        // else return ([...checkOutItemsListVM, ...checkOutItemsListVM, ...checkOutItemsListVM, ...checkOutItemsListVM,] || []).map((product, idx) => (
         <>
-          <View
-            style={{
-              borderBottomColor: '#000',
-              borderWidth: 0.2,
-              marginVertical: 5,
-              borderColor: colors.grey,
-            }}
-          />
+
+          {
+            idx === 0 &&
+            <View
+              style={{
+                borderBottomColor: '#000',
+                borderWidth: 0.2,
+                marginVertical: 5,
+                borderColor: colors.grey,
+              }}
+            />
+          }
           <Products
             key={`product-key-${idx}`}
             dynamiColors={dynamiColors}
             isJOVI={isJOVI}
-            product={{ ...product, title: product.title || product.pitStopItemName }}
+            product={{ ...product, title: product.title || product.pitStopItemName, pitstopType }}
             incDecDelHandler={quantity => {
               incDecDelHandler({
                 // pitstopIndex,
@@ -129,21 +133,23 @@ export default () => {
             }}
           />
           {
-            idx === checkOutItemsListVM.length - 1 ? null : <DashedLines />
+            idx === checkOutItemsListVM.length - 1 ? null : <DashedLine />
           }
 
         </>
       ))
     }
     return (
-      <View
+      <TouchableWithoutFeedback
         style={{
           backgroundColor: dynamiColors.white,
           borderRadius: 10,
           margin: 5,
           ...sharedStyles._styles(dynamiColors).shadow,
           elevation: 3,
-        }}>
+        }}
+        onPress={() => expandCollapeHanlder(pitstopIndex)}
+      >
         <View
           style={{
             flexDirection: 'row',
@@ -152,28 +158,34 @@ export default () => {
             padding: 5,
 
           }}>
-          <View style={{ flexDirection: 'row' }}>
-            <Text
-              style={{ color: dynamiColors.primary, fontSize: 17 }}
-              fontFamily="PoppinsBold">
-              {pitstopName} {"\n"}
+          <View style={{ flexDirection: 'row', maxWidth: "60%" }}>
+            <View style={{}}>
               <Text
-                style={{ color: dynamiColors.black, fontSize: 12 }}
-                fontFamily="PoppinsRegular">{`Back to ${isJOVI ? 'Jovi Job' : 'Store'
-                  }`}
+                style={{ color: dynamiColors.primary, fontSize: 17 }}
+                fontFamily="PoppinsBold"
+                numberOfLines={1}
+              >
+                {pitstopName}
               </Text>
-            </Text>
+              <TouchableScale style={{ paddingTop: 2 }} onPress={() => { }}>
+                <Text
+                  style={{ color: dynamiColors.black, fontSize: 12 }}
+                  fontFamily="PoppinsRegular">{`Back to ${isJOVI ? 'Jovi Job' : 'Store'
+                    }`}
+                </Text>
+              </TouchableScale>
+            </View>
             {!isJOVI && (
               <SvgXml
                 xml={percent_icon(dynamiColors.primary)}
                 height={15}
                 width={15}
-                style={{top: 7}}
+                style={{ margin: 5 }}
               />
             )}
           </View>
 
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', maxWidth: "40%" }}>
             <TouchableScale onPress={() => {
               sharedConfirmationAlert(
                 "Alert!", "Are you sure you want to clear the pitstop?",
@@ -212,8 +224,8 @@ export default () => {
                 width: 30,
                 borderRadius: 7,
                 borderWidth: 0.5,
-                borderColor: '#C1C1C1',
-                backgroundColor: '#C1C1C1',
+                borderColor: '#fff',
+                backgroundColor: '#fff',
                 alignItems: 'center',
                 justifyContent: 'center',
                 opacity: .7,
@@ -230,7 +242,7 @@ export default () => {
           </View>
         </View>
         {expanded.includes(pitstopIndex) ? viewToRender() : null}
-      </View>
+      </TouchableWithoutFeedback >
     );
   };
   const Products = ({
@@ -239,7 +251,7 @@ export default () => {
     product,
     incDecDelHandler,
   }) => {
-    const { title, estimatePrice, description,discountedPrice, notes, images, _itemPriceWithoutDiscount, _totalDiscount, _itemPrice, quantity } = product;
+    const { title, estimatePrice, description, discountedPrice, notes, images, _itemPriceWithoutDiscount, _totalDiscount, _itemPrice, quantity, pitstopType } = product;
     if (isJOVI) {
       return <View style={{ flexDirection: 'row' }}>
         <View style={{ height: 70, width: 70, borderRadius: 10, margin: 5 }}>
@@ -284,7 +296,7 @@ export default () => {
       const IS_DISCOUNTED = _totalDiscount > 0;
       return (
         <View style={{ flexDirection: 'row' }}>
-          <View style={{ height: 70, width: 70, borderRadius: 10, margin: 5 }}>
+          <View style={{ height: 70, width: 70, borderRadius: 10, margin: 10 }}>
             <Image
               source={{ uri: renderFile(images[0].joviImageThumbnail) }}
               style={{ height: 70, width: 70, borderRadius: 10 }}
@@ -312,7 +324,7 @@ export default () => {
                     xml={percent_icon(dynamiColors.primary)}
                     height={15}
                     width={15}
-                    style={{ marginHorizontal: 10, width: "10%", top: 5 }}
+                    style={{ marginHorizontal: 5, width: "10%", top: 5 }}
                   />
                 }
 
@@ -321,45 +333,45 @@ export default () => {
                 <SvgXml xml={pencil_icon()} height={25} width={16} />
               </TouchableScale>
             </View>
-            <View>
-              <Text
-                numberOfLines={1}
-                style={{ textAlign: 'left', color: '#6B6B6B', fontSize: 12 }}
-                fontFamily="PoppinsLight">
-                {notes}
-              </Text>
-            </View>
-            <Text style={{ color: colors.grey }} numberOfLines={1}>
+
+            <Text style={{ color: colors.black, fontSize: 12 }} numberOfLines={1}>
               {
-                product?.selectedOptions?.map(obj => obj.tittle).join(",")
+                pitstopType === PITSTOP_TYPES.RESTAURANT ? product?.selectedOptions?.map(obj => obj.tittle).join(", ") : description
               }
             </Text>
-
+            <Text
+              numberOfLines={1}
+              style={{ textAlign: 'left', color: '#6B6B6B', fontSize: 10 }}
+              fontFamily="PoppinsLight">
+              {notes}
+            </Text>
             <View
               style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
+                paddingVertical: 10
               }}>
-              <View>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <Text
                   style={{ color: dynamiColors.primary, fontSize: 12 }}
                   fontFamily="PoppinsMedium">
-                  {renderPrice(_itemPrice??discountedPrice)}
+                  {renderPrice(_itemPrice ?? discountedPrice)}
                 </Text>
                 {
                   IS_DISCOUNTED &&
                   <Text
-                    style={{ color: dynamiColors.grey, fontSize: 12, textDecorationLine: "line-through" }}
+                    style={{ color: dynamiColors.grey, fontSize: 10, textDecorationLine: "line-through", paddingHorizontal: 5 }}
                     fontFamily="PoppinsMedium">
                     {renderPrice(_itemPriceWithoutDiscount)}
                   </Text>
                 }
               </View>
-              <IncDec
-                quantity={quantity}
-                incDecDelHandler={quantity => incDecDelHandler(quantity)}
-                dynamiColors={dynamiColors}
+              <ProductQuantityCard
+                size={100}
+                initialQuantity={quantity}
+                colors={dynamiColors}
+                updateQuantity={(quantity) => {
+                  incDecDelHandler(quantity)
+                }}
+
               />
             </View>
           </View>
@@ -367,52 +379,6 @@ export default () => {
       );
     }
   };
-  const IncDec = ({ quantity, incDecDelHandler, dynamiColors }) => (
-    <View
-      style={{
-        flexDirection: 'row',
-        alignSelf: 'center',
-        backgroundColor: dynamiColors.white,
-        borderRadius: 30,
-        alignItems: 'center',
-        paddingHorizontal: 6,
-        borderColor: dynamiColors.primary,
-        borderWidth: 1,
-        paddingVertical: 2,
-        ...sharedStyles._styles(dynamiColors).shadow,
-      }}>
-      <TouchableScale onPress={() => incDecDelHandler(quantity - 1)}>
-        <VectorIcon
-          name={quantity <= 1 ? "delete" : "minus"}
-          type="MaterialCommunityIcons"
-          size={20}
-          color={dynamiColors.primary}
-        />
-      </TouchableScale>
-      <TouchableScale>
-        <Text
-          style={{
-            fontWeight: 'bold',
-            fontSize: 14,
-            justifyContent: 'center',
-            alignItems: 'center',
-            color: dynamiColors.primary,
-            paddingHorizontal: 16,
-          }}>
-          {quantity}
-        </Text>
-      </TouchableScale>
-      <TouchableScale onPress={() => incDecDelHandler(quantity + 1)}>
-        <VectorIcon
-          name="plus"
-          type="MaterialCommunityIcons"
-          size={20}
-          color={dynamiColors.primary}
-        />
-      </TouchableScale>
-    </View>
-  );
-
   const Totals = () => {
     const { subTotal, discount, serviceCharges, total } = cartReducer;
     const row = (caption = '', value = 0, isBold = false) => {
@@ -446,7 +412,8 @@ export default () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <CustomHeader
-        rightIconName=""
+        rightIconName='home'
+        rightIconColor={colors.primary}
         leftIconName="arrow-back"
         title="Jovi Cart"
         containerStyle={{
@@ -516,7 +483,7 @@ export default () => {
                 {
                   text: "Yes",
                   onPress: () => {
-                    dispatch(ReduxActions.clearCartAction());
+                    dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
                     NavigationService.NavigationActions.common_actions.goBack();
                   }
                 },
@@ -531,13 +498,14 @@ export default () => {
         </TouchableScale>
         <TextInput
           placeholder="Want to add instructions for your rider?"
+          placeholderTextColor={colors.grey}
           style={{
             backgroundColor: '#FFFFFF',
             borderColor: colors.grey,
             borderWidth: 0.5,
             borderRadius: 7,
           }}
-          onChangeText={text => _instructionsRef.current = text.trim()}
+          onChangeText={text => GV.RIDER_INSTRUCTIONS.current = text.trim()}
         />
         <Totals />
       </ScrollView>
@@ -551,7 +519,7 @@ export default () => {
                 paddingVertical: 10,
                 backgroundColor: colors.primary,
                 borderRadius: 10,
-                marginHorizontal: 3,
+                marginHorizontal: 5,
               }}
               onPress={() => {
                 NavigationService.NavigationActions.common_actions.navigate(idx > 0 ? ROUTES.APP_DRAWER_ROUTES.CheckOut.screen_name : ROUTES.APP_DRAWER_ROUTES.Home.screen_name)

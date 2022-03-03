@@ -8,7 +8,7 @@ import TouchableScale from '../../components/atoms/TouchableScale';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import NoRecord from '../../components/organisms/NoRecord';
-import { isNextPage, renderFile, sharedAddUpdatePitstop, sharedExceptionHandler, uniqueKeyExtractor, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { isNextPage, renderFile, sharedAddToCartKeys, sharedAddUpdatePitstop, sharedExceptionHandler, uniqueKeyExtractor, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
@@ -292,7 +292,10 @@ export default ({ navigation, route }) => {
         data[parentIndex].pitstopItemList[index].quantity = quantity;
         const pitstopDetails = {
             pitstopType: PITSTOP_TYPES.SUPER_MARKET,
-            vendorDetails: { ...data[parentIndex], pitstopItemList: null, marketID, actionKey: "marketID", pitstopName: allData.pitstopName, pitstopIndex: null, pitstopType, ...route.params },
+            vendorDetails: {
+                ...data[parentIndex], pitstopItemList: null, marketID, actionKey: "marketID", pitstopName: allData.pitstopName, pitstopIndex: null, pitstopType, ...route.params,
+                ...sharedAddToCartKeys(data[parentIndex], null).restaurant
+            },
             itemDetails: {
                 ...data[parentIndex].pitstopItemList[index],
                 actionKey: "pitStopItemID",
@@ -302,6 +305,7 @@ export default ({ navigation, route }) => {
                 _totalDiscount: discountAmount,
                 _totalGst: currentItem.gstAmount,
                 totalAddOnPrice: 0,
+                ...sharedAddToCartKeys(null, currentItem).item
 
             },
         }

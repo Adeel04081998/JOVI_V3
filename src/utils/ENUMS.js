@@ -163,4 +163,11 @@ export default {
         Replaced: 4,
         NotAvailable: 5,
     },
+    "DISCOUNT_TYPES":
+    {
+        "Fixed": 1,
+        "Percentage": 2,
+        // "icon": svgs.discount()
+    },
+
 }

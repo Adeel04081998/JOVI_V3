@@ -1,5 +1,5 @@
 import React from 'react';
-import { GestureResponderEvent, ImageSourcePropType, ImageBackground as RNImageBackground, ImageURISource, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { GestureResponderEvent, ImageSourcePropType, ImageBackground as RNImageBackground, ImageURISource, StyleSheet, StyleProp, ViewStyle, Alert } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import svgs from '../../../assets/svgs';
 import ImageBackground from '../../../components/atoms/ImageBackground';

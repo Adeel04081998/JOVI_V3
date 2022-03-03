@@ -51,7 +51,7 @@ export default () => {
     const paymentMethod = "Payment Method"
     const paymentType = "Wallet"
     const walletAmount = userReducer.wallet || "1500"
-    const instructionForRider = cartReducer.riderInstructions || "Call me when you reach on the address"
+    const instructionForRider = GV.RIDER_INSTRUCTIONS.current;
     const [state, setState] = React.useState({
         chargeBreakdown: null,
         isLoading: false,
