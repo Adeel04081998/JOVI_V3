@@ -32,7 +32,7 @@ export default (props) => {
     const adrObjRef = useRef(null)
 
     const onConfirmAddress = () => {
-        let finalDestObj = adrObjRef.current
+        let finalDestObj = adrObjRef.current;
         dispatch(ReduxActions.setModalAction({ visible: false }))
         dispatch(ReduxActions.setUserFinalDestAction({ finalDestObj }))
         setState(initState)
@@ -73,7 +73,7 @@ export default (props) => {
             }));
         }
     }, [userReducer.addresses]);
-    const getSvgXML=(item)=>{
+    const getSvgXML = (item) => {
         const itemColor = item.iconColor ? item.iconColor : colors.primary;
         let svgXml = svgs.addOtherLocation(itemColor);
         if (item.addressType) {

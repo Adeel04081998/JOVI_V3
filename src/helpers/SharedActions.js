@@ -17,6 +17,7 @@ import NavigationService from '../navigations/NavigationService';
 import actions from '../redux/actions';
 import preference_manager from '../preference_manager';
 import ROUTES from '../navigations/ROUTES';
+import ENUMS from '../utils/ENUMS';
 const dispatch = store.dispatch;
 export const sharedGetDeviceInfo = async () => {
     let model = DeviceInfo.getModel();
@@ -393,23 +394,23 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
     })
     estimateTime = sharedCalculateMaxTime([...pitstops].filter(_p => _p.pitstopType === PITSTOP_TYPES.RESTAURANT), "vendorMaxEstTime")
     subTotal = subTotal + joviPitstopsTotal;
-    total = subTotal - discount + serviceCharges;
+    total = (subTotal - discount) + serviceCharges;
     joviCalculation = joviRemainingAmount - (joviPitstopsTotal + joviPrevOrdersPitstopsAmount)
     joviRemainingAmount = joviCalculation <= 0 ? 0 : joviCalculation;
     // console.log('[TO STORE DATA => PITSTOPS,joviRemainingAmount, subTotal,discount, total,itemsCount, serviceCharges]', pitstops, joviRemainingAmount, subTotal, discount, total, itemsCount, serviceCharges);
     if (!pitstops.length) {
         dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
+        NavigationService.NavigationActions.common_actions.goBack();
     } else {
         dispatch(ReduxActions.setCartAction({ pitstops, joviRemainingAmount, subTotal, itemsCount, joviPitstopsTotal, joviPrevOrdersPitstopsAmount, joviCalculation, total, estimateTime, gst, discount }));
     }
 };
 export const sharedDiscountsCalculator = (
     originalPrice = 0,
-    discount = 0,
-    discountDivider = 100,
+    discount = 0
 ) => {
     let afterDiscount = Math.round(
-        originalPrice - originalPrice * (discount / discountDivider),
+        originalPrice - (originalPrice * (discount / 100)),
     );
     return afterDiscount;
 };
@@ -479,7 +480,7 @@ export const sharedAddUpdatePitstop = (
             if (!fromCart && upcomingItemDetails.selectedOptions?.length) {
                 upcomingItemDetails = checkSameProduct(currentPitstopItems, upcomingItemDetails);
             }
-            if (upcomingItemDetails.alreadyExisted) {
+            else if (upcomingItemDetails.alreadyExisted) {
                 itemIndex = upcomingItemDetails.checkoutIndex;
                 console.log('[Update EXISTING CHECKOUT ITEMS]');
                 if (!upcomingItemDetails.quantity) {
@@ -705,7 +706,7 @@ export const sharedFetchOrder = (orderID = 0, successCb = () => { }, errCb = () 
         Endpoints.FetchOrder + '/' + orderID,
         (response) => {
             console.log('sharedFetchOrder', response);
-            if(response.data.order.orderStatus === 3){
+            if (response.data.order.orderStatus === 3) {
                 NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
                 return;
             }
@@ -721,7 +722,7 @@ export const sharedFetchOrder = (orderID = 0, successCb = () => { }, errCb = () 
 export const sharedClearReducers = () => {
     dispatch(actions.clearModalAction());
 }
-export const sleep=(second= 1)=> {
+export const sleep = (second = 1) => {
     return new Promise(resolve => {
         let ms = Number(second) * Number(1000);
         setTimeout(resolve, ms)
@@ -765,7 +766,7 @@ export const sharedGetDashboardCategoryIApi = () => {
     getRequest(
         Endpoints.GET_VENDOR_DASHBOARD_CATEGORY_ID,
         res => {
-            dispatch(ReduxActions.setvendorDashboardCategoryIDAction(res.data?.vendorDashboardCatIDViewModelList ?? [] ));
+            dispatch(ReduxActions.setvendorDashboardCategoryIDAction(res.data?.vendorDashboardCatIDViewModelList ?? []));
         },
         err => {
             sharedExceptionHandler(err);
@@ -785,9 +786,9 @@ export const sharedAddToCartKeys = (restaurant = null, item = null) => {
 
     }
     if (item) {
-        item._itemPrice = item.gstAddedPrice;
-        item._itemPriceWithoutDiscount = item.gstAddedPrice - item.discountAmount;
-        item._totalDiscount = item.discountAmount;
+        item._itemPrice = item.discountedPrice || item.gstAddedPrice || item.itemPrice;
+        item._itemPriceWithoutDiscount = item.gstAddedPrice;
+        item._totalDiscount = item.discountType === ENUMS.DISCOUNT_TYPES.Percentage ? sharedDiscountsCalculator(item._itemPriceWithoutDiscount, item.discountAmount) : item.discountAmount; // if discount type is fixed then discount amount would be the discounted price
         item._totalGst = item.gstAmount;
     }
     return {

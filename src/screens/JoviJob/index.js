@@ -215,6 +215,7 @@ export default ({ navigation, route }) => {
 
 
     const clearData = () => {
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name);
         setCardData(initCartData);
         setNameVal("");
         setCityVal("");

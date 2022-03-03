@@ -119,7 +119,7 @@ export default (props) => {
     }
 
     const onPressSaveAndContinue = () => {
-        const finalDestObj = props.route?.params?.finalDestObj
+        const finalDestObj = props.route?.params?.finalDestObj;
         confirmServiceAvailabilityForLocation(postRequest, props.route?.params?.finalDestObj.latitude, props.route?.params?.finalDestObj.longitude,
             (resp) => {
                 let addressType = addressTypeList.filter(x => x.selected === true)
@@ -140,7 +140,13 @@ export default (props) => {
                         console.log("ADDorUPDATE ADDRESS.RESPONSE", res);
                         if (res.data.statusCode === 200) {
                             sharedGetUserAddressesApi();
-                            dispatch(ReduxActions.setUserFinalDestAction({ finalDestObj }))
+                            dispatch(ReduxActions.setUserFinalDestAction({
+                                finalDestObj: {
+                                    ...finalDestObj,
+                                    "addressType": addressType[0]?.key || '',
+                                    "addressTypeStr": inputs[3].val || ''
+                                },
+                            }))
                             onBackPress(true);
                         }
                     },
