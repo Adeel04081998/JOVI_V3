@@ -30,6 +30,7 @@
     "run:ios:debug": "yarn set:env:debug && yarn ios --configuration Debug",
     "run:ios:staging": "yarn set:env:staging && yarn ios --configuration  Release",
     "run:ios:release": "yarn set:env:release && yarn ios --configuration Release",
+    "iphone_13_pro_max": "npx react-native run-ios --simulator \"iPhone 13 Pro Max\"",
     "test": "jest",
     "lint": "eslint ."
   },

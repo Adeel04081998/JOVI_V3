@@ -281,7 +281,7 @@ const RestaurantProductMenuScrollable = (props: Props) => {
 
                 {props.renderAboveItems && props.renderAboveItems()}
 
-                <View style={{ paddingHorizontal: 0, backgroundColor: "white" }}>
+                <View style={{ paddingHorizontal: 0,paddingBottom:40}}>
                     {props.data && props.data.map((food: any, parentIndex: number) => {
                         return (
                             <View

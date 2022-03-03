@@ -1,6 +1,7 @@
 import { Platform, StyleSheet } from "react-native";
 import { option } from "yargs";
 import { initColors } from "../../res/colors";
+import constants from "../../res/constants";
 const SPACING_VERTICAL = 10;
 export default {
     styles(colors = initColors) {
@@ -89,10 +90,11 @@ export default {
 
             },
             search_container: {
-                flexDirection: "row", alignItems: "center", backgroundColor: "#fff", borderRadius: 10, height: 55, justifyContent: "space-between", overflow: 'hidden',
+                flexDirection: "row", alignItems: "center", backgroundColor: "#F2F1F6", borderRadius: 10, height: constants.window_dimensions.height * .06, justifyContent: "space-between", overflow: 'hidden',
+                borderWidth:1, borderColor:'#EBEAEE'
             },
             search_input: {
-                alignSelf: 'center', backgroundColor: "#fff"
+                alignSelf: 'center', height: constants.window_dimensions.height * .06, backgroundColor: "#F2F1F6"
             },
             cat_item_container: {
                 marginHorizontal: 3, justifyContent: 'center', borderRadius: 10

@@ -92,9 +92,15 @@ export default (props) => {
     }
   };
 
+  const [, updateState] = React.useState();
+  const forceUpdate = React.useCallback(() => updateState({}), []);
 
   const onRegionChange = (region) => {
     // setPlaceName('')
+    if(!disabledRef.current){
+      disabledRef.current = false;
+      forceUpdate();
+    }
   };
 
 
@@ -104,7 +110,7 @@ export default (props) => {
       latitude,
       longitude
     }
-
+    
   };
 
   useEffect(() => {
@@ -286,6 +292,7 @@ export default (props) => {
     return (
       <Button
         onPress={async () => {
+          setLoader(true)
           if (disabledRef.current) {
             return;
           }
@@ -306,6 +313,7 @@ export default (props) => {
               }
               props.onConfirmLoc(placeObj)
             }, (error) => {
+              setLoader(false)
               disabledRef.current = false
               console.log(((error?.response) ? error.response : {}), error);
               if (error?.data?.statusCode === 417) {

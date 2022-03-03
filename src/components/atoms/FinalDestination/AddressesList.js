@@ -73,13 +73,27 @@ export default (props) => {
             }));
         }
     }, [userReducer.addresses]);
+    const getSvgXML=(item)=>{
+        const itemColor = item.iconColor ? item.iconColor : colors.primary;
+        let svgXml = svgs.addOtherLocation(itemColor);
+        if (item.addressType) {
+            if (item.addressType === 1)
+                svgXml = svgs.homeAddIcon(itemColor);
+            else if (item.addressType === 2)
+                svgXml = svgs.bagIcon(itemColor);
+            else if (item.addressType === 5)
+                svgXml = svgs.relationIcon(itemColor);
+        }
+        return svgXml;
+    }
+
     const renderAddressList = () => {
         return (
             <View style={{}}>
                 {state.addressList.slice(0, 10).map((item, index) => {
                     return (
                         <TouchableOpacity activeOpacity={1} key={`addressList ${index}`} style={{ flexDirection: 'row', padding: 15, alignItems: 'center', backgroundColor: item.iconColor ? colors.light_primary_color : colors.white }} onPress={() => onAdressListPress(item, index)} >
-                            <SvgXml xml={item.addressType ? item.addressType === 1 ? svgs.homeAddIcon(item.iconColor ? item.iconColor : colors.primary) : item.addressType === 2 ? svgs.bagIcon(item.iconColor ? item.iconColor : colors.primary) : svgs.relationIcon(item.iconColor ? item.iconColor : colors.primary) : svgs.addOtherLocation(item.iconColor ? item.iconColor : colors.primary)} height={22} width={22} />
+                            <SvgXml xml={getSvgXML(item)} height={22} width={22} />
                             <View style={{ flexDirection: 'column', marginLeft: 10 }}>
                                 <Text fontFamily={"PoppinsMedium"} style={{ color: item.iconColor ? item.iconColor : colors.primary, fontSize: 16 }}>{item.addressTypeStr || 'Other'}</Text>
                                 {item.title && <Text numberOfLines={1} fontFamily={"PoppinsRegular"} style={{ color: colors.subTextGreyColor || item.iconColor, fontSize: 10, width: WIDTH * 0.8 }}>{item.title}</Text>}

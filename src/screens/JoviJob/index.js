@@ -29,7 +29,7 @@ import { multipartPostRequest, postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import AudioplayerMultiple from '../../components/atoms/AudioplayerMultiple';
 import Image from '../../components/atoms/Image';
-import { confirmServiceAvailabilityForLocation, sharedAddUpdatePitstop, sharedConfirmationAlert,uniqueKeyExtractor } from '../../helpers/SharedActions';
+import { confirmServiceAvailabilityForLocation, sharedAddUpdatePitstop, sharedConfirmationAlert, uniqueKeyExtractor } from '../../helpers/SharedActions';
 import Toast from '../../components/atoms/Toast';
 import Regex from '../../utils/Regex';
 import { useDispatch, useSelector } from 'react-redux';
@@ -143,7 +143,7 @@ export default ({ navigation, route }) => {
     const [nameval, setNameVal] = useState('')
     const [cityVal, setCityVal] = useState('')
     const [placeName, setPlaceName] = useState('')
-    const [locationVal, setLocationVal] = useState(__DEV__? 'Islamabad':'')
+    const [locationVal, setLocationVal] = useState(__DEV__ ? 'Islamabad' : '')
     const [scrollEnabled, setScrollEnabled] = useState(true)
     const latitudeRef = React.useRef(null);
     const longitudeRef = React.useRef(null);
@@ -172,7 +172,7 @@ export default ({ navigation, route }) => {
 
     /******** Start of Pitstop Details variables *******/
 
-    const [description, setDescription] = useState(__DEV__? 'HELLOO':'')
+    const [description, setDescription] = useState(__DEV__ ? 'HELLOO' : '')
     const [imageData, updateImagesData] = useState([]);
 
     const [, updateStateaaa] = React.useState();
@@ -201,7 +201,7 @@ export default ({ navigation, route }) => {
     const [initialEstVal, setInitialEstVal] = useState('')
     const [switchVal, setSwitch] = useState(true);
     const [estTime, setEstTime] = React.useState({
-        text: __DEV__? '0-15 mins':"Estimated Time",
+        text: __DEV__ ? '0-15 mins' : "Estimated Time",
         value: __DEV__ ? 1 : 0
     });
     const [collapsed, setCollapsed] = React.useState(true);
@@ -465,18 +465,18 @@ export default ({ navigation, route }) => {
         }
     };//end of deleteRecording
 
-    React.useEffect(()=>{
-        console.log('micPressmicPressmicPressmicPress' ,micPress);
-    },[micPress])
+    React.useEffect(() => {
+        console.log('micPressmicPressmicPressmicPress', micPress);
+    }, [micPress])
     const recordingPress = async (closeSecond = false) => {
         if (!micPress) {
             askForAudioRecordPermission((allowRecording) => {
-                console.log('akllow aaaaa ',allowRecording);
+                console.log('akllow aaaaa ', allowRecording);
                 if (allowRecording) {
                     const fileName = "record-" + new Date().getTime() + ".mp4";
                     recorderRef.current = new Recorder(fileName).record();
                     setMicPress(true);
-                    
+
                 }
             })
         } else {
@@ -509,7 +509,7 @@ export default ({ navigation, route }) => {
 
                                     pitStopVoiceNote(obj, false);
                                     toggleCardData(PITSTOP_CARD_TYPES["estimated-time"]);
-                                    console.log('closeSecond   ',closeSecond);
+                                    console.log('closeSecond   ', closeSecond);
                                     if (closeSecond) {
                                         updateCardOnHeaderPress(updateCardOnHeaderPressItem);
                                     }
@@ -636,7 +636,7 @@ export default ({ navigation, route }) => {
 
     const renderHeader = (idx, title, desc, svg, isOpened, key, headerColor, index, disabled) => {
         const isDisabled = disabledHandler(index, disabled);
-        
+
         return (
             <CardHeader
                 title={title}
@@ -654,20 +654,13 @@ export default ({ navigation, route }) => {
 
                     if (idx === 2 && isOpened) { //AHMED KH RHA KOI 2 ko change nh kry ga... ;-P
                         //WHEN DESCRIPTION TOGGLE  
-                        console.log('micPress ',micPress);
                         if (micPress) {
-                            console.log('if isOpened ==>>> micPress');
-
                             recordingPress(true);
                         } else {
-                            console.log('else isOpened ==>>> micPress');
-
                             setForceDeleted(true);
                             updateStateaaa();
                         }
-                        console.log('if isOpened');
                     } else {
-                        console.log('else ==>>>> isOpened');
                         updateCardOnHeaderPress(updateCardOnHeaderPressItem);
                     }
 
@@ -849,7 +842,7 @@ export default ({ navigation, route }) => {
 
                                 }}
                                     activeOpacity={1}
-                                    onPressIn={()=>{recordingPress(false)}}>
+                                    onPressIn={() => { recordingPress(false) }}>
                                     {micPress ?
                                         <RNImage
                                             source={require('../../assets/gifs/Record.gif')}
@@ -953,17 +946,17 @@ export default ({ navigation, route }) => {
                 isOpened={isDisabled ? false : isOpened}
                 onChangeSliderText={newsliderValue => {
                     if (Regex.numberOnly.test(newsliderValue)) {
-                        let remainingAmountLength=(`${remainingAmount}`.length)-1;
-                        if(remainingAmountLength<1){
-                            remainingAmountLength=1;
+                        let remainingAmountLength = (`${remainingAmount}`.length) - 1;
+                        if (remainingAmountLength < 1) {
+                            remainingAmountLength = 1;
                         }
-                        const maxLengthRegex = new RegExp(`^([0-${remainingAmountLength>1 ? '9':remainingAmount}]{0,${remainingAmountLength}}|${remainingAmount})$`, "g");
+                        const maxLengthRegex = new RegExp(`^([0-${remainingAmountLength > 1 ? '9' : remainingAmount}]{0,${remainingAmountLength}}|${remainingAmount})$`, "g");
                         if (maxLengthRegex.test(newsliderValue)) {
                             setEstVal(newsliderValue);
                             setInitialEstVal(newsliderValue);
                         }
                     }
-                     else {
+                    else {
                         setEstVal('');
                         setInitialEstVal(0);
                     }
@@ -985,6 +978,36 @@ export default ({ navigation, route }) => {
         if (locationVal !== '' && (description !== '' || Object.keys(voiceNote).length || imageData.length) && (estTime.text.includes('mins') || estTime.text.includes('hour')) && (switchVal ? parseInt(estVal) > 0 : true)) return false
         else return true
     }
+
+    const onSaveAndContinue = () => {
+        let pitstopData = {
+            pitstopID: 0, // on update will get from params, 
+            title: locationVal,
+            description,
+            pitstopName: 'Jovi Job',
+            pitstopType: route.params.pitstopType,
+            nameval,
+            imageData,
+            voiceNote,
+            estTime,
+            estimatePrice: parseInt(estVal),
+            latitude: latitudeRef.current,
+            longitude: longitudeRef.current
+        }
+        confirmServiceAvailabilityForLocation(postRequest, latitudeRef.current, longitudeRef.current, (resp) => {
+            sharedAddUpdatePitstop(pitstopData, false, [], false, false, clearData);
+        }, (error) => {
+            console.log(((error?.response) ? error.response : {}), error);
+            if (error?.data?.statusCode === 417) {
+                if (error.areaLock) { } else {
+                    error?.data?.message && Toast.error(error?.data?.message);
+                }
+            }
+            else {
+                Toast.error('An Error Occurred!');
+            }
+        })
+    }//end of save and continue function
 
     return (
         <SafeAreaView style={{ flex: 1 }} >
@@ -1030,35 +1053,7 @@ export default ({ navigation, route }) => {
                 </KeyboardAwareScrollView>
                 <Button
                     text="Save and Continue"
-                    onPress={() => {
-                        let pitstopData = {
-                            pitstopID: 0, // on update will get from params, 
-                            title: locationVal,
-                            description,
-                            pitstopName: 'Jovi Job',
-                            pitstopType: route.params.pitstopType,
-                            nameval,
-                            imageData,
-                            voiceNote,
-                            estTime,
-                            estimatePrice: parseInt(estVal),
-                            latitude: latitudeRef.current,
-                            longitude: longitudeRef.current
-                        }
-                        confirmServiceAvailabilityForLocation(postRequest, latitudeRef.current, longitudeRef.current, (resp) => {
-                            sharedAddUpdatePitstop(pitstopData, false, [], false, false, clearData);
-                        }, (error) => {
-                            console.log(((error?.response) ? error.response : {}), error);
-                            if (error?.data?.statusCode === 417) {
-                                if (error.areaLock) { } else {
-                                    error?.data?.message && Toast.error(error?.data?.message);
-                                }
-                            }
-                            else {
-                                Toast.error('An Error Occurred!');
-                            }
-                        })
-                    }}
+                    onPress={onSaveAndContinue}
                     disabled={validationCheck()}
                     style={[styles.locButton, { height: 60, marginVertical: 10 }]}
                     textStyle={[styles.btnText, { fontSize: 16 }]}

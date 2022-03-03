@@ -44,7 +44,6 @@ export default React.memo((props) => {
         }
         return step
     }
-    console.log('estValestValestValestVal ',props.estVal);
 
     return (
         // <View style={styles.pitStopLocationContainer} >

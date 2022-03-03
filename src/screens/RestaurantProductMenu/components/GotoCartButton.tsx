@@ -21,6 +21,7 @@ interface Props extends ButtonProps {
     text?: string;
     count?: any;
     price?: any;
+    bottom?: any;
 }
 
 
@@ -28,6 +29,7 @@ const defaultProps = {
     text: "Go to cart",
     count: null,
     price: null,
+    bottom:0
 };
 // #endregion :: INTERFACE END's FROM HERE 
 
@@ -36,7 +38,7 @@ const GotoCartButton = (props: Props) => {
     const colors = props.colors;
 
     const insets = useSafeAreaInsets();
-    const styles = stylesFunc(colors, insets);
+    const styles = stylesFunc(colors, insets, props);
 
     const cartReducer = useSelector((store: any) => store.cartReducer);
     const { itemsCount, subTotal } = cartReducer;
@@ -96,7 +98,7 @@ export default GotoCartButton;
 
 // #region :: STYLES START's FROM HERE 
 
-const stylesFunc = (colors: typeof initColors, insets: EdgeInsets) => StyleSheet.create({
+const stylesFunc = (colors: typeof initColors, insets: EdgeInsets, props: Props) => StyleSheet.create({
     rightText: {
         color: colors.white,
         fontSize: 16,
@@ -141,9 +143,9 @@ const stylesFunc = (colors: typeof initColors, insets: EdgeInsets) => StyleSheet
     primaryContainer: {
         backgroundColor: colors.white,
         position: 'absolute',
-        paddingTop: 20,
-        paddingBottom: insets.bottom > 0 ? insets.bottom : getStatusBarHeight() * 0.7,
-        bottom: 0,
+        paddingTop: 10,
+        paddingBottom: insets.bottom > 0 ? insets.bottom : getStatusBarHeight() * 0.4,
+        bottom: props?.bottom,
 
         width: "100%",
     },

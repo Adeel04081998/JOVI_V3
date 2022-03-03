@@ -8,7 +8,10 @@ export default {
                     PermissionsAndroid.PERMISSIONS.READ_SMS,
                     {
                         title: "SMS Permission",
-                        message: "Allow JOVI to read SMS messages?"
+                        message: "Allow JOVI to read SMS messages?",
+                        buttonNeutral: "Ask Me Later",
+                        buttonNegative: "Cancel",
+                        buttonPositive: "OK"
                     }
                 );
                 return result;
