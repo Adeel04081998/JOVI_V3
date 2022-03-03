@@ -13,7 +13,7 @@ import View from "../../components/atoms/View";
 import Button from "../../components/molecules/Button";
 import CustomHeader from "../../components/molecules/CustomHeader";
 import ImageCarousel from "../../components/molecules/ImageCarousel";
-import { renderPrice, sharedAddUpdatePitstop, sharedExceptionHandler, sharedInteval, sleep } from "../../helpers/SharedActions";
+import { renderPrice, sharedAddUpdatePitstop, sharedExceptionHandler, sharedInteval, sleep, sharedAddToCartKeys } from "../../helpers/SharedActions";
 import { postRequest } from "../../manager/ApiManager";
 import Endpoints from "../../manager/Endpoints";
 import NavigationService from "../../navigations/NavigationService";
@@ -184,7 +184,9 @@ export default (props) => {
                 _totalDiscount: state.totalDiscount,
                 totalAddOnPrice,
                 actionKey: propItem.pitStopItemID ? "pitStopItemID" : "pitStopDealID",
-                estimatePrepTime: pitstopType === PITSTOP_TYPES.RESTAURANT ? generalProductOrDealDetail.estimateTime : ""
+                estimatePrepTime: pitstopType === PITSTOP_TYPES.RESTAURANT ? generalProductOrDealDetail.estimateTime : "",
+                ...pitstopType === PITSTOP_TYPES.SUPER_MARKET ? { ...sharedAddToCartKeys(null, state.generalProductOrDealDetail).item } : {},
+
             },
             vendorDetails: { ...propItem.vendorDetails, pitstopType, pitstopActionKey: "marketID" },
         }
@@ -280,7 +282,7 @@ export default (props) => {
                     <Button
                         disabled={!enable.enableBtn}
                         onPress={() => addToCartHandler()}
-                        text={`Add to cart ${optionsListArr.length > 0 ? renderPrice(discountedPriceWithGst,'-','',/[pkr|rs|rs.|pkr.|-]{1,}/i) : ''}`}
+                        text={`Add to cart ${optionsListArr.length > 0 ? renderPrice(discountedPriceWithGst, '-', '', /[pkr|rs|rs.|pkr.|-]{1,}/i) : ''}`}
                         // text={`Add to cart ${productPrice ? '- ' + (parseInt(productPrice) + parseInt(state.totalAddOnPrice)) : ''}`}
                         textStyle={{ textAlign: 'center', fontSize: 16 }}
                         style={{ paddingHorizontal: 16, alignSelf: "center", paddingVertical: 10, borderRadius: 10, backgroundColor: colors.primary, justifyContent: 'center', alignItems: 'center' }}

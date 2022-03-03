@@ -72,11 +72,12 @@ export default (props) => {
         }
     }, [runInterval])
     React.useEffect(() => {
-        Sms.requestReadSmsPermission()
-            .then(async res => {
-                _onSmsListener();
-            })
-            .catch(err => console.log("err...", err));
+        _onSmsListener()
+        // Sms.requestReadSmsPermission()
+        //     .then(async res => {
+        //         _onSmsListener();
+        //     })
+        //     .catch(err => console.log("err...", err));
         return () => {
             resetInterval()
             RNOtpVerify.removeListener()

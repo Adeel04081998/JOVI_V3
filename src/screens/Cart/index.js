@@ -1,3 +1,7 @@
+/******************************************* MISSING POINTS **********************************/
+// * Item status from backend upon add/update cart
+// * Get Service charges from server on swapped array
+
 import React from 'react';
 import { Appearance, ScrollView } from 'react-native';
 import { SvgXml } from 'react-native-svg';
@@ -11,7 +15,7 @@ import TouchableScale from '../../components/atoms/TouchableScale';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
-import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedConfirmationAlert, sharedGetServiceCharges } from '../../helpers/SharedActions';
+import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedConfirmationAlert, sharedGetServiceCharges, sharedSubStringText } from '../../helpers/SharedActions';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import sharedStyles from '../../res/sharedStyles';
@@ -25,6 +29,7 @@ import colors, { initColors } from '../../res/colors';
 import ReduxActions from '../../redux/actions';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
 import DraggableFlatList from '../../components/molecules/DraggableFlatList';
+import constants from '../../res/constants';
 
 
 const BottomLine = () => (
@@ -38,7 +43,7 @@ const BottomLine = () => (
 );
 const DashedLines = () => {
   return <View style={{ flexDirection: "row", overflow: "hidden" }}>
-    {Array(1000).fill("-").map((line, idx) => <Text style={{ color: initColors.grey }}>{line}</Text>)}
+    {Array(200).fill("-").map((line, idx) => <Text style={{ color: initColors.grey }}>{line}</Text>)}
   </View>
 
 }
@@ -47,6 +52,7 @@ export default () => {
   const dispatch = useDispatch();
   console.log('[CART_SCREEN] cartReducer', cartReducer);
   const [expanded, setExpanded] = React.useState([0]);
+  const [data, setData] = React.useState([...cartReducer.pitstops])
   const _instructionsRef = React.createRef("");
   const colors = theme.getTheme(
     GV.THEME_VALUES.DEFAULT,
@@ -67,6 +73,7 @@ export default () => {
     setExpanded(_list)
   }
   const PitstopsCard = ({ pitstop }) => {
+    console.log("pitstop", pitstop);
     const {
       pitstopIndex, // from cart pitstops
       pitstopID, // from cart pitstops
@@ -77,19 +84,37 @@ export default () => {
     const dynamiColors = theme.getTheme(pitstopType);
     const isJOVI = pitstopType === PITSTOP_TYPES.JOVI;
     const viewToRender = () => {
-      if (isJOVI) return <Products
-        key={`jovi-product-key`}
-        dynamiColors={dynamiColors}
-        isJOVI={isJOVI}
-        product={pitstop}
-      />
+      if (isJOVI) return <>
+        <View
+          style={{
+            borderBottomColor: '#000',
+            borderWidth: 0.2,
+            marginVertical: 5,
+            borderColor: colors.grey,
+          }}
+        />
+        <Products
+          key={`jovi-product-key`}
+          dynamiColors={dynamiColors}
+          isJOVI={isJOVI}
+          product={pitstop}
+        />
+      </>
       else return (checkOutItemsListVM || []).map((product, idx) => (
         <>
+          <View
+            style={{
+              borderBottomColor: '#000',
+              borderWidth: 0.2,
+              marginVertical: 5,
+              borderColor: colors.grey,
+            }}
+          />
           <Products
             key={`product-key-${idx}`}
             dynamiColors={dynamiColors}
             isJOVI={isJOVI}
-            product={{ ...product, title: product.title || product.pitStopItemName, price: product.discountedPrice || product.gstAddedPrice || product.price }}
+            product={{ ...product, title: product.title || product.pitStopItemName }}
             incDecDelHandler={quantity => {
               incDecDelHandler({
                 // pitstopIndex,
@@ -123,26 +148,27 @@ export default () => {
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
+            alignItems: "center",
             padding: 5,
+
           }}>
           <View style={{ flexDirection: 'row' }}>
-            <View>
-              <Text
-                style={{ color: dynamiColors.primary, fontSize: 17 }}
-                fontFamily="PoppinsBold">
-                {pitstopName}
-              </Text>
+            <Text
+              style={{ color: dynamiColors.primary, fontSize: 17 }}
+              fontFamily="PoppinsBold">
+              {pitstopName} {"\n"}
               <Text
                 style={{ color: dynamiColors.black, fontSize: 12 }}
                 fontFamily="PoppinsRegular">{`Back to ${isJOVI ? 'Jovi Job' : 'Store'
-                  }`}</Text>
-            </View>
+                  }`}
+              </Text>
+            </Text>
             {!isJOVI && (
               <SvgXml
                 xml={percent_icon(dynamiColors.primary)}
-                height={20}
-                width={20}
-                style={{ marginHorizontal: 10 }}
+                height={15}
+                width={15}
+                style={{top: 7}}
               />
             )}
           </View>
@@ -203,14 +229,6 @@ export default () => {
             </TouchableScale>
           </View>
         </View>
-        <View
-          style={{
-            borderBottomColor: '#000',
-            borderWidth: 0.2,
-            marginVertical: 5,
-            borderColor: colors.grey,
-          }}
-        />
         {expanded.includes(pitstopIndex) ? viewToRender() : null}
       </View>
     );
@@ -236,15 +254,18 @@ export default () => {
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',
+
               // margin: 5,
             }}>
             <Text
-              style={{ color: dynamiColors.black, fontSize: 14 }}
-              fontFamily="PoppinsBold">
+              style={{ color: dynamiColors.black, fontSize: 14, textAlign: "left", width: "90%" }}
+              fontFamily="PoppinsBold"
+              numberOfLines={3}
+            >
               {title}
             </Text>
-            <TouchableScale style={{ paddingRight: 5 }}>
-              <SvgXml xml={pencil_icon()} height={20} width={12} />
+            <TouchableScale style={{ width: "10%" }}>
+              <SvgXml xml={pencil_icon()} height={25} width={16} />
             </TouchableScale>
           </View>
           <Text
@@ -255,11 +276,12 @@ export default () => {
           <Text
             style={{ color: dynamiColors.primary, fontSize: 12 }}
             fontFamily="PoppinsMedium">
-            {renderPrice(estimatePrice)}
+            {renderPrice(estimatePrice || 0)}
           </Text>
         </View>
       </View>
     } else {
+      const IS_DISCOUNTED = _totalDiscount > 0;
       return (
         <View style={{ flexDirection: 'row' }}>
           <View style={{ height: 70, width: 70, borderRadius: 10, margin: 5 }}>
@@ -276,22 +298,27 @@ export default () => {
                 alignItems: 'center',
                 // margin: 5,
               }}>
-              <View style={{ flexDirection: 'row' }}>
+              <View style={{ flexDirection: 'row', width: "80%" }}>
                 <Text
                   style={{ color: dynamiColors.black, fontSize: 14 }}
-                  fontFamily="PoppinsBold">
+                  fontFamily="PoppinsBold"
+                  numberOfLines={1}
+                >
                   {title}
                 </Text>
+                {
+                  IS_DISCOUNTED &&
+                  <SvgXml
+                    xml={percent_icon(dynamiColors.primary)}
+                    height={15}
+                    width={15}
+                    style={{ marginHorizontal: 10, width: "10%", top: 5 }}
+                  />
+                }
 
-                <SvgXml
-                  xml={percent_icon(dynamiColors.primary)}
-                  height={20}
-                  width={20}
-                  style={{ marginHorizontal: 10 }}
-                />
               </View>
-              <TouchableScale style={{ paddingRight: 5 }}>
-                <SvgXml xml={pencil_icon()} height={22} width={14} />
+              <TouchableScale style={{ width: "10%" }}>
+                <SvgXml xml={pencil_icon()} height={25} width={16} />
               </TouchableScale>
             </View>
             <View>
@@ -321,7 +348,7 @@ export default () => {
                   {renderPrice(_itemPriceWithoutDiscount)}
                 </Text>
                 {
-                  _totalDiscount > 0 &&
+                  IS_DISCOUNTED &&
                   <Text
                     style={{ color: dynamiColors.grey, fontSize: 12, textDecorationLine: "line-through" }}
                     fontFamily="PoppinsMedium">
@@ -437,19 +464,18 @@ export default () => {
           <DeliveryAddress />
           <Text style={{ padding: 10, fontSize: 12 }} fontFamily="PoppinsLight">{'Hold and drag to rearrange your pitstops to get the better route and less service charges.'}</Text>
           <DraggableFlatList
-            data={cartReducer.pitstops}
+            data={data}
             renderItem={({ item, index }) => <PitstopsCard
               key={`pit-key${index}`}
               pitstop={{ ...item, pitstopIndex: index }}
             />}
-            updateData={(newData) => sharedAddUpdatePitstop(null, false, newData)}
+            updateData={(newData) => {
+              setData(newData);
+              // setExpanded([])
+              // sharedAddUpdatePitstop(null, false, newData)
+            }}
+            style={{ maxHeight: constants.screen_dimensions.height * 0.40 }}
           />
-          {/* {(cartReducer.pitstops || []).map((pitstop, pitstopIndex) => (
-            <PitstopsCard
-              key={`pit-key${pitstopIndex}`}
-              pitstop={{ ...pitstop, pitstopIndex }}
-            />
-          ))} */}
         </View>
         <TouchableScale
           style={{
@@ -495,7 +521,8 @@ export default () => {
                     NavigationService.NavigationActions.common_actions.goBack();
                   }
                 },
-              ]
+              ],
+              { cancelable: false }
             )
           }}
         >

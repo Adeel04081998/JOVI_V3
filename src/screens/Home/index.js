@@ -134,7 +134,7 @@ export default () => {
                         />
                         <View style={homeStyles.wrapper}>
                             <Search colors={colors} homeStyles={homeStyles} />
-                            <Categories homeStyles={homeStyles} />
+                        <Categories homeStyles={homeStyles} />
                             <AvatarAlert messagesReducer={messagesReducer} homeStyles={homeStyles} />
                             {/* <RecentOrders /> AS PER PM WE HAVE TO REMOVE RECENT ORDER FOR NOW*/}
                             {vendorDashboardCategoryIDReducer.map((item, index) => {

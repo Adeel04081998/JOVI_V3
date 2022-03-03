@@ -29,7 +29,7 @@ import { multipartPostRequest, postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import AudioplayerMultiple from '../../components/atoms/AudioplayerMultiple';
 import Image from '../../components/atoms/Image';
-import { confirmServiceAvailabilityForLocation, sharedAddUpdatePitstop, sharedConfirmationAlert, uniqueKeyExtractor } from '../../helpers/SharedActions';
+import { confirmServiceAvailabilityForLocation, sharedAddUpdatePitstop, sharedConfirmationAlert, sharedExceptionHandler, uniqueKeyExtractor } from '../../helpers/SharedActions';
 import Toast from '../../components/atoms/Toast';
 import Regex from '../../utils/Regex';
 import { useDispatch, useSelector } from 'react-redux';
@@ -145,8 +145,8 @@ export default ({ navigation, route }) => {
     const [placeName, setPlaceName] = useState('')
     const [locationVal, setLocationVal] = useState(__DEV__ ? 'Islamabad' : '')
     const [scrollEnabled, setScrollEnabled] = useState(true)
-    const latitudeRef = React.useRef(null);
-    const longitudeRef = React.useRef(null);
+    const latitudeRef = React.useRef(__DEV__ ? constants.i8_markaz.latitude : null);
+    const longitudeRef = React.useRef(__DEV__ ? constants.i8_markaz.longitude : null);
 
     const animatedValues = [
         React.useRef(new Animated.Value(0)).current,
@@ -197,7 +197,7 @@ export default ({ navigation, route }) => {
 
     /******** Start of other Pitstop variables *******/
 
-    const [estVal, setEstVal] = useState('')
+    const [estVal, setEstVal] = useState(__DEV__ ? "1500" : '')
     const [initialEstVal, setInitialEstVal] = useState('')
     const [switchVal, setSwitch] = useState(true);
     const [estTime, setEstTime] = React.useState({
@@ -654,6 +654,7 @@ export default ({ navigation, route }) => {
 
                     if (idx === 2 && isOpened) { //AHMED KH RHA KOI 2 ko change nh kry ga... ;-P
                         //WHEN DESCRIPTION TOGGLE  
+                        // console.log('micPress ', micPress);
                         if (micPress) {
                             recordingPress(true);
                         } else {
@@ -997,15 +998,8 @@ export default ({ navigation, route }) => {
         confirmServiceAvailabilityForLocation(postRequest, latitudeRef.current, longitudeRef.current, (resp) => {
             sharedAddUpdatePitstop(pitstopData, false, [], false, false, clearData);
         }, (error) => {
-            console.log(((error?.response) ? error.response : {}), error);
-            if (error?.data?.statusCode === 417) {
-                if (error.areaLock) { } else {
-                    error?.data?.message && Toast.error(error?.data?.message);
-                }
-            }
-            else {
-                Toast.error('An Error Occurred!');
-            }
+            console.log("[confirmServiceAvailabilityForLocation].error", error);
+            sharedExceptionHandler(error);
         })
     }//end of save and continue function
 
