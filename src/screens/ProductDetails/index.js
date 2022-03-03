@@ -226,7 +226,7 @@ export default (props) => {
             totalDiscount: 0,
             totalGst: 0,
         }));
-        sharedAddUpdatePitstop(dataToSend, false, [], true)
+        sharedAddUpdatePitstop(dataToSend, false, [], true,false,()=>{},true)
 
         // NavigationService.NavigationActions.common_actions.navigate({ dataToSend })
 

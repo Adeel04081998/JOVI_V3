@@ -435,7 +435,8 @@ export const sharedAddUpdatePitstop = (
     swappedArray = [],
     forceAddNewItem = false,
     fromCart = false,
-    cb = () => { }
+    cb = () => { },
+    forceUpdate = false,
 ) => {
     console.log("pitstopDetails", pitstopDetails);
     if (false) return dispatch(ReduxActionss.clearCartAction({}));
@@ -521,6 +522,8 @@ export const sharedAddUpdatePitstop = (
     }
     console.log('[TO CALCULATE PITSTOPS]', pitstops);
     cb();
+    
+    cartReducer.forceUpdate = forceUpdate;
     sharedCalculateCartTotals(pitstops, cartReducer)
 
 };
@@ -705,7 +708,7 @@ export const sharedFetchOrder = (orderID = 0, successCb = () => { }, errCb = () 
         Endpoints.FetchOrder + '/' + orderID,
         (response) => {
             console.log('sharedFetchOrder', response);
-            if(response.data.order.orderStatus === 3){
+            if (response.data.order.orderStatus === 3) {
                 NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
                 return;
             }
@@ -721,7 +724,7 @@ export const sharedFetchOrder = (orderID = 0, successCb = () => { }, errCb = () 
 export const sharedClearReducers = () => {
     dispatch(actions.clearModalAction());
 }
-export const sleep=(second= 1)=> {
+export const sleep = (second = 1) => {
     return new Promise(resolve => {
         let ms = Number(second) * Number(1000);
         setTimeout(resolve, ms)
@@ -765,7 +768,7 @@ export const sharedGetDashboardCategoryIApi = () => {
     getRequest(
         Endpoints.GET_VENDOR_DASHBOARD_CATEGORY_ID,
         res => {
-            dispatch(ReduxActions.setvendorDashboardCategoryIDAction(res.data?.vendorDashboardCatIDViewModelList ?? [] ));
+            dispatch(ReduxActions.setvendorDashboardCategoryIDAction(res.data?.vendorDashboardCatIDViewModelList ?? []));
         },
         err => {
             sharedExceptionHandler(err);

@@ -8,7 +8,7 @@ import TouchableScale from '../../components/atoms/TouchableScale';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import NoRecord from '../../components/organisms/NoRecord';
-import { isNextPage, renderFile, sharedAddUpdatePitstop, sharedExceptionHandler, uniqueKeyExtractor, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { isNextPage, renderFile, sharedAddUpdatePitstop, sharedExceptionHandler, sharedGetPitstopData, uniqueKeyExtractor, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
@@ -37,8 +37,11 @@ const PITSTOPS = {
     PHARMACY: 3,
     RESTAURANT: 4,
 }
+
+
 export default ({ navigation, route }) => {
     const pitstopType = route?.params?.pitstopType ?? PITSTOP_TYPES.SUPER_MARKET;
+
 
     // #region :: STYLES & THEME START's FROM HERE 
     const colors = theme.getTheme(GV.THEME_VALUES[lodash.invert(PITSTOPS)[pitstopType]], Appearance.getColorScheme() === "dark");
@@ -47,6 +50,8 @@ export default ({ navigation, route }) => {
 
     // #endregion :: STYLES & THEME END's FROM HERE 
     const marketID = route.params?.pitstopID ?? 0;// 4613,4609, 4521;
+    const getStoredQuantities = sharedGetPitstopData({ marketID }, "marketID");
+
     const headerTitle = route.params?.title ?? '';
 
     // #region :: STATE's & REF's START's FROM HERE 
@@ -74,8 +79,9 @@ export default ({ navigation, route }) => {
         return () => { };
     }, []);
 
-    const getQuantity = () => {
-        return 0;
+    const getQuantity = (id) => {
+        const arr = getStoredQuantities?.checkOutItemsListVM ?? [];
+        return arr.find(x => x[x.actionKey] === id)?.quantity ?? 0;
     };
 
     const loadData = (currentRequestNumber, append = false) => {
@@ -98,7 +104,6 @@ export default ({ navigation, route }) => {
         };
 
         postRequest(Endpoints.GET_PRODUCT_MENU_LIST, params, (res) => {
-            console.log('GET_PRODUCT_MENU_LIST', res);
             if (res.data.statusCode === 404) {
                 updateQuery({
                     errorText: res.data.message,
@@ -116,7 +121,7 @@ export default ({ navigation, route }) => {
                 const newpitstopItemListArr = pitem.pitstopItemList.map(item => {
                     return {
                         ...item,
-                        quantity: getQuantity(),
+                        quantity: getQuantity(item.pitStopItemID),
                         isOutOfStock: false,
                     }
                 })
@@ -206,7 +211,6 @@ export default ({ navigation, route }) => {
     // #region :: RENDER VERTICAL & HORIZONTAL SCROLL ITEM START's FROM HERE 
     const _renderParentItem = ({ item: parentItem, index: parentIndex }) => {
         const productTotalItem = parentItem?.productsPaginationInfo?.totalItems ?? 0;
-
         return (
             <React.Fragment>
 
@@ -251,6 +255,8 @@ export default ({ navigation, route }) => {
                                         updateQuantity(parentIndex, index, quantity);
                                     }}
                                     item={{
+                                        marketID: marketID,
+                                        pitstopItemID: item.pitStopItemID,
                                         image: { uri: renderFile(`${image}`) },
                                         isOutOfStock: isOutOfStock,
                                         name: item.pitStopItemName,
