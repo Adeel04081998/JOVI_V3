@@ -349,7 +349,6 @@ export default (props) => {
 
             let timeToshowGif = Platform.OS === 'ios' ? (deviceInfoModule.hasNotch() ? 2800 : 4000) : 6000
             if (addToCardAnimation === true) {
-                console.log("if here", addToCardAnimation);
                 animateLoader();
                 // setTimeout(() => {
                 //     animateLoader(0)

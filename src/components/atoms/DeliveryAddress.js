@@ -45,8 +45,8 @@ export default ({ instructions = "", contianerStyle = {}, addressTxtStyle = {}, 
     const colors = initColors;
     const userReducer = useSelector(store => store.userReducer);
     const dispatch = useDispatch();
-    console.log("[DeliveryAddress].userReducer", userReducer);
     const finalDestination = userReducer.finalDestObj;
+    
     return (
         <View
             style={[{
@@ -98,26 +98,26 @@ export default ({ instructions = "", contianerStyle = {}, addressTxtStyle = {}, 
             {
                 instructions ?
                     <>
-                        <BottomLine lineStyle={{  marginHorizontal: 18, borderBottomColor: '#DFDFDF', borderLeftWidth: 0, borderRightWidth: 0 }} />
+                        <View style={{ marginHorizontal: 18, backgroundColor: '#DFDFDF', height: 1, marginVertical: 5 }} />
                         <View style={{ padding: SPACING - 5, paddingLeft: SPACING + 8, bottom: 5, }}>
                             <Text
-                                style={{ color: colors.primary, fontSize: 14,  }}
+                                style={{ color: colors.primary, fontSize: 14, }}
                                 fontFamily="PoppinsSemiBold"
                                 numberOfLines={1}>
                                 Instruction for rider
                             </Text>
                             <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between', paddingBottom: 5, }}>
-                                <Text style={{ color: colors.black, fontSize: 11, textAlign: 'auto', paddingVertical:3}} numberOfLines={2} fontFamily='PoppinsRegular'>
+                                <Text style={{ color: colors.black, fontSize: 11, textAlign: 'auto', paddingVertical: 3 }} numberOfLines={2} fontFamily='PoppinsRegular'>
                                     {instructions}
                                 </Text>
-                                <VectorIcon
+                                {/* <VectorIcon
                                     name="chevron-forward"
                                     type="Ionicons"
                                     size={19}
                                     color={"#6D51BB"}
-                                    style={{right:5}}
+                                    style={{ right: 8, }}
 
-                                />
+                                /> */}
 
                             </View>
 
