@@ -22,15 +22,18 @@ export default ({ CategoriesTabConfig = {}, selectedCategories = [], parentCateg
         // return state.activeTab === item.categoryID;
         return (selectedCategories ?? []).find(x => x === item.categoryID);
     }
-    const selectedStyle = (item) => {
+    const selectedStyle = (item,index) => {
+        console.log('ijsdkfgjskdfjgkajdgkjksdjgkjk',index);
         const style = {
             height: CONTAINER_HEIGHT,
             width: CONTAINER_WIDTH,
             marginBottom: 5,
             justifyContent: 'center',
+            left:10,
             backgroundColor: '#fff',
             ...sharedStyles._styles().shadow,
             ...styles.cat_item_container,
+            marginRight:categoriesList.length-1===index ?20:8,
         };
         return style;
     }
@@ -40,7 +43,7 @@ export default ({ CategoriesTabConfig = {}, selectedCategories = [], parentCateg
         }, 1000);
     }, []);
     const CategoryCardItemComponent = isRendered.current ? CategoryCardItemSimple : CategoryCardItem;
-    return (<View style={{ marginTop: 10, overflow: 'visible' }}>
+    return (<View style={{ marginTop: 10, overflow: 'visible', marginHorizontal:-10 }}>
         {CategoriesTabConfig.categoryTitle && <Text numberOfLines={1} fontFamily='PoppinsSemiBold' style={styles.categoryTitle}>
             Cuisine
         </Text>}
@@ -50,22 +53,23 @@ export default ({ CategoriesTabConfig = {}, selectedCategories = [], parentCateg
             }
             delay={250}
             renderItem={(x, i) => {
-                return <CategoryCardItemComponent
-                    key={`category card item${i}`}
-                    xml={x.image}
-                    title={x.categoryName}
-                    containerStyleOverride={true}
-                    containerOverrideStyle={{
-                        backgroundColor: checkSelectedTab(x) ? colors.primary + '20' : '#fff',
-                        borderColor: checkSelectedTab(x) ? colors.primary : '',
-                        borderWidth: checkSelectedTab(x) ? 2 : 0,
-                        paddingTop:3,
-                        height: '100%'
-                    }}
-                    textStyle={styles.cardTextStyle}
-                    imageContainerStyle={[{ height: CONTAINER_HEIGHT * 0.5, marginVertical: 5 }, styles.cat_img_container]}
-                    onPress={() => { setState(pre => ({ ...pre, activeTab: pre.activeTab === x.categoryID ? null : x.categoryID })); parentCategoryHandler(x, 'categoryID', 'cuisines') }}
-                />
+                    return <CategoryCardItemComponent
+                        key={`category card item${i}`}
+                        xml={x.image}
+                        title={x.categoryName}
+                        containerStyleOverride={true}
+                        containerOverrideStyle={{
+                            backgroundColor: checkSelectedTab(x) ? colors.primary + '20' : '#fff',
+                            borderColor: checkSelectedTab(x) ? colors.primary : '',
+                            borderWidth: checkSelectedTab(x) ? 2 : 0,
+                            paddingTop:3,
+                            height: '100%', 
+
+                        }}
+                        textStyle={styles.cardTextStyle}
+                        imageContainerStyle={[{ height: CONTAINER_HEIGHT * 0.5, marginVertical: 5 }, styles.cat_img_container]}
+                        onPress={() => { setState(pre => ({ ...pre, activeTab: pre.activeTab === x.categoryID ? null : x.categoryID })); parentCategoryHandler(x, 'categoryID', 'cuisines') }}
+                    />
             }}
             horizontal={true}
             itemContainerStyleCb={selectedStyle}
@@ -79,7 +83,8 @@ const styles = StyleSheet.create({
         width: 80, justifyContent: 'center', alignContent: 'center', alignItems: 'center', alignSelf: 'center'
     },
     cat_item_container:{
-        marginHorizontal: 3, justifyContent: 'center', borderRadius: 10
+        justifyContent: 'center', borderRadius: 10, 
+        
     },
     categoryTitle:{ fontSize: 15, color: "#272727", paddingVertical: SPACING_VERTICAL },
     cardTextStyle:{ fontSize: 12, paddingHorizontal: 2, },
