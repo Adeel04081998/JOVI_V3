@@ -17,10 +17,10 @@ import NavigationService from '../../../navigations/NavigationService';
 import ROUTES from '../../../navigations/ROUTES';
 import { useSelector } from 'react-redux';
 
-export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCatID = 0, imageStyles = {}, themeColors = null, showMoreBtnText = "", }) => {
+export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCatID = 0, imageStyles = {}, themeColors = null, showMoreBtnText = "", cb = () =>{} }) => {
     const SPACING_BOTTOM = 0;
     const [data, setData] = React.useState(null);
-    const [isLoading, setIsLoading] = React.useState(true);
+    const isLoading = React.useRef(null);
     const userReducer = useSelector(store => store.userReducer);
     const finalDestination = userReducer?.finalDestObj ?? { latitude: 0, longitude: 0 };
 
@@ -35,10 +35,14 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
                 "longitude": finalDestination.longitude
             },
             res => {
+                console.log('res.data ==>>>',res.data);
                 if (res.data.statusCode !== 200) return;
+                cb(true)
                 setData(res.data.vendorCategoryViewModel);
             },
             err => {
+                isLoading.current = true
+                cb(true)
                 sharedExceptionHandler(err)
             },
             {},

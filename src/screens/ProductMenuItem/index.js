@@ -10,9 +10,11 @@ import { getKeyByValue, isNextPage, renderFile, sharedAddToCartKeys, sharedAddUp
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
+import ROUTES from '../../navigations/ROUTES';
 import { store } from '../../redux/store';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
+import ENUMS from '../../utils/ENUMS';
 import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import ProductMenuItemCard from '../ProductMenu/components/ProductMenuItemCard';
 import { ProductDummyData1 } from '../RestaurantProductMenu/components/ProductDummyData';
@@ -27,6 +29,8 @@ export default ({ navigation, route }) => {
 
     // #region :: ROUTE PARAM's START's FROM HERE 
     const pitstopType = route?.params?.pitstopType ?? PITSTOP_TYPES.SUPER_MARKET;
+const parentItem=route?.params?.item ?? {};    
+const allData=route?.params?.allData ?? {};
 
     const marketID = route?.params?.marketID ?? 0;// 4613,4609, 4521, 4668;
     const categoryID = route?.params?.item?.categoryID ?? 0;// 668, 675
@@ -231,7 +235,11 @@ export default ({ navigation, route }) => {
     // #region :: RENDER ITEM START's FROM HERE 
     const _renderItem = ({ item, index }) => {
         const image = (item?.images ?? []).length > 0 ? item.images[0].joviImageThumbnail : '';
-        const isOutOfStock = "isOutOfStock" in item ? item.isOutOfStock : false;
+        let isOutOfStock = "isOutOfStock" in item ? item.isOutOfStock : false;
+        if (item.availabilityStatus === ENUMS.AVAILABILITY_STATUS.OutOfStock) {
+            isOutOfStock = true;
+        }
+
         return (
             <View style={{
                 marginTop: 20,
@@ -240,7 +248,18 @@ export default ({ navigation, route }) => {
                     itemContainerStyle={{
                         marginRight: 0,
                     }}
-                    onPress={() => { }}
+                    onPress={() => { 
+                        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, {
+                            propItem: {
+                                itemDetails: { ...item },
+                                ...item,
+                                vendorDetails: { ...parentItem, pitstopItemList: null, marketID, actionKey: "marketID", 
+                                pitstopName: allData?.pitstopName??'', pitstopIndex: null, pitstopType, ...route.params },
+                                // vendorDetails: { ...route.params, allData },
+                            },
+                            pitstopType: pitstopType
+                        })
+                    }}
                     colors={colors}
                     index={index}
                     itemImageSize={ITEM_IMAGE_SIZE}

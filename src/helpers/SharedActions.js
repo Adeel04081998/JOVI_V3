@@ -769,6 +769,7 @@ export const sharedGetDashboardCategoryIApi = () => {
     getRequest(
         Endpoints.GET_VENDOR_DASHBOARD_CATEGORY_ID,
         res => {
+            console.log('[sharedGetDashboardCategoryIApi].res',res);
             dispatch(ReduxActions.setvendorDashboardCategoryIDAction(res.data?.vendorDashboardCatIDViewModelList ?? []));
         },
         err => {

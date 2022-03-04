@@ -1,7 +1,7 @@
 import { useFocusEffect } from '@react-navigation/native';
 import lodash from 'lodash'; // 4.0.8
 import LottieView from "lottie-react-native";
-import React from 'react';
+import React, { useState } from 'react';
 import { Animated, Appearance, Easing, SafeAreaView, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
 import Text from '../../components/atoms/Text';
@@ -93,7 +93,11 @@ const PistopListing = React.memo(({ route, }) => {
     const animationHeight = constants.window_dimensions.height * 0.96;
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]], Appearance.getColorScheme() === "dark");
     const listingStyles = stylesheet.styles(colors, width, height);
-    const isLoading = !promotionsReducer?.dashboardContentListViewModel?.dashboardBannerImg || !categoriesTagsReducer;
+    const [loadedData, setLoadedData] = useState(false)
+    console.log("loadedData", loadedData);
+    const isLoading = !loadedData;
+    console.log("isLoading", isLoading);
+
     const filterValidations = {
         search: (val) => { return val !== '' },
         filter: (val, currentVal) => { return val !== null && val.length > 0 && val[0] === currentVal },
@@ -152,7 +156,7 @@ const PistopListing = React.memo(({ route, }) => {
         }));
         const isAllDisSelected = filtersRef.current.averagePrice === null && filtersRef.current.cuisines.length === 0 && filtersRef.current.filter.length === 0;
         allRestaurantAnimation(isAllDisSelected ? 1 : 0);
-        console.log('updatedFilters', updatedFilters,isAllDisSelected,filtersRef.current);
+        console.log('updatedFilters', updatedFilters, isAllDisSelected, filtersRef.current);
     }
     const goToFilters = () => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Filter.screen_name, { activeAvergePrice: filtersRef.current.averagePrice, activeCusine: filtersRef.current.cuisines[0], activeFilterBy: filtersRef.current.filter[0], backCB: backFromFiltersHandler });
@@ -186,7 +190,7 @@ const PistopListing = React.memo(({ route, }) => {
             homeStyles={listingStyles}
             onSearch={onSearchHandler}
         />
-        
+
         <Filters
             colors={colors}
             filterConfig={currentPitstopType}
@@ -217,23 +221,21 @@ const PistopListing = React.memo(({ route, }) => {
     }}>
         <ImageCarousel
             // aspectRatio={16 / 7}
-            data={promotionsReducer?.dashboardContentListViewModel?.dashboardPromoListVM ??
-                [{
-                    promoImg: promotionsReducer?.dashboardContentListViewModel?.dashboardBannerImg ??
-                        `Dev/DashboardBanner/2021/5/20/Jov_banner_350x220 (1)_12173.jpg`
-                }]} // Hardcoded url added for QA testing only if there is no data in db => Mudassir
+            data={promotionsReducer?.dashboardContentListViewModel?.dashboardPromoListVM ?? []} // Hardcoded url added for QA testing only if there is no data in db => Mudassir
             uriKey="promoImg"
             containerStyle={{ ...listingStyles.imageCarousal }}
             height={128}
             theme={colors}
         />
         <View style={{ ...listingStyles.wrapper, paddingBottom: SPACING_VERTICAL }}>
-        {vendorDashboardCategoryIDReducer.map((item, index) => {
-                                return (
-                                    <GenericList themeColors={colors} pitstopType={pitstopType} vendorDashboardCatID={item.vendorDashboardCatID}/>
-                                    )
-                            })}
-            
+            {vendorDashboardCategoryIDReducer.map((item, index) => {
+                return (
+                    <GenericList themeColors={colors} pitstopType={pitstopType} vendorDashboardCatID={item.vendorDashboardCatID} cb={(loaded) => {
+                        setLoadedData(loaded)
+                    }} />
+                )
+            })}
+
         </View>
     </Animated.View>);
     const renderAllRestaurantsListing = () => (<Animated.View style={{
@@ -260,7 +262,6 @@ const PistopListing = React.memo(({ route, }) => {
             scrollRef.current && scrollRef.current.scrollTo({ y: yAxis, x: xAxis, animated: true });
         }
     }, [scrollEvent]));
-
     return (
         <View style={listingStyles.container}>
             <SafeAreaView style={{ flex: 1 }}>
@@ -268,22 +269,22 @@ const PistopListing = React.memo(({ route, }) => {
                     // leftIconType={'AntDesign'} leftIconName={'left'}
                     leftIconSize={30}
                 />
-                {isLoading ? <CardLoader styles={listingStyles} /> :
-                    <ScrollView
-                        ref={scrollRef}
-                        nestedScrollEnabled showsVerticalScrollIndicator={false} scrollEventThrottle={16}
-                        onScroll={(event) => {
-                            const yAxis = event?.nativeEvent?.contentOffset.y ?? 0;
-                            if (yAxis > 0)
-                                scrollEvent = event.nativeEvent.contentOffset;
-                            if (handleInfinityScroll(event)) {
-                                setFetchDataUseEffect(Math.random());
-                            }
-                        }}>
-                        {renderFilters()}
-                        {renderCarouselNdListing()}
-                        {renderAllRestaurantsListing()}
-                    </ScrollView>}
+                {isLoading ? <CardLoader styles={listingStyles} /> : null}
+                {<ScrollView
+                    ref={scrollRef}
+                    nestedScrollEnabled showsVerticalScrollIndicator={false} scrollEventThrottle={16}
+                    onScroll={(event) => {
+                        const yAxis = event?.nativeEvent?.contentOffset.y ?? 0;
+                        if (yAxis > 0)
+                            scrollEvent = event.nativeEvent.contentOffset;
+                        if (handleInfinityScroll(event)) {
+                            setFetchDataUseEffect(Math.random());
+                        }
+                    }}>
+                    {renderFilters()}
+                    {renderCarouselNdListing()}
+                    {renderAllRestaurantsListing()}
+                </ScrollView>}
                 <BottomBarComponent colors={colors} leftData={[{ id: 1, iconName: "home", title: "Home" }, { id: 2, iconName: "person", title: "Profile" }]} rightData={[{ id: 3, iconName: "wallet", title: "Wallet" }, { id: 4, iconName: "pin", title: "Location" }]} />
             </SafeAreaView>
         </View>

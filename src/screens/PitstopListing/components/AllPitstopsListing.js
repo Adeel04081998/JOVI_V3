@@ -22,7 +22,7 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
         pitstopListViewModel: {
             list: []
         },
-        isLoading: false
+        isLoading: true
     });
     const userReducer = useSelector(store => store.userReducer);
     const isFocused = useIsFocused();

@@ -225,7 +225,7 @@ export default ({ navigation, route }) => {
 
                     {isNextPage(productTotalItem, HORIZONTAL_MAX_ITEM_PER_REQUEST, 1) &&
                         <TouchableScale wait={0} onPress={() => {
-                            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductMenuItem.screen_name, { pitstopType, marketID, item: parentItem })
+                            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductMenuItem.screen_name, { pitstopType, marketID, item: parentItem,allData })
                         }}>
                             <Text style={itemStyles.titleViewmoreText}>{`View More`}</Text>
                         </TouchableScale>
