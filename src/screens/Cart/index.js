@@ -3,36 +3,33 @@
 // * Get Service charges from server on swapped array
 
 import React from 'react';
-import { Alert, Appearance, ScrollView } from 'react-native';
+import { Appearance } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { useDispatch, useSelector } from 'react-redux';
-import svgs from '../../assets/svgs';
+import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-aware-scroll-view';
+import DeliveryAddress from "../../components/atoms/DeliveryAddress";
 import Image from '../../components/atoms/Image';
 import SafeAreaView from '../../components/atoms/SafeAreaView';
+import SetpProgress from '../../components/atoms/StepProgress';
 import Text from '../../components/atoms/Text';
 import TextInput from '../../components/atoms/TextInput';
 import TouchableScale from '../../components/atoms/TouchableScale';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
-import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedConfirmationAlert, sharedGetServiceCharges, sharedSubStringText } from '../../helpers/SharedActions';
+import DraggableFlatList from '../../components/molecules/DraggableFlatList';
+import DashedLine from '../../components/organisms/DashedLine';
+import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedConfirmationAlert } from '../../helpers/SharedActions';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
+import ReduxActions from '../../redux/actions';
+import constants from '../../res/constants';
 import sharedStyles from '../../res/sharedStyles';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES } from '../../utils/GV';
-import SetpProgress from '../../components/atoms/StepProgress';
+import ProductQuantityCard from '../ProductMenu/components/ProductQuantityCard';
 import stylesheet from './styles';
 import { pencil_icon, percent_icon, routes_icon } from './svgs/cart_svgs';
-import DeliveryAddress from "../../components/atoms/DeliveryAddress";
-import colors, { initColors } from '../../res/colors';
-import ReduxActions from '../../redux/actions';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
-import DraggableFlatList from '../../components/molecules/DraggableFlatList';
-import constants from '../../res/constants';
-import DashedLine from '../../components/organisms/DashedLine';
-import ProductQuantityCard from '../ProductMenu/components/ProductQuantityCard';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 const BottomLine = () => (
   <View
     style={{
@@ -105,14 +102,7 @@ export default () => {
 
           {
             idx === 0 &&
-            <View
-              style={{
-                borderBottomColor: '#000',
-                borderWidth: 0.2,
-                marginVertical: 5,
-                borderColor: colors.grey,
-              }}
-            />
+            <BottomLine />
           }
           <Products
             key={`product-key-${idx}`}
@@ -139,16 +129,24 @@ export default () => {
         </>
       ))
     }
+    const onStorePress = () => {
+      const routes = {
+        4: ROUTES.APP_DRAWER_ROUTES.RestaurantProductMenu.screen_name,
+        1: ROUTES.APP_DRAWER_ROUTES.ProductMenu.screen_name,
+        2: ROUTES.APP_DRAWER_ROUTES.JoviJob.screen_name,
+      }
+      NavigationService.NavigationActions.common_actions.navigate(routes[pitstopType], { ...pitstop, pitstopType });
+    }
     return (
-      <TouchableWithoutFeedback
+      <View
         style={{
           backgroundColor: dynamiColors.white,
-          borderRadius: 10,
+          borderRadius: 7,
           margin: 5,
           ...sharedStyles._styles(dynamiColors).shadow,
           elevation: 3,
         }}
-        onPress={() => expandCollapeHanlder(pitstopIndex)}
+      // onPress={() => expandCollapeHanlder(pitstopIndex)}
       >
         <View
           style={{
@@ -159,7 +157,7 @@ export default () => {
 
           }}>
           <View style={{ flexDirection: 'row', maxWidth: "60%" }}>
-            <View style={{}}>
+            <View>
               <Text
                 style={{ color: dynamiColors.primary, fontSize: 17 }}
                 fontFamily="PoppinsBold"
@@ -167,7 +165,7 @@ export default () => {
               >
                 {pitstopName}
               </Text>
-              <TouchableScale style={{ paddingTop: 2 }} onPress={() => { }}>
+              <TouchableScale style={{ paddingTop: 2, maxWidth: 100 }} onPress={onStorePress}>
                 <Text
                   style={{ color: dynamiColors.black, fontSize: 12 }}
                   fontFamily="PoppinsRegular">{`Back to ${isJOVI ? 'Jovi Job' : 'Store'
@@ -242,7 +240,7 @@ export default () => {
           </View>
         </View>
         {expanded.includes(pitstopIndex) ? viewToRender() : null}
-      </TouchableWithoutFeedback >
+      </View>
     );
   };
   const Products = ({
@@ -425,22 +423,32 @@ export default () => {
       <View style={{ top: -10 }}>
         <SetpProgress maxHighlight={2} />
       </View>
-      <ScrollView contentContainerStyle={{ padding: 10 }} nestedScrollEnabled style={{ flex: 1 }}>
+      <KeyboardAwareScrollView contentContainerStyle={{ padding: 10 }} nestedScrollEnabled style={{ flex: 1 }}>
         <View style={{ marginHorizontal: 0 }}>
           <DeliveryAddress />
           <Text style={{ padding: 10, fontSize: 12 }} fontFamily="PoppinsLight">{'Hold and drag to rearrange your pitstops to get the better route and less service charges.'}</Text>
+          {/* <FlatList
+            keyExtractor={(index) => `index-${index}`}
+            data={data}
+            renderItem={({ item, index }) => <PitstopsCard
+              key={`pit-key${index}`}
+              pitstop={{ ...item, pitstopIndex: index }}
+            />
+            }
+          /> */}
           <DraggableFlatList
             data={data}
             renderItem={({ item, index }) => <PitstopsCard
               key={`pit-key${index}`}
               pitstop={{ ...item, pitstopIndex: index }}
-            />}
+            />
+            }
             updateData={(newData) => {
               setData(newData);
               // setExpanded([])
               // sharedAddUpdatePitstop(null, false, newData)
             }}
-            style={{ maxHeight: constants.screen_dimensions.height * 0.40 }}
+            style={{ maxHeight: constants.screen_dimensions.height * 0.6}}
           />
         </View>
         <TouchableScale
@@ -508,7 +516,7 @@ export default () => {
           onChangeText={text => GV.RIDER_INSTRUCTIONS.current = text.trim()}
         />
         <Totals />
-      </ScrollView>
+      </KeyboardAwareScrollView>
       <View style={{ backgroundColor: colors.white, paddingVertical: 10, alignItems: "center", justifyContent: "center", }}>
         <View style={{ flexDirection: 'row', marginHorizontal: 10, }}>
           {['Add Pitstop', 'Checkout'].map((title, idx) => (

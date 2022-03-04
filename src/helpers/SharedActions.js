@@ -523,7 +523,7 @@ export const sharedAddUpdatePitstop = (
     }
     console.log('[TO CALCULATE PITSTOPS]', pitstops);
     cb();
-    
+
     cartReducer.forceUpdate = forceUpdate;
     sharedCalculateCartTotals(pitstops, cartReducer)
 
@@ -789,9 +789,9 @@ export const sharedAddToCartKeys = (restaurant = null, item = null) => {
 
     }
     if (item) {
-        item._itemPrice = item.discountedPrice || item.gstAddedPrice || item.itemPrice;
+        item._itemPrice = item.discountedPrice > 0 ? item.discountedPrice : item.gstAddedPrice > 0 ? item.gstAddedPrice : item.itemPrice;
         item._itemPriceWithoutDiscount = item.gstAddedPrice;
-        item._totalDiscount = item.discountType === ENUMS.DISCOUNT_TYPES.Percentage ? sharedDiscountsCalculator(item._itemPriceWithoutDiscount, item.discountAmount) : item.discountAmount; // if discount type is fixed then discount amount would be the discounted price
+        item._totalDiscount = item?.discountType === ENUMS.DISCOUNT_TYPES.Percentage ? sharedDiscountsCalculator(item._itemPriceWithoutDiscount, item.discountAmount) : item.discountAmount; // if discount type is fixed then discount amount would be the discounted price
         item._totalGst = item.gstAmount;
     }
     return {
