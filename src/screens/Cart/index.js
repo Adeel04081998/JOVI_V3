@@ -448,7 +448,7 @@ export default () => {
               // setExpanded([])
               // sharedAddUpdatePitstop(null, false, newData)
             }}
-            style={{ maxHeight: constants.screen_dimensions.height * 0.6}}
+            style={{ maxHeight: constants.screen_dimensions.height * 0.40}}
           />
         </View>
         <TouchableScale

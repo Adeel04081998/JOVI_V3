@@ -44,7 +44,8 @@ export default () => {
     const homeStyles = stylesheet.styles(colors);
     const homeFadeIn = React.useRef(new Animated.Value(0)).current;
     const [state, setState] = useState(initState)
-    const { modalVisible, finalDestTitle } = state
+    const { modalVisible, finalDestTitle } = state;
+    const isFinalDestinationSelected = userReducer.finalDestObj;
     // #region :: SELECTING FINAL DESTINATION IF NOT SELECTED START's FROM HERE 
     const gotoFinalDestinationModal = () => {
         dispatch(ReduxActions.setModalAction({
@@ -91,7 +92,7 @@ export default () => {
                 }
             });
         }
-    }, [loaderVisible,userReducer?.finalDestObj]);
+    }, [loaderVisible, userReducer?.finalDestObj]);
     React.useEffect(() => {
         if (!isFocused) {
             dispatch(ReduxActions.hideRobotAction());
@@ -162,7 +163,7 @@ export default () => {
                             <Categories homeStyles={homeStyles} />
                             <AvatarAlert messagesReducer={messagesReducer} homeStyles={homeStyles} />
                             {/* <RecentOrders /> AS PER PM WE HAVE TO REMOVE RECENT ORDER FOR NOW*/}
-                            {vendorDashboardCategoryIDReducer.map((item, index) => {
+                            {isFinalDestinationSelected && vendorDashboardCategoryIDReducer.map((item, index) => {
                                 return (
                                     <GenericList vendorDashboardCatID={item.vendorDashboardCatID} />
                                 )
