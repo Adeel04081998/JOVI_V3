@@ -11,7 +11,7 @@ import { renderPrice, sharedFetchOrder, sharedOrderNavigation } from '../../help
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
-import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
+import GV, { ORDER_STATUSES, PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import { stylesFunc } from './styles';
 import { orderProcessingDummyData } from './StaticData';
 import AnimatedLottieView from 'lottie-react-native';
@@ -69,7 +69,7 @@ export default ({ navigation, route }) => {
     const fetchOrderDetails = () => {
         sharedFetchOrder(orderIDParam, (res) => {
             if (res.data.statusCode === 200) {
-                let allowedOrderStatuses = ['VendorApproval', 'VendorProblem', 'Initiated'];
+                let allowedOrderStatuses = [ORDER_STATUSES.VendorApproval, ORDER_STATUSES.VendorProblem, ORDER_STATUSES.Initiated];
                 if (!allowedOrderStatuses.includes(res.data.order.subStatusName)) {
                     sharedOrderNavigation(orderIDParam, res.data.order.subStatusName, ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name);
                     return;
@@ -99,7 +99,7 @@ export default ({ navigation, route }) => {
         // '14' out of stock
         // '18' replaced
         const notificationTypes = ["1", "11", "12", "13", "14", "18"]
-        console.log('fcmReducer------OrderProcessing',fcmReducer);
+        console.log('fcmReducer------OrderProcessing', fcmReducer);
         const jobNotify = fcmReducer.notifications?.find(x => (x.data && (notificationTypes.includes(`${x.data.NotificationType}`))) ? x : false) ?? false;
         if (jobNotify) {
             console.log(`[jobNotify]`, jobNotify)
@@ -118,7 +118,7 @@ export default ({ navigation, route }) => {
                 fetchOrderDetails()
             }
             else {
-               
+
             }
             //  To remove old notification
             dispatch(actions.fcmAction({ notifyClientID }));
@@ -285,7 +285,7 @@ export default ({ navigation, route }) => {
                     {/* ****************** Start of SERVICE CHARGES ****************** */}
                     <OrderProcessingChargesUI
                         title={`Service Charges(Incl S.T ${renderPrice(state.chargeBreakdown.estimateServiceTax, '')})`}
-                        value={renderPrice(state.chargeBreakdown.estimateServiceTax+state.chargeBreakdown.totalEstimateCharge)} />
+                        value={renderPrice(state.chargeBreakdown.estimateServiceTax + state.chargeBreakdown.totalEstimateCharge)} />
                     <DashedLine />
 
                     {/* ****************** End of SERVICE CHARGES ****************** */}

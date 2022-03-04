@@ -38,7 +38,7 @@ export default (props) => {
     /******************************************* START OF VARIABLE INITIALIZATION **********************************/
 
     console.log('props ==>>>', props);
-    const { showContinueBtn = false, selectFinalDestination = false, newFinalDestination = null, showCurrentLocationBtn = true, showMarker = false, showDirections = true } = props;
+    const { showContinueBtn = false, selectFinalDestination = false,hideBackButton=false, newFinalDestination = null, showCurrentLocationBtn = true, showMarker = false, showDirections = true, customPitstops = null } = props;
 
     const HEIGHT = constants.window_dimensions.height;
     const WIDTH = constants.window_dimensions.width;
@@ -58,7 +58,7 @@ export default (props) => {
 
     const styles = mapStyles(colors, HEIGHT, WIDTH, props);
     const { cartReducer, userReducer } = useSelector(store => store);
-    const pitstops = [...cartReducer.pitstops, { ...userReducer.finalDestObj, isFinalDestination: true }];
+    const pitstops = customPitstops ?? [...cartReducer.pitstops, { ...userReducer.finalDestObj, isFinalDestination: true }];
 
     /******************************************* END OF VARIABLE INITIALIZATION **********************************/
 
@@ -324,6 +324,7 @@ export default (props) => {
 
 
     const renderBackBtn = () => {
+        if(hideBackButton) return;
         return (
             <TouchableOpacity style={styles.backBtn} onPress={() => {
                 if (props.onBackPress) {

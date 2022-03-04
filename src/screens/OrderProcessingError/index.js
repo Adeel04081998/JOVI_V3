@@ -1,6 +1,7 @@
 import AnimatedLottieView from 'lottie-react-native';
 import * as React from 'react';
 import { Appearance, SafeAreaView } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import Text from '../../components/atoms/Text';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
@@ -9,7 +10,7 @@ import Button from '../../components/molecules/Button';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import OrderEstTimeCard from '../../components/organisms/Card/OrderEstTimeCard';
 import DashedLine from '../../components/organisms/DashedLine';
-import { renderPrice, sharedConfirmationAlert, sharedExceptionHandler, sharedFetchOrder, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { renderPrice, sharedConfirmationAlert, sharedExceptionHandler, sharedFetchOrder, sharedOrderNavigation, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
@@ -18,7 +19,7 @@ import constants from '../../res/constants';
 import FontFamily from '../../res/FontFamily';
 import theme from '../../res/theme';
 import ENUMS from '../../utils/ENUMS';
-import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
+import GV, { ORDER_STATUSES, PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import { OrderProcessingChargesUI, OrderProcessingEstimatedTotalUI } from '../OrderProcessing';
 import { orderProcessingDummyData } from '../OrderProcessing/StaticData';
 import { stylesFunc } from './styles';
@@ -32,7 +33,8 @@ export default ({ navigation, route }) => {
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]], Appearance.getColorScheme() === "dark");
     const orderIDParam = route?.params?.orderID ?? 0;
     const styles = stylesFunc(colors);
-
+    const fcmReducer = useSelector(store => store.fcmReducer);
+    const dispatch = useDispatch();
     // #endregion :: STYLES & THEME END's FROM HERE 
 
     // #region :: RENDER HEADER START's FROM HERE 
@@ -69,9 +71,19 @@ export default ({ navigation, route }) => {
     });
 
     // #endregion :: STATE's & REF's END's FROM HERE 
-
-    React.useEffect(() => {
+    const goToHome = () => {
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
+    }
+    const orderCancelledOrCompleted = () => {
+        goToHome();
+    }
+    const fetchOrderDetails = () => {
         sharedFetchOrder(orderIDParam, (res) => {
+            let allowedOrderStatuses = [ORDER_STATUSES.CustomerApproval,ORDER_STATUSES.CustomerProblem];
+            if (!allowedOrderStatuses.includes(res.data.order.subStatusName)) {
+                sharedOrderNavigation(orderIDParam, res.data.order.subStatusName, ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name);
+                return;
+            }
             let updatedPitstops = res.data.order.pitStopsList.map((item, i) => {
                 let updatedPitstop = { ...item };
                 if (item.jobItemsListViewModel && item.jobItemsListViewModel.length > 0) {
@@ -94,11 +106,50 @@ export default ({ navigation, route }) => {
             setState(pre => ({ ...pre, ...res.data.order, pitStopsList: updatedPitstops, isLoading: false }));
 
         });
+    }
+    React.useEffect(() => {
+        // console.log("[Order Processing].fcmReducer", fcmReducer);
+        // '1',  For job related notification
+        // '11',  For rider allocated related notification
+        // '12', For order cancelled by admin
+        // '13' For order cancelled by system
+        // '14' out of stock
+        // '18' replaced
+        const notificationTypes = ["1", "11", "12", "13", "14", "18"]
+        console.log('fcmReducer------OrderProcessing Error', fcmReducer);
+        const jobNotify = fcmReducer.notifications?.find(x => (x.data && (notificationTypes.includes(`${x.data.NotificationType}`))) ? x : false) ?? false;
+        if (jobNotify) {
+            console.log(`[jobNotify]`, jobNotify)
+            const { data, notifyClientID } = jobNotify;
+            // const results = sharedCheckNotificationExpiry(data.ExpiryDate);
+            // if (results.isSameOrBefore) {
+            if (data.NotificationType == notificationTypes[1] || data.NotificationType == notificationTypes[0]) {
+                // console.log("[Order Processing] Rider Assigned By Firbase...");
+                fetchOrderDetails();
+            }
+            if (data.NotificationType == notificationTypes[2] || data.NotificationType == notificationTypes[3]) {
+                // console.log("[Order Processing] Order Cancelled By Firbase...");
+                orderCancelledOrCompleted();
+            }
+            if (data.NotificationType == notificationTypes[4] || data.NotificationType == notificationTypes[5]) {
+                fetchOrderDetails()
+            }
+            else {
+
+            }
+            //  To remove old notification
+            dispatch(actions.fcmAction({ notifyClientID }));
+        } else console.log("[Order Processing Error] Job notification not found!!");
+        return () => {
+        }
+    }, [fcmReducer]);
+    React.useEffect(() => {
+        fetchOrderDetails();
         return () => { };
     }, []);
 
     const orderDecision = isConfirm => {
-        setState((pre) => ({ ...pre, orderActionLoading: isConfirm ?'accept':'cancel', }));
+        setState((pre) => ({ ...pre, orderActionLoading: isConfirm ? 'accept' : 'cancel', }));
         postRequest(
             Endpoints.AcceptRejectOrder,
             {

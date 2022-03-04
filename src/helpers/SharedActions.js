@@ -11,7 +11,7 @@ import { store } from '../redux/store';
 import ReduxActions from '../redux/actions';
 import configs from '../utils/configs';
 import Regex from '../utils/Regex';
-import GV, { PITSTOP_TYPES } from '../utils/GV';
+import GV, { PITSTOP_TYPES,ORDER_STATUSES } from '../utils/GV';
 import constants from '../res/constants';
 import NavigationService from '../navigations/NavigationService';
 import actions from '../redux/actions';
@@ -747,16 +747,16 @@ export const sharedOrderNavigation = (orderID = null, orderStatus = null, replac
     const goToOrderProcessingError = () => navigationLogic(ROUTES.APP_DRAWER_ROUTES.OrderProcessingError.screen_name);
     const goToOrderTracking = () => navigationLogic(ROUTES.APP_DRAWER_ROUTES.OrderProcessingError.screen_name);
     const orderStatusEnum = {
-        'VendorApproval': goToOrderProcessing,
-        'VendorProblem': goToOrderProcessing,
-        'CustomerApproval': goToOrderProcessingError,
-        'CustomerProblem': goToOrderProcessingError,
-        'FindingRider': goToOrderTracking,
-        'Initiated': goToOrderTracking,
-        'Processing': goToOrderTracking,
-        'RiderFound': goToOrderTracking,
-        'RiderProblem': goToOrderTracking,
-        'TransferProblem': goToOrderTracking,
+        [ORDER_STATUSES.VendorApproval]: goToOrderProcessing,
+        [ORDER_STATUSES.VendorProblem]: goToOrderProcessing,
+        [ORDER_STATUSES.CustomerApproval]: goToOrderProcessingError,
+        [ORDER_STATUSES.CustomerProblem]: goToOrderProcessingError,
+        [ORDER_STATUSES.FindingRider]: goToOrderTracking,
+        [ORDER_STATUSES.Initiated]: goToOrderTracking,
+        [ORDER_STATUSES.Processing]: goToOrderTracking,
+        [ORDER_STATUSES.RiderFound]: goToOrderTracking,
+        [ORDER_STATUSES.RiderProblem]: goToOrderTracking,
+        [ORDER_STATUSES.TransferProblem]: goToOrderTracking,
     };
     orderStatusEnum[orderStatus ?? '']();
 }

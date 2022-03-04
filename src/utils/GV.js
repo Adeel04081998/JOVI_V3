@@ -17,10 +17,22 @@ export const PITSTOP_TYPES_INVERTED = {
     1: 'SUPER_MARKET',
     2: 'JOVI',
     3: 'PHARMACY',
-    4: 'RESTAURANT', 
+    4: 'RESTAURANT',
     5: 'JOVI_MART',
     10: 'ALL',
 };
+export const ORDER_STATUSES = {
+    'VendorApproval':'VendorApproval',
+    'VendorProblem':'VendorProblem',
+    'CustomerApproval':'CustomerApproval',
+    'CustomerProblem':'CustomerProblem',
+    'FindingRider':'FindingRider',
+    'Initiated':'Initiated',
+    'Processing':'Processing',
+    'RiderFound':'RiderFound',
+    'RiderProblem':'RiderProblem',
+    'TransferProblem':'TransferProblem',
+}
 export default {
     BASE_URL: initUrlRef,
     SET_VALUE: 1,
@@ -30,4 +42,4 @@ export default {
     THEME_VALUES: { ...PITSTOP_TYPES },
     MAX_PITSTOP_IMAGE_LIMIT: 3,
     MAX_JOVI_AMOUNT: 10000
-} 
+}
