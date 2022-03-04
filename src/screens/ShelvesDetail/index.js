@@ -256,7 +256,7 @@ export default ({ navigation, route }) => {
     // #region :: GETTING PRODUCT MENU PRICE FROM ITEM START's FROM HERE 
     const getPricesForProductMenuItemCard = (item) => {
         return {
-            discountedPrice: item.discountedPrice || item.gstAddedPrice || item.itemPrice, //MAIN PRICE
+            discountedPrice: item.discountAmount > 0 ? item.discountedPrice : item.gstAddedPrice || item.itemPrice, //MAIN PRICE
             price: item.gstAddedPrice || item.itemPrice, //ACTUAL PRICE BEFORE DISCOUNT
             discountAmount: item.discountAmount, //PERCENTAGE OF DISCOUNT
             discountType: item.discountType, //DISCOUNT TYPE FIXED OR PERCENATAGE

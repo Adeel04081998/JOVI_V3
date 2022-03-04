@@ -150,7 +150,7 @@ const ProductMenuItemCard = (props: Props) => {
 
 
                     {/* ****************** Start of MAIN PRICE  ****************** */}
-                    <Text fontFamily='PoppinsBold' style={itemStyles.price}>{renderPrice(props.item.discountedPrice)}</Text>
+                    <Text fontFamily='PoppinsBold' style={itemStyles.price}>{renderPrice({price:props.item.discountedPrice,showZero:true})}</Text>
 
                     {/* ****************** End of MAIN PRICE  ****************** */}
 
