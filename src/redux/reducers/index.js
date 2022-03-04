@@ -71,7 +71,7 @@ const enumsReducer = (state = {}, action) => {
   }
 };
 const messagesReducer = (
-  state = { robotJson: null, showRobotFlag: null },
+  state = { robotJson: null, showRobotFlag: null, hideRobotFlag: null },
   action,
 ) => {
   switch (action.type) {
@@ -83,6 +83,11 @@ const messagesReducer = (
       return {
         ...state,
         showRobotFlag: state.showRobotFlag ? state.showRobotFlag + 1 : 1,
+      };
+    case TYPES.HIDE_ROBOT:
+      return {
+        ...state,
+        hideRobotFlag: state.hideRobotFlag ? state.hideRobotFlag+ 1 : 1,
       };
     case TYPES.CLEAR_ROBOT_JSON:
       return { ...state, robotJson: null };

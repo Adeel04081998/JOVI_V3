@@ -51,8 +51,8 @@ const Robot = ({ messagesReducer }) => {
         }
     }, [messagesReducer?.showRobotFlag, messagesReducer?.showRobotFlag]);
     useEffect(() => {
-        setState(pre => ({ ...pre, showRobot: false }));
-    }, [isLoggedIn])
+        hideRobot();
+    }, [messagesReducer?.hideRobotFlag])
     // console.log("state.lottieAnim", state.lottieAnim)
     if (state.showRobot === false) return null;
     return (

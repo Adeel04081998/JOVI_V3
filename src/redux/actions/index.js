@@ -85,6 +85,11 @@ const showRobotAction = () => {
         type: TYPES.SHOW_ROBOT,
     }
 }
+const hideRobotAction = () => {
+    return {
+        type: TYPES.HIDE_ROBOT,
+    }
+}
 const setCategoriesTagsAction = (payload = {}) => {
     return {
         type: TYPES.SET_CATEGORIES_TAGS,
@@ -133,5 +138,6 @@ export default {
     setUserPrevOrdersAction,
     fcmAction,
     setvendorDashboardCategoryIDAction,
+    hideRobotAction,
     //...
 }
