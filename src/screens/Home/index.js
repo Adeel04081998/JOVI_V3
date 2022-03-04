@@ -1,4 +1,4 @@
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import React, { useState } from 'react';
 import { Animated, Appearance, Easing } from "react-native";
@@ -37,7 +37,7 @@ export default () => {
     const messagesReducer = useSelector(state => state.messagesReducer);
     const userReducer = useSelector(state => state.userReducer);
     const vendorDashboardCategoryIDReducer = useSelector(s => s.vendorDashboardCategoryIDReducer)?.data ?? [];
-
+    const isFocused = useIsFocused();
     const dispatch = useDispatch();
     const loaderVisible = !promotionsReducer?.statusCode || !messagesReducer.statusCode;
     const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark");
@@ -54,22 +54,24 @@ export default () => {
         }))
     };
     const onOrderPress = (order) => {
-        sharedOrderNavigation(order.orderID,order.subStatusName);
+        sharedOrderNavigation(order.orderID, order.subStatusName);
     }
     useFocusEffect(
         React.useCallback(() => {
-            getRequest(Endpoints.GetOpenOrders,(res)=>{
-                console.log('[GetOpenOrders] res',res);
-                if(res.data.statusCode === 200){
-                    const openOrders = res.data?.getOpenOrderDetails?.openOrderList??[];
-                    dispatch(ReduxActions.setUserAction({ openOrders,noOfOpenOrders:openOrders.length }));
+            getRequest(Endpoints.GetOpenOrders, (res) => {
+                console.log('[GetOpenOrders] res', res);
+                if (res.data.statusCode === 200) {
+                    const openOrders = res.data?.getOpenOrderDetails?.openOrderList ?? [];
+                    dispatch(ReduxActions.setUserAction({ openOrders, noOfOpenOrders: openOrders.length }));
                 }
-            },(err)=>{sharedExceptionHandler(err);});
+            }, (err) => { sharedExceptionHandler(err); });
             if (!(!!userReducer?.finalDestObj)) {
                 gotoFinalDestinationModal();
             }
 
-            return () => { };
+            return () => {
+                dispatch(ReduxActions.hideRobotAction());
+            };
         }, [userReducer?.finalDestObj])
     );
 
@@ -77,7 +79,7 @@ export default () => {
     // #endregion :: SELECTING FINAL DESTINATION IF NOT SELECTED END's FROM HERE 
 
     React.useEffect(() => {
-        if (!loaderVisible) {
+        if (!loaderVisible && userReducer?.finalDestObj?.latitude) {
             Animated.timing(homeFadeIn, {
                 toValue: 1,
                 duration: 700,
@@ -89,8 +91,12 @@ export default () => {
                 }
             });
         }
-    }, [loaderVisible]);
-
+    }, [loaderVisible,userReducer?.finalDestObj]);
+    React.useEffect(() => {
+        if (!isFocused) {
+            dispatch(ReduxActions.hideRobotAction());
+        }
+    }, [isFocused]);
     const renderLoader = () => {
         return <View style={homeStyles.gifLoader}>
             <LottieView
@@ -153,7 +159,7 @@ export default () => {
                         />
                         <View style={homeStyles.wrapper}>
                             <Search colors={colors} homeStyles={homeStyles} />
-                        <Categories homeStyles={homeStyles} />
+                            <Categories homeStyles={homeStyles} />
                             <AvatarAlert messagesReducer={messagesReducer} homeStyles={homeStyles} />
                             {/* <RecentOrders /> AS PER PM WE HAVE TO REMOVE RECENT ORDER FOR NOW*/}
                             {vendorDashboardCategoryIDReducer.map((item, index) => {
