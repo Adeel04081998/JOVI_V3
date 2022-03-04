@@ -7,7 +7,7 @@ import TouchableScale from '../../components/atoms/TouchableScale';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import NoRecord from '../../components/organisms/NoRecord';
-import { getRandomInt, isNextPage, renderFile, sharedAddUpdatePitstop, sharedExceptionHandler, uniqueKeyExtractor, sharedAddToCartKeys } from '../../helpers/SharedActions';
+import { getRandomInt, isNextPage, renderFile, sharedAddUpdatePitstop, sharedExceptionHandler, uniqueKeyExtractor, sharedAddToCartKeys, sharedGetPitstopData } from '../../helpers/SharedActions';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
@@ -39,6 +39,7 @@ export default ({ navigation, route }) => {
     const shelveID = route?.params?.shelveID ?? 0;
     const headerTitle = route?.params?.categoryName ?? '';
     const shelveArr = route?.params?.shelveData ?? [];
+    const getStoredQuantities = sharedGetPitstopData({ marketID }, "marketID");
 
     // #endregion :: ROUTE PARAM's END's FROM HERE 
 
@@ -75,8 +76,9 @@ export default ({ navigation, route }) => {
         return () => { };
     }, []);
 
-    const getQuantity = () => {
-        return 0;
+    const getQuantity = (id) => {
+        const arr = getStoredQuantities?.checkOutItemsListVM ?? [];
+        return arr.find(x => x[x.actionKey] === id)?.quantity ?? 0;
     };
 
     const loadData = (tagID) => {
@@ -120,7 +122,7 @@ export default ({ navigation, route }) => {
                 const newpitstopItemListArr = pitem.pitstopItemList.map(item => {
                     return {
                         ...item,
-                        quantity: getQuantity(),
+                        quantity: getQuantity(item.pitStopItemID),
                         isOutOfStock: false,
                     }
                 })
@@ -388,6 +390,8 @@ export default ({ navigation, route }) => {
                                 } :
                                     {
                                         item: {
+                                            marketID: marketID,
+                                            pitstopItemID: item.pitStopItemID,
                                             image: { uri: renderFile(`${image}`) },
                                             isOutOfStock: isOutOfStock,
                                             name: item.pitStopItemName,

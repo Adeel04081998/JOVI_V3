@@ -1,12 +1,12 @@
 import lodash from 'lodash'; // 4.0.8
 import AnimatedLottieView from 'lottie-react-native';
 import React from 'react';
-import { ActivityIndicator, Appearance, FlatList, SafeAreaView } from 'react-native';
+import { ActivityIndicator, Alert, Appearance, FlatList, SafeAreaView } from 'react-native';
 import View from '../../components/atoms/View';
 import AnimatedFlatlist from '../../components/molecules/AnimatedScrolls/AnimatedFlatlist';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import NoRecord from '../../components/organisms/NoRecord';
-import { getKeyByValue, isNextPage, renderFile, sharedAddToCartKeys, sharedAddUpdatePitstop, sharedExceptionHandler, uniqueKeyExtractor } from '../../helpers/SharedActions';
+import { getKeyByValue, isNextPage, renderFile, sharedAddToCartKeys, sharedAddUpdatePitstop, sharedExceptionHandler, sharedGetPitstopData, uniqueKeyExtractor } from '../../helpers/SharedActions';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
@@ -31,6 +31,7 @@ export default ({ navigation, route }) => {
     const marketID = route?.params?.marketID ?? 0;// 4613,4609, 4521, 4668;
     const categoryID = route?.params?.item?.categoryID ?? 0;// 668, 675
     const headerTitle = route?.params?.item?.categoryName ?? '';
+    const getStoredQuantities = sharedGetPitstopData({ marketID }, "marketID");
 
     // #endregion :: ROUTE PARAM's END's FROM HERE 
 
@@ -62,10 +63,10 @@ export default ({ navigation, route }) => {
         return () => { };
     }, []);
 
-    const getQuantity = () => {
-        return 0;
+    const getQuantity = (id) => {
+        const arr = getStoredQuantities?.checkOutItemsListVM ?? [];
+        return arr.find(x => x[x.actionKey] === id)?.quantity ?? 0;
     };
-
     const loadData = (currentRequestNumber, append = false) => {
         updateQuery({
             errorText: '',
@@ -114,7 +115,7 @@ export default ({ navigation, route }) => {
                 const newpitstopItemListArr = pitem.pitstopItemList.map(item => {
                     return {
                         ...item,
-                        quantity: getQuantity(),
+                        quantity: getQuantity(item.pitStopItemID),
                         isOutOfStock: false,
                     }
                 })
@@ -247,6 +248,8 @@ export default ({ navigation, route }) => {
                         updateQuantity(index, quantity);
                     }}
                     item={{
+                        marketID: marketID,
+                        pitstopItemID: item.pitStopItemID,
                         image: { uri: renderFile(`${image}`) },
                         isOutOfStock: isOutOfStock,
                         name: item.pitStopItemName,

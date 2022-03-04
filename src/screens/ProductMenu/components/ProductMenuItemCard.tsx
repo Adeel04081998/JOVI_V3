@@ -1,5 +1,5 @@
 import React from 'react';
-import { GestureResponderEvent, ImageSourcePropType, ImageBackground as RNImageBackground, ImageURISource, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { GestureResponderEvent, ImageSourcePropType, ImageBackground as RNImageBackground, ImageURISource, StyleSheet, StyleProp, ViewStyle, Alert } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import svgs from '../../../assets/svgs';
 import ImageBackground from '../../../components/atoms/ImageBackground';
@@ -17,6 +17,9 @@ import ProductQuantityCard from './ProductQuantityCard';
 
 // #region :: INTERFACE START's FROM HERE 
 interface ProductMenuItemCardItem {
+    /** PITSTOP ITEM ID  */
+    pitstopItemID: number | string,
+    marketID: number | string,
     image: ImageSourcePropType,
     isOutOfStock: boolean,
     quantity: number,
@@ -123,6 +126,8 @@ const ProductMenuItemCard = (props: Props) => {
                                 }} />
                             }
                             <ProductQuantityCard
+                                marketID={props.item.marketID}
+                                pitstopItemID={props.item.pitstopItemID}
                                 outOfStock={props.item.isOutOfStock}
                                 initialQuantity={props.item.quantity}
                                 colors={props.colors}

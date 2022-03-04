@@ -17,7 +17,7 @@ export const PITSTOP_TYPES_INVERTED = {
     1: 'SUPER_MARKET',
     2: 'JOVI',
     3: 'PHARMACY',
-    4: 'RESTAURANT', 
+    4: 'RESTAURANT',
     5: 'JOVI_MART',
     10: 'ALL',
 };
@@ -29,5 +29,6 @@ export default {
     OTP_INTERVAL: 30, // SECONDS
     THEME_VALUES: { ...PITSTOP_TYPES },
     MAX_PITSTOP_IMAGE_LIMIT: 3,
-    MAX_JOVI_AMOUNT: 10000
+    MAX_JOVI_AMOUNT: 10000,
+    RIDER_INSTRUCTIONS: React.createRef("")
 } 

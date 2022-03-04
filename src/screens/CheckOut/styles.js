@@ -35,10 +35,10 @@ export default {
                 color: '#fff', textAlign: 'left', paddingLeft: 20, flex: 1
             },
             voucherSecondaryContainer: {
-                backgroundColor: colors.white, borderRadius: 2, marginRight: 15, width:'25%', height:28, justifyContent:'center',alignSelf:'center',alignContent:'center'
+                backgroundColor: colors.white, borderRadius: 2, marginRight: 15, width: '25%', height: 28, justifyContent: 'center', alignSelf: 'center', alignContent: 'center'
             },
             voucherSeeAllTxtstyle: {
-                color: colors.primary, marginHorizontal: 10,  fontSize: 14, alignSelf:'center', justifyContent:'center', alignContent:'center', alignItems:'center'
+                color: colors.primary, marginHorizontal: 10, fontSize: 14, alignSelf: 'center', justifyContent: 'center', alignContent: 'center', alignItems: 'center'
             },
             receiptMainContainer: {
                 backgroundColor: colors.white, flex: 1, margin: TOPSPACING, borderRadius: 8, ...AppStyles.shadow, elevation: 2
@@ -67,8 +67,12 @@ export default {
                 justifyContent: 'flex-end', fontSize: 12, color: RECEIPTPiTSTOPMAINTXTCOLOR
             },
             reciptSubDetailspitStopItemName: {
-                color: subDetailListTxtColor, fontSize: subDetailListTxtFontSize
-
+                color: subDetailListTxtColor,
+                fontSize: subDetailListTxtFontSize,
+                textAlign:'justify', 
+                paddingHorizontal:20 ,
+                flex:1
+               
             },
             reciptSubDetailspitStopItemPrice: {
                 justifyContent: 'flex-end', color: subDetailListTxtColor, fontSize: subDetailListTxtFontSize

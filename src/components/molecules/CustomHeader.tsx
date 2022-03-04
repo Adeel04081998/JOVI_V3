@@ -172,7 +172,7 @@ const CustomHeader = (props: Props) => {
                 {VALIDATION_CHECK(props.leftCustom) ?
                     props.leftCustom
                     : (VALIDATION_CHECK(props.leftIconName) || props.leftDot) &&
-                    <TouchableScale style={[styles.iconContainer, props.leftContainerStyle]}
+                    <TouchableScale wait={0} style={[styles.iconContainer, props.leftContainerStyle]}
                         {...props.onLeftIconPress ? {
                             onPress: (event) => props.onLeftIconPress && props.onLeftIconPress(event)
                         } : {
@@ -208,7 +208,7 @@ const CustomHeader = (props: Props) => {
                 alignItems: "flex-end",
             }]}>
                 {VALIDATION_CHECK(props.rightCustom) ? props.rightCustom : (VALIDATION_CHECK(props.rightIconName) || props.rightDot) &&
-                    <TouchableScale style={[styles.iconContainer, props.rightContainerStyle]}
+                    <TouchableScale wait={0}  style={[styles.iconContainer, props.rightContainerStyle]}
                         {...props.onRightIconPress ? {
                             onPress: (event) => props.onRightIconPress && props.onRightIconPress(event)
                         } : {
