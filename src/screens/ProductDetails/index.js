@@ -102,9 +102,13 @@ export default (props) => {
                     loading: false
 
                 }));
+
+                const optionListArr = (res.data.generalProductOrDealDetail.optionList ?? []);
+                console.log('UPDATED ARR optionListArr   ', optionListArr);
+                const hasRequired = optionListArr.filter(x => x.isRequired).length;
                 setEnable(pre => ({
                     ...pre,
-                    enableBtn: (res.data.generalProductOrDealDetail.optionList ?? []).length < 1,
+                    enableBtn: optionListArr.length < 1 || hasRequired < 1,
                     requiredIds: (res.data.generalProductOrDealDetail?.optionList ?? []).filter(item => item.isRequired === true).map((_, i) => (i))
                 }));
             } else {
@@ -129,7 +133,26 @@ export default (props) => {
         array.forEach((v) => (v.parentIndex === value && count++));
         return count;
     }
-    const enableDisable = (updatedArr = []) => {
+    const enableDisable = (updatedArr = [], parentIndex) => {
+        {/* ****************** CALCULATING TOTAL REQUIRED COUNT ****************** */ }
+        const requiredCount = optionsListArr.filter(x => x.isRequired).length;
+
+        {/* ****************** WHEN REQUIRED IS MANDATORY BUT NONE IS SELECTED YET ****************** */ }
+        if (updatedArr.length < 1 && requiredCount > 0) {
+            setEnable(pre => ({ ...pre, enableBtn: false }));
+            return
+        }
+
+        {/* ****************** Start of CALCULATING TOTAL REQUIRED SELECTED COUNT ****************** */ }
+        let mustSelectedCount = optionsListArr.filter(x => x.isRequired);
+        mustSelectedCount = mustSelectedCount.length < 1 ? 0 : mustSelectedCount.map(item => item.quantity).reduce((prev, next) => prev + next);
+
+        {/* ****************** GETTING CURRENT REQUIRED SELECTED --  isRequired is added with every item which lies in the required array  ****************** */ }
+        const alreadySelectedCount = updatedArr.filter(x => x.isRequired).length;
+
+        setEnable(pre => ({ ...pre, enableBtn: alreadySelectedCount >= mustSelectedCount }));
+        return
+
         updatedArr = [...new Set(updatedArr.map(item => { return item.parentIndex }))];
         let enableBtn = enable.enableBtn;
         const updatedArrSorted = updatedArr.slice().sort();
@@ -139,9 +162,10 @@ export default (props) => {
         setEnable(pre => ({ ...pre, enableBtn: enableBtn }));
     }
 
-    const onPressHandler = (item, isMany, parentIndex, quantity = null) => {
+    const onPressHandler = (item, isMany, parentIndex, quantity = null, isRequired) => {
         // console.log([1,2,3].)
         const alreadyExist = state.selectedOptions.filter(op => op.itemOptionID === item.itemOptionID)[0];
+
         let updatedArr = [...state.selectedOptions];
         if (quantity && getOccurrence(state.selectedOptions, parentIndex) === quantity) {
             if (alreadyExist) {
@@ -153,9 +177,9 @@ export default (props) => {
         } else if (alreadyExist) {
             updatedArr = updatedArr.filter(x => x.itemOptionID !== item.itemOptionID);
         } else {
-            updatedArr.push({ ...item, parentIndex });
+            updatedArr.push({ ...item, parentIndex, isRequired });
         }
-        enableDisable(updatedArr);
+        enableDisable(updatedArr, parentIndex);
         const totalAddOnPrice = updatedArr.reduce((previousValue, currentValue) => { return parseInt(previousValue) + parseInt(currentValue.optionPrice) }, 0);
         const discountAmount = generalProductOrDealDetail.itemDiscount;
         const joviDiscountRate = generalProductOrDealDetail.joviDiscount ?? 0;
@@ -226,7 +250,7 @@ export default (props) => {
             totalDiscount: 0,
             totalGst: 0,
         }));
-        sharedAddUpdatePitstop(dataToSend, false, [], true,false,()=>{},true)
+        sharedAddUpdatePitstop(dataToSend, false, [], true, false, () => { }, true)
 
         // NavigationService.NavigationActions.common_actions.navigate({ dataToSend })
 
@@ -435,6 +459,7 @@ export default (props) => {
     }, [])
 
     const inputRef = React.useRef(null);
+
     return (
         <View style={{ flex: 1 }} >
 

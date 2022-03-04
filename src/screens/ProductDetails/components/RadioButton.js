@@ -18,7 +18,7 @@ export default ({ data = [], selectedOptions = [], onPressCb, productDetailsStyl
     }
 
 
-    const RenderSelectionUi = ({ pitstopItemsOptionList, choosedQuantity, isMany, parentIndex }) => {
+    const RenderSelectionUi = ({ pitstopItemsOptionList, choosedQuantity, isMany, parentIndex ,isRequired}) => {
         return (
             <View style={{
                 backgroundColor: 'white',
@@ -32,7 +32,7 @@ export default ({ data = [], selectedOptions = [], onPressCb, productDetailsStyl
                         const attributeName = x.tittle
                         const attributeOptionPrice = x.optionPrice
                         let isActive = checkSelected(x);
-                        return <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1, paddingVertical: 5 }} onPress={() => onPressCb(x, isMany, parentIndex, choosedQuantity ?? null)} key={i}  >
+                        return <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1, paddingVertical: 5 }} onPress={() => onPressCb(x, isMany, parentIndex, choosedQuantity ?? null,isRequired)} key={i}  >
                             <View style={productDetailsStyles.radioButtonCircle}>
                                 {isActive &&
                                     <View style={productDetailsStyles.filledCircle(true)} />
@@ -72,7 +72,7 @@ export default ({ data = [], selectedOptions = [], onPressCb, productDetailsStyl
                             }
                         </Text>
                         {isRequired && <Text style={productDetailsStyles.requiredTxt} fontFamily="PoppinsRegular">{"Required"}</Text>}
-                        <RenderSelectionUi pitstopItemsOptionList={pitstopItemsOptionList} isMany={isMany} parentIndex={i} choosedQuantity={choosedQuantity} />
+                        <RenderSelectionUi pitstopItemsOptionList={pitstopItemsOptionList} isMany={isMany} parentIndex={i} choosedQuantity={choosedQuantity} isRequired={isRequired} />
 
                     </AnimatedView>
 
