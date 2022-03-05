@@ -11,7 +11,7 @@ import { store } from '../redux/store';
 import ReduxActions from '../redux/actions';
 import configs from '../utils/configs';
 import Regex from '../utils/Regex';
-import GV, { PITSTOP_TYPES,ORDER_STATUSES } from '../utils/GV';
+import GV, { PITSTOP_TYPES, ORDER_STATUSES } from '../utils/GV';
 import constants from '../res/constants';
 import NavigationService from '../navigations/NavigationService';
 import actions from '../redux/actions';
@@ -561,10 +561,25 @@ export const sharedGetPitstopData = (pitstop = {}, pitstopActionKey = "marketID"
         return pitstops[pitstopIdx]
     } else return null;
 }
+const convertTime12to24 = (time12h) => {
+    const [time, modifier] = time12h.split(' ');
 
+    let [hours, minutes] = time.split(':');
+
+    if (hours === '12') {
+        hours = '00';
+    }
+
+    if (modifier === 'PM') {
+        hours = parseInt(hours, 10) + 12;
+    }
+
+    return `${hours}:${minutes}`;
+}
 export const sharedGetServiceCharges = (payload = null, successCb = () => { }) => {
     const cartReducer = store.getState().cartReducer;
     const userReducer = store.getState().userReducer;
+    const estimateTime = cartReducer?.estimateTime?.includes('AM') || cartReducer?.estimateTime?.includes('PM') ? convertTime12to24(cartReducer.estimateTime) : cartReducer.estimateTime;
     console.log('userReducer', userReducer);
     const pitstopItems = [];
     [...cartReducer.pitstops].map((item, i) => {
@@ -588,19 +603,24 @@ export const sharedGetServiceCharges = (payload = null, successCb = () => { }) =
     });
     payload = payload ? payload : {
         "joviJobAmount": cartReducer.joviPitstopsTotal,
-        "estimateTime": cartReducer.estimateTime || null,
+        "estimateTime": estimateTime || null,
         "pitstops": [...cartReducer.pitstops, { ...(userReducer?.finalDestObj ?? {}) }].map((_pitstop, pitIndex) => ({
             "isRestaurant": _pitstop.isRestaurant,
             "latLng": `${_pitstop.latitude},${_pitstop.longitude}`,
             "pitStopType": _pitstop.pitstopType,
         })),
-        pitstopItems,
-        "skipEstAmountAndGst": cartReducer.pitstops.every(pt => pt.pitstopType === 2) ? true : false,
+        "skipEstAmountAndGst": cartReducer.pitstops.every(pt => pt.pitstopType === 2 || pt.pitstopType === undefined) ? true : false,
         // "hardwareID": "string",
         // "promoCodeApplied": "string",
         // "adminID": "string",
         // "isAdmin": true,
         // "orderID": 0
+    }
+    if (pitstopItems.length > 0) {
+        payload = {
+            ...payload,
+            pitstopItems
+        }
     }
     console.log('payload--sharedGetServiceCharges', payload);
     postRequest(
@@ -705,7 +725,7 @@ export const sharedFetchOrder = (orderID = 0, successCb = () => { }, errCb = () 
         Endpoints.FetchOrder + '/' + orderID,
         (response) => {
             console.log('sharedFetchOrder', response);
-            if(response.data.order.orderStatus === 3){
+            if (response.data.order.orderStatus === 3) {
                 NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
                 return;
             }
@@ -721,7 +741,7 @@ export const sharedFetchOrder = (orderID = 0, successCb = () => { }, errCb = () 
 export const sharedClearReducers = () => {
     dispatch(actions.clearModalAction());
 }
-export const sleep=(second= 1)=> {
+export const sleep = (second = 1) => {
     return new Promise(resolve => {
         let ms = Number(second) * Number(1000);
         setTimeout(resolve, ms)
@@ -745,7 +765,7 @@ export const sharedOrderNavigation = (orderID = null, orderStatus = null, replac
     };
     const goToOrderProcessing = () => navigationLogic(ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name);
     const goToOrderProcessingError = () => navigationLogic(ROUTES.APP_DRAWER_ROUTES.OrderProcessingError.screen_name);
-    const goToOrderTracking = () => navigationLogic(ROUTES.APP_DRAWER_ROUTES.OrderProcessingError.screen_name);
+    const goToOrderTracking = () => navigationLogic(ROUTES.APP_DRAWER_ROUTES.OrderTracking.screen_name);
     const orderStatusEnum = {
         [ORDER_STATUSES.VendorApproval]: goToOrderProcessing,
         [ORDER_STATUSES.VendorProblem]: goToOrderProcessing,
@@ -765,7 +785,7 @@ export const sharedGetDashboardCategoryIApi = () => {
     getRequest(
         Endpoints.GET_VENDOR_DASHBOARD_CATEGORY_ID,
         res => {
-            dispatch(ReduxActions.setvendorDashboardCategoryIDAction(res.data?.vendorDashboardCatIDViewModelList ?? [] ));
+            dispatch(ReduxActions.setvendorDashboardCategoryIDAction(res.data?.vendorDashboardCatIDViewModelList ?? []));
         },
         err => {
             sharedExceptionHandler(err);

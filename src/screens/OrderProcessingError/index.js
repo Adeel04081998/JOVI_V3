@@ -15,6 +15,7 @@ import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
+import actions from '../../redux/actions';
 import constants from '../../res/constants';
 import FontFamily from '../../res/FontFamily';
 import theme from '../../res/theme';
@@ -160,7 +161,11 @@ export default ({ navigation, route }) => {
                 console.log("[AcceptRejectOrder].respone", response);
                 const { statusCode, orderStatusVM } = response.data;
                 if (statusCode === 200) {
-                    NavigationService.NavigationActions.common_actions.goBack();
+                    if(isConfirm){
+                        NavigationService.NavigationActions.common_actions.goBack();
+                    }else{
+                        NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderTracking.screen_name,{},ROUTES.APP_DRAWER_ROUTES.OrderProcessingError.screen_name);
+                    }
                 }
             },
             (error) => {
