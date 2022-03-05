@@ -155,7 +155,7 @@ export default () => {
                             {/* <RecentOrders /> AS PER PM WE HAVE TO REMOVE RECENT ORDER FOR NOW*/}
                             {isFinalDestinationSelected && vendorDashboardCategoryIDReducer.map((item, index) => {
                                 return (
-                                    <GenericList vendorDashboardCatID={item.vendorDashboardCatID} />
+                                    <GenericList vendorDashboardCatID={item.vendorDashboardCatID} textContainer={{ paddingHorizontal: 0 }} />
                                 )
                             })}
                         </View>

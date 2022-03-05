@@ -23,7 +23,6 @@ export default ({ CategoriesTabConfig = {}, selectedCategories = [], parentCateg
         return (selectedCategories ?? []).find(x => x === item.categoryID);
     }
     const selectedStyle = (item,index) => {
-        console.log('ijsdkfgjskdfjgkajdgkjksdjgkjk',index);
         const style = {
             height: CONTAINER_HEIGHT,
             width: CONTAINER_WIDTH,
