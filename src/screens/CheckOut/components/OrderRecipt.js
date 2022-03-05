@@ -1,46 +1,29 @@
 import React, { useState } from 'react'
-import AnimatedView from '../../../components/atoms/AnimatedView'
-import View from '../../../components/atoms/View'
-import sharedStyles from '../../../res/sharedStyles'
-import DashedLine from '../../../components/organisms/DashedLine'
 import { SvgXml } from 'react-native-svg'
 import svgs from '../../../assets/svgs'
-import { renderPrice, sharedGetPrice } from '../../../helpers/SharedActions'
+import AnimatedView from '../../../components/atoms/AnimatedView'
 import Text from '../../../components/atoms/Text'
 import TouchableOpacity from '../../../components/atoms/TouchableOpacity'
-import { useSelector } from 'react-redux'
-import AppStyles from '../../../res/AppStyles'
+import View from '../../../components/atoms/View'
+import DashedLine from '../../../components/organisms/DashedLine'
+import { renderPrice, sharedCalculatedTotals, sharedGetPrice } from '../../../helpers/SharedActions'
 import { PITSTOP_TYPES } from '../../../utils/GV'
 
 
-const RECEIPTPiTSTOPMAINTXTCOLOR = "#6B6B6B"
-const subDetailListTxtColor = "#6B6B6B"
-const subDetailListTxtFontSize = 12
 const subDetailListTxtFontFamily = 'PoppinsRegular'
-const TOPSPACING = 10
 
 export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData = [] }) => {
     const [showDetails, setShowDetails] = useState(false)
     const pitStops = cartReducer.pitstops || []
-    const discount = cartReducer.discount || 0
-    const serviceCharges = cartReducer.serviceCharges
-    const gst = cartReducer.gst || 0
-    const estimatedTotal = cartReducer.total + serviceCharges || 0;
-    const st = cartReducer.st || 0;
-    console.log("cartReducer", cartReducer);
     const onShowDetails = () => {
         setShowDetails(!showDetails)
     }
-
     const RenderSubPitStopDetailsUi = ({ pitstopDetail, data = [] }) => {
         if (showDetails) {
             return (
                 <View style={{}}>
                     {data.map((item, i) => {
                         let pitStopItemName = item.pitStopItemName
-                        let itemPrice = item.itemPrice
-                        let itemQuantity = item.quantity || "xl"
-                        let itemSize = "1"
                         return <View style={{ flex: 1, flexDirection: 'row', paddingVertical: 3, justifyContent: "space-between" }} key={i}>
                             <Text style={checkOutStyles.reciptSubDetailspitStopItemName} numberOfLines={1} fontFamily={subDetailListTxtFontFamily}>
                                 {`${pitStopItemName}`.trimStart()}
@@ -71,14 +54,14 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                     <View style={checkOutStyles.gstPrimaryContainer}>
                         <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular'>GST</Text>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
-                            <Text style={checkOutStyles.gstCommonPriceTxtStyle} fontFamily='PoppinsRegular'>{`${renderPrice({ showZero: true, price: gst })}`}</Text>
+                            <Text style={checkOutStyles.gstCommonPriceTxtStyle} fontFamily='PoppinsRegular'>{`${renderPrice({ showZero: true, price: sharedCalculatedTotals().gst })}`}</Text>
                         </View>
                     </View>
                     <View style={checkOutStyles.gstPrimaryContainer}>
                         <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular' >Service Charges</Text>
-                        <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular'>{`(incl S.T ${renderPrice(st, '')})`}</Text>
+                        <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular'>{` (incl S.T ${renderPrice(sharedCalculatedTotals().serviceTax, '')})`}</Text>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
-                            <Text style={checkOutStyles.gstCommonPriceTxtStyle} fontFamily='PoppinsRegular'>{`${renderPrice({ showZero: true, price: serviceCharges })}`}</Text>
+                            <Text style={checkOutStyles.gstCommonPriceTxtStyle} fontFamily='PoppinsRegular'>{`${renderPrice({ showZero: true, price: sharedCalculatedTotals().serviceCharges })}`}</Text>
                         </View>
                     </View>
 
@@ -90,7 +73,7 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                     <View style={{ flexDirection: "row", flex: 1 }}>
                         <Text style={[checkOutStyles.gstCommonLabelTxtStyle, { textAlignVertical: 'center' }]} fontFamily='PoppinsRegular'>Discount</Text>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1, }}>
-                            {<Text style={[checkOutStyles.gstCommonPriceTxtStyle, { textAlignVertical: 'center' }]} fontFamily='PoppinsRegular'>{`${renderPrice({ showZero: true, price: discount }, 'Rs -')}`}</Text>}
+                            {<Text style={[checkOutStyles.gstCommonPriceTxtStyle, { textAlignVertical: 'center' }]} fontFamily='PoppinsRegular'>{`${renderPrice({ showZero: true, price: sharedCalculatedTotals().discount }, 'Rs -')}`}</Text>}
                         </View>
                     </View>
                 </View>
@@ -101,7 +84,7 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                     <View style={{ flexDirection: "row", }}>
                         <Text style={{ fontSize: 16, color: "#272727" }} fontFamily='PoppinsSemiBold'>Estimated Total</Text>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
-                            <Text style={{ fontSize: 16, color: "#272727" }} fontFamily='PoppinsSemiBold' >{`${renderPrice(estimatedTotal)}`}</Text>
+                            <Text style={{ fontSize: 16, color: "#272727" }} fontFamily='PoppinsSemiBold' >{`${renderPrice(sharedCalculatedTotals().total)}`}</Text>
                         </View>
                     </View>
                 </View>

@@ -22,7 +22,7 @@ import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
-import {  useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const WINDOW_HEIGHT = constants.window_dimensions.height;
 const PITSTOPS = {
@@ -268,7 +268,7 @@ export default ({ navigation, route }) => {
                     )
                 }}
                 renderItem={(parentItem, item, parentIndex, index) => {
-                    const price=(item?.hasOptions ?? false) ?renderPrice(item.price, 'from Rs.') : renderPrice(`${item.price}`);
+                    const price = (item?.hasOptions ?? false) ? renderPrice(item.price, 'from Rs.') : renderPrice(`${item.price}`);
                     if (parentItem?.isTopDeal ?? false) {
                         return (
                             <View style={{ backgroundColor: colors.screen_background }}>
@@ -283,7 +283,7 @@ export default ({ navigation, route }) => {
                                         itemID: item.itemID,
                                         image: { uri: renderFile(item.image) },
                                         description: item.description,
-                                        title: item.name, 
+                                        title: item.name,
                                         price: price,
                                     }} />
 
@@ -330,7 +330,7 @@ export default ({ navigation, route }) => {
                 )}
             />
 
-            <GotoCartButton colors={colors} onPress={() => { }} bottom={insets.bottom > 0 ? insets.bottom : getStatusBarHeight()*0.01} />
+            <GotoCartButton colors={colors} bottom={insets.bottom > 0 ? insets.bottom : getStatusBarHeight() * 0.01} />
         </SafeAreaView>
     )
 };//end of EXPORT DEFAULT
