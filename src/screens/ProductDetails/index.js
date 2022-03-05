@@ -65,7 +65,7 @@ export default (props) => {
     let productName = generalProductOrDealDetail.pitStopItemName || ""
     let productDetails = generalProductOrDealDetail.description || ""
     let gstAddedPrice = generalProductOrDealDetail.gstAddedPrice || ""
-    let productPrice = generalProductOrDealDetail.discountedPrice || gstAddedPrice || ""
+    let productPrice = generalProductOrDealDetail.discountedPrice > 0 ? generalProductOrDealDetail.discountedPrice : generalProductOrDealDetail.gstAddedPrice > 0 ? generalProductOrDealDetail.gstAddedPrice : generalProductOrDealDetail.itemPrice;
     let discountedPrice = generalProductOrDealDetail.discountedPrice || ""
     let optionsListArr = generalProductOrDealDetail.optionList ?? []
     let images = generalProductOrDealDetail.images ?? []
@@ -233,10 +233,12 @@ export default (props) => {
                 actionKey: propItem.pitStopItemID ? "pitStopItemID" : "pitStopDealID",
                 estimatePrepTime: pitstopType === PITSTOP_TYPES.RESTAURANT ? generalProductOrDealDetail.estimateTime : "",
                 totalJoviDiscount: state.totalJoviDiscount,
-                ...pitstopType === PITSTOP_TYPES.SUPER_MARKET ? { ...sharedAddToCartKeys(null, state.generalProductOrDealDetail).item } : {},
+                ...!optionsListArr.length ? { ...sharedAddToCartKeys(null, state.generalProductOrDealDetail).item } : {},
 
             },
-            vendorDetails: { ...propItem.vendorDetails, pitstopType, pitstopActionKey: "marketID", productsDealsCategories: undefined },
+            vendorDetails: {
+                ...propItem.vendorDetails, pitstopType, pitstopActionKey: "marketID", productsDealsCategories: undefined
+            },
         }
         setState((pre) => ({
             ...pre,
@@ -298,7 +300,7 @@ export default (props) => {
                 paddingVertical: constants.spacing_vertical,
                 borderRadius: 30,
                 backgroundColor: colors.white,
-                width: "35%",
+                minWidth: "35%",
             }}>
 
                 <TouchableScale
@@ -324,6 +326,16 @@ export default (props) => {
                 </TouchableScale>
             </View>
         )
+    }
+    const cartText = () => {
+        let txt = 'Add to cart ';
+        if (selectedOptions.length) {
+            console.log("discountedPriceWithGst",discountedPriceWithGst);   
+            
+            txt = txt + renderPrice(discountedPriceWithGst, '-', '', /[pkr|rs|rs.|pkr.|-]{1,}/i);
+        }
+        else txt = txt + renderPrice(productPrice, '-', '', /[pkr|rs|rs.|pkr.|-]{1,}/i);
+        return txt;
     }
 
     const renderButtonsUi = () => {
@@ -366,11 +378,11 @@ export default (props) => {
                         />
                     </TouchableScale>
                 </View> */}
-                <View style={{ marginLeft: 9, width: '65%' }}>
+                <View style={{ maxWidth: '55%' }}>
                     <Button
                         disabled={!enable.enableBtn}
                         onPress={() => addToCartHandler()}
-                        text={`Add to cart ${optionsListArr.length > 0 ? renderPrice(discountedPriceWithGst, '-', '', /[pkr|rs|rs.|pkr.|-]{1,}/i) : ''}`}
+                        text={cartText()}
                         // text={`Add to cart ${productPrice ? '- ' + (parseInt(productPrice) + parseInt(state.totalAddOnPrice)) : ''}`}
                         textStyle={{ textAlign: 'center', fontSize: 16 }}
                         style={{ paddingHorizontal: 16, alignSelf: "center", paddingVertical: 10, borderRadius: 10, backgroundColor: colors.primary, justifyContent: 'center', alignItems: 'center' }}
