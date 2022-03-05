@@ -18,7 +18,7 @@ import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import DraggableFlatList from '../../components/molecules/DraggableFlatList';
 import DashedLine from '../../components/organisms/DashedLine';
-import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedConfirmationAlert, sharedGetServiceCharges } from '../../helpers/SharedActions';
+import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedCalculatedTotals, sharedConfirmationAlert, sharedGetServiceCharges } from '../../helpers/SharedActions';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import ReduxActions from '../../redux/actions';
@@ -89,15 +89,17 @@ export default () => {
     // })
   }
   const PitstopsCard = ({ pitstop }) => {
+    console.log("[PitstopsCard].pitstop", pitstop);
     const {
       pitstopIndex, // from cart pitstops
       pitstopID, // from cart pitstops
       pitstopName, // fill from component and got from cart iteration
       pitstopType, // fill from component and got from cart iteration
-      checkOutItemsListVM, //fill from component and got from cart's pitstops nesting iteration
+      checkOutItemsListVM = [], //fill from component and got from cart's pitstops nesting iteration
     } = pitstop;
     const dynamiColors = theme.getTheme(pitstopType);
     const isJOVI = pitstopType === PITSTOP_TYPES.JOVI;
+    const IS_DISCOUNTED_VENDOR = checkOutItemsListVM.find(x => x.discountType > 0);
     const viewToRender = () => {
       if (isJOVI) return <>
         <View
@@ -186,7 +188,7 @@ export default () => {
                 </Text>
               </TouchableScale>
             </View>
-            {!isJOVI && (
+            {IS_DISCOUNTED_VENDOR && (
               <SvgXml
                 xml={percent_icon(dynamiColors.primary)}
                 height={15}
@@ -391,7 +393,6 @@ export default () => {
     }
   };
   const Totals = () => {
-    const { subTotal, discount, serviceCharges, total } = cartReducer;
     const row = (caption = '', value = 0, isBold = false) => {
       if (value) {
         return <View
@@ -412,11 +413,11 @@ export default () => {
     };
     return (
       <View style={{ paddingHorizontal: 10 }}>
-        {row('Subtotal', subTotal, true)}
-        {row('Discount', `- ${discount}`)}
-        {row('Service Charges', serviceCharges)}
+        {row('Subtotal', sharedCalculatedTotals().subTotal, true)}
+        {row('Discount', `- ${sharedCalculatedTotals().discount}`)}
+        {row(`Service Charges (Incl S.T ${sharedCalculatedTotals().serviceTax})`, sharedCalculatedTotals().serviceCharges)}
         <BottomLine />
-        {row('Total', total + serviceCharges, true)}
+        {row('Total', sharedCalculatedTotals().total, true)}
       </View>
     );
   };
@@ -499,8 +500,8 @@ export default () => {
                     {
                       text: "Yes",
                       onPress: () => {
-                        dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
                         NavigationService.NavigationActions.common_actions.goBack();
+                        dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
                       }
                     },
                   ],

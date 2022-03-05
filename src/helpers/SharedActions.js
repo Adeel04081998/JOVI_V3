@@ -614,11 +614,11 @@ export const sharedGetServiceCharges = (payload = null, successCb = () => { }) =
         Endpoints.SERVICE_CHARGES,
         payload,
         (response) => {
-            const { statusCode, serviceCharge, chargeBreakdown, discount, orderEstimateTime } = response.data;
+            const { statusCode, serviceCharge, serviceTax, chargeBreakdown, genericDiscount, orderEstimateTime } = response.data;
             console.log('service charges response -----', response);
             if (statusCode === 200)
                 // NEED TO MODIFY THESE LOGIC FOR FUTURE CASES LIKE CHECKOUT SCREEN...
-                dispatch(ReduxActions.setCartAction({ orderEstimateTime, serviceCharges: serviceCharge, total: cartReducer.total, chargeBreakdown: chargeBreakdown ?? {} }))
+                dispatch(ReduxActions.setCartAction({ orderEstimateTime, serviceCharges: serviceCharge, serviceTax, total: cartReducer.total, genericDiscount, chargeBreakdown: chargeBreakdown ?? {} }))
             successCb(response);
         },
         (error) => {
@@ -770,7 +770,7 @@ export const sharedGetDashboardCategoryIApi = () => {
     getRequest(
         Endpoints.GET_VENDOR_DASHBOARD_CATEGORY_ID,
         res => {
-            console.log('[sharedGetDashboardCategoryIApi].res',res);
+            console.log('[sharedGetDashboardCategoryIApi].res', res);
             dispatch(ReduxActions.setvendorDashboardCategoryIDAction(res.data?.vendorDashboardCatIDViewModelList ?? []));
         },
         err => {
@@ -802,3 +802,18 @@ export const sharedAddToCartKeys = (restaurant = null, item = null) => {
     }
 
 }
+
+export const sharedCalculatedTotals = () => {
+    const { subTotal, discount, serviceCharges, serviceTax, genericDiscount, total, gst } = store.getState().cartReducer;
+    const _serviceCharges = serviceCharges + serviceTax;
+    return {
+        gst,
+        serviceTax,
+        serviceCharges: _serviceCharges,
+        discount: discount + genericDiscount,
+        subTotal,
+        total: total + _serviceCharges
+    }
+
+}
+

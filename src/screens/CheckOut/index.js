@@ -43,7 +43,7 @@ export default () => {
     const cartReducer = useSelector(store => store.cartReducer);
     const userReducer = useSelector(store => store.userReducer);
     const totalPitstop = cartReducer.pitstops.length ?? ""
-    const estimatedDeliveryTime = cartReducer.estTimeStr || ""
+    const estimatedDeliveryTime = cartReducer.orderEstimateTime || ""
     const [vouchersList, setVouchersList] = useState([])
     const dispatch = useDispatch();
     const [switchVal, setSwitchVal] = useState(true)
