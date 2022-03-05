@@ -1,23 +1,19 @@
-import React from 'react';
 import { useIsFocused } from '@react-navigation/native';
-import { Alert, StatusBar } from 'react-native';
-import { Platform } from 'react-native';
-import DeviceInfo from 'react-native-device-info';
+import React from 'react';
+import { Alert, Platform, StatusBar } from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
-import { postRequest, getRequest } from '../manager/ApiManager';
-import Endpoints from '../manager/Endpoints';
+import DeviceInfo from 'react-native-device-info';
 import Toast from '../components/atoms/Toast';
-import { store } from '../redux/store';
-import ReduxActions from '../redux/actions';
-import configs from '../utils/configs';
-import Regex from '../utils/Regex';
-import GV, { PITSTOP_TYPES } from '../utils/GV';
-import constants from '../res/constants';
+import { getRequest, postRequest } from '../manager/ApiManager';
+import Endpoints from '../manager/Endpoints';
 import NavigationService from '../navigations/NavigationService';
-import actions from '../redux/actions';
-import preference_manager from '../preference_manager';
 import ROUTES from '../navigations/ROUTES';
+import { default as actions, default as ReduxActions } from '../redux/actions';
+import { store } from '../redux/store';
+import constants from '../res/constants';
 import ENUMS from '../utils/ENUMS';
+import GV, { PITSTOP_TYPES } from '../utils/GV';
+import Regex from '../utils/Regex';
 const dispatch = store.dispatch;
 export const sharedGetDeviceInfo = async () => {
     let model = DeviceInfo.getModel();
@@ -815,5 +811,15 @@ export const sharedCalculatedTotals = () => {
         total: total + _serviceCharges
     }
 
+}
+
+export const sharedOnVendorPress = (pitstop, index) => {
+    const pitstopID = pitstop?.pitstopID ?? pitstop.vendorID ?? 0
+    const routes = {
+        4: ROUTES.APP_DRAWER_ROUTES.RestaurantProductMenu.screen_name,
+        1: ROUTES.APP_DRAWER_ROUTES.ProductMenu.screen_name,
+        2: ROUTES.APP_DRAWER_ROUTES.JoviJob.screen_name,
+    }
+    NavigationService.NavigationActions.common_actions.navigate(routes[pitstop.pitstopType], { ...pitstop, pitstopID });
 }
 

@@ -18,7 +18,7 @@ import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import DraggableFlatList from '../../components/molecules/DraggableFlatList';
 import DashedLine from '../../components/organisms/DashedLine';
-import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedCalculatedTotals, sharedConfirmationAlert, sharedGetServiceCharges } from '../../helpers/SharedActions';
+import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedCalculatedTotals, sharedConfirmationAlert, sharedGetServiceCharges, sharedOnVendorPress } from '../../helpers/SharedActions';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import ReduxActions from '../../redux/actions';
@@ -66,14 +66,6 @@ export default () => {
     if (_idx >= 0) _list = _list.filter(i => i !== idx);
     else _list.push(idx);
     setExpanded(_list)
-  }
-  const onStorePress = (pitstop) => {
-    const routes = {
-      4: ROUTES.APP_DRAWER_ROUTES.RestaurantProductMenu.screen_name,
-      1: ROUTES.APP_DRAWER_ROUTES.ProductMenu.screen_name,
-      2: ROUTES.APP_DRAWER_ROUTES.JoviJob.screen_name,
-    }
-    NavigationService.NavigationActions.common_actions.navigate(routes[pitstop.pitstopType], { ...pitstop }); // pitstopItemObj added for Jovi job edit case
   }
   const onEditPress = (product) => {
     console.log("[onEditPress].pitstop", product);
@@ -180,7 +172,7 @@ export default () => {
               >
                 {pitstopName}
               </Text>
-              <TouchableScale style={{ paddingTop: 2, maxWidth: 100 }} onPress={() => onStorePress(pitstop)}>
+              <TouchableScale style={{ paddingTop: 2, maxWidth: 100 }} onPress={() => sharedOnVendorPress(pitstop)}>
                 <Text
                   style={{ color: dynamiColors.black, fontSize: 12 }}
                   fontFamily="PoppinsRegular">{`Back to ${isJOVI ? 'Jovi Job' : 'Store'
