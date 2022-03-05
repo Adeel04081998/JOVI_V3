@@ -123,16 +123,6 @@ export default () => {
                         }))
                     }}
                     onLeftIconPress={null}
-                    onRightIconPress={() => {
-                        sharedConfirmationAlert("Alert", "Log me out and remove all the cache?",
-                            [
-                                { text: "No", onPress: () => { } },
-                                {
-                                    text: "Yes", onPress: () => preference_manager.clearAllCacheAsync().then(() => sharedLogoutUser())
-                                },
-                            ]
-                        )
-                    }}
                 />
                 {loaderVisible ? renderLoader() : <Animated.View style={{
                     opacity: homeFadeIn.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1] }),
@@ -172,7 +162,18 @@ export default () => {
                     </KeyboardAwareScrollView>
                 </Animated.View>}
             </SafeAreaView>
-            <BottomBarComponent leftData={[{ id: 1, iconName: "home", title: "Home" }, { id: 2, iconName: "person", title: "Profile" }]} rightData={[{ id: 3, iconName: "wallet", title: "Wallet" }, { id: 4, iconName: "pin", title: "Location" }]} />
+            <BottomBarComponent leftData={[{ id: 1, iconName: "home", title: "Home" }, { id: 2, iconName: "person", title: "Profile" }]} rightData={[{ id: 3, iconName: "wallet", title: "Wallet" }, {
+                id: 4, iconType: "AntDesign", iconName: "logout", title: "Logout", onPress: () => {
+                    sharedConfirmationAlert("Alert", "Log me out and remove all the cache?",
+                        [
+                            { text: "No", onPress: () => { } },
+                            {
+                                text: "Yes", onPress: () => preference_manager.clearAllCacheAsync().then(() => sharedLogoutUser())
+                            },
+                        ]
+                    )
+                }
+            }]} />
         </View>
     );
 };

@@ -43,20 +43,20 @@ export default () => {
     const cartReducer = useSelector(store => store.cartReducer);
     const userReducer = useSelector(store => store.userReducer);
     const totalPitstop = cartReducer.pitstops.length ?? ""
-    const estimatedDeliveryTime = cartReducer.estTimeStr || "Now 30 - 45 min"
+    const estimatedDeliveryTime = cartReducer.estTimeStr || ""
     const [vouchersList, setVouchersList] = useState([])
     const dispatch = useDispatch();
     const [switchVal, setSwitchVal] = useState(true)
     const [paymentMode, setpaymentMode] = useState("Wallet")
     const paymentMethod = "Payment Method"
     const paymentType = "Wallet"
-    const walletAmount = userReducer.wallet || "1500"
+    const walletAmount = userReducer.balance || 0;
     const instructionForRider = GV.RIDER_INSTRUCTIONS.current;
     const [state, setState] = React.useState({
         chargeBreakdown: null,
         isLoading: false,
     });
-     
+
     // const estimateServiceCharge = () => {
     //     let payload = newJoviPitstop ? {
     //         "pitstops": [...pitstops].map((item, index) => ({
@@ -205,7 +205,7 @@ export default () => {
                 // "customerLongitude": getLastRecordedLocationOnMap()?.longitude,
                 // ref => https://cibak.atlassian.net/browse/TJA-3225 ==> Mudassir
                 // "pitstopDistances": state.pitstopDistances
-            }; 
+            };
             postRequest(Endpoints.CreateUpdateOrder, finalOrder, (res) => {
                 console.log('order place res', res);
                 if (res.data.statusCode === 200) {
@@ -262,6 +262,7 @@ export default () => {
         )
     }
     const RenderPaymentMethodCardUi = () => {
+        const SHOW_WALLET = switchVal && walletAmount > 0;
 
         return (
             <AnimatedView style={checkOutStyles.paymentCardMainCOntainder}>
@@ -272,51 +273,56 @@ export default () => {
                     </View>
                     <View style={checkOutStyles.paymentOptionMainContainer}>
                         <View style={{ flexDirection: 'row' }}>
-                            <SvgXml xml={switchVal ? svgs.wallet() : svgs.paymentCash()} fill={colors.grey} style={{ alignSelf: "center", height: 20, width: 20 }} />
+                            <SvgXml xml={SHOW_WALLET ? svgs.wallet() : svgs.paymentCash()} fill={colors.grey} style={{ alignSelf: "center", height: 20, width: 20 }} />
                             <View style={checkOutStyles.paymentOptionPrimaryContainer}>
-                                <Text style={checkOutStyles.paymentOptionLabelTxt} fontFamily='PoppinsSemiBold'>{switchVal ? `${paymentType}` : " Cash on delivery"}</Text>
-                                {switchVal ? <Text style={checkOutStyles.paymentOptionLabelWallletTxt} fontFamily='PoppinsRegular'>{`Rs ${walletAmount}`}</Text> : null}
+                                <Text style={checkOutStyles.paymentOptionLabelTxt} fontFamily='PoppinsSemiBold'>{SHOW_WALLET ? `${paymentType}` : " Cash on delivery"}</Text>
+                                {SHOW_WALLET ? <Text style={checkOutStyles.paymentOptionLabelWallletTxt} fontFamily='PoppinsRegular'>{`Rs. ${walletAmount}`}</Text> : null}
                             </View>
                         </View>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1, alignItems: 'center', }}>
-                            <Switch onToggleSwitch={(bool) => {
-                                // onToggleSwitch(bool) 
-                                setSwitchVal(bool)
-                            }}
-                            switchVal={switchVal}
-                                width={30} height={18}
-                                switchContainerActive={{
-                                    backgroundColor: '#48EA8B',
-                                    borderRadius: 20,
-                                    justifyContent: 'center',
-                                    
-                               
-                                }}
-                                switchContainerInActive={{
-                                    backgroundColor: '#C1C1C1',
-                                    borderRadius: 20,
-                                    justifyContent: 'center',
-                                }}
-                                subSwitchContainerActive={{
-                                    width: 13,
-                                    height: 13,
-                                    borderRadius: 10,
-                                    borderColor: 'white',
-                                    borderWidth: 0,
-                                    right: 2,
-                                    backgroundColor: 'white',
-                                }}
-                                subSwitchContainerInActive={{
-                                    width: 13,
-                                    height: 13,
-                                    borderRadius: 10,
-                                    borderColor: 'white',
-                                    backgroundColor: 'white',
-                                    borderWidth: 0,
-                                    right: 1,
-                                }}
+                            {walletAmount > 0 ?
 
-                            />
+                                <Switch onToggleSwitch={(bool) => {
+                                    // onToggleSwitch(bool) 
+                                    setSwitchVal(bool)
+                                }}
+                                    switchVal={switchVal}
+                                    width={30} height={18}
+                                    switchContainerActive={{
+                                        backgroundColor: '#48EA8B',
+                                        borderRadius: 20,
+                                        justifyContent: 'center',
+
+
+                                    }}
+                                    switchContainerInActive={{
+                                        backgroundColor: '#C1C1C1',
+                                        borderRadius: 20,
+                                        justifyContent: 'center',
+                                    }}
+                                    subSwitchContainerActive={{
+                                        width: 13,
+                                        height: 13,
+                                        borderRadius: 10,
+                                        borderColor: 'white',
+                                        borderWidth: 0,
+                                        right: 2,
+                                        backgroundColor: 'white',
+                                    }}
+                                    subSwitchContainerInActive={{
+                                        width: 13,
+                                        height: 13,
+                                        borderRadius: 10,
+                                        borderColor: 'white',
+                                        backgroundColor: 'white',
+                                        borderWidth: 0,
+                                        right: 1,
+                                    }}
+
+                                />
+                                : null
+                            }
+
                         </View>
                     </View>
                 </View>
@@ -369,7 +375,7 @@ export default () => {
                         contianerStyle={{ margin: TOPSPACING, marginBottom: 2, padding: 0, borderRadius: 8 }}
                         addressTxtStyle={{ fontSize: 14, color: "#6D51BB", paddingHorizontal: 10 }}
                         instructions={instructionForRider}
-                        // editIconStyle={{ justifyContent: 'center', alignSelf: 'center', alignItems: 'center', paddingVertical:10, paddingHorizontal:14 }}
+                        editIconStyle={{ justifyContent: 'center', alignSelf: 'center', alignItems: 'center', paddingVertical:10, paddingHorizontal:14 }}
                         edit_icon_Height={18}
                         isShowLine={false}
                         finalDestinationPrimaryContainer={{ paddingLeft: 18, paddingVertical: 0, bottom: 3 }}

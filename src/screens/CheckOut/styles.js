@@ -69,10 +69,10 @@ export default {
             reciptSubDetailspitStopItemName: {
                 color: subDetailListTxtColor,
                 fontSize: subDetailListTxtFontSize,
-                textAlign:'justify', 
-                paddingHorizontal:20 ,
-                flex:1
-               
+                textAlign: 'justify',
+                paddingHorizontal: 20,
+                flex: 1
+
             },
             reciptSubDetailspitStopItemPrice: {
                 justifyContent: 'flex-end', color: subDetailListTxtColor, fontSize: subDetailListTxtFontSize
@@ -110,7 +110,8 @@ export default {
 
             },
             paymentOptionLabelWallletTxt: {
-                color: RECEIPTPiTSTOPMAINTXTCOLOR, fontSize: 10
+                color: RECEIPTPiTSTOPMAINTXTCOLOR, fontSize: 10,
+                left: 2
 
             }
 

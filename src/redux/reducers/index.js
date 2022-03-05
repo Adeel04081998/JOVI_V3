@@ -13,7 +13,8 @@ const INIT_CART_DATA = {
   joviCalculation: 0,
   gst: 0,
   estimateTime: 0,
-  itemsCount: 0
+  itemsCount: 0,
+  orderEstimateTime: ""
 };
 
 const userReducer = (state = { prevOrders: [] }, action) => {
@@ -38,7 +39,7 @@ const cartReducer = (state = INIT_CART_DATA, action) => {
   // console.log("action", action)
   switch (action.type) {
     case TYPES.SET_CART_ACTION:
-      return { ...state, ...action.payload, pitstops: [...(action.payload.pitstops??state.pitstops)] };
+      return { ...state, ...action.payload, pitstops: [...(action.payload.pitstops ?? state.pitstops)] };
     case TYPES.CLEAR_CART_ACTION:
       return {
         ...INIT_CART_DATA,
@@ -87,7 +88,7 @@ const messagesReducer = (
     case TYPES.HIDE_ROBOT:
       return {
         ...state,
-        hideRobotFlag: state.hideRobotFlag ? state.hideRobotFlag+ 1 : 1,
+        hideRobotFlag: state.hideRobotFlag ? state.hideRobotFlag + 1 : 1,
       };
     case TYPES.CLEAR_ROBOT_JSON:
       return { ...state, robotJson: null };
@@ -129,10 +130,10 @@ const fcmReducer = (state = { "notifications": [] }, action = {}) => {
 }
 //...Rest of the reducers would be here
 
-const vendorDashboardCategoryIDReducer = (state = {data:[]}, action) => {
+const vendorDashboardCategoryIDReducer = (state = { data: [] }, action) => {
   switch (action.type) {
     case TYPES.SET_VENDOR_DASHBOARD_CATEGORY_ID_ACTION:
-      const data=[...action.payload];
+      const data = [...action.payload];
       return { ...state, data };
     default:
       return { ...state };

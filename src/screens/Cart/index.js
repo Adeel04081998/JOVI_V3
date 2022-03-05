@@ -3,10 +3,9 @@
 // * Get Service charges from server on swapped array
 
 import React from 'react';
-import { Appearance } from 'react-native';
+import { Alert, Appearance, ScrollView } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { useDispatch, useSelector } from 'react-redux';
-import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-aware-scroll-view';
 import DeliveryAddress from "../../components/atoms/DeliveryAddress";
 import Image from '../../components/atoms/Image';
 import SafeAreaView from '../../components/atoms/SafeAreaView';
@@ -19,11 +18,10 @@ import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import DraggableFlatList from '../../components/molecules/DraggableFlatList';
 import DashedLine from '../../components/organisms/DashedLine';
-import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedConfirmationAlert } from '../../helpers/SharedActions';
+import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedConfirmationAlert, sharedGetServiceCharges } from '../../helpers/SharedActions';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import ReduxActions from '../../redux/actions';
-import constants from '../../res/constants';
 import sharedStyles from '../../res/sharedStyles';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES } from '../../utils/GV';
@@ -57,7 +55,7 @@ export default () => {
   );
   const cartStyles = stylesheet.styles(colors);
   React.useEffect(() => {
-    // sharedGetServiceCharges()
+    sharedGetServiceCharges()
   }, [])
   const incDecDelHandler = (pitstopDetails, pitstopIndex = null, isDeletePitstop = false) => {
     sharedAddUpdatePitstop({ ...pitstopDetails }, isDeletePitstop, [], false, true);
@@ -68,6 +66,27 @@ export default () => {
     if (_idx >= 0) _list = _list.filter(i => i !== idx);
     else _list.push(idx);
     setExpanded(_list)
+  }
+  const onStorePress = (pitstop) => {
+    const routes = {
+      4: ROUTES.APP_DRAWER_ROUTES.RestaurantProductMenu.screen_name,
+      1: ROUTES.APP_DRAWER_ROUTES.ProductMenu.screen_name,
+      2: ROUTES.APP_DRAWER_ROUTES.JoviJob.screen_name,
+    }
+    NavigationService.NavigationActions.common_actions.navigate(routes[pitstop.pitstopType], { ...pitstop }); // pitstopItemObj added for Jovi job edit case
+  }
+  const onEditPress = (product) => {
+    console.log("[onEditPress].pitstop", product);
+    if (product.pitstopType === PITSTOP_TYPES.JOVI) NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.JoviJob.screen_name, { pitstopItemObj: product });
+    else Alert.alert("Dear lakaas! Bug ni bnana, \n Abi sirf JOVI job ko edit kr skty hain ap log! Bug ni bnana!")
+    // else NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, {
+    //   propItem: {
+    //     itemDetails: { ...product },
+    //     ...product,
+    //     vendorDetails: { ...product },
+    //   },
+    //   pitstopType: product.pitstopType
+    // })
   }
   const PitstopsCard = ({ pitstop }) => {
     const {
@@ -87,6 +106,7 @@ export default () => {
             borderWidth: 0.2,
             marginVertical: 5,
             borderColor: colors.grey,
+
           }}
         />
         <Products
@@ -99,43 +119,36 @@ export default () => {
       else return (checkOutItemsListVM || []).map((product, idx) => (
         // else return ([...checkOutItemsListVM, ...checkOutItemsListVM, ...checkOutItemsListVM, ...checkOutItemsListVM,] || []).map((product, idx) => (
         <>
-
           {
             idx === 0 &&
             <BottomLine />
           }
-          <Products
-            key={`product-key-${idx}`}
-            dynamiColors={dynamiColors}
-            isJOVI={isJOVI}
-            product={{ ...product, title: product.title || product.pitStopItemName, pitstopType }}
-            incDecDelHandler={quantity => {
-              incDecDelHandler({
-                // pitstopIndex,
-                vendorDetails: {
-                  actionKey: "pitstopID",
-                  pitstopID,
-                  pitstopName,
-                  pitstopType,
-                },
-                itemDetails: { ...product, actionKey: "checkOutItemID", productIndex: idx, quantity },
-              });
-            }}
-          />
-          {
-            idx === checkOutItemsListVM.length - 1 ? null : <DashedLine />
-          }
+          <>
+            <Products
+              key={`product-key-${idx}`}
+              dynamiColors={dynamiColors}
+              isJOVI={isJOVI}
+              product={{ ...product, title: product.title || product.pitStopItemName, pitstopType }}
+              incDecDelHandler={quantity => {
+                incDecDelHandler({
+                  // pitstopIndex,
+                  vendorDetails: {
+                    actionKey: "pitstopID",
+                    pitstopID,
+                    pitstopName,
+                    pitstopType,
+                  },
+                  itemDetails: { ...product, actionKey: "checkOutItemID", productIndex: idx, quantity },
+                });
+              }}
+            />
+            {
+              idx === checkOutItemsListVM.length - 1 ? null : <DashedLine />
+            }
 
+          </>
         </>
       ))
-    }
-    const onStorePress = () => {
-      const routes = {
-        4: ROUTES.APP_DRAWER_ROUTES.RestaurantProductMenu.screen_name,
-        1: ROUTES.APP_DRAWER_ROUTES.ProductMenu.screen_name,
-        2: ROUTES.APP_DRAWER_ROUTES.JoviJob.screen_name,
-      }
-      NavigationService.NavigationActions.common_actions.navigate(routes[pitstopType], { ...pitstop, pitstopType });
     }
     return (
       <View
@@ -165,7 +178,7 @@ export default () => {
               >
                 {pitstopName}
               </Text>
-              <TouchableScale style={{ paddingTop: 2, maxWidth: 100 }} onPress={onStorePress}>
+              <TouchableScale style={{ paddingTop: 2, maxWidth: 100 }} onPress={() => onStorePress(pitstop)}>
                 <Text
                   style={{ color: dynamiColors.black, fontSize: 12 }}
                   fontFamily="PoppinsRegular">{`Back to ${isJOVI ? 'Jovi Job' : 'Store'
@@ -274,7 +287,7 @@ export default () => {
             >
               {title}
             </Text>
-            <TouchableScale style={{ width: "10%" }}>
+            <TouchableScale style={{ width: "10%" }} onPress={() => onEditPress(product)}>
               <SvgXml xml={pencil_icon()} height={25} width={16} />
             </TouchableScale>
           </View>
@@ -286,7 +299,7 @@ export default () => {
           <Text
             style={{ color: dynamiColors.primary, fontSize: 12 }}
             fontFamily="PoppinsMedium">
-            {renderPrice(estimatePrice || 0)}
+            {renderPrice({ showZero: true, price: estimatePrice || 0 })}
           </Text>
         </View>
       </View>
@@ -327,7 +340,7 @@ export default () => {
                 }
 
               </View>
-              <TouchableScale style={{ width: "10%" }}>
+              <TouchableScale style={{ width: "10%" }} onPress={() => onEditPress(product)}>
                 <SvgXml xml={pencil_icon()} height={25} width={16} />
               </TouchableScale>
             </View>
@@ -398,12 +411,12 @@ export default () => {
       } else return null;
     };
     return (
-      <View style={{}}>
+      <View style={{ paddingHorizontal: 10 }}>
         {row('Subtotal', subTotal, true)}
-        {row('Discount', discount)}
+        {row('Discount', `- ${discount}`)}
         {row('Service Charges', serviceCharges)}
         <BottomLine />
-        {row('Total', total, true)}
+        {row('Total', total + serviceCharges, true)}
       </View>
     );
   };
@@ -412,6 +425,8 @@ export default () => {
       <CustomHeader
         rightIconName='home'
         rightIconColor={colors.primary}
+        rightIconSize={20}
+        onRightIconPress={() => NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name)}
         leftIconName="arrow-back"
         title="Jovi Cart"
         containerStyle={{
@@ -423,100 +438,96 @@ export default () => {
       <View style={{ top: -10 }}>
         <SetpProgress maxHighlight={2} />
       </View>
-      <KeyboardAwareScrollView contentContainerStyle={{ padding: 10 }} nestedScrollEnabled style={{ flex: 1 }}>
-        <View style={{ marginHorizontal: 0 }}>
-          <DeliveryAddress />
-          <Text style={{ padding: 10, fontSize: 12 }} fontFamily="PoppinsLight">{'Hold and drag to rearrange your pitstops to get the better route and less service charges.'}</Text>
-          {/* <FlatList
-            keyExtractor={(index) => `index-${index}`}
-            data={data}
-            renderItem={({ item, index }) => <PitstopsCard
-              key={`pit-key${index}`}
-              pitstop={{ ...item, pitstopIndex: index }}
-            />
-            }
-          /> */}
-          <DraggableFlatList
-            data={data}
-            renderItem={({ item, index }) => <PitstopsCard
-              key={`pit-key${index}`}
-              pitstop={{ ...item, pitstopIndex: index }}
-            />
-            }
-            updateData={(newData) => {
-              setData(newData);
-              // setExpanded([])
-              // sharedAddUpdatePitstop(null, false, newData)
-            }}
-            style={{ maxHeight: constants.screen_dimensions.height * 0.40}}
+      <View style={{ flex: 1, flexGrow: 1, paddingHorizontal: 10, }} >
+        <DraggableFlatList
+          ListHeaderComponent={<View>
+            <DeliveryAddress />
+            <Text style={{ padding: 10, fontSize: 12 }} fontFamily="PoppinsLight">{'Hold and drag to rearrange your pitstops to get the better route and less service charges.'}</Text>
+          </View>
+          }
+          data={cartReducer.pitstops}
+          renderItem={({ item, index }) => <PitstopsCard
+            key={`pit-key${index}`}
+            pitstop={{ ...item, pitstopIndex: index }}
           />
-        </View>
-        <TouchableScale
-          style={{
-            marginVertical: 5,
-            padding: 10,
-            borderRadius: 8,
-            backgroundColor: colors.primary,
-            alignSelf: 'center',
-            flexDirection: 'row',
-            alignItems: 'center',
+          }
+          updateData={(newData) => {
+            // setData(newData) 
+            if (expanded.length === 1) {
+              expandCollapeHanlder(expanded.findIndex(x => x))
+            }
+            sharedAddUpdatePitstop(null, false, newData)
           }}
-          onPress={() => NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.SharedMapView.screen_name)}
-        >
-          <SvgXml xml={routes_icon()} height={20} width={20} color="#fff" />
-          <Text style={{ color: '#fff', paddingHorizontal: 5 }}>
-            Check route on map
-          </Text>
-        </TouchableScale>
+          ListFooterComponent={<View>
+            <TouchableScale
+              style={{
+                marginVertical: 5,
+                padding: 10,
+                borderRadius: 8,
+                backgroundColor: colors.primary,
+                alignSelf: 'center',
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}
+              onPress={() => NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.SharedMapView.screen_name)}
+            >
+              <SvgXml xml={routes_icon()} height={20} width={20} color="#fff" />
+              <Text style={{ color: '#fff', paddingHorizontal: 5 }}>
+                Check route on map
+              </Text>
+            </TouchableScale>
 
-        <TouchableScale
-          style={{
-            marginVertical: 5,
-            padding: 10,
-            borderRadius: 20,
-            backgroundColor: colors.white,
-            alignSelf: 'center',
-            alignItems: 'center',
-            borderColor: colors.primary,
-            borderWidth: 1,
-          }}
-          onPress={() => {
-            sharedConfirmationAlert(
-              "Alert!", "Are you sure you want to clear entire cart?",
-              [
-                {
-                  text: "No",
-                  onPress: () => { }
-                },
-                {
-                  text: "Yes",
-                  onPress: () => {
-                    dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
-                    NavigationService.NavigationActions.common_actions.goBack();
-                  }
-                },
-              ],
-              { cancelable: false }
-            )
-          }}
-        >
-          <Text style={{ color: colors.primary, paddingHorizontal: 5 }}>
-            Empty entire jovi cart
-          </Text>
-        </TouchableScale>
-        <TextInput
-          placeholder="Want to add instructions for your rider?"
-          placeholderTextColor={colors.grey}
-          style={{
-            backgroundColor: '#FFFFFF',
-            borderColor: colors.grey,
-            borderWidth: 0.5,
-            borderRadius: 7,
-          }}
-          onChangeText={text => GV.RIDER_INSTRUCTIONS.current = text.trim()}
+            <TouchableScale
+              style={{
+                marginVertical: 5,
+                padding: 10,
+                borderRadius: 20,
+                backgroundColor: colors.white,
+                alignSelf: 'center',
+                alignItems: 'center',
+                borderColor: colors.primary,
+                borderWidth: 1,
+              }}
+              onPress={() => {
+                sharedConfirmationAlert(
+                  "Alert!", "Are you sure you want to clear entire cart?",
+                  [
+                    {
+                      text: "No",
+                      onPress: () => { }
+                    },
+                    {
+                      text: "Yes",
+                      onPress: () => {
+                        dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
+                        NavigationService.NavigationActions.common_actions.goBack();
+                      }
+                    },
+                  ],
+                  { cancelable: false }
+                )
+              }}
+            >
+              <Text style={{ color: colors.primary, paddingHorizontal: 5 }}>
+                Empty entire jovi cart
+              </Text>
+            </TouchableScale>
+            <TextInput
+              placeholder="Want to add instructions for your rider?"
+              placeholderTextColor={colors.grey}
+              style={{
+                backgroundColor: '#FFFFFF',
+                borderColor: colors.grey,
+                borderWidth: 0.5,
+                borderRadius: 7,
+              }}
+              onChangeText={text => GV.RIDER_INSTRUCTIONS.current = text.trim()}
+              defaultValue={GV.RIDER_INSTRUCTIONS.current}
+            />
+            <Totals />
+          </View>}
         />
-        <Totals />
-      </KeyboardAwareScrollView>
+      </View>
       <View style={{ backgroundColor: colors.white, paddingVertical: 10, alignItems: "center", justifyContent: "center", }}>
         <View style={{ flexDirection: 'row', marginHorizontal: 10, }}>
           {['Add Pitstop', 'Checkout'].map((title, idx) => (

@@ -359,7 +359,7 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
         estimateTime = "",
         gst = 0,
         total = 0;
-    pitstops.map((pitstop, index) => {
+    pitstops = pitstops.map((pitstop, index) => {
         let _pitstop = { ...pitstop }
         if (_pitstop.pitstopType === PITSTOP_TYPES.JOVI) {
             itemsCount += 1;
@@ -373,7 +373,6 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
             let _pitTotal = 0
             // itemsCount += _pitstop.checkOutItemsListVM.length;
             vendorMaxEstTime = sharedCalculateMaxTime(_pitstop.pitstopType === PITSTOP_TYPES.RESTAURANT ? _pitstop.checkOutItemsListVM : [], "estimatePrepTime");
-            console.log("vendorMaxEstTime", vendorMaxEstTime);
             _pitstop.vendorMaxEstTime = vendorMaxEstTime;
             _pitstop.checkOutItemsListVM.map((product, j) => {
 
@@ -394,16 +393,17 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
     })
     estimateTime = sharedCalculateMaxTime([...pitstops].filter(_p => _p.pitstopType === PITSTOP_TYPES.RESTAURANT), "vendorMaxEstTime")
     subTotal = subTotal + joviPitstopsTotal;
-    total = (subTotal - discount) + serviceCharges;
+    total = (subTotal - discount);
     joviCalculation = joviRemainingAmount - (joviPitstopsTotal + joviPrevOrdersPitstopsAmount)
     joviRemainingAmount = joviCalculation <= 0 ? 0 : joviCalculation;
+    dispatch(ReduxActions.setCartAction({ pitstops, joviRemainingAmount, subTotal, itemsCount, joviPitstopsTotal, joviPrevOrdersPitstopsAmount, joviCalculation, total, estimateTime, gst, discount }));
     // console.log('[TO STORE DATA => PITSTOPS,joviRemainingAmount, subTotal,discount, total,itemsCount, serviceCharges]', pitstops, joviRemainingAmount, subTotal, discount, total, itemsCount, serviceCharges);
-    if (!pitstops.length) {
-        dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
-        NavigationService.NavigationActions.common_actions.goBack();
-    } else {
-        dispatch(ReduxActions.setCartAction({ pitstops, joviRemainingAmount, subTotal, itemsCount, joviPitstopsTotal, joviPrevOrdersPitstopsAmount, joviCalculation, total, estimateTime, gst, discount }));
-    }
+    // if (!pitstops.length) {
+    //     dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
+    //     NavigationService.NavigationActions.common_actions.goBack();
+    // } else {
+    //     dispatch(ReduxActions.setCartAction({ pitstops, joviRemainingAmount, subTotal, itemsCount, joviPitstopsTotal, joviPrevOrdersPitstopsAmount, joviCalculation, total, estimateTime, gst, discount }));
+    // }
 };
 export const sharedDiscountsCalculator = (
     originalPrice = 0,
@@ -433,16 +433,19 @@ const checkSameProduct = (currentCheckoutItems, newP) => {
 export const sharedAddUpdatePitstop = (
     pitstopDetails = {},
     isDeletePitstop = false,
-    swappedArray = [],
+    swappedPitstops = [],
     forceAddNewItem = false,
     fromCart = false,
     cb = () => { },
     forceUpdate = false,
 ) => {
-    console.log("pitstopDetails", pitstopDetails);
-    if (false) return dispatch(ReduxActionss.clearCartAction({}));
     const cartReducer = store.getState().cartReducer;
-    if (swappedArray.length) return sharedCalculateCartTotals(swappedArray, cartReducer);
+    if (swappedPitstops.length) {
+        dispatch(ReduxActions.setCartAction({ pitstops: swappedPitstops }));
+        sharedCalculateCartTotals(swappedPitstops, cartReducer);
+        return;
+    }
+    console.log("pitstopDetails", pitstopDetails);
     let pitstops = cartReducer.pitstops;
     const pitstopIndex = (pitstopDetails?.pitstopIndex >= 0 ? pitstopDetails.pitstopIndex : null);
     if (pitstopIndex !== null && isDeletePitstop) {
@@ -523,8 +526,8 @@ export const sharedAddUpdatePitstop = (
     }
     console.log('[TO CALCULATE PITSTOPS]', pitstops);
     cb();
-
     cartReducer.forceUpdate = forceUpdate;
+    dispatch(ReduxActions.setCartAction({ pitstops }));
     sharedCalculateCartTotals(pitstops, cartReducer)
 
 };
@@ -611,13 +614,11 @@ export const sharedGetServiceCharges = (payload = null, successCb = () => { }) =
         Endpoints.SERVICE_CHARGES,
         payload,
         (response) => {
-            const { statusCode, serviceCharge, chargeBreakdown, discount } = response.data;
+            const { statusCode, serviceCharge, chargeBreakdown, discount, orderEstimateTime } = response.data;
             console.log('service charges response -----', response);
             if (statusCode === 200)
                 // NEED TO MODIFY THESE LOGIC FOR FUTURE CASES LIKE CHECKOUT SCREEN...
-                if (!cartReducer.serviceCharges) {
-                    dispatch(ReduxActions.setCartAction({ serviceCharges: serviceCharge, total: cartReducer.total + serviceCharge, chargeBreakdown: chargeBreakdown ?? {} }))
-                }
+                dispatch(ReduxActions.setCartAction({ orderEstimateTime, serviceCharges: serviceCharge, total: cartReducer.total, chargeBreakdown: chargeBreakdown ?? {} }))
             successCb(response);
         },
         (error) => {

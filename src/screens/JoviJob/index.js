@@ -250,14 +250,16 @@ export default ({ navigation, route }) => {
 
     // to be used for editing purposes
     useEffect(() => {
-        if (route.params !== undefined && route.params !== '') {
-            if (route.params.pitstopItemObj) {
-                setLocationVal(pitstopItemObj.title)
-                setNameVal(pitstopItemObj.nameval)
-                updateImagesData(pitstopItemObj.imageData)
-                setVoiceNote(pitstopItemObj.voiceNote)
-                setEstTime(pitstopItemObj.estTime)
-            }
+        console.log("route.params", route.params);
+        if (route?.params?.pitstopItemObj) {
+            const { title, nameval, imageData, voiceNote, estTime, description, estimatePrice } = route.params.pitstopItemObj;
+            setLocationVal(title)
+            setNameVal(nameval)
+            updateImagesData(imageData)
+            setVoiceNote(voiceNote)
+            setEstTime(estTime)
+            setDescription(description)
+            setEstVal(estimatePrice)
         }
     }, [route])
 
@@ -710,7 +712,7 @@ export default ({ navigation, route }) => {
                 nameVal={nameval}
                 // locationVal={locationVal}
                 isOpened={isOpened}
-                onChangeName={(text) => { setNameVal(text.trim()) }}
+                onChangeName={(text) => { setNameVal(text) }}
                 onLocationPress={onLocationPress}
                 handleLocationSelected={handleLocationSelected}
                 onLocationSearchInputChange={onLocationSearchInputChange}
@@ -983,7 +985,7 @@ export default ({ navigation, route }) => {
 
     const onSaveAndContinue = () => {
         let pitstopData = {
-            pitstopID: 0, // on update will get from params, 
+            pitstopIndex: route?.params?.pitstopIndex ?? null, // on update will get from params, 
             title: locationVal,
             description,
             pitstopName: 'Jovi Job',
