@@ -41,7 +41,7 @@ export default ({ filterConfig, selectedFilters, parentFilterHandler = () => { }
                     </TouchableScale>
                 }}
                 horizontal={true}
-                itemContainerStyleCb={(x,) => (_styles.filterContainer(x))}
+                itemContainerStyleCb={(x,i) => (_styles.filterContainer(x))}
             />
         </View>
     </View>)
@@ -53,7 +53,7 @@ const styles = (colors, checkSelectedFilter) => {
             borderColor: 'rgba(0,0,0,0.4)',
             justifyContent: 'center',
             paddingHorizontal: 8,
-            // marginHorizontal: 5,
+            marginHorizontal: 5,
             borderRadius: checkSelectedFilter(x) ? 4 : 1,
             backgroundColor: checkSelectedFilter(x) ? colors.primary + '20' : '#fff',
             borderColor: checkSelectedFilter(x) ? colors.primary : '',

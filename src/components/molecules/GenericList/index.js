@@ -147,7 +147,7 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
     container: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingHorizontal: 0,
+        paddingHorizontal: 10,
         paddingVertical: 5
     },
     mainText: {
@@ -163,11 +163,12 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
         backgroundColor: colors.white || '#fff',
         borderRadius: 10,
         // marginHorizontal: 5,
-        marginRight: 10,
+        // marginRight: 10,
         flex: 1,
         paddingHorizontal: 10,
         paddingVertical: 10,
         marginVertical: 5,
+        marginLeft:10
     },
     itemContainerSmall: {
         ...sharedStyles._styles(colors).shadow,
