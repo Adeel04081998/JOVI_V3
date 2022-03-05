@@ -335,17 +335,6 @@ export default (props) => {
         }
         else txt = txt + renderPrice(productPrice, '-', '', /[pkr|rs|rs.|pkr.|-]{1,}/i);
         return txt;
-        // if (pitstopType === PITSTOP_TYPES.RESTAURANT) {
-        //     if (!optionsListArr.length) {
-        //         txt = txt + renderPrice((discountedPrice > 0 ? discountedPrice : gstAddedPrice), '-', '', /[pkr|rs|rs.|pkr.|-]{1,}/i)
-        //     } else {
-        //         txt = txt + renderPrice(discountedPriceWithGst, '-', '', /[pkr|rs|rs.|pkr.|-]{1,}/i);
-        //     }
-
-
-        // } else {
-
-        // }
     }
 
     const renderButtonsUi = () => {
