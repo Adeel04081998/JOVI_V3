@@ -42,6 +42,7 @@ export const refreshTokenMiddleware = (requestCallback, params) => {
 };
 
 export const postRequest = async (url, data, onSuccess = () => { }, onError = () => { }, headers = {}, showLoader = true, customLoader = null) => {
+    if (!GV.NET_INFO_REF?.current?.isConnected) return Toast.info("No Internet connection!", 5000)
     if (customLoader) {
         customLoader(true);
     }
@@ -61,17 +62,19 @@ export const postRequest = async (url, data, onSuccess = () => { }, onError = ()
     }
 };
 export const getRequest = async (url, onSuccess = () => { }, onError = () => { }, headers = {}, showLoader = true) => {
+    if (!GV.NET_INFO_REF?.current?.isConnected) return Toast.info("No Internet connection!", 5000)
     try {
         let res = await Axios.get(url, headers);
         // console.log("[ApiManager].getRequest.res", JSON.stringify(res));
         onSuccess(res);
     } catch (error) {
-        console.log("[ApiManager].getRequest.error", error);
+        console.log("[ApiManager].getRequest.error wqoieuoiqwueioquweiouqw", error);
         if (error?.data?.StatusCode === 401) return refreshTokenMiddleware(getRequest, [url, onSuccess, onError, headers, false]);
         onError(error);
     }
 };
 export const multipartPostRequest = (url, formData, onSuccess = () => { }, onError = () => { }, showLoader = false) => {
+    if (!GV.NET_INFO_REF?.current?.isConnected) return Toast.info("No Internet connection!", 5000)
     fetch(`${GV.BASE_URL.current}/${url}`, {
         method: 'post',
         headers: {

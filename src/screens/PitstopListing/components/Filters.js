@@ -61,11 +61,11 @@ const styles = (colors, checkSelectedFilter) => {
         }),
         filterTouchable: {
             display: 'flex',
-            flexDirection: 'row'
+            flexDirection: 'row',
         },
         scrollParent: {
             display: 'flex',
-            flexDirection: 'row'
+            flexDirection: 'row',
         },
         filterIcon: {
             height: FILTER_ICON_HEIGHT,
@@ -84,7 +84,7 @@ const styles = (colors, checkSelectedFilter) => {
 
             elevation: 6,
         },
-        parentContainer: { width: '100%', paddingTop: 10, display: 'flex', justifyContent: 'center', alignContent: 'center', },
+        parentContainer: { width: '100%', paddingTop: 10, display: 'flex', justifyContent: 'center', alignContent: 'center'},
         filterTitle: { fontSize: 15, color: "#272727", paddingVertical: SPACING_VERTICAL },
     });
 }

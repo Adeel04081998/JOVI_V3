@@ -27,6 +27,7 @@ import deviceInfoModule from 'react-native-device-info';
 import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-aware-scroll-view';
 import constants from '../../res/constants';
 import AppStyles from '../../res/AppStyles';
+import ROUTES from '../../navigations/ROUTES';
 
 
 
@@ -405,7 +406,7 @@ export default (props) => {
                 easing: Easing.ease,
             }).start(finished => {
                 if (finished && toValue === 0) {
-                    setState(pre => ({ ...pre, addToCardAnimation: false }))
+                    setState(pre => ({ ...pre, addToCardAnimation: false }));
                     NavigationService.NavigationActions.common_actions.goBack()
 
                 }
@@ -477,6 +478,11 @@ export default (props) => {
                             leftIconColor={productDetailsStyles.customHeaderLeftRightIconColor}
                             rightContainerStyle={productDetailsStyles.customHeaderLeftRightContainer}
                             rightIconColor={productDetailsStyles.customHeaderLeftRightIconColor}
+                            onRightIconPress={()=>{
+                                if(!state.addToCardAnimation){
+                                    NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name);
+                                }
+                            }}
                         />
                         <KeyboardAwareScrollView
                             showsVerticalScrollIndicator={false}
