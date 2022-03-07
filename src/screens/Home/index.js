@@ -1,7 +1,7 @@
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import React, { useState } from 'react';
-import { Animated, Appearance, Easing } from "react-native";
+import { Animated, Appearance, Easing, ScrollView } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import { useDispatch, useSelector } from 'react-redux';
 import AddressesList from "../../components/atoms/FinalDestination/AddressesList";
@@ -127,11 +127,20 @@ export default () => {
                     <KeyboardAwareScrollView style={{}} showsVerticalScrollIndicator={false}>
                         <Greetings messagesReducer={messagesReducer} homeStyles={homeStyles} userReducer={userReducer} colors={colors} />
                         {
-                            userReducer.openOrders && userReducer.openOrders.map((item,i)=>{
-                                return <Text style={{width:60,marginLeft:40,marginVertical:10,height:20,backgroundColor:'red'}} onPress={()=>{
-                                    onOrderPress(item);
-                                }}>{item.orderID}</Text>
-                            })
+                            userReducer.openOrders && userReducer.openOrders.length > 0 &&
+                            <>
+                                <Text style={{ margin: 5, left: 5, fontWeight: "bold", color: colors.primary, fontSize: 16 }}>Orders:</Text>
+                                <ScrollView horizontal contentContainerStyle={{ flexDirection: "row", justifyContent: "flex-start", alignItems: "center" }} style={{ borderRadius: 5, borderWidth: .5, borderColor: colors.primary, margin: 5 }}>
+                                    {
+                                        // [...userReducer.openOrders, ...userReducer.openOrders, ...userReducer.openOrders, ...userReducer.openOrders].map((item, i) => {
+                                            userReducer.openOrders.map((item, i) => {
+                                            return <Text style={{ margin: 10, backgroundColor: colors.primary, color: colors.white, borderRadius: 5, padding: 5, textAlign: "center", paddingTop: 7 }} onPress={() => {
+                                                onOrderPress(item);
+                                            }}>{item.orderID}</Text>
+                                        })
+                                    }
+                                </ScrollView>
+                            </>
                         }
                         <ImageCarousel
                             // aspectRatio={16 / 7}
