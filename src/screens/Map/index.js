@@ -1,4 +1,4 @@
-import { View, Text, Appearance } from 'react-native';
+import { View, Text, Appearance, BackHandler } from 'react-native';
 import React, { useState } from 'react';
 import Maps from '../../components/atoms/GoogleMaps/Maps';
 import NavigationService from '../../navigations/NavigationService';
@@ -23,7 +23,7 @@ export default (props) => {
 
   const onConfirmLoc = (finalDestObj) => {
     if (props.route.params.index === 0) {
-      
+
       console.log('here in 0');
       props.route.params.onNavigateBack && props.route.params.onNavigateBack(finalDestObj.title);
       dispatch(ReduxActions.setUserFinalDestAction({ finalDestObj }))
@@ -53,20 +53,39 @@ export default (props) => {
     }
   }
 
+  React.useEffect(() => {
+    const backAction = () => {
+        onBackPress()
+        return true
+    };
+
+    const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+    );
+
+    return () => backHandler.remove();
+}, []);
+
+  const onBackPress = () => {
+    if (isFromEdit) {
+      NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.AddAddress.screen_name, {
+        finalDestObj: lastLoc,
+        updateFinalDestination,
+        isFromEdit
+      })
+    } else {
+      NavigationService.NavigationActions.common_actions.goBack();
+    }
+    isFromEdit = false;
+  }
+
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }} >
       <View style={{ flex: 1 }} >
         <Maps route={props.route} onConfirmLoc={onConfirmLoc} onBackPress={() => {
-          if (isFromEdit) {
-            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.AddAddress.screen_name, {
-              finalDestObj: lastLoc,
-              updateFinalDestination,
-              isFromEdit
-            })
-          } else {
-            NavigationService.NavigationActions.common_actions.goBack();
-          }
-          isFromEdit = false;
+          onBackPress()
         }} />
       </View>
     </SafeAreaView>

@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native"
+import { Platform, StyleSheet } from "react-native"
 import { initColors } from "./colors"
 
 export default {
@@ -12,7 +12,7 @@ export default {
                 },
                 shadowOpacity: 0.15,
                 shadowRadius: 3.84,
-                elevation: 1,
+                elevation: Platform.OS === "android" ? 1 : 3,
             }
         })
     }

@@ -55,12 +55,12 @@ const RestaurantProductMenuScrollable = (props: Props) => {
         tabs.current = props.data;
     }, [props.data]);
     // #region :: HORIZONTAL LAYOUT HANDLER START's FROM HERE 
-    const handleTab = (categoryID: any, tabName: any, layout: any) => {
+    const handleTab = (categoryID: any, tabName: any, layout: any, _idx: number) => {
         layout.categoryID = categoryID;
         layout.name = tabName;
         layout.anim = false;
         layout.id = new Date().getTime();
-        if (widthValue._value === 0) {
+        if (widthValue._value === 0 && _idx === 0) {
             widthValue.setValue(layout.width);
         }
 
@@ -195,7 +195,7 @@ const RestaurantProductMenuScrollable = (props: Props) => {
                         <TouchableScale
                             key={uniqueKeyExtractor()}
                             onPress={e => handleScroll(food.categoryID, food.categoryName)}
-                            onLayout={e => handleTab(food.categoryID, food.categoryName, e.nativeEvent.layout)}
+                            onLayout={e => handleTab(food.categoryID, food.categoryName, e.nativeEvent.layout, i)}
                             style={{
                                 backgroundColor: "#F2F1F6",
                                 borderWidth: 0.2,
