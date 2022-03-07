@@ -194,6 +194,7 @@ const PistopListing = React.memo(({ route, }) => {
             selectedFilters={state.filters.filter}
             parentFilterHandler={onPressFilter}
             filtersData={categoriesTagsReducer?.vendorFilterViewModel?.filtersList}
+            screenName={'Listing Page'}
             goToFilters={goToFilters} />
 
         {currentPitstopType.categorySection &&

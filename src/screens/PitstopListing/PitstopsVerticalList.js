@@ -251,6 +251,7 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
                         colors={colors}
                         parentFilterHandler={onFilterChange}
                         filterConfig={{}}
+                        screenName={'Vertical Listing Page'}
                         goToFilters={goToFilters}
                         selectedFilters={state.filters.filter}
                     />
