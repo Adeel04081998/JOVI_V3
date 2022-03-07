@@ -15,7 +15,7 @@ import CardLoader from "./CardLoader";
 import { useSelector } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
 
-const ITEMS_PER_PAGE = 20;
+
 
 export default ({ config, filters, pitstopType, styles, imageStyles = { width: '100%' }, fetchPitstopsFlagParent = null, pitstopFilters = null, colors }) => {
     const [state, setState] = React.useState({
@@ -26,7 +26,7 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
     });
     const userReducer = useSelector(store => store.userReducer);
     const isFocused = useIsFocused();
-    console.log('userReducer', userReducer);
+    const ITEMS_PER_PAGE = pitstopType === 4 ? userReducer?.restaurantListingScreenItemsPerPage : userReducer?.supermarketListingScreenItemsPerPage;
     const finalDestination = userReducer.finalDestObj ?? {};
     const isRequestSent = React.useRef(false);
     const componentLoaded = React.useRef(false);
