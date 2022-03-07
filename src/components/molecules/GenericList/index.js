@@ -23,19 +23,20 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
     const isLoading = React.useRef(null);
     const userReducer = useSelector(store => store.userReducer);
     const finalDestination = userReducer?.finalDestObj ?? { latitude: 0, longitude: 0 };
+    const ITEMS_PER_PAGE = userReducer.homeScreenItemsPerPage || 10;
 
     const fetchData = () => {
         postRequest(Endpoints.GET_VENDOR_DASHBOARD_CATEGORY_ID_DETAIL,
             {
                 "vendorType": vendorType,
                 "pageNumber": 1,
-                "itemsPerPage": 10,
+                "itemsPerPage": ITEMS_PER_PAGE,
                 "vendorDashboardCatID": vendorDashboardCatID,
                 "latitude": finalDestination.latitude,
                 "longitude": finalDestination.longitude
             },
             res => {
-                console.log('res.data ==>>>', res.data);
+                console.log('res.data generic ==>>>', res.data);
                 if (res.data.statusCode !== 200) return;
                 cb(true)
                 setData(res.data.vendorCategoryViewModel);
@@ -117,7 +118,7 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
             {/* {
                 data.map((item, index) => ( */}
             <React.Fragment key={`generic-item-key-${'index'}`}>
-                <View style={{...textContainer,...styles.container}} >
+                <View style={{ ...textContainer, ...styles.container }} >
                     <Text style={styles.mainText} >{data?.header}</Text>
                     <TouchableOpacity onPress={() => onPressViewMore()}>
                         <Text style={styles.viewMoreBtn} >{showMoreBtnText || `View More`}</Text>

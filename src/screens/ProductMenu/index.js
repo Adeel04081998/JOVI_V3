@@ -8,7 +8,7 @@ import TouchableScale from '../../components/atoms/TouchableScale';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import NoRecord from '../../components/organisms/NoRecord';
-import { isNextPage, renderFile,sharedAddToCartKeys, sharedAddUpdatePitstop, sharedExceptionHandler, sharedGetPitstopData, uniqueKeyExtractor, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { isNextPage, renderFile, sharedAddToCartKeys, sharedAddUpdatePitstop, sharedExceptionHandler, sharedGetPitstopData, uniqueKeyExtractor, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
@@ -27,10 +27,10 @@ import { itemStylesFunc, stylesFunc } from './styles';
 const WINDOW_WIDTH = constants.window_dimensions.width;
 
 const ITEM_IMAGE_SIZE = WINDOW_WIDTH * 0.35;
-const VERTICAL_MAX_ITEM_PER_REQUEST = 10;
+// const VERTICAL_MAX_ITEM_PER_REQUEST = 10;
 const HORIZONTAL_MAX_ITEM_PER_REQUEST = 4;
 const SHELVE_MAX_COUNT = 7;
-const DEFAULT_PAGINATION_INFO = { totalItem: 0, itemPerRequest: VERTICAL_MAX_ITEM_PER_REQUEST, currentRequestCount: 1 };
+// const DEFAULT_PAGINATION_INFO = { totalItem: 0, itemPerRequest: VERTICAL_MAX_ITEM_PER_REQUEST, currentRequestCount: 1 };
 const PITSTOPS = {
     SUPER_MARKET: 1,
     JOVI: 2,
@@ -43,6 +43,7 @@ export default ({ navigation, route }) => {
     const pitstopType = route?.params?.pitstopType ?? PITSTOP_TYPES.SUPER_MARKET;
 
 
+
     // #region :: STYLES & THEME START's FROM HERE 
     const colors = theme.getTheme(GV.THEME_VALUES[lodash.invert(PITSTOPS)[pitstopType]], Appearance.getColorScheme() === "dark");
     const styles = stylesFunc(colors);
@@ -53,6 +54,12 @@ export default ({ navigation, route }) => {
     const getStoredQuantities = sharedGetPitstopData({ marketID }, "marketID");
 
     const headerTitle = route.params?.title ?? '';
+
+    // #region :: ITEM_PER_PAGE_FROM HERE 
+
+    const userReducer = useSelector(store => store.userReducer);
+    const VERTICAL_MAX_ITEM_PER_REQUEST = userReducer.supermarketMenuScreenItemsPerPage || 10;
+    const DEFAULT_PAGINATION_INFO = { totalItem: 0, itemPerRequest: VERTICAL_MAX_ITEM_PER_REQUEST, currentRequestCount: 1 };
 
     // #region :: STATE's & REF's START's FROM HERE 
     const flatlistRef = React.useRef(null);
@@ -225,7 +232,7 @@ export default ({ navigation, route }) => {
 
                     {isNextPage(productTotalItem, HORIZONTAL_MAX_ITEM_PER_REQUEST, 1) &&
                         <TouchableScale wait={0} onPress={() => {
-                            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductMenuItem.screen_name, { pitstopType, marketID, item: parentItem,allData })
+                            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductMenuItem.screen_name, { pitstopType, marketID, item: parentItem, allData })
                         }}>
                             <Text style={itemStyles.titleViewmoreText}>{`View More`}</Text>
                         </TouchableScale>

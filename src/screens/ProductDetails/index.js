@@ -32,8 +32,7 @@ import ROUTES from '../../navigations/ROUTES';
 
 
 export default (props) => {
-    console.log("props product Details=>>", props);
-    // const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark"
+    // console.log("props product Details=>>", props);
     let initialState = {
 
         'generalProductOrDealDetail': {},
@@ -105,7 +104,6 @@ export default (props) => {
                 }));
 
                 const optionListArr = (res.data.generalProductOrDealDetail.optionList ?? []);
-                console.log('UPDATED ARR optionListArr   ', optionListArr);
                 const hasRequired = optionListArr.filter(x => x.isRequired).length;
                 setEnable(pre => ({
                     ...pre,
@@ -197,7 +195,6 @@ export default (props) => {
         let discountedPriceWithGst = discountedPriceWithoutGst + totalGst;
         const totalPriceWithoutDiscount = discountedPriceWithGst + totalDiscount;
         // console.log('discountedPrice', totalAmountWithoutGst, discountedPriceWithoutGst, (totalAddOnPrice + generalProductOrDealDetail.itemPrice) * 0.2, (totalAddOnPrice + generalProductOrDealDetail.itemPrice) - ((20 / 100) * (totalAddOnPrice + generalProductOrDealDetail.itemPrice)));
-        console.log('Item', generalProductOrDealDetail);
         setState(pre => ({
             ...pre, selectedOptions: updatedArr, totalAddOnPrice: totalAddOnPrice,
             discountedPriceWithoutGst,
@@ -330,8 +327,6 @@ export default (props) => {
     const cartText = () => {
         let txt = 'Add to cart ';
         if (selectedOptions.length) {
-            console.log("discountedPriceWithGst",discountedPriceWithGst);   
-            
             txt = txt + renderPrice(discountedPriceWithGst, '-', '', /[pkr|rs|rs.|pkr.|-]{1,}/i);
         }
         else txt = txt + renderPrice(productPrice, '-', '', /[pkr|rs|rs.|pkr.|-]{1,}/i);
@@ -490,8 +485,8 @@ export default (props) => {
                             leftIconColor={productDetailsStyles.customHeaderLeftRightIconColor}
                             rightContainerStyle={productDetailsStyles.customHeaderLeftRightContainer}
                             rightIconColor={productDetailsStyles.customHeaderLeftRightIconColor}
-                            onRightIconPress={()=>{
-                                if(!state.addToCardAnimation){
+                            onRightIconPress={() => {
+                                if (!state.addToCardAnimation) {
                                     NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name);
                                 }
                             }}

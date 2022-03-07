@@ -24,10 +24,11 @@ import Card from './components/Card';
 import { useSelector } from 'react-redux';
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 const SPACING_VERTICAL = 10;
-const ITEMS_PER_PAGE = 10;
+// const ITEMS_PER_PAGE = 10;
 const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
     const userReducer = useSelector(store => store.userReducer);
     // console.log("[PitstopsVerticalList].userReducer", userReducer);
+    const ITEMS_PER_PAGE = userReducer.popularSectionViewMoreItemsPerPage || 10;
     const finalDestination = userReducer.finalDestObj;
     const pitstopType = route.params.pitstopType ?? 4;
     const [state, setState] = React.useState({

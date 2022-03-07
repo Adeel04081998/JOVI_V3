@@ -43,7 +43,6 @@ const PistopListing = React.memo(({ route, }) => {
     const { pitstopType } = route.params;
     const vendorDashboardCategoryIDReducer = useSelector(s => s.vendorDashboardCategoryIDReducer)?.data ?? [];
 
-    console.log('pitstopType', pitstopType);
     const [state, setState] = React.useState({
         filters: {
             filter: [],
@@ -94,9 +93,7 @@ const PistopListing = React.memo(({ route, }) => {
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]], Appearance.getColorScheme() === "dark");
     const listingStyles = stylesheet.styles(colors, width, height);
     const [loadedData, setLoadedData] = useState(false)
-    console.log("loadedData", loadedData);
     const isLoading = !loadedData;
-    console.log("isLoading", isLoading);
 
     const filterValidations = {
         search: (val) => { return val !== '' },
@@ -156,7 +153,7 @@ const PistopListing = React.memo(({ route, }) => {
         }));
         const isAllDisSelected = filtersRef.current.averagePrice === null && filtersRef.current.cuisines.length === 0 && filtersRef.current.filter.length === 0;
         allRestaurantAnimation(isAllDisSelected ? 1 : 0);
-        console.log('updatedFilters', updatedFilters, isAllDisSelected, filtersRef.current);
+    
     }
     const goToFilters = () => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Filter.screen_name, { activeAvergePrice: filtersRef.current.averagePrice, activeCusine: filtersRef.current.cuisines[0], activeFilterBy: filtersRef.current.filter[0], backCB: backFromFiltersHandler });
