@@ -406,7 +406,7 @@ export default () => {
     return (
       <View style={{ paddingHorizontal: 10 }}>
         {row('Subtotal', sharedCalculatedTotals().subTotal, true)}
-        {row('Discount', `- ${sharedCalculatedTotals().discount}`)}
+        {sharedCalculatedTotals().discount ? row('Discount', `- ${sharedCalculatedTotals().discount}`) : null}
         {row(`Service Charges (Incl S.T ${sharedCalculatedTotals().serviceTax})`, sharedCalculatedTotals().serviceCharges)}
         <BottomLine />
         {row('Total', sharedCalculatedTotals().total, true)}
@@ -534,7 +534,7 @@ export default () => {
                 marginHorizontal: 5,
               }}
               onPress={() => {
-                NavigationService.NavigationActions.common_actions.navigate(idx > 0 ? ROUTES.APP_DRAWER_ROUTES.CheckOut.screen_name : ROUTES.APP_DRAWER_ROUTES.Home.screen_name)
+                NavigationService.NavigationActions.common_actions.navigate((idx > 0 && cartReducer.pitstops.length) ? ROUTES.APP_DRAWER_ROUTES.CheckOut.screen_name : ROUTES.APP_DRAWER_ROUTES.Home.screen_name)
               }}
             >
               <Text style={{ textAlign: 'center', color: colors.white }}>

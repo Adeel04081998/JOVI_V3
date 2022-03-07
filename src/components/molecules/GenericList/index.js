@@ -17,7 +17,7 @@ import NavigationService from '../../../navigations/NavigationService';
 import ROUTES from '../../../navigations/ROUTES';
 import { useSelector } from 'react-redux';
 
-export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCatID = 0, imageStyles = {}, themeColors = null, showMoreBtnText = "", cb = () => { } }) => {
+export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCatID = 0, imageStyles = {}, themeColors = null, showMoreBtnText = "", cb = () => { }, textContainer = {} }) => {
     const SPACING_BOTTOM = 0;
     const [data, setData] = React.useState(null);
     const isLoading = React.useRef(null);
@@ -117,7 +117,7 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
             {/* {
                 data.map((item, index) => ( */}
             <React.Fragment key={`generic-item-key-${'index'}`}>
-                <View style={styles.container} >
+                <View style={{...textContainer,...styles.container}} >
                     <Text style={styles.mainText} >{data?.header}</Text>
                     <TouchableOpacity onPress={() => onPressViewMore()}>
                         <Text style={styles.viewMoreBtn} >{showMoreBtnText || `View More`}</Text>
@@ -151,7 +151,7 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
     container: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingHorizontal: 10,
+        // paddingHorizontal: 10,
         paddingVertical: 5
     },
     mainText: {

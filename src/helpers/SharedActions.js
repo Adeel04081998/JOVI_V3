@@ -346,7 +346,6 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
     let joviRemainingAmount = constants.max_jovi_order_amount,
         subTotal = 0,
         discount = 0,
-        serviceCharges = cartReducer.serviceCharges || 0,
         itemsCount = 0,
         joviPitstopsTotal = 0,
         joviPrevOrdersPitstopsAmount = 0,
@@ -393,13 +392,6 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
     joviCalculation = joviRemainingAmount - (joviPitstopsTotal + joviPrevOrdersPitstopsAmount)
     joviRemainingAmount = joviCalculation <= 0 ? 0 : joviCalculation;
     dispatch(ReduxActions.setCartAction({ pitstops, joviRemainingAmount, subTotal, itemsCount, joviPitstopsTotal, joviPrevOrdersPitstopsAmount, joviCalculation, total, estimateTime, gst, discount }));
-    // console.log('[TO STORE DATA => PITSTOPS,joviRemainingAmount, subTotal,discount, total,itemsCount, serviceCharges]', pitstops, joviRemainingAmount, subTotal, discount, total, itemsCount, serviceCharges);
-    // if (!pitstops.length) {
-    //     dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
-    //     NavigationService.NavigationActions.common_actions.goBack();
-    // } else {
-    //     dispatch(ReduxActions.setCartAction({ pitstops, joviRemainingAmount, subTotal, itemsCount, joviPitstopsTotal, joviPrevOrdersPitstopsAmount, joviCalculation, total, estimateTime, gst, discount }));
-    // }
 };
 export const sharedDiscountsCalculator = (
     originalPrice = 0,
@@ -520,11 +512,16 @@ export const sharedAddUpdatePitstop = (
             });
         }
     }
-    console.log('[TO CALCULATE PITSTOPS]', pitstops);
+    // console.log('[TO CALCULATE PITSTOPS]', pitstops);
     cb();
     cartReducer.forceUpdate = forceUpdate;
-    dispatch(ReduxActions.setCartAction({ pitstops }));
-    sharedCalculateCartTotals(pitstops, cartReducer)
+    if (!pitstops.length) {
+        dispatch(ReduxActions.clearCartAction({ pitstops: [], forceUpdate }));
+        NavigationService.NavigationActions.common_actions.goBack();
+    } else {
+        dispatch(ReduxActions.setCartAction({ pitstops }));
+        sharedCalculateCartTotals(pitstops, cartReducer)
+    }
 
 };
 
@@ -800,7 +797,7 @@ export const sharedAddToCartKeys = (restaurant = null, item = null) => {
 }
 
 export const sharedCalculatedTotals = () => {
-    const { subTotal, discount, serviceCharges, serviceTax, genericDiscount, total, gst } = store.getState().cartReducer;
+    const { subTotal = 0, discount = 0, serviceCharges = 0, serviceTax = 0, genericDiscount = 0, total = 0, gst = 0 } = store.getState().cartReducer;
     const _serviceCharges = serviceCharges + serviceTax;
     return {
         gst,

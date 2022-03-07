@@ -4,11 +4,8 @@ import React, { useState } from 'react';
 import { Animated, Appearance, Easing } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import { useDispatch, useSelector } from 'react-redux';
-import BottomAllignedModal from "../../components/atoms/BottomAllignedModal";
 import AddressesList from "../../components/atoms/FinalDestination/AddressesList";
-import RecentOrders from '../../components/atoms/RecentOrders';
 import SafeAreaView from "../../components/atoms/SafeAreaView";
-import Text from "../../components/atoms/Text";
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import GenericList from '../../components/molecules/GenericList';
@@ -17,8 +14,6 @@ import BottomBarComponent from '../../components/organisms/BottomBarComponent';
 import { sharedConfirmationAlert, sharedExceptionHandler, sharedLogoutUser, sharedOrderNavigation } from "../../helpers/SharedActions";
 import { getRequest } from "../../manager/ApiManager";
 import Endpoints from "../../manager/Endpoints";
-import NavigationService from "../../navigations/NavigationService";
-import ROUTES from "../../navigations/ROUTES";
 import preference_manager from "../../preference_manager";
 import ReduxActions from '../../redux/actions';
 import theme from "../../res/theme";
@@ -155,7 +150,7 @@ export default () => {
                             {/* <RecentOrders /> AS PER PM WE HAVE TO REMOVE RECENT ORDER FOR NOW*/}
                             {isFinalDestinationSelected && vendorDashboardCategoryIDReducer.map((item, index) => {
                                 return (
-                                    <GenericList vendorDashboardCatID={item.vendorDashboardCatID} />
+                                    <GenericList vendorDashboardCatID={item.vendorDashboardCatID} textContainer={{ paddingHorizontal: 0 }} />
                                 )
                             })}
                         </View>
