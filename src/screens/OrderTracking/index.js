@@ -45,7 +45,7 @@ export default ({ route }) => {
         chargeBreakdown: {},
         progress: 0,
         currentPitstop: null,
-        orderEstimateTimeRange: '40 - 50',
+        orderEstimateTimeRange: ' - ',
     });
     const circleColor = state.subStatusName === ORDER_STATUSES.RiderFound ? '#37c130' : colors.primary;
     const isRiderFound = state.subStatusName === ORDER_STATUSES.RiderFound;
@@ -81,7 +81,7 @@ export default ({ route }) => {
                     if (item.joviJobStatus === 2 || item.joviJobStatus === 7) {
                         progress += increment;
                     } else if (!currentPitstop) {
-                        currentPitstop = item;
+                        currentPitstop = {...item,index:i};
                     }
 
                     circularPitstops.push(focusedPitstop);
@@ -247,7 +247,7 @@ export default ({ route }) => {
                     {
                         isRiderFound && state.currentPitstop ?
                             <Text style={styles.currentPitstopTime}>
-                                {`Estimated arrival at Pitstop 3\n${state.currentPitstop?.pitstopEstimateTime ?? '40 - 50'} minutes`}
+                                {`Estimated arrival at Pitstop ${state.currentPitstop?.index+1}\n${state.currentPitstop?.pitstopEstimateTime ?? ' - '} minutes`}
                             </Text>
                             :
                             null

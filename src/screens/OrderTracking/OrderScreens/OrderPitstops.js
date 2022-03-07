@@ -150,7 +150,7 @@ export default ({ route }) => {
                     }
                 });
                 setState(pre => ({ ...pre, ...res.data.order, pitStopsList:updatedPitstops, currentPitstop, isLoading: false, }))
-                // setState(pre => ({ ...pre, ...res.data.order, pitStopsList: [...updatedPitstops, ...updatedPitstops], currentPitstop, isLoading: false, }))
+                // setState(pre => ({ ...pre, ...res.data.order, pitStopsList: [...updatedPitstops,...updatedPitstops,...updatedPitstops, ...updatedPitstops], currentPitstop, isLoading: false, }))
             } else {
                 setState(pre => ({ ...pre, isLoading: false }))
             }
