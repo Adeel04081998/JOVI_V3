@@ -50,6 +50,7 @@ const ScrollableList = (props: Props) => {
     const currentTabRef = React.useRef(props.data && props.data.length > 0 ? props.data[0] : {});
     React.useEffect(() => {
         tabs.current = props.data;
+        currentTabRef.current = props.data[0];
     }, [props.data]);
     // #endregion :: State's & Ref's END's FROM HERE 
 

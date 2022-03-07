@@ -98,6 +98,10 @@ const APP_DRAWER_ROUTES = {
         screen_name: "SHARED_MAP_VIEW",
         options: null,
     },
+    "OrderPitstops":{
+        screen_name: "ORDER_PITSTOPS",
+        options: null
+    },
     
 }
 const APP_ROUTES = {

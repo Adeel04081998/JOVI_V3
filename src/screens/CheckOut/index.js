@@ -165,7 +165,7 @@ export default () => {
                                 "gstPercentage": obj.gstPercentage,
                                 "gstAddedPrice": obj.gstAddedPrice + obj.totalJoviDiscount + obj._totalDiscount,//backend is expecting gst added price without discounts, due to deadline, it couldn't be calculated from backend,
                                 "restaurantProductNotFound": (obj.isRestaurant && obj.restaurantProductNotFound) ? obj.restaurantProductNotFound : 0,
-                                "pitstopItemsOptionList": (obj.isRestaurant ?
+                                "pitstopItemsOptionList": (obj.isRestaurant || item.pitstopType === 4?
                                     // A non-deal type restaurant item
                                     (obj.pitStopDealID ?
                                         ((obj.selectedOptions) || []).map((o, i) => ({
@@ -215,7 +215,7 @@ export default () => {
                     dispatch(actions.setUserAction({
                         ordersList: [res.data.createUpdateOrderVM.orderID]
                     }));
-                    sharedOrderNavigation(res.data?.createUpdateOrderVM?.orderID ?? 0,res.data?.createUpdateOrderVM?.subStatusName??'');
+                    sharedOrderNavigation(res.data?.createUpdateOrderVM?.orderID ?? 0,res.data?.createUpdateOrderVM?.subStatusName??'',null,true);
                 } else {
                     setState(pre => ({ ...pre, isLoading: false }));
                 }

@@ -754,14 +754,20 @@ export const sharedHandleInfinityScroll = (event) => {
     if (Math.ceil(mHeight + Y) >= cSize) return true;
     return false;
 }
-export const sharedOrderNavigation = (orderID = null, orderStatus = null, replacingRoute = null) => {
+export const sharedOrderNavigation = (orderID = null, orderStatus = null, replacingRoute = null, newOrder = null, showBack = false) => {
     console.log('orderID', orderID);
     const navigationLogic = (route) => {
-        if (replacingRoute) {
-            NavigationService.NavigationActions.stack_actions.replace(route, { orderID }, replacingRoute);
-        } else {
-            NavigationService.NavigationActions.common_actions.navigate(route, { orderID });
-        }
+        if (newOrder) {
+            NavigationService.NavigationActions.common_actions.reset_with_filter_invert([ROUTES.APP_DRAWER_ROUTES.Home.screen_name], {
+                name: route,
+                params: { orderID,showBack }
+            });
+        } else
+            if (replacingRoute) {
+                NavigationService.NavigationActions.stack_actions.replace(route, { orderID,showBack }, replacingRoute);
+            } else {
+                NavigationService.NavigationActions.common_actions.navigate(route, { orderID,showBack });
+            }
     };
     const goToOrderProcessing = () => navigationLogic(ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name);
     const goToOrderProcessingError = () => navigationLogic(ROUTES.APP_DRAWER_ROUTES.OrderProcessingError.screen_name);
@@ -815,4 +821,16 @@ export const sharedAddToCartKeys = (restaurant = null, item = null) => {
         item
     }
 
+}
+export const sharedGenerateProductItem = (itemName, quantity = null, options = null) => {
+    let title = itemName;
+    if (options) {
+        options.map((item, i) => {
+            title = title + ' - ' + item.attributeName;
+        });
+    }
+    if (quantity) {
+        title = title + ' - x' + quantity;
+    }
+    return title;
 }

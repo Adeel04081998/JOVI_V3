@@ -8,6 +8,7 @@ import svgs from "../../assets/svgs";
 import SharedMapView from "../../components/atoms/GoogleMaps/SharedMapView";
 import SafeAreaView from "../../components/atoms/SafeAreaView";
 import Text from "../../components/atoms/Text";
+import TouchableOpacity from "../../components/atoms/TouchableOpacity";
 import VectorIcon from "../../components/atoms/VectorIcon";
 import View from "../../components/atoms/View";
 import AnimatedProgressWheel from "../../components/molecules/AnimatedProgressWheel";
@@ -35,6 +36,7 @@ export default ({ route }) => {
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[2]], Appearance.getColorScheme() === "dark");
     const orderIDParam = route?.params?.orderID ?? 41231;
     const SCALED_HEIGHT = PixelRatio.roundToNearestPixel(WINDOW_HEIGHT * (WINDOW_HEIGHT / baseHeight));
+    const styles = _styles(colors,WIDTH,SCALED_HEIGHT);
     const [state, setState] = React.useState({
         orderID: orderIDParam ?? 0,
         pitStopsList: [],
@@ -96,6 +98,9 @@ export default ({ route }) => {
     }
     const orderCancelledOrCompleted = () => {
         goToHome();
+    }
+    const onOrderNavigationPress = (route = '') => {
+        NavigationService.NavigationActions.common_actions.navigate(route,{orderID:orderIDParam});
     }
     React.useEffect(() => {
         fetchOrderDetails();
@@ -177,26 +182,18 @@ export default ({ route }) => {
             <View style={{ position: 'absolute', marginTop: -125 }}>
                 {/* <SvgXml style={{ top: -10, }} height={137} width={WIDTH} xml={circleCurveSvgXml} /> */}
             </View>
-            <View style={{
-                display: 'flex',
-                alignItems: 'center',
-                marginTop: -120,
-                backgroundColor: colors.white,
-                padding: 25,
-                borderTopEndRadius: 110,
-                borderTopLeftRadius: 110,
-            }}>
+            <View style={styles.orderProgressContainer}>
 
                 {/* {renderUI[ORDER_STATUSES.RiderFound]()} */}
                 {renderUI[state.subStatusName ?? ORDER_STATUSES.Processing]()}
             </View>
-            <View style={{ position: 'absolute', width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, top: 75 }}>
-                <View style={{ height: 42, width: 42, borderRadius: 21, display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: colors.primary }}>
+            <View style={styles.orderNavigationContainer}>
+                <View style={styles.orderNavigationButton}>
                     <VectorIcon size={25} name={'md-chatbubble-ellipses'} type={'Ionicons'} color={colors.white} />
                 </View>
-                <View style={{ height: 42, width: 42, borderRadius: 21, display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: colors.primary }}>
+                <TouchableOpacity onPress={()=>onOrderNavigationPress(ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name)}  style={styles.orderNavigationButton}>
                     <VectorIcon size={30} name={'list'} type={'Ionicons'} color={colors.white} />
-                </View>
+                </TouchableOpacity>
             </View>
         </>
     }
@@ -205,13 +202,7 @@ export default ({ route }) => {
             <View style={styles.container} >
                 <CustomHeader
                     hideFinalDestination
-                    containerStyle={{
-                        backgroundColor: 'transparent',
-                        borderBottomWidth: 0,
-                        position: 'absolute',
-                        top: 0,
-                        zIndex: 9999
-                    }}
+                    containerStyle={styles.headerContainer}
                     leftContainerStyle={{
                         backgroundColor: colors.white,
                     }}
@@ -234,14 +225,7 @@ export default ({ route }) => {
                     showDirections={true}
                     // showMarker={true}
                     // mapHeight={SCALED_HEIGHT * 0.27}
-                    markerStyle={{
-                        zIndex: 3,
-                        position: 'absolute',
-                        marginTop: -15,
-                        marginLeft: -11,
-                        left: WIDTH / 2,
-                        top: ((SCALED_HEIGHT * 1.3) - SCALED_HEIGHT) / 2,
-                    }}
+                    markerStyle={styles.mapMarkerStyle}
                     customPitstops={state.pitStopsList}
                     // pitchEnabled={false}
                     // zoomEnabled={false}
@@ -251,26 +235,18 @@ export default ({ route }) => {
 
                     }} />
             </View>
-            <View style={{
-                position: 'absolute',
-                bottom: 0,
-                width: '100%',
-                height: 300,
-                backgroundColor: 'white',
-                display: 'flex',
-                alignItems: 'center'
-            }}>
+            <View style={styles.bottomViewContainer}>
                 {renderProgressCircle()}
-                <View style={{ height: 200, marginTop: 50, alignItems: 'center', display: 'flex', }}>
+                <View style={styles.orderInformationContainer}>
                     {isRiderFound ?
-                        <Text style={{ fontSize: 20, marginTop: 10, fontWeight: 'bold', color: colors.black }} fontFamily={'PoppinsSemiBold'}>JOVI</Text>
+                        <Text style={styles.joviTitle} fontFamily={'PoppinsSemiBold'}>JOVI</Text>
                         :
                         renderTime(30, 14)
                     }
-                    <Text style={{ fontSize: 14, marginTop: 10, fontWeight: 'bold', color: colors.black }} fontFamily={'PoppinsSemiBold'}>Almost there! Your order is being prepared now.</Text>
+                    <Text style={styles.orderCaption} fontFamily={'PoppinsSemiBold'}>Almost there! Your order is being prepared now.</Text>
                     {
                         isRiderFound && state.currentPitstop ?
-                            <Text style={{ textAlign: 'center', color: colors.black, fontSize: 14 ,marginTop:10}}>
+                            <Text style={styles.currentPitstopTime}>
                                 {`Estimated arrival at Pitstop 3\n${state.currentPitstop?.pitstopEstimateTime ?? '40 - 50'} minutes`}
                             </Text>
                             :
@@ -282,11 +258,50 @@ export default ({ route }) => {
     );
 };
 
-const styles = StyleSheet.create({
+const _styles = (colors,WIDTH,SCALED_HEIGHT)=> StyleSheet.create({
     safeArea: {
         flex: 1,
     },
     container: {
         flex: 1
+    },
+    headerContainer:{
+        backgroundColor: 'transparent',
+        borderBottomWidth: 0,
+        position: 'absolute',
+        top: 0,
+        zIndex: 9999
+    },
+    mapMarkerStyle: {
+        zIndex: 3,
+        position: 'absolute',
+        marginTop: -15,
+        marginLeft: -11,
+        left: WIDTH / 2,
+        top: ((SCALED_HEIGHT * 1.3) - SCALED_HEIGHT) / 2,
+    },
+    bottomViewContainer:{
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        height: 300,
+        backgroundColor: 'white',
+        display: 'flex',
+        alignItems: 'center',
+    },
+    orderInformationContainer:{ height: 200, marginTop: 50, alignItems: 'center', display: 'flex', },
+    joviTitle:{ fontSize: 20, marginTop: 10, fontWeight: 'bold', color: colors.black },
+    orderCaption:{ fontSize: 14, marginTop: 10, fontWeight: 'bold', color: colors.black },
+    currentPitstopTime:{ textAlign: 'center', color: colors.black, fontSize: 14 ,marginTop:10},
+    orderNavigationContainer:{ position: 'absolute', width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, top: 75 },
+    orderNavigationButton:{ height: 42, width: 42, borderRadius: 21, display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: colors.primary },
+    orderProgressContainer:{
+        display: 'flex',
+        alignItems: 'center',
+        marginTop: -120,
+        backgroundColor: colors.white,
+        padding: 25,
+        borderTopEndRadius: 150,
+        borderTopLeftRadius: 150,
     },
 });

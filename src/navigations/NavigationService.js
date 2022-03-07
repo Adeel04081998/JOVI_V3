@@ -51,7 +51,23 @@ const NavigationActions = {
                     routes,
                 });
             })
-        }
+        },
+        reset_with_filter_invert: (routesToSave = [""],newRoute = null, navigation = _NavgationRef.current) => {
+            navigation.dispatch(state => {
+                const routes = state.routes.filter(r => routesToSave.includes(r.name));
+                console.log('state',state);
+                if(newRoute){
+                    routes.push({
+                        ...newRoute
+                    })
+                }
+                return CommonActions.reset({
+                    ...state,
+                    index: routes.length - 1,
+                    routes,
+                });
+            })
+        },
     },
     stack_actions: {
         replace: (destRouteName = "", destParams = {}, route = null, navigation = _NavgationRef.current) => {
