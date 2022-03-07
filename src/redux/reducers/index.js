@@ -12,9 +12,9 @@ const INIT_CART_DATA = {
   joviPrevOrdersPitstopsAmount: 0,
   joviCalculation: 0,
   gst: 0,
-  estimateTime: 0,
   itemsCount: 0,
-  orderEstimateTime: ""
+  estimateTime: null,
+  orderEstimateTime: null
 };
 
 const userReducer = (state = { prevOrders: [] }, action) => {

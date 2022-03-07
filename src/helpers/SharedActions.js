@@ -328,6 +328,7 @@ export const isNextPage = (totalItem, itemPerRequest, currentRequestCount) => {
 };//end of isNextPage
 
 export const sharedCalculateMaxTime = (dataArr = [], key = "estimatePrepTime") => {
+    if (!dataArr.length) return null;
     let estimateTime = "",
         arr = [];
     dataArr.map((_resItem, _resIndex) => {
@@ -338,7 +339,7 @@ export const sharedCalculateMaxTime = (dataArr = [], key = "estimatePrepTime") =
             arr.push(_dateSpan.getTime())
         }
     })
-    estimateTime = arr.length ? new Date(Math.max(...arr)).toLocaleTimeString().replace(Regex.time, '$1') : "";
+    estimateTime = arr.length ? new Date(Math.max(...arr)).toLocaleTimeString().replace(Regex.time, '$1') : null;
     return estimateTime;
 }
 export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
@@ -366,8 +367,8 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
             joviPitstopsTotal += _pitstop.estimatePrice || 0;
         } else {
             let _pitTotal = 0
-            // itemsCount += _pitstop.checkOutItemsListVM.length;
             vendorMaxEstTime = sharedCalculateMaxTime(_pitstop.pitstopType === PITSTOP_TYPES.RESTAURANT ? _pitstop.checkOutItemsListVM : [], "estimatePrepTime");
+            console.log("vendorMaxEstTime", vendorMaxEstTime);
             _pitstop.vendorMaxEstTime = vendorMaxEstTime;
             _pitstop.checkOutItemsListVM.map((product, j) => {
 
@@ -387,6 +388,7 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
         return _pitstop;
     })
     estimateTime = sharedCalculateMaxTime([...pitstops].filter(_p => _p.pitstopType === PITSTOP_TYPES.RESTAURANT), "vendorMaxEstTime")
+    console.log("estimateTime", estimateTime);
     subTotal = subTotal + joviPitstopsTotal;
     total = (subTotal - discount);
     joviCalculation = joviRemainingAmount - (joviPitstopsTotal + joviPrevOrdersPitstopsAmount)
@@ -517,7 +519,8 @@ export const sharedAddUpdatePitstop = (
     cartReducer.forceUpdate = forceUpdate;
     if (!pitstops.length) {
         dispatch(ReduxActions.clearCartAction({ pitstops: [], forceUpdate }));
-        NavigationService.NavigationActions.common_actions.goBack();
+        if (fromCart)
+            NavigationService.NavigationActions.common_actions.goBack();
     } else {
         dispatch(ReduxActions.setCartAction({ pitstops }));
         sharedCalculateCartTotals(pitstops, cartReducer)
@@ -565,7 +568,6 @@ export const sharedGetPitstopData = (pitstop = {}, pitstopActionKey = "marketID"
 export const sharedGetServiceCharges = (payload = null, successCb = () => { }) => {
     const cartReducer = store.getState().cartReducer;
     const userReducer = store.getState().userReducer;
-    console.log('userReducer', userReducer);
     const pitstopItems = [];
     [...cartReducer.pitstops].map((item, i) => {
         if (item.checkOutItemsListVM) {

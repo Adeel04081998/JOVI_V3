@@ -54,7 +54,7 @@ export const postRequest = async (url, data, onSuccess = () => { }, onError = ()
     } catch (error) {
         console.log("[ApiManager].postRequest.error", JSON.stringify(error));
         if (error?.data?.StatusCode === 401) return refreshTokenMiddleware(postRequest, [url, data, onSuccess, onError, headers, false, customLoader]);
-        onError(error);
+        // onError(error); // Hide 401 message
     } finally {
         if (customLoader) {
             customLoader(false);
@@ -70,7 +70,7 @@ export const getRequest = async (url, onSuccess = () => { }, onError = () => { }
     } catch (error) {
         console.log("[ApiManager].getRequest.error wqoieuoiqwueioquweiouqw", error);
         if (error?.data?.StatusCode === 401) return refreshTokenMiddleware(getRequest, [url, onSuccess, onError, headers, false]);
-        onError(error);
+        // onError(error); // Hide 401 message
     }
 };
 export const multipartPostRequest = (url, formData, onSuccess = () => { }, onError = () => { }, showLoader = false) => {

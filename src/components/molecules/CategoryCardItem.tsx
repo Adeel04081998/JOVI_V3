@@ -74,8 +74,8 @@ const CategoryCardItem = (props: Props) => {
     return (
         <TouchableOpacity 
         {...props} 
-        onPressIn={animateBackgroundColorPressIn}
-        onPressOut={animateBackgroundColorPressOut}
+        // onPressIn={animateBackgroundColorPressIn}
+        // onPressOut={animateBackgroundColorPressOut}
         style={props.containerStyleOverride ? {
             backgroundColor: '#fff',
             borderRadius: 10,
@@ -89,7 +89,9 @@ const CategoryCardItem = (props: Props) => {
             height: props.height,
             width: props.width,
 
-        }]}>
+        }]}
+        activeOpacity={.9}
+        >
             <AnimatedView style={{position:'absolute',width:'100%',height:'100%',borderRadius: 10,backgroundColor:props.pressBackgroundColor,opacity:animatedBackground.interpolate({
                 inputRange:[0,1],
                 outputRange:[0,0.7]

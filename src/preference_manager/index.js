@@ -1,8 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import GV from '../utils/GV';
 import PreferenceManagerKeys from './PreferenceManagerKeys';
+import { store } from '../redux/store';
+import ReduxActions from '../redux/actions';
 
 export const RNAsyncStorage = AsyncStorage;
+const dispatch = store.dispatch;
 
 export default {
     getSetUserAsync: async (type = GV.SET_VALUE, data = {}) => {
@@ -34,6 +37,7 @@ export default {
     },
     clearAllCacheAsync: async () => {
         try {
+            dispatch(ReduxActions.clearCartAction({ pitstops: [] }))
             const keys = Object.keys(PreferenceManagerKeys).map(key => PreferenceManagerKeys[key])
             await AsyncStorage.multiRemove(keys);
             console.log('Cache cleaned successfully...');
