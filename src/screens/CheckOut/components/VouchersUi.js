@@ -40,7 +40,7 @@ export default ({ checkOutStyles = {} }) => {
             <View style={{ width: 70 }} />
             <View style={checkOutStyles.voucherPrimaryContainer}>
 
-                <Text style={checkOutStyles.vouchertxtStyle} numberOfLines={1}>You have 3 vouchers</Text>
+                <Text style={checkOutStyles.vouchertxtStyle} numberOfLines={1}>You have 0 vouchers</Text>
                 <TouchableOpacity style={checkOutStyles.voucherSecondaryContainer} >
                     <Text style={checkOutStyles.voucherSeeAllTxtstyle} fontFamily='PoppinsMedium'>{"See All"}</Text>
                 </TouchableOpacity>

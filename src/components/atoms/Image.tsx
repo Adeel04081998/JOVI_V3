@@ -49,7 +49,7 @@ const Image = (props: Props) => {
 
   const startFullAnimate = (val: number) => {
     return Animated.timing(fullAnimationRef, {
-      duration: 800,
+      duration: 200,
       toValue: val,
       useNativeDriver: true,
     }).start(() => {

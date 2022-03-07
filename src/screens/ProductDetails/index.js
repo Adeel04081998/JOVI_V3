@@ -25,12 +25,14 @@ import styleSheet from "./style";
 import Image from '../../components/atoms/Image';
 import deviceInfoModule from 'react-native-device-info';
 import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-aware-scroll-view';
+import constants from '../../res/constants';
+import AppStyles from '../../res/AppStyles';
+import ROUTES from '../../navigations/ROUTES';
 
 
 
 export default (props) => {
-    console.log("props product Details=>>", props);
-    // const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark"
+    // console.log("props product Details=>>", props);
     let initialState = {
 
         'generalProductOrDealDetail': {},
@@ -62,7 +64,7 @@ export default (props) => {
     let productName = generalProductOrDealDetail.pitStopItemName || ""
     let productDetails = generalProductOrDealDetail.description || ""
     let gstAddedPrice = generalProductOrDealDetail.gstAddedPrice || ""
-    let productPrice = generalProductOrDealDetail.discountedPrice || gstAddedPrice || ""
+    let productPrice = generalProductOrDealDetail.discountedPrice > 0 ? generalProductOrDealDetail.discountedPrice : generalProductOrDealDetail.gstAddedPrice > 0 ? generalProductOrDealDetail.gstAddedPrice : generalProductOrDealDetail.itemPrice;
     let discountedPrice = generalProductOrDealDetail.discountedPrice || ""
     let optionsListArr = generalProductOrDealDetail.optionList ?? []
     let images = generalProductOrDealDetail.images ?? []
@@ -84,7 +86,7 @@ export default (props) => {
             "pitstopType": pitstopType
         }, (res) => {
             console.log('if GET_PRODUCTDETAIL  res', res);
-            if(res.data.statusCode === 200){
+            if (res.data.statusCode === 200) {
                 setState((pre) => ({
                     ...pre,
                     generalProductOrDealDetail: {
@@ -98,15 +100,18 @@ export default (props) => {
                         // gstAddedPrice: res.data.generalProductOrDealDetail.gstAddedPrice + 40
                     },
                     loading: false
-    
+
                 }));
+
+                const optionListArr = (res.data.generalProductOrDealDetail.optionList ?? []);
+                const hasRequired = optionListArr.filter(x => x.isRequired).length;
                 setEnable(pre => ({
                     ...pre,
-                    enableBtn: (res.data.generalProductOrDealDetail.optionList ?? []).length < 1,
+                    enableBtn: optionListArr.length < 1 || hasRequired < 1,
                     requiredIds: (res.data.generalProductOrDealDetail?.optionList ?? []).filter(item => item.isRequired === true).map((_, i) => (i))
                 }));
-            }else{
-                setState(pre=>({...pre,loading:false}));
+            } else {
+                setState(pre => ({ ...pre, loading: false }));
             }
 
 
@@ -127,7 +132,26 @@ export default (props) => {
         array.forEach((v) => (v.parentIndex === value && count++));
         return count;
     }
-    const enableDisable = (updatedArr = []) => {
+    const enableDisable = (updatedArr = [], parentIndex) => {
+        {/* ****************** CALCULATING TOTAL REQUIRED COUNT ****************** */ }
+        const requiredCount = optionsListArr.filter(x => x.isRequired).length;
+
+        {/* ****************** WHEN REQUIRED IS MANDATORY BUT NONE IS SELECTED YET ****************** */ }
+        if (updatedArr.length < 1 && requiredCount > 0) {
+            setEnable(pre => ({ ...pre, enableBtn: false }));
+            return
+        }
+
+        {/* ****************** Start of CALCULATING TOTAL REQUIRED SELECTED COUNT ****************** */ }
+        let mustSelectedCount = optionsListArr.filter(x => x.isRequired);
+        mustSelectedCount = mustSelectedCount.length < 1 ? 0 : mustSelectedCount.map(item => item.quantity).reduce((prev, next) => prev + next);
+
+        {/* ****************** GETTING CURRENT REQUIRED SELECTED --  isRequired is added with every item which lies in the required array  ****************** */ }
+        const alreadySelectedCount = updatedArr.filter(x => x.isRequired).length;
+
+        setEnable(pre => ({ ...pre, enableBtn: alreadySelectedCount >= mustSelectedCount }));
+        return
+
         updatedArr = [...new Set(updatedArr.map(item => { return item.parentIndex }))];
         let enableBtn = enable.enableBtn;
         const updatedArrSorted = updatedArr.slice().sort();
@@ -137,9 +161,10 @@ export default (props) => {
         setEnable(pre => ({ ...pre, enableBtn: enableBtn }));
     }
 
-    const onPressHandler = (item, isMany, parentIndex, quantity = null) => {
+    const onPressHandler = (item, isMany, parentIndex, quantity = null, isRequired) => {
         // console.log([1,2,3].)
         const alreadyExist = state.selectedOptions.filter(op => op.itemOptionID === item.itemOptionID)[0];
+
         let updatedArr = [...state.selectedOptions];
         if (quantity && getOccurrence(state.selectedOptions, parentIndex) === quantity) {
             if (alreadyExist) {
@@ -151,9 +176,9 @@ export default (props) => {
         } else if (alreadyExist) {
             updatedArr = updatedArr.filter(x => x.itemOptionID !== item.itemOptionID);
         } else {
-            updatedArr.push({ ...item, parentIndex });
+            updatedArr.push({ ...item, parentIndex, isRequired });
         }
-        enableDisable(updatedArr);
+        enableDisable(updatedArr, parentIndex);
         const totalAddOnPrice = updatedArr.reduce((previousValue, currentValue) => { return parseInt(previousValue) + parseInt(currentValue.optionPrice) }, 0);
         const discountAmount = generalProductOrDealDetail.itemDiscount;
         const joviDiscountRate = generalProductOrDealDetail.joviDiscount ?? 0;
@@ -170,7 +195,6 @@ export default (props) => {
         let discountedPriceWithGst = discountedPriceWithoutGst + totalGst;
         const totalPriceWithoutDiscount = discountedPriceWithGst + totalDiscount;
         // console.log('discountedPrice', totalAmountWithoutGst, discountedPriceWithoutGst, (totalAddOnPrice + generalProductOrDealDetail.itemPrice) * 0.2, (totalAddOnPrice + generalProductOrDealDetail.itemPrice) - ((20 / 100) * (totalAddOnPrice + generalProductOrDealDetail.itemPrice)));
-        console.log('Item', generalProductOrDealDetail);
         setState(pre => ({
             ...pre, selectedOptions: updatedArr, totalAddOnPrice: totalAddOnPrice,
             discountedPriceWithoutGst,
@@ -206,10 +230,12 @@ export default (props) => {
                 actionKey: propItem.pitStopItemID ? "pitStopItemID" : "pitStopDealID",
                 estimatePrepTime: pitstopType === PITSTOP_TYPES.RESTAURANT ? generalProductOrDealDetail.estimateTime : "",
                 totalJoviDiscount: state.totalJoviDiscount,
-                ...pitstopType === PITSTOP_TYPES.SUPER_MARKET ? { ...sharedAddToCartKeys(null, state.generalProductOrDealDetail).item } : {},
+                ...!optionsListArr.length ? { ...sharedAddToCartKeys(null, state.generalProductOrDealDetail).item } : {},
 
             },
-            vendorDetails: { ...propItem.vendorDetails, pitstopType, pitstopActionKey: "marketID", productsDealsCategories: undefined },
+            vendorDetails: {
+                ...propItem.vendorDetails, pitstopType, pitstopActionKey: "marketID", productsDealsCategories: undefined
+            },
         }
         setState((pre) => ({
             ...pre,
@@ -224,7 +250,7 @@ export default (props) => {
             totalDiscount: 0,
             totalGst: 0,
         }));
-        sharedAddUpdatePitstop(dataToSend, false, [], true)
+        sharedAddUpdatePitstop(dataToSend, false, [], true, false, () => { }, true)
 
         // NavigationService.NavigationActions.common_actions.navigate({ dataToSend })
 
@@ -260,10 +286,58 @@ export default (props) => {
 
     }
 
+    const _renderQuantityCard = () => {
+        return (
+            <View style={{
+                ...AppStyles.shadow,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                paddingHorizontal: constants.spacing_horizontal,
+                paddingVertical: constants.spacing_vertical,
+                borderRadius: 30,
+                backgroundColor: colors.white,
+                minWidth: "35%",
+            }}>
+
+                <TouchableScale
+                    wait={0}
+                    onPress={() => { itemCountOnPress("minus") }}>
+                    <VectorIcon
+                        name="minus"
+                        type="MaterialCommunityIcons"
+                        size={25}
+                        color={"black"}
+                    />
+                </TouchableScale>
+                <Text fontFamily='PoppinsBold' style={{ fontSize: 18, justifyContent: 'center', alignItems: 'center', color: colors.black, }}>{itemCount}</Text>
+                <TouchableScale
+                    wait={0}
+                    onPress={() => { itemCountOnPress("plus") }}>
+                    <VectorIcon
+                        name="plus"
+                        type="MaterialCommunityIcons"
+                        size={25}
+                        color={"black"}
+                    />
+                </TouchableScale>
+            </View>
+        )
+    }
+    const cartText = () => {
+        let txt = 'Add to cart ';
+        if (selectedOptions.length) {
+            txt = txt + renderPrice(discountedPriceWithGst, '-', '', /[pkr|rs|rs.|pkr.|-]{1,}/i);
+        }
+        else txt = txt + renderPrice(productPrice, '-', '', /[pkr|rs|rs.|pkr.|-]{1,}/i);
+        return txt;
+    }
+
     const renderButtonsUi = () => {
         return (
             <AnimatedView style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, alignItems: 'center', marginHorizontal: 12, height: 80 }}>
-                <View style={{
+                {_renderQuantityCard()}
+                {/* <View style={{
                     flexDirection: 'row', alignSelf: 'center', backgroundColor: 'white', borderRadius: 30, alignItems: 'center', paddingHorizontal: Platform.OS === "android" ? 6 : 20, paddingVertical: 5,
                     shadowColor: "#000",
                     shadowOffset: { width: 0, height: 2, },
@@ -298,15 +372,15 @@ export default (props) => {
                             color={"black"}
                         />
                     </TouchableScale>
-                </View>
-                <View style={{ marginLeft: 9, width: '65%' }}>
+                </View> */}
+                <View style={{ maxWidth: '55%' }}>
                     <Button
                         disabled={!enable.enableBtn}
                         onPress={() => addToCartHandler()}
-                        text={`Add to cart ${optionsListArr.length > 0 ? renderPrice(discountedPriceWithGst, '-', '', /[pkr|rs|rs.|pkr.|-]{1,}/i) : ''}`}
+                        text={cartText()}
                         // text={`Add to cart ${productPrice ? '- ' + (parseInt(productPrice) + parseInt(state.totalAddOnPrice)) : ''}`}
                         textStyle={{ textAlign: 'center', fontSize: 16 }}
-                        style={{ paddingHorizontal: 16, alignSelf: "center", paddingVertical: 10, borderRadius: 10, backgroundColor: colors.primary, justifyContent: 'center', alignItems: 'center' }}
+                        style={{ paddingHorizontal: 0, alignSelf: "center", paddingVertical: 10, borderRadius: 10, backgroundColor: colors.primary, justifyContent: 'center', alignItems: 'center' }}
                     />
                 </View>
 
@@ -339,7 +413,7 @@ export default (props) => {
                 easing: Easing.ease,
             }).start(finished => {
                 if (finished && toValue === 0) {
-                    setState(pre => ({ ...pre, addToCardAnimation: false }))
+                    setState(pre => ({ ...pre, addToCardAnimation: false }));
                     NavigationService.NavigationActions.common_actions.goBack()
 
                 }
@@ -349,7 +423,6 @@ export default (props) => {
 
             let timeToshowGif = Platform.OS === 'ios' ? (deviceInfoModule.hasNotch() ? 2800 : 4000) : 6000
             if (addToCardAnimation === true) {
-                console.log("if here", addToCardAnimation);
                 animateLoader();
                 // setTimeout(() => {
                 //     animateLoader(0)
@@ -388,20 +461,44 @@ export default (props) => {
             </AnimatedView>
         )
     }
+
     useEffect(() => {
         loadProductDetails()
 
+
     }, [])
-
+    const screenAnimation = React.useRef(new Animated.Value(0)).current;
+    React.useLayoutEffect(() => {
+        Animated.timing(screenAnimation, {
+            toValue: 1,
+            duration: 500,
+            useNativeDriver: true,
+            easing: Easing.ease
+        }).start();
+    }, [loading]);
     const inputRef = React.useRef(null);
+
     return (
-        <View style={{ flex: 1 }} >
+        <>
+            {loading ? renderLoader() :
+                <AnimatedView style={{
+                    flex: 1,
+                    transform: [{
+                        translateY: screenAnimation.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [800, 0]
+                        })
+                        // scaleX: cuisineAnimation
+                    }]
+                }} >
 
 
-            {
 
-                loading ? renderLoader() :
-                    <SafeAreaView style={[productDetailsStyles.mainContainer,]}>
+
+
+                    <SafeAreaView style={[productDetailsStyles.mainContainer, {
+
+                    }]}>
                         <CustomHeader
                             leftIconName={"chevron-back"}
                             onLeftIconPress={goBack}
@@ -411,6 +508,11 @@ export default (props) => {
                             leftIconColor={productDetailsStyles.customHeaderLeftRightIconColor}
                             rightContainerStyle={productDetailsStyles.customHeaderLeftRightContainer}
                             rightIconColor={productDetailsStyles.customHeaderLeftRightIconColor}
+                            onRightIconPress={() => {
+                                if (!state.addToCardAnimation) {
+                                    NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name);
+                                }
+                            }}
                         />
                         <KeyboardAwareScrollView
                             showsVerticalScrollIndicator={false}
@@ -426,31 +528,7 @@ export default (props) => {
                             }
                             }>
                             <RenderProductImages colors={colors} images={images} />
-                            {/* <View>
-                                <ImageCarousel
-                                    data={images}
-                                    containerStyle={{
-                                        borderRadius: 0,
-                                        borderBottomWidth: 0,
-                                        marginVertcal: 4,
-                                        marginHorizontal: 0,
-                                    }}
-                                    imageStyle={{ borderRadius: 0 }}
-                                    paginationDotStyle={{ borderColor: 'red', backgroundColor: colors.primary, }}
-                                    uriKey="joviImage"
-                                    // height={180}
-                                    height={330}
 
-
-                                />
-                            </View>
-                            <LinearGradient
-                                // colors={['#F6F5FA00', '#F6F5FA00', '#F6F5FA', '#F6F5FA']}
-                                colors={['#F6F5FA00', '#F6F5FA00', '#F6F5FA', '#F6F5FA']}
-                                // style={{ top: 150, width: '100%', height: 40, position: 'absolute', }}
-                                style={{ top: 280, width: '100%', height: 60, position: 'absolute', }}
-                            >
-                            </LinearGradient> */}
 
                             <AnimatedView style={[productDetailsStyles.primaryContainer]}>
                                 <Text style={productDetailsStyles.productNametxt} numberOfLines={1} fontFamily="PoppinsMedium">{productName}</Text>
@@ -502,10 +580,13 @@ export default (props) => {
                         {renderButtonsUi()}
                     </SafeAreaView>
 
-            }
-            {state.addToCardAnimation ? <RenderPutItemInCartBox addToCardAnimation={state.addToCardAnimation} /> : <View />}
 
-        </View>
+                    {state.addToCardAnimation ? <RenderPutItemInCartBox addToCardAnimation={state.addToCardAnimation} /> : <View />}
+
+                </AnimatedView>
+            }
+        </>
+
 
     )
 

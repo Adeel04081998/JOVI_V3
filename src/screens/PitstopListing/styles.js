@@ -1,5 +1,6 @@
 import { Platform, StyleSheet } from "react-native";
 import { initColors } from "../../res/colors";
+import constants from "../../res/constants";
 import sharedStyles from "../../res/sharedStyles";
 const SPACING_VERTICAL = 10;
 export default {
@@ -80,7 +81,8 @@ export default {
                 borderWidth:1, borderColor:'#EBEAEE'
             },
             search_input: {
-                alignSelf: 'center', backgroundColor: "#F2F1F6"
+                alignSelf: 'center', backgroundColor: "#F2F1F6",
+                height: constants.window_dimensions.height * .06
             },
             cat_item_container: {
                 marginHorizontal: 3, justifyContent: 'center', borderRadius: 10

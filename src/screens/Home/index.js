@@ -1,14 +1,11 @@
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import React, { useState } from 'react';
 import { Animated, Appearance, Easing } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import { useDispatch, useSelector } from 'react-redux';
-import BottomAllignedModal from "../../components/atoms/BottomAllignedModal";
 import AddressesList from "../../components/atoms/FinalDestination/AddressesList";
-import RecentOrders from '../../components/atoms/RecentOrders';
 import SafeAreaView from "../../components/atoms/SafeAreaView";
-import Text from "../../components/atoms/Text";
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import GenericList from '../../components/molecules/GenericList';
@@ -17,8 +14,6 @@ import BottomBarComponent from '../../components/organisms/BottomBarComponent';
 import { sharedConfirmationAlert, sharedExceptionHandler, sharedLogoutUser, sharedOrderNavigation } from "../../helpers/SharedActions";
 import { getRequest } from "../../manager/ApiManager";
 import Endpoints from "../../manager/Endpoints";
-import NavigationService from "../../navigations/NavigationService";
-import ROUTES from "../../navigations/ROUTES";
 import preference_manager from "../../preference_manager";
 import ReduxActions from '../../redux/actions';
 import theme from "../../res/theme";
@@ -37,14 +32,15 @@ export default () => {
     const messagesReducer = useSelector(state => state.messagesReducer);
     const userReducer = useSelector(state => state.userReducer);
     const vendorDashboardCategoryIDReducer = useSelector(s => s.vendorDashboardCategoryIDReducer)?.data ?? [];
-
+    const isFocused = useIsFocused();
     const dispatch = useDispatch();
     const loaderVisible = !promotionsReducer?.statusCode || !messagesReducer.statusCode;
     const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark");
     const homeStyles = stylesheet.styles(colors);
     const homeFadeIn = React.useRef(new Animated.Value(0)).current;
     const [state, setState] = useState(initState)
-    const { modalVisible, finalDestTitle } = state
+    const { modalVisible, finalDestTitle } = state;
+    const isFinalDestinationSelected = userReducer.finalDestObj;
     // #region :: SELECTING FINAL DESTINATION IF NOT SELECTED START's FROM HERE 
     const gotoFinalDestinationModal = () => {
         dispatch(ReduxActions.setModalAction({
@@ -54,22 +50,24 @@ export default () => {
         }))
     };
     const onOrderPress = (order) => {
-        sharedOrderNavigation(order.orderID,order.subStatusName);
+        sharedOrderNavigation(order.orderID, order.subStatusName);
     }
     useFocusEffect(
         React.useCallback(() => {
-            getRequest(Endpoints.GetOpenOrders,(res)=>{
-                console.log('[GetOpenOrders] res',res);
-                if(res.data.statusCode === 200){
-                    const openOrders = res.data?.getOpenOrderDetails?.openOrderList??[];
-                    dispatch(ReduxActions.setUserAction({ openOrders,noOfOpenOrders:openOrders.length }));
+            getRequest(Endpoints.GetOpenOrders, (res) => {
+                console.log('[GetOpenOrders] res', res);
+                if (res.data.statusCode === 200) {
+                    const openOrders = res.data?.getOpenOrderDetails?.openOrderList ?? [];
+                    dispatch(ReduxActions.setUserAction({ openOrders, noOfOpenOrders: openOrders.length }));
                 }
-            },(err)=>{sharedExceptionHandler(err);});
+            }, (err) => { sharedExceptionHandler(err); });
             if (!(!!userReducer?.finalDestObj)) {
                 gotoFinalDestinationModal();
             }
 
-            return () => { };
+            return () => {
+                dispatch(ReduxActions.hideRobotAction());
+            };
         }, [userReducer?.finalDestObj])
     );
 
@@ -77,7 +75,7 @@ export default () => {
     // #endregion :: SELECTING FINAL DESTINATION IF NOT SELECTED END's FROM HERE 
 
     React.useEffect(() => {
-        if (!loaderVisible) {
+        if (!loaderVisible && userReducer?.finalDestObj?.latitude) {
             Animated.timing(homeFadeIn, {
                 toValue: 1,
                 duration: 700,
@@ -89,8 +87,12 @@ export default () => {
                 }
             });
         }
-    }, [loaderVisible]);
-
+    }, [loaderVisible, userReducer?.finalDestObj]);
+    React.useEffect(() => {
+        if (!isFocused) {
+            dispatch(ReduxActions.hideRobotAction());
+        }
+    }, [isFocused]);
     const renderLoader = () => {
         return <View style={homeStyles.gifLoader}>
             <LottieView
@@ -116,16 +118,6 @@ export default () => {
                         }))
                     }}
                     onLeftIconPress={null}
-                    onRightIconPress={() => {
-                        sharedConfirmationAlert("Alert", "Log me out and remove all the cache?",
-                            [
-                                { text: "No", onPress: () => { } },
-                                {
-                                    text: "Yes", onPress: () => preference_manager.clearAllCacheAsync().then(() => sharedLogoutUser())
-                                },
-                            ]
-                        )
-                    }}
                 />
                 {loaderVisible ? renderLoader() : <Animated.View style={{
                     opacity: homeFadeIn.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1] }),
@@ -153,19 +145,30 @@ export default () => {
                         />
                         <View style={homeStyles.wrapper}>
                             <Search colors={colors} homeStyles={homeStyles} />
-                        <Categories homeStyles={homeStyles} />
+                            <Categories homeStyles={homeStyles} />
                             <AvatarAlert messagesReducer={messagesReducer} homeStyles={homeStyles} />
                             {/* <RecentOrders /> AS PER PM WE HAVE TO REMOVE RECENT ORDER FOR NOW*/}
-                            {vendorDashboardCategoryIDReducer.map((item, index) => {
+                            {isFinalDestinationSelected && vendorDashboardCategoryIDReducer.map((item, index) => {
                                 return (
-                                    <GenericList vendorDashboardCatID={item.vendorDashboardCatID} />
+                                    <GenericList vendorDashboardCatID={item.vendorDashboardCatID} textContainer={{ paddingHorizontal: 0 }} />
                                 )
                             })}
                         </View>
                     </KeyboardAwareScrollView>
                 </Animated.View>}
             </SafeAreaView>
-            <BottomBarComponent leftData={[{ id: 1, iconName: "home", title: "Home" }, { id: 2, iconName: "person", title: "Profile" }]} rightData={[{ id: 3, iconName: "wallet", title: "Wallet" }, { id: 4, iconName: "pin", title: "Location" }]} />
+            <BottomBarComponent leftData={[{ id: 1, iconName: "home", title: "Home" }, { id: 2, iconName: "person", title: "Profile" }]} rightData={[{ id: 3, iconName: "wallet", title: "Wallet" }, {
+                id: 4, iconType: "AntDesign", iconName: "logout", title: "Logout", onPress: () => {
+                    sharedConfirmationAlert("Alert", "Log me out and remove all the cache?",
+                        [
+                            { text: "No", onPress: () => { } },
+                            {
+                                text: "Yes", onPress: () => preference_manager.clearAllCacheAsync().then(() => sharedLogoutUser())
+                            },
+                        ]
+                    )
+                }
+            }]} />
         </View>
     );
 };

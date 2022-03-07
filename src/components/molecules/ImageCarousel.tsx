@@ -6,7 +6,7 @@ import {
   View,
   ViewStyle
 } from 'react-native';
-import { VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { uniqueKeyExtractor, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import constants from '../../res/constants';
 import { renderFile } from "../../helpers/SharedActions";
 
@@ -14,7 +14,7 @@ const { width } = Dimensions.get('window');
 
 const SPACING = constants.horizontal_margin;
 
-const ITEM_WIDTH = width ;
+const ITEM_WIDTH = width;
 const ITEM_HEIGHT = 150;
 const BORDER_RADIUS = 8;
 
@@ -56,7 +56,7 @@ const defaultProps = {
 
   aspectRatio: undefined,
   uriKey: "",
-  theme:{},
+  theme: {},
 };
 
 let timer: any = null;
@@ -185,7 +185,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
         automaticallyAdjustContentInsets={false}
         horizontal
         showsHorizontalScrollIndicator={false}
-        keyExtractor={(_, index) => `Image-Carousal-key-${index}-${new Date().getTime()}`}
+        // keyExtractor={(_, index) => `Image-Carousal-key-${index}-${new Date().getTime()}`}
         bounces={false}
         decelerationRate={0}
         renderToHardwareTextureAndroid

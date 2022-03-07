@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Appearance, Animated, Easing } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import constants from '../../../res/constants';
@@ -17,6 +17,8 @@ export default React.memo((props) => {
     const HEIGHT = constants.window_dimensions.height
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
     const styles = joviJobStyles(colors, WIDTH, HEIGHT);
+
+
     return (
         <TouchableOpacity activeOpacity={1} style={[styles.header]}
             disabled={props.disabled}
@@ -29,19 +31,13 @@ export default React.memo((props) => {
                 <Text style={styles.pitStopLoc} fontFamily={"PoppinsRegular"} numberOfLines={1} >{props.description}</Text>
             </View>
             <View
-                style={[styles.arrow, { backgroundColor: props.headerBackgroundColor ? props.headerBackgroundColor : colors.lightGreyBorder }]}
-            >
-                <Animated.View style={{
-
-                }}>
-                    <VectorIcon name={props.isOpened ? "keyboard-arrow-up" : "keyboard-arrow-down"} type="MaterialIcons" color={colors.textColor} />
-                </Animated.View>
+                style={[styles.arrow, { backgroundColor: props.headerBackgroundColor ? props.headerBackgroundColor : colors.lightGreyBorder }]}>
+                <VectorIcon name={props.isOpened ?  "keyboard-arrow-up" : "keyboard-arrow-down"} type="MaterialIcons" color={colors.textColor} />
             </View>
-        </TouchableOpacity>
+        </TouchableOpacity >
     );
 }, ((n, p) => {
-    return n===p
-    return (n.isOpened === p.isOpened && n.disabled === p.disabled && n.headerBackgroundColor === p.headerBackgroundColor)
+    return n === p
 }))
 
 

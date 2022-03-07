@@ -4,35 +4,34 @@ import { store } from '../redux/store';
 import GV from '../utils/GV';
 // import perf from '@react-native-firebase/perf';
 
-
 Axios.interceptors.request.use(
     config => {
         try {
-            if (!GV.NET_INFO_REF?.current?.isConnected) return Toast.info("No Internet connection!", 5000);
-            config.baseURL = GV.BASE_URL.current;
-            config.timeout = 60 * 1000; // 1 MINUTE
-            config.timeoutErrorMessage = "Request Timeout..."
-            config.headers['isNewApp'] = "true"; // for device and app info in future
-            config.headers['deviceInfo'] = JSON.stringify({hardwareID:'1231dh1dh12'}); // for device and app info in future
-            const userReducer = store.getState().userReducer;
-            const authToken = userReducer?.token?.authToken; // [?.] Added becuase of before login api request when we dont have auth token...
-            if (authToken) {
-                config.headers['Authorization'] = 'Bearer ' + authToken;
-            }
-            // if (getLocalSettings().app_perf_enabled) {
-            //     const httpMetric = perf().newHttpMetric(config.url, String(config.method).toUpperCase());
-            //     const trace = await perf().startTrace(config.url);
-            //     // trace.putAttribute('user', 'zulfiqar');
-            //     // trace.putMetric('credits', 20);
-            //     console.log("[axios].httpMetric, trace", httpMetric, trace)
-            //     config.metadata = { httpMetric, trace };
-            //     // add any extra metric attributes, if required
-            //     // httpMetric.putAttribute('userId', '12345678');
-            //     // Define & start a trace
-            //     // Stop the trace
-            //     await httpMetric.start();
-            //     await trace.start();
-            // }
+                config.baseURL = GV.BASE_URL.current;
+                config.timeout = 60 * 1000; // 1 MINUTE
+                config.timeoutErrorMessage = "Oops something went wrong"
+                config.headers['isNewApp'] = "true"; // for device and app info in future
+                config.headers['deviceInfo'] = JSON.stringify({hardwareID:'1231dh1dh12'}); // for device and app info in future
+                const userReducer = store.getState().userReducer;
+                const authToken = userReducer?.token?.authToken; // [?.] Added becuase of before login api request when we dont have auth token...
+                if (authToken) {
+                    config.headers['Authorization'] = 'Bearer ' + authToken;
+                }
+                // if (getLocalSettings().app_perf_enabled) {
+                //     const httpMetric = perf().newHttpMetric(config.url, String(config.method).toUpperCase());
+                //     const trace = await perf().startTrace(config.url);
+                //     // trace.putAttribute('user', 'zulfiqar');
+                //     // trace.putMetric('credits', 20);
+                //     console.log("[axios].httpMetric, trace", httpMetric, trace)
+                //     config.metadata = { httpMetric, trace };
+                //     // add any extra metric attributes, if required
+                //     // httpMetric.putAttribute('userId', '12345678');
+                //     // Define & start a trace
+                //     // Stop the trace
+                //     await httpMetric.start();
+                //     await trace.start();
+                // }
+         
         }
         catch (error) {
             console.log("[axios].request.catch.error", error)
