@@ -5,6 +5,7 @@ import BackgroundTimer from 'react-native-background-timer';
 import DeviceInfo from 'react-native-device-info';
 import Toast from '../components/atoms/Toast';
 import { getRequest, postRequest } from '../manager/ApiManager';
+import configs from '../utils/configs';
 import Endpoints from '../manager/Endpoints';
 import NavigationService from '../navigations/NavigationService';
 import ROUTES from '../navigations/ROUTES';
@@ -564,10 +565,26 @@ export const sharedGetPitstopData = (pitstop = {}, pitstopActionKey = "marketID"
         return pitstops[pitstopIdx]
     } else return null;
 }
+const convertTime12to24 = (time12h) => {
+    const [time, modifier] = time12h.split(' ');
 
+    let [hours, minutes] = time.split(':');
+
+    if (hours === '12') {
+        hours = '00';
+    }
+
+    if (modifier === 'PM') {
+        hours = parseInt(hours, 10) + 12;
+    }
+
+    return `${hours}:${minutes}`;
+}
 export const sharedGetServiceCharges = (payload = null, successCb = () => { }) => {
     const cartReducer = store.getState().cartReducer;
     const userReducer = store.getState().userReducer;
+    const estimateTime = cartReducer?.estimateTime?.includes('AM') || cartReducer?.estimateTime?.includes('PM') ? convertTime12to24(cartReducer.estimateTime) : cartReducer.estimateTime;
+    console.log('userReducer', userReducer);
     const pitstopItems = [];
     [...cartReducer.pitstops].map((item, i) => {
         if (item.checkOutItemsListVM) {
@@ -590,19 +607,24 @@ export const sharedGetServiceCharges = (payload = null, successCb = () => { }) =
     });
     payload = payload ? payload : {
         "joviJobAmount": cartReducer.joviPitstopsTotal,
-        "estimateTime": cartReducer.estimateTime || null,
+        "estimateTime": estimateTime || null,
         "pitstops": [...cartReducer.pitstops, { ...(userReducer?.finalDestObj ?? {}) }].map((_pitstop, pitIndex) => ({
             "isRestaurant": _pitstop.isRestaurant,
             "latLng": `${_pitstop.latitude},${_pitstop.longitude}`,
             "pitStopType": _pitstop.pitstopType,
         })),
-        pitstopItems,
-        "skipEstAmountAndGst": cartReducer.pitstops.every(pt => pt.pitstopType === 2) ? true : false,
+        "skipEstAmountAndGst": cartReducer.pitstops.every(pt => pt.pitstopType === 2 || pt.pitstopType === undefined) ? true : false,
         // "hardwareID": "string",
         // "promoCodeApplied": "string",
         // "adminID": "string",
         // "isAdmin": true,
         // "orderID": 0
+    }
+    if (pitstopItems.length > 0) {
+        payload = {
+            ...payload,
+            pitstopItems
+        }
     }
     console.log('payload--sharedGetServiceCharges', payload);
     postRequest(
@@ -734,29 +756,35 @@ export const sharedHandleInfinityScroll = (event) => {
     if (Math.ceil(mHeight + Y) >= cSize) return true;
     return false;
 }
-export const sharedOrderNavigation = (orderID = null, orderStatus = null, replacingRoute = null) => {
+export const sharedOrderNavigation = (orderID = null, orderStatus = null, replacingRoute = null, newOrder = null, showBack = false) => {
     console.log('orderID', orderID);
     const navigationLogic = (route) => {
-        if (replacingRoute) {
-            NavigationService.NavigationActions.stack_actions.replace(route, { orderID }, replacingRoute);
-        } else {
-            NavigationService.NavigationActions.common_actions.navigate(route, { orderID });
-        }
+        if (newOrder) {
+            NavigationService.NavigationActions.common_actions.reset_with_filter_invert([ROUTES.APP_DRAWER_ROUTES.Home.screen_name], {
+                name: route,
+                params: { orderID,showBack }
+            });
+        } else
+            if (replacingRoute) {
+                NavigationService.NavigationActions.stack_actions.replace(route, { orderID,showBack }, replacingRoute);
+            } else {
+                NavigationService.NavigationActions.common_actions.navigate(route, { orderID,showBack });
+            }
     };
     const goToOrderProcessing = () => navigationLogic(ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name);
     const goToOrderProcessingError = () => navigationLogic(ROUTES.APP_DRAWER_ROUTES.OrderProcessingError.screen_name);
-    const goToOrderTracking = () => navigationLogic(ROUTES.APP_DRAWER_ROUTES.OrderProcessingError.screen_name);
+    const goToOrderTracking = () => navigationLogic(ROUTES.APP_DRAWER_ROUTES.OrderTracking.screen_name);
     const orderStatusEnum = {
-        'VendorApproval': goToOrderProcessing,
-        'VendorProblem': goToOrderProcessing,
-        'CustomerApproval': goToOrderProcessingError,
-        'CustomerProblem': goToOrderProcessingError,
-        'FindingRider': goToOrderTracking,
-        'Initiated': goToOrderTracking,
-        'Processing': goToOrderTracking,
-        'RiderFound': goToOrderTracking,
-        'RiderProblem': goToOrderTracking,
-        'TransferProblem': goToOrderTracking,
+        [ORDER_STATUSES.VendorApproval]: goToOrderProcessing,
+        [ORDER_STATUSES.VendorProblem]: goToOrderProcessing,
+        [ORDER_STATUSES.CustomerApproval]: goToOrderProcessingError,
+        [ORDER_STATUSES.CustomerProblem]: goToOrderProcessingError,
+        [ORDER_STATUSES.FindingRider]: goToOrderTracking,
+        [ORDER_STATUSES.Initiated]: goToOrderTracking,
+        [ORDER_STATUSES.Processing]: goToOrderTracking,
+        [ORDER_STATUSES.RiderFound]: goToOrderTracking,
+        [ORDER_STATUSES.RiderProblem]: goToOrderTracking,
+        [ORDER_STATUSES.TransferProblem]: goToOrderTracking,
     };
     orderStatusEnum[orderStatus ?? '']();
 }
@@ -765,7 +793,6 @@ export const sharedGetDashboardCategoryIApi = () => {
     getRequest(
         Endpoints.GET_VENDOR_DASHBOARD_CATEGORY_ID,
         res => {
-            console.log('[sharedGetDashboardCategoryIApi].res', res);
             dispatch(ReduxActions.setvendorDashboardCategoryIDAction(res.data?.vendorDashboardCatIDViewModelList ?? []));
         },
         err => {
@@ -796,6 +823,18 @@ export const sharedAddToCartKeys = (restaurant = null, item = null) => {
         item
     }
 
+}
+export const sharedGenerateProductItem = (itemName, quantity = null, options = null) => {
+    let title = itemName;
+    if (options) {
+        options.map((item, i) => {
+            title = title + ' - ' + item.attributeName;
+        });
+    }
+    if (quantity) {
+        title = title + ' - x' + quantity;
+    }
+    return title;
 }
 
 export const sharedCalculatedTotals = () => {

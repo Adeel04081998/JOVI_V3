@@ -32,8 +32,7 @@ import ROUTES from '../../navigations/ROUTES';
 
 
 export default (props) => {
-    console.log("props product Details=>>", props);
-    // const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark"
+    // console.log("props product Details=>>", props);
     let initialState = {
 
         'generalProductOrDealDetail': {},
@@ -105,7 +104,6 @@ export default (props) => {
                 }));
 
                 const optionListArr = (res.data.generalProductOrDealDetail.optionList ?? []);
-                console.log('UPDATED ARR optionListArr   ', optionListArr);
                 const hasRequired = optionListArr.filter(x => x.isRequired).length;
                 setEnable(pre => ({
                     ...pre,
@@ -197,7 +195,6 @@ export default (props) => {
         let discountedPriceWithGst = discountedPriceWithoutGst + totalGst;
         const totalPriceWithoutDiscount = discountedPriceWithGst + totalDiscount;
         // console.log('discountedPrice', totalAmountWithoutGst, discountedPriceWithoutGst, (totalAddOnPrice + generalProductOrDealDetail.itemPrice) * 0.2, (totalAddOnPrice + generalProductOrDealDetail.itemPrice) - ((20 / 100) * (totalAddOnPrice + generalProductOrDealDetail.itemPrice)));
-        console.log('Item', generalProductOrDealDetail);
         setState(pre => ({
             ...pre, selectedOptions: updatedArr, totalAddOnPrice: totalAddOnPrice,
             discountedPriceWithoutGst,
@@ -330,8 +327,6 @@ export default (props) => {
     const cartText = () => {
         let txt = 'Add to cart ';
         if (selectedOptions.length) {
-            console.log("discountedPriceWithGst",discountedPriceWithGst);   
-            
             txt = txt + renderPrice(discountedPriceWithGst, '-', '', /[pkr|rs|rs.|pkr.|-]{1,}/i);
         }
         else txt = txt + renderPrice(productPrice, '-', '', /[pkr|rs|rs.|pkr.|-]{1,}/i);
@@ -385,7 +380,7 @@ export default (props) => {
                         text={cartText()}
                         // text={`Add to cart ${productPrice ? '- ' + (parseInt(productPrice) + parseInt(state.totalAddOnPrice)) : ''}`}
                         textStyle={{ textAlign: 'center', fontSize: 16 }}
-                        style={{ paddingHorizontal: 16, alignSelf: "center", paddingVertical: 10, borderRadius: 10, backgroundColor: colors.primary, justifyContent: 'center', alignItems: 'center' }}
+                        style={{ paddingHorizontal: 0, alignSelf: "center", paddingVertical: 10, borderRadius: 10, backgroundColor: colors.primary, justifyContent: 'center', alignItems: 'center' }}
                     />
                 </View>
 
@@ -466,21 +461,44 @@ export default (props) => {
             </AnimatedView>
         )
     }
+
     useEffect(() => {
         loadProductDetails()
 
-    }, [])
 
+    }, [])
+    const screenAnimation = React.useRef(new Animated.Value(0)).current;
+    React.useLayoutEffect(() => {
+        Animated.timing(screenAnimation, {
+            toValue: 1,
+            duration: 500,
+            useNativeDriver: true,
+            easing: Easing.ease
+        }).start();
+    }, [loading]);
     const inputRef = React.useRef(null);
 
     return (
-        <View style={{ flex: 1 }} >
+        <>
+            {loading ? renderLoader() :
+                <AnimatedView style={{
+                    flex: 1,
+                    transform: [{
+                        translateY: screenAnimation.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [800, 0]
+                        })
+                        // scaleX: cuisineAnimation
+                    }]
+                }} >
 
 
-            {
 
-                loading ? renderLoader() :
-                    <SafeAreaView style={[productDetailsStyles.mainContainer,]}>
+
+
+                    <SafeAreaView style={[productDetailsStyles.mainContainer, {
+
+                    }]}>
                         <CustomHeader
                             leftIconName={"chevron-back"}
                             onLeftIconPress={goBack}
@@ -490,8 +508,8 @@ export default (props) => {
                             leftIconColor={productDetailsStyles.customHeaderLeftRightIconColor}
                             rightContainerStyle={productDetailsStyles.customHeaderLeftRightContainer}
                             rightIconColor={productDetailsStyles.customHeaderLeftRightIconColor}
-                            onRightIconPress={()=>{
-                                if(!state.addToCardAnimation){
+                            onRightIconPress={() => {
+                                if (!state.addToCardAnimation) {
                                     NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name);
                                 }
                             }}
@@ -510,31 +528,7 @@ export default (props) => {
                             }
                             }>
                             <RenderProductImages colors={colors} images={images} />
-                            {/* <View>
-                                <ImageCarousel
-                                    data={images}
-                                    containerStyle={{
-                                        borderRadius: 0,
-                                        borderBottomWidth: 0,
-                                        marginVertcal: 4,
-                                        marginHorizontal: 0,
-                                    }}
-                                    imageStyle={{ borderRadius: 0 }}
-                                    paginationDotStyle={{ borderColor: 'red', backgroundColor: colors.primary, }}
-                                    uriKey="joviImage"
-                                    // height={180}
-                                    height={330}
 
-
-                                />
-                            </View>
-                            <LinearGradient
-                                // colors={['#F6F5FA00', '#F6F5FA00', '#F6F5FA', '#F6F5FA']}
-                                colors={['#F6F5FA00', '#F6F5FA00', '#F6F5FA', '#F6F5FA']}
-                                // style={{ top: 150, width: '100%', height: 40, position: 'absolute', }}
-                                style={{ top: 280, width: '100%', height: 60, position: 'absolute', }}
-                            >
-                            </LinearGradient> */}
 
                             <AnimatedView style={[productDetailsStyles.primaryContainer]}>
                                 <Text style={productDetailsStyles.productNametxt} numberOfLines={1} fontFamily="PoppinsMedium">{productName}</Text>
@@ -586,10 +580,13 @@ export default (props) => {
                         {renderButtonsUi()}
                     </SafeAreaView>
 
-            }
-            {state.addToCardAnimation ? <RenderPutItemInCartBox addToCardAnimation={state.addToCardAnimation} /> : <View />}
 
-        </View>
+                    {state.addToCardAnimation ? <RenderPutItemInCartBox addToCardAnimation={state.addToCardAnimation} /> : <View />}
+
+                </AnimatedView>
+            }
+        </>
+
 
     )
 

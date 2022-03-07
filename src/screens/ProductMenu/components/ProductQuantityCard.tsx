@@ -155,7 +155,7 @@ export const stylesFunc = (colors: typeof initColors, ITEM_SIZE: number = defaul
         ...AppStyles.shadow,
     },
     text: {
-        fontSize: 12,
+        fontSize: 10,
         fontFamily: FontFamily.Poppins.Medium,
         color: colors.primary,// "#272727",
 

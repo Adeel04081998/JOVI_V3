@@ -21,6 +21,18 @@ export const PITSTOP_TYPES_INVERTED = {
     5: 'JOVI_MART',
     10: 'ALL',
 };
+export const ORDER_STATUSES = {
+    'VendorApproval':'VendorApproval',
+    'VendorProblem':'VendorProblem',
+    'CustomerApproval':'CustomerApproval',
+    'CustomerProblem':'CustomerProblem',
+    'FindingRider':'FindingRider',
+    'Initiated':'Initiated',
+    'Processing':'Processing',
+    'RiderFound':'RiderFound',
+    'RiderProblem':'RiderProblem',
+    'TransferProblem':'TransferProblem',
+}
 export default {
     BASE_URL: initUrlRef,
     SET_VALUE: 1,

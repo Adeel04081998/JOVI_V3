@@ -7,28 +7,29 @@ import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import OrderEstTimeCard from '../../components/organisms/Card/OrderEstTimeCard';
 import DashedLine from '../../components/organisms/DashedLine';
-import { renderPrice, sharedFetchOrder, sharedOrderNavigation } from '../../helpers/SharedActions';
+import { renderPrice, sharedFetchOrder, sharedGenerateProductItem, sharedOrderNavigation } from '../../helpers/SharedActions';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
-import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
+import GV, { ORDER_STATUSES, PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import { stylesFunc } from './styles';
 import { orderProcessingDummyData } from './StaticData';
 import AnimatedLottieView from 'lottie-react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import ROUTES from '../../navigations/ROUTES';
-import NavigationService from '../../navigations/NavigationService';
+import NavigationService, { _NavgationRef } from '../../navigations/NavigationService';
 import actions from '../../redux/actions';
 
 const DOUBLE_SPACING = constants.spacing_horizontal + 6;
 const IMAGE_SIZE = constants.window_dimensions.width * 0.3;
 
 export default ({ navigation, route }) => {
-
+    console.log('_NavgationRef', _NavgationRef.current)
     const pitstopType = route?.params?.pitstopType ?? PITSTOP_TYPES.JOVI;
     const fcmReducer = useSelector(store => store.fcmReducer);
     const dispatch = useDispatch();
     const orderIDParam = route?.params?.orderID ?? 0;
+    const showBack = route?.params?.showBack ?? false;
     // #region :: STYLES & THEME START's FROM HERE 
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]], Appearance.getColorScheme() === "dark");
 
@@ -44,7 +45,7 @@ export default ({ navigation, route }) => {
                     rightIconName='home'
                     hideFinalDestination
                     title={'Processing'}
-                    leftIconName={null}
+                    leftIconName={showBack?'chevron-back':null}
                     rightIconColor={colors.primary}
                     rightIconSize={22}
                     onRightIconPress={() => {
@@ -69,7 +70,7 @@ export default ({ navigation, route }) => {
     const fetchOrderDetails = () => {
         sharedFetchOrder(orderIDParam, (res) => {
             if (res.data.statusCode === 200) {
-                let allowedOrderStatuses = ['VendorApproval', 'VendorProblem', 'Initiated'];
+                let allowedOrderStatuses = [ORDER_STATUSES.VendorApproval, ORDER_STATUSES.VendorProblem, ORDER_STATUSES.Initiated];
                 if (!allowedOrderStatuses.includes(res.data.order.subStatusName)) {
                     sharedOrderNavigation(orderIDParam, res.data.order.subStatusName, ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name);
                     return;
@@ -99,7 +100,7 @@ export default ({ navigation, route }) => {
         // '14' out of stock
         // '18' replaced
         const notificationTypes = ["1", "11", "12", "13", "14", "18"]
-        console.log('fcmReducer------OrderProcessing',fcmReducer);
+        console.log('fcmReducer------OrderProcessing', fcmReducer);
         const jobNotify = fcmReducer.notifications?.find(x => (x.data && (notificationTypes.includes(`${x.data.NotificationType}`))) ? x : false) ?? false;
         if (jobNotify) {
             console.log(`[jobNotify]`, jobNotify)
@@ -118,7 +119,7 @@ export default ({ navigation, route }) => {
                 fetchOrderDetails()
             }
             else {
-               
+
             }
             //  To remove old notification
             dispatch(actions.fcmAction({ notifyClientID }));
@@ -259,6 +260,7 @@ export default ({ navigation, route }) => {
                                 data={item.jobItemsListViewModel ?? []}
                                 dataLeftKey={'productItemName'}
                                 dataRightKey={'price'}
+                                estimatePrice={item.estimatePrice}
                             />
                         )
                     })}
@@ -285,7 +287,7 @@ export default ({ navigation, route }) => {
                     {/* ****************** Start of SERVICE CHARGES ****************** */}
                     <OrderProcessingChargesUI
                         title={`Service Charges(Incl S.T ${renderPrice(state.chargeBreakdown.estimateServiceTax, '')})`}
-                        value={renderPrice(state.chargeBreakdown.estimateServiceTax+state.chargeBreakdown.totalEstimateCharge)} />
+                        value={renderPrice(state.chargeBreakdown.estimateServiceTax + state.chargeBreakdown.totalEstimateCharge)} />
                     <DashedLine />
 
                     {/* ****************** End of SERVICE CHARGES ****************** */}
@@ -414,7 +416,7 @@ export const OrderProcessingChargesUI = ({ title = '', value = '', }) => {
 // #endregion :: CHARGES, GST, DISCOUNT UI END's FROM HERE 
 
 // #region :: PITSTOP ITEM UI  START's FROM HERE 
-const PitStopItemUI = ({ pitstopTitle = '', isJoviJob = false, pitstopNumber = 1, data = [], dataLeftKey = "title", dataRightKey = "value" }) => {
+const PitStopItemUI = ({ pitstopTitle = '', isJoviJob = false, pitstopNumber = 1, data = [], dataLeftKey = "title", dataRightKey = "value", estimatePrice = 0 }) => {
     return (
 
         <View style={{ marginVertical: 8, }}>
@@ -432,6 +434,13 @@ const PitStopItemUI = ({ pitstopTitle = '', isJoviJob = false, pitstopNumber = 1
                             paddingHorizontal: DOUBLE_SPACING * 1.5,
                             width: "75%",
                         }} numberOfLines={2}>{`${pitstopTitle}`}</Text>
+                        <Text style={{
+                            color: "#272727",
+                            fontSize: 12,
+                            paddingHorizontal: DOUBLE_SPACING,
+                            width: "25%",
+                            textAlign: "right",
+                        }} numberOfLines={1}>{renderPrice(`${estimatePrice}`)}</Text>
                     </View>
                     :
                     null
@@ -444,7 +453,7 @@ const PitStopItemUI = ({ pitstopTitle = '', isJoviJob = false, pitstopNumber = 1
                             fontSize: 12,
                             paddingHorizontal: DOUBLE_SPACING * 1.5,
                             width: "75%",
-                        }} numberOfLines={2}>{`${item[dataLeftKey]}`}</Text>
+                        }} numberOfLines={3}>{`${sharedGenerateProductItem(item[dataLeftKey], item.quantity, item.jobItemOptions)}`}</Text>
 
                         <Text style={{
                             color: "#272727",

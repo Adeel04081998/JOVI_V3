@@ -3,6 +3,7 @@ import { Animated, Appearance, Easing, FlatList, } from 'react-native';
 import AnimatedView from '../../AnimatedView';
 import Text from '../../Text';
 import TouchableOpacity from '../../TouchableOpacity';
+import TouchableScale from '../../TouchableScale';
 import View from '../../View';
 export default ({ data = {}, filterType = "", filterTypeStyle, styles, colors, onPress, selectedFilter = {}, activeCusine = null }) => {
     let tagName = data.tagName ?? ""
@@ -31,7 +32,7 @@ export default ({ data = {}, filterType = "", filterTypeStyle, styles, colors, o
                         const isActive = activeCusine === x.categoryID;
                         let borderColor = isActive ? "#F3B8B4" : "#C1C1C1"
                         let color = isActive ? "#F94E41" : "black"
-                        return <TouchableOpacity style={{justifyContent: 'center', height: 25, borderWidth: 0.8, borderColor, borderRadius: 5, marginRight: 10, marginBottom: 10, alignItems: 'center', backgroundColor: '#FFFFFF',
+                        return <TouchableScale style={{justifyContent: 'center', height: 25, borderWidth: 0.8, borderColor, borderRadius: 5, marginRight: 10, marginBottom: 10, alignItems: 'center', backgroundColor: '#FFFFFF',
                             transform: [{
                                 scale: cuisineAnimation.interpolate({
                                     inputRange: [0, 1],
@@ -45,7 +46,7 @@ export default ({ data = {}, filterType = "", filterTypeStyle, styles, colors, o
                         >
 
                             <Text style={{ fontSize: 12, color, textAlign: 'center', paddingHorizontal: 10 }} fontFamily='PoppinsMedium'>{x.categoryName}</Text>
-                        </TouchableOpacity>
+                        </TouchableScale>
                     })
                 }
             </View>
