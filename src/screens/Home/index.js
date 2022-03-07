@@ -6,6 +6,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
 import { useDispatch, useSelector } from 'react-redux';
 import AddressesList from "../../components/atoms/FinalDestination/AddressesList";
 import SafeAreaView from "../../components/atoms/SafeAreaView";
+import Text from "../../components/atoms/Text";
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import GenericList from '../../components/molecules/GenericList';

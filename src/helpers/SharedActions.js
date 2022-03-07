@@ -13,7 +13,7 @@ import { default as actions, default as ReduxActions } from '../redux/actions';
 import { store } from '../redux/store';
 import constants from '../res/constants';
 import ENUMS from '../utils/ENUMS';
-import GV, { PITSTOP_TYPES } from '../utils/GV';
+import GV, { ORDER_STATUSES, PITSTOP_TYPES } from '../utils/GV';
 import Regex from '../utils/Regex';
 const dispatch = store.dispatch;
 export const sharedGetDeviceInfo = async () => {
