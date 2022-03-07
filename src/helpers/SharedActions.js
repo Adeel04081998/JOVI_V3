@@ -13,7 +13,7 @@ import { default as actions, default as ReduxActions } from '../redux/actions';
 import { store } from '../redux/store';
 import constants from '../res/constants';
 import ENUMS from '../utils/ENUMS';
-import GV, { PITSTOP_TYPES } from '../utils/GV';
+import GV, { ORDER_STATUSES, PITSTOP_TYPES } from '../utils/GV';
 import Regex from '../utils/Regex';
 const dispatch = store.dispatch;
 export const sharedGetDeviceInfo = async () => {
@@ -762,13 +762,13 @@ export const sharedOrderNavigation = (orderID = null, orderStatus = null, replac
         if (newOrder) {
             NavigationService.NavigationActions.common_actions.reset_with_filter_invert([ROUTES.APP_DRAWER_ROUTES.Home.screen_name], {
                 name: route,
-                params: { orderID,showBack }
+                params: { orderID, showBack }
             });
         } else
             if (replacingRoute) {
-                NavigationService.NavigationActions.stack_actions.replace(route, { orderID,showBack }, replacingRoute);
+                NavigationService.NavigationActions.stack_actions.replace(route, { orderID, showBack }, replacingRoute);
             } else {
-                NavigationService.NavigationActions.common_actions.navigate(route, { orderID,showBack });
+                NavigationService.NavigationActions.common_actions.navigate(route, { orderID, showBack });
             }
     };
     const goToOrderProcessing = () => navigationLogic(ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name);
