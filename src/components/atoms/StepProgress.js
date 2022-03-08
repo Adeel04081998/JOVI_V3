@@ -53,6 +53,6 @@ const _styles = (colors = initColors) => StyleSheet.create({
         width: (width - CIRCLE_HEIGHT * 3) / 4, backgroundColor: colors.primary, paddingVertical: 2
     },
     circle: {
-        height: CIRCLE_HEIGHT, width: CIRCLE_HEIGHT, borderRadius: CIRCLE_HEIGHT / 2, borderWidth: 3, borderColor: colors.primary
+        height: CIRCLE_HEIGHT, width: CIRCLE_HEIGHT, borderRadius: CIRCLE_HEIGHT / 2, borderWidth: 3, borderColor: colors.primary, backgroundColor: colors.white
     }
 })

@@ -2,6 +2,7 @@ import { Platform, StyleSheet } from "react-native";
 import { option } from "yargs";
 import { initColors } from "../../res/colors";
 import constants from "../../res/constants";
+import FontFamily from "../../res/FontFamily";
 const SPACING_VERTICAL = 10;
 export default {
     styles(colors = initColors) {
@@ -32,7 +33,7 @@ export default {
             greetingHeaderText: {
                 fontSize: 16,
                 color: '#272727',
-                fontWeight:'normal',
+                fontWeight: 'normal',
 
             },
             greetingBodyText: {
@@ -44,18 +45,18 @@ export default {
                 borderRadius: 7,
                 // backgroundColor: colors.BlueChalk || '#EEE5FF',
                 backgroundColor: 'rgba(238, 229, 255, 1)'
-               
+
 
             },
             alertMsgSecondaryContainer: {
                 flex: 1, flexDirection: 'column', justifyContent: 'center',
                 //  padding: 10,
-                paddingVertical:10, paddingHorizontal:14
+                paddingVertical: 10, paddingHorizontal: 14
             },
             alertMsgHeaderText: {
                 fontSize: 14,
                 color: colors.BlueVoilet || "#6D51BB",
-                
+
 
             },
             alertMsgBodyText: {
@@ -72,14 +73,14 @@ export default {
                 // minWidth: 80,
                 flexDirection: 'column',
                 alignItems: 'center',
-                alignSelf:'center',
+                alignSelf: 'center',
                 height: 70,
                 width: '25%',
 
             }),
             categoriesCardPrimaryContainer: {
                 flex: 0.8,
-                margin: 0
+                margin: 0,
             },
             categoriesCardTittleText: {
                 fontSize: 16,
@@ -88,13 +89,6 @@ export default {
             },
             categoriesCardItemContainer: {
 
-            },
-            search_container: {
-                flexDirection: "row", alignItems: "center", backgroundColor: "#F2F1F6", borderRadius: 10, height: constants.window_dimensions.height * .06, justifyContent: "space-between", overflow: 'hidden',
-                borderWidth:1, borderColor:'#EBEAEE'
-            },
-            search_input: {
-                alignSelf: 'center', height: constants.window_dimensions.height * .06, backgroundColor: "#F2F1F6"
             },
             cat_item_container: {
                 marginHorizontal: 3, justifyContent: 'center', borderRadius: 10

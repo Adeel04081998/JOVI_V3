@@ -50,17 +50,19 @@ const ScrollableList = (props: Props) => {
     const currentTabRef = React.useRef(props.data && props.data.length > 0 ? props.data[0] : {});
     React.useEffect(() => {
         tabs.current = props.data;
+        currentTabRef.current = props.data[0];
     }, [props.data]);
     // #endregion :: State's & Ref's END's FROM HERE 
 
     // #region :: HORIZONTAL LAYOUT HANDLER START's FROM HERE 
-    const handleTab = (categoryID: any, tabName: any, layout: any) => {
+    const handleTab = (categoryID: any, tabName: any, layout: any, _idx: number) => {
+
         layout.categoryID = categoryID;
         layout.name = tabName;
         layout.anim = false;
         layout.id = new Date().getTime();
 
-        if (widthValue._value === 0) {
+        if (widthValue._value === 0 && _idx === 0) {
             widthValue.setValue(layout.width + INDICATOR_WIDTH_MINUS);
         }
 
@@ -95,6 +97,7 @@ const ScrollableList = (props: Props) => {
         const content = tabs.current.find((singleTab: any) => singleTab.categoryID === categoryID);
         currentTabRef.current = content;
         widthValue.setValue(content.width + INDICATOR_WIDTH_MINUS);
+        
         scrollRef.current && scrollRef.current.scrollTo({ y: content.yy + 2 })
 
         Animated.timing(value, {
@@ -116,6 +119,7 @@ const ScrollableList = (props: Props) => {
 
     // #region :: ON VERTICAL SCROLL START's FROM HERE 
     const handleOnScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+        console.log('[handleOnScroll].e ==>>>', e.nativeEvent);
 
         const scrollY = e.nativeEvent.contentOffset.y
         let updatedTap = tabs.current;
@@ -191,22 +195,26 @@ const ScrollableList = (props: Props) => {
             <View style={{ paddingTop: 5, height: 55 }}>
                 <View style={[style.row]}>
                     {props.data && props.data.map((food: any, i: number) => (
-                        <TouchableScale
-                            key={uniqueKeyExtractor()}
-                            onPress={e => handleScroll(food.categoryID, food.categoryName)}
-                            onLayout={e => handleTab(food.categoryID, food.categoryName, e.nativeEvent.layout)}
-                            style={{
-                                backgroundColor: "#F2F1F6",
-                                borderWidth: 0.2,
-                                // borderColor: "#F2F1F6",
-                                borderColor: "#707070",
-                                marginRight: 6,
-                                borderRadius: 26,
-                            }}
-                        >
-                            <Text style={[style.tab, {
-                            }]} >{food.categoryName}</Text>
-                        </TouchableScale>
+                        <>
+                            {console.log('food ==>>>', food, 'i ==>>>', i)}
+
+                            <TouchableScale
+                                key={uniqueKeyExtractor()}
+                                onPress={e => handleScroll(food.categoryID, food.categoryName)}
+                                onLayout={e => handleTab(food.categoryID, food.categoryName, e.nativeEvent.layout, i)}
+                                style={{
+                                    backgroundColor: "#F2F1F6",
+                                    borderWidth: 0.2,
+                                    // borderColor: "#F2F1F6",
+                                    borderColor: "#707070",
+                                    marginRight: 6,
+                                    borderRadius: 26,
+                                }}
+                            >
+                                <Text style={[style.tab, {
+                                }]} >{food.categoryName}</Text>
+                            </TouchableScale>
+                        </>
                     ))}
                 </View>
                 <Animated.View style={[{

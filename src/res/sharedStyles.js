@@ -1,7 +1,8 @@
-import { StyleSheet } from "react-native"
+import { Platform, StyleSheet } from "react-native"
+import { initColors } from "./colors"
 
 export default {
-    _styles(colors = {}) {
+    _styles(colors = initColors ) {
         return StyleSheet.create({
             shadow: {
                 shadowColor: colors.black || "#000",
@@ -11,7 +12,7 @@ export default {
                 },
                 shadowOpacity: 0.15,
                 shadowRadius: 3.84,
-                elevation: 1,
+                elevation: Platform.OS === "android" ? 1 : 3,
             }
         })
     }

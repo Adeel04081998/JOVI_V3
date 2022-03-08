@@ -6,6 +6,7 @@ import RNDraggableFlatList, {
   ScaleDecorator
 } from "react-native-draggable-flatlist";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import sharedStyles from "../../res/sharedStyles";
 
 type Props = React.ComponentProps<typeof RNDraggableFlatList> & {
   children?: any;
@@ -25,13 +26,16 @@ const DraggableFlatList = (props: Props) => {
   const MyrenderItem = (itemProps: RenderItemParams<unknown>) => {
     return <ScaleDecorator>
       <TouchableOpacity
-      activeOpacity={.8}
+      activeOpacity={.9}
         onLongPress={itemProps.drag}
         disabled={itemProps.isActive}
         style={itemProps.isActive ? {
+          // ...sharedStyles._styles().shadow
         // backgroundColor: "rgba(0,0,0,0.3)",
           opacity: 1,
         } : {
+          
+          // backgroundColor: ""
           // backgroundColor:activatedIndex.current!==-1 ? `rgba(0,0,0,0.3)` : '#fff',
         }}>
         {/* @ts-ignore */}
@@ -45,6 +49,7 @@ const DraggableFlatList = (props: Props) => {
 
       <RNDraggableFlatList
         {...props}
+        nestedScrollEnabled
         keyExtractor={(item, index) => `${index}`}
         extraData={activated}
         onDragBegin={(index) => {

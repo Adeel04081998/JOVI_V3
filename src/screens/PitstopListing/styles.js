@@ -1,5 +1,6 @@
 import { Platform, StyleSheet } from "react-native";
 import { initColors } from "../../res/colors";
+import constants from "../../res/constants";
 import sharedStyles from "../../res/sharedStyles";
 const SPACING_VERTICAL = 10;
 export default {
@@ -74,13 +75,6 @@ export default {
             },
             categoriesCardItemContainer: {
 
-            },
-            search_container: {
-                flexDirection: "row", alignItems: "center", backgroundColor: "#F2F1F6", borderRadius: 10, height: 50, justifyContent: "space-between", overflow: 'hidden',
-                borderWidth:1, borderColor:'#EBEAEE'
-            },
-            search_input: {
-                alignSelf: 'center', backgroundColor: "#F2F1F6"
             },
             cat_item_container: {
                 marginHorizontal: 3, justifyContent: 'center', borderRadius: 10

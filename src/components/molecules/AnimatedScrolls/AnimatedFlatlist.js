@@ -54,8 +54,8 @@ const AnimatedFlatlist = ({ horizontal = false, data = [],delay=100, animationTy
                     outputRange: [0.6, 1]
                 })
             }],
-            ...itemContainerStyle,...itemContainerStyleCb(item)//cb was added, because every item had different style and itemContainerStyle was already used in some places
-        } : {...itemContainerStyle,...itemContainerStyleCb(item)}}>
+            ...itemContainerStyle,...itemContainerStyleCb(item,index)//cb was added, because every item had different style and itemContainerStyle was already used in some places
+        } : {...itemContainerStyle,...itemContainerStyleCb(item,index)}}>
             {renderItem(item, index)}
         </Animated.View>
     }

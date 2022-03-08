@@ -45,7 +45,7 @@ const GotoCartButton = (props: Props) => {
     const price = props?.price ?? subTotal;
     const count = props?.count ?? itemsCount;
 
-    if (!VALIDATION_CHECK(count)) return null;
+    if (!count) return null;
     return (
         <View style={{
             ...styles.primaryContainer,

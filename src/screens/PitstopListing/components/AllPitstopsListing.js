@@ -5,7 +5,7 @@ import Text from '../../../components/atoms/Text';
 import TouchableOpacity from '../../../components/atoms/TouchableOpacity';
 import VectorIcon from '../../../components/atoms/VectorIcon';
 import View from '../../../components/atoms/View';
-import { renderFile, sharedExceptionHandler } from '../../../helpers/SharedActions';
+import { renderFile, sharedExceptionHandler, sharedOnVendorPress } from '../../../helpers/SharedActions';
 import { postRequest } from '../../../manager/ApiManager';
 import Endpoints from '../../../manager/Endpoints';
 import NavigationService from "../../../navigations/NavigationService";
@@ -15,19 +15,19 @@ import CardLoader from "./CardLoader";
 import { useSelector } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
 
-const ITEMS_PER_PAGE = 20;
+
 
 export default ({ config, filters, pitstopType, styles, imageStyles = { width: '100%' }, fetchPitstopsFlagParent = null, pitstopFilters = null, colors }) => {
     const [state, setState] = React.useState({
         pitstopListViewModel: {
             list: []
         },
-        isLoading: false
+        isLoading: true
     });
     const userReducer = useSelector(store => store.userReducer);
     const isFocused = useIsFocused();
-    console.log('userReducer',userReducer);
-    const finalDestination =  userReducer.finalDestObj??{};
+    const ITEMS_PER_PAGE = pitstopType === 4 ? userReducer?.restaurantListingScreenItemsPerPage : userReducer?.supermarketListingScreenItemsPerPage;
+    const finalDestination = userReducer.finalDestObj ?? {};
     const isRequestSent = React.useRef(false);
     const componentLoaded = React.useRef(false);
     const paginationInfo = React.useRef({
@@ -92,7 +92,7 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
         }, {}, true);
     }
     const fetchDataWithUpdatedPageNumber = (onLoad = false) => {
-        if(isRequestSent.current||!isFocused) return;
+        if (isRequestSent.current || !isFocused) return;
         if (paginationInfo.current.totalItems && (ITEMS_PER_PAGE * paginationInfo.current.pageNumber) >= paginationInfo.current.totalItems) {
             return;
         }
@@ -104,8 +104,8 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
         getData();
     }
     const fetchDataWithResetedPageNumber = () => {
-        if(!isFocused) return;
-        if(isRequestSent.current||!isFocused) return;
+        if (!isFocused) return;
+        if (isRequestSent.current || !isFocused) return;
         paginationInfo.current = {
             pageNumber: 1,
             itemsPerPage: ITEMS_PER_PAGE
@@ -126,24 +126,16 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
         fetchDataWithUpdatedPageNumber();
         componentLoaded.current = true;
     }, []);
-    React.useEffect(()=>{
+    React.useEffect(() => {
         fetchDataWithResetedPageNumber();
-    },[finalDestination]);
-    const onPressPitstop = (item) => {
-        const routes = {
-            4: ROUTES.APP_DRAWER_ROUTES.RestaurantProductMenu.screen_name,
-            1: ROUTES.APP_DRAWER_ROUTES.ProductMenu.screen_name,
-            2: ROUTES.APP_DRAWER_ROUTES.RestaurantProductMenu.screen_name,
-        }
-        NavigationService.NavigationActions.common_actions.navigate(routes[pitstopType], { ...item, pitstopType });
-    }
+    }, [finalDestination]);
     const renderItem = (item, index) => {
         return <Card
             colors={colors}
             key={index}
             data={item}
             index={index}
-            onPressPitstop={onPressPitstop}
+            onPressPitstop={(data, index) => sharedOnVendorPress({ ...data, pitstopType }, index)}
         />
     }
     return (

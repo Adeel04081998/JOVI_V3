@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Alert, Appearance, PixelRatio, ScrollView } from 'react-native'
+import { Alert, Appearance, BackHandler, PixelRatio, ScrollView } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
 import { SvgXml } from 'react-native-svg';
 import { useDispatch, useSelector } from 'react-redux';
@@ -107,6 +107,21 @@ export default (props) => {
     const [state, setState] = useState(initState)
     const { inputs, addressTypeList, selectedRegion } = state;
 
+    const backAction = () => {
+        console.log('here in backAction');
+        onBackPress()
+        return true
+    };
+
+    React.useEffect(() => {
+        BackHandler.addEventListener("hardwareBackPress", backAction);
+
+        return () =>
+            BackHandler.removeEventListener("hardwareBackPress", backAction);
+    }, []);
+
+
+
     const IS_DISABLED = () => {
         let addressType = addressTypeList.find(x => x.selected === true);
         if (addressType) {
@@ -119,7 +134,7 @@ export default (props) => {
     }
 
     const onPressSaveAndContinue = () => {
-        const finalDestObj = props.route?.params?.finalDestObj
+        const finalDestObj = props.route?.params?.finalDestObj;
         confirmServiceAvailabilityForLocation(postRequest, props.route?.params?.finalDestObj.latitude, props.route?.params?.finalDestObj.longitude,
             (resp) => {
                 let addressType = addressTypeList.filter(x => x.selected === true)
@@ -140,7 +155,13 @@ export default (props) => {
                         console.log("ADDorUPDATE ADDRESS.RESPONSE", res);
                         if (res.data.statusCode === 200) {
                             sharedGetUserAddressesApi();
-                            dispatch(ReduxActions.setUserFinalDestAction({ finalDestObj }))
+                            dispatch(ReduxActions.setUserFinalDestAction({
+                                finalDestObj: {
+                                    ...finalDestObj,
+                                    "addressType": addressType[0]?.key || '',
+                                    "addressTypeStr": inputs[3].val || ''
+                                },
+                            }))
                             onBackPress(true);
                         }
                     },

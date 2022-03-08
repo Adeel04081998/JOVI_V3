@@ -8,7 +8,7 @@ import TouchableScale from '../../components/atoms/TouchableScale';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import NoRecord from '../../components/organisms/NoRecord';
-import { isNextPage, renderFile, sharedAddUpdatePitstop, sharedExceptionHandler, uniqueKeyExtractor, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { isNextPage, renderFile, sharedAddToCartKeys, sharedAddUpdatePitstop, sharedExceptionHandler, sharedGetPitstopData, uniqueKeyExtractor, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
@@ -27,18 +27,22 @@ import { itemStylesFunc, stylesFunc } from './styles';
 const WINDOW_WIDTH = constants.window_dimensions.width;
 
 const ITEM_IMAGE_SIZE = WINDOW_WIDTH * 0.35;
-const VERTICAL_MAX_ITEM_PER_REQUEST = 10;
+// const VERTICAL_MAX_ITEM_PER_REQUEST = 10;
 const HORIZONTAL_MAX_ITEM_PER_REQUEST = 4;
 const SHELVE_MAX_COUNT = 7;
-const DEFAULT_PAGINATION_INFO = { totalItem: 0, itemPerRequest: VERTICAL_MAX_ITEM_PER_REQUEST, currentRequestCount: 1 };
+// const DEFAULT_PAGINATION_INFO = { totalItem: 0, itemPerRequest: VERTICAL_MAX_ITEM_PER_REQUEST, currentRequestCount: 1 };
 const PITSTOPS = {
     SUPER_MARKET: 1,
     JOVI: 2,
     PHARMACY: 3,
     RESTAURANT: 4,
 }
+
+
 export default ({ navigation, route }) => {
     const pitstopType = route?.params?.pitstopType ?? PITSTOP_TYPES.SUPER_MARKET;
+
+
 
     // #region :: STYLES & THEME START's FROM HERE 
     const colors = theme.getTheme(GV.THEME_VALUES[lodash.invert(PITSTOPS)[pitstopType]], Appearance.getColorScheme() === "dark");
@@ -47,7 +51,15 @@ export default ({ navigation, route }) => {
 
     // #endregion :: STYLES & THEME END's FROM HERE 
     const marketID = route.params?.pitstopID ?? 0;// 4613,4609, 4521;
+    const getStoredQuantities = sharedGetPitstopData({ marketID }, "marketID");
+
     const headerTitle = route.params?.title ?? '';
+
+    // #region :: ITEM_PER_PAGE_FROM HERE 
+
+    const userReducer = useSelector(store => store.userReducer);
+    const VERTICAL_MAX_ITEM_PER_REQUEST = userReducer.supermarketMenuScreenItemsPerPage || 10;
+    const DEFAULT_PAGINATION_INFO = { totalItem: 0, itemPerRequest: VERTICAL_MAX_ITEM_PER_REQUEST, currentRequestCount: 1 };
 
     // #region :: STATE's & REF's START's FROM HERE 
     const flatlistRef = React.useRef(null);
@@ -74,8 +86,9 @@ export default ({ navigation, route }) => {
         return () => { };
     }, []);
 
-    const getQuantity = () => {
-        return 0;
+    const getQuantity = (id) => {
+        const arr = getStoredQuantities?.checkOutItemsListVM ?? [];
+        return arr.find(x => x[x.actionKey] === id)?.quantity ?? 0;
     };
 
     const loadData = (currentRequestNumber, append = false) => {
@@ -98,7 +111,7 @@ export default ({ navigation, route }) => {
         };
 
         postRequest(Endpoints.GET_PRODUCT_MENU_LIST, params, (res) => {
-            console.log('GET_PRODUCT_MENU_LIST', res);
+            console.log('tesssssss ', res);
             if (res.data.statusCode === 404) {
                 updateQuery({
                     errorText: res.data.message,
@@ -116,7 +129,7 @@ export default ({ navigation, route }) => {
                 const newpitstopItemListArr = pitem.pitstopItemList.map(item => {
                     return {
                         ...item,
-                        quantity: getQuantity(),
+                        quantity: getQuantity(item.pitStopItemID),
                         isOutOfStock: false,
                     }
                 })
@@ -194,8 +207,9 @@ export default ({ navigation, route }) => {
 
     // #region :: GETTING PRODUCT MENU PRICE FROM ITEM START's FROM HERE 
     const getPricesForProductMenuItemCard = (item) => {
+
         return {
-            discountedPrice: item.discountedPrice || item.gstAddedPrice || item.itemPrice, //MAIN PRICE
+            discountedPrice: item.discountAmount > 0 ? item.discountedPrice : item.gstAddedPrice || item.itemPrice, //MAIN PRICE
             price: item.gstAddedPrice || item.itemPrice, //ACTUAL PRICE BEFORE DISCOUNT
             discountAmount: item.discountAmount, //PERCENTAGE OF DISCOUNT
             discountType: item.discountType, //DISCOUNT TYPE FIXED OR PERCENATAGE
@@ -206,7 +220,6 @@ export default ({ navigation, route }) => {
     // #region :: RENDER VERTICAL & HORIZONTAL SCROLL ITEM START's FROM HERE 
     const _renderParentItem = ({ item: parentItem, index: parentIndex }) => {
         const productTotalItem = parentItem?.productsPaginationInfo?.totalItems ?? 0;
-
         return (
             <React.Fragment>
 
@@ -219,7 +232,7 @@ export default ({ navigation, route }) => {
 
                     {isNextPage(productTotalItem, HORIZONTAL_MAX_ITEM_PER_REQUEST, 1) &&
                         <TouchableScale wait={0} onPress={() => {
-                            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductMenuItem.screen_name, { pitstopType, marketID, item: parentItem })
+                            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductMenuItem.screen_name, { pitstopType, marketID, item: parentItem, allData })
                         }}>
                             <Text style={itemStyles.titleViewmoreText}>{`View More`}</Text>
                         </TouchableScale>
@@ -251,6 +264,8 @@ export default ({ navigation, route }) => {
                                         updateQuantity(parentIndex, index, quantity);
                                     }}
                                     item={{
+                                        marketID: marketID,
+                                        pitstopItemID: item.pitStopItemID,
                                         image: { uri: renderFile(`${image}`) },
                                         isOutOfStock: isOutOfStock,
                                         name: item.pitStopItemName,
@@ -292,7 +307,10 @@ export default ({ navigation, route }) => {
         data[parentIndex].pitstopItemList[index].quantity = quantity;
         const pitstopDetails = {
             pitstopType: PITSTOP_TYPES.SUPER_MARKET,
-            vendorDetails: { ...data[parentIndex], pitstopItemList: null, marketID, actionKey: "marketID", pitstopName: allData.pitstopName, pitstopIndex: null, pitstopType, ...route.params },
+            vendorDetails: {
+                ...data[parentIndex], pitstopItemList: null, marketID, actionKey: "marketID", pitstopName: allData.pitstopName, pitstopIndex: null, pitstopType, ...route.params,
+                ...sharedAddToCartKeys(data[parentIndex], null).restaurant
+            },
             itemDetails: {
                 ...data[parentIndex].pitstopItemList[index],
                 actionKey: "pitStopItemID",
@@ -302,6 +320,7 @@ export default ({ navigation, route }) => {
                 _totalDiscount: discountAmount,
                 _totalGst: currentItem.gstAmount,
                 totalAddOnPrice: 0,
+                ...sharedAddToCartKeys(null, currentItem).item
 
             },
         }

@@ -103,6 +103,11 @@ const APP_DRAWER_ROUTES = {
         options: null,
     },
 
+    "OrderPitstops":{
+        screen_name: "ORDER_PITSTOPS",
+        options: null
+    },
+    
 }
 const APP_ROUTES = {
     "AppDrawerStack": {

@@ -43,7 +43,7 @@ export default LocationSearch = ({ handleOnInputChange, index, clearInputField, 
         <GooglePlacesAutocomplete
             ref={locTextRef}
             disableScroll={false}
-            placeholder={"Enter a pitstop location"}
+            placeholder={"Enter your location"}
             placeholderTextColor="rgba(0, 0, 0, 0.5)"
             onPress={(data, { geometry }) => onLocationSelected(data, geometry, index, null)}
             query={{
@@ -163,7 +163,7 @@ export default LocationSearch = ({ handleOnInputChange, index, clearInputField, 
                 textInput: [inputStyles || {
                     borderWidth: 1,
                     borderColor: "#E6EAFA",
-                    borderRadius: 5,
+                    borderRadius: 6,
                     paddingVertical: 0,
                     height: 40,
                     marginBottom: 10,
@@ -220,7 +220,7 @@ const locationSearchStyles = (color, width, height) => StyleSheet.create({
     iconStyleRight: {
         position: "absolute",
         right: 4,
-        top: 13,
+        top: 20/2,
         width: 32,
         height: 50,
     },

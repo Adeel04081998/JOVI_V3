@@ -1,22 +1,20 @@
-import React from 'react';
 import { useIsFocused } from '@react-navigation/native';
-import { Alert, StatusBar } from 'react-native';
-import { Platform } from 'react-native';
-import DeviceInfo from 'react-native-device-info';
+import React from 'react';
+import { Alert, Platform, StatusBar } from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
-import { postRequest, getRequest } from '../manager/ApiManager';
-import Endpoints from '../manager/Endpoints';
+import DeviceInfo from 'react-native-device-info';
 import Toast from '../components/atoms/Toast';
-import { store } from '../redux/store';
-import ReduxActions from '../redux/actions';
+import { getRequest, postRequest } from '../manager/ApiManager';
 import configs from '../utils/configs';
-import Regex from '../utils/Regex';
-import GV, { PITSTOP_TYPES,ORDER_STATUSES } from '../utils/GV';
-import constants from '../res/constants';
+import Endpoints from '../manager/Endpoints';
 import NavigationService from '../navigations/NavigationService';
-import actions from '../redux/actions';
-import preference_manager from '../preference_manager';
 import ROUTES from '../navigations/ROUTES';
+import { default as actions, default as ReduxActions } from '../redux/actions';
+import { store } from '../redux/store';
+import constants from '../res/constants';
+import ENUMS from '../utils/ENUMS';
+import GV, { ORDER_STATUSES, PITSTOP_TYPES } from '../utils/GV';
+import Regex from '../utils/Regex';
 const dispatch = store.dispatch;
 export const sharedGetDeviceInfo = async () => {
     let model = DeviceInfo.getModel();
@@ -32,7 +30,8 @@ export const sharedExceptionHandler = err => {
     const TOAST_SHOW = 3000;
     if (err) {
         if (err.data) {
-            if (err.data.errors) {
+            if (error?.data?.StatusCode === 401) return;
+            else if (err.data.errors) {
                 var errorKeys = Object.keys(err.data.errors),
                     errorStr = "";
                 for (let index = 0; index < errorKeys.length; index++) {
@@ -331,6 +330,7 @@ export const isNextPage = (totalItem, itemPerRequest, currentRequestCount) => {
 };//end of isNextPage
 
 export const sharedCalculateMaxTime = (dataArr = [], key = "estimatePrepTime") => {
+    if (!dataArr.length) return null;
     let estimateTime = "",
         arr = [];
     dataArr.map((_resItem, _resIndex) => {
@@ -341,7 +341,7 @@ export const sharedCalculateMaxTime = (dataArr = [], key = "estimatePrepTime") =
             arr.push(_dateSpan.getTime())
         }
     })
-    estimateTime = arr.length ? new Date(Math.max(...arr)).toLocaleTimeString().replace(Regex.time, '$1') : "";
+    estimateTime = arr.length ? new Date(Math.max(...arr)).toLocaleTimeString().replace(Regex.time, '$1') : null;
     return estimateTime;
 }
 export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
@@ -349,7 +349,6 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
     let joviRemainingAmount = constants.max_jovi_order_amount,
         subTotal = 0,
         discount = 0,
-        serviceCharges = cartReducer.serviceCharges || 0,
         itemsCount = 0,
         joviPitstopsTotal = 0,
         joviPrevOrdersPitstopsAmount = 0,
@@ -358,7 +357,7 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
         estimateTime = "",
         gst = 0,
         total = 0;
-    pitstops.map((pitstop, index) => {
+    pitstops = pitstops.map((pitstop, index) => {
         let _pitstop = { ...pitstop }
         if (_pitstop.pitstopType === PITSTOP_TYPES.JOVI) {
             itemsCount += 1;
@@ -370,7 +369,6 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
             joviPitstopsTotal += _pitstop.estimatePrice || 0;
         } else {
             let _pitTotal = 0
-            // itemsCount += _pitstop.checkOutItemsListVM.length;
             vendorMaxEstTime = sharedCalculateMaxTime(_pitstop.pitstopType === PITSTOP_TYPES.RESTAURANT ? _pitstop.checkOutItemsListVM : [], "estimatePrepTime");
             console.log("vendorMaxEstTime", vendorMaxEstTime);
             _pitstop.vendorMaxEstTime = vendorMaxEstTime;
@@ -392,24 +390,19 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
         return _pitstop;
     })
     estimateTime = sharedCalculateMaxTime([...pitstops].filter(_p => _p.pitstopType === PITSTOP_TYPES.RESTAURANT), "vendorMaxEstTime")
+    console.log("estimateTime", estimateTime);
     subTotal = subTotal + joviPitstopsTotal;
-    total = subTotal - discount + serviceCharges;
+    total = (subTotal - discount);
     joviCalculation = joviRemainingAmount - (joviPitstopsTotal + joviPrevOrdersPitstopsAmount)
     joviRemainingAmount = joviCalculation <= 0 ? 0 : joviCalculation;
-    // console.log('[TO STORE DATA => PITSTOPS,joviRemainingAmount, subTotal,discount, total,itemsCount, serviceCharges]', pitstops, joviRemainingAmount, subTotal, discount, total, itemsCount, serviceCharges);
-    if (!pitstops.length) {
-        dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
-    } else {
-        dispatch(ReduxActions.setCartAction({ pitstops, joviRemainingAmount, subTotal, itemsCount, joviPitstopsTotal, joviPrevOrdersPitstopsAmount, joviCalculation, total, estimateTime, gst, discount }));
-    }
+    dispatch(ReduxActions.setCartAction({ pitstops, joviRemainingAmount, subTotal, itemsCount, joviPitstopsTotal, joviPrevOrdersPitstopsAmount, joviCalculation, total, estimateTime, gst, discount }));
 };
 export const sharedDiscountsCalculator = (
     originalPrice = 0,
-    discount = 0,
-    discountDivider = 100,
+    discount = 0
 ) => {
     let afterDiscount = Math.round(
-        originalPrice - originalPrice * (discount / discountDivider),
+        originalPrice - (originalPrice * (discount / 100)),
     );
     return afterDiscount;
 };
@@ -432,15 +425,19 @@ const checkSameProduct = (currentCheckoutItems, newP) => {
 export const sharedAddUpdatePitstop = (
     pitstopDetails = {},
     isDeletePitstop = false,
-    swappedArray = [],
+    swappedPitstops = [],
     forceAddNewItem = false,
     fromCart = false,
-    cb = () => { }
+    cb = () => { },
+    forceUpdate = false,
 ) => {
-    console.log("pitstopDetails", pitstopDetails);
-    if (false) return dispatch(ReduxActionss.clearCartAction({}));
     const cartReducer = store.getState().cartReducer;
-    if (swappedArray.length) return sharedCalculateCartTotals(swappedArray, cartReducer);
+    if (swappedPitstops.length) {
+        dispatch(ReduxActions.setCartAction({ pitstops: swappedPitstops }));
+        sharedCalculateCartTotals(swappedPitstops, cartReducer);
+        return;
+    }
+    console.log("pitstopDetails", pitstopDetails);
     let pitstops = cartReducer.pitstops;
     const pitstopIndex = (pitstopDetails?.pitstopIndex >= 0 ? pitstopDetails.pitstopIndex : null);
     if (pitstopIndex !== null && isDeletePitstop) {
@@ -479,7 +476,7 @@ export const sharedAddUpdatePitstop = (
             if (!fromCart && upcomingItemDetails.selectedOptions?.length) {
                 upcomingItemDetails = checkSameProduct(currentPitstopItems, upcomingItemDetails);
             }
-            if (upcomingItemDetails.alreadyExisted) {
+            else if (upcomingItemDetails.alreadyExisted) {
                 itemIndex = upcomingItemDetails.checkoutIndex;
                 console.log('[Update EXISTING CHECKOUT ITEMS]');
                 if (!upcomingItemDetails.quantity) {
@@ -519,9 +516,17 @@ export const sharedAddUpdatePitstop = (
             });
         }
     }
-    console.log('[TO CALCULATE PITSTOPS]', pitstops);
+    // console.log('[TO CALCULATE PITSTOPS]', pitstops);
     cb();
-    sharedCalculateCartTotals(pitstops, cartReducer)
+    cartReducer.forceUpdate = forceUpdate;
+    if (!pitstops.length) {
+        dispatch(ReduxActions.clearCartAction({ pitstops: [], forceUpdate }));
+        if (fromCart)
+            NavigationService.NavigationActions.common_actions.goBack();
+    } else {
+        dispatch(ReduxActions.setCartAction({ pitstops }));
+        sharedCalculateCartTotals(pitstops, cartReducer)
+    }
 
 };
 
@@ -561,10 +566,25 @@ export const sharedGetPitstopData = (pitstop = {}, pitstopActionKey = "marketID"
         return pitstops[pitstopIdx]
     } else return null;
 }
+const convertTime12to24 = (time12h) => {
+    const [time, modifier] = time12h.split(' ');
 
+    let [hours, minutes] = time.split(':');
+
+    if (hours === '12') {
+        hours = '00';
+    }
+
+    if (modifier === 'PM') {
+        hours = parseInt(hours, 10) + 12;
+    }
+
+    return `${hours}:${minutes}`;
+}
 export const sharedGetServiceCharges = (payload = null, successCb = () => { }) => {
     const cartReducer = store.getState().cartReducer;
     const userReducer = store.getState().userReducer;
+    const estimateTime = cartReducer?.estimateTime?.includes('AM') || cartReducer?.estimateTime?.includes('PM') ? convertTime12to24(cartReducer.estimateTime) : cartReducer.estimateTime;
     console.log('userReducer', userReducer);
     const pitstopItems = [];
     [...cartReducer.pitstops].map((item, i) => {
@@ -588,32 +608,35 @@ export const sharedGetServiceCharges = (payload = null, successCb = () => { }) =
     });
     payload = payload ? payload : {
         "joviJobAmount": cartReducer.joviPitstopsTotal,
-        "estimateTime": cartReducer.estimateTime || null,
+        "estimateTime": estimateTime || null,
         "pitstops": [...cartReducer.pitstops, { ...(userReducer?.finalDestObj ?? {}) }].map((_pitstop, pitIndex) => ({
             "isRestaurant": _pitstop.isRestaurant,
             "latLng": `${_pitstop.latitude},${_pitstop.longitude}`,
             "pitStopType": _pitstop.pitstopType,
         })),
-        pitstopItems,
-        "skipEstAmountAndGst": cartReducer.pitstops.every(pt => pt.pitstopType === 2) ? true : false,
+        "skipEstAmountAndGst": cartReducer.pitstops.every(pt => pt.pitstopType === 2 || pt.pitstopType === undefined) ? true : false,
         // "hardwareID": "string",
         // "promoCodeApplied": "string",
         // "adminID": "string",
         // "isAdmin": true,
         // "orderID": 0
     }
+    if (pitstopItems.length > 0) {
+        payload = {
+            ...payload,
+            pitstopItems
+        }
+    }
     console.log('payload--sharedGetServiceCharges', payload);
     postRequest(
         Endpoints.SERVICE_CHARGES,
         payload,
         (response) => {
-            const { statusCode, serviceCharge, chargeBreakdown, discount } = response.data;
+            const { statusCode, serviceCharge, serviceTax, chargeBreakdown, genericDiscount, orderEstimateTime } = response.data;
             console.log('service charges response -----', response);
             if (statusCode === 200)
                 // NEED TO MODIFY THESE LOGIC FOR FUTURE CASES LIKE CHECKOUT SCREEN...
-                if (!cartReducer.serviceCharges) {
-                    dispatch(ReduxActions.setCartAction({ serviceCharges: serviceCharge, total: cartReducer.total + serviceCharge, chargeBreakdown: chargeBreakdown ?? {} }))
-                }
+                dispatch(ReduxActions.setCartAction({ orderEstimateTime, serviceCharges: serviceCharge, serviceTax, total: cartReducer.total, genericDiscount, chargeBreakdown: chargeBreakdown ?? {} }))
             successCb(response);
         },
         (error) => {
@@ -705,7 +728,7 @@ export const sharedFetchOrder = (orderID = 0, successCb = () => { }, errCb = () 
         Endpoints.FetchOrder + '/' + orderID,
         (response) => {
             console.log('sharedFetchOrder', response);
-            if(response.data.order.orderStatus === 3){
+            if (response.data.order.orderStatus === 3) {
                 NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
                 return;
             }
@@ -721,7 +744,7 @@ export const sharedFetchOrder = (orderID = 0, successCb = () => { }, errCb = () 
 export const sharedClearReducers = () => {
     dispatch(actions.clearModalAction());
 }
-export const sleep=(second= 1)=> {
+export const sleep = (second = 1) => {
     return new Promise(resolve => {
         let ms = Number(second) * Number(1000);
         setTimeout(resolve, ms)
@@ -734,18 +757,24 @@ export const sharedHandleInfinityScroll = (event) => {
     if (Math.ceil(mHeight + Y) >= cSize) return true;
     return false;
 }
-export const sharedOrderNavigation = (orderID = null, orderStatus = null, replacingRoute = null) => {
+export const sharedOrderNavigation = (orderID = null, orderStatus = null, replacingRoute = null, newOrder = null, showBack = false) => {
     console.log('orderID', orderID);
     const navigationLogic = (route) => {
-        if (replacingRoute) {
-            NavigationService.NavigationActions.stack_actions.replace(route, { orderID }, replacingRoute);
-        } else {
-            NavigationService.NavigationActions.common_actions.navigate(route, { orderID });
-        }
+        if (newOrder) {
+            NavigationService.NavigationActions.common_actions.reset_with_filter_invert([ROUTES.APP_DRAWER_ROUTES.Home.screen_name], {
+                name: route,
+                params: { orderID, showBack }
+            });
+        } else
+            if (replacingRoute) {
+                NavigationService.NavigationActions.stack_actions.replace(route, { orderID, showBack }, replacingRoute);
+            } else {
+                NavigationService.NavigationActions.common_actions.navigate(route, { orderID, showBack });
+            }
     };
     const goToOrderProcessing = () => navigationLogic(ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name);
     const goToOrderProcessingError = () => navigationLogic(ROUTES.APP_DRAWER_ROUTES.OrderProcessingError.screen_name);
-    const goToOrderTracking = () => navigationLogic(ROUTES.APP_DRAWER_ROUTES.OrderProcessingError.screen_name);
+    const goToOrderTracking = () => navigationLogic(ROUTES.APP_DRAWER_ROUTES.OrderTracking.screen_name);
     const orderStatusEnum = {
         [ORDER_STATUSES.VendorApproval]: goToOrderProcessing,
         [ORDER_STATUSES.VendorProblem]: goToOrderProcessing,
@@ -765,7 +794,7 @@ export const sharedGetDashboardCategoryIApi = () => {
     getRequest(
         Endpoints.GET_VENDOR_DASHBOARD_CATEGORY_ID,
         res => {
-            dispatch(ReduxActions.setvendorDashboardCategoryIDAction(res.data?.vendorDashboardCatIDViewModelList ?? [] ));
+            dispatch(ReduxActions.setvendorDashboardCategoryIDAction(res.data?.vendorDashboardCatIDViewModelList ?? []));
         },
         err => {
             sharedExceptionHandler(err);
@@ -785,9 +814,9 @@ export const sharedAddToCartKeys = (restaurant = null, item = null) => {
 
     }
     if (item) {
-        item._itemPrice = item.gstAddedPrice;
-        item._itemPriceWithoutDiscount = item.gstAddedPrice - item.discountAmount;
-        item._totalDiscount = item.discountAmount;
+        item._itemPrice = item.discountedPrice > 0 ? item.discountedPrice : item.gstAddedPrice > 0 ? item.gstAddedPrice : item.itemPrice;
+        item._itemPriceWithoutDiscount = item.gstAddedPrice;
+        item._totalDiscount = item?.discountType === ENUMS.DISCOUNT_TYPES.Percentage ? sharedDiscountsCalculator(item._itemPriceWithoutDiscount, item.discountAmount) : item.discountAmount; // if discount type is fixed then discount amount would be the discounted price
         item._totalGst = item.gstAmount;
     }
     return {
@@ -802,3 +831,40 @@ export const uuidGenerator=()=> {
     };
     return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
 };//end of uuidGenerator
+export const sharedGenerateProductItem = (itemName, quantity = null, options = null) => {
+    let title = itemName;
+    if (options) {
+        options.map((item, i) => {
+            title = title + ' - ' + item.attributeName;
+        });
+    }
+    if (quantity) {
+        title = title + ' - x' + quantity;
+    }
+    return title;
+}
+
+export const sharedCalculatedTotals = () => {
+    const { subTotal = 0, discount = 0, serviceCharges = 0, serviceTax = 0, genericDiscount = 0, total = 0, gst = 0 } = store.getState().cartReducer;
+    const _serviceCharges = serviceCharges + serviceTax;
+    return {
+        gst,
+        serviceTax,
+        serviceCharges: _serviceCharges,
+        discount: discount + genericDiscount,
+        subTotal,
+        total: total + _serviceCharges
+    }
+
+}
+
+export const sharedOnVendorPress = (pitstop, index) => {
+    const pitstopID = pitstop?.pitstopID ?? pitstop.vendorID ?? 0
+    const routes = {
+        4: ROUTES.APP_DRAWER_ROUTES.RestaurantProductMenu.screen_name,
+        1: ROUTES.APP_DRAWER_ROUTES.ProductMenu.screen_name,
+        2: ROUTES.APP_DRAWER_ROUTES.JoviJob.screen_name,
+    }
+    NavigationService.NavigationActions.common_actions.navigate(routes[pitstop.pitstopType], { ...pitstop, pitstopID });
+}
+

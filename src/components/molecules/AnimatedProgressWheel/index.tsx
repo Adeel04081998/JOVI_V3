@@ -144,7 +144,6 @@ class AnimatedProgressWheel extends PureComponent {
         return Math.floor(Math.random() * (max - min + 1) + min)
     }
     RenderPitstopCircle = ({ item, index, x, y }) => {
-        const icon = this.randomIntFromInterval(0, 3);
         React.useEffect(() => {
             setTimeout(() => {
                 Animated.timing(this.animatedPitstops[index], {
@@ -179,7 +178,7 @@ class AnimatedProgressWheel extends PureComponent {
                 rotate: '180deg',
             }]
         }}>
-            <SvgXml xml={ENUMS.PITSTOP_TYPES[icon].icon} height={"80%"} width={"80%"} />
+            <SvgXml xml={item.icon} height={"80%"} width={"80%"} />
         </Animated.View>
     };
     renderOverlay = (styles, color = this.props.color) => {
@@ -194,7 +193,7 @@ class AnimatedProgressWheel extends PureComponent {
             y = i < 2 ? y : y;
             angle = angle + increment;
             const RenderPitstop = this.RenderPitstopCircle;
-            return <RenderPitstop index={i} item={item} x={x} y={y} />
+            return <RenderPitstop key={i} index={i} item={item} x={x} y={y} />
         })
         return views;
     };

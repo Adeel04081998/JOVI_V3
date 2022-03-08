@@ -80,7 +80,7 @@ export default (props) => {
       }
     }, (error) => {
       mapView.current && mapView.current.animateToRegion(sharedStartingRegionPK);
-      Toast.error("Location is either turned off or unresponsive!");
+      // Toast.error("Location is either turned off or unresponsive!");
     }, {
       timeout: 3000,
     });

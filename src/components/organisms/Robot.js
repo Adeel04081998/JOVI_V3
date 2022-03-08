@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import LottieView from 'lottie-react-native';
 import constants from '../../res/constants';
 import { Animated, TouchableOpacity, Easing } from 'react-native';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { renderFile } from '../../helpers/SharedActions';
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 const HEIGHT = 170;
@@ -16,6 +16,8 @@ const Robot = ({ messagesReducer }) => {
     // RobotJson.p.toString().replace('')
     // RobotJson = JSON.parse(JSON.stringify(RobotJson)).toString().replace('&&&Text1&&&','Hello');
     // console.log('robot',RobotJson);
+    const { isLoggedIn } = useSelector(state => state.userReducer);
+
     const animatedTouchableValue = React.useRef(new Animated.Value(0)).current;
     const { width } = constants.window_dimensions;
     const hideRobot = () => {
@@ -48,6 +50,9 @@ const Robot = ({ messagesReducer }) => {
             //     });
         }
     }, [messagesReducer?.showRobotFlag, messagesReducer?.showRobotFlag]);
+    useEffect(() => {
+        hideRobot();
+    }, [messagesReducer?.hideRobotFlag])
     // console.log("state.lottieAnim", state.lottieAnim)
     if (state.showRobot === false) return null;
     return (

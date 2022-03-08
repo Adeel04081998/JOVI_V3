@@ -10,11 +10,12 @@ import Button from '../../components/molecules/Button';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import OrderEstTimeCard from '../../components/organisms/Card/OrderEstTimeCard';
 import DashedLine from '../../components/organisms/DashedLine';
-import { renderPrice, sharedConfirmationAlert, sharedExceptionHandler, sharedFetchOrder, sharedOrderNavigation, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { renderPrice, sharedConfirmationAlert, sharedExceptionHandler, sharedFetchOrder, sharedGenerateProductItem, sharedOrderNavigation, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
+import actions from '../../redux/actions';
 import constants from '../../res/constants';
 import FontFamily from '../../res/FontFamily';
 import theme from '../../res/theme';
@@ -32,6 +33,7 @@ export default ({ navigation, route }) => {
     const pitstopType = route?.params?.pitstopType ?? PITSTOP_TYPES.JOVI;
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]], Appearance.getColorScheme() === "dark");
     const orderIDParam = route?.params?.orderID ?? 0;
+    const showBack = route?.params?.showBack ?? false;
     const styles = stylesFunc(colors);
     const fcmReducer = useSelector(store => store.fcmReducer);
     const dispatch = useDispatch();
@@ -46,9 +48,9 @@ export default ({ navigation, route }) => {
                     rightIconName='home'
                     hideFinalDestination
                     title={'Approval'}
-                    leftIconName={null}
-                    rightIconColor={colors.primary}
+                    leftIconName={showBack?'chevron-back':null}
                     rightIconSize={22}
+                    rightIconColor={colors.primary}
                     onRightIconPress={() => {
                         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
                     }}
@@ -79,7 +81,7 @@ export default ({ navigation, route }) => {
     }
     const fetchOrderDetails = () => {
         sharedFetchOrder(orderIDParam, (res) => {
-            let allowedOrderStatuses = [ORDER_STATUSES.CustomerApproval,ORDER_STATUSES.CustomerProblem];
+            let allowedOrderStatuses = [ORDER_STATUSES.CustomerApproval, ORDER_STATUSES.CustomerProblem];
             if (!allowedOrderStatuses.includes(res.data.order.subStatusName)) {
                 sharedOrderNavigation(orderIDParam, res.data.order.subStatusName, ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name);
                 return;
@@ -160,7 +162,11 @@ export default ({ navigation, route }) => {
                 console.log("[AcceptRejectOrder].respone", response);
                 const { statusCode, orderStatusVM } = response.data;
                 if (statusCode === 200) {
-                    NavigationService.NavigationActions.common_actions.goBack();
+                    if (isConfirm) {
+                        NavigationService.NavigationActions.common_actions.goBack();
+                    } else {
+                        NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderTracking.screen_name, {}, ROUTES.APP_DRAWER_ROUTES.OrderProcessingError.screen_name);
+                    }
                 }
             },
             (error) => {
@@ -265,6 +271,8 @@ export default ({ navigation, route }) => {
                                                     title={childItem.productItemName}
                                                     price={childItem.price}
                                                     type={CARD_SUB_TITLE_TYPES.cancelled}
+                                                    quantity={childItem.quantity}
+                                                    options={childItem.jobItemOptions?.length > 0 ? childItem.jobItemOptions : (childItem.jobDealOptions ?? [])}
                                                 />
                                             )
                                         })}
@@ -281,6 +289,8 @@ export default ({ navigation, route }) => {
                                                         title={childItem.productItemName}
                                                         price={childItem.price}
                                                         type={CARD_SUB_TITLE_TYPES.available}
+                                                        quantity={childItem.quantity}
+                                                        options={childItem.jobItemOptions?.length > 0 ? childItem.jobItemOptions : (childItem.jobDealOptions ?? [])}
                                                     />
                                                 )
                                             })}
@@ -311,6 +321,8 @@ export default ({ navigation, route }) => {
                                                     title={childItem.productItemName}
                                                     price={childItem.price}
                                                     type={CARD_SUB_TITLE_TYPES.outOfStock}
+                                                    quantity={childItem.quantity}
+                                                    options={childItem.jobItemOptions?.length > 0 ? childItem.jobItemOptions : (childItem.jobDealOptions ?? [])}
                                                 />
                                             )
                                         })}
@@ -410,7 +422,8 @@ export default ({ navigation, route }) => {
 };//end of EXPORT DEFAULT
 
 // #region :: CARD TEXT UI START's FROM HERE 
-const CardText = ({ title = '', price = '', type }) => {
+const CardText = ({ title = '', price = '', type, quantity = null, options = null }) => {
+    const productTitle = sharedGenerateProductItem(title, quantity, options);
     if (type === CARD_SUB_TITLE_TYPES.cancelled || type === CARD_SUB_TITLE_TYPES.outOfStock) {
         return (
             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
@@ -421,7 +434,7 @@ const CardText = ({ title = '', price = '', type }) => {
                     textDecorationLine: "line-through",
                     textDecorationColor: "#B1B1B1",
 
-                }} numberOfLines={1}>{`${title}`}</Text>
+                }} numberOfLines={3}>{`${productTitle}`}</Text>
                 <Text fontFamily='PoppinsMedium' style={{
                     maxWidth: "30%",
                     fontSize: 12,
@@ -440,7 +453,7 @@ const CardText = ({ title = '', price = '', type }) => {
                     fontSize: 12,
                     color: "#272727",
 
-                }} numberOfLines={1}>{`${title}`}</Text>
+                }} numberOfLines={3}>{`${productTitle}`}</Text>
                 <Text fontFamily='PoppinsMedium' style={{
                     maxWidth: "30%",
                     fontSize: 12,

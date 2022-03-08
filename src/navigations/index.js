@@ -32,12 +32,11 @@ import OrderProcessingError from '../screens/OrderProcessingError';
 import SharedMapView from '../components/atoms/GoogleMaps/SharedMapView';
 import OrderTracking from '../screens/OrderTracking';
 import OrderChat from '../screens/OrderChat';
+import OrderPitstops from '../screens/OrderTracking/OrderScreens/OrderPitstops';
 
 const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES, APP_DRAWER_ROUTES, APP_DRAWER_STACK } = ROUTES;
 const AppDrawerStack = (props) => {
-    return <Stack.Navigator screenOptions={stackOpts} 
-    initialRouteName={APP_DRAWER_ROUTES.OrderChat.screen_name}
-    >
+    return <Stack.Navigator screenOptions={stackOpts} initialRouteName={APP_DRAWER_ROUTES.OrderChat.screen_name} >
         {(APP_DRAWER_STACK || []).map((routeInfo, index) => (
             <Stack.Screen
                 key={`AppDrawerss-Screen-key-${index}-${routeInfo.id}`}
@@ -81,6 +80,7 @@ const AppDrawerComponents = {
     SharedMapView,
     OrderTracking,
     OrderChat,
+    OrderPitstops,
 }//will open with Slide Animation
 const ContainerStack = createStackNavigator();
 const Stack = createSharedElementStackNavigator();

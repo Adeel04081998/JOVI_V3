@@ -1,5 +1,5 @@
 import React from 'react';
-import { Appearance, StyleSheet, Platform } from 'react-native';
+import { Appearance, StyleSheet, Platform, Alert } from 'react-native';
 import theme from '../../../res/theme';
 import GV from '../../../utils/GV';
 import Image from '../../atoms/Image';
@@ -9,7 +9,7 @@ import VectorIcon from '../../atoms/VectorIcon';
 import View from '../../atoms/View';
 import AnimatedFlatlist from '../AnimatedScrolls/AnimatedFlatlist';
 import constants from '../../../res/constants';
-import { renderFile, sharedExceptionHandler } from '../../../helpers/SharedActions';
+import { renderFile, sharedExceptionHandler, sharedOnVendorPress } from '../../../helpers/SharedActions';
 import { postRequest } from '../../../manager/ApiManager';
 import Endpoints from '../../../manager/Endpoints';
 import sharedStyles from '../../../res/sharedStyles';
@@ -17,28 +17,33 @@ import NavigationService from '../../../navigations/NavigationService';
 import ROUTES from '../../../navigations/ROUTES';
 import { useSelector } from 'react-redux';
 
-export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCatID = 0, imageStyles = {}, themeColors = null, showMoreBtnText = "", }) => {
+export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCatID = 0, imageStyles = {}, themeColors = null, showMoreBtnText = "", cb = () => { }, textContainer = {} }) => {
     const SPACING_BOTTOM = 0;
     const [data, setData] = React.useState(null);
-    const [isLoading, setIsLoading] = React.useState(true);
+    const isLoading = React.useRef(null);
     const userReducer = useSelector(store => store.userReducer);
     const finalDestination = userReducer?.finalDestObj ?? { latitude: 0, longitude: 0 };
+    const ITEMS_PER_PAGE = userReducer.homeScreenItemsPerPage || 10;
 
     const fetchData = () => {
         postRequest(Endpoints.GET_VENDOR_DASHBOARD_CATEGORY_ID_DETAIL,
             {
                 "vendorType": vendorType,
                 "pageNumber": 1,
-                "itemsPerPage": 10,
+                "itemsPerPage": ITEMS_PER_PAGE,
                 "vendorDashboardCatID": vendorDashboardCatID,
                 "latitude": finalDestination.latitude,
                 "longitude": finalDestination.longitude
             },
             res => {
+                console.log('res.data generic ==>>>', res.data);
                 if (res.data.statusCode !== 200) return;
+                cb(true)
                 setData(res.data.vendorCategoryViewModel);
             },
             err => {
+                isLoading.current = true
+                cb(true)
                 sharedExceptionHandler(err)
             },
             {},
@@ -69,7 +74,7 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
         1: (item, index) => {
             const { title, description, image, averagePrice } = item;
             return (
-                <TouchableOpacity activeOpacity={0.8} style={{ padding: 10 }}>
+                <TouchableOpacity activeOpacity={0.8} style={{ padding: 10 }} onPress={() => sharedOnVendorPress(item, index)}>
                     <Image source={{ uri: renderFile(image) }} style={[styles.image_Small, imageStyles]} tapToOpen={false} />
                     <View style={styles.subContainer}>
                         <Text style={styles.title} numberOfLines={1} >{title}</Text>
@@ -84,7 +89,7 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
         2: (item, index) => {
             const { title, description, estTime, distance, image, averagePrice } = item;
             return (
-                <TouchableOpacity activeOpacity={0.8} >
+                <TouchableOpacity activeOpacity={0.8} onPress={() => sharedOnVendorPress(item, index)}>
                     <Image source={{ uri: renderFile(image) }} style={[styles.image, imageStyles]} tapToOpen={false} />
                     <View style={styles.subContainer}>
                         <Text style={styles.title} numberOfLines={1} >{title}</Text>
@@ -106,34 +111,34 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
     const onPressViewMore = () => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.PitstopsVerticalList.screen_name, { pitstopType: pitstopType, listingObj: { ...data } });
     }
-    if(!data)
-    return null
+    if (!data)
+        return null
     return (
         <View style={{ paddingBottom: SPACING_BOTTOM }}>
             {/* {
                 data.map((item, index) => ( */}
-                    <React.Fragment key={`generic-item-key-${'index'}`}>
-                        <View style={styles.container} >
-                            <Text style={styles.mainText} >{data?.header}</Text>
-                            <TouchableOpacity onPress={() => onPressViewMore()}>
-                                <Text style={styles.viewMoreBtn} >{showMoreBtnText || `View More`}</Text>
-                            </TouchableOpacity>
-                        </View>
+            <React.Fragment key={`generic-item-key-${'index'}`}>
+                <View style={{ ...textContainer, ...styles.container }} >
+                    <Text style={styles.mainText} >{data?.header}</Text>
+                    <TouchableOpacity onPress={() => onPressViewMore()}>
+                        <Text style={styles.viewMoreBtn} >{showMoreBtnText || `View More`}</Text>
+                    </TouchableOpacity>
+                </View>
 
-                        <AnimatedFlatlist
+                <AnimatedFlatlist
 
-                            data={data?.vendorList??[]}
-                            renderItem={cardTypeUI[data?.cardType ?? 1]}
-                            itemContainerStyle={data?.cardType === 1 ? styles.itemContainerSmall : { ...styles.itemContainer }}
-                            // itemContainerStyle={item.cardType !== 1?styles.itemContainerSmall:{ ...styles.itemContainer }}
-                            horizontal={true}
-                            flatlistProps={{
-                                showsHorizontalScrollIndicator: false,
-                                contentContainerStyle: { marginLeft: 0 }
-                            }}
-                        />
-                    </React.Fragment>
-                {/* )) */}
+                    data={data?.vendorList ?? []}
+                    renderItem={cardTypeUI[data?.cardType ?? 1]}
+                    itemContainerStyle={data?.cardType === 1 ? styles.itemContainerSmall : { ...styles.itemContainer }}
+                    // itemContainerStyle={item.cardType !== 1?styles.itemContainerSmall:{ ...styles.itemContainer }}
+                    horizontal={true}
+                    flatlistProps={{
+                        showsHorizontalScrollIndicator: false,
+                        contentContainerStyle: { marginLeft: 0 }
+                    }}
+                />
+            </React.Fragment>
+            {/* )) */}
             {/* } */}
 
         </View>
@@ -147,7 +152,7 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
     container: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingHorizontal: 0,
+        // paddingHorizontal: 10,
         paddingVertical: 5
     },
     mainText: {
@@ -163,11 +168,12 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
         backgroundColor: colors.white || '#fff',
         borderRadius: 10,
         // marginHorizontal: 5,
-        marginRight: 10,
+        // marginRight: 10,
         flex: 1,
         paddingHorizontal: 10,
         paddingVertical: 10,
         marginVertical: 5,
+        marginLeft: 10
     },
     itemContainerSmall: {
         ...sharedStyles._styles(colors).shadow,
