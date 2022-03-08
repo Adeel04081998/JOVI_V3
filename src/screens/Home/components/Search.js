@@ -32,7 +32,7 @@ export default ({ colors, homeStyles, onSearch = () => { }, placeholder = null, 
                 placeholder={placeholder ?? 'Search for shops and restaurants or pharmacy'}
                 onChangeText={(val) => setState(pre => ({ ...pre, value: val }))}
                 // style={{ minHeight: minHeight, alignSelf: 'center', height: constants.window_dimensions.height * .06, backgroundColor: "#F2F1F6", fontFamily: FontFamily.Poppins.Regular }}
-                style={{ minHeight: HEIGHT, fontSize: 10, fontFamily: FontFamily.Poppins.Regular, backgroundColor: "#F2F1F6" }}
+                style={{ minHeight: HEIGHT, fontSize: 10, fontFamily: FontFamily.Poppins.Regular, backgroundColor: "#F2F1F6" , left:-9}}
                 maxLength={50}
                 numberOfLines={Platform.OS === "ios" ? null : numberOfLines}
             />
