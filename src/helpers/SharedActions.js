@@ -230,7 +230,9 @@ export const sharedGetUserAddressesApi = () => {
         Endpoints.GET_USER_ADDRESSES,
         res => {
             console.log("[sharedGetUserAddressesApi].res", res);
-            dispatch(ReduxActions.setUserAction({ ...res.data }));
+            if (res.data.statusCode === 200)
+                dispatch(ReduxActions.setUserAction({ ...res.data }));
+            else dispatch(ReduxActions.setUserAction({ addresses: [] }));
         },
         err => {
             sharedExceptionHandler(err);
@@ -861,4 +863,38 @@ export const sharedOnVendorPress = (pitstop, index) => {
     }
     NavigationService.NavigationActions.common_actions.navigate(routes[pitstop.pitstopType], { ...pitstop, pitstopID });
 }
+
+export const sharedOnCategoryPress = (item, index) => {
+    const pitstopType = item.value;
+    const routes = {
+        4: ROUTES.APP_DRAWER_ROUTES.PitstopListing.screen_name,
+        1: ROUTES.APP_DRAWER_ROUTES.PitstopListing.screen_name,
+        2: ROUTES.APP_DRAWER_ROUTES.JoviJob.screen_name,
+    }
+    NavigationService.NavigationActions.common_actions.navigate(routes[pitstopType], { pitstopType });
+}
+
+export const sharedGetCurrentLocation = (onSuccess = () => { }, onError = () => { }) => {
+    navigator.geolocation.getCurrentPosition(({ coords }) => onSuccess(coords),
+        (error) => {
+            if (error) {
+                // CustomToast.error("An error accured while fetching your current location, please try again.")
+                onError(error)
+            }
+        },
+        {
+            timeout: 15000,
+            enableHighAccuracy: true,
+            showLocationDialog: true,
+            forceRequestLocation: true,
+        }
+    );
+}
+
+var headersInfo = { coordinatesInfo: {}, appVersions: { live: constants.app_version, codepush: constants.app_version } };
+export const sharedSetHeadersInfo = async () => {
+    const _deviceInfo = await sharedGetDeviceInfo();
+    sharedGetCurrentLocation(coords => headersInfo = { ...headersInfo, ..._deviceInfo, coordinatesInfo: coords })
+};
+export const sharedGetHeadersInfo = () => headersInfo;
 

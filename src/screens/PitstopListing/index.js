@@ -153,7 +153,7 @@ const PistopListing = React.memo(({ route, }) => {
         }));
         const isAllDisSelected = filtersRef.current.averagePrice === null && filtersRef.current.cuisines.length === 0 && filtersRef.current.filter.length === 0;
         allRestaurantAnimation(isAllDisSelected ? 1 : 0);
-    
+
     }
     const goToFilters = () => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Filter.screen_name, { activeAvergePrice: filtersRef.current.averagePrice, activeCusine: filtersRef.current.cuisines[0], activeFilterBy: filtersRef.current.filter[0], backCB: backFromFiltersHandler });
@@ -186,6 +186,7 @@ const PistopListing = React.memo(({ route, }) => {
             colors={colors}
             homeStyles={listingStyles}
             onSearch={onSearchHandler}
+            fontSize={12}
         />
 
         <Filters

@@ -154,7 +154,7 @@ export default () => {
                             height={170}
                         />
                         <View style={homeStyles.wrapper}>
-                            <Search colors={colors} homeStyles={homeStyles} />
+                            <Search colors={colors} homeStyles={homeStyles} fontSize={12} />
                             <Categories homeStyles={homeStyles} />
                             <AvatarAlert messagesReducer={messagesReducer} homeStyles={homeStyles} />
                             {/* <RecentOrders /> AS PER PM WE HAVE TO REMOVE RECENT ORDER FOR NOW*/}
