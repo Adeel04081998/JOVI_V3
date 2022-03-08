@@ -43,6 +43,7 @@ const defaultProps = {
     showPickOption: false,
     color: initColors,
 };
+let addFurther = false;
 
 const ImageWithTextInput = (props: Props) => {
     const colors = props?.color ?? defaultProps.color;
@@ -85,7 +86,12 @@ const ImageWithTextInput = (props: Props) => {
     const getPicture = (pic: any) => {
         console.log('getPicture   ', pic);
         if ((pic?.assets ?? []).length > 0) {
-            setImages(pic.assets);
+            if (addFurther) {
+                setImages([...images, ...pic.assets]);
+                addFurther = false;
+            } else {
+                setImages(pic.assets);
+            }
             toggleVisible(true);
         } else {
             setImages([]);
@@ -187,6 +193,13 @@ const ImageWithTextInput = (props: Props) => {
                             marginHorizontal: 10,
                             marginBottom: Platform.OS === "ios" ? images.length < 2 ? insets.bottom : 0 : 0,
                         }}>
+                            <TouchableOpacity onPress={() => {
+                                addFurther = true;
+                                onAttachmentPress();
+                            }} style={{ marginRight: 6, }}>
+                                <VectorIcon name="ios-images" size={23} />
+                            </TouchableOpacity>
+
                             <TextInput
                                 placeholder="Type something..."
                                 style={{
