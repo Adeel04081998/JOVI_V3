@@ -18,7 +18,7 @@ export default ({ messagesReducer, homeStyles, userReducer, colors }) => {
         React.useLayoutEffect(() => {
             Animated.timing(greetingAnimation, {
                 toValue: 1,
-                duration: 400,
+                duration: 700,
                 useNativeDriver: true,
                 easing: Easing.ease
             }).start();
@@ -29,9 +29,10 @@ export default ({ messagesReducer, homeStyles, userReducer, colors }) => {
                     ...homeStyles.greetingMainContainer,
                     opacity: greetingAnimation,
                     transform: [{
-                        translateX: greetingAnimation.interpolate({
+                        scale: greetingAnimation.interpolate({
                             inputRange: [0, 1],
-                            outputRange: [-100, 0]
+                            // outputRange: [-100, 0]
+                            outputRange: [0.2, 1]
                         })
                     }]
                 },
