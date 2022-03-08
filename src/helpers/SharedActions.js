@@ -30,7 +30,8 @@ export const sharedExceptionHandler = err => {
     const TOAST_SHOW = 3000;
     if (err) {
         if (err.data) {
-            if (err.data.errors) {
+            if (error?.data?.StatusCode === 401) return;
+            else if (err.data.errors) {
                 var errorKeys = Object.keys(err.data.errors),
                     errorStr = "";
                 for (let index = 0; index < errorKeys.length; index++) {
@@ -825,6 +826,12 @@ export const sharedAddToCartKeys = (restaurant = null, item = null) => {
     }
 
 }
+export const uuidGenerator=()=> {
+    const S4 = function () {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    };
+    return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+};//end of uuidGenerator
 export const sharedGenerateProductItem = (itemName, quantity = null, options = null) => {
     let title = itemName;
     if (options) {

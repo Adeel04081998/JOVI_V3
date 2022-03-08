@@ -38,12 +38,13 @@ export default {
     //Get Open Orders
     "GetOpenOrders": "/api/Dashboard/GetOpenOrderDetails/List",
     //Accept Reject Order
-    "AcceptRejectOrder":"/api/Order/VendorJob/ConfirmStatus/Update",
+    "AcceptRejectOrder": "/api/Order/VendorJob/ConfirmStatus/Update",
 
     "GET_VENDOR_DASHBOARD_CATEGORY_ID": "api/Menu/Vendor/GetDashboardCatIDs",//USED IN SHARED ACTION FOR GETTING CATEGORY ID's AND STORING IN REDUCER
     "GET_VENDOR_DASHBOARD_CATEGORY_ID_DETAIL": "api/Menu/Vendor/CategorizationByID",//USED IN GENERIC LIST
     //Get Rider Location
     "GetRiderLocation":"api/User/Customer/GetRidersLatestLocation",
+    "SEND_MESSAGE_TO_RIDER": "api/Order/Chat",//USED IN ORDER CHAT
 }
 
 

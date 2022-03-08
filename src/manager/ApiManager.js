@@ -54,7 +54,7 @@ export const postRequest = async (url, data, onSuccess = () => { }, onError = ()
     } catch (error) {
         console.log("[ApiManager].postRequest.error", JSON.stringify(error));
         if (error?.data?.StatusCode === 401) return refreshTokenMiddleware(postRequest, [url, data, onSuccess, onError, headers, false, customLoader]);
-        // onError(error); // Hide 401 message
+        onError(error);
     } finally {
         if (customLoader) {
             customLoader(false);
@@ -70,15 +70,16 @@ export const getRequest = async (url, onSuccess = () => { }, onError = () => { }
     } catch (error) {
         console.log("[ApiManager].getRequest.error wqoieuoiqwueioquweiouqw", error);
         if (error?.data?.StatusCode === 401) return refreshTokenMiddleware(getRequest, [url, onSuccess, onError, headers, false]);
-        // onError(error); // Hide 401 message
+        onError(error);
     }
 };
-export const multipartPostRequest = (url, formData, onSuccess = () => { }, onError = () => { }, showLoader = false) => {
+export const multipartPostRequest = (url, formData, onSuccess = () => { }, onError = () => { }, showLoader = false, header = {}) => {
     if (!GV.NET_INFO_REF?.current?.isConnected) return Toast.info("No Internet connection!", 5000)
     fetch(`${GV.BASE_URL.current}/${url}`, {
         method: 'post',
         headers: {
             'Content-Type': 'multipart/form-data',
+            ...header,
         },
         body: formData
     })

@@ -62,7 +62,7 @@ const APP_DRAWER_ROUTES = {
         screen_name: "Shelves",
         options: null,
     },
-    "AddAddress":{
+    "AddAddress": {
         screen_name: "ADDADDRESS",
         options: null,
     },
@@ -98,6 +98,11 @@ const APP_DRAWER_ROUTES = {
         screen_name: "SHARED_MAP_VIEW",
         options: null,
     },
+    "OrderChat": {
+        screen_name: "ORDER_CHAT",
+        options: null,
+    },
+
     "OrderPitstops":{
         screen_name: "ORDER_PITSTOPS",
         options: null

@@ -50,6 +50,7 @@ type Props = React.ComponentProps<typeof RNView> & {
     //RIGHT SIDE PROP's ENDING 
 
     //CENTER PROP's
+    centerCustom?: () => React.ReactNode;
     title?: string;
     finalDest?: string,
     onTitlePress?: (event: GestureResponderEvent) => void;
@@ -97,6 +98,7 @@ const defaultProps = {
     //RIGHT SIDE PROP's ENDING 
 
     //CENTER PROP's
+    centerCustom: null,
     title: null,
     onTitlePress: undefined,
     titleStyle: {},
@@ -121,7 +123,7 @@ const CustomHeader = (props: Props) => {
 
     // },[cartReducer.itemsCount])
 
-    
+
 
     const _renderFinalDestination = () => {
         return props.hideFinalDestination ? <></> : (
@@ -195,9 +197,12 @@ const CustomHeader = (props: Props) => {
 
             {/* ****************** Start of CENTER ****************** */}
             <View style={styles.middleContainer}>
-                {VALIDATION_CHECK(props.title) ?
-                    <Text numberOfLines={1} style={[styles.title, props.titleStyle]} fontFamily={"PoppinsBold"}>{props.title}</Text> :
-                    _renderFinalDestination()
+                {props.centerCustom ? props.centerCustom() : <>
+                    {VALIDATION_CHECK(props.title) ?
+                        <Text numberOfLines={1} style={[styles.title, props.titleStyle]} fontFamily={"PoppinsBold"}>{props.title}</Text> :
+                        _renderFinalDestination()
+                    }
+                </>
                 }
             </View>
 
@@ -213,12 +218,12 @@ const CustomHeader = (props: Props) => {
                             onPress: (event) => props.onRightIconPress && props.onRightIconPress(event)
                         } : {
                             onPress: () => {
-                                if(IS_CART_ICON && cartReducer.itemsCount > 0){
+                                if (IS_CART_ICON && cartReducer.itemsCount > 0) {
                                     // NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name)
                                     NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name)
                                 }
-},
-                            disabled: (cartReducer.itemsCount > 0 && IS_CART_ICON) ? false: true
+                            },
+                            disabled: (cartReducer.itemsCount > 0 && IS_CART_ICON) ? false : true
                         }}>
                         {VALIDATION_CHECK(props.rightIconName) &&
                             <VectorIcon
@@ -227,7 +232,7 @@ const CustomHeader = (props: Props) => {
                                 color={props.rightIconColor || props.defaultColor}
                                 size={props.rightIconSize} />
                         }
-                        {cartReducer.itemsCount > 0  &&  IS_CART_ICON && _renderDot(cartReducer.itemsCount, props.rightDotStyle, props.rightDotTextStyle)}
+                        {cartReducer.itemsCount > 0 && IS_CART_ICON && _renderDot(cartReducer.itemsCount, props.rightDotStyle, props.rightDotTextStyle)}
                         {/* {props.rightDot && _renderDot(props.rightDot, props.rightDotStyle, props.rightDotTextStyle)} */}
                     </TouchableScale>
                 }
@@ -256,8 +261,8 @@ const DOT = {
     size: 10,
     color: "#FA3E3E",
 };
-
-
+export const CustomHeaderIconBorder = ICON_BORDER;
+export const CustomHeaderStyles = (primaryColor = "#FA3E3E") => headerStyles(primaryColor);
 const headerStyles = (primaryColor = "#FA3E3E") => StyleSheet.create({
     primaryContainer: {
         flexDirection: "row",
