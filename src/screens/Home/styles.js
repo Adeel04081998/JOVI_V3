@@ -3,6 +3,7 @@ import { option } from "yargs";
 import { initColors } from "../../res/colors";
 import constants from "../../res/constants";
 import FontFamily from "../../res/FontFamily";
+import sharedStyles from "../../res/sharedStyles";
 const SPACING_VERTICAL = 10;
 export default {
     styles(colors = initColors) {
@@ -91,7 +92,8 @@ export default {
 
             },
             cat_item_container: {
-                marginHorizontal: 3, justifyContent: 'center', borderRadius: 10
+                marginHorizontal: 3, justifyContent: 'center', borderRadius: 10,
+                ...sharedStyles._styles().placefor_specific_shadow
             },
             cat_img_container: {
                 width: 80, justifyContent: 'center', alignContent: 'center', alignItems: 'center', alignSelf: 'center'
