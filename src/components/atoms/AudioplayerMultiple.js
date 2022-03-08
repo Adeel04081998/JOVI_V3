@@ -6,15 +6,17 @@ import svgs, { pauseIcon, playIcon } from "../../assets/svgs/index";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { secToHourMinSec } from "../../helpers/SharedActions";
 import Sound from "react-native-sound";
+import { useIsFocused } from '@react-navigation/native';
 
 
 let timer = null;
 const playerRefArr = [];
 let isLastPlaying = false;
 
-export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', width = "90%", forceStopAll = false, }) => {
+export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', width = "90%", forceStopAll = false, timeStyle = {}, maximumTrackTintColor = `rgba(115, 89, 190, 0.5)`, timeContainerStyle = null }) => {
     // let isPlaying = (chatPlayingVoice && chatPlayingVoiceIndex === index);
 
+    const isFocused = useIsFocused();
     let soundPlayerRef = useRef();
 
     const [isPlaying, setIsPlaying] = useState(false);
@@ -24,6 +26,12 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
     const [displayTime, setDisplayTime] = useState(0);
 
     const [icon, setIcon] = useState();
+
+    useEffect(() => {
+        if (!isFocused) {
+            stopAudio();
+        }
+    }, [isFocused]);
 
 
     useEffect(() => {
@@ -168,7 +176,7 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
                                 playAudio();
                         }}>
                             <SvgXml
-                                xml={isPlaying ? svgs.pauseIcon() : svgs.playIcon()}
+                                xml={isPlaying ? svgs.pauseIcon(activeTheme.primary) : svgs.playIcon(activeTheme.primary)}
                                 width={20}
                                 height={20}
                                 style={{
@@ -182,13 +190,9 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
                                 ...styles.slider,
                                 width: width
                             }}
-                            // minimumTrackTintColor="#FFFFFF"
-                            // maximumTrackTintColor="#000000"
-                            // thumbImage={SliderCircle}
                             thumbImage={icon}
                             minimumTrackTintColor={activeTheme.primary}
-                            maximumTrackTintColor={`rgba(115, 89, 190, 0.5)`}
-                            // thumbTintColor={activeTheme.default}
+                            maximumTrackTintColor={maximumTrackTintColor}
                             value={parseInt(currentTime)}
                             minimumValue={0}
                             maximumValue={parseInt(totalDuration)}
@@ -208,7 +212,12 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
                 }
             </View>
 
-            <Text style={styles.durationText}>{`${secToHourMinSec(displayTime)}`}</Text>
+            {timeContainerStyle ?
+                <View style={timeContainerStyle}>
+                    <Text style={[styles.durationText, timeStyle]}>{`${secToHourMinSec(displayTime)}`}</Text>
+                </View> :
+                <Text style={[styles.durationText, timeStyle]}>{`${secToHourMinSec(displayTime)}`}</Text>
+            }
 
         </View>
     )

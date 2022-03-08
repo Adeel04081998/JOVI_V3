@@ -95,12 +95,13 @@ export const getRequest = async (url, onSuccess = () => { }, onError = () => { }
         }
     }
 };
-export const multipartPostRequest = (url, formData, onSuccess = () => { }, onError = () => { }, showLoader = false) => {
+export const multipartPostRequest = (url, formData, onSuccess = () => { }, onError = () => { }, showLoader = false, header = {}) => {
     noInternetHandler(multipartPostRequest,[url, formData, onSuccess, onError = () => { }])
     fetch(`${GV.BASE_URL.current}/${url}`, {
         method: 'post',
         headers: {
             'Content-Type': 'multipart/form-data',
+            ...header,
         },
         body: formData
     })

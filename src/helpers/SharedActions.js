@@ -586,7 +586,8 @@ const convertTime12to24 = (time12h) => {
 export const sharedGetServiceCharges = (payload = null, successCb = () => { }) => {
     const cartReducer = store.getState().cartReducer;
     const userReducer = store.getState().userReducer;
-    const estimateTime = cartReducer?.estimateTime?.includes('AM') || cartReducer?.estimateTime?.includes('PM') ? convertTime12to24(cartReducer.estimateTime) : cartReducer.estimateTime;
+    // const estimateTime = cartReducer?.estimateTime?.includes('AM') || cartReducer?.estimateTime?.includes('PM') ? convertTime12to24(cartReducer.estimateTime) : cartReducer.estimateTime;
+    const estimateTime = cartReducer.estimateTime;
     console.log('userReducer', userReducer);
     const pitstopItems = [];
     [...cartReducer.pitstops].map((item, i) => {
@@ -827,6 +828,12 @@ export const sharedAddToCartKeys = (restaurant = null, item = null) => {
     }
 
 }
+export const uuidGenerator=()=> {
+    const S4 = function () {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    };
+    return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+};//end of uuidGenerator
 export const sharedGenerateProductItem = (itemName, quantity = null, options = null) => {
     let title = itemName;
     if (options) {
@@ -862,6 +869,41 @@ export const sharedOnVendorPress = (pitstop, index) => {
         2: ROUTES.APP_DRAWER_ROUTES.JoviJob.screen_name,
     }
     NavigationService.NavigationActions.common_actions.navigate(routes[pitstop.pitstopType], { ...pitstop, pitstopID });
+}
+export const sharedNotificationHandlerForOrderScreens = (fcmReducer,fetchOrder = ()=>{}, orderCompletedOrCancelled = () =>{}) => {
+    // console.log("[Order Processing].fcmReducer", fcmReducer);
+        // '1',  For job related notification
+        // '11',  For rider allocated related notification
+        // '12', For order cancelled by admin
+        // '13' For order cancelled by system
+        // '14' out of stock
+        // '18' replaced
+        // '17' jovi job completed
+        // '16' order completed
+    const notificationTypes = ["1", "11", "12", "13", "14", "18", "17","16"]
+        console.log('fcmReducer------OrderPitstops', fcmReducer);
+        const jobNotify = fcmReducer.notifications?.find(x => (x.data && (notificationTypes.includes(`${x.data.NotificationType}`))) ? x : false) ?? false;
+        if (jobNotify) {
+            console.log(`[jobNotify]`, jobNotify)
+            const { data, notifyClientID } = jobNotify;
+            // const results = sharedCheckNotificationExpiry(data.ExpiryDate);
+            // if (results.isSameOrBefore) {
+            if (data.NotificationType == notificationTypes[1] || data.NotificationType == notificationTypes[0]) {
+                // console.log("[Order Processing] Rider Assigned By Firbase...");
+                fetchOrder();
+            }
+            if (data.NotificationType == notificationTypes[2] || data.NotificationType == notificationTypes[3]  || data.NotificationType == notificationTypes[7]) {
+                // console.log("[Order Processing] Order Cancelled By Firbase...");
+                orderCompletedOrCancelled();
+            }
+            if (data.NotificationType == notificationTypes[4] || data.NotificationType == notificationTypes[5] || data.NotificationType == notificationTypes[6]) {
+                fetchOrder()
+            }
+            else {
+            }
+            //  To remove old notification
+            dispatch(actions.fcmAction({ notifyClientID }));
+        } else console.log("[Order OrderPitstops] Job notification not found!!");
 }
 
 export const sharedOnCategoryPress = (item, index) => {

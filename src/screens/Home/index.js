@@ -134,7 +134,7 @@ export default () => {
                                     {
                                         // [...userReducer.openOrders, ...userReducer.openOrders, ...userReducer.openOrders, ...userReducer.openOrders].map((item, i) => {
                                             userReducer.openOrders.map((item, i) => {
-                                            return <Text style={{ margin: 10, backgroundColor: colors.primary, color: colors.white, borderRadius: 5, padding: 5, textAlign: "center", paddingTop: 7 }} onPress={() => {
+                                            return <Text key={i} style={{ margin: 10, backgroundColor: colors.primary, color: colors.white, borderRadius: 5, padding: 5, textAlign: "center", paddingTop: 7 }} onPress={() => {
                                                 onOrderPress(item);
                                             }}>{item.orderID}</Text>
                                         })
@@ -160,7 +160,7 @@ export default () => {
                             {/* <RecentOrders /> AS PER PM WE HAVE TO REMOVE RECENT ORDER FOR NOW*/}
                             {isFinalDestinationSelected && vendorDashboardCategoryIDReducer.map((item, index) => {
                                 return (
-                                    <GenericList vendorDashboardCatID={item.vendorDashboardCatID} textContainer={{ paddingHorizontal: 0 }} />
+                                    <GenericList key={index} vendorDashboardCatID={item.vendorDashboardCatID} textContainer={{ paddingHorizontal: 0 }} />
                                 )
                             })}
                         </View>

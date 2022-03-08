@@ -150,7 +150,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
             return <View />;
           }
           return (
-            <TouchableWithoutFeedback onPressIn={() => {
+            <TouchableWithoutFeedback key={index} onPressIn={() => {
               clearInterval(timer);
               timer = null;
             }}

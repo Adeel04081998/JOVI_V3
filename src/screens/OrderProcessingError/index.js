@@ -10,19 +10,17 @@ import Button from '../../components/molecules/Button';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import OrderEstTimeCard from '../../components/organisms/Card/OrderEstTimeCard';
 import DashedLine from '../../components/organisms/DashedLine';
-import { renderPrice, sharedConfirmationAlert, sharedExceptionHandler, sharedFetchOrder, sharedGenerateProductItem, sharedOrderNavigation, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { renderPrice, sharedConfirmationAlert, sharedExceptionHandler, sharedFetchOrder, sharedGenerateProductItem, sharedNotificationHandlerForOrderScreens, sharedOrderNavigation } from '../../helpers/SharedActions';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
-import actions from '../../redux/actions';
 import constants from '../../res/constants';
 import FontFamily from '../../res/FontFamily';
 import theme from '../../res/theme';
 import ENUMS from '../../utils/ENUMS';
 import GV, { ORDER_STATUSES, PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import { OrderProcessingChargesUI, OrderProcessingEstimatedTotalUI } from '../OrderProcessing';
-import { orderProcessingDummyData } from '../OrderProcessing/StaticData';
 import { stylesFunc } from './styles';
 
 const IMAGE_SIZE = constants.window_dimensions.width * 0.3;
@@ -110,38 +108,7 @@ export default ({ navigation, route }) => {
         });
     }
     React.useEffect(() => {
-        // console.log("[Order Processing].fcmReducer", fcmReducer);
-        // '1',  For job related notification
-        // '11',  For rider allocated related notification
-        // '12', For order cancelled by admin
-        // '13' For order cancelled by system
-        // '14' out of stock
-        // '18' replaced
-        const notificationTypes = ["1", "11", "12", "13", "14", "18"]
-        console.log('fcmReducer------OrderProcessing Error', fcmReducer);
-        const jobNotify = fcmReducer.notifications?.find(x => (x.data && (notificationTypes.includes(`${x.data.NotificationType}`))) ? x : false) ?? false;
-        if (jobNotify) {
-            console.log(`[jobNotify]`, jobNotify)
-            const { data, notifyClientID } = jobNotify;
-            // const results = sharedCheckNotificationExpiry(data.ExpiryDate);
-            // if (results.isSameOrBefore) {
-            if (data.NotificationType == notificationTypes[1] || data.NotificationType == notificationTypes[0]) {
-                // console.log("[Order Processing] Rider Assigned By Firbase...");
-                fetchOrderDetails();
-            }
-            if (data.NotificationType == notificationTypes[2] || data.NotificationType == notificationTypes[3]) {
-                // console.log("[Order Processing] Order Cancelled By Firbase...");
-                orderCancelledOrCompleted();
-            }
-            if (data.NotificationType == notificationTypes[4] || data.NotificationType == notificationTypes[5]) {
-                fetchOrderDetails()
-            }
-            else {
-
-            }
-            //  To remove old notification
-            dispatch(actions.fcmAction({ notifyClientID }));
-        } else console.log("[Order Processing Error] Job notification not found!!");
+        sharedNotificationHandlerForOrderScreens(fcmReducer,fetchOrderDetails,orderCancelledOrCompleted);
         return () => {
         }
     }, [fcmReducer]);
@@ -163,9 +130,9 @@ export default ({ navigation, route }) => {
                 const { statusCode, orderStatusVM } = response.data;
                 if (statusCode === 200) {
                     if (isConfirm) {
-                        NavigationService.NavigationActions.common_actions.goBack();
-                    } else {
                         NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderTracking.screen_name, {}, ROUTES.APP_DRAWER_ROUTES.OrderProcessingError.screen_name);
+                    } else {
+                        NavigationService.NavigationActions.common_actions.goBack();
                     }
                 }
             },

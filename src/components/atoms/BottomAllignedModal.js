@@ -19,8 +19,8 @@ export default (props) => {
     const modalAnimation = (toValue = 1) => {
         Animated.timing(openAnimation, {
             toValue: toValue,
-            duration: 600,
-            easing: Easing.ease,
+            duration: 300,
+            easing: Easing.bezier(0.77, 0.0, 0.175, 1.0),
             useNativeDriver: true
         }).start(finished => {
             if (finished && toValue === 0) {
