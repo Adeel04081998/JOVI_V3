@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, Animated, Appearance, Easing, Image as RNImage, ScrollView, Platform, Alert, TextInput as RNTextInput, Keyboard, FlatList, } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Animated, Appearance, Easing, Image as RNImage, ScrollView, Platform, Alert, TextInput as RNTextInput, Keyboard, FlatList, ActivityIndicator, } from 'react-native';
 import { Transition, Transitioning } from 'react-native-reanimated';
 import svgs from '../../assets/svgs';
 import VectorIcon from '../../components/atoms/VectorIcon';
@@ -188,6 +188,7 @@ export default ({ navigation, route }) => {
     const [micPress, setMicPress] = useState(false);
     const [isDeleted, setIsDeleted] = useState(false);
     const [forceDeleted, setForceDeleted] = useState(false);
+    const [loader, setLoader] = useState(false);
     const [voiceNote, setVoiceNote] = useState({})
 
     /******** End of Pitstop Details variables *******/
@@ -196,10 +197,13 @@ export default ({ navigation, route }) => {
 
 
     /******** Start of other Pitstop variables *******/
-
+    const cartReducer = useSelector((store) => {
+        return store.cartReducer;
+    });
+    const remainingAmount = cartReducer.joviRemainingAmount;
     const [estVal, setEstVal] = useState(__DEV__ ? "1500" : '')
     const [initialEstVal, setInitialEstVal] = useState('')
-    const [switchVal, setSwitch] = useState(true);
+    const [switchVal, setSwitch] = useState(remainingAmount === 0 ? false : true);
     const [estTime, setEstTime] = React.useState({
         text: __DEV__ ? '0-15 mins' : "Estimated Time",
         value: __DEV__ ? 1 : 0
@@ -346,10 +350,7 @@ export default ({ navigation, route }) => {
     }
     /************   End of functions of Pitstop location Component Funcs    **************/
 
-    const cartReducer = useSelector((store) => {
-        return store.cartReducer;
-    });
-    const remainingAmount = cartReducer.joviRemainingAmount;
+
 
     const getRemainingAmount = () => {
         let RA = remainingAmount - estVal
@@ -365,7 +366,9 @@ export default ({ navigation, route }) => {
         let slicedImages = null;
         if (imageData.length) {
             slicedImages = [...imageData];
-            let maxIterator = slicedImages.length === 1 && picData.assets.length === 1 ? 1 : slicedImages.length === 1 && picData.assets.length === 2 ? 2 : slicedImages.length === 2 ? 1 : 3;
+            let maxIterator = slicedImages.length === 1 && picData.assets.length === 1 ? 1
+                : slicedImages.length === 1 && picData.assets.length > 2 ? 2
+                    : slicedImages.length === 2 ? 1 : 3;
             for (let index = 0; index < maxIterator; index++) {
                 let imgObj = picData.assets[index];
                 imgObj.id = Math.floor(Math.random() * 100000)
@@ -474,100 +477,103 @@ export default ({ navigation, route }) => {
     const recordingPress = async (closeSecond = false) => {
         if (!micPress) {
             askForAudioRecordPermission((allowRecording) => {
-                console.log('akllow aaaaa ', allowRecording);
+                console.log('[allowRecording] ', allowRecording);
                 if (allowRecording) {
                     const fileName = "record-" + new Date().getTime() + ".mp4";
                     recorderRef.current = new Recorder(fileName).record();
                     setMicPress(true);
-
                 }
             })
         } else {
-
-            if (recorderRef.current !== null) {
-                recorderRef.current.stop((error) => {
-                    if (Platform.OS === "ios") {
-                        new Player("playerDestroyer.mp4").prepare((err) => { }).destroy(); //ADDING THIS TO DESTROY RECORDER FOR iOS Devices 
-                    }
-
-                    if (!error) {
-                        const path = recorderRef.current._fsPath;
-                        RNMediaMeta.get(`${path}`)
-                            .then(metadata => {
-                                if (`${metadata.duration}` > `0`) {
-
-                                    const obj = {
-                                        id: Math.floor(Math.random() * 100000),
-                                        uri: Platform.OS === "android" ? `file://${path}` : path,
-                                        name: path.split('/').pop(),
-                                        type: "audio/mp4",
-                                    }
-
-                                    setIsRecord(true);
-                                    setRecordingUploading(false);
-                                    setMicPress(false);
-                                    //SUCCESS HANDLER
-
-                                    // const resAt0 = res.joviImageReturnViewModelList[0];
-
-                                    pitStopVoiceNote(obj, false);
-                                    toggleCardData(PITSTOP_CARD_TYPES["estimated-time"]);
-                                    console.log('closeSecond   ', closeSecond);
-                                    if (closeSecond) {
-                                        updateCardOnHeaderPress(updateCardOnHeaderPressItem);
-                                    }
-
-
-                                    // updateProgress(0);
-                                    // setRecordingUploading(false);
-                                    // Multipart.upload([{ ...obj }], { ...parentProps, dispatch: parentDispatch }, false, (uploadPercentage) => {
-                                    //     //UPLOAD PROGRESS HANDLER
-                                    //     updateProgress(parseInt(uploadPercentage));
-                                    // }, (res) => {
-                                    //     //SUCCESS HANDLER
-
-                                    //     const resAt0 = res.joviImageReturnViewModelList[0];
-
-                                    //     pitStopVoiceNote({
-                                    //         _fsPath: renderPicture(resAt0.joviImage),
-                                    //         ...resAt0,
-                                    //     }, false);
-
-                                    //     setIsRecord(true);
-                                    //     toggleCardData(PITSTOP_CARD_TYPES["estimated-time"]);
-                                    //     updateProgress(0);
-                                    //     setRecordingUploading(false);
-
-                                    // }, () => {
-                                    //     //ERROR HANDLER
-                                    //     updateProgress(0);
-                                    //     setIsRecord(false);
-                                    //     setIsDeleted(true);
-                                    //     setRecordingUploading(false);
-                                    // })
-
-                                }
-                            })
-                            .catch(err => {
-                                console.log('recorderRef.current Media meta Error   ', err)
-                                setIsRecord(false);
-                                setMicPress(false);
-                            });
-                    }
-                    else {
-                        Alert.alert("Error Occurred while Recording Audio!");
-                        setIsRecord(false);
-                        setMicPress(false);
-                    }
-                });
-            } else {
-                setMicPress(false);
-                setIsRecord(false);
-            }
-
+            getRecordingDuration(closeSecond)
         }
     };//end of recordingPress
 
+
+
+    const getRecordingDuration = (closeSecond) => {
+        if (recorderRef.current !== null) {
+            recorderRef.current.stop((error) => {
+                if (Platform.OS === "ios") {
+                    new Player("playerDestroyer.mp4").prepare((err) => { }).destroy(); //ADDING THIS TO DESTROY RECORDER FOR iOS Devices 
+                }
+
+                if (!error) {
+                    const path = recorderRef.current._fsPath;
+                    RNMediaMeta.get(`${path}`)
+                        .then(metadata => {
+                            console.log('metadata', metadata);
+                            if (`${metadata.duration}` > `0`) {
+
+                                const obj = {
+                                    id: Math.floor(Math.random() * 100000),
+                                    uri: Platform.OS === "android" ? `file://${path}` : path,
+                                    name: path.split('/').pop(),
+                                    type: "audio/mp4",
+                                }
+
+                                setIsRecord(true);
+                                setRecordingUploading(false);
+                                setMicPress(false);
+                                //SUCCESS HANDLER
+
+                                // const resAt0 = res.joviImageReturnViewModelList[0];
+
+                                pitStopVoiceNote(obj, false);
+                                toggleCardData(PITSTOP_CARD_TYPES["estimated-time"]);
+                                console.log('closeSecond   ', closeSecond);
+                                if (closeSecond) {
+                                    updateCardOnHeaderPress(updateCardOnHeaderPressItem);
+                                }
+
+
+                                // updateProgress(0);
+                                // setRecordingUploading(false);
+                                // Multipart.upload([{ ...obj }], { ...parentProps, dispatch: parentDispatch }, false, (uploadPercentage) => {
+                                //     //UPLOAD PROGRESS HANDLER
+                                //     updateProgress(parseInt(uploadPercentage));
+                                // }, (res) => {
+                                //     //SUCCESS HANDLER
+
+                                //     const resAt0 = res.joviImageReturnViewModelList[0];
+
+                                //     pitStopVoiceNote({
+                                //         _fsPath: renderPicture(resAt0.joviImage),
+                                //         ...resAt0,
+                                //     }, false);
+
+                                //     setIsRecord(true);
+                                //     toggleCardData(PITSTOP_CARD_TYPES["estimated-time"]);
+                                //     updateProgress(0);
+                                //     setRecordingUploading(false);
+
+                                // }, () => {
+                                //     //ERROR HANDLER
+                                //     updateProgress(0);
+                                //     setIsRecord(false);
+                                //     setIsDeleted(true);
+                                //     setRecordingUploading(false);
+                                // })
+
+                            }
+                        })
+                        .catch(err => {
+                            console.log('recorderRef.current Media meta Error   ', err)
+                            setIsRecord(false);
+                            setMicPress(false);
+                        });
+                }
+                else {
+                    Alert.alert("Error Occurred while Recording Audio!");
+                    setIsRecord(false);
+                    setMicPress(false);
+                }
+            });
+        } else {
+            setMicPress(false);
+            setIsRecord(false);
+        }
+    }
     /************   End of functions of Pitstop Details Component  Funcs   **************/
 
 
@@ -773,6 +779,7 @@ export default ({ navigation, route }) => {
                                             }
                                         }
                                     ],
+                                    { cancelable: false }
                                 )
 
                         }}
@@ -874,6 +881,9 @@ export default ({ navigation, route }) => {
                                             reset={false}
                                             getTime={(time) => {
                                                 recordTimeRef.current?.setNativeProps({ text: time.substring(time.indexOf(":") + 1, time.length) })
+                                                if (time === "00:00:05") {
+                                                    getRecordingDuration(false)
+                                                }
                                             }}
                                             options={{
                                                 container: { backgroundColor: '#fff', display: "none" },
@@ -984,6 +994,7 @@ export default ({ navigation, route }) => {
     }
 
     const onSaveAndContinue = () => {
+        setLoader(true)
         let pitstopData = {
             pitstopIndex: route?.params?.pitstopIndex ?? null, // on update will get from params, 
             title: locationVal,
@@ -1000,9 +1011,11 @@ export default ({ navigation, route }) => {
         }
         confirmServiceAvailabilityForLocation(postRequest, latitudeRef.current, longitudeRef.current, (resp) => {
             sharedAddUpdatePitstop(pitstopData, false, [], false, false, clearData);
+            setLoader(false)
         }, (error) => {
             console.log("[confirmServiceAvailabilityForLocation].error", error);
             sharedExceptionHandler(error);
+            setLoader(false)
         })
     }//end of save and continue function
 
@@ -1052,9 +1065,11 @@ export default ({ navigation, route }) => {
                     text="Save and Continue"
                     onPress={onSaveAndContinue}
                     disabled={validationCheck()}
+                    isLoading={loader}
                     style={[styles.locButton, { height: 60, marginVertical: 10 }]}
                     textStyle={[styles.btnText, { fontSize: 16 }]}
                     fontFamily="PoppinsRegular"
+                    wait={0.4}
                 />
             </Transitioning.View>
         </SafeAreaView >

@@ -16,6 +16,7 @@ import ROUTES from '../../navigations/ROUTES';
 import { store } from '../../redux/store';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
+import ENUMS from '../../utils/ENUMS';
 import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import ProductMenuItemCard from '../ProductMenu/components/ProductMenuItemCard';
 import ScrollableList from './Components/ScrollableList';
@@ -263,7 +264,7 @@ export default ({ navigation, route }) => {
         }
     };
     // #endregion :: GETTING PRODUCT MENU PRICE FROM ITEM END's FROM HERE 
-console.log('here in shelve data');
+    console.log('here in shelve data');
 
     const onViewMorePress = (item) => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductMenuItem.screen_name, { pitstopType, marketID, item: item });
@@ -351,8 +352,12 @@ console.log('here in shelve data');
                         paddingHorizontal: constants.spacing_horizontal,
                     }}
                     renderItem={(parentItem, item, parentIndex, index) => {
+                        console.log('item ==>>>>',item);
                         const image = (item?.images ?? []).length > 0 ? item.images[0].joviImageThumbnail : '';
-                        const isOutOfStock = "isOutOfStock" in item ? item.isOutOfStock : false;
+                        let isOutOfStock = "isOutOfStock" in item ? item.isOutOfStock : false;
+                        if (item.availabilityStatus === ENUMS.AVAILABILITY_STATUS.OutOfStock) {
+                            isOutOfStock = true;
+                        }
 
                         const productTotalItem = parentItem?.productsPaginationInfo?.totalItems ?? 0;
                         const additionalCount = productTotalItem - PITSTOP_ITEM_LIST_MAX_COUNT;
@@ -360,6 +365,7 @@ console.log('here in shelve data');
 
                         return (
                             <ProductMenuItemCard
+                                disabled={isOutOfStock}
                                 onPress={() => {
                                     if (isSeeAll) {
                                         onViewMorePress(parentItem);

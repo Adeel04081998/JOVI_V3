@@ -6,7 +6,7 @@ import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import AnimatedFlatlist from '../../components/molecules/AnimatedScrolls/AnimatedFlatlist';
-import { renderFile, sharedExceptionHandler } from '../../helpers/SharedActions';
+import { renderFile, sharedExceptionHandler, sharedOnVendorPress } from '../../helpers/SharedActions';
 import constants from '../../res/constants';
 import sharedStyles from '../../res/sharedStyles';
 import theme from '../../res/theme';
@@ -212,7 +212,9 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
             }
         }, []);
         return (
-            <TC key={index} activeOpacity={0.8} style={{
+            <TC key={index} activeOpacity={0.8} onPress={()=>{
+                sharedOnVendorPress(item, index)
+            }} style={{
                 ...styles.itemContainer, height: 270, ...isAnimateable ? {
                     opacity: animatedScale,
                     transform: [{

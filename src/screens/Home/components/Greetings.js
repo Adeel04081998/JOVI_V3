@@ -28,12 +28,12 @@ export default ({ messagesReducer, homeStyles, userReducer, colors }) => {
                 {
                     ...homeStyles.greetingMainContainer,
                     opacity: greetingAnimation,
-                    transform: [{
-                        translateX: greetingAnimation.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: [-100, 0]
-                        })
-                    }]
+                    // transform: [{
+                    //     translateX: greetingAnimation.interpolate({
+                    //         inputRange: [0, 1],
+                    //         outputRange: [-100, 0]
+                    //     })
+                    // }]
                 },
                 { margin: 5 }
             ]} >

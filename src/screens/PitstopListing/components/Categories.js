@@ -30,7 +30,7 @@ export default ({ CategoriesTabConfig = {}, selectedCategories = [], parentCateg
             justifyContent: 'center',
             left:10,
             backgroundColor: '#fff',
-            ...sharedStyles._styles().shadow,
+            // ...sharedStyles._styles().shadow,
             ...styles.cat_item_container,
             marginRight:categoriesList.length-1===index ?20:8,
         };

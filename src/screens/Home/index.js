@@ -79,7 +79,7 @@ export default () => {
         if (!loaderVisible && userReducer?.finalDestObj?.latitude) {
             Animated.timing(homeFadeIn, {
                 toValue: 1,
-                duration: 700,
+                duration: 300,
                 useNativeDriver: true,
                 easing: Easing.ease
             }).start(finished => {
@@ -122,7 +122,7 @@ export default () => {
                 />
                 {loaderVisible ? renderLoader() : <Animated.View style={{
                     opacity: homeFadeIn.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1] }),
-                    transform: [{ scale: homeFadeIn.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] }) }]
+                    // transform: [{ scale: homeFadeIn.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] }) }]
                 }}>
                     <KeyboardAwareScrollView style={{}} showsVerticalScrollIndicator={false}>
                         <Greetings messagesReducer={messagesReducer} homeStyles={homeStyles} userReducer={userReducer} colors={colors} />

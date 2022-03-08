@@ -19,6 +19,7 @@ export default React.memo((props) => {
     const HEIGHT = constants.window_dimensions.height
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
     const styles = joviJobStyles(colors, WIDTH, HEIGHT);
+    console.log('props.switchVal ===>>>>',props.switchVal);
     return (
             props.isOpened &&
                 <>
@@ -35,7 +36,7 @@ export default React.memo((props) => {
 
     );
 },((n,p)=>{
-    return (n.isOpened===p.isOpened&&n.switchVal===p.switchVal)
+    return (n.isOpened===p.isOpened && n.switchVal===p.switchVal)
 }));
 
 

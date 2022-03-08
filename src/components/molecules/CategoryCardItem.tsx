@@ -97,16 +97,16 @@ const CategoryCardItem = (props: Props) => {
                 outputRange:[0,0.7]
             })}} />
             <AnimatedView style={[{
-                opacity: transFormAngle.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0.2, 1]
-                }),
-                transform: [{
-                    rotate: transFormAngle.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: ['270deg', '360deg']
-                    })
-                }]
+                // opacity: transFormAngle.interpolate({
+                //     inputRange: [0, 1],
+                //     outputRange: [0.2, 1]
+                // }),
+                // transform: [{
+                //     rotate: transFormAngle.interpolate({
+                //         inputRange: [0, 1],
+                //         outputRange: ['270deg', '360deg']
+                //     })
+                // }]
             }, props.imageContainerStyle, {
                 justifyContent: 'center',
                 alignItems: "center",
@@ -117,10 +117,10 @@ const CategoryCardItem = (props: Props) => {
                 <Text
                     numberOfLines={1}
                     style={[{
-                        opacity: transFormAngle.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: [0.2, 1]
-                        }),
+                        // opacity: transFormAngle.interpolate({
+                        //     inputRange: [0, 1],
+                        //     outputRange: [0.2, 1]
+                        // }),
                         color: "#272727",
                         textAlign: "center",
                         fontSize: 16,

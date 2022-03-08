@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { ActivityIndicator, Appearance, Platform, StyleSheet, View } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
-import { confirmServiceAvailabilityForLocation, sharedStartingRegionPK } from '../../../helpers/SharedActions';
+import { confirmServiceAvailabilityForLocation, sharedExceptionHandler, sharedStartingRegionPK } from '../../../helpers/SharedActions';
 import VectorIcon from '../VectorIcon';
 import { addressInfo, hybridLocationPermission } from '../../../helpers/Location';
 import Button from '../../molecules/Button';
@@ -97,7 +97,7 @@ export default (props) => {
 
   const onRegionChange = (region) => {
     // setPlaceName('')
-    if(!disabledRef.current){
+    if (!disabledRef.current) {
       disabledRef.current = false;
       forceUpdate();
     }
@@ -110,7 +110,7 @@ export default (props) => {
       latitude,
       longitude
     }
-    
+
   };
 
   useEffect(() => {
@@ -283,6 +283,8 @@ export default (props) => {
     else false
   }
 
+  console.log('disabledCheck() ==>>>', disabledCheck())
+
   const cb = (loaderBool) => {
     disabledRef.current = false
     setLoader(loaderBool)
@@ -300,13 +302,13 @@ export default (props) => {
           const { latitude, longitude } = coordinatesRef.current
           confirmServiceAvailabilityForLocation(postRequest, latitude || props.route?.params?.latitude, longitude || props.route?.params?.longitude,
             async (resp) => {
-              let adrInfo = await addressInfo(latitude || props.route?.params?.latitude, longitude  || props.route?.params?.longitude, cb)
+              let adrInfo = await addressInfo(latitude || props.route?.params?.latitude, longitude || props.route?.params?.longitude, cb)
               placeNameRef.current = adrInfo.address
               setPlaceName(adrInfo.address)
               let placeObj = {
                 title: placeNameRef.current,
-                latitude: latitude || props.route?.params?.latitude ,
-                longitude: longitude  || props.route?.params?.longitude,
+                latitude: latitude || props.route?.params?.latitude,
+                longitude: longitude || props.route?.params?.longitude,
                 latitudeDelta: LATITUDE_DELTA,
                 longitudeDelta: LONGITUDE_DELTA,
                 city: adrInfo.city
@@ -315,15 +317,7 @@ export default (props) => {
             }, (error) => {
               setLoader(false)
               disabledRef.current = false
-              console.log(((error?.response) ? error.response : {}), error);
-              if (error?.data?.statusCode === 417) {
-                if (error.areaLock) { } else {
-                  error?.data?.message && Toast.error(error?.data?.message);
-                }
-              }
-              else {
-                Toast.error('An Error Occurred!');
-              }
+              sharedExceptionHandler(error)
             })
 
         }
