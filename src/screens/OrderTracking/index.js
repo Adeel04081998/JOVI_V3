@@ -1,6 +1,7 @@
 import AnimatedLottieView from "lottie-react-native";
 import React from "react";
 import { Animated, Appearance, Easing, PixelRatio, StyleSheet } from "react-native";
+import { SvgXml } from "react-native-svg";
 import { useSelector } from "react-redux";
 import svgs from "../../assets/svgs";
 import SharedMapView from "../../components/atoms/GoogleMaps/SharedMapView";
@@ -166,7 +167,7 @@ export default ({ route }) => {
     }
     const renderTime = (timeFontSize = 22, minutesUI = 10) => {
         return <>
-            <Text style={{ fontSize: timeFontSize, color: 'black', fontWeight: 'bold' }} fontFamily={'PoppinsBold'} onPress={() => setState(pre => ({ ...pre, progress: pre.progress + (100 / 6) }))}>{isRiderFound && state.currentPitstop ? state.currentPitstop.pitstopEstimateTime : state.orderEstimateTimeRange}</Text>
+            <Text style={{ fontSize: timeFontSize, color: 'black', fontWeight: 'bold' }} fontFamily={'PoppinsBold'} >{isRiderFound && state.currentPitstop ? state.currentPitstop.pitstopEstimateTime : state.orderEstimateTimeRange}</Text>
             <Text style={{ fontSize: minutesUI, marginTop: 5, justifyContent: 'center', alignItems: 'center', textAlign: 'center' }} >{` minutes \nuntil delivered`}</Text>
         </>
     }
@@ -208,11 +209,11 @@ export default ({ route }) => {
                 {renderUI[state.subStatusName ?? ORDER_STATUSES.Processing]()}
             </View>
             <View style={styles.orderNavigationContainer}>
-                <TouchableOpacity disabled={!isRiderFound} style={{ ...styles.orderNavigationButton, backgroundColor: isRiderFound ? colors.primary : colors.grey }}>
+                <TouchableOpacity disabled={!isRiderFound} onPress={() => onOrderNavigationPress(ROUTES.APP_DRAWER_ROUTES.OrderChat.screen_name)} style={{ ...styles.orderNavigationButton, backgroundColor: isRiderFound ? colors.primary : colors.grey }}>
                     <VectorIcon size={25} name={'md-chatbubble-ellipses'} type={'Ionicons'} color={colors.white} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => onOrderNavigationPress(ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name)} style={styles.orderNavigationButton}>
-                    <VectorIcon size={30} name={'list'} type={'Ionicons'} color={colors.white} />
+                    <SvgXml xml={svgs.order_chat_header_receipt(colors.white)} height={25} width={25} />
                 </TouchableOpacity>
             </View>
         </>
