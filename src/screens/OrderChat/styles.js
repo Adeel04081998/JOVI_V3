@@ -7,6 +7,15 @@ import FontFamily from "../../res/FontFamily";
 export const stylesFunc = (colors = initColors) => StyleSheet.create({
     primaryContainer: {
         flex: 1,
+        backgroundColor: colors.white,
+    },
+    composerIconContainer: {
+        justifyContent: 'center',
+    },
+    composerIcon: {
+        marginLeft: 6,
+        height:23,
+        width:23,
     },
 
 });//end of stylesFunc
@@ -19,6 +28,7 @@ export const headerStyles = StyleSheet.create({
     name: {
         fontSize: 15,
         color: "#272727",
+        textAlign: "center",
     },
     image: {
         height: 50,

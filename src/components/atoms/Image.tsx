@@ -13,6 +13,7 @@ type Props = React.ComponentProps<typeof RNImage> & {
   onPress?: () => void;
 
   tapToOpen?: boolean;
+  useLoader?: boolean;
 };
 
 const defaultProps = {
@@ -21,6 +22,7 @@ const defaultProps = {
   onPress: undefined,
   containerStyle: {},
 
+  useLoader: true,
   tapToOpen: true,
 }
 
@@ -33,7 +35,7 @@ const Image = (props: Props) => {
   const animationRef = React.useRef(new Animated.Value(0)).current;
   const fullAnimationRef = React.useRef(new Animated.Value(0)).current;
 
-  const loader = error || loading || !props.source;
+  const loader = (error || loading || !props.source) && props.useLoader;
 
   React.useEffect(() => {
     startAnimate();

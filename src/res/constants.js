@@ -4,7 +4,7 @@ export default {
     app_version: '2.3.2',
     url_qa: "https://qa-api.jovi-app.com",
     url_qasprint_v1: "https://qasprintv1-api.jovi-app.com",
-    url_ngRok:"https://tabish.ngrok.io",
+    url_ngRok: "https://tabish.ngrok.io",
     url_dev: "https://dev-api.jovi-app.com",
     url_staging: "https://staging-api.jovi-app.com",
     url_live: "https://live-api.jovi-app.com",
@@ -45,5 +45,6 @@ export default {
         longitude: 69.89856876432896,
         longitudeDelta: 15.910217463970177
     },
-    i8_markaz: { latitude: 33.6685534, longitude: 73.0727673 }
+    i8_markaz: { latitude: 33.6685534, longitude: 73.0727673 },
+    recording_duration_max_limit: 2,
 }
