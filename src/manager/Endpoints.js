@@ -42,6 +42,8 @@ export default {
 
     "GET_VENDOR_DASHBOARD_CATEGORY_ID": "api/Menu/Vendor/GetDashboardCatIDs",//USED IN SHARED ACTION FOR GETTING CATEGORY ID's AND STORING IN REDUCER
     "GET_VENDOR_DASHBOARD_CATEGORY_ID_DETAIL": "api/Menu/Vendor/CategorizationByID",//USED IN GENERIC LIST
+    //Get Rider Location
+    "GetRiderLocation":"api/User/Customer/GetRidersLatestLocation",
 }
 
 

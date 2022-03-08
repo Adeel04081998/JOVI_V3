@@ -1,10 +1,7 @@
 import { useFocusEffect } from '@react-navigation/native';
-import lodash from 'lodash'; // 4.0.8
-import LottieView from "lottie-react-native";
 import React, { useState } from 'react';
 import { Animated, Appearance, Easing, SafeAreaView, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
-import Text from '../../components/atoms/Text';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import GenericList from '../../components/molecules/GenericList';
@@ -18,12 +15,23 @@ import ROUTES from '../../navigations/ROUTES';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
+
+import stylesheet from './styles';
+
+// const Search = React.lazy(()=>import('../Home/components/Search'));
+// const AllPitstopsListing = React.lazy(()=>import('./components/AllPitstopsListing'));
+// const CardLoader = React.lazy(()=>import('./components/CardLoader'));
+// const Categories = React.lazy(()=>import('./components/Categories'));
+// const Filters = React.lazy(()=>import('./components/Filters'));
+
+//
 import Search from '../Home/components/Search';
 import AllPitstopsListing from './components/AllPitstopsListing';
 import CardLoader from './components/CardLoader';
 import Categories from './components/Categories';
 import Filters from './components/Filters';
-import stylesheet from './styles';
+
+
 const SPACING_VERTICAL = 10;
 // const renderLoader = (styles) => {
 //     return <View style={styles.gifLoader}>
@@ -39,7 +47,37 @@ const SPACING_VERTICAL = 10;
 // }
 
 let scrollEvent = null;
-const PistopListing = React.memo(({ route, }) => {
+const PistopListing = ({ route }) => {
+    const [state, setState] = React.useState({ loaded: false });
+    const { pitstopType } = route.params;
+    const isLoadedRef = React.useRef(false);
+    const SCALE_IMAGE = {
+        height: constants.window_dimensions.height / 5,
+        width: constants.window_dimensions.width * 0.86
+    }
+    const { height, width } = SCALE_IMAGE;
+    const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]], Appearance.getColorScheme() === "dark");
+    const listingStyles = stylesheet.styles(colors, width, height);
+    if (!isLoadedRef.current) {
+        isLoadedRef.current = true;
+        setInterval(() => {
+            setState(pre => ({ ...pre, loaded: true }));
+        }, 300);
+    }
+    const onBackPress = () => {
+        NavigationService.NavigationActions.common_actions.goBack();
+    }
+    return <View style={listingStyles.container}>
+        <SafeAreaView style={{ flex: 1 }}>
+            <CustomHeader defaultColor={colors.primary} onLeftIconPress={onBackPress} leftIconColor={colors.primary} rightIconColor={colors.primary}
+                // leftIconType={'AntDesign'} leftIconName={'left'}
+                leftIconSize={30}
+            />
+            {state.loaded ? <PistopListingChild route={route} /> : <CardLoader styles={listingStyles} />}
+        </SafeAreaView>
+    </View>
+}//when app is animating the screen, then there is a lag due to load time of pitstoplisting component, so there is a wrapper for that component, so the screen transition is smooth
+const PistopListingChild = React.memo(({ route, }) => {
     const { pitstopType } = route.params;
     const vendorDashboardCategoryIDReducer = useSelector(s => s.vendorDashboardCategoryIDReducer)?.data ?? [];
 
@@ -89,7 +127,6 @@ const PistopListing = React.memo(({ route, }) => {
         width: constants.window_dimensions.width * 0.86
     }
     const { height, width } = SCALE_IMAGE;
-    const animationHeight = constants.window_dimensions.height * 0.96;
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]], Appearance.getColorScheme() === "dark");
     const listingStyles = stylesheet.styles(colors, width, height);
     const [loadedData, setLoadedData] = useState(false)
@@ -153,15 +190,10 @@ const PistopListing = React.memo(({ route, }) => {
         }));
         const isAllDisSelected = filtersRef.current.averagePrice === null && filtersRef.current.cuisines.length === 0 && filtersRef.current.filter.length === 0;
         allRestaurantAnimation(isAllDisSelected ? 1 : 0);
-    
     }
     const goToFilters = () => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Filter.screen_name, { activeAvergePrice: filtersRef.current.averagePrice, activeCusine: filtersRef.current.cuisines[0], activeFilterBy: filtersRef.current.filter[0], backCB: backFromFiltersHandler });
     }
-    const onBackPress = () => {
-        NavigationService.NavigationActions.common_actions.goBack();
-    }
-
     const handleInfinityScroll = (event) => {
         let mHeight = event.nativeEvent.layoutMeasurement.height;
         let cSize = event.nativeEvent.contentSize.height;
@@ -264,31 +296,33 @@ const PistopListing = React.memo(({ route, }) => {
         }
     }, [scrollEvent]));
     return (
-        <View style={listingStyles.container}>
-            <SafeAreaView style={{ flex: 1 }}>
-                <CustomHeader defaultColor={colors.primary} onLeftIconPress={onBackPress} leftIconColor={colors.primary} rightIconColor={colors.primary}
-                    // leftIconType={'AntDesign'} leftIconName={'left'}
-                    leftIconSize={30}
-                />
-                {isLoading ? <CardLoader styles={listingStyles} /> : null}
-                {<ScrollView
-                    ref={scrollRef}
-                    nestedScrollEnabled showsVerticalScrollIndicator={false} scrollEventThrottle={16}
-                    onScroll={(event) => {
-                        const yAxis = event?.nativeEvent?.contentOffset.y ?? 0;
-                        if (yAxis > 0)
-                            scrollEvent = event.nativeEvent.contentOffset;
-                        if (handleInfinityScroll(event)) {
-                            setFetchDataUseEffect(Math.random());
-                        }
-                    }}>
-                    {renderFilters()}
-                    {renderCarouselNdListing()}
-                    {renderAllRestaurantsListing()}
-                </ScrollView>}
-                <BottomBarComponent colors={colors} leftData={[{ id: 1, iconName: "home", title: "Home" }, { id: 2, iconName: "person", title: "Profile" }]} rightData={[{ id: 3, iconName: "wallet", title: "Wallet" }, { id: 4, iconName: "pin", title: "Location" }]} />
-            </SafeAreaView>
-        </View>
+        // <View style={listingStyles.container}>
+        //     <SafeAreaView style={{ flex: 1 }}>
+        //         <CustomHeader defaultColor={colors.primary} onLeftIconPress={onBackPress} leftIconColor={colors.primary} rightIconColor={colors.primary}
+        //             // leftIconType={'AntDesign'} leftIconName={'left'}
+        //             leftIconSize={30}
+        //         />
+        <>
+            {isLoading ? <CardLoader styles={listingStyles} /> : null}
+            <ScrollView
+                ref={scrollRef}
+                nestedScrollEnabled showsVerticalScrollIndicator={false} scrollEventThrottle={16}
+                onScroll={(event) => {
+                    const yAxis = event?.nativeEvent?.contentOffset.y ?? 0;
+                    if (yAxis > 0)
+                        scrollEvent = event.nativeEvent.contentOffset;
+                    if (handleInfinityScroll(event)) {
+                        setFetchDataUseEffect(Math.random());
+                    }
+                }}>
+                {renderFilters()}
+                {renderCarouselNdListing()}
+                {renderAllRestaurantsListing()}
+            </ScrollView>
+            <BottomBarComponent colors={colors} leftData={[{ id: 1, iconName: "home", title: "Home" }, { id: 2, iconName: "person", title: "Profile" }]} rightData={[{ id: 3, iconName: "wallet", title: "Wallet" }, { id: 4, iconName: "pin", title: "Location" }]} />
+            {/* </SafeAreaView>
+        </View> */}
+        </>
     );
 }, (next, prev) => next !== prev)
 export default PistopListing;

@@ -3,6 +3,7 @@ import { Animated } from 'react-native';
 import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 // Auth imports
 import Introduction from '../screens/IntroScreen';
 import EnterOTP from '../screens/OTP/Enter';
@@ -40,7 +41,7 @@ const AppDrawerStack = (props) => {
                 key={`AppDrawerss-Screen-key-${index}-${routeInfo.id}`}
                 name={routeInfo.screen_name}
                 component={AppDrawerComponents[routeInfo.componenet]}
-                options={routeInfo.options ? routeInfo.options : options}
+                options={{...options(),...routeInfo.options??{}}}
 
             />
         ))}
@@ -80,7 +81,8 @@ const AppDrawerComponents = {
     OrderPitstops,
 }//will open with Slide Animation
 const ContainerStack = createStackNavigator();
-const Stack = createSharedElementStackNavigator();
+const Stack = createNativeStackNavigator();
+// const Stack = createSharedElementStackNavigator();
 const Drawer = createDrawerNavigator();
 
 const options = () => ({
@@ -89,6 +91,7 @@ const options = () => ({
         open: { animation: "timing", config: { duration: 400 } },
         close: { animation: "timing", config: { duration: 400 } }
     },
+    animation:'slide_from_right',
     // cardStyleInterpolator: forSlide
 })
 const forSlide = ({ current, next, inverted, layouts: { screen } }) => {

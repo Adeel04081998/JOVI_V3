@@ -7,7 +7,7 @@ import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import OrderEstTimeCard from '../../components/organisms/Card/OrderEstTimeCard';
 import DashedLine from '../../components/organisms/DashedLine';
-import { renderPrice, sharedFetchOrder, sharedGenerateProductItem, sharedOrderNavigation } from '../../helpers/SharedActions';
+import { renderPrice, sharedFetchOrder, sharedGenerateProductItem, sharedNotificationHandlerForOrderScreens, sharedOrderNavigation } from '../../helpers/SharedActions';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
@@ -92,38 +92,7 @@ export default ({ navigation, route }) => {
         return () => { };
     }, []);
     React.useEffect(() => {
-        // console.log("[Order Processing].fcmReducer", fcmReducer);
-        // '1',  For job related notification
-        // '11',  For rider allocated related notification
-        // '12', For order cancelled by admin
-        // '13' For order cancelled by system
-        // '14' out of stock
-        // '18' replaced
-        const notificationTypes = ["1", "11", "12", "13", "14", "18"]
-        console.log('fcmReducer------OrderProcessing', fcmReducer);
-        const jobNotify = fcmReducer.notifications?.find(x => (x.data && (notificationTypes.includes(`${x.data.NotificationType}`))) ? x : false) ?? false;
-        if (jobNotify) {
-            console.log(`[jobNotify]`, jobNotify)
-            const { data, notifyClientID } = jobNotify;
-            // const results = sharedCheckNotificationExpiry(data.ExpiryDate);
-            // if (results.isSameOrBefore) {
-            if (data.NotificationType == notificationTypes[1] || data.NotificationType == notificationTypes[0]) {
-                // console.log("[Order Processing] Rider Assigned By Firbase...");
-                fetchOrderDetails();
-            }
-            if (data.NotificationType == notificationTypes[2] || data.NotificationType == notificationTypes[3]) {
-                // console.log("[Order Processing] Order Cancelled By Firbase...");
-                orderCancelledOrCompleted();
-            }
-            if (data.NotificationType == notificationTypes[4] || data.NotificationType == notificationTypes[5]) {
-                fetchOrderDetails()
-            }
-            else {
-
-            }
-            //  To remove old notification
-            dispatch(actions.fcmAction({ notifyClientID }));
-        } else console.log("[Order Processing] Job notification not found!!");
+        sharedNotificationHandlerForOrderScreens(fcmReducer,fetchOrderDetails,orderCancelledOrCompleted);
         return () => {
         }
     }, [fcmReducer]);

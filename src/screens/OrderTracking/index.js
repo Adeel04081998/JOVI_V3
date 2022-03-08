@@ -1,9 +1,7 @@
 import AnimatedLottieView from "lottie-react-native";
 import React from "react";
-import { Appearance, PixelRatio, StyleSheet } from "react-native";
-import Animated from "react-native-reanimated";
-import { SvgXml } from "react-native-svg";
-import { useDispatch, useSelector } from "react-redux";
+import { Animated, Appearance, Easing, PixelRatio, StyleSheet } from "react-native";
+import { useSelector } from "react-redux";
 import svgs from "../../assets/svgs";
 import SharedMapView from "../../components/atoms/GoogleMaps/SharedMapView";
 import SafeAreaView from "../../components/atoms/SafeAreaView";
@@ -13,30 +11,28 @@ import VectorIcon from "../../components/atoms/VectorIcon";
 import View from "../../components/atoms/View";
 import AnimatedProgressWheel from "../../components/molecules/AnimatedProgressWheel";
 import CustomHeader from "../../components/molecules/CustomHeader";
-import { sharedFetchOrder, sharedOrderNavigation } from "../../helpers/SharedActions";
+import { sharedExceptionHandler, sharedFetchOrder, sharedNotificationHandlerForOrderScreens, sharedOrderNavigation } from "../../helpers/SharedActions";
+import { getRequest } from "../../manager/ApiManager";
+import Endpoints from "../../manager/Endpoints";
 import NavigationService from "../../navigations/NavigationService";
 import ROUTES from "../../navigations/ROUTES";
-import actions from "../../redux/actions";
 import constants from "../../res/constants";
 import theme from "../../res/theme";
 import ENUMS from "../../utils/ENUMS";
-import GV, { ORDER_STATUSES, PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from "../../utils/GV";
+import GV, { ORDER_STATUSES, PITSTOP_TYPES_INVERTED } from "../../utils/GV";
 const circleCurveSvgXml = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-1.9919999999999998 11.235 2.0079999999999996 0.764">
 <path d="M 0.016 11.993 q -0.313 -0.031 -0.376 -0.283 c -0.2 -0.629 -1.065 -0.618 -1.271 -0.005 c -0.051 0.206 -0.149 0.258 -0.361 0.292" fill="#fff"/>
 </svg>`;
 export default ({ route }) => {
-    const pitstopType = route?.params?.pitstopType ?? PITSTOP_TYPES.JOVI;
     const fcmReducer = useSelector(store => store.fcmReducer);
-    const dispatch = useDispatch();
-
+    const userReducer = useSelector(store => store.userReducer);
     const baseHeight = 550
     const WINDOW_HEIGHT = constants.window_dimensions.height;
-    const HEIGHT = constants.screen_dimensions.height;
     const WIDTH = constants.screen_dimensions.width;
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[2]], Appearance.getColorScheme() === "dark");
     const orderIDParam = route?.params?.orderID ?? 41231;
     const SCALED_HEIGHT = PixelRatio.roundToNearestPixel(WINDOW_HEIGHT * (WINDOW_HEIGHT / baseHeight));
-    const styles = _styles(colors,WIDTH,SCALED_HEIGHT);
+    const styles = _styles(colors, WIDTH, SCALED_HEIGHT);
     const [state, setState] = React.useState({
         orderID: orderIDParam ?? 0,
         pitStopsList: [],
@@ -46,10 +42,16 @@ export default ({ route }) => {
         progress: 0,
         currentPitstop: null,
         orderEstimateTimeRange: ' - ',
+        totalActivePitstops: 0,
+    });
+    const [realtimeChangingState, setRealTimeState] = React.useState({
+        riderLocation: null,
     });
     const circleColor = state.subStatusName === ORDER_STATUSES.RiderFound ? '#37c130' : colors.primary;
     const isRiderFound = state.subStatusName === ORDER_STATUSES.RiderFound;
     const colorChangeAnimation = React.useRef(new Animated.Value(0)).current;
+    const loadAnimation = React.useRef(new Animated.Value(0)).current;
+    const fetchRiderLocationRef = React.useRef(null);
     const renderUI = {
         [ORDER_STATUSES.TransferProblem]: () => renderProcessingUI(),
         [ORDER_STATUSES.RiderProblem]: () => renderProcessingUI(),
@@ -60,38 +62,76 @@ export default ({ route }) => {
     const fetchOrderDetails = () => {
         sharedFetchOrder(orderIDParam, (res) => {
             if (res.data.statusCode === 200) {
-                let allowedOrderStatuses = [ORDER_STATUSES.Processing, ORDER_STATUSES.FindingRider, ORDER_STATUSES.RiderProblem, ORDER_STATUSES.TransferProblem];
-                console.log('res - sharedFetchOrder', res);
+                let allowedOrderStatuses = [ORDER_STATUSES.Processing, ORDER_STATUSES.RiderFound, ORDER_STATUSES.FindingRider, ORDER_STATUSES.RiderProblem, ORDER_STATUSES.TransferProblem];
                 if (!allowedOrderStatuses.includes(res.data.order.subStatusName)) {
                     sharedOrderNavigation(orderIDParam, res.data.order.subStatusName, ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name);
                     return;
                 }
                 let progress = 0;
-                const increment = 100 / res.data.order.totalPitstops;
+                const totalActivePitstops = res.data.order.pitStopsList.filter(item => ![3, 4, 5, 9].includes(item.joviJobStatus));
+                const increment = 100 / (totalActivePitstops.length);
                 const circularPitstops = [{
                     icon: svgs.startingPoint()
                 }];
                 let currentPitstop = null;
                 let updatedPitstops = [];
-                res.data.order.pitStopsList.map((item, i) => {
-                    updatedPitstops.push({ ...item, isFinalDestination: i === (res.data.order.totalPitstops - 1) });
-                    if (i === (res.data.order.totalPitstops - 1)) return;
+                totalActivePitstops.map((item, i) => {
+                    updatedPitstops.push({ ...item, isFinalDestination: i === (totalActivePitstops.length - 1) });
+                    if (i === (totalActivePitstops.length - 1)) return;
                     const pitstopType = item.catID === '0' ? 2 : parseInt(item.catID);
                     const focusedPitstop = ENUMS.PITSTOP_TYPES.filter(pt => pt.value === pitstopType)[0];
                     if (item.joviJobStatus === 2 || item.joviJobStatus === 7) {
                         progress += increment;
                     } else if (!currentPitstop) {
-                        currentPitstop = {...item,index:i};
+                        currentPitstop = { ...item, index: i };
                     }
 
                     circularPitstops.push(focusedPitstop);
                 });
-                // setState(pre => ({ ...pre, ...res.data.order,progress:progress, isLoading: false,circularPitstops }))
-                setState(pre => ({ ...pre, ...res.data.order, pitStopsList: updatedPitstops, currentPitstop, progress: res.data.order.completedJobPercentage, isLoading: false, circularPitstops }))
+                if (res.data.order.subStatusName === ORDER_STATUSES.RiderFound) {
+                    fetchRiderLocation();
+                }
+                if (!currentPitstop) {
+                    currentPitstop = { ...res.data.order.pitStopsList[res.data.order.pitStopsList.length - 1], index: totalActivePitstops.length - 1 };
+                }
+                setState(pre => ({ ...pre, ...res.data.order, pitStopsList: updatedPitstops, totalActivePitstops, currentPitstop, progress: progress, isLoading: false, circularPitstops }))
+                // setState(pre => ({ ...pre, ...res.data.order, pitStopsList: updatedPitstops, currentPitstop, progress: res.data.order.completedJobPercentage, isLoading: false, circularPitstops }))
             } else {
                 setState(pre => ({ ...pre, isLoading: false }))
             }
         });
+    }
+    const fetchRiderLocation = () => {
+        const fetchRiderLocationRequest = () => {
+            getRequest(`${Endpoints.GetRiderLocation}/${orderIDParam}`, (res) => {
+                if (res.data.statusCode === 200) {
+                    let { latitude, latitudeDelta, longitude, longitudeDelta, rotation } = res.data.riderLocationViewModel;
+                    try {
+                        const locObj = {
+                            latitude: parseFloat(latitude),
+                            latitudeDelta: parseFloat(latitudeDelta),
+                            longitude: parseFloat(longitude),
+                            longitudeDelta: parseFloat(longitudeDelta),
+                            rotation: parseFloat(rotation)
+                        };
+
+                        if (locObj.latitude) {
+                            console.log('res[GetRidersLatestLocation]', locObj);
+                            setRealTimeState((prevState) => ({ ...prevState, riderLocation: { ...locObj } }));
+                        }
+                        else {
+                        }
+                    }
+                    catch (e) {
+                        console.log('e', e);
+                    }
+                }
+            }, err => sharedExceptionHandler(err), {}, false);
+        }
+        if (fetchRiderLocationRef.current) {
+            clearInterval(fetchRiderLocationRef.current);
+        }
+        fetchRiderLocationRef.current = setInterval(fetchRiderLocationRequest, (userReducer?.fetchRiderLocationInterval || 5) * 1000);
     }
     const goToHome = () => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
@@ -100,44 +140,24 @@ export default ({ route }) => {
         goToHome();
     }
     const onOrderNavigationPress = (route = '') => {
-        NavigationService.NavigationActions.common_actions.navigate(route,{orderID:orderIDParam});
+        NavigationService.NavigationActions.common_actions.navigate(route, { orderID: orderIDParam });
     }
     React.useEffect(() => {
         fetchOrderDetails();
+        Animated.timing(loadAnimation, {
+            toValue: 1,
+            useNativeDriver: true,
+            duration: 500,
+            easing: Easing.ease
+        }).start();
+        return () => {
+            if (fetchRiderLocationRef.current) {
+                clearInterval(fetchRiderLocationRef.current);
+            }
+        }
     }, []);
     React.useEffect(() => {
-        // console.log("[Order Processing].fcmReducer", fcmReducer);
-        // '1',  For job related notification
-        // '11',  For rider allocated related notification
-        // '12', For order cancelled by admin
-        // '13' For order cancelled by system
-        // '14' out of stock
-        // '18' replaced
-        const notificationTypes = ["1", "11", "12", "13", "14", "18"]
-        console.log('fcmReducer------OrderTracking', fcmReducer);
-        const jobNotify = fcmReducer.notifications?.find(x => (x.data && (notificationTypes.includes(`${x.data.NotificationType}`))) ? x : false) ?? false;
-        if (jobNotify) {
-            console.log(`[jobNotify]`, jobNotify)
-            const { data, notifyClientID } = jobNotify;
-            // const results = sharedCheckNotificationExpiry(data.ExpiryDate);
-            // if (results.isSameOrBefore) {
-            if (data.NotificationType == notificationTypes[1] || data.NotificationType == notificationTypes[0]) {
-                // console.log("[Order Processing] Rider Assigned By Firbase...");
-                fetchOrderDetails();
-            }
-            if (data.NotificationType == notificationTypes[2] || data.NotificationType == notificationTypes[3]) {
-                // console.log("[Order Processing] Order Cancelled By Firbase...");
-                orderCancelledOrCompleted();
-            }
-            if (data.NotificationType == notificationTypes[4] || data.NotificationType == notificationTypes[5]) {
-                fetchOrderDetails()
-            }
-            else {
-
-            }
-            //  To remove old notification
-            dispatch(actions.fcmAction({ notifyClientID }));
-        } else console.log("[Order OrderTracking] Job notification not found!!");
+        sharedNotificationHandlerForOrderScreens(fcmReducer, fetchOrderDetails, orderCancelledOrCompleted);
         return () => {
         }
     }, [fcmReducer]);
@@ -188,10 +208,10 @@ export default ({ route }) => {
                 {renderUI[state.subStatusName ?? ORDER_STATUSES.Processing]()}
             </View>
             <View style={styles.orderNavigationContainer}>
-                <View style={styles.orderNavigationButton}>
+                <TouchableOpacity disabled={!isRiderFound} style={{ ...styles.orderNavigationButton, backgroundColor: isRiderFound ? colors.primary : colors.grey }}>
                     <VectorIcon size={25} name={'md-chatbubble-ellipses'} type={'Ionicons'} color={colors.white} />
-                </View>
-                <TouchableOpacity onPress={()=>onOrderNavigationPress(ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name)}  style={styles.orderNavigationButton}>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => onOrderNavigationPress(ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name)} style={styles.orderNavigationButton}>
                     <VectorIcon size={30} name={'list'} type={'Ionicons'} color={colors.white} />
                 </TouchableOpacity>
             </View>
@@ -227,6 +247,8 @@ export default ({ route }) => {
                     // mapHeight={SCALED_HEIGHT * 0.27}
                     markerStyle={styles.mapMarkerStyle}
                     customPitstops={state.pitStopsList}
+                    riderLocation={realtimeChangingState.riderLocation}
+                    customCenter={state.currentPitstop ?? { latitude: 33.66818441183923, longitude: 73.07202094623308 }}
                     // pitchEnabled={false}
                     // zoomEnabled={false}
                     // scrollEnabled={false}
@@ -235,7 +257,14 @@ export default ({ route }) => {
 
                     }} />
             </View>
-            <View style={styles.bottomViewContainer}>
+            <Animated.View style={{
+                ...styles.bottomViewContainer, opacity: loadAnimation, transform: [{
+                    translateY: loadAnimation.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [300, 0]
+                    })
+                }]
+            }}>
                 {renderProgressCircle()}
                 <View style={styles.orderInformationContainer}>
                     {isRiderFound ?
@@ -247,25 +276,25 @@ export default ({ route }) => {
                     {
                         isRiderFound && state.currentPitstop ?
                             <Text style={styles.currentPitstopTime}>
-                                {`Estimated arrival at Pitstop ${state.currentPitstop?.index+1}\n${state.currentPitstop?.pitstopEstimateTime ?? ' - '} minutes`}
+                                {`Estimated arrival at ${state.totalActivePitstops.length === state.currentPitstop.index + 1 ? 'Final Destination' : `Pitstop ${state.currentPitstop?.index + 1}`}\n${state.currentPitstop?.pitstopEstimateTime ?? ' - '} minutes`}
                             </Text>
                             :
                             null
                     }
                 </View>
-            </View>
+            </Animated.View>
         </SafeAreaView>
     );
 };
 
-const _styles = (colors,WIDTH,SCALED_HEIGHT)=> StyleSheet.create({
+const _styles = (colors, WIDTH, SCALED_HEIGHT) => StyleSheet.create({
     safeArea: {
         flex: 1,
     },
     container: {
         flex: 1
     },
-    headerContainer:{
+    headerContainer: {
         backgroundColor: 'transparent',
         borderBottomWidth: 0,
         position: 'absolute',
@@ -280,7 +309,7 @@ const _styles = (colors,WIDTH,SCALED_HEIGHT)=> StyleSheet.create({
         left: WIDTH / 2,
         top: ((SCALED_HEIGHT * 1.3) - SCALED_HEIGHT) / 2,
     },
-    bottomViewContainer:{
+    bottomViewContainer: {
         position: 'absolute',
         bottom: 0,
         width: '100%',
@@ -289,13 +318,13 @@ const _styles = (colors,WIDTH,SCALED_HEIGHT)=> StyleSheet.create({
         display: 'flex',
         alignItems: 'center',
     },
-    orderInformationContainer:{ height: 200, marginTop: 50, alignItems: 'center', display: 'flex', },
-    joviTitle:{ fontSize: 20, marginTop: 10, fontWeight: 'bold', color: colors.black },
-    orderCaption:{ fontSize: 14, marginTop: 10, fontWeight: 'bold', color: colors.black },
-    currentPitstopTime:{ textAlign: 'center', color: colors.black, fontSize: 14 ,marginTop:10},
-    orderNavigationContainer:{ position: 'absolute', width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, top: 75 },
-    orderNavigationButton:{ height: 42, width: 42, borderRadius: 21, display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: colors.primary },
-    orderProgressContainer:{
+    orderInformationContainer: { height: 200, marginTop: 50, alignItems: 'center', display: 'flex', },
+    joviTitle: { fontSize: 20, marginTop: 10, fontWeight: 'bold', color: colors.black },
+    orderCaption: { fontSize: 14, marginTop: 10, fontWeight: 'bold', color: colors.black },
+    currentPitstopTime: { textAlign: 'center', color: colors.black, fontSize: 14, marginTop: 10 },
+    orderNavigationContainer: { position: 'absolute', width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, top: 75 },
+    orderNavigationButton: { height: 42, width: 42, borderRadius: 21, display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: colors.primary },
+    orderProgressContainer: {
         display: 'flex',
         alignItems: 'center',
         marginTop: -120,
