@@ -144,7 +144,7 @@ const ProductMenuItemCard = (props: Props) => {
                     {/* ****************** End of IMAGE & QUANTITY ****************** */}
 
                     {/* ****************** Start of NAME/TITLE ****************** */}
-                    <Text style={itemStyles.name} numberOfLines={2}>{`${props.item.name}`}</Text>
+                    <Text style={itemStyles.name} numberOfLines={1}>{`${props.item.name}`}</Text>
 
                     {/* ****************** End of NAME/TITLE ****************** */}
 

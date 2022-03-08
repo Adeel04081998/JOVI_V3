@@ -32,9 +32,10 @@ export default ({ colors, homeStyles, onSearch = () => { }, placeholder = null, 
                 placeholder={placeholder ?? 'Search for shops and restaurants or pharmacy'}
                 onChangeText={(val) => setState(pre => ({ ...pre, value: val }))}
                 // style={{ minHeight: minHeight, alignSelf: 'center', height: constants.window_dimensions.height * .06, backgroundColor: "#F2F1F6", fontFamily: FontFamily.Poppins.Regular }}
-                style={{ minHeight: HEIGHT, fontSize: 10, fontFamily: FontFamily.Poppins.Regular, backgroundColor: "#F2F1F6" , left:-9}}
+                style={{ minHeight: HEIGHT, fontSize: 12, fontFamily: FontFamily.Poppins.Regular, backgroundColor: "#F2F1F6", left: -9, fontFamily: FontFamily.Poppins.Regular }}
                 maxLength={50}
                 numberOfLines={Platform.OS === "ios" ? null : numberOfLines}
+
             />
             <VectorIcon name='search' style={{ right: constants.window_dimensions.width * 0.09, paddingRight: 5, backgroundColor: "#F2F1F6", }} size={constants.window_dimensions.height * 0.03} color={'#C6C5C8'} onPress={() => onSearch(state.value)} />
         </View>
