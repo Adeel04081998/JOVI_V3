@@ -15,7 +15,7 @@ import View from '../../components/atoms/View';
 import CustomHeader, { CustomHeaderIconBorder, CustomHeaderStyles } from '../../components/molecules/CustomHeader';
 import ImageWithTextInput from '../../components/organisms/ImageWithTextInput';
 import { sharedLaunchCameraorGallery } from '../../helpers/Camera';
-import { getRandomInt, sharedConfirmationAlert, sharedExceptionHandler, uuidGenerator, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { getRandomInt, renderFile, sharedConfirmationAlert, sharedExceptionHandler, uuidGenerator, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { multipartPostRequest, postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
@@ -43,6 +43,7 @@ export default ({ navigation, route }) => {
     const enumsReducer = useSelector(c => c.enumsReducer);
     const userReducer = store.getState().userReducer;
     const orderID = route?.params?.orderID;
+    const riderPicture = route?.params?.riderProfilePic;
     const getEnumValue = (value) => {
         const ChatFileTypeEnum = enumsReducer.ChatFileTypeEnum;
         let typeNo = 0;
@@ -83,7 +84,7 @@ export default ({ navigation, route }) => {
                     )}
                     centerCustom={() => (
                         <View style={customheaderStyles.imageNameContainer}>
-                            <Image source={{ uri: 'https://randomuser.me/api/portraits/men/75.jpg' }} style={customheaderStyles.image} tapToOpen={false} />
+                            <Image source={{ uri: renderFile(riderPicture) }} style={customheaderStyles.image} tapToOpen={false} />
                             <Text fontFamily='PoppinsSemiBold' style={customheaderStyles.name} numberOfLines={1}>{`Order ID # ${orderID}`}</Text>
                         </View>
                     )}

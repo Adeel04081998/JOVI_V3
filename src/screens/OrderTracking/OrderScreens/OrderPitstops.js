@@ -127,7 +127,7 @@ export default ({ route }) => {
             )}
             leftCustom={(
                 <TouchableScale wait={0} onPress={() => {
-                    NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderChat.screen_name, { orderID: orderIDParam }, ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name)
+                    NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderChat.screen_name, { orderID: orderIDParam,riderProfilePic:state.userPic }, ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name)
                 }} style={styles.iconContainer}>
                     <SvgXml xml={svgs.order_chat_header_receipt(isRiderFound ? colors.primary : colors.grey)} height={HEADER_ICON_SIZE_RIGHT} width={HEADER_ICON_SIZE_RIGHT} />
                 </TouchableScale>
