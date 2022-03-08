@@ -192,7 +192,7 @@ const ScrollableList = (props: Props) => {
             }
         }, [props.data]);
         return (
-            <View style={{ paddingTop: 5, height: 55 }}>
+            <View style={{ paddingTop: 5, height: 55 , marginHorizontal:10}}>
                 <View style={[style.row]}>
                     {props.data && props.data.map((food: any, i: number) => (
                         <>
@@ -226,9 +226,9 @@ const ScrollableList = (props: Props) => {
                         }
                     }} style={[style.indicator, {
                         width: widthValue,
-                        height: 45,
+                        height: 30,
                         borderRadius: 26,
-                        top: -44,
+                        top: -30,
                         backgroundColor: 'white',
                         borderWidth: 1,
                         borderColor: props.colors.primary,
@@ -373,7 +373,7 @@ const stylesFunc = (colors: typeof initColors) => StyleSheet.create({
         color: "#272727",
         fontSize: 12,
         textAlign: "center",
-        paddingVertical: 12,
+        paddingVertical: 6,
         paddingHorizontal: 26,
 
         // color: "grey",
