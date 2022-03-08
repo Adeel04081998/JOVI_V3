@@ -19,8 +19,6 @@ export default {
                 width: '101%', paddingLeft: 10,
                 // paddingTop:8,
                 paddingVertical: 15,
-
-
                 paddingHorizontal: 5, display: 'flex', justifyContent: 'center', alignContent: 'center',
             },
             imageCarousal: {
@@ -31,7 +29,7 @@ export default {
                 // resizeMode: "contain"
             },
             wrapper: {
-                margin: SPACING_VERTICAL, paddingBottom: Platform.select({ android: 160, ios: 140 })
+                margin: SPACING_VERTICAL, paddingBottom: Platform.select({ android: 160, ios: 140 }),
             },
             greetingMainContainer: {
                 margin: 0,

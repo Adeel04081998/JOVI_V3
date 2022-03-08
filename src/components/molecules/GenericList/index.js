@@ -173,7 +173,9 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
         paddingHorizontal: 10,
         paddingVertical: 10,
         marginVertical: 5,
-        marginLeft: 10
+        marginLeft: 10,
+        marginRight: 10,
+
     },
     itemContainerSmall: {
         ...sharedStyles._styles(colors).shadow,
@@ -187,6 +189,8 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
         // paddingHorizontal: 10,
         // paddingVertical: 10,
         marginVertical: 5,
+        left: 10,
+        
     },
     image: {
         height: height,
@@ -223,7 +227,7 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
         fontSize: 14,
         // paddingVertical: 5,
         color: '#000',
-        width: width * 0.7
+        width: width * 0.5
     },
     bodyContainer: {
         width: width * 0.8
