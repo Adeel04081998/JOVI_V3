@@ -42,7 +42,6 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
 
     useEffect(() => {
         setupSoundPlayer();
-
         return () => {
         }
 
@@ -51,20 +50,16 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
     useEffect(() => {
         if (forceStopAll)
             stopAudio();
-
-
     }, [forceStopAll])
 
 
 
     const setupSoundPlayer = async () => {
 
-
         const chatAudioplayer = new Sound(audioURL, '', error => {
             if (error) {
                 return;
             }
-
             const duration = parseInt(chatAudioplayer?.getDuration());
             setTotalDuration(duration > 0 ? duration : 0);
             setDisplayTime(duration > 0 ? duration : 0);
@@ -83,9 +78,6 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
             soundPlayerRef.current = chatAudioplayer;
 
         });
-
-
-
     };
 
     const pauseAll = () => {
@@ -97,17 +89,13 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
     const startTimer = () => {
         timer = setInterval(() => {
             soundPlayerRef.current?.getCurrentTime(sec => {
-                if (sec > 0 || displayTime === 0) {
-                    if (Platform.OS === "android") {
-                        sec += 1;
-                    }
-                    setDisplayTime(sec >= 0 ? sec : totalDuration);
-                    setCurrentTime(sec >= 0 ? sec : 0);
-
-
+                const isPlaying = soundPlayerRef.current?._playing ?? false;
+                if (isPlaying) {
+                    setDisplayTime(sec);
+                    setCurrentTime(sec);
                 }
                 else {
-                    setCurrentTime(sec > 0 ? sec : 0);
+                    setCurrentTime(0);
                     pauseAudio();
                 }
 
