@@ -240,7 +240,8 @@ export default ({ navigation, route }) => {
             },
         }
 
-        sharedAddUpdatePitstop(pitstopDetails,)
+        // sharedAddUpdatePitstop(pitstopDetails,)
+
         // if (Math.random() < 0) {
         //     undoQuantity(parentIndex, index);
         // }
@@ -377,13 +378,14 @@ export default ({ navigation, route }) => {
                                 }}
                                 itemContainerStyle={{
                                     marginRight: 0,
-                                    marginVertical:8,
+                                    marginVertical: 8,
                                     // paddingTop:0,
                                     // borderWidth:1
                                 }}
                                 colors={colors}
                                 index={index}
                                 itemImageSize={ITEM_IMAGE_SIZE}
+                                itemQuantitySize={ITEM_IMAGE_SIZE * 0.2}
                                 updateQuantity={(quantity) => {
                                     updateQuantity(parentIndex, index, quantity);
                                 }}
@@ -403,7 +405,7 @@ export default ({ navigation, route }) => {
                                             ...getPricesForProductMenuItemCard(item),
                                         }
                                     }}
-                                    screenName={2}
+                                screenName={2}
 
                             />
                         )

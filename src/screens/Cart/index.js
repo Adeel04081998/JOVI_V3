@@ -22,6 +22,7 @@ import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedCalculatedTotals
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import ReduxActions from '../../redux/actions';
+import constants from '../../res/constants';
 import sharedStyles from '../../res/sharedStyles';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES } from '../../utils/GV';
@@ -369,15 +370,19 @@ export default () => {
                   </Text>
                 }
               </View>
-              <ProductQuantityCard
-                size={100}
-                initialQuantity={quantity}
-                colors={dynamiColors}
-                updateQuantity={(quantity) => {
+                 <ProductQuantityCard
+                                initialQuantity={quantity}
+                                colors={dynamiColors}
+                                outOfStock={false}
+                                textSize={18}
+                                size={100}
+                                cardSize={100}
+                                updateQuantity={(quantity) => {
                   incDecDelHandler(quantity)
-                }}
+                                }}
 
-              />
+                            />
+
             </View>
           </View>
         </View>

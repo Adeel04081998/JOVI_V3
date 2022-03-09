@@ -36,6 +36,7 @@ interface ProductMenuItemCardItem {
 interface Props {
     index: number;
     itemImageSize: number;
+    itemQuantitySize?:number;
     screenName: number; // 1 for SupermarketMenu 2 for  Shelves
     colors: typeof initColors;
     item: ProductMenuItemCardItem,
@@ -56,6 +57,7 @@ const defaultProps = {
     disabled: false,
     seeAll: false,
     additionalCount: 1,
+    itemQuantitySize:20,
     screenName: 1 // 1 for SupermarketMenu 2 for  Shelves
 
 };
@@ -64,6 +66,8 @@ const defaultProps = {
 
 const ProductMenuItemCard = (props: Props) => {
     const ITEM_IMAGE_SIZE = props.itemImageSize;
+    const ITEM_QUANTITY_SIZE=props?.itemQuantitySize ?? props.itemImageSize;
+    
     const screenName = props.screenName
     const itemStyles = itemStylesFunc(props.colors, ITEM_IMAGE_SIZE);
 
@@ -135,7 +139,8 @@ const ProductMenuItemCard = (props: Props) => {
                                 outOfStock={props.item.isOutOfStock}
                                 initialQuantity={props.item.quantity}
                                 colors={props.colors}
-                                size={ITEM_IMAGE_SIZE}
+                                size={ITEM_QUANTITY_SIZE}
+                                cardSize={ITEM_IMAGE_SIZE}
                                 screenName={screenName}
                                 updateQuantity={(quantity) => {
                                     props.updateQuantity && props.updateQuantity(quantity);

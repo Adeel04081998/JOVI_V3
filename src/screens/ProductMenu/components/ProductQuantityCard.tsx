@@ -16,6 +16,8 @@ import FontFamily from '../../../res/FontFamily';
 interface Props {
     colors: typeof initColors;
     size?: number;
+    cardSize?: number;
+    textSize?: number;
     updateQuantity?: (quantity: number) => void;
     initialQuantity?: string | number;
     outOfStock?: boolean;
@@ -37,8 +39,11 @@ const defaultProps = {
 // #endregion :: INTERFACE END's FROM HERE 
 
 const ProductQuantityCard = (props: Props) => {
-    // const ITEM_SIZE = props?.size ?? defaultProps.size;
-    const ITEM_SIZE = props.screenName === 2? constants.window_dimensions.width * 0.35 : props.size;
+    const ITEM_SIZE = props?.size ?? defaultProps.size;
+    const CARD_ITEM_SIZE = props?.cardSize ?? ITEM_SIZE;
+    const TEXT_ICON_SIZE=props?.textSize ?? ITEM_SIZE;
+
+    // const ITEM_SIZE = props.screenName === 2? constants.window_dimensions.width * 0.35 : props.size;
 
     const cartReducer = useSelector((store: any) => { return store.cartReducer; });
     const isFocused = useIsFocused();
@@ -105,9 +110,9 @@ const ProductQuantityCard = (props: Props) => {
 
     return (
         <View style={{
-            width: state.quantity > 0 || props.outOfStock ? ITEM_SIZE * 0.8 : ITEM_SIZE * 0.15,
-            height: state.quantity > 0 || props.outOfStock ? ITEM_SIZE * 0.25 : ITEM_SIZE * 0.15,
-            borderRadius: ITEM_SIZE * 0.25,
+            width: state.quantity > 0 || props.outOfStock ? CARD_ITEM_SIZE * 0.88 : ITEM_SIZE,
+            height: state.quantity > 0 || props.outOfStock ? CARD_ITEM_SIZE * 0.25 : ITEM_SIZE,
+            borderRadius: ITEM_SIZE,
             justifyContent: state.quantity > 0 && !props.outOfStock ? "space-between" : "center",
             paddingHorizontal: state.quantity > 0 || props.outOfStock ? 8 : 0,
             ...styles.primaryContainer,
@@ -128,18 +133,18 @@ const ProductQuantityCard = (props: Props) => {
                             <TouchableOpacity wait={0} onPress={decrementQuantity}
                                 hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}>
                                 {state.quantity === 1 ?
-                                    <VectorIcon color={colors.primary} name={"delete"} type="MaterialCommunityIcons" size={ITEM_SIZE * 0.15} />
+                                    <VectorIcon color={colors.primary} name={"delete"} type="MaterialCommunityIcons" size={TEXT_ICON_SIZE} />
                                     :
-                                    <VectorIcon color={colors.primary} name="minus" type="Feather" size={ITEM_SIZE * 0.15} />
+                                    <VectorIcon color={colors.primary} name="minus" type="Feather" size={TEXT_ICON_SIZE} />
                                 }
                             </TouchableOpacity>
-                            <Text style={styles.text}>{state.quantity}</Text>
+                            <Text style={{...styles.text,fontSize:TEXT_ICON_SIZE*0.7}}>{state.quantity}</Text>
                         </>
                     }
                     <TouchableOpacity wait={0} onPress={incrementQuantity}
                     style={{}}
                         hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}>
-                        <VectorIcon color={colors.primary} name="plus" type="Feather" size={ITEM_SIZE * 0.15} />
+                        <VectorIcon color={colors.primary} name="plus" type="Feather" size={TEXT_ICON_SIZE} />
                     </TouchableOpacity>
                 </>
             }
