@@ -18,7 +18,8 @@ export const sectionHeaderItemStyleFunc = (colors) => StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between",
         paddingBottom: 10,
-        paddingTop: 20,
+        // paddingTop: 20,
+        top: -5,
         paddingHorizontal: constants.spacing_horizontal,
     },
     title: {

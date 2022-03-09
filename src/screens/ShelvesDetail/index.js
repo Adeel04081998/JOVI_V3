@@ -263,7 +263,7 @@ export default ({ navigation, route }) => {
         }
     };
     // #endregion :: GETTING PRODUCT MENU PRICE FROM ITEM END's FROM HERE 
-console.log('here in shelve data');
+    console.log('here in shelve data');
 
     const onViewMorePress = (item) => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductMenuItem.screen_name, { pitstopType, marketID, item: item });
@@ -280,13 +280,13 @@ console.log('here in shelve data');
                 data={shelveData}
                 extraData={shelveMetaData}
                 style={{ flexGrow: 0, }}
-                contentContainerStyle={{ paddingBottom: data.length === 1 ? 10 : 40, }}
+                contentContainerStyle={{ paddingBottom: data.length === 1 ? 10 : 20, }}
                 showsHorizontalScrollIndicator={false}
                 horizontal
                 renderItem={({ item, index }) => {
                     return (
                         <TouchableScale style={{
-                            minHeight: 40,
+                            minHeight: 30,
                             marginTop: 15,
                             marginLeft: index === 0 ? 10 : 0,
                             paddingHorizontal: 10,
