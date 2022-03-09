@@ -15,9 +15,11 @@ import View from '../../components/atoms/View';
 import CustomHeader, { CustomHeaderIconBorder, CustomHeaderStyles } from '../../components/molecules/CustomHeader';
 import ImageWithTextInput from '../../components/organisms/ImageWithTextInput';
 import NoRecord from '../../components/organisms/NoRecord';
-import { getRandomInt, renderFile, sharedExceptionHandler, uuidGenerator, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { renderFile, sharedExceptionHandler, uuidGenerator, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { getRequest, multipartPostRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
+import NavigationService from '../../navigations/NavigationService';
+import ROUTES from '../../navigations/ROUTES';
 import { store } from '../../redux/store';
 import constants from '../../res/constants';
 import FontFamily from '../../res/FontFamily';
@@ -41,6 +43,8 @@ export default ({ navigation, route }) => {
         _id: userReducer.id,
         name: `${userReducer.firstName} ${userReducer.lastName}`,
     }
+    const orderID = route?.params?.orderID;
+    const riderPicture = route?.params?.riderProfilePic;
     const getEnumValue = (value) => {
         const ChatFileTypeEnum = enumsReducer.ChatFileTypeEnum;
         let typeNo = 0;
@@ -68,20 +72,23 @@ export default ({ navigation, route }) => {
                 <CustomHeader
                     containerStyle={customheaderStyles.containerStyle}
                     leftCustom={(
-                        <TouchableScale wait={0}
-                            style={customheaderStyles.iconContainer}>
+                        <TouchableScale wait={0} onPress={() => {
+                            NavigationService.NavigationActions.common_actions.goBack();
+                        }} style={customheaderStyles.iconContainer}>
                             <SvgXml xml={svgs.order_chat_header_location(colors.primary)} height={HEADER_ICON_SIZE_LEFT} width={HEADER_ICON_SIZE_LEFT} />
                         </TouchableScale>
                     )}
                     rightCustom={(
-                        <TouchableScale wait={0} style={customheaderStyles.iconContainer}>
+                        <TouchableScale wait={0} onPress={() => {
+                            NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name, { orderID: orderID }, ROUTES.APP_DRAWER_ROUTES.OrderChat.screen_name)
+                        }} style={customheaderStyles.iconContainer}>
                             <SvgXml xml={svgs.order_chat_header_receipt(colors.primary)} height={HEADER_ICON_SIZE_RIGHT} width={HEADER_ICON_SIZE_RIGHT} />
                         </TouchableScale>
                     )}
                     centerCustom={() => (
                         <View style={customheaderStyles.imageNameContainer}>
-                            <Image source={{ uri: 'https://randomuser.me/api/portraits/men/75.jpg' }} style={customheaderStyles.image} tapToOpen={false} />
-                            <Text fontFamily='PoppinsSemiBold' style={customheaderStyles.name} numberOfLines={1}>{`Order ID # ${getRandomInt(1000, 10000)}`}</Text>
+                            <Image source={{ uri: renderFile(riderPicture) }} style={customheaderStyles.image} tapToOpen={false} />
+                            <Text fontFamily='PoppinsSemiBold' style={customheaderStyles.name} numberOfLines={1}>{`Order ID # ${orderID}`}</Text>
                         </View>
                     )}
                     defaultColor={colors.primary}

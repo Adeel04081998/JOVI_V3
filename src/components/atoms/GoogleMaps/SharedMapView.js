@@ -22,6 +22,7 @@ import { useSelector } from "react-redux";
 import { initColors } from '../../../res/colors';
 import View from '../View';
 import Text from '../Text';
+import ENUMS from '../../../utils/ENUMS';
 
 
 const LATITUDE_DELTA = 0.01;
@@ -32,13 +33,12 @@ const FINAL_DESTINATION_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="25
   <path id="Icon_awesome-flag-checkered" data-name="Icon awesome-flag-checkered" d="M11.046,8.463V11.5c1.163.263,2.2.7,3.281.994V9.453c-1.159-.259-2.2-.691-3.281-.99ZM21,2.981A13.016,13.016,0,0,1,15.784,4.4c-2.385,0-4.359-1.551-7.364-1.551a8.666,8.666,0,0,0-3.031.535A2.5,2.5,0,1,0,1.632,4.541v17.21a1.067,1.067,0,0,0,1.07,1.07h.713a1.067,1.067,0,0,0,1.07-1.07V17.543a12.428,12.428,0,0,1,5.1-.985c2.389,0,4.359,1.551,7.364,1.551a9.314,9.314,0,0,0,5.46-1.823,1.422,1.422,0,0,0,.615-1.177V4.273A1.424,1.424,0,0,0,21,2.981ZM7.766,14.508a14.043,14.043,0,0,0-3.281.74V12.105a12.752,12.752,0,0,1,3.281-.776Zm13.123-6a14.218,14.218,0,0,1-3.281,1.065v3.169a8.285,8.285,0,0,0,3.281-1.159V14.73a7.2,7.2,0,0,1-3.281,1.208V12.747a7.54,7.54,0,0,1-3.281-.25v3a26.007,26.007,0,0,0-3.281-.949V11.5a9.908,9.908,0,0,0-3.281-.169V8.209a15.73,15.73,0,0,0-3.281.932V6a12.765,12.765,0,0,1,3.281-.981V8.209a7.582,7.582,0,0,1,3.281.254v-3a25.376,25.376,0,0,0,3.281.949V9.457a8.491,8.491,0,0,0,3.281.12v-3.2a15.771,15.771,0,0,0,3.281-1Z" transform="translate(2.746 0.003)" fill="#272727"/>
 </g>
 </svg>`
-
 export default (props) => {
 
     /******************************************* START OF VARIABLE INITIALIZATION **********************************/
 
     console.log('props ==>>>', props);
-    const { showContinueBtn = false, selectFinalDestination = false,hideBackButton=false, newFinalDestination = null, showCurrentLocationBtn = true, showMarker = false, showDirections = true, customPitstops = null } = props;
+    const { showContinueBtn = false, customCenter = null, riderLocation = null, selectFinalDestination = false, hideBackButton = false, newFinalDestination = null, showCurrentLocationBtn = true, showMarker = false, showDirections = true, customPitstops = null } = props;
 
     const HEIGHT = constants.window_dimensions.height;
     const WIDTH = constants.window_dimensions.width;
@@ -55,11 +55,20 @@ export default (props) => {
     const placeNameRef = useRef(null)
     const [ready, setMapReady] = useState(false)
     const [region, setRegion] = useState(sharedStartingRegionPK)
-
+    const [riderLocationState, setRiderLocationState] = React.useState(riderLocation);
     const styles = mapStyles(colors, HEIGHT, WIDTH, props);
     const { cartReducer, userReducer } = useSelector(store => store);
     const pitstops = customPitstops ?? [...cartReducer.pitstops, { ...userReducer.finalDestObj, isFinalDestination: true }];
-
+    const riderMarkerRef = React.useRef(null);
+    const mapCentered = React.useRef(false)
+    React.useEffect(() => {
+        if (riderLocation && riderLocationState === null) {
+            setRiderLocationState(riderLocation);
+        }
+        if (riderLocationState && riderLocation) {
+            riderMarkerRef.current.animateMarkerToCoordinate(riderLocation)
+        }
+    }, [riderLocation])
     /******************************************* END OF VARIABLE INITIALIZATION **********************************/
 
 
@@ -69,7 +78,7 @@ export default (props) => {
         console.log("[_Direction].pitstops", pitstops);
         if (showDirections) {
             return (pitstops || []).map((pitstop, index) => {
-                return <View>
+                return <View key={index}>
                     <Marker identifier={`marker ${index + 1}`} key={`marker-key${index + 1}`} coordinate={pitstop} anchor={{ x: 0.46, y: 0.7 }}>
                         {
                             pitstop.isFinalDestination ? <View>
@@ -107,7 +116,7 @@ export default (props) => {
                         {
                         ...pitstop.isFinalDestination ? {
                             origin: pitstops[index - 1],
-                            destination: { ...customPitstops?pitstop:userReducer.finalDestObj }
+                            destination: { ...customPitstops ? pitstop : userReducer.finalDestObj }
                         } : {
                             origin: pitstops[index],
                             destination: pitstops[index + 1]
@@ -144,7 +153,6 @@ export default (props) => {
 
 
     const getCurrentPosition = () => {
-
         navigator.geolocation.getCurrentPosition(({ coords: { latitude, longitude } }) => {
             if (props.latitude !== undefined && props.latitude !== null) {
                 mapView?.current?.animateToRegion({
@@ -195,10 +203,19 @@ export default (props) => {
             await hybridLocationPermission();
         }
         locationHandler();
-        getCurrentPosition()
+        if (!customCenter) {
+            getCurrentPosition()
+        }
     }, [ready, props.latitude]);
-
-
+    useEffect(() => {
+        if (customCenter && ready && !mapCentered.current) {
+            mapCentered.current = false;
+            setTimeout(() => {
+                console.log('customCenter', mapView.current);
+                mapView.current && mapView.current.animateToRegion(customCenter);
+            }, 300);
+        }
+    }, [customCenter, ready]);
     /******************************************* END OF FUNCTIONS **********************************/
 
 
@@ -267,6 +284,14 @@ export default (props) => {
             >
                 <FinalDestination />
                 <_Direction />
+                {
+                    riderLocationState ? <Marker flat={true} ref={riderMarkerRef} identifier={`marker rider`} key={`marker-key-rider`} coordinate={riderLocationState} anchor={{ x: 0.46, y: 0.7 }}
+                    >
+                        <View>
+                            <SvgXml xml={svgs.riderIcon()} height={35} width={35} />
+                        </View>
+                    </Marker> : null
+                }
             </MapView>
         )
     }
@@ -324,7 +349,7 @@ export default (props) => {
 
 
     const renderBackBtn = () => {
-        if(hideBackButton) return;
+        if (hideBackButton) return;
         return (
             <TouchableOpacity style={styles.backBtn} onPress={() => {
                 if (props.onBackPress) {

@@ -206,6 +206,7 @@ export default () => {
                 // ref => https://cibak.atlassian.net/browse/TJA-3225 ==> Mudassir
                 // "pitstopDistances": state.pitstopDistances
             };
+            console.log('Final Order Payload',finalOrder);
             postRequest(Endpoints.CreateUpdateOrder, finalOrder, (res) => {
                 console.log('order place res', res);
                 if (res.data.statusCode === 200) {
