@@ -134,7 +134,7 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
                     horizontal={true}
                     flatlistProps={{
                         showsHorizontalScrollIndicator: false,
-                        contentContainerStyle: { marginLeft: 0 }
+                        contentContainerStyle: { marginLeft: 0 ,  paddingRight:10}
                     }}
                 />
             </React.Fragment>
@@ -174,7 +174,7 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
         paddingVertical: 10,
         marginVertical: 5,
         marginLeft: 10,
-        marginRight: 10,
+        // marginRight: 10,
 
     },
     itemContainerSmall: {
@@ -183,13 +183,14 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
         height: 200,
         width: 180,
         borderRadius: 10,
-        marginRight: 10,
+        marginRight: Platform.OS === 'ios'?10: 10,
         // marginHorizontal: 5,
         flex: 1,
         // paddingHorizontal: 10,
         // paddingVertical: 10,
         marginVertical: 5,
         left: 10,
+       
         
     },
     image: {

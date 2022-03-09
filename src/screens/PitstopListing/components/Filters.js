@@ -14,33 +14,33 @@ const SPACING_VERTICAL = 10;
 const FILTER_ICON_HEIGHT = 35;
 const FILTER_ICON_SIZE = 17;
 
-export default ({ filterConfig,screenName='', selectedFilters, parentFilterHandler = () => { }, colors, goToFilters, }) => {
+export default ({ filterConfig, screenName = '', selectedFilters, parentFilterHandler = () => { }, colors, goToFilters, }) => {
     const categoriesTagsReducer = useSelector(state => state.categoriesTagsReducer);
     const filtersList = categoriesTagsReducer?.vendorFilterViewModel?.filtersList ?? [];
-    const [state, setState] = React.useState({ activeTab: null,filtersData:filtersList });
+    const [state, setState] = React.useState({ activeTab: null, filtersData: filtersList });
     const _listRef = React.useRef(null);
-    const {filtersData} = state;
+    const { filtersData } = state;
     const checkSelectedFilter = (item) => {
         // return state.activeTab === item.vendorDashboardCatID;
         return (selectedFilters ?? []).find(x => x === item.vendorDashboardCatID);
     }
     const uniqueArray = a => [...new Set(a.map(o => JSON.stringify(o)))].map(s => JSON.parse(s))
     const onChangeFilter = (item = {}) => {
-    //    const updatedList = [{...item},...state.filtersData];
-       setState(pre => ({ ...pre, activeTab: pre.activeTab === item.vendorDashboardCatID ? null : item.vendorDashboardCatID }));
-    //    setState(pre => ({ ...pre, activeTab: pre.activeTab === item.vendorDashboardCatID ? null : item.vendorDashboardCatID, filtersData:uniqueArray(updatedList) }));
-       parentFilterHandler(item, 'vendorDashboardCatID', 'filter');
-    //    if(_listRef.current){
-    //        _listRef.current.scrollToOffset({ animated: true, offset: 0 });
-    //    }
+        //    const updatedList = [{...item},...state.filtersData];
+        setState(pre => ({ ...pre, activeTab: pre.activeTab === item.vendorDashboardCatID ? null : item.vendorDashboardCatID }));
+        //    setState(pre => ({ ...pre, activeTab: pre.activeTab === item.vendorDashboardCatID ? null : item.vendorDashboardCatID, filtersData:uniqueArray(updatedList) }));
+        parentFilterHandler(item, 'vendorDashboardCatID', 'filter');
+        //    if(_listRef.current){
+        //        _listRef.current.scrollToOffset({ animated: true, offset: 0 });
+        //    }
     }
     const _styles = styles(colors, checkSelectedFilter);
-    React.useEffect(()=>{
-        if(selectedFilters&&selectedFilters.length>0){
-            let selectedFilter = filtersList.find(x => (selectedFilters??[]).includes(x.vendorDashboardCatID));
-            setState(pre=>({...pre,activeTab:selectedFilter,filtersData:uniqueArray([selectedFilter,...filtersList])}));
+    React.useEffect(() => {
+        if (selectedFilters && selectedFilters.length > 0) {
+            let selectedFilter = filtersList.find(x => (selectedFilters ?? []).includes(x.vendorDashboardCatID));
+            setState(pre => ({ ...pre, activeTab: selectedFilter, filtersData: uniqueArray([selectedFilter, ...filtersList]) }));
         }
-    },[]);
+    }, []);
     return (<View style={_styles.parentContainer}>
         {filterConfig.filterTitleShown && <Text numberOfLines={1} fontFamily='PoppinsSemiBold' style={_styles.filterTitle}>
             Filters
@@ -52,15 +52,16 @@ export default ({ filterConfig,screenName='', selectedFilters, parentFilterHandl
             </TouchableScale>}
             <AnimatedFlatlist
                 data={filtersData}
-                flatlistProps={{ref:_listRef}}
+                flatlistProps={{ ref: _listRef }}
                 renderItem={(item, i) => {
-                    return <TouchableScale onPress={()=>onChangeFilter(item)} style={_styles.filterTouchable}>
+                    return <TouchableScale onPress={() => onChangeFilter(item)} style={_styles.filterTouchable}>
                         {VALIDATION_CHECK(item.image) && <SvgXml height={FILTER_ICON_SIZE} width={FILTER_ICON_SIZE} xml={item.image} />}
                         <Text style={{ fontSize: 12, color: 'rgba(0,0,0,0.6)', paddingHorizontal: 5 }} fontFamily={'PoppinsBold'} >{item.name}</Text>
                     </TouchableScale>
                 }}
                 horizontal={true}
-                itemContainerStyleCb={(x,i) => (_styles.filterContainer(x))}
+                itemContainerStyleCb={(x, i) => (_styles.filterContainer(x))}
+                
             />
         </View>
     </View>)
@@ -71,8 +72,9 @@ const styles = (colors, checkSelectedFilter) => {
             height: FILTER_ICON_HEIGHT,
             borderColor: 'rgba(0,0,0,0.4)',
             justifyContent: 'center',
-            paddingHorizontal: 8,
+            paddingHorizontal: 10,
             marginHorizontal: 5,
+            right:5,
             borderRadius: checkSelectedFilter(x) ? 4 : 1,
             backgroundColor: checkSelectedFilter(x) ? colors.primary + '20' : '#fff',
             borderColor: checkSelectedFilter(x) ? colors.primary : '',
@@ -100,10 +102,11 @@ const styles = (colors, checkSelectedFilter) => {
             },
             shadowOpacity: 0.27,
             shadowRadius: 4.65,
-
+            // borderWidth: 1,
+            right: 4,
             elevation: 6,
         },
-        parentContainer: { width: '100%', paddingTop: 10, display: 'flex', justifyContent: 'center', alignContent: 'center'},
+        parentContainer: { width: '100%', paddingTop: 10, display: 'flex', justifyContent: 'center', alignContent: 'center' },
         filterTitle: { fontSize: 15, color: "#272727", paddingVertical: SPACING_VERTICAL },
     });
 }
