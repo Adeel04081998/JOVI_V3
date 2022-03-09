@@ -33,7 +33,6 @@ const defaultProps = {
 
 // #endregion :: INTERFACE END's FROM HERE 
 
-const INDICATOR_WIDTH_MINUS = 0;
 
 const ScrollableList = (props: Props) => {
     const style = stylesFunc(props.colors);
@@ -63,7 +62,7 @@ const ScrollableList = (props: Props) => {
         layout.id = new Date().getTime();
 
         if (widthValue._value === 0 && _idx === 0) {
-            widthValue.setValue(layout.width + INDICATOR_WIDTH_MINUS);
+            widthValue.setValue(layout.width);
         }
 
         let index = tabs.current.findIndex((stab: any) => stab.categoryID === categoryID);
@@ -96,7 +95,7 @@ const ScrollableList = (props: Props) => {
     const handleScroll = (categoryID: any, name: any) => {
         const content = tabs.current.find((singleTab: any) => singleTab.categoryID === categoryID);
         currentTabRef.current = content;
-        widthValue.setValue(content.width + INDICATOR_WIDTH_MINUS);
+        widthValue.setValue(content.width);
 
         scrollRef.current && scrollRef.current.scrollTo({ y: content.yy + 2 })
 
@@ -108,7 +107,7 @@ const ScrollableList = (props: Props) => {
         }).start();
 
         Animated.timing(widthValue, {
-            toValue: content.width * INDICATOR_WIDTH_MINUS,
+            toValue: content.width,
             duration: 100,
             useNativeDriver: false
         }).start()
@@ -145,7 +144,7 @@ const ScrollableList = (props: Props) => {
                 useNativeDriver: true
             }).start();
             Animated.timing(widthValue, {
-                toValue: tab.width + INDICATOR_WIDTH_MINUS,
+                toValue: tab.width,
                 duration: 100,
                 useNativeDriver: false
             }).start()
@@ -233,8 +232,8 @@ const ScrollableList = (props: Props) => {
                     }} style={[style.indicator, {
                         width: widthValue,
                         height: 30,
-                        borderRadius: 15,
-                        top: -30,
+                        borderRadius:  15,
+                        top: -30.9,
                         backgroundColor: 'white',
                         borderWidth: 0.5,
                         borderColor: props.colors.primary,
