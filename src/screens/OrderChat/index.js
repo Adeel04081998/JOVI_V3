@@ -1,10 +1,11 @@
 import AnimatedLottieView from 'lottie-react-native';
 import * as React from 'react';
-import { Appearance, Platform, SafeAreaView, TextInput as RNTextInput } from 'react-native';
+import { Appearance, KeyboardAvoidingView, Platform, SafeAreaView, TextInput as RNTextInput } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { useSelector } from 'react-redux';
 import { GiftedChat } from '../../../libs/react-native-gifted-chat';
 import RecordButton from '../../../libs/react-native-gifted-chat/RecordButton';
+import ChangeWindowManager from '../../../NativeModules/ChangeWindowManager';
 import svgs from '../../assets/svgs';
 import AudioplayerMultiple from '../../components/atoms/AudioplayerMultiple';
 import Image from '../../components/atoms/Image';
@@ -15,7 +16,7 @@ import View from '../../components/atoms/View';
 import CustomHeader, { CustomHeaderIconBorder, CustomHeaderStyles } from '../../components/molecules/CustomHeader';
 import ImageWithTextInput from '../../components/organisms/ImageWithTextInput';
 import NoRecord from '../../components/organisms/NoRecord';
-import { renderFile, sharedExceptionHandler, uuidGenerator, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { renderFile, sharedExceptionHandler, sharedFetchOrder, sharedNotificationHandlerForOrderScreens, uuidGenerator, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { getRequest, multipartPostRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
@@ -37,6 +38,7 @@ let attachmentProps = null;
 export default ({ navigation, route }) => {
 
     // #region :: REDUCER  START's FROM HERE 
+    const fcmReducer = useSelector(store => store.fcmReducer);
     const enumsReducer = useSelector(c => c.enumsReducer);
     const userReducer = store.getState().userReducer;
     const MY_USER = {
@@ -58,6 +60,27 @@ export default ({ navigation, route }) => {
     }
 
     // #endregion :: REDUCER  END's FROM HERE 
+
+    // #region :: FCM HANDLING START's FROM HERE 
+    const goToHome = () => {
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
+    }
+    const orderCancelledOrCompleted = () => {
+        goToHome();
+    }
+
+    React.useEffect(() => {
+        //middle param will be use for rider change
+        sharedNotificationHandlerForOrderScreens(fcmReducer, (prop) => {
+            if (prop?.loadChat) {
+                loadData();
+            }
+        }, orderCancelledOrCompleted);
+        return () => {
+        }
+    }, [fcmReducer]);
+
+    // #endregion :: FCM HANDLING END's FROM HERE 
 
     // #region :: STYLES & THEME START's FROM HERE 
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[PITSTOP_TYPES.JOVI]], Appearance.getColorScheme() === "dark");
@@ -87,7 +110,7 @@ export default ({ navigation, route }) => {
                     )}
                     centerCustom={() => (
                         <View style={customheaderStyles.imageNameContainer}>
-                            <Image source={{ uri: renderFile(riderPicture) }} style={customheaderStyles.image} tapToOpen={false} />
+                            {/* <Image source={{ uri: renderFile(riderPicture) }} style={customheaderStyles.image} tapToOpen={false} /> */}
                             <Text fontFamily='PoppinsSemiBold' style={customheaderStyles.name} numberOfLines={1}>{`Order ID # ${orderID}`}</Text>
                         </View>
                     )}
@@ -112,6 +135,7 @@ export default ({ navigation, route }) => {
     const [messages, setMessages] = React.useState([]);
     const [micTimer, toggleMicTimer] = React.useState(false);
     const [showPickOption, toggleShowPickOption] = React.useState(false);
+    const [riderID, setRiderID] = React.useState('');
 
     // #endregion :: STATE's & REF's END's FROM HERE 
 
@@ -208,12 +232,14 @@ export default ({ navigation, route }) => {
 
     // #endregion :: ON ATTACHMENT PRESS END's FROM HERE 
 
-
     // #region :: API IMPLEMENTATION START's FROM HERE 
-
     React.useEffect(() => {
+        ChangeWindowManager.setAdjustResize();
         loadData();
-        return () => { };
+        getRiderIDFromServer();
+        return () => {
+            ChangeWindowManager.setAdjustPan();
+        };
     }, []);
 
 
@@ -225,12 +251,11 @@ export default ({ navigation, route }) => {
             errorText: '',
         });
 
-        getRequest(`${Endpoints.GET_ORDER_MESSAGE}?orderID=${"63342266"}`, (res) => {
+        getRequest(`${Endpoints.GET_ORDER_MESSAGE}?orderID=${orderID}`, (res) => {
+            console.log('resssss ', res);
             if (res.data.statusCode === 200) {
                 const resData = res.data.chatListV2;
-                let newData = resData.sort(function (a, b) {
-                    return new Date(b.createdAt) - new Date(a.createdAt)
-                })
+                let newData = resData;
 
 
                 // {/* ****************** Start of WHEN USER IS NOT SEND BY BACKEND ****************** */} 
@@ -262,10 +287,21 @@ export default ({ navigation, route }) => {
                 });
                 return
             } else {
+                setMessages([]);
+                const errMessage = res.data?.message ?? 'Something went wrong!';
+                if (`${errMessage}`.trim().toLowerCase() === "record not found") {
+                    updateQuery({
+                        isLoading: false,
+                        error: false,
+                        errorText: '',
+                        data: [],
+                    });
+                    return;
+                }
                 updateQuery({
                     isLoading: false,
                     error: true,
-                    errorText: res.data?.messages ?? 'Something went wrong!',
+                    errorText: errMessage,
                     data: [],
                 });
                 return;
@@ -285,6 +321,19 @@ export default ({ navigation, route }) => {
 
     // #endregion :: API IMPLEMENTATION END's FROM HERE 
 
+    // #region :: GET ORDER DETAIL - USED FOR GETTING RIDER ID START's FROM HERE 
+    const getRiderIDFromServer = () => {
+        sharedFetchOrder(orderID, (res) => {
+            if (res.data.statusCode === 200) {
+                setRiderID(res.data.order.riderID);
+            } else {
+                setRiderID('');
+            }
+        });
+    };
+
+    // #endregion :: GET ORDER DETAIL - USED FOR GETTING RIDER ID END's FROM HERE 
+
     // #region :: SEND MESSAGE TO RIDER START's FROM HERE 
     const onMessageSend = React.useCallback((messages = []) => {
         setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
@@ -293,9 +342,9 @@ export default ({ navigation, route }) => {
     const sendMessageToRider = (type = "", text, item) => {
 
         let formData = new FormData();
-        formData.append("OrderID", "63342266");
-        formData.append("UserID", "3d407674-eae5-4f62-86df-7b1f28bebe2c");//CURRENT USER ID
-        formData.append("ReceiverID", "70ea8ed1-e773-4e0a-a969-f97777187d54"); //RIDER ID
+        formData.append("OrderID", `${orderID}`);
+        formData.append("UserID", MY_USER._id);//CURRENT USER ID
+        formData.append("ReceiverID", riderID); //RIDER ID
         const chatType = getEnumValue(type);
         formData.append("Type", chatType);
         if (item) {
@@ -306,13 +355,17 @@ export default ({ navigation, route }) => {
             });
         }
 
+        if (chatType === CHAT_TYPE_ENUM.audio) {
+            formData.append("AudioDuration", '');
+        }
         if (VALIDATION_CHECK(text)) {
             formData.append("Message", text);
         } else {
             formData.append("Message", item?.text ?? '');
         }
-
-        multipartPostRequest(Endpoints.SEND_MESSAGE_TO_RIDER, formData, (res) => {
+        console.log('resssss 2222 PARAM ', formData);
+        multipartPostRequest(Endpoints.SEND_ORDER_MESSAGE_TO_RIDER, formData, (res) => {
+            console.log('resssss 22222 ', res);
             if ((res.data?.statusCode ?? 400) === 200) {
                 //REQUEST SUCCESSFULLY....
                 return
@@ -383,7 +436,6 @@ export default ({ navigation, route }) => {
                     toggleShowPickOption(false);
                 }}
             />
-
             <GiftedChat
                 ref={giftedChatRef}
                 renderAvatar={null}
@@ -497,13 +549,10 @@ export default ({ navigation, route }) => {
                         </View>
                     )
                 }}
-            // keyboardShouldPersistTaps='never'
-            // {...platformConf}
-            // isKeyboardInternallyHandled
-
+            // subKeyboardHeight
 
             />
-
+            {/* {Platform.OS === 'android' && <KeyboardAvoidingView behavior={'padding'} keyboardVerticalOffset={20} />} */}
         </View>
     )
 

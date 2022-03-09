@@ -140,8 +140,8 @@ export default ({ route }) => {
     const orderCancelledOrCompleted = () => {
         goToHome();
     }
-    const onOrderNavigationPress = (route = '',extraParams={}) => {
-        NavigationService.NavigationActions.common_actions.navigate(route, { orderID: orderIDParam,...extraParams });
+    const onOrderNavigationPress = (route = '', extraParams = {}) => {
+        NavigationService.NavigationActions.common_actions.navigate(route, { orderID: orderIDParam, ...extraParams });
     }
     React.useEffect(() => {
         fetchOrderDetails();
@@ -209,7 +209,7 @@ export default ({ route }) => {
                 {renderUI[state.subStatusName ?? ORDER_STATUSES.Processing]()}
             </View>
             <View style={styles.orderNavigationContainer}>
-                <TouchableOpacity disabled={!isRiderFound} onPress={() => onOrderNavigationPress(ROUTES.APP_DRAWER_ROUTES.OrderChat.screen_name,{riderProfilePic:state.userPic})} style={{ ...styles.orderNavigationButton, backgroundColor: isRiderFound ? colors.primary : colors.grey }}>
+                <TouchableOpacity disabled={!isRiderFound} onPress={() => onOrderNavigationPress(ROUTES.APP_DRAWER_ROUTES.OrderChat.screen_name, { riderProfilePic: state.userPic, })} style={{ ...styles.orderNavigationButton, backgroundColor: isRiderFound ? colors.primary : colors.grey }}>
                     <VectorIcon size={25} name={'md-chatbubble-ellipses'} type={'Ionicons'} color={colors.white} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => onOrderNavigationPress(ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name)} style={styles.orderNavigationButton}>
@@ -236,7 +236,7 @@ export default ({ route }) => {
                     rightIconName={'home'}
                     leftIconColor={colors.black}
                 />
-                <SharedMapView
+               {/* <SharedMapView
                     hideBackButton
                     // latitude={props.route?.params?.finalDestObj.latitude}
                     // longitude={props.route?.params?.finalDestObj.longitude}
@@ -256,7 +256,7 @@ export default ({ route }) => {
                     // selectFinalDestination={true}
                     onMapPress={() => {
 
-                    }} />
+                    }} /> */}
             </View>
             <Animated.View style={{
                 ...styles.bottomViewContainer, opacity: loadAnimation, transform: [{

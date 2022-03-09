@@ -66,7 +66,8 @@ export default (props) => {
             setRiderLocationState(riderLocation);
         }
         if (riderLocationState && riderLocation) {
-            riderMarkerRef.current.animateMarkerToCoordinate(riderLocation)
+            // riderMarkerRef.current.animateMarkerToCoordinate(riderLocation)
+            setRiderLocationState(riderLocation);
         }
     }, [riderLocation])
     /******************************************* END OF VARIABLE INITIALIZATION **********************************/
