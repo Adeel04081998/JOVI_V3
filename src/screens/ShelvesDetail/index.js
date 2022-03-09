@@ -26,7 +26,7 @@ import { sectionHeaderItemStyleFunc, stylesFunc } from './styles';
 // #region :: CONSTANT's START's FROM HERE 
 const WINDOW_WIDTH = constants.screen_dimensions.width;
 
-const ITEM_IMAGE_SIZE = WINDOW_WIDTH * 0.39;
+const ITEM_IMAGE_SIZE = WINDOW_WIDTH * 0.29;
 
 const PITSTOP_ITEM_LIST_MAX_COUNT = 5;
 
