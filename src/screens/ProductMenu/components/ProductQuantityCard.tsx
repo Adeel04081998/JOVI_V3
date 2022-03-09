@@ -2,12 +2,14 @@ import { useIsFocused } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
+import { number } from 'yargs';
 import Text from '../../../components/atoms/Text';
 import TouchableOpacity from '../../../components/atoms/TouchableOpacity';
 import VectorIcon from '../../../components/atoms/VectorIcon';
 import View from '../../../components/atoms/View';
 import AppStyles from '../../../res/AppStyles';
 import { initColors } from '../../../res/colors';
+import constants from '../../../res/constants';
 import FontFamily from '../../../res/FontFamily';
 
 // #region :: INTERFACE START's FROM HERE 
@@ -20,6 +22,7 @@ interface Props {
     outOfStockText?: string;
     pitstopItemID: number | string;
     marketID: number | string;
+    screenName : number
 }
 
 const defaultProps = {
@@ -27,13 +30,16 @@ const defaultProps = {
     updateQuantity: undefined,
     initialQuantity: 0,
     outOfStock: false,
-    outOfStockText: 'Out of stock'
+    outOfStockText: 'Out of stock',
+    screenName:1
 };
 
 // #endregion :: INTERFACE END's FROM HERE 
 
 const ProductQuantityCard = (props: Props) => {
-    const ITEM_SIZE = props?.size ?? defaultProps.size;
+    // const ITEM_SIZE = props?.size ?? defaultProps.size;
+    const ITEM_SIZE = props.screenName === 2? constants.window_dimensions.width * 0.35 : props.size;
+
     const cartReducer = useSelector((store: any) => { return store.cartReducer; });
     const isFocused = useIsFocused();
     const colors = props.colors;
@@ -131,6 +137,7 @@ const ProductQuantityCard = (props: Props) => {
                         </>
                     }
                     <TouchableOpacity wait={0} onPress={incrementQuantity}
+                    style={{}}
                         hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}>
                         <VectorIcon color={colors.primary} name="plus" type="Feather" size={ITEM_SIZE * 0.15} />
                     </TouchableOpacity>

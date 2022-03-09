@@ -18,6 +18,7 @@ import constants from '../../res/constants';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import ProductMenuItemCard from '../ProductMenu/components/ProductMenuItemCard';
+import GotoCartButton from '../RestaurantProductMenu/components/GotoCartButton';
 import ScrollableList from './Components/ScrollableList';
 import { sectionHeaderItemStyleFunc, stylesFunc } from './styles';
 
@@ -25,7 +26,7 @@ import { sectionHeaderItemStyleFunc, stylesFunc } from './styles';
 // #region :: CONSTANT's START's FROM HERE 
 const WINDOW_WIDTH = constants.screen_dimensions.width;
 
-const ITEM_IMAGE_SIZE = WINDOW_WIDTH * 0.29;
+const ITEM_IMAGE_SIZE = WINDOW_WIDTH * 0.39;
 
 const PITSTOP_ITEM_LIST_MAX_COUNT = 5;
 
@@ -402,6 +403,7 @@ export default ({ navigation, route }) => {
                                             ...getPricesForProductMenuItemCard(item),
                                         }
                                     }}
+                                    screenName={2}
 
                             />
                         )
@@ -410,6 +412,7 @@ export default ({ navigation, route }) => {
                 />
 
             }
+            <GotoCartButton colors={colors} />
         </SafeAreaView>
     )
 };//end of EXPORT DEFAULT

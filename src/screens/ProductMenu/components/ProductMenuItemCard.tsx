@@ -36,6 +36,7 @@ interface ProductMenuItemCardItem {
 interface Props {
     index: number;
     itemImageSize: number;
+    screenName: number; // 1 for SupermarketMenu 2 for  Shelves
     colors: typeof initColors;
     item: ProductMenuItemCardItem,
     updateQuantity?: (quantity: number) => void;
@@ -55,13 +56,15 @@ const defaultProps = {
     disabled: false,
     seeAll: false,
     additionalCount: 1,
+    screenName: 1 // 1 for SupermarketMenu 2 for  Shelves
+
 };
 
 // #endregion :: INTERFACE END's FROM HERE 
 
 const ProductMenuItemCard = (props: Props) => {
     const ITEM_IMAGE_SIZE = props.itemImageSize;
-
+    const screenName = props.screenName
     const itemStyles = itemStylesFunc(props.colors, ITEM_IMAGE_SIZE);
 
     return (
@@ -133,9 +136,11 @@ const ProductMenuItemCard = (props: Props) => {
                                 initialQuantity={props.item.quantity}
                                 colors={props.colors}
                                 size={ITEM_IMAGE_SIZE}
+                                screenName={screenName}
                                 updateQuantity={(quantity) => {
                                     props.updateQuantity && props.updateQuantity(quantity);
                                 }}
+
                             />
 
 
