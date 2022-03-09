@@ -20,6 +20,7 @@ export default ({ filterConfig, screenName = '', selectedFilters, parentFilterHa
     const [state, setState] = React.useState({ activeTab: null, filtersData: filtersList });
     const _listRef = React.useRef(null);
     const { filtersData } = state;
+    const isFilterIcon = filterConfig.filterScreenIcon
     const checkSelectedFilter = (item) => {
         // return state.activeTab === item.vendorDashboardCatID;
         return (selectedFilters ?? []).find(x => x === item.vendorDashboardCatID);
@@ -42,11 +43,11 @@ export default ({ filterConfig, screenName = '', selectedFilters, parentFilterHa
         }
     }, []);
     return (<View style={_styles.parentContainer}>
-        {filterConfig.filterTitleShown && <Text numberOfLines={1} fontFamily='PoppinsSemiBold' style={_styles.filterTitle}>
+        { isFilterIcon && <Text numberOfLines={1} fontFamily='PoppinsSemiBold' style={_styles.filterTitle}>
             Filters
         </Text>}
-        <View style={_styles.scrollParent}>
-            {filterConfig.filterScreenIcon && <TouchableScale onPress={goToFilters} style={_styles.filterIcon}>
+        <View style={[_styles.scrollParent, { marginHorizontal: isFilterIcon ? 0 : -10, paddingLeft: isFilterIcon ? 0 : 10 }]}>
+            {isFilterIcon && <TouchableScale onPress={goToFilters} style={_styles.filterIcon}>
                 {/* <VectorIcon name={'filter'} type={'AntDesign'} size={17} color={'black'} style={{ marginRight: 2 }} /> */}
                 <SvgXml height={20} width={20} xml={svgs.filter()} style={{ margin: 5 }} />
             </TouchableScale>}
@@ -61,7 +62,7 @@ export default ({ filterConfig, screenName = '', selectedFilters, parentFilterHa
                 }}
                 horizontal={true}
                 itemContainerStyleCb={(x, i) => (_styles.filterContainer(x))}
-                
+
             />
         </View>
     </View>)
@@ -74,7 +75,7 @@ const styles = (colors, checkSelectedFilter) => {
             justifyContent: 'center',
             paddingHorizontal: 10,
             marginHorizontal: 5,
-            right:5,
+            right: 5,
             borderRadius: checkSelectedFilter(x) ? 4 : 1,
             backgroundColor: checkSelectedFilter(x) ? colors.primary + '20' : '#fff',
             borderColor: checkSelectedFilter(x) ? colors.primary : '',
