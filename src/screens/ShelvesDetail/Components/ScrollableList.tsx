@@ -97,7 +97,7 @@ const ScrollableList = (props: Props) => {
         const content = tabs.current.find((singleTab: any) => singleTab.categoryID === categoryID);
         currentTabRef.current = content;
         widthValue.setValue(content.width + INDICATOR_WIDTH_MINUS);
-        
+
         scrollRef.current && scrollRef.current.scrollTo({ y: content.yy + 2 })
 
         Animated.timing(value, {
@@ -192,7 +192,7 @@ const ScrollableList = (props: Props) => {
             }
         }, [props.data]);
         return (
-            <View style={{ paddingTop: 5, height: 55 , marginHorizontal:10}}>
+            <View style={{ paddingTop: 5, height: 55, marginHorizontal: 10 }}>
                 <View style={[style.row]}>
                     {props.data && props.data.map((food: any, i: number) => (
                         <>
@@ -209,6 +209,9 @@ const ScrollableList = (props: Props) => {
                                     borderColor: "#707070",
                                     marginRight: 6,
                                     borderRadius: 26,
+                                    // paddingVertical:3,
+                                    height: 30,
+                                  
                                 }}
                             >
                                 <Text style={[style.tab, {
@@ -373,9 +376,9 @@ const stylesFunc = (colors: typeof initColors) => StyleSheet.create({
         color: "#272727",
         fontSize: 12,
         textAlign: "center",
-        paddingVertical: 6,
+        // paddingVertical: 10,
+        marginVertical: 5,
         paddingHorizontal: 26,
-
         // color: "grey",
         // fontWeight: "bold",
         // textTransform: "uppercase",

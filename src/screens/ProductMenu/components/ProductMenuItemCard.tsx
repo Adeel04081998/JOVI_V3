@@ -11,6 +11,7 @@ import View from '../../../components/atoms/View';
 import { renderFile, renderPrice, uniqueKeyExtractor, VALIDATION_CHECK } from '../../../helpers/SharedActions';
 import AppStyles from '../../../res/AppStyles';
 import { initColors } from '../../../res/colors';
+import constants from '../../../res/constants';
 import FontFamily from '../../../res/FontFamily';
 import ENUMS from '../../../utils/ENUMS';
 import ProductQuantityCard from './ProductQuantityCard';
@@ -144,13 +145,13 @@ const ProductMenuItemCard = (props: Props) => {
                     {/* ****************** End of IMAGE & QUANTITY ****************** */}
 
                     {/* ****************** Start of NAME/TITLE ****************** */}
-                    <Text style={itemStyles.name} numberOfLines={1}>{`${props.item.name}`}</Text>
+                    <Text style={[itemStyles.name, {}]} numberOfLines={2}>{`${props.item.name}`}</Text>
 
                     {/* ****************** End of NAME/TITLE ****************** */}
 
 
                     {/* ****************** Start of MAIN PRICE  ****************** */}
-                    <Text fontFamily='PoppinsBold' style={itemStyles.price}>{renderPrice({price:props.item.discountedPrice,showZero:true})}</Text>
+                    <Text fontFamily='PoppinsBold' style={itemStyles.price}>{renderPrice({ price: props.item.discountedPrice, showZero: true })}</Text>
 
                     {/* ****************** End of MAIN PRICE  ****************** */}
 
@@ -222,9 +223,13 @@ export const itemStylesFunc = (colors: typeof initColors, ITEM_IMAGE_SIZE: numbe
     name: {
         color: "#6B6B6B",
         fontSize: 9,
-        paddingTop: 4,
-        paddingBottom: 4,
+        // paddingTop: 4,
+        // paddingBottom: 4,
         maxWidth: ITEM_IMAGE_SIZE - 20,
+        height: 35,
+        marginTop:10,
+       
+
     },
     discountPrice: {
         color: "#C1C1C1",

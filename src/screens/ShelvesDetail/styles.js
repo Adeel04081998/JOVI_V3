@@ -7,7 +7,7 @@ import FontFamily from "../../res/FontFamily";
 export const stylesFunc = (colors = initColors) => StyleSheet.create({
     primaryContainer: {
         flex: 1,
-        backgroundColor: colors.white,
+        backgroundColor: '#F8F8F8',
     },
 
 })
