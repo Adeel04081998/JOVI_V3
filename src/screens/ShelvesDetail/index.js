@@ -376,6 +376,9 @@ export default ({ navigation, route }) => {
                                 }}
                                 itemContainerStyle={{
                                     marginRight: 0,
+                                    marginVertical:8,
+                                    // paddingTop:0,
+                                    // borderWidth:1
                                 }}
                                 colors={colors}
                                 index={index}

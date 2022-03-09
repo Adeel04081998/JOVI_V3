@@ -227,8 +227,8 @@ export const itemStylesFunc = (colors: typeof initColors, ITEM_IMAGE_SIZE: numbe
         // paddingBottom: 4,
         maxWidth: ITEM_IMAGE_SIZE - 20,
         height: 35,
-        marginTop:10,
-       
+        marginTop: 10,
+
 
     },
     discountPrice: {

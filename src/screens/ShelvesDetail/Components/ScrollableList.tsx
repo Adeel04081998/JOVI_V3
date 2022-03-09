@@ -192,7 +192,7 @@ const ScrollableList = (props: Props) => {
             }
         }, [props.data]);
         return (
-            <View style={{ paddingTop: 5, height: 55, marginHorizontal: 10 }}>
+            <View style={{ paddingTop: 5, height: 45, marginHorizontal: 10 }}>
                 <View style={[style.row]}>
                     {props.data && props.data.map((food: any, i: number) => (
                         <>
@@ -203,18 +203,21 @@ const ScrollableList = (props: Props) => {
                                 onPress={e => handleScroll(food.categoryID, food.categoryName)}
                                 onLayout={e => handleTab(food.categoryID, food.categoryName, e.nativeEvent.layout, i)}
                                 style={{
-                                    backgroundColor: "#F2F1F6",
+                                    backgroundColor: "#FFFFFF",
                                     borderWidth: 0.2,
-                                    // borderColor: "#F2F1F6",
-                                    borderColor: "#707070",
+                                    borderColor: "#FFFFFF",
+                                    // borderColor: "#707070",
                                     marginRight: 6,
-                                    borderRadius: 26,
+                                    borderRadius: 15,
                                     // paddingVertical:3,
-                                    height: 30,
-                                  
+                                    // height: 30,
+                                    // width:'17%',
+
+
                                 }}
                             >
-                                <Text style={[style.tab, {
+                                <Text style={[{
+                                    right: 0, paddingHorizontal: 10, paddingVertical: 4,
                                 }]} >{food.categoryName}</Text>
                             </TouchableScale>
                         </>
@@ -230,10 +233,10 @@ const ScrollableList = (props: Props) => {
                     }} style={[style.indicator, {
                         width: widthValue,
                         height: 30,
-                        borderRadius: 26,
+                        borderRadius: 15,
                         top: -30,
                         backgroundColor: 'white',
-                        borderWidth: 1,
+                        borderWidth: 0.5,
                         borderColor: props.colors.primary,
                         alignItems: "center",
                         justifyContent: "center",
@@ -243,6 +246,7 @@ const ScrollableList = (props: Props) => {
                             fontSize: 12,
                             textAlign: "center",
                             overflow: "hidden",
+                            opacity: 1,
 
                         }]} >{currentTabState?.categoryName ?? currentTabState?.name}</Text>
                     </Animated.View>
@@ -378,6 +382,7 @@ const stylesFunc = (colors: typeof initColors) => StyleSheet.create({
         textAlign: "center",
         // paddingVertical: 10,
         marginVertical: 5,
+        // left:3,
         paddingHorizontal: 26,
         // color: "grey",
         // fontWeight: "bold",

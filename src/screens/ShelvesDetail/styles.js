@@ -19,7 +19,7 @@ export const sectionHeaderItemStyleFunc = (colors) => StyleSheet.create({
         justifyContent: "space-between",
         paddingBottom: 10,
         // paddingTop: 20,
-        top: -5,
+        paddingVertical:10,
         paddingHorizontal: constants.spacing_horizontal,
     },
     title: {
