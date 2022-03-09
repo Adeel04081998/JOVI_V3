@@ -141,7 +141,7 @@ export default ({ route }) => {
             </View>
         }
         return <View style={styles.footerContainer}>
-            {isRiderFound && <><TouchableOpacity onPress={() => openDialer(userReducer?.customerHelpNumber)} style={styles.footerItemContainer}>
+            {isRiderFound && <><TouchableOpacity onPress={() => openDialer(state?.riderContactNo)} style={styles.footerItemContainer}>
                 {renderCallIcon()}
                 <Text style={{ marginLeft: 10, color: colors.black }}>Jovi Rider</Text>
             </TouchableOpacity>
