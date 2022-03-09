@@ -27,6 +27,9 @@ import FontFamily from '../../res/FontFamily';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import { headerStyles, stylesFunc } from './styles';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat)
 
 const HEADER_ICON_SIZE_LEFT = CustomHeaderIconBorder.size * 0.7;
 const HEADER_ICON_SIZE_RIGHT = CustomHeaderIconBorder.size * 0.6;
@@ -257,6 +260,13 @@ export default ({ navigation, route }) => {
                 const resData = res.data.chatListV2;
                 let newData = resData;
 
+                newData = newData.map(i => {
+                    const date = dayjs(i.createdAt, constants.server_time_format);
+                    return {
+                        ...i,
+                        createdAt: new Date(date),
+                    }
+                });
 
                 // {/* ****************** Start of WHEN USER IS NOT SEND BY BACKEND ****************** */} 
                 // at time of implementation we request for updation that's why we are adding below code
