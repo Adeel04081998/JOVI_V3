@@ -1,6 +1,6 @@
 import AnimatedLottieView from 'lottie-react-native';
 import * as React from 'react';
-import { Appearance, Platform, SafeAreaView, Text as RNText, TextInput as RNTextInput } from 'react-native';
+import { Appearance, Platform, SafeAreaView, TextInput as RNTextInput } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { useSelector } from 'react-redux';
 import { GiftedChat } from '../../../libs/react-native-gifted-chat';
@@ -14,33 +14,33 @@ import TouchableScale from '../../components/atoms/TouchableScale';
 import View from '../../components/atoms/View';
 import CustomHeader, { CustomHeaderIconBorder, CustomHeaderStyles } from '../../components/molecules/CustomHeader';
 import ImageWithTextInput from '../../components/organisms/ImageWithTextInput';
-import { sharedLaunchCameraorGallery } from '../../helpers/Camera';
-import { getRandomInt, sharedConfirmationAlert, sharedExceptionHandler, uuidGenerator, VALIDATION_CHECK } from '../../helpers/SharedActions';
-import { multipartPostRequest, postRequest } from '../../manager/ApiManager';
+import NoRecord from '../../components/organisms/NoRecord';
+import { getRandomInt, renderFile, sharedExceptionHandler, uuidGenerator, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { getRequest, multipartPostRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import { store } from '../../redux/store';
 import constants from '../../res/constants';
 import FontFamily from '../../res/FontFamily';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
-import { CHAT_STATIC_DATA, IMAGES_STATIC } from './StaticData';
 import { headerStyles, stylesFunc } from './styles';
 
 const HEADER_ICON_SIZE_LEFT = CustomHeaderIconBorder.size * 0.7;
 const HEADER_ICON_SIZE_RIGHT = CustomHeaderIconBorder.size * 0.6;
 
-const DATA = CHAT_STATIC_DATA(40, 20);
-const MY_USER_ID = DATA.MY_USER_ID;
-const MY_USER = DATA.MY_USER;
 const CHAT_TYPE_ENUM = { image: "image", audio: "audio", text: "text" };
 const padToTwo = (number) => (number <= 9 ? `0${number}` : number);
 let attachmentProps = null;
 
 export default ({ navigation, route }) => {
 
+    // #region :: REDUCER  START's FROM HERE 
     const enumsReducer = useSelector(c => c.enumsReducer);
     const userReducer = store.getState().userReducer;
-
+    const MY_USER = {
+        _id: userReducer.id,
+        name: `${userReducer.firstName} ${userReducer.lastName}`,
+    }
     const getEnumValue = (value) => {
         const ChatFileTypeEnum = enumsReducer.ChatFileTypeEnum;
         let typeNo = 0;
@@ -52,6 +52,8 @@ export default ({ navigation, route }) => {
         }
         return typeNo;
     }
+
+    // #endregion :: REDUCER  END's FROM HERE 
 
     // #region :: STYLES & THEME START's FROM HERE 
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[PITSTOP_TYPES.JOVI]], Appearance.getColorScheme() === "dark");
@@ -99,35 +101,12 @@ export default ({ navigation, route }) => {
         isLoading: false,
         error: false,
         errorText: '',
-        refreshing: false,
     });
     const [messages, setMessages] = React.useState([]);
-    const [images, setImages] = React.useState([]);
     const [micTimer, toggleMicTimer] = React.useState(false);
     const [showPickOption, toggleShowPickOption] = React.useState(false);
 
     // #endregion :: STATE's & REF's END's FROM HERE 
-
-    // #region :: LOADING AND ERROR UI START's FROM HERE 
-    if (query.isLoading) {
-        return <View style={styles.primaryContainer}>
-            {_renderHeader()}
-            <AnimatedLottieView
-                source={require('../../assets/gifs/Processingloading.json')}
-                autoPlay
-                loop
-                style={{
-                    height: '100%',
-                    width: "100%",
-                    alignSelf: "center",
-                    marginTop: 10,
-                    marginBottom: 15,
-                }}
-            />
-        </View>
-    }
-
-    // #endregion :: LOADING AND ERROR UI END's FROM HERE 
 
     // #region :: STOPWATCH START's FROM HERE 
     const timerTextRef = React.useRef(null);
@@ -214,26 +193,96 @@ export default ({ navigation, route }) => {
 
     // #endregion :: STOPWATCH END's FROM HERE 
 
+    // #region :: ON ATTACHMENT PRESS START's FROM HERE 
     const onAttachmentPress = (props) => {
         attachmentProps = props;
         toggleShowPickOption(true);
     }
 
+    // #endregion :: ON ATTACHMENT PRESS END's FROM HERE 
+
+
+    // #region :: API IMPLEMENTATION START's FROM HERE 
+
     React.useEffect(() => {
-        console.log('enumsReducer ,', enumsReducer);
-        const newData = DATA.data.sort(function (a, b) {
-            return new Date(b.createdAt) - new Date(a.createdAt)
+        loadData();
+        return () => { };
+    }, []);
+
+
+    const loadData = () => {
+        updateQuery({
+            data: [],
+            isLoading: true,
+            error: false,
+            errorText: '',
+        });
+
+        getRequest(`${Endpoints.GET_ORDER_MESSAGE}?orderID=${"63342266"}`, (res) => {
+            if (res.data.statusCode === 200) {
+                const resData = res.data.chatListV2;
+                let newData = resData.sort(function (a, b) {
+                    return new Date(b.createdAt) - new Date(a.createdAt)
+                })
+
+
+                // {/* ****************** Start of WHEN USER IS NOT SEND BY BACKEND ****************** */} 
+                // at time of implementation we request for updation that's why we are adding below code
+                if (newData.length > 0) {
+                    if (!("user" in newData[0])) {
+                        newData = newData.map((i) => {
+                            return {
+                                ...i,
+                                user: {
+                                    "_id": i.senderID,
+                                    "name": i.senderName,
+                                    "image": i.senderPicture,
+                                }
+                            }
+                        })
+                    }
+                }
+
+                // {/* ****************** End of WHEN USER IS NOT SEND BY BACKEND ****************** */}
+
+                setMessages(newData);
+
+                updateQuery({
+                    isLoading: false,
+                    error: false,
+                    errorText: '',
+                    data: newData,
+                });
+                return
+            } else {
+                updateQuery({
+                    isLoading: false,
+                    error: true,
+                    errorText: res.data?.messages ?? 'Something went wrong!',
+                    data: [],
+                });
+                return;
+            }
+
+
+        }, (err) => {
+            sharedExceptionHandler(err);
+            updateQuery({
+                errorText: sharedExceptionHandler(err),
+                isLoading: false,
+                error: true,
+                data: [],
+            })
         })
+    };//end of loadData
 
-        setMessages(newData);
-        return () => { }
-    }, [])
+    // #endregion :: API IMPLEMENTATION END's FROM HERE 
 
+    // #region :: SEND MESSAGE TO RIDER START's FROM HERE 
     const onMessageSend = React.useCallback((messages = []) => {
         setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
     }, []);
 
-    // #region :: SEND MESSAGE TO RIDER START's FROM HERE 
     const sendMessageToRider = (type = "", text, item) => {
 
         let formData = new FormData();
@@ -242,7 +291,6 @@ export default ({ navigation, route }) => {
         formData.append("ReceiverID", "70ea8ed1-e773-4e0a-a969-f97777187d54"); //RIDER ID
         const chatType = getEnumValue(type);
         formData.append("Type", chatType);
-        console.log('SEND_MESSAGE_TO_RIDER item ', item);
         if (item) {
             formData.append("File", {
                 uri: Platform.OS === 'android' ? item.uri : item.uri.replace("file://", ""),
@@ -257,25 +305,54 @@ export default ({ navigation, route }) => {
             formData.append("Message", item?.text ?? '');
         }
 
-
-        console.log('SEND_MESSAGE_TO_RIDER formData --- ', formData);
-
         multipartPostRequest(Endpoints.SEND_MESSAGE_TO_RIDER, formData, (res) => {
-            console.log('SEND_MESSAGE_TO_RIDER', res);
             if ((res.data?.statusCode ?? 400) === 200) {
                 //REQUEST SUCCESSFULLY....
                 return
             }
 
-
         }, (err) => {
-            console.log('SEND_MESSAGE_TO_RIDER ERROR ', err);
             sharedExceptionHandler(err);
         }, false, { Authorization: `Bearer ${userReducer?.token?.authToken}` });
-    }//end of sendMessageToRider    
+    };//end of sendMessageToRider    
 
     // #endregion :: SEND MESSAGE TO RIDER END's FROM HERE 
 
+    // #region :: LOADING AND ERROR UI START's FROM HERE 
+    if (query.isLoading) {
+        return <View style={styles.primaryContainer}>
+            {_renderHeader()}
+            <View style={{
+                flex: 1,
+                marginTop: -80,
+                alignItems: "center",
+                justifyContent: "center",
+            }}>
+                <AnimatedLottieView
+                    source={require('../../assets/LoadingView/OrderChat.json')}
+                    autoPlay
+                    loop
+                    style={{
+                        height: 120,
+                        width: 120,
+                    }}
+                />
+            </View>
+        </View>
+    } else if (query.error) {
+        return <View style={styles.primaryContainer}>
+            {_renderHeader()}
+            <NoRecord
+                color={colors}
+                title={query.errorText}
+                buttonText={`Refresh`}
+                onButtonPress={() => { loadData() }} />
+        </View>
+    }
+
+    // #endregion :: LOADING AND ERROR UI END's FROM HERE 
+
+    // #region :: UI START's FROM HERE 
     return (
         <View style={styles.primaryContainer}>
             {_renderHeader()}
@@ -307,14 +384,16 @@ export default ({ navigation, route }) => {
                 showUserAvatar={false}
                 messages={messages}
                 onSend={messages => onMessageSend(messages)}
-                user={MY_USER_ID}
+                user={{ _id: userReducer.id }}
+
                 {...micTimer && {
                     renderComposer: renderMicTimer
                 }}
                 renderMessageAudio={(props) => {
                     const currentMessage = props.currentMessage;
-                    const isMyUser = currentMessage.user._id === MY_USER_ID._id;
-                    const audioMessage = JSON.parse(currentMessage.audio);
+                    const isMyUser = currentMessage.user._id === userReducer.id;
+
+                    const audioMessage = renderFile(currentMessage.audio);
                     return (
                         <View style={{ paddingTop: 6, }}>
                             <AudioplayerMultiple
@@ -334,7 +413,7 @@ export default ({ navigation, route }) => {
                                     }
                                 }}
                                 timeContainerStyle={{}}
-                                audioURL={audioMessage.uri}
+                                audioURL={audioMessage}
                                 // forceStopAll={isDeleted || forceDeleted}
                                 width={Platform.OS === "ios" ? "90%" : "95%"}
                             />
@@ -420,4 +499,7 @@ export default ({ navigation, route }) => {
 
         </View>
     )
+
+    // #endregion :: UI END's FROM HERE 
+
 };//end of EXPORT DEFAULT
