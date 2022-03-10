@@ -60,7 +60,7 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                     <View style={checkOutStyles.gstPrimaryContainer}>
                         <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular' >Service Charges</Text>
                         <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular'>{` (incl S.T ${renderPrice(sharedCalculatedTotals().serviceTax, '')})`}</Text>
-                        <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
+                        <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 , }}>
                             <Text style={checkOutStyles.gstCommonPriceTxtStyle} fontFamily='PoppinsRegular'>{`${renderPrice({ showZero: true, price: sharedCalculatedTotals().serviceCharges })}`}</Text>
                         </View>
                     </View>
@@ -69,11 +69,11 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                 <View style={{ marginHorizontal: 1 }}>
                     <DashedLine dashLineStyles={{ color: "#707070" }} />
                 </View>
-                <View style={{ flex: 1, flexDirection: 'column', marginHorizontal: 12 }}>
+                <View style={{ flex: 1, flexDirection: 'column', marginHorizontal: 12 , borderWidth:0, }}>
                     <View style={{ flexDirection: "row", flex: 1 }}>
-                        <Text style={[checkOutStyles.gstCommonLabelTxtStyle, { textAlignVertical: 'center' }]} fontFamily='PoppinsRegular'>Discount</Text>
+                        <Text style={[checkOutStyles.gstCommonLabelTxtStyle, { textAlignVertical: 'center', }]} fontFamily='PoppinsRegular'>Discount</Text>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1, }}>
-                            {<Text style={[checkOutStyles.gstCommonPriceTxtStyle, { textAlignVertical: 'center' }]} fontFamily='PoppinsRegular'>{`${renderPrice({ showZero: true, price: sharedCalculatedTotals().discount }, 'Rs -')}`}</Text>}
+                            {<Text style={[checkOutStyles.gstCommonPriceTxtStyle, { textAlignVertical: 'center', }]} fontFamily='PoppinsRegular'>{`${renderPrice({ showZero: true, price: sharedCalculatedTotals().discount }, 'Rs -')}`}</Text>}
                         </View>
                     </View>
                 </View>
@@ -106,9 +106,9 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
     return (
         <AnimatedView style={checkOutStyles.receiptMainContainer}>
             <View style={checkOutStyles.receiptPrimaryContainer}>
-                <SvgXml xml={svgs.compliance()}></SvgXml>
+                <SvgXml xml={svgs.compliance()} style={{ top: 2 }}></SvgXml>
                 <Text style={checkOutStyles.orderReciptTxt} fontFamily='PoppinsSemiBold'>Order Receipt</Text>
-                <TouchableOpacity style={{ position: 'absolute', right: 0 }} onPress={onShowDetails} >
+                <TouchableOpacity style={{ position: 'absolute', right: 0, paddingVertical: 2, borderWidth: 0 }} onPress={onShowDetails}  >
                     <Text style={checkOutStyles.detailTxt} fontFamily='PoppinsMedium'>Details</Text>
                 </TouchableOpacity>
             </View>
