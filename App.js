@@ -23,7 +23,6 @@ import BottomAllignedModal from './src/components/atoms/BottomAllignedModal';
 import View from './src/components/atoms/View';
 import Robot from './src/components/organisms/Robot';
 import { sharedClearReducers, sharedGetDashboardCategoryIApi, sharedGetEnumsApi, sharedGetFilters, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser, sharedSendFCMTokenToServer } from './src/helpers/SharedActions';
-import useNetInfo from './src/hooks/useNetInfo';
 import RootStack from "./src/navigations";
 import { _NavgationRef } from './src/navigations/NavigationService';
 import Modal from './src/components/atoms/Modal';
@@ -38,6 +37,7 @@ import CheckOut from './src/screens/CheckOut';
 import Map from './src/screens/Map';
 import { env } from './src/utils/configs';
 import GV from './src/utils/GV';
+import NoInternetModal from "./src/components/atoms/NoInternetModal";
 
 
 // #region :: VECTOR ICON LOAD START's FROM HERE 
@@ -69,11 +69,8 @@ const CODE_PUSH_OPTIONS = {
 };
 
 const App = () => {
-    const netInfo = useNetInfo();
     const { visible } = useSelector(state => state.modalReducer)
-    GV.NET_INFO_REF.current = netInfo;
     const [state, setState] = React.useState({ appLoaded: false });
-    // console.log("netInfo", netInfo)
     const isDarkMode = useColorScheme() === "dark";
     const theme = isDarkMode ? {
         ...DefaultTheme,
@@ -148,12 +145,6 @@ const App = () => {
         <SafeAreaProvider>
             <SafeAreaView style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
                 <StatusBar backgroundColor={'#fff'} barStyle={"dark-content"} />
-                {/* {
-          Platform.OS === "ios" ?
-            <StatusBar backgroundColor={'transparent'} barStyle={isDarkMode ? "light-content" : "dark-content"} />
-            :
-            <StatusBar backgroundColor={'#fff'} barStyle={"dark-content"} />
-        } */}
                 <NavigationContainer theme={theme} ref={_NavgationRef} >
                     <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
                         <RootStack />
@@ -162,6 +153,7 @@ const App = () => {
                 </NavigationContainer>
                 <Robot />
                 <Toast />
+                <NoInternetModal />
             </SafeAreaView>
             <SharedGetApis />
         </SafeAreaProvider>
@@ -169,8 +161,8 @@ const App = () => {
 };
 export default App;
 const SharedGetApis = ({ }) => {
-    const [state,setState] = React.useState({
-        appLoaded:false
+    const [state, setState] = React.useState({
+        appLoaded: false
     });
     const { isLoggedIn } = useSelector(state => state.userReducer);
     const dispatch = useDispatch();
@@ -244,7 +236,7 @@ const SharedGetApis = ({ }) => {
             fcmService.registerAppWithFCM();
             fcmService.register(onRegister, onNotification, onOpenNotification)
             localNotificationService.configure(onRegister, onRegistrationError, onOpenNotification, onAction);
-            setState(pre=>({...pre,appLoaded:true}));
+            setState(pre => ({ ...pre, appLoaded: true }));
         }
     }, [isLoggedIn])
     return (<></>);

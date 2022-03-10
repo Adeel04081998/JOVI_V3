@@ -45,7 +45,7 @@ Axios.interceptors.request.use(
     },
     error => {
         console.log("[Axios.Request.Error]", JSON.stringify(error))
-        return Promise.reject(error)
+        return Promise.reject(error.response ? error.request : error)
     });
 
 Axios.interceptors.response.use(
@@ -79,7 +79,7 @@ Axios.interceptors.response.use(
             // if (error?.response?.status === 400) Toast.error('Bad Request!');
             // else if (error?.response?.status === 404) Toast.error('Bad Request!');
             // if (error.message) Toast.error(error.message);
-            if (error?.response?.status === 500) Toast.error('Something went wrong!');
+            if (error?.response?.status === 500 || error?.response?.status === 404) Toast.error('Something went wrong!');
             // if (error.config.metadata) {
             //     // Request failed, e.g. HTTP code 500
 
@@ -97,7 +97,7 @@ Axios.interceptors.response.use(
             console.log("[axios].response.error.catch.error", error)
 
         } finally {
-            return Promise.reject(error.response);
+            return Promise.reject(error.response ? error.response : error);
         }
     });
 export default Axios;

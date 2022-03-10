@@ -26,11 +26,11 @@ export const sharedGetDeviceInfo = async () => {
     return { deviceID, model, systemVersion };
 };
 export const sharedExceptionHandler = err => {
-    // console.log("[sharedExceptionHandler].err", err);
+    console.log("[sharedExceptionHandler].err", err);
     const TOAST_SHOW = 3000;
     if (err) {
         if (err.data) {
-            if (error?.data?.StatusCode === 401) return;
+            if (err?.data?.StatusCode === 401) return;
             else if (err.data.errors) {
                 var errorKeys = Object.keys(err.data.errors),
                     errorStr = "";
@@ -333,7 +333,7 @@ export const isNextPage = (totalItem, itemPerRequest, currentRequestCount) => {
 
 export const sharedCalculateMaxTime = (dataArr = [], key = "estimatePrepTime") => {
     if (!dataArr.length) return null;
-    let estimateTime = "",
+    let estimateTime = null,
         arr = [];
     dataArr.map((_resItem, _resIndex) => {
         if (VALIDATION_CHECK(_resItem[key])) {
@@ -342,8 +342,16 @@ export const sharedCalculateMaxTime = (dataArr = [], key = "estimatePrepTime") =
             let _dateSpan = new Date(now.getFullYear(), now.getMonth(), now.getDate(), ...splitTime);
             arr.push(_dateSpan.getTime())
         }
+
     })
-    estimateTime = arr.length ? new Date(Math.max(...arr)).toLocaleTimeString().replace(Regex.time, '$1') : null;
+    // estimateTime = arr.length ? new Date(Math.max(...arr)).toLocaleTimeString().replace(Regex.time, '$1') : null;
+    if (arr.length) {
+        const timeSpan = new Date(Math.max(...arr));
+        const hrs = timeSpan.getHours();
+        const mins = timeSpan.getMinutes();
+        // console.log("timeSpan, hrs, mins", timeSpan, hrs, mins);
+        estimateTime = (hrs < 9 ? `0${hrs}` : hrs) + ":" + (mins < 9 ? `0${mins}` : mins);
+    }
     return estimateTime;
 }
 export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
@@ -403,10 +411,11 @@ export const sharedDiscountsCalculator = (
     originalPrice = 0,
     discount = 0
 ) => {
-    let afterDiscount = Math.round(
-        originalPrice - (originalPrice * (discount / 100)),
-    );
-    return afterDiscount;
+    let _discountAmount = Math.round(originalPrice * (discount / 100));
+    return {
+        _discountAmount,
+        afterDiscount: originalPrice - _discountAmount
+    };
 };
 export const sharedUniqueIdGenerator = (randomNum = 1000) => {
     return Math.floor(Math.random() * randomNum) + new Date().getTime();
@@ -819,7 +828,7 @@ export const sharedAddToCartKeys = (restaurant = null, item = null) => {
     if (item) {
         item._itemPrice = item.discountedPrice > 0 ? item.discountedPrice : item.gstAddedPrice > 0 ? item.gstAddedPrice : item.itemPrice;
         item._itemPriceWithoutDiscount = item.gstAddedPrice;
-        item._totalDiscount = item?.discountType === ENUMS.DISCOUNT_TYPES.Percentage ? sharedDiscountsCalculator(item._itemPriceWithoutDiscount, item.discountAmount) : item.discountAmount; // if discount type is fixed then discount amount would be the discounted price
+        item._totalDiscount = item?.discountType === ENUMS.DISCOUNT_TYPES.Percentage ? sharedDiscountsCalculator(item._itemPriceWithoutDiscount, item.discountAmount)._discountAmount : item.discountAmount; // if discount type is fixed then discount amount would be the discounted price
         item._totalGst = item.gstAmount;
     }
     return {
@@ -828,7 +837,7 @@ export const sharedAddToCartKeys = (restaurant = null, item = null) => {
     }
 
 }
-export const uuidGenerator=()=> {
+export const uuidGenerator = () => {
     const S4 = function () {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
     };
@@ -870,40 +879,40 @@ export const sharedOnVendorPress = (pitstop, index) => {
     }
     NavigationService.NavigationActions.common_actions.navigate(routes[pitstop.pitstopType], { ...pitstop, pitstopID });
 }
-export const sharedNotificationHandlerForOrderScreens = (fcmReducer,fetchOrder = ()=>{}, orderCompletedOrCancelled = () =>{}) => {
+export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder = () => { }, orderCompletedOrCancelled = () => { }) => {
     // console.log("[Order Processing].fcmReducer", fcmReducer);
-        // '1',  For job related notification
-        // '11',  For rider allocated related notification
-        // '12', For order cancelled by admin
-        // '13' For order cancelled by system
-        // '14' out of stock
-        // '18' replaced
-        // '17' jovi job completed
-        // '16' order completed
-    const notificationTypes = ["1", "11", "12", "13", "14", "18", "17","16"]
-        console.log('fcmReducer------OrderPitstops', fcmReducer);
-        const jobNotify = fcmReducer.notifications?.find(x => (x.data && (notificationTypes.includes(`${x.data.NotificationType}`))) ? x : false) ?? false;
-        if (jobNotify) {
-            console.log(`[jobNotify]`, jobNotify)
-            const { data, notifyClientID } = jobNotify;
-            // const results = sharedCheckNotificationExpiry(data.ExpiryDate);
-            // if (results.isSameOrBefore) {
-            if (data.NotificationType == notificationTypes[1] || data.NotificationType == notificationTypes[0]) {
-                // console.log("[Order Processing] Rider Assigned By Firbase...");
-                fetchOrder();
-            }
-            if (data.NotificationType == notificationTypes[2] || data.NotificationType == notificationTypes[3]  || data.NotificationType == notificationTypes[7]) {
-                // console.log("[Order Processing] Order Cancelled By Firbase...");
-                orderCompletedOrCancelled();
-            }
-            if (data.NotificationType == notificationTypes[4] || data.NotificationType == notificationTypes[5] || data.NotificationType == notificationTypes[6]) {
-                fetchOrder()
-            }
-            else {
-            }
-            //  To remove old notification
-            dispatch(actions.fcmAction({ notifyClientID }));
-        } else console.log("[Order OrderPitstops] Job notification not found!!");
+    // '1',  For job related notification
+    // '11',  For rider allocated related notification
+    // '12', For order cancelled by admin
+    // '13' For order cancelled by system
+    // '14' out of stock
+    // '18' replaced
+    // '17' jovi job completed
+    // '16' order completed
+    const notificationTypes = ["1", "11", "12", "13", "14", "18", "17", "16"]
+    console.log('fcmReducer------OrderPitstops', fcmReducer);
+    const jobNotify = fcmReducer.notifications?.find(x => (x.data && (notificationTypes.includes(`${x.data.NotificationType}`))) ? x : false) ?? false;
+    if (jobNotify) {
+        console.log(`[jobNotify]`, jobNotify)
+        const { data, notifyClientID } = jobNotify;
+        // const results = sharedCheckNotificationExpiry(data.ExpiryDate);
+        // if (results.isSameOrBefore) {
+        if (data.NotificationType == notificationTypes[1] || data.NotificationType == notificationTypes[0]) {
+            // console.log("[Order Processing] Rider Assigned By Firbase...");
+            fetchOrder();
+        }
+        if (data.NotificationType == notificationTypes[2] || data.NotificationType == notificationTypes[3] || data.NotificationType == notificationTypes[7]) {
+            // console.log("[Order Processing] Order Cancelled By Firbase...");
+            orderCompletedOrCancelled();
+        }
+        if (data.NotificationType == notificationTypes[4] || data.NotificationType == notificationTypes[5] || data.NotificationType == notificationTypes[6]) {
+            fetchOrder()
+        }
+        else {
+        }
+        //  To remove old notification
+        dispatch(actions.fcmAction({ notifyClientID }));
+    } else console.log("[Order OrderPitstops] Job notification not found!!");
 }
 
 export const sharedOnCategoryPress = (item, index) => {
@@ -917,7 +926,7 @@ export const sharedOnCategoryPress = (item, index) => {
 }
 
 export const sharedGetCurrentLocation = (onSuccess = () => { }, onError = () => { }) => {
-    navigator.geolocation.getCurrentPosition(({ coords }) => onSuccess(coords),
+    navigator.geolocation?.getCurrentPosition(({ coords }) => onSuccess(coords),
         (error) => {
             if (error) {
                 // CustomToast.error("An error accured while fetching your current location, please try again.")

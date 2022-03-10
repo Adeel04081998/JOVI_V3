@@ -39,7 +39,7 @@ export default React.memo(({ homeStyles }) => {
     }
     return <AnimatedView style={[homeStyles.categoriesCardPrimaryContainer]}>
         <Text style={homeStyles.categoriesCardTittleText}>Categories</Text>
-        <AnimatedView style={{ flexDirection: 'row' }}>
+        <AnimatedView style={{ flexDirection: 'row'}}>
             {ENUMS.PITSTOP_TYPES.filter(x => x.isActive).map((x, i) => {
                 return <CategoryCardItem
                     key={`category card item${i}`}
