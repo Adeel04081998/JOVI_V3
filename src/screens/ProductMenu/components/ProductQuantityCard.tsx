@@ -24,7 +24,8 @@ interface Props {
     outOfStockText?: string;
     pitstopItemID: number | string;
     marketID: number | string;
-    screenName : number
+    screenName : number,
+    fromCart: boolean
 }
 
 const defaultProps = {
@@ -33,7 +34,9 @@ const defaultProps = {
     initialQuantity: 0,
     outOfStock: false,
     outOfStockText: 'Out of stock',
-    screenName:1
+    screenName:1,
+    fromCart: false
+
 };
 
 // #endregion :: INTERFACE END's FROM HERE 
@@ -53,6 +56,7 @@ const ProductQuantityCard = (props: Props) => {
     const [state, setState] = React.useState({ quantity: parseInt(`${props?.initialQuantity ?? defaultProps.initialQuantity}`), });
     const delayCbRef = React.useRef<any>(null);
     const skipEffect = React.useRef<boolean>(false);
+    const firstPitstop = React.useRef<boolean>(false);
 
     React.useEffect(() => {
         setState(pre => ({ ...pre, quantity: parseInt(`${props?.initialQuantity ?? defaultProps.initialQuantity}`), }));
@@ -60,6 +64,11 @@ const ProductQuantityCard = (props: Props) => {
     }, [props.initialQuantity])
 
     React.useEffect(() => {
+        if(firstPitstop.current){
+            firstPitstop.current = false;
+            props.updateQuantity && props.updateQuantity(1);
+            return;
+        }
         if (skipEffect.current) {
             skipEffect.current = false;
             return;
@@ -97,7 +106,8 @@ const ProductQuantityCard = (props: Props) => {
     const incrementQuantity = () => {
         setState(pre => ({ ...pre, quantity: pre.quantity + 1 }))
         if(cartReducer.pitstops.length < 1) {
-            props.updateQuantity && props.updateQuantity(state.quantity);
+            // props.updateQuantity && props.updateQuantity(1);
+            firstPitstop.current = true;
         }
     }
 
@@ -105,7 +115,16 @@ const ProductQuantityCard = (props: Props) => {
         setState(pre => ({ ...pre, quantity: pre.quantity - 1 }));
     }
 
-
+    if(props.fromCart && state.quantity <= 0) return <View style={{
+        justifyContent:  "center",
+        paddingHorizontal: 0,
+        position: 'absolute',
+        bottom: 6,
+        right: 8,
+        alignItems: "center",
+        flexDirection: "row",
+        backgroundColor: colors.white,
+    }}><Text>...Please wait</Text></View>;
     return (
         <View style={{
             width: state.quantity > 0 || props.outOfStock ? CARD_ITEM_SIZE * 0.88 : ITEM_SIZE,
@@ -139,8 +158,7 @@ const ProductQuantityCard = (props: Props) => {
                             <Text style={{...styles.text,fontSize:TEXT_ICON_SIZE*0.7}}>{state.quantity}</Text>
                         </>
                     }
-                    <TouchableOpacity wait={0} onPress={incrementQuantity}
-                    style={{}}
+                    <TouchableOpacity wait={0} onPress={incrementQuantity}style={{}}
                         hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}>
                         <VectorIcon color={colors.primary} name="plus" type="Feather" size={TEXT_ICON_SIZE} />
                     </TouchableOpacity>
