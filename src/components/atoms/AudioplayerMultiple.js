@@ -6,15 +6,17 @@ import svgs, { pauseIcon, playIcon } from "../../assets/svgs/index";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { secToHourMinSec } from "../../helpers/SharedActions";
 import Sound from "react-native-sound";
+import { useIsFocused } from '@react-navigation/native';
 
 
 let timer = null;
 const playerRefArr = [];
 let isLastPlaying = false;
 
-export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', width = "90%", forceStopAll = false, }) => {
+export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', width = "90%", forceStopAll = false, timeStyle = {}, maximumTrackTintColor = `rgba(115, 89, 190, 0.5)`, timeContainerStyle = null }) => {
     // let isPlaying = (chatPlayingVoice && chatPlayingVoiceIndex === index);
 
+    const isFocused = useIsFocused();
     let soundPlayerRef = useRef();
 
     const [isPlaying, setIsPlaying] = useState(false);
@@ -25,6 +27,12 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
 
     const [icon, setIcon] = useState();
 
+    useEffect(() => {
+        if (!isFocused) {
+            stopAudio();
+        }
+    }, [isFocused]);
+
 
     useEffect(() => {
         Icon.getImageSource('checkbox-blank-circle', 15, activeTheme.primary)
@@ -34,7 +42,6 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
 
     useEffect(() => {
         setupSoundPlayer();
-
         return () => {
         }
 
@@ -43,20 +50,16 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
     useEffect(() => {
         if (forceStopAll)
             stopAudio();
-
-
     }, [forceStopAll])
 
 
 
     const setupSoundPlayer = async () => {
 
-
         const chatAudioplayer = new Sound(audioURL, '', error => {
             if (error) {
                 return;
             }
-
             const duration = parseInt(chatAudioplayer?.getDuration());
             setTotalDuration(duration > 0 ? duration : 0);
             setDisplayTime(duration > 0 ? duration : 0);
@@ -75,9 +78,6 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
             soundPlayerRef.current = chatAudioplayer;
 
         });
-
-
-
     };
 
     const pauseAll = () => {
@@ -89,17 +89,13 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
     const startTimer = () => {
         timer = setInterval(() => {
             soundPlayerRef.current?.getCurrentTime(sec => {
-                if (sec > 0 || displayTime === 0) {
-                    if (Platform.OS === "android") {
-                        sec += 1;
-                    }
-                    setDisplayTime(sec >= 0 ? sec : totalDuration);
-                    setCurrentTime(sec >= 0 ? sec : 0);
-
-
+                const isPlaying = soundPlayerRef.current?._playing ?? false;
+                if (isPlaying) {
+                    setDisplayTime(sec);
+                    setCurrentTime(sec);
                 }
                 else {
-                    setCurrentTime(sec > 0 ? sec : 0);
+                    setCurrentTime(0);
                     pauseAudio();
                 }
 
@@ -168,7 +164,7 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
                                 playAudio();
                         }}>
                             <SvgXml
-                                xml={isPlaying ? svgs.pauseIcon() : svgs.playIcon()}
+                                xml={isPlaying ? svgs.pauseIcon(activeTheme.primary) : svgs.playIcon(activeTheme.primary)}
                                 width={20}
                                 height={20}
                                 style={{
@@ -182,13 +178,9 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
                                 ...styles.slider,
                                 width: width
                             }}
-                            // minimumTrackTintColor="#FFFFFF"
-                            // maximumTrackTintColor="#000000"
-                            // thumbImage={SliderCircle}
                             thumbImage={icon}
                             minimumTrackTintColor={activeTheme.primary}
-                            maximumTrackTintColor={`rgba(115, 89, 190, 0.5)`}
-                            // thumbTintColor={activeTheme.default}
+                            maximumTrackTintColor={maximumTrackTintColor}
                             value={parseInt(currentTime)}
                             minimumValue={0}
                             maximumValue={parseInt(totalDuration)}
@@ -208,7 +200,12 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
                 }
             </View>
 
-            <Text style={styles.durationText}>{`${secToHourMinSec(displayTime)}`}</Text>
+            {timeContainerStyle ?
+                <View style={timeContainerStyle}>
+                    <Text style={[styles.durationText, timeStyle]}>{`${secToHourMinSec(displayTime)}`}</Text>
+                </View> :
+                <Text style={[styles.durationText, timeStyle]}>{`${secToHourMinSec(displayTime)}`}</Text>
+            }
 
         </View>
     )

@@ -39,6 +39,7 @@ public class MainApplication extends Application implements ReactApplication {
           // packages.add(new MyReactNativePackage());
           packages.add(new SplashScreenReactPackage());
           packages.add(new RNMediaMetaPackage());
+          packages.add(new ChangeWindowManagerPackage());
 
           return packages;
         }

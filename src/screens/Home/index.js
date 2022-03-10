@@ -125,9 +125,13 @@ export default () => {
                     opacity: homeFadeIn.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1] }),
                     transform: [{ scale: homeFadeIn.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] }) }]
                 }}>
-                    <KeyboardAwareScrollView style={{}} showsVerticalScrollIndicator={false}>
+                    <KeyboardAwareScrollView style={{}} showsVerticalScrollIndicator={false}
+                    //  alwaysBounceHorizontal={false}
+                    //  alwaysBounceVertical={false}
+                    //  bounces={false}
+                    >
                         <Greetings messagesReducer={messagesReducer} homeStyles={homeStyles} userReducer={userReducer} colors={colors} />
-                        {
+                        {/* {
                             userReducer.openOrders && userReducer.openOrders.length > 0 &&
                             <>
                                 <Text style={{ margin: 5, left: 5, fontWeight: "bold", color: colors.primary, fontSize: 16 }}>Orders:</Text>
@@ -142,7 +146,7 @@ export default () => {
                                     }
                                 </ScrollView>
                             </>
-                        }
+                        } */}
                         <ImageCarousel
                             // aspectRatio={16 / 7}
                             data={promotionsReducer?.dashboardContentListViewModel?.dashboardPromoListVM ??
@@ -155,7 +159,7 @@ export default () => {
                             height={170}
                         />
                         <View style={homeStyles.wrapper}>
-                            <Search colors={colors} homeStyles={homeStyles} />
+                            <Search colors={colors} homeStyles={homeStyles} fontSize={12} />
                             <Categories homeStyles={homeStyles} />
                             <AvatarAlert messagesReducer={messagesReducer} homeStyles={homeStyles} />
                             {/* <RecentOrders /> AS PER PM WE HAVE TO REMOVE RECENT ORDER FOR NOW*/}

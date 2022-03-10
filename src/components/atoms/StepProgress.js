@@ -20,6 +20,17 @@ export default ({ maxHighlight = 0 }) => {
         if (i < maxHighlight) clr = colors.primary
         return clr;
     }
+    const _paddingLeft = (i) => {
+        if (Platform.OS === "android") {
+            if (i > 0) return 0;
+            else return 2;
+        } else {
+            // NOT PERFECT YET NEED TO VERIFY ON SMALL IOS DEVICES
+            if (i > 0) return 0;
+            if (i === 1) return 5;
+            else return 2;
+        }
+    }
     return (
         <>
             <View style={{ flexDirection: "row", alignItems: "center", }}>
@@ -34,12 +45,12 @@ export default ({ maxHighlight = 0 }) => {
                 <View style={{ width, backgroundColor: colors.grey, paddingVertical: 2 }} />
 
             </View>
-            <View style={{ flexDirection: "row", alignItems: "center", paddingVertical: 5 }}>
+            <View style={{ flexDirection: "row", alignItems: "center", paddingVertical: 1 }}>
                 {
                     DATA.map((p, i) => (
                         <React.Fragment key={`progress-key-${i}`} >
                             <View style={{ width: (width + (CIRCLE_HEIGHT * 2)) / 7 }} />
-                            <Text style={{ color: highlight(i), fontSize: 12, paddingLeft: Platform.OS === 'android' ? 0 : 2 }} fontFamily="PoppinsRegular">{StrEnum[i]}</Text>
+                            <Text style={{ color: highlight(i), fontSize: 12, paddingLeft: _paddingLeft(i) }} fontFamily="PoppinsRegular">{StrEnum[i]}</Text>
                         </React.Fragment>
                     ))
                 }

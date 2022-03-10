@@ -329,8 +329,7 @@ export default ({ navigation, route }) => {
                     <View style={{ marginTop: headerHeight + 40, paddingHorizontal: 15, backgroundColor: "pink", elevation: 2, paddingTop: 0 }} />
                 )}
             />
-
-            <GotoCartButton colors={colors} bottom={insets.bottom > 0 ? insets.bottom : getStatusBarHeight() * 0.01} />
+            <GotoCartButton colors={colors} bottom={insets.bottom > 0 ? insets.bottom : getStatusBarHeight(true)} />
         </SafeAreaView>
     )
 };//end of EXPORT DEFAULT

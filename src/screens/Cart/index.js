@@ -228,10 +228,10 @@ export default () => {
               style={{
                 height: 30,
                 width: 30,
-                borderRadius: 7,
-                borderWidth: 0.5,
-                borderColor: '#fff',
-                backgroundColor: '#fff',
+                // borderRadius: 7,
+                // borderWidth: 0.5,
+                // borderColor: '#fff',
+                // backgroundColor: '#fff',
                 alignItems: 'center',
                 justifyContent: 'center',
                 opacity: .7,
@@ -240,7 +240,7 @@ export default () => {
             >
               <VectorIcon
                 type="AntDesign"
-                name={expanded.includes(pitstopIndex) ? "down" : "up"}
+                name={expanded.includes(pitstopIndex) ? "up" : "down"}
                 color={dynamiColors.primary}
                 size={20}
               />
@@ -370,19 +370,18 @@ export default () => {
                   </Text>
                 }
               </View>
-                 <ProductQuantityCard
-                                initialQuantity={quantity}
-                                colors={dynamiColors}
-                                outOfStock={false}
-                                textSize={18}
-                                size={100}
-                                cardSize={100}
-                                updateQuantity={(quantity) => {
+              <ProductQuantityCard
+                initialQuantity={quantity}
+                colors={dynamiColors}
+                outOfStock={false}
+                textSize={18}
+                size={100}
+                cardSize={100}
+                updateQuantity={(quantity) => {
                   incDecDelHandler(quantity)
-                                }}
-
-                            />
-
+                }}
+                fromCart={true}
+              />
             </View>
           </View>
         </View>
@@ -438,6 +437,7 @@ export default () => {
       </View>
       <View style={{ flex: 1, flexGrow: 1, paddingHorizontal: 10, }} >
         <DraggableFlatList
+          onDragBegin={(index) => expandCollapeHanlder(index)}
           ListHeaderComponent={<View>
             <DeliveryAddress />
             <Text style={{ padding: 10, fontSize: 12 }} fontFamily="PoppinsLight">{'Hold and drag to rearrange your pitstops to get the better route and less service charges.'}</Text>

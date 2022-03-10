@@ -12,11 +12,13 @@ type Props = React.ComponentProps<typeof RNDraggableFlatList> & {
   children?: any;
   updateData?: (data: any) => void;
   renderItem?: RenderItem<any>;
+  onDragBegin?: (index: any) => void;
 
 };
 
 const defaultProps = {
   updateData: undefined,
+  onDragBegin: undefined
 }
 
 const DraggableFlatList = (props: Props) => {
@@ -53,6 +55,7 @@ const DraggableFlatList = (props: Props) => {
         keyExtractor={(item, index) => `${index}`}
         extraData={activated}
         onDragBegin={(index) => {
+          // props.onDragBegin && props.onDragBegin(index)
           // activatedIndex.current = index;
           // setActivated(true);
         }}

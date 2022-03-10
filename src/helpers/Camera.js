@@ -42,10 +42,10 @@ const cameraResponseHandler = (response, cb, next) => {
     } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
         cb();
-    }  else if (response.errorCode) {
+    } else if (response.errorCode) {
         console.log('User tapped custom button: ', response.errorCode);
         cb();
-    } 
+    }
     else {
         console.log(response);
         next(response);
@@ -89,7 +89,7 @@ export const handleDeniedPermission = (msgHeader = "", msgText = "", cb, setting
     );
 };
 
-export const sharedLaunchCameraorGallery = async (pressType, cb, next) => {
+export const sharedLaunchCameraorGallery = async (pressType, cb, next, option = options) => {
     // console.log("Here")
     // debugger;
     try {
@@ -109,7 +109,7 @@ export const sharedLaunchCameraorGallery = async (pressType, cb, next) => {
             }
         }
         if (pressType === 1) {
-            ImagePicker.launchCamera(options, response => {
+            ImagePicker.launchCamera(option, response => {
                 // debugger;
                 cameraResponseHandler(response, cb, next)
             });
@@ -123,7 +123,7 @@ export const sharedLaunchCameraorGallery = async (pressType, cb, next) => {
             //     console.log('e ==>>>', e);
             // })
         } else {
-            ImagePicker.launchImageLibrary(options, response => {
+            ImagePicker.launchImageLibrary(option, response => {
                 // debugger;
                 cameraResponseHandler(response, cb, next)
             });
@@ -156,12 +156,12 @@ export const askForAudioRecordPermission = async (cb) => {
         else if (Platform.OS === 'ios') {
             const result = await request(PERMISSIONS.IOS.MICROPHONE);
 
-            if (result !== RESULTS.GRANTED) {
-                handleDeniedPermission('Microphone permission is not granted!', 'If you want to send Voice Messages, then go to Settings and allow Microphone permission.');
+            if (result === RESULTS.GRANTED) {
+                cb && cb(true);
                 return;
             }
             else {
-                cb && cb(true);
+                handleDeniedPermission('Microphone permission is not granted!', 'If you want to send Voice Messages, then go to Settings and allow Microphone permission.');
                 return;
             }
         }

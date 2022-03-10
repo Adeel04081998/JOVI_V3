@@ -250,7 +250,6 @@ export default ({ navigation, route }) => {
 
     // to be used for editing purposes
     useEffect(() => {
-        console.log("route.params", route.params);
         if (route?.params?.pitstopItemObj) {
             const { title, nameval, imageData, voiceNote, estTime, description, estimatePrice } = route.params.pitstopItemObj;
             setLocationVal(title)
