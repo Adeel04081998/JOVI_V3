@@ -550,9 +550,9 @@ export default (props) => {
                                     >{` ${renderPrice(productPrice)}`}</Text>
                                     {
                                         discountedPrice > 0 ?
-                                            <Text style={[productDetailsStyles.productPricetxt, { paddingHorizontal: 5, textDecorationLine: "line-through", color: colors.grey }]}
+                                            <Text style={[productDetailsStyles.productPricetxt, { paddingHorizontal: 5, textDecorationLine: "line-through", color: colors.navTextColor, fontSize: 14 }]}
                                                 fontFamily='PoppinsRegular'
-                                            >{`${renderPrice(gstAddedPrice, '')}`}</Text>
+                                            >{`${renderPrice(gstAddedPrice)}`}</Text>
                                             : null
 
                                     }
@@ -569,7 +569,7 @@ export default (props) => {
                                         <TextInput
                                             ref={inputRef}
                                             containerStyle={{ backgroundColor: 'white', margin: 0, }}
-                                            placeholder="Types your instructions"
+                                            placeholder="Type your instructions"
                                             placeholderTextColor={"#CFCFCF"}
                                             titleStyle={{ color: 'black', fontSize: 14, marginVertical: -8 }}
                                             title="Please add your instructions"

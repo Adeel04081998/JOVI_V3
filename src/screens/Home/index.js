@@ -112,6 +112,7 @@ export default () => {
                 <CustomHeader
                     finalDest={userReducer?.finalDestObj?.title || null}
                     leftIconName={"ios-menu"}
+                    rightIconColor={"#6D51BB"}
                     onTitlePress={() => {
                         dispatch(ReduxActions.setModalAction({
                             visible: true,
@@ -161,7 +162,7 @@ export default () => {
 
                             {isFinalDestinationSelected && vendorDashboardCategoryIDReducer.map((item, index) => {
                                 return (
-                                    <View style={{  marginHorizontal:-10, }}>
+                                    <View style={{ marginHorizontal: -10, }}>
                                         <GenericList vendorDashboardCatID={item.vendorDashboardCatID} textContainer={{ paddingHorizontal: 10 }} />
 
                                     </View>
