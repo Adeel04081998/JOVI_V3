@@ -27,7 +27,7 @@ const APP_DRAWER_ROUTES = {
     },
     "ProductDetails": {
         screen_name: "ProductDetails",
-        options: {animation:'slide_from_bottom'},
+        options: { animation: 'slide_from_bottom' },
     },
     "JoviJob": {
         screen_name: 'JOVIJOB',
@@ -103,11 +103,16 @@ const APP_DRAWER_ROUTES = {
         options: null,
     },
 
-    "OrderPitstops":{
+    "OrderPitstops": {
         screen_name: "ORDER_PITSTOPS",
         options: null
     },
-    
+    "RateRider": {
+        screen_name: "RATE_RIDER", // || Rate your jovi
+        options: null
+    },
+
+
 }
 const APP_ROUTES = {
     "AppDrawerStack": {
@@ -117,7 +122,7 @@ const APP_ROUTES = {
 };
 const AUTH_STACKS = Object.keys(AUTH_ROUTES).map((key, index) => ({ id: `init-${index}-${key}`, screen_name: AUTH_ROUTES[key].screen_name, componenet: key }));
 const APP_STACKS = Object.keys(APP_ROUTES).map((key, index) => ({ id: `init-${index}-${key}`, screen_name: APP_ROUTES[key].screen_name, componenet: key }));
-const APP_DRAWER_STACK = Object.keys(APP_DRAWER_ROUTES).map((key, index) => ({ id: `init-${index}-${key}`,options:APP_DRAWER_ROUTES[key].options, screen_name: APP_DRAWER_ROUTES[key].screen_name, componenet: key }));
+const APP_DRAWER_STACK = Object.keys(APP_DRAWER_ROUTES).map((key, index) => ({ id: `init-${index}-${key}`, options: APP_DRAWER_ROUTES[key].options, screen_name: APP_DRAWER_ROUTES[key].screen_name, componenet: key }));
 export default {
     AUTH_ROUTES,
     AUTH_STACKS,
