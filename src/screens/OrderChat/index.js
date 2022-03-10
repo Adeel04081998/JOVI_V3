@@ -89,7 +89,7 @@ export default ({ navigation, route }) => {
                     isReceived: true,
                     orderID: orderID,
                     text: message,
-                    user: prop.notificationData?.data?.user ?? { _id: '9411158e-8a53-4849-ba1d-7b3ffcd97fa6', name: 'Shahid Mehmood', image: 'staging/Rider/2022/1/15/rn_image_picker_lib_temp_d9ea8fff-9935-4dee-a009-8e26ac7c3637_163149.jpg' },
+                    user: { _id: prop.notificationData?.data?._id??'', name:  prop.notificationData?.data?.name??'', image:  prop.notificationData?.data?.image??''},
                     userType: 2,
                     userTypeStr: "Rider",
                     _id: new Date().getTime()
