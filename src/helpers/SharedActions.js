@@ -889,7 +889,7 @@ export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder 
     // '13' For order cancelled by system
     // '14' out of stock
     // '18' replaced
-    // '17' jovi job completed
+    // '17' jovi job completed at index 6
     // '16' order completed
     // '2' Chat message at INDEX 8
 
