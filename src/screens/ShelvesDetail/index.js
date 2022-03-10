@@ -18,6 +18,7 @@ import constants from '../../res/constants';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import ProductMenuItemCard from '../ProductMenu/components/ProductMenuItemCard';
+import GotoCartButton from '../RestaurantProductMenu/components/GotoCartButton';
 import ScrollableList from './Components/ScrollableList';
 import { sectionHeaderItemStyleFunc, stylesFunc } from './styles';
 
@@ -239,7 +240,8 @@ export default ({ navigation, route }) => {
             },
         }
 
-        sharedAddUpdatePitstop(pitstopDetails,)
+        // sharedAddUpdatePitstop(pitstopDetails,)
+
         // if (Math.random() < 0) {
         //     undoQuantity(parentIndex, index);
         // }
@@ -263,7 +265,7 @@ export default ({ navigation, route }) => {
         }
     };
     // #endregion :: GETTING PRODUCT MENU PRICE FROM ITEM END's FROM HERE 
-console.log('here in shelve data');
+    console.log('here in shelve data');
 
     const onViewMorePress = (item) => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductMenuItem.screen_name, { pitstopType, marketID, item: item });
@@ -280,13 +282,13 @@ console.log('here in shelve data');
                 data={shelveData}
                 extraData={shelveMetaData}
                 style={{ flexGrow: 0, }}
-                contentContainerStyle={{ paddingBottom: data.length === 1 ? 10 : 40, }}
+                contentContainerStyle={{ paddingBottom: data.length === 1 ? 10 : 20, }}
                 showsHorizontalScrollIndicator={false}
                 horizontal
                 renderItem={({ item, index }) => {
                     return (
                         <TouchableScale style={{
-                            minHeight: 40,
+                            minHeight: 30,
                             marginTop: 15,
                             marginLeft: index === 0 ? 10 : 0,
                             paddingHorizontal: 10,
@@ -376,10 +378,14 @@ console.log('here in shelve data');
                                 }}
                                 itemContainerStyle={{
                                     marginRight: 0,
+                                    marginVertical: 8,
+                                    // paddingTop:0,
+                                    // borderWidth:1
                                 }}
                                 colors={colors}
                                 index={index}
                                 itemImageSize={ITEM_IMAGE_SIZE}
+                                itemQuantitySize={ITEM_IMAGE_SIZE * 0.2}
                                 updateQuantity={(quantity) => {
                                     updateQuantity(parentIndex, index, quantity);
                                 }}
@@ -399,6 +405,7 @@ console.log('here in shelve data');
                                             ...getPricesForProductMenuItemCard(item),
                                         }
                                     }}
+                                screenName={2}
 
                             />
                         )
@@ -407,6 +414,7 @@ console.log('here in shelve data');
                 />
 
             }
+            <GotoCartButton colors={colors} />
         </SafeAreaView>
     )
 };//end of EXPORT DEFAULT

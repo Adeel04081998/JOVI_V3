@@ -66,6 +66,11 @@ export default () => {
 
 
     const signUpSuccessHandler = (res) => {
+        if (res?.statusCode === 417) {
+            sharedExceptionHandler(res);
+            NavigationService.NavigationActions.common_actions.goBack();
+            return
+        }
         setState((pre) => ({ ...pre, isLoading: false }))
         const { statusCode, loginResult, message, } = res;
         if (statusCode !== 200) {
@@ -135,7 +140,7 @@ export default () => {
     const onCrossHandler = () => {
         NavigationService.NavigationActions.common_actions.goBack();
     }
-const IS_DISABLED = inputsArr[0].value !== '' && inputsArr[1].value !== ''  && inputsArr[2].value !== '';
+    const IS_DISABLED = inputsArr[0].value !== '' && inputsArr[1].value !== '' && inputsArr[2].value !== '';
     const validationCheck = () => {
         if (IS_DISABLED) return false
         else return true

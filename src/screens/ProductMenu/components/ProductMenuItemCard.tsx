@@ -11,6 +11,7 @@ import View from '../../../components/atoms/View';
 import { renderFile, renderPrice, uniqueKeyExtractor, VALIDATION_CHECK } from '../../../helpers/SharedActions';
 import AppStyles from '../../../res/AppStyles';
 import { initColors } from '../../../res/colors';
+import constants from '../../../res/constants';
 import FontFamily from '../../../res/FontFamily';
 import ENUMS from '../../../utils/ENUMS';
 import ProductQuantityCard from './ProductQuantityCard';
@@ -35,6 +36,8 @@ interface ProductMenuItemCardItem {
 interface Props {
     index: number;
     itemImageSize: number;
+    itemQuantitySize?:number;
+    screenName: number; // 1 for SupermarketMenu 2 for  Shelves
     colors: typeof initColors;
     item: ProductMenuItemCardItem,
     updateQuantity?: (quantity: number) => void;
@@ -54,13 +57,18 @@ const defaultProps = {
     disabled: false,
     seeAll: false,
     additionalCount: 1,
+    itemQuantitySize:20,
+    screenName: 1 // 1 for SupermarketMenu 2 for  Shelves
+
 };
 
 // #endregion :: INTERFACE END's FROM HERE 
 
 const ProductMenuItemCard = (props: Props) => {
     const ITEM_IMAGE_SIZE = props.itemImageSize;
-
+    const ITEM_QUANTITY_SIZE=props?.itemQuantitySize ?? props.itemImageSize;
+    
+    const screenName = props.screenName
     const itemStyles = itemStylesFunc(props.colors, ITEM_IMAGE_SIZE);
 
     return (
@@ -131,10 +139,13 @@ const ProductMenuItemCard = (props: Props) => {
                                 outOfStock={props.item.isOutOfStock}
                                 initialQuantity={props.item.quantity}
                                 colors={props.colors}
-                                size={ITEM_IMAGE_SIZE}
+                                size={ITEM_QUANTITY_SIZE}
+                                cardSize={ITEM_IMAGE_SIZE}
+                                screenName={screenName}
                                 updateQuantity={(quantity) => {
                                     props.updateQuantity && props.updateQuantity(quantity);
                                 }}
+
                             />
 
 
@@ -144,13 +155,13 @@ const ProductMenuItemCard = (props: Props) => {
                     {/* ****************** End of IMAGE & QUANTITY ****************** */}
 
                     {/* ****************** Start of NAME/TITLE ****************** */}
-                    <Text style={itemStyles.name} numberOfLines={2}>{`${props.item.name}`}</Text>
+                    <Text style={[itemStyles.name, {}]} numberOfLines={2}>{`${props.item.name}`}</Text>
 
                     {/* ****************** End of NAME/TITLE ****************** */}
 
 
                     {/* ****************** Start of MAIN PRICE  ****************** */}
-                    <Text fontFamily='PoppinsBold' style={itemStyles.price}>{renderPrice({price:props.item.discountedPrice,showZero:true})}</Text>
+                    <Text fontFamily='PoppinsBold' style={itemStyles.price}>{renderPrice({ price: props.item.discountedPrice, showZero: true })}</Text>
 
                     {/* ****************** End of MAIN PRICE  ****************** */}
 
@@ -222,9 +233,13 @@ export const itemStylesFunc = (colors: typeof initColors, ITEM_IMAGE_SIZE: numbe
     name: {
         color: "#6B6B6B",
         fontSize: 9,
-        paddingTop: 4,
-        paddingBottom: 4,
+        // paddingTop: 4,
+        // paddingBottom: 4,
         maxWidth: ITEM_IMAGE_SIZE - 20,
+        height: 35,
+        marginTop: 10,
+
+
     },
     discountPrice: {
         color: "#C1C1C1",

@@ -43,7 +43,8 @@ const cartReducer = (state = INIT_CART_DATA, action) => {
     case TYPES.CLEAR_CART_ACTION:
       return {
         ...INIT_CART_DATA,
-        ...action.payload
+        ...action.payload,
+        pitstops: [],
       }
     default:
       return { ...state };

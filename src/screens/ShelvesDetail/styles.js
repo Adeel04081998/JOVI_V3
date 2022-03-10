@@ -7,7 +7,7 @@ import FontFamily from "../../res/FontFamily";
 export const stylesFunc = (colors = initColors) => StyleSheet.create({
     primaryContainer: {
         flex: 1,
-        backgroundColor: colors.white,
+        backgroundColor: '#F8F8F8',
     },
 
 })
@@ -18,7 +18,8 @@ export const sectionHeaderItemStyleFunc = (colors) => StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between",
         paddingBottom: 10,
-        paddingTop: 20,
+        // paddingTop: 20,
+        paddingVertical:10,
         paddingHorizontal: constants.spacing_horizontal,
     },
     title: {

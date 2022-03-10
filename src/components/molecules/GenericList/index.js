@@ -119,7 +119,7 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
                 data.map((item, index) => ( */}
             <React.Fragment key={`generic-item-key-${'index'}`}>
                 <View style={{ ...textContainer, ...styles.container }} >
-                    <Text style={styles.mainText} >{data?.header}</Text>
+                    <Text style={styles.mainText} numberOfLines={1} >{data?.header}</Text>
                     <TouchableOpacity onPress={() => onPressViewMore()}>
                         <Text style={styles.viewMoreBtn} >{showMoreBtnText || `View More`}</Text>
                     </TouchableOpacity>
@@ -134,7 +134,7 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
                     horizontal={true}
                     flatlistProps={{
                         showsHorizontalScrollIndicator: false,
-                        contentContainerStyle: { marginLeft: 0 }
+                        contentContainerStyle: { marginLeft: 0 ,  paddingRight:10}
                     }}
                 />
             </React.Fragment>
@@ -158,6 +158,9 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
     mainText: {
         color: colors.text,
         fontSize: 16,
+        flex:0.8,
+     
+        // paddingHorizontal:10,
     },
     viewMoreBtn: {
         color: colors.primary || '#6D51BB', // colors.primary here should be the theme color of specific category
@@ -173,7 +176,9 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
         paddingHorizontal: 10,
         paddingVertical: 10,
         marginVertical: 5,
-        marginLeft: 10
+        marginLeft: 10,
+        // marginRight: 10,
+
     },
     itemContainerSmall: {
         ...sharedStyles._styles(colors).shadow,
@@ -181,12 +186,15 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
         height: 200,
         width: 180,
         borderRadius: 10,
-        marginRight: 10,
+        marginRight: Platform.OS === 'ios'?10: 10,
         // marginHorizontal: 5,
         flex: 1,
         // paddingHorizontal: 10,
         // paddingVertical: 10,
         marginVertical: 5,
+        left: 10,
+       
+        
     },
     image: {
         height: height,
@@ -223,7 +231,7 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
         fontSize: 14,
         // paddingVertical: 5,
         color: '#000',
-        width: width * 0.7
+        width: width * 0.5
     },
     bodyContainer: {
         width: width * 0.8

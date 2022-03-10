@@ -15,7 +15,7 @@ export default (props) => {
     const dispatch = useDispatch();
     const modalReducer = useSelector(state => state.modalReducer);
     const disabled = modalReducer?.disabled ?? false;
-    const { visible, ModalContent, closeModal } = modalReducer;
+    const { visible, ModalContent, closeModal, onPress } = modalReducer;
     const modalAnimation = (toValue = 1) => {
         Animated.timing(openAnimation, {
             toValue: toValue,
@@ -42,7 +42,7 @@ export default (props) => {
         }
     }, [closeModal]);
     let modalContentToRender = null;
-    if (ModalContent) {
+    if (ModalContent || props.ModalContent) {
         modalContentToRender = ModalContent
     } else {
         modalContentToRender = <AddressesList finalDestFunc={(placeName) => {
@@ -57,9 +57,7 @@ export default (props) => {
         <View style={{ position: 'absolute', height: HEIGHT, width: WIDTH, top: 0, zIndex: 999 }}>
             <AnimatedToucableOpacity activeOpacity={1}
                 disabled={disabled}
-                onPress={() => {
-                    dispatch(ReduxActions.closeModalAction())
-                }} style={{ flex: 1, opacity: openAnimation, backgroundColor: 'rgba(0,0,0,0.5)' }} />
+                onPress={onPress ? onPress : () => dispatch(ReduxActions.closeModalAction())} style={{ flex: 1, opacity: openAnimation, backgroundColor: 'rgba(0,0,0,0.5)' }} />
 
             <Animated.View
                 style={{

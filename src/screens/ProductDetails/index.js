@@ -302,7 +302,8 @@ export default (props) => {
                 paddingVertical: constants.spacing_vertical,
                 borderRadius: 30,
                 backgroundColor: colors.white,
-                minWidth: "35%",
+                flex: Platform.OS === "android" ? 0.6 : 0.5,
+
             }}>
 
                 <TouchableScale
@@ -340,7 +341,11 @@ export default (props) => {
 
     const renderButtonsUi = () => {
         return (
-            <AnimatedView style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, alignItems: 'center', marginHorizontal: 12, height: 80 }}>
+            <AnimatedView style={{
+                flexDirection: 'row', justifyContent: 'space-between',
+                alignItems: 'center',
+                marginHorizontal: 10, height: 80,
+            }}>
                 {_renderQuantityCard()}
                 {/* <View style={{
                     flexDirection: 'row', alignSelf: 'center', backgroundColor: 'white', borderRadius: 30, alignItems: 'center', paddingHorizontal: Platform.OS === "android" ? 6 : 20, paddingVertical: 5,
@@ -378,14 +383,19 @@ export default (props) => {
                         />
                     </TouchableScale>
                 </View> */}
-                <View style={{ maxWidth: '55%' }}>
+                <View style={{ flex: 1, marginLeft: 15 }}>
                     <Button
                         disabled={!enable.enableBtn}
                         onPress={() => addToCartHandler()}
                         text={cartText()}
                         // text={`Add to cart ${productPrice ? '- ' + (parseInt(productPrice) + parseInt(state.totalAddOnPrice)) : ''}`}
-                        textStyle={{ textAlign: 'center', fontSize: 16 }}
-                        style={{ paddingHorizontal: 0, alignSelf: "center", paddingVertical: 10, borderRadius: 10, backgroundColor: colors.primary, justifyContent: 'center', alignItems: 'center' }}
+                        textStyle={{ textAlign: 'center', fontSize: 16, }}
+                        style={{
+                            paddingHorizontal: 10,
+                            alignSelf: "center", paddingVertical: 10,
+                            borderRadius: 10, backgroundColor: colors.primary,
+                            justifyContent: 'center', alignItems: 'center'
+                        }}
                     />
                 </View>
 
@@ -472,9 +482,9 @@ export default (props) => {
                                     >{` ${renderPrice(productPrice)}`}</Text>
                                     {
                                         discountedPrice > 0 ?
-                                            <Text style={[productDetailsStyles.productPricetxt, { paddingHorizontal: 5, textDecorationLine: "line-through", color: colors.grey }]}
+                                            <Text style={[productDetailsStyles.productPricetxt, { paddingHorizontal: 5, textDecorationLine: "line-through", color: colors.navTextColor, fontSize: 14 }]}
                                                 fontFamily='PoppinsRegular'
-                                            >{`${renderPrice(gstAddedPrice, '')}`}</Text>
+                                            >{`${renderPrice(gstAddedPrice)}`}</Text>
                                             : null
 
                                     }
@@ -491,7 +501,7 @@ export default (props) => {
                                         <TextInput
                                             ref={inputRef}
                                             containerStyle={{ backgroundColor: 'white', margin: 0, }}
-                                            placeholder="Types your instructions"
+                                            placeholder="Type your instructions"
                                             placeholderTextColor={"#CFCFCF"}
                                             titleStyle={{ color: 'black', fontSize: 14, marginVertical: -8 }}
                                             title="Please add your instructions"

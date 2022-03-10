@@ -145,7 +145,7 @@ const stylesFunc = (colors: typeof initColors, insets: EdgeInsets, props: Props)
         position: 'absolute',
         paddingTop: 10,
         paddingBottom: insets.bottom > 0 ? insets.bottom : getStatusBarHeight() * 0.4,
-        bottom: props?.bottom,
+        bottom: props?.bottom ?? 0,
 
         width: "100%",
     },
