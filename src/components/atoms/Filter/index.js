@@ -128,6 +128,7 @@ export default (props) => {
                 // disabled={enableDisableButton}
                 text='Apply'
                 textStyle={{fontSize: 14, color: colors.white}}
+                wait={2}
                 style={{width: WIDTH * 0.75, height: HEIGHT * 0.065,  alignSelf: "center", marginBottom: 10, backgroundColor: "#ED4C42", borderRadius: 25 }}
                 
             />
