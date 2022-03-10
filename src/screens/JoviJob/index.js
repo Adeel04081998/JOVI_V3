@@ -83,9 +83,11 @@ export default ({ navigation, route }) => {
             "title": "Pitstop Details",
             "desc": "What Would You Like Your Jovi To Do ?",
             "svg": svgs.pitstopPin(),
+            // "isOpened": false,
             "isOpened": __DEV__ ? true : false,
             "headerColor": colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["description"],
+            // "disabled": true,
             "disabled": __DEV__ ? false : true,
         },
         {
@@ -93,9 +95,11 @@ export default ({ navigation, route }) => {
             "title": "Estimated Waiting Time",
             "desc": "What Is The Estimated Time Of The Job ?",
             "svg": svgs.pitStopEstTime(),
+            // "isOpened": false,
             "isOpened": __DEV__ ? true : false,
             "headerColor": colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["estimated-time"],
+            // "disabled": true,
             "disabled": __DEV__ ? false : true,
         },
         {
@@ -104,8 +108,10 @@ export default ({ navigation, route }) => {
             "desc": "Do You Want Us To Buy For You ?",
             "svg": svgs.pitStopBuy(),
             "isOpened": __DEV__ ? true : false,
+            // "isOpened": false,
             "headerColor": colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["buy-for-me"],
+            // "disabled": true,
             "disabled": __DEV__ ? false : true,
 
         },
@@ -113,10 +119,12 @@ export default ({ navigation, route }) => {
             "idx": 5,
             "title": "Estimated Price",
             "desc": "What is the Estimated Price?",
-            "svg": svgs.pitStopEstTime(),
+            "svg": svgs.pitStopEstPrice(),
+            // "isOpened": false,
             "isOpened": __DEV__ ? true : false,
             "headerColor": colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["estimated-price"],
+            // "disabled": true,
             "disabled": __DEV__ ? false : true,
 
         },
@@ -143,6 +151,7 @@ export default ({ navigation, route }) => {
     const [nameval, setNameVal] = useState('')
     const [cityVal, setCityVal] = useState('')
     const [placeName, setPlaceName] = useState('')
+    // const [locationVal, setLocationVal] = useState('')
     const [locationVal, setLocationVal] = useState(__DEV__ ? 'Islamabad' : '')
     const [scrollEnabled, setScrollEnabled] = useState(true)
     const latitudeRef = React.useRef(__DEV__ ? constants.i8_markaz.latitude : null);
@@ -173,6 +182,7 @@ export default ({ navigation, route }) => {
     /******** Start of Pitstop Details variables *******/
 
     const [description, setDescription] = useState(__DEV__ ? 'HELLOO' : '')
+    // const [description, setDescription] = useState('')
     const [imageData, updateImagesData] = useState([]);
 
     const [, updateStateaaa] = React.useState();
@@ -201,6 +211,7 @@ export default ({ navigation, route }) => {
         return store.cartReducer;
     });
     const remainingAmount = cartReducer.joviRemainingAmount;
+    // const [estVal, setEstVal] = useState('')
     const [estVal, setEstVal] = useState(__DEV__ ? "1500" : '')
     const [initialEstVal, setInitialEstVal] = useState('')
     const [switchVal, setSwitch] = useState(remainingAmount === 0 ? false : true);
@@ -208,6 +219,10 @@ export default ({ navigation, route }) => {
         text: __DEV__ ? '0-15 mins' : "Estimated Time",
         value: __DEV__ ? 1 : 0
     });
+    // const [estTime, setEstTime] = React.useState({
+    //     text: "Estimated Time",
+    //     value: 0
+    // });
     const [collapsed, setCollapsed] = React.useState(true);
 
 
@@ -673,7 +688,7 @@ export default ({ navigation, route }) => {
                     } else {
                         updateCardOnHeaderPress(updateCardOnHeaderPressItem);
                     }
-
+                    setScrollEnabled(true)
                 }} />
         )
     }
@@ -725,6 +740,7 @@ export default ({ navigation, route }) => {
                 onNearbyLocationPress={() => locationHandler()}
                 clearInputField={() => setLocationVal('')}
                 handleInputFocused={(index, isFocus) => {
+                    console.log('isFocus ==>>>', isFocus);
                     setScrollEnabled(isFocus)
                 }}
                 handleSetFavClicked={handleSetFavClicked}
@@ -1090,7 +1106,7 @@ const descriptionStyles = StyleSheet.create({
         marginRight: 12,
     },
     inputHeading: {
-        fontWeight: "bold",
+        fontWeight: "600",
         textAlign: "left",
     },
     uploadAttachmentContainer: {
@@ -1134,6 +1150,7 @@ const descriptionStyles = StyleSheet.create({
     recordVoiceText: {
         color: "#272727",
         marginLeft: 8,
+        fontFamily: FontFamily.Poppins.Regular
     },
 
     imageFileContainer: {

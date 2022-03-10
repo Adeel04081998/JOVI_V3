@@ -27,7 +27,7 @@ export default React.memo((props) => {
                         Buy For Me
                     </Text>
                     <View style={styles.buyForMeContainer}>
-                        <Text style={[styles.pitstopText, { fontWeight: 'bold', fontSize: 16 }]} >{props.switchVal ? 'Yes' : 'No' }</Text>
+                        <Text style={[styles.pitstopText, { fontWeight: '600', fontSize: 16 }]} >{props.switchVal ? 'Yes' : 'No' }</Text>
                         <View>
                             <Switch switchVal={props.switchVal} onToggleSwitch={(bool) => {props.onToggleSwitch(bool)}} />
                         </View>

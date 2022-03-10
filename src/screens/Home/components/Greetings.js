@@ -39,7 +39,7 @@ export default ({ messagesReducer, homeStyles, userReducer, colors }) => {
             ]} >
             <Text style={[homeStyles.greetingHeaderText,]} numberOfLines={1} fontFamily='PoppinsRegular' >
                 {beforeName ? `${String(beforeName)}` : null}
-                {isNameExists && <Text style={{ color: colors.BlueVoilet || "#6D51BB", alignSelf: 'center', fontSize: 16, fontWeight: 'normal', }} numberOfLines={1} fontFamily='PoppinsRegular'>
+                {isNameExists && <Text style={{ color: colors.BlueVoilet || "#6D51BB", alignSelf: 'center', fontSize: 16, fontWeight: '600', }} numberOfLines={1} fontFamily='PoppinsRegular'>
                     {`${userReducer["firstName"]}`}
                 </Text>}
                 {afterName ? `${String(afterName)}` : null}

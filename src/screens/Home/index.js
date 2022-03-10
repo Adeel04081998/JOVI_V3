@@ -129,7 +129,7 @@ export default () => {
                         {
                             userReducer.openOrders && userReducer.openOrders.length > 0 &&
                             <>
-                                <Text style={{ margin: 5, left: 5, fontWeight: "bold", color: colors.primary, fontSize: 16 }}>Orders:</Text>
+                                <Text style={{ margin: 5, left: 5, fontWeight: "600", color: colors.primary, fontSize: 16 }}>Orders:</Text>
                                 <ScrollView horizontal contentContainerStyle={{ flexDirection: "row", justifyContent: "flex-start", alignItems: "center" }} style={{ borderRadius: 5, borderWidth: .5, borderColor: colors.primary, margin: 5 }}>
                                     {
                                         // [...userReducer.openOrders, ...userReducer.openOrders, ...userReducer.openOrders, ...userReducer.openOrders].map((item, i) => {

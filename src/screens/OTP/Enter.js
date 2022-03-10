@@ -139,6 +139,7 @@ export default () => {
                             borderWidth: forcePattern ? 0.5 : 0,
                             marginLeft: 5
                         }}
+                        style={{fontFamily: FontFamily.Poppins.Regular}}
                         onFocus={() => setForcePattern(false)}
                     />
                 </AnimatedView>

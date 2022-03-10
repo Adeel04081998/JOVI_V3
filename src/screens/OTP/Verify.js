@@ -252,8 +252,8 @@ export default (props) => {
     };
     return <SafeAreaView style={{ flex: 1, backgroundColor: "#F6F5FA" }}>
         <View style={{ marginVertical: 30 }} >
-            <Text style={{ textAlign: "center", color: '#000', fontWeight: 'bold', paddingVertical: 10 }}  >Verify Phone Number</Text>
-            <Text style={{ textAlign: "center", color: '#7D7D7D' }}>{`Code is sent to ${cellNo}`}</Text>
+            <Text style={{ textAlign: "center", color: '#000', fontWeight: '600', paddingVertical: 10 }} fontFamily={"PoppinsMedium"} >{"Verify Phone Number"}</Text>
+            <Text style={{ textAlign: "center", color: '#7D7D7D' }} fontFamily={"PoppinsMedium"}  >{`Code is sent to ${cellNo}`}</Text>
         </View>
         <View style={{ flexDirection: "row", justifyContent: "center" }}>
             {

@@ -24,6 +24,7 @@ const PitStopDetails = (props) => {
                 // returnKeyType= ""
                 style={{
                     height: 120,
+                    fontFamily: FontFamily.Poppins.Regular,
                     textAlignVertical: 'top',
                     ...Platform.select({
                         ios: {

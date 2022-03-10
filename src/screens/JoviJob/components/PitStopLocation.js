@@ -46,6 +46,7 @@ const PitStopLocation = (props) => {
                     color: "#000",
                     zIndex: -1,
                     backgroundColor: colors.white,
+                    fontFamily: FontFamily.Poppins.Regular
                 }}
                 listViewStyles={{
                     borderWidth: 1,
@@ -87,6 +88,9 @@ const PitStopLocation = (props) => {
                 value={props.nameVal}
                 returnKeyType="done"
                 onChangeText={props.onChangeName}
+                style={{
+                    fontFamily: FontFamily.Poppins.Regular
+                }}
             />
         </View>
     );

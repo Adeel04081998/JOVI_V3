@@ -1,4 +1,5 @@
 import { StyleSheet, Dimensions, Platform } from 'react-native';
+import FontFamily from '../../res/FontFamily';
 
 export default {
     styles(colors, SPACING_VERTICAL) {
@@ -12,7 +13,7 @@ export default {
                 paddingTop: 50,
                 // paddingTop: Platform.OS === 'android'?50:0,
             },
-            textAlignCenter: { textAlign: "center", fontWeight: 'normal' },
+            textAlignCenter: { textAlign: "center", fontWeight: '600' },
             otpDropdownParentView: {
                 shadowColor: "#000",
                 shadowOffset: {
@@ -80,6 +81,7 @@ export default {
 
                 elevation: 2,
                 backgroundColor: 'white',
+                fontFamily: FontFamily.Poppins.Medium
             },
             borderStyleBase: {
                 width: 30,

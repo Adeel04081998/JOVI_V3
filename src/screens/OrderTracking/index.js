@@ -146,7 +146,7 @@ export default ({ route }) => {
     }
     const renderTime = (timeFontSize = 22, minutesUI = 10) => {
         return <>
-            <Text style={{ fontSize: timeFontSize, color: 'black', fontWeight: 'bold' }} fontFamily={'PoppinsBold'} onPress={() => setState(pre => ({ ...pre, progress: pre.progress + (100 / 6) }))}>{isRiderFound && state.currentPitstop ? state.currentPitstop.pitstopEstimateTime : state.orderEstimateTimeRange}</Text>
+            <Text style={{ fontSize: timeFontSize, color: 'black', fontWeight: '600' }} fontFamily={'PoppinsBold'} onPress={() => setState(pre => ({ ...pre, progress: pre.progress + (100 / 6) }))}>{isRiderFound && state.currentPitstop ? state.currentPitstop.pitstopEstimateTime : state.orderEstimateTimeRange}</Text>
             <Text style={{ fontSize: minutesUI, marginTop: 5, justifyContent: 'center', alignItems: 'center', textAlign: 'center' }} >{` minutes \nuntil delivered`}</Text>
         </>
     }
@@ -290,8 +290,8 @@ const _styles = (colors,WIDTH,SCALED_HEIGHT)=> StyleSheet.create({
         alignItems: 'center',
     },
     orderInformationContainer:{ height: 200, marginTop: 50, alignItems: 'center', display: 'flex', },
-    joviTitle:{ fontSize: 20, marginTop: 10, fontWeight: 'bold', color: colors.black },
-    orderCaption:{ fontSize: 14, marginTop: 10, fontWeight: 'bold', color: colors.black },
+    joviTitle:{ fontSize: 20, marginTop: 10, fontWeight: '600', color: colors.black },
+    orderCaption:{ fontSize: 14, marginTop: 10, fontWeight: '600', color: colors.black },
     currentPitstopTime:{ textAlign: 'center', color: colors.black, fontSize: 14 ,marginTop:10},
     orderNavigationContainer:{ position: 'absolute', width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, top: 75 },
     orderNavigationButton:{ height: 42, width: 42, borderRadius: 21, display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: colors.primary },

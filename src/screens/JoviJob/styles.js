@@ -24,7 +24,7 @@ export default (colors = initColors, width, height) => StyleSheet.create({
     },
     heading: {
         fontSize: 38,
-        fontWeight: '900',
+        fontWeight: '600',
         textTransform: 'uppercase',
         letterSpacing: -2,
     },
@@ -124,7 +124,7 @@ export default (colors = initColors, width, height) => StyleSheet.create({
     },
     btnText: {
         fontSize: 12,
-        fontWeight: 'normal'
+        fontWeight: '600'
     },
     attachment: {
         textAlign: 'left',
@@ -186,7 +186,7 @@ export default (colors = initColors, width, height) => StyleSheet.create({
     appButtonText: {
         fontSize: 14,
         color: "#fff",
-        fontWeight: "bold",
+        fontWeight: "600",
         alignSelf: "center",
     },
     caption: {

@@ -336,7 +336,7 @@ const _styles = (colors, width, height) => StyleSheet.create({
     mainText: {
         color: colors.primary,
         fontSize: 18,
-        fontWeight: 'bold'
+        fontWeight: '600'
     },
     viewMoreBtn: {
         color: colors.primary || '#6D51BB', // colors.theme here should be the theme color of specific category
