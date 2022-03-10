@@ -1,6 +1,6 @@
 import AnimatedLottieView from "lottie-react-native";
 import React from "react";
-import { Animated, Appearance, Easing, PixelRatio, StyleSheet } from "react-native";
+import { Animated, Appearance, Easing, PixelRatio, Platform, StyleSheet } from "react-native";
 import { SvgXml } from "react-native-svg";
 import { useSelector } from "react-redux";
 import svgs from "../../assets/svgs";
@@ -21,6 +21,7 @@ import constants from "../../res/constants";
 import theme from "../../res/theme";
 import ENUMS from "../../utils/ENUMS";
 import GV, { ORDER_STATUSES, PITSTOP_TYPES_INVERTED } from "../../utils/GV";
+import { PanGestureHandler } from 'react-native-gesture-handler';
 const circleCurveSvgXml = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-1.9919999999999998 11.235 2.0079999999999996 0.764">
 <path d="M 0.016 11.993 q -0.313 -0.031 -0.376 -0.283 c -0.2 -0.629 -1.065 -0.618 -1.271 -0.005 c -0.051 0.206 -0.149 0.258 -0.361 0.292" fill="#fff"/>
 </svg>`;
@@ -48,6 +49,7 @@ export default ({ route }) => {
     const [realtimeChangingState, setRealTimeState] = React.useState({
         riderLocation: null,
     });
+    const [componentLoaded, setComponentLoaded] = React.useState(false);
     const circleColor = state.subStatusName === ORDER_STATUSES.RiderFound ? '#37c130' : colors.primary;
     const isRiderFound = state.subStatusName === ORDER_STATUSES.RiderFound;
     const colorChangeAnimation = React.useRef(new Animated.Value(0)).current;
@@ -60,6 +62,21 @@ export default ({ route }) => {
         [ORDER_STATUSES.RiderFound]: () => renderTimeUI(),
         [ORDER_STATUSES.Processing]: () => renderProcessingUI(),
     };
+    const translateY = new Animated.Value(0);
+    // const onPanGestureEvent = Animated.event(
+    //     [
+    //         {
+    //             nativeEvent: {
+    //                 translationY: translateY,
+    //             },
+    //         },
+    //     ],
+    //     { useNativeDriver: true, }
+    // );
+    // const onHandlerStateChange = React.useCallback(() => {
+    //     console.log('translateY', translateY);
+    //     translateY.extractOffset();
+    // }, []);//to be implemented
     const fetchOrderDetails = () => {
         sharedFetchOrder(orderIDParam, (res) => {
             if (res.data.statusCode === 200) {
@@ -131,6 +148,8 @@ export default ({ route }) => {
         }
         if (fetchRiderLocationRef.current) {
             clearInterval(fetchRiderLocationRef.current);
+        } else if (!fetchRiderLocationRef.current) {
+            fetchRiderLocationRequest();
         }
         fetchRiderLocationRef.current = setInterval(fetchRiderLocationRequest, (userReducer?.fetchRiderLocationInterval || 5) * 1000);
     }
@@ -140,8 +159,8 @@ export default ({ route }) => {
     const orderCancelledOrCompleted = () => {
         goToHome();
     }
-    const onOrderNavigationPress = (route = '',extraParams={}) => {
-        NavigationService.NavigationActions.common_actions.navigate(route, { orderID: orderIDParam,...extraParams });
+    const onOrderNavigationPress = (route = '', extraParams = {}) => {
+        NavigationService.NavigationActions.common_actions.navigate(route, { orderID: orderIDParam, ...extraParams });
     }
     React.useEffect(() => {
         fetchOrderDetails();
@@ -150,7 +169,11 @@ export default ({ route }) => {
             useNativeDriver: true,
             duration: 500,
             easing: Easing.ease
-        }).start();
+        }).start(finished => {
+            if (finished) {
+                setComponentLoaded(true);
+            }
+        });
         return () => {
             if (fetchRiderLocationRef.current) {
                 clearInterval(fetchRiderLocationRef.current);
@@ -209,7 +232,7 @@ export default ({ route }) => {
                 {renderUI[state.subStatusName ?? ORDER_STATUSES.Processing]()}
             </View>
             <View style={styles.orderNavigationContainer}>
-                <TouchableOpacity disabled={!isRiderFound} onPress={() => onOrderNavigationPress(ROUTES.APP_DRAWER_ROUTES.OrderChat.screen_name,{riderProfilePic:state.userPic})} style={{ ...styles.orderNavigationButton, backgroundColor: isRiderFound ? colors.primary : colors.grey }}>
+                <TouchableOpacity disabled={!isRiderFound} onPress={() => onOrderNavigationPress(ROUTES.APP_DRAWER_ROUTES.OrderChat.screen_name, { riderProfilePic: state.userPic })} style={{ ...styles.orderNavigationButton, backgroundColor: isRiderFound ? colors.primary : colors.grey }}>
                     <VectorIcon size={25} name={'md-chatbubble-ellipses'} type={'Ionicons'} color={colors.white} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => onOrderNavigationPress(ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name)} style={styles.orderNavigationButton}>
@@ -220,70 +243,82 @@ export default ({ route }) => {
     }
     return (
         <SafeAreaView style={styles.safeArea}>
-            <View style={styles.container} >
-                <CustomHeader
-                    hideFinalDestination
-                    containerStyle={styles.headerContainer}
-                    leftContainerStyle={{
-                        backgroundColor: colors.white,
-                    }}
-                    rightContainerStyle={{
-                        backgroundColor: colors.white,
-                    }}
-                    onRightIconPress={() => {
-                        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
-                    }}
-                    rightIconName={'home'}
-                    leftIconColor={colors.black}
-                />
-                <SharedMapView
+            <CustomHeader
+                hideFinalDestination
+                containerStyle={styles.headerContainer}
+                leftContainerStyle={{
+                    backgroundColor: colors.white,
+                }}
+                rightContainerStyle={{
+                    backgroundColor: colors.white,
+                }}
+                onRightIconPress={() => {
+                    NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
+                }}
+                rightIconName={'home'}
+                leftIconColor={colors.black}
+            />
+            <Animated.View style={{
+                ...styles.container, transform: [{
+                    translateY: loadAnimation.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0, -200]
+                    })
+                }]
+            }} >
+                {state.currentPitstop?.latitude && <SharedMapView
                     hideBackButton
-                    // latitude={props.route?.params?.finalDestObj.latitude}
-                    // longitude={props.route?.params?.finalDestObj.longitude}
+                    latitude={state.currentPitstop?.latitude}
+                    longitude={state.currentPitstop?.longitude}
                     route={route}
                     showCurrentLocationBtn={false}
                     showContinueBtn={false}
                     showDirections={true}
-                    // showMarker={true}
-                    // mapHeight={SCALED_HEIGHT * 0.27}
                     markerStyle={styles.mapMarkerStyle}
-                    customPitstops={state.pitStopsList}
                     riderLocation={realtimeChangingState.riderLocation}
-                    customCenter={state.currentPitstop ?? { latitude: 33.66818441183923, longitude: 73.07202094623308 }}
-                    // pitchEnabled={false}
-                    // zoomEnabled={false}
-                    // scrollEnabled={false}
-                    // selectFinalDestination={true}
-                    onMapPress={() => {
-
-                    }} />
-            </View>
-            <Animated.View style={{
-                ...styles.bottomViewContainer, opacity: loadAnimation, transform: [{
-                    translateY: loadAnimation.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [300, 0]
-                    })
-                }]
-            }}>
-                {renderProgressCircle()}
-                <View style={styles.orderInformationContainer}>
-                    {isRiderFound ?
-                        <Text style={styles.joviTitle} fontFamily={'PoppinsSemiBold'}>JOVI</Text>
-                        :
-                        renderTime(30, 14)
-                    }
-                    <Text style={styles.orderCaption} fontFamily={'PoppinsSemiBold'}>Almost there! Your order is being prepared now.</Text>
-                    {
-                        isRiderFound && state.currentPitstop ?
-                            <Text style={styles.currentPitstopTime}>
-                                {`Estimated arrival at ${state.totalActivePitstops.length === state.currentPitstop.index + 1 ? 'Final Destination' : `Pitstop ${state.currentPitstop?.index + 1}`}\n${state.currentPitstop?.pitstopEstimateTime ?? ' - '} minutes`}
-                            </Text>
-                            :
-                            null
-                    }
-                </View>
+                    // customCenter={{ latitude: 33.669147010259806, longitude: 73.07375434744728 }}
+                    customPitstops={state.pitStopsList}
+                    customCenter={state.currentPitstop}
+                    smoothRiderPlacement
+                />}
             </Animated.View>
+            {/* <PanGestureHandler
+                onGestureEvent={onPanGestureEvent}
+                onHandlerStateChange={onHandlerStateChange}
+                minDist={50}
+
+            // activeOffsetY={[0, 300]}
+
+            > */}
+                <Animated.View
+                    onLayout={(e) => { console.log('e-onLayout', e); }}
+                    style={{
+                        ...styles.bottomViewContainer, opacity: loadAnimation, transform: [{
+                            translateY: componentLoaded ? translateY : loadAnimation.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: [300, 0]
+                            })
+                        }]
+                    }}>
+                    {renderProgressCircle()}
+                    <View style={styles.orderInformationContainer}>
+                        {isRiderFound ?
+                            <Text style={styles.joviTitle} fontFamily={'PoppinsSemiBold'}>JOVI</Text>
+                            :
+                            renderTime(30, 14)
+                        }
+                        <Text style={styles.orderCaption} fontFamily={'PoppinsSemiBold'}>Almost there! Your order is being prepared now.</Text>
+                        {
+                            isRiderFound && state.currentPitstop ?
+                                <Text style={styles.currentPitstopTime}>
+                                    {`Estimated arrival at ${state.totalActivePitstops.length === state.currentPitstop.index + 1 ? 'Final Destination' : `Pitstop ${state.currentPitstop?.index + 1}`}\n${state.currentPitstop?.pitstopEstimateTime ?? ' - '} minutes`}
+                                </Text>
+                                :
+                                null
+                        }
+                    </View>
+                </Animated.View>
+            {/* </PanGestureHandler> */}
         </SafeAreaView>
     );
 };
@@ -299,7 +334,7 @@ const _styles = (colors, WIDTH, SCALED_HEIGHT) => StyleSheet.create({
         backgroundColor: 'transparent',
         borderBottomWidth: 0,
         position: 'absolute',
-        top: 0,
+        top: Platform.select({ ios: 30, android: 0 }),
         zIndex: 9999
     },
     mapMarkerStyle: {

@@ -130,7 +130,7 @@ export default ({ navigation, route }) => {
                 const { statusCode, orderStatusVM } = response.data;
                 if (statusCode === 200) {
                     if (isConfirm) {
-                        NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderTracking.screen_name, {}, ROUTES.APP_DRAWER_ROUTES.OrderProcessingError.screen_name);
+                        NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderTracking.screen_name, {orderID:orderIDParam}, ROUTES.APP_DRAWER_ROUTES.OrderProcessingError.screen_name);
                     } else {
                         NavigationService.NavigationActions.common_actions.goBack();
                     }

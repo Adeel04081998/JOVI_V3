@@ -30,7 +30,7 @@ export const sharedExceptionHandler = err => {
     const TOAST_SHOW = 3000;
     if (err) {
         if (err.data) {
-            if (error?.data?.StatusCode === 401) return;
+            if (err?.data?.StatusCode === 401) return;
             else if (err.data.errors) {
                 var errorKeys = Object.keys(err.data.errors),
                     errorStr = "";
@@ -729,9 +729,11 @@ export const sharedFetchOrder = (orderID = 0, successCb = () => { }, errCb = () 
         Endpoints.FetchOrder + '/' + orderID,
         (response) => {
             console.log('sharedFetchOrder', response);
-            if (response.data.order.orderStatus === 3) {
-                NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
-                return;
+            if(response.data.statusCode === 200){
+                if (response.data.order.orderStatus === 3) {
+                    NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
+                    return;
+                }
             }
             successCb(response);
         },

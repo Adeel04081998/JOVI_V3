@@ -164,8 +164,8 @@ export default ({ route }) => {
                         currentPitstop = { ...item, index: i };
                     }
                     if (![3, 4, 5, 9].includes(item.joviJobStatus)) {
+                        updatedPitstops.push(item);
                     }
-                    updatedPitstops.push(item);
                 });
                 if (!currentPitstop) {
                     currentPitstop = res.data.order.pitStopsList[res.data.order.pitStopsList.length - 1];
