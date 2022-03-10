@@ -22,6 +22,7 @@ import theme from "../../res/theme";
 import ENUMS from "../../utils/ENUMS";
 import GV, { ORDER_STATUSES, PITSTOP_TYPES_INVERTED } from "../../utils/GV";
 import { PanGestureHandler } from 'react-native-gesture-handler';
+import { useIsFocused } from "@react-navigation/native";
 const circleCurveSvgXml = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-1.9919999999999998 11.235 2.0079999999999996 0.764">
 <path d="M 0.016 11.993 q -0.313 -0.031 -0.376 -0.283 c -0.2 -0.629 -1.065 -0.618 -1.271 -0.005 c -0.051 0.206 -0.149 0.258 -0.361 0.292" fill="#fff"/>
 </svg>`;
@@ -35,6 +36,7 @@ export default ({ route }) => {
     const orderIDParam = route?.params?.orderID ?? 41231;
     const SCALED_HEIGHT = PixelRatio.roundToNearestPixel(WINDOW_HEIGHT * (WINDOW_HEIGHT / baseHeight));
     const styles = _styles(colors, WIDTH, SCALED_HEIGHT);
+    const isFocused = useIsFocused();
     const [state, setState] = React.useState({
         orderID: orderIDParam ?? 0,
         pitStopsList: [],
@@ -78,6 +80,7 @@ export default ({ route }) => {
     //     translateY.extractOffset();
     // }, []);//to be implemented
     const fetchOrderDetails = () => {
+        if (!isFocused) return;
         sharedFetchOrder(orderIDParam, (res) => {
             if (res.data.statusCode === 200) {
                 let allowedOrderStatuses = [ORDER_STATUSES.Processing, ORDER_STATUSES.RiderFound, ORDER_STATUSES.FindingRider, ORDER_STATUSES.RiderProblem, ORDER_STATUSES.TransferProblem];
@@ -121,6 +124,7 @@ export default ({ route }) => {
     }
     const fetchRiderLocation = () => {
         const fetchRiderLocationRequest = () => {
+            if (!isFocused) return;
             getRequest(`${Endpoints.GetRiderLocation}/${orderIDParam}`, (res) => {
                 if (res.data.statusCode === 200) {
                     let { latitude, latitudeDelta, longitude, longitudeDelta, rotation } = res.data.riderLocationViewModel;
@@ -180,6 +184,17 @@ export default ({ route }) => {
             }
         }
     }, []);
+    React.useEffect(()=>{
+        if(!isFocused){
+            if(fetchRiderLocationRef.current){
+                clearInterval(fetchRiderLocationRef.current);
+            }
+        }else{
+            if(isRiderFound){
+                fetchRiderLocation();
+            }
+        }
+    },[isFocused]);
     React.useEffect(() => {
         sharedNotificationHandlerForOrderScreens(fcmReducer, fetchOrderDetails, orderCancelledOrCompleted);
         return () => {
@@ -290,34 +305,34 @@ export default ({ route }) => {
             // activeOffsetY={[0, 300]}
 
             > */}
-                <Animated.View
-                    onLayout={(e) => { console.log('e-onLayout', e); }}
-                    style={{
-                        ...styles.bottomViewContainer, opacity: loadAnimation, transform: [{
-                            translateY: componentLoaded ? translateY : loadAnimation.interpolate({
-                                inputRange: [0, 1],
-                                outputRange: [300, 0]
-                            })
-                        }]
-                    }}>
-                    {renderProgressCircle()}
-                    <View style={styles.orderInformationContainer}>
-                        {isRiderFound ?
-                            <Text style={styles.joviTitle} fontFamily={'PoppinsSemiBold'}>JOVI</Text>
+            <Animated.View
+                onLayout={(e) => { console.log('e-onLayout', e); }}
+                style={{
+                    ...styles.bottomViewContainer, opacity: loadAnimation, transform: [{
+                        translateY: componentLoaded ? translateY : loadAnimation.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [300, 0]
+                        })
+                    }]
+                }}>
+                {renderProgressCircle()}
+                <View style={styles.orderInformationContainer}>
+                    {isRiderFound ?
+                        <Text style={styles.joviTitle} fontFamily={'PoppinsSemiBold'}>JOVI</Text>
+                        :
+                        renderTime(30, 14)
+                    }
+                    <Text style={styles.orderCaption} fontFamily={'PoppinsSemiBold'}>Almost there! Your order is being prepared now.</Text>
+                    {
+                        isRiderFound && state.currentPitstop ?
+                            <Text style={styles.currentPitstopTime}>
+                                {`Estimated arrival at ${state.totalActivePitstops.length === state.currentPitstop.index + 1 ? 'Final Destination' : `Pitstop ${state.currentPitstop?.index + 1}`}\n${state.currentPitstop?.pitstopEstimateTime ?? ' - '} minutes`}
+                            </Text>
                             :
-                            renderTime(30, 14)
-                        }
-                        <Text style={styles.orderCaption} fontFamily={'PoppinsSemiBold'}>Almost there! Your order is being prepared now.</Text>
-                        {
-                            isRiderFound && state.currentPitstop ?
-                                <Text style={styles.currentPitstopTime}>
-                                    {`Estimated arrival at ${state.totalActivePitstops.length === state.currentPitstop.index + 1 ? 'Final Destination' : `Pitstop ${state.currentPitstop?.index + 1}`}\n${state.currentPitstop?.pitstopEstimateTime ?? ' - '} minutes`}
-                                </Text>
-                                :
-                                null
-                        }
-                    </View>
-                </Animated.View>
+                            null
+                    }
+                </View>
+            </Animated.View>
             {/* </PanGestureHandler> */}
         </SafeAreaView>
     );

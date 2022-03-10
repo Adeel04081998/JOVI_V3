@@ -903,7 +903,8 @@ export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder 
         }
         else if (data.NotificationType == notificationTypes[8]) {
             fetchOrder({
-                loadChat:true
+                loadChat:true,
+                notificationData:jobNotify,
             })
         }
         else {
