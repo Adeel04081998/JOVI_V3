@@ -236,7 +236,7 @@ export default ({ route }) => {
                     rightIconName={'home'}
                     leftIconColor={colors.black}
                 />
-               {/* <SharedMapView
+               <SharedMapView
                     hideBackButton
                     // latitude={props.route?.params?.finalDestObj.latitude}
                     // longitude={props.route?.params?.finalDestObj.longitude}
@@ -256,7 +256,7 @@ export default ({ route }) => {
                     // selectFinalDestination={true}
                     onMapPress={() => {
 
-                    }} /> */}
+                    }} />
             </View>
             <Animated.View style={{
                 ...styles.bottomViewContainer, opacity: loadAnimation, transform: [{
