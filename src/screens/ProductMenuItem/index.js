@@ -29,8 +29,8 @@ export default ({ navigation, route }) => {
 
     // #region :: ROUTE PARAM's START's FROM HERE 
     const pitstopType = route?.params?.pitstopType ?? PITSTOP_TYPES.SUPER_MARKET;
-const parentItem=route?.params?.item ?? {};    
-const allData=route?.params?.allData ?? {};
+    const parentItem = route?.params?.item ?? {};
+    const allData = route?.params?.allData ?? {};
 
     const marketID = route?.params?.marketID ?? 0;// 4613,4609, 4521, 4668;
     const categoryID = route?.params?.item?.categoryID ?? 0;// 668, 675
@@ -248,13 +248,15 @@ const allData=route?.params?.allData ?? {};
                     itemContainerStyle={{
                         marginRight: 0,
                     }}
-                    onPress={() => { 
+                    onPress={() => {
                         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, {
                             propItem: {
                                 itemDetails: { ...item },
                                 ...item,
-                                vendorDetails: { ...parentItem, pitstopItemList: null, marketID, actionKey: "marketID", 
-                                pitstopName: allData?.pitstopName??'', pitstopIndex: null, pitstopType, ...route.params },
+                                vendorDetails: {
+                                    ...parentItem, pitstopItemList: null, marketID, actionKey: "marketID",
+                                    pitstopName: allData?.pitstopName ?? '', pitstopIndex: null, pitstopType, ...route.params
+                                },
                                 // vendorDetails: { ...route.params, allData },
                             },
                             pitstopType: pitstopType
@@ -349,7 +351,7 @@ const allData=route?.params?.allData ?? {};
     // #endregion :: ERROR AND LOADING END's FROM HERE 
 
     return (
-        <SafeAreaView style={styles.primaryContainer}>
+        <SafeAreaView style={[styles.primaryContainer]}>
             {_renderHeader()}
 
 

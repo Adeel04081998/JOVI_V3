@@ -250,19 +250,24 @@ export default (props) => {
             totalDiscount: 0,
             totalGst: 0,
         }));
-        sharedAddUpdatePitstop(dataToSend, false, [], true, false, () => { }, true)
+        // sharedAddUpdatePitstop(dataToSend, false, [], true, false, () => { }, true)
 
         // NavigationService.NavigationActions.common_actions.navigate({ dataToSend })
 
         setEnable(pre => ({
             ...pre,
             enableBtn: optionsListArr.length < 1,
+            dataToSend,
             requiredIds: [],
         }));
     }
     // console.log("[generalProductOrDealDetail]", state.generalProductOrDealDetail)
 
-
+    React.useEffect(() => {
+        if (enable.dataToSend) {
+            sharedAddUpdatePitstop(enable.dataToSend, false, [], true, false, () => { }, true)
+        }
+    }, [enable.dataToSend]);
     const itemCountOnPress = (key) => {
         let updatedItemCount
         if (key === 'minus') {
@@ -297,7 +302,8 @@ export default (props) => {
                 paddingVertical: constants.spacing_vertical,
                 borderRadius: 30,
                 backgroundColor: colors.white,
-                minWidth: "35%",
+                flex: Platform.OS === "android" ? 0.6 : 0.5,
+
             }}>
 
                 <TouchableScale
@@ -335,7 +341,11 @@ export default (props) => {
 
     const renderButtonsUi = () => {
         return (
-            <AnimatedView style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, alignItems: 'center', marginHorizontal: 12, height: 80 }}>
+            <AnimatedView style={{
+                flexDirection: 'row', justifyContent: 'space-between',
+                alignItems: 'center',
+                marginHorizontal: 10, height: 80,
+            }}>
                 {_renderQuantityCard()}
                 {/* <View style={{
                     flexDirection: 'row', alignSelf: 'center', backgroundColor: 'white', borderRadius: 30, alignItems: 'center', paddingHorizontal: Platform.OS === "android" ? 6 : 20, paddingVertical: 5,
@@ -373,14 +383,19 @@ export default (props) => {
                         />
                     </TouchableScale>
                 </View> */}
-                <View style={{ maxWidth: '55%' }}>
+                <View style={{ flex: 1, marginLeft: 15 }}>
                     <Button
                         disabled={!enable.enableBtn}
                         onPress={() => addToCartHandler()}
                         text={cartText()}
                         // text={`Add to cart ${productPrice ? '- ' + (parseInt(productPrice) + parseInt(state.totalAddOnPrice)) : ''}`}
-                        textStyle={{ textAlign: 'center', fontSize: 16 }}
-                        style={{ paddingHorizontal: 0, alignSelf: "center", paddingVertical: 10, borderRadius: 10, backgroundColor: colors.primary, justifyContent: 'center', alignItems: 'center' }}
+                        textStyle={{ textAlign: 'center', fontSize: 16, }}
+                        style={{
+                            paddingHorizontal: 10,
+                            alignSelf: "center", paddingVertical: 10,
+                            borderRadius: 10, backgroundColor: colors.primary,
+                            justifyContent: 'center', alignItems: 'center'
+                        }}
                     />
                 </View>
 
@@ -403,79 +418,13 @@ export default (props) => {
             />
         </View>
     }
-    const RenderPutItemInCartBox = ({ addToCardAnimation }) => {
-        const animateAddToCart = React.useRef(new Animated.Value(0)).current;
-        const animateLoader = (toValue = 1) => {
-            Animated.timing(animateAddToCart, {
-                toValue: toValue,
-                duration: 300,
-                useNativeDriver: true,
-                easing: Easing.ease,
-            }).start(finished => {
-                if (finished && toValue === 0) {
-                    setState(pre => ({ ...pre, addToCardAnimation: false }));
-                    NavigationService.NavigationActions.common_actions.goBack()
 
-                }
-            });
-        }
-        React.useEffect(() => {
-
-            let timeToshowGif = Platform.OS === 'ios' ? (deviceInfoModule.hasNotch() ? 2800 : 4000) : 6000
-            if (addToCardAnimation === true) {
-                animateLoader();
-                // setTimeout(() => {
-                //     animateLoader(0)
-                // }, timeToshowGif);
-
-            }
-
-        }, [addToCardAnimation]);
-        return (
-            <AnimatedView style={{ opacity: animateAddToCart, display: addToCardAnimation === true ? 'flex' : 'none', position: 'absolute', height: "100%", backgroundColor: 'rgba(0,0,1,0.5)', width: '100%', justifyContent: 'flex-start', alignContent: 'flex-start' }}>
-
-                <Animated.Image
-                    source={require('../../assets/gifs/AddToCart.gif')}
-                    resizeMethod={'auto'}
-                    resizeMode={'contain'}
-                    style={{ justifyContent: 'flex-end', alignContent: 'center', alignSelf: 'center', width: "90%" }}
-                    height={70}
-                    width={40}
-                    onLoadEnd={async () => {
-                        await sleep(Platform.OS === 'ios' ? 2 : 1);
-                        animateLoader(0)
-                    }}
-                />
-
-                {/* <AnimatedLottieView
-                    source={require('../../assets/gifs/Add To Cart.json')}
-                    onAnimationFinish={() => {
-                        animateLoader(0);
-                    }}
-                    style={{
-                        marginTop: Platform.OS === 'ios' ? -105 : -180
-                    }}
-                    resizeMode={'contain'}
-                    autoPlay loop={false}
-                /> */}
-            </AnimatedView>
-        )
-    }
 
     useEffect(() => {
         loadProductDetails()
 
 
     }, [])
-    const screenAnimation = React.useRef(new Animated.Value(0)).current;
-    React.useLayoutEffect(() => {
-        Animated.timing(screenAnimation, {
-            toValue: 1,
-            duration: 500,
-            useNativeDriver: true,
-            easing: Easing.ease
-        }).start();
-    }, [loading]);
     const inputRef = React.useRef(null);
 
     return (
@@ -483,13 +432,6 @@ export default (props) => {
             {loading ? renderLoader() :
                 <AnimatedView style={{
                     flex: 1,
-                    transform: [{
-                        translateY: screenAnimation.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: [800, 0]
-                        })
-                        // scaleX: cuisineAnimation
-                    }]
                 }} >
 
 
@@ -540,9 +482,9 @@ export default (props) => {
                                     >{` ${renderPrice(productPrice)}`}</Text>
                                     {
                                         discountedPrice > 0 ?
-                                            <Text style={[productDetailsStyles.productPricetxt, { paddingHorizontal: 5, textDecorationLine: "line-through", color: colors.grey }]}
+                                            <Text style={[productDetailsStyles.productPricetxt, { paddingHorizontal: 5, textDecorationLine: "line-through", color: colors.navTextColor, fontSize: 14 }]}
                                                 fontFamily='PoppinsRegular'
-                                            >{`${renderPrice(gstAddedPrice, '')}`}</Text>
+                                            >{`${renderPrice(gstAddedPrice)}`}</Text>
                                             : null
 
                                     }
@@ -559,7 +501,7 @@ export default (props) => {
                                         <TextInput
                                             ref={inputRef}
                                             containerStyle={{ backgroundColor: 'white', margin: 0, }}
-                                            placeholder="Types your instructions"
+                                            placeholder="Type your instructions"
                                             placeholderTextColor={"#CFCFCF"}
                                             titleStyle={{ color: 'black', fontSize: 14, marginVertical: -8 }}
                                             title="Please add your instructions"
@@ -581,7 +523,7 @@ export default (props) => {
                     </SafeAreaView>
 
 
-                    {state.addToCardAnimation ? <RenderPutItemInCartBox addToCardAnimation={state.addToCardAnimation} /> : <View />}
+                    <RenderPutItemInCartBox addToCardAnimation={state.addToCardAnimation} setState={setState} />
 
                 </AnimatedView>
             }
@@ -625,3 +567,62 @@ const RenderProductImages = React.memo(({ images, colors }) => {
         </LinearGradient>
     </>
 }, (n, p) => n !== p);
+
+const RenderPutItemInCartBox = ({ addToCardAnimation, setState }) => {
+    const animateAddToCart = React.useRef(new Animated.Value(0)).current;
+    const animateLoader = (toValue = 1) => {
+        Animated.timing(animateAddToCart, {
+            toValue: toValue,
+            duration: 300,
+            useNativeDriver: true,
+            easing: Easing.ease,
+        }).start(finished => {
+            if (finished && toValue === 0) {
+                setState(pre => ({ ...pre, addToCardAnimation: false }));
+                NavigationService.NavigationActions.common_actions.goBack()
+
+            }
+        });
+    }
+    React.useEffect(() => {
+
+        let timeToshowGif = Platform.OS === 'ios' ? (deviceInfoModule.hasNotch() ? 2800 : 4000) : 6000
+        if (addToCardAnimation === true) {
+            animateLoader();
+            // setTimeout(() => {
+            //     animateLoader(0)
+            // }, timeToshowGif);
+
+        }
+
+    }, [addToCardAnimation]);
+    return (
+        <AnimatedView style={{ opacity: animateAddToCart, display: addToCardAnimation === true ? 'flex' : 'none', position: 'absolute', height: "100%", backgroundColor: 'rgba(0,0,1,0.5)', width: '100%', justifyContent: 'flex-start', alignContent: 'flex-start' }}>
+
+            {addToCardAnimation && <Animated.Image
+                source={require('../../assets/gifs/AddToCart.gif')}
+                resizeMethod={'auto'}
+                resizeMode={'contain'}
+                style={{ justifyContent: 'flex-end', alignContent: 'center', alignSelf: 'center', width: "90%" }}
+                height={70}
+                width={40}
+                onLoadEnd={async () => {
+                    await sleep(Platform.OS === 'ios' ? 2 : 1);
+                    animateLoader(0)
+                }}
+            />}
+
+            {/* <AnimatedLottieView
+                source={require('../../assets/gifs/Add To Cart.json')}
+                onAnimationFinish={() => {
+                    animateLoader(0);
+                }}
+                style={{
+                    marginTop: Platform.OS === 'ios' ? -105 : -180
+                }}
+                resizeMode={'contain'}
+                autoPlay loop={false}
+            /> */}
+        </AnimatedView>
+    )
+}

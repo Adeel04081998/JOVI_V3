@@ -165,7 +165,7 @@ export default () => {
                                 "gstPercentage": obj.gstPercentage,
                                 "gstAddedPrice": obj.gstAddedPrice + obj.totalJoviDiscount + obj._totalDiscount,//backend is expecting gst added price without discounts, due to deadline, it couldn't be calculated from backend,
                                 "restaurantProductNotFound": (obj.isRestaurant && obj.restaurantProductNotFound) ? obj.restaurantProductNotFound : 0,
-                                "pitstopItemsOptionList": (obj.isRestaurant || item.pitstopType === 4?
+                                "pitstopItemsOptionList": (obj.isRestaurant || item.pitstopType === 4 ?
                                     // A non-deal type restaurant item
                                     (obj.pitStopDealID ?
                                         ((obj.selectedOptions) || []).map((o, i) => ({
@@ -206,6 +206,7 @@ export default () => {
                 // ref => https://cibak.atlassian.net/browse/TJA-3225 ==> Mudassir
                 // "pitstopDistances": state.pitstopDistances
             };
+            console.log('Final Order Payload',finalOrder);
             postRequest(Endpoints.CreateUpdateOrder, finalOrder, (res) => {
                 console.log('order place res', res);
                 if (res.data.statusCode === 200) {
@@ -214,7 +215,7 @@ export default () => {
                     dispatch(actions.setUserAction({
                         ordersList: [res.data.createUpdateOrderVM.orderID]
                     }));
-                    sharedOrderNavigation(res.data?.createUpdateOrderVM?.orderID ?? 0,res.data?.createUpdateOrderVM?.subStatusName??'',null,true);
+                    sharedOrderNavigation(res.data?.createUpdateOrderVM?.orderID ?? 0, res.data?.createUpdateOrderVM?.subStatusName ?? '', null, true);
                 } else {
                     setState(pre => ({ ...pre, isLoading: false }));
                 }
@@ -345,7 +346,7 @@ export default () => {
                 titleStyle={{ fontSize: 16, fontFamily: FontFamily.Poppins.SemiBold, color: '#6D51BB' }}
                 onLeftIconPress={goBack}
                 // rightIconName=''
-                containerStyle={{ borderBottomWidth: 0 }}
+                containerStyle={{ borderBottomWidth: 0, }}
 
                 rightIconName='home'
                 rightIconSize={22}
@@ -355,18 +356,18 @@ export default () => {
                 }}
             //  /   defaultColor={colors.primary} 
             />
-            <View style={{ backgroundColor: colors.screen_background, flex: 1 }}>
+            <View style={{ backgroundColor: colors.screen_background, flex: 1, }}>
                 <View style={{ top: -10 }}>
                     <StepProgress maxHighlight={3} />
                 </View>
-                <ScrollView style={{ flex: 1, }} showsVerticalScrollIndicator={false}>
+                <ScrollView style={{ flex: 1, marginTop: -10 }} showsVerticalScrollIndicator={false}>
 
                     <OrderEstTimeCard
                         imageHeight={IMAGE_SIZE * 0.6}
                         color={colors}
                         right={{ value: totalPitstop }}
                         middle={{ value: estimatedDeliveryTime }}
-                        contentContainerStyle={{ marginBottom: 0, marginVertical: 0, marginTop: 10, borderRadius: 8 }}
+                        contentContainerStyle={{ marginBottom: 0, marginVertical: 0, marginTop: 5, borderRadius: 8, paddingVertical: 5 }}
                         rightContainerStyle={{}}
                         middleContainerStyle={{ flex: 2 }}
                         leftContainerStyle={{ paddingRight: 15 }}
@@ -375,7 +376,7 @@ export default () => {
                         contianerStyle={{ margin: TOPSPACING, marginBottom: 2, padding: 0, borderRadius: 8 }}
                         addressTxtStyle={{ fontSize: 14, color: "#6D51BB", paddingHorizontal: 10 }}
                         instructions={instructionForRider}
-                        editIconStyle={{ justifyContent: 'center', alignSelf: 'center', alignItems: 'center', paddingVertical:10, paddingHorizontal:14 }}
+                        editIconStyle={{ justifyContent: 'center', alignSelf: 'center', alignItems: 'center', paddingVertical: 10, paddingHorizontal: 14 }}
                         edit_icon_Height={18}
                         isShowLine={false}
                         finalDestinationPrimaryContainer={{ paddingLeft: 18, paddingVertical: 0, bottom: 3 }}

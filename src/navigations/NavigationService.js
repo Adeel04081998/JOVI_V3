@@ -19,7 +19,7 @@ const NavigationActions = {
                 navigation.dispatch({
                     ...CommonActions.goBack(),
                     source: route.key,
-                    target: route?.params?.key
+                    target: route.target
                 });
             } else navigation.dispatch(CommonActions.goBack());
 

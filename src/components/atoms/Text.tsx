@@ -13,17 +13,19 @@ const defaultProps={
   fontFamily:"PoppinsRegular",
 }
 
-const Text =(props: Props) =>{
+const Text =React.forwardRef((props: Props,ref) =>{
   if(!props.children) return null;
   return (
   <RNText 
+  ref={ref}
   {...props}
    style={[{
     fontFamily: Platform.select({android:props.fontFamily,ios:props.fontFamily?.replace("Poppins","Poppins-")}),
   },props.style]}
   />
   );
-}
+});
 
+//@ts-ignore
 Text.defaultProps=defaultProps;
 export default Text;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Animated, Appearance, Easing, FlatList, ScrollView, StyleSheet } from 'react-native';
+import { Alert, Animated, Appearance, Easing, FlatList, ScrollView, StyleSheet } from 'react-native';
 import Image from '../../components/atoms/Image';
 import Text from '../../components/atoms/Text';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
@@ -84,7 +84,9 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
     const onFilterChange = (item, idKey, key,) => {
         setState(pre => ({ ...pre, listingObj: { ...item, header: item.name }, filters: { ...pre.filters, filter: [item[idKey]] } }));
         filtersRef.current[key] = [item[idKey]];
-        fetchDataWithResetedPageNumber();
+        fetchDataWithResetedPageNumber({ "vendorDashboardCatID": item.vendorDashboardCatID }); // https://cibak.atlassian.net/browse/JV3-1374
+        // getData({ "vendorDashboardCatID": item.vendorDashboardCatID })
+
     }
     const onCategoryChange = (item, idKey, key, emptyVal = []) => {
         const isDisSelect = filterValidations[key](filtersRef.current[key], item[idKey]);
@@ -92,7 +94,7 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
         filtersRef.current[key] = isDisSelect ? emptyVal : [item[idKey]];
         fetchDataWithResetedPageNumber();
     }
-    const getData = () => {
+    const getData = (params = {}) => {
         isRequestSent.current = true;
         setState(pre => ({ ...pre, isLoading: true }));
         postRequest(Endpoints.GET_PITSTOPS_PROMOTIONS, {
@@ -103,6 +105,7 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
             "categoryID": filtersRef.current.cuisines[0] ?? '',
             "latitude": finalDestination.latitude,
             "longitude": finalDestination.longitude,
+            ...params
         }, (res) => {
             setTimeout(() => {
                 isRequestSent.current = false;
@@ -164,7 +167,7 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
         }
         getData();
     }
-    const fetchDataWithResetedPageNumber = () => {
+    const fetchDataWithResetedPageNumber = (params = {}) => {
         if (state.vendorCategoryViewModel.vendorList.length > 0) {
             setState(pre => ({ ...pre, vendorCategoryViewModel: { vendorList: [] } }));
         }
@@ -173,7 +176,7 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
             pageNumber: 1,
             itemsPerPage: ITEMS_PER_PAGE
         }
-        getData();
+        getData(params);
     }
     const onBackPress = () => {
         NavigationService.NavigationActions.common_actions.goBack();

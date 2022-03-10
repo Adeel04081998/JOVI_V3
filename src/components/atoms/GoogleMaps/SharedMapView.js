@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react'
-import { Appearance, Platform, StyleSheet } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
+import { Appearance, Easing, Platform, StyleSheet } from 'react-native';
+import MapView, { AnimatedRegion, Marker, PROVIDER_GOOGLE } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import { sharedStartingRegionPK } from '../../../helpers/SharedActions';
 import VectorIcon from '../VectorIcon';
 import { addressInfo, hybridLocationPermission } from '../../../helpers/Location';
@@ -22,6 +22,7 @@ import { useSelector } from "react-redux";
 import { initColors } from '../../../res/colors';
 import View from '../View';
 import Text from '../Text';
+import ENUMS from '../../../utils/ENUMS';
 
 
 const LATITUDE_DELTA = 0.01;
@@ -32,13 +33,12 @@ const FINAL_DESTINATION_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="25
   <path id="Icon_awesome-flag-checkered" data-name="Icon awesome-flag-checkered" d="M11.046,8.463V11.5c1.163.263,2.2.7,3.281.994V9.453c-1.159-.259-2.2-.691-3.281-.99ZM21,2.981A13.016,13.016,0,0,1,15.784,4.4c-2.385,0-4.359-1.551-7.364-1.551a8.666,8.666,0,0,0-3.031.535A2.5,2.5,0,1,0,1.632,4.541v17.21a1.067,1.067,0,0,0,1.07,1.07h.713a1.067,1.067,0,0,0,1.07-1.07V17.543a12.428,12.428,0,0,1,5.1-.985c2.389,0,4.359,1.551,7.364,1.551a9.314,9.314,0,0,0,5.46-1.823,1.422,1.422,0,0,0,.615-1.177V4.273A1.424,1.424,0,0,0,21,2.981ZM7.766,14.508a14.043,14.043,0,0,0-3.281.74V12.105a12.752,12.752,0,0,1,3.281-.776Zm13.123-6a14.218,14.218,0,0,1-3.281,1.065v3.169a8.285,8.285,0,0,0,3.281-1.159V14.73a7.2,7.2,0,0,1-3.281,1.208V12.747a7.54,7.54,0,0,1-3.281-.25v3a26.007,26.007,0,0,0-3.281-.949V11.5a9.908,9.908,0,0,0-3.281-.169V8.209a15.73,15.73,0,0,0-3.281.932V6a12.765,12.765,0,0,1,3.281-.981V8.209a7.582,7.582,0,0,1,3.281.254v-3a25.376,25.376,0,0,0,3.281.949V9.457a8.491,8.491,0,0,0,3.281.12v-3.2a15.771,15.771,0,0,0,3.281-1Z" transform="translate(2.746 0.003)" fill="#272727"/>
 </g>
 </svg>`
-
 export default (props) => {
 
     /******************************************* START OF VARIABLE INITIALIZATION **********************************/
 
     console.log('props ==>>>', props);
-    const { showContinueBtn = false, selectFinalDestination = false,hideBackButton=false, newFinalDestination = null, showCurrentLocationBtn = true, showMarker = false, showDirections = true, customPitstops = null } = props;
+    const { showContinueBtn = false, customCenter = null, smoothRiderPlacement = false, riderLocation = null, selectFinalDestination = false, hideBackButton = false, newFinalDestination = null, showCurrentLocationBtn = true, showMarker = false, showDirections = true, customPitstops = null } = props;
 
     const HEIGHT = constants.window_dimensions.height;
     const WIDTH = constants.window_dimensions.width;
@@ -55,11 +55,150 @@ export default (props) => {
     const placeNameRef = useRef(null)
     const [ready, setMapReady] = useState(false)
     const [region, setRegion] = useState(sharedStartingRegionPK)
-
+    const [riderLocationState, setRiderLocationState] = React.useState(new AnimatedRegion({
+        latitude: riderLocation?.latitude ?? 33.66857554574141,
+        longitude: riderLocation?.longitude ?? 73.07390455114331,
+    }));
     const styles = mapStyles(colors, HEIGHT, WIDTH, props);
     const { cartReducer, userReducer } = useSelector(store => store);
     const pitstops = customPitstops ?? [...cartReducer.pitstops, { ...userReducer.finalDestObj, isFinalDestination: true }];
+    const riderMarkerRef = React.useRef(null);
+    const mapCentered = React.useRef(false)
+    const animatingRef = React.useRef(false);
+    const currentAnimationTime = React.useRef(null);
+    const locationQueue = React.useRef([]);
+    const firstTimeRiderLocation = React.useRef(false);
+    function diff_seconds(dt2, dt1) {
 
+        var diff = (dt2 - dt1) / 1000;
+        diff /= 60;
+        diff /= 60;
+        return Math.abs(Math.round(diff));
+
+    }
+    var rad = function (x) {
+        return x * Math.PI / 180;
+    };
+    var getDistance = function (p1, p2) {
+        var R = 6378137; // Earth’s mean radius in meter
+        var dLat = rad(p2.latitude - p1.latitude);
+        var dLong = rad(p2.longitude - p1.longitude);
+        console.log('dLat,', p2.latitude, p1.latitude);
+        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(rad(p1.latitude)) * Math.cos(rad(p2.latitude)) *
+            Math.sin(dLong / 2) * Math.sin(dLong / 2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        var d = R * c;
+        return d; // returns the distance in meter
+    };
+    const smoothRiderMovement = () => {
+        const animateMarker = (location = riderLocation) => {
+            if (Platform.OS === 'ios') {
+                // setRiderLocationState(riderLocation);
+                animatingRef.current = true;
+                currentAnimationTime.current = new Date().getTime();
+                const distance = getDistance({ latitude: riderLocationState.latitude._value, longitude: riderLocationState.longitude._value }, location);
+                let duration = 50000;
+                console.log('distance', distance);
+                if (distance > 20) {
+                    duration = 30000;
+                }
+                riderLocationState.timing({ ...location, useNativeDriver: false, easing: Easing.ease, duration: duration }).start();
+                setTimeout(() => {
+                    if (locationQueue.length > 0) {
+                        handleLocationQueue();
+                    } else {
+                        animatingRef.current = false;
+                    }
+                }, duration);
+                animatingRef.current = true;
+                currentAnimationTime.current = new Date().getTime();
+                // riderLocationState.timing({ ...location, useNativeDriver: false, easing: Easing.ease, duration: 30000 }).start();
+            } else {
+                animatingRef.current = true;
+                currentAnimationTime.current = new Date().getTime();
+                const distance = getDistance({ latitude: riderLocationState.latitude._value, longitude: riderLocationState.longitude._value }, location);
+                let duration = 30000;
+                console.log('distance', distance);
+                if (distance > 120) {
+                    duration = 10000;
+                }
+                riderMarkerRef.current.animateMarkerToCoordinate(location, duration);
+                setTimeout(() => {
+                    if (locationQueue.length > 0) {
+                        handleLocationQueue();
+                    } else {
+                        animatingRef.current = false;
+                    }
+                }, duration);
+            }
+        }
+        const handleLocationQueue = () => {
+            if (locationQueue.current.length > 0) {
+                animateMarker(locationQueue.current[0]);
+                locationQueue.current.splice(0, 1);
+            }
+        }
+        if (riderLocation?.latitude) {
+            if (firstTimeRiderLocation.current === false) {
+                console.log('[animateMarker]');
+                setRiderLocationState(new AnimatedRegion({
+                    latitude: riderLocation?.latitude ?? 33.666503955034855,
+                    longitude: riderLocation?.longitude ?? 73.07542804577459,
+                }));
+                // if (riderMarkerRef.current) {
+                //     riderMarkerRef.current.animateMarkerToCoordinate(riderLocation);
+                // }
+                firstTimeRiderLocation.current = true;
+            } else {
+                if (animatingRef.current === true) {
+                    const timeDifference = diff_seconds(new Date().getTime(), currentAnimationTime.current);
+                    if (timeDifference === 0) {
+                        animateMarker();
+                    } else
+                        if (timeDifference > 29) {
+                            handleLocationQueue();
+                        } else {
+                            locationQueue.current.push(riderLocation);
+                        }
+                } else {
+                    animateMarker();
+                }
+            }
+        }
+    }
+    const normalRiderMovement = () => {
+        const animateMarker = () => {
+            if (Platform.OS === 'ios') {
+                riderLocationState.timing({ ...riderLocation, useNativeDriver: false, easing: Easing.ease, duration: 300 }).start();
+            } else {
+                riderMarkerRef.current.animateMarkerToCoordinate(riderLocation);
+            }
+        }
+        if (riderLocation?.latitude) {
+            if (firstTimeRiderLocation.current === false) {
+                setRiderLocationState(new AnimatedRegion({
+                    latitude: riderLocation?.latitude ?? 33.666503955034855,
+                    longitude: riderLocation?.longitude ?? 73.07542804577459,
+                }));
+                // if (riderMarkerRef.current) {
+                //     riderMarkerRef.current.animateMarkerToCoordinate(riderLocation);
+                // }
+                firstTimeRiderLocation.current = true;
+            } else {
+                animateMarker();
+            }
+        }
+    }
+    React.useEffect(() => {
+        if (smoothRiderPlacement) {
+            smoothRiderMovement();
+        } else {
+            normalRiderMovement();
+        }
+        if (riderLocationState && riderLocation) {
+        }
+    }, [riderLocation])
     /******************************************* END OF VARIABLE INITIALIZATION **********************************/
 
 
@@ -69,7 +208,7 @@ export default (props) => {
         console.log("[_Direction].pitstops", pitstops);
         if (showDirections) {
             return (pitstops || []).map((pitstop, index) => {
-                return <View>
+                return <View key={index}>
                     <Marker identifier={`marker ${index + 1}`} key={`marker-key${index + 1}`} coordinate={pitstop} anchor={{ x: 0.46, y: 0.7 }}>
                         {
                             pitstop.isFinalDestination ? <View>
@@ -107,7 +246,7 @@ export default (props) => {
                         {
                         ...pitstop.isFinalDestination ? {
                             origin: pitstops[index - 1],
-                            destination: { ...customPitstops?pitstop:userReducer.finalDestObj }
+                            destination: { ...customPitstops ? pitstop : userReducer.finalDestObj }
                         } : {
                             origin: pitstops[index],
                             destination: pitstops[index + 1]
@@ -144,7 +283,6 @@ export default (props) => {
 
 
     const getCurrentPosition = () => {
-
         navigator.geolocation.getCurrentPosition(({ coords: { latitude, longitude } }) => {
             if (props.latitude !== undefined && props.latitude !== null) {
                 mapView?.current?.animateToRegion({
@@ -191,14 +329,24 @@ export default (props) => {
     };
 
     useEffect(() => {
-        const locationHandler = async () => {
-            await hybridLocationPermission();
+        if (!customCenter) {
+            console.log('customCenter Not', mapView.current);
+            const locationHandler = async () => {
+                await hybridLocationPermission();
+            }
+            locationHandler();
+            getCurrentPosition()
         }
-        locationHandler();
-        getCurrentPosition()
     }, [ready, props.latitude]);
-
-
+    useEffect(() => {
+        if (customCenter && customCenter?.latitude && ready && !mapCentered.current) {
+            mapCentered.current = true;
+            setTimeout(() => {
+                console.log('customCenter', mapView.current);
+                mapView.current && mapView.current.animateToRegion({longitude:customCenter.longitude,latitude:customCenter.latitude});
+            }, 10);
+        }
+    }, [customCenter, ready]);
     /******************************************* END OF FUNCTIONS **********************************/
 
 
@@ -267,6 +415,20 @@ export default (props) => {
             >
                 <FinalDestination />
                 <_Direction />
+                {/* {
+                    riderLocationState ? <Marker.Animated flat={true} ref={riderMarkerRef} identifier={`marker rider`} key={`marker-key-rider`} coordinate={riderLocationState} anchor={{ x: 0.46, y: 0.45 }}
+                    // riderLocationState ? <Marker flat={true} ref={riderMarkerRef} identifier={`marker rider`} key={`marker-key-rider`} coordinate={riderLocationState} anchor={{ x: 0.46, y: 0.7 }}
+                    />: null
+                } */}
+                {
+                    riderLocationState.latitude._value !== null && riderLocation?.latitude ? <Marker.Animated flat={true} ref={riderMarkerRef} identifier={`marker rider`} key={`marker-key-rider`} coordinate={riderLocationState} anchor={{ x: 0.46, y: 0.45 }}
+                    // riderLocationState ? <Marker flat={true} ref={riderMarkerRef} identifier={`marker rider`} key={`marker-key-rider`} coordinate={riderLocationState} anchor={{ x: 0.46, y: 0.7 }}
+                    >
+                        <View>
+                            <SvgXml xml={svgs.joviIcon()} height={25} width={25} />
+                        </View>
+                    </Marker.Animated> : null
+                }
             </MapView>
         )
     }
@@ -324,7 +486,7 @@ export default (props) => {
 
 
     const renderBackBtn = () => {
-        if(hideBackButton) return;
+        if (hideBackButton) return;
         return (
             <TouchableOpacity style={styles.backBtn} onPress={() => {
                 if (props.onBackPress) {
