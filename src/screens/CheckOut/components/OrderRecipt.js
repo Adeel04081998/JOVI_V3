@@ -25,10 +25,13 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                     {data.map((item, i) => {
                         let pitStopItemName = item.pitStopItemName
                         return <View style={{ flex: 1, flexDirection: 'row', marginBottom: -2, justifyContent: "space-between" }} key={i}>
-                            <Text style={checkOutStyles.reciptSubDetailspitStopItemName} numberOfLines={1} fontFamily={subDetailListTxtFontFamily}>
+                            <Text style={[checkOutStyles.reciptSubDetailspitStopItemName, {  }]} numberOfLines={1} fontFamily={subDetailListTxtFontFamily}>
                                 {`${pitStopItemName}`.trimStart()}
                             </Text>
-                            {/* <View style={{ flexDirection: 'row', flex: 1, marginHorizontal: 20 }}>
+                            {/* <Text style={{fontSize:12, color:colors.grey, borderWidth:1, marginHorizontal:-15}} numberOfLines={1} fontFamily={subDetailListTxtFontFamily}>
+                              xl
+                            </Text> */}
+                            {/* <View style={{ flesxDirection: 'row', flex: 1, marginHorizontal: 20 }}>
                             <Text style={checkOutStyles.reciptSubDetailspitStopItemName} numberOfLines={1} fontFamily={subDetailListTxtFontFamily}>{`${pitStopItemName}`}</Text>
                             <Text style={{ color: subDetailListTxtColor, fontSize: subDetailListTxtFontSize }} numberOfLines={1} fontFamily={subDetailListTxtFontFamily}>{` -${itemSize}`}</Text>
                             <Text style={{ color: subDetailListTxtColor, fontSize: subDetailListTxtFontSize }} numberOfLines={1} fontFamily={subDetailListTxtFontFamily}>{` -${itemQuantity}`}</Text>

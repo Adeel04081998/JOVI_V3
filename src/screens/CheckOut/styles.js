@@ -21,6 +21,7 @@ export default {
                 borderRadius: 10,
                 flexDirection: 'row',
                 margin: TOPSPACING,
+                marginHorizontal: 10,
                 alignItems: 'center',
                 justifyContent: 'space-between'
             },
@@ -46,7 +47,9 @@ export default {
 
             },
             receiptMainContainer: {
-                backgroundColor: colors.white, flex: 1, margin: TOPSPACING, borderRadius: 8, ...AppStyles.shadow, elevation: 2,
+                backgroundColor: colors.white, flex: 1, margin: TOPSPACING,
+                marginHorizontal:10,
+                borderRadius: 8, ...AppStyles.shadow, elevation: 2,
             },
             receiptPrimaryContainer: {
                 flexDirection: 'row', margin: 12, marginBottom: 0,
