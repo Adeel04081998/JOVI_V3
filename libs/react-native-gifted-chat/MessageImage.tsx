@@ -14,6 +14,7 @@ import {
 // @ts-ignore
 import Lightbox from 'react-native-lightbox'
 import Image from '../../src/components/atoms/Image'
+import { renderFile } from '../../src/helpers/SharedActions'
 import constants from '../../src/res/constants'
 import { IMessage } from './Models'
 import { StylePropType } from './utils'
@@ -73,15 +74,15 @@ export default class MessageImage<
       currentMessage,
     } = this.props
     if (!!currentMessage) {
-      
+      const imageMessage = renderFile(currentMessage.image);
       return (
         <View style={[styles.container, containerStyle]}>
-             <Image
-              {...imageProps}
-              useLoader={false}
-              style={[styles.image, imageStyle]}
-              source={{ uri: currentMessage.image }}
-            />
+          <Image
+            {...imageProps}
+            useLoader={false}
+            style={[styles.image, imageStyle]}
+            source={{ uri: imageMessage }}
+          />
           {/* <Lightbox
             activeProps={{
               style: styles.imageActive,

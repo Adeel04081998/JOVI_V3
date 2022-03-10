@@ -9,6 +9,7 @@ import {
   StyleProp,
   ViewStyle,
   TextStyle,
+  TouchableOpacity,
 } from 'react-native'
 
 import QuickReplies from './QuickReplies'
@@ -534,11 +535,12 @@ export default class Bubble<
             wrapperStyle && wrapperStyle[position],
           ]}
         >
-          <TouchableWithoutFeedback
-            onPress={this.onPress}
+          <TouchableOpacity
+            // onPress={this.onPress}
             onLongPress={this.onLongPress}
-            accessibilityTraits='text'
-            {...this.props.touchableProps}
+            activeOpacity={1}
+          // accessibilityTraits='text'
+          // {...this.props.touchableProps}
           >
             <View>
               {this.renderBubbleContent()}
@@ -554,7 +556,7 @@ export default class Bubble<
                 {this.renderTicks()}
               </View>
             </View>
-          </TouchableWithoutFeedback>
+          </TouchableOpacity>
         </View>
         {this.renderQuickReplies()}
       </View>
