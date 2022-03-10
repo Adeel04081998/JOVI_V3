@@ -98,12 +98,13 @@ export default ({ route }) => {
                 let updatedPitstops = [];
                 totalActivePitstops.map((item, i) => {
                     updatedPitstops.push({ ...item, isFinalDestination: i === (totalActivePitstops.length - 1) });
+                    if (item.joviJobStatus === 2 || item.joviJobStatus === 7) {
+                        progress += increment;
+                    }
                     if (i === (totalActivePitstops.length - 1)) return;
                     const pitstopType = item.catID === '0' ? 2 : parseInt(item.catID);
                     const focusedPitstop = ENUMS.PITSTOP_TYPES.filter(pt => pt.value === pitstopType)[0];
-                    if (item.joviJobStatus === 2 || item.joviJobStatus === 7) {
-                        progress += increment;
-                    } else if (!currentPitstop) {
+                     if (!currentPitstop && item.joviJobStatus !== 2 && item.joviJobStatus !== 7) {
                         currentPitstop = { ...item, index: i };
                     }
 
@@ -184,17 +185,17 @@ export default ({ route }) => {
             }
         }
     }, []);
-    React.useEffect(()=>{
-        if(!isFocused){
-            if(fetchRiderLocationRef.current){
+    React.useEffect(() => {
+        if (!isFocused) {
+            if (fetchRiderLocationRef.current) {
                 clearInterval(fetchRiderLocationRef.current);
             }
-        }else{
-            if(isRiderFound){
+        } else {
+            if (isRiderFound) {
                 fetchRiderLocation();
             }
         }
-    },[isFocused]);
+    }, [isFocused]);
     React.useEffect(() => {
         sharedNotificationHandlerForOrderScreens(fcmReducer, fetchOrderDetails, orderCancelledOrCompleted);
         return () => {
