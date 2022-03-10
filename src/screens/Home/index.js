@@ -131,7 +131,7 @@ export default () => {
                     //  bounces={false}
                     >
                         <Greetings messagesReducer={messagesReducer} homeStyles={homeStyles} userReducer={userReducer} colors={colors} />
-                        {/* {
+                        {
                             userReducer.openOrders && userReducer.openOrders.length > 0 &&
                             <>
                                 <Text style={{ margin: 5, left: 5, fontWeight: "600", color: colors.primary, fontSize: 16 }}>Orders:</Text>
@@ -146,7 +146,7 @@ export default () => {
                                     }
                                 </ScrollView>
                             </>
-                        } */}
+                        }
                         <ImageCarousel
                             // aspectRatio={16 / 7}
                             data={promotionsReducer?.dashboardContentListViewModel?.dashboardPromoListVM ??
