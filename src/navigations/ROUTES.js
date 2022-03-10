@@ -109,7 +109,7 @@ const APP_DRAWER_ROUTES = {
     },
     "RateRider": {
         screen_name: "RATE_RIDER", // || Rate your jovi
-        options: null
+        options: { animation: 'slide_from_bottom' },
     },
 
 

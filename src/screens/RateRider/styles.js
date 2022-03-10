@@ -1,4 +1,5 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
+import { getStatusBarHeight } from "../../helpers/StatusBarHeight";
 import AppStyles from "../../res/AppStyles";
 import { initColors } from "../../res/colors";
 import constants from "../../res/constants";
@@ -76,7 +77,13 @@ export const headerStyles = (colors = initColors) => StyleSheet.create({
         borderBottomWidth: 0,
         backgroundColor: 'transparent',
     },
+    iconContainer: {
+        zIndex: 9999,
+        position: 'absolute',
+        right: constants.spacing_horizontal,
+        top: Platform.OS === "android" ? getStatusBarHeight(false) : getStatusBarHeight(false) * 1.5,
 
+    }
 });
 
 

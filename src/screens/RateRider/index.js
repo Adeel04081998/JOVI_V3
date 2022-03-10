@@ -1,28 +1,27 @@
 import AnimatedLottieView from 'lottie-react-native';
 import * as React from 'react';
-import { Appearance, KeyboardAvoidingView, SafeAreaView, ScrollView, StatusBar, StyleSheet, Platform } from 'react-native';
+import { Animated, Appearance, Easing, Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-aware-scroll-view';
-import ChangeWindowManager from '../../../NativeModules/ChangeWindowManager';
 import Switch from '../../components/atoms/Switch';
 import Text from '../../components/atoms/Text';
 import TextInput from '../../components/atoms/TextInput';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
-import TouchableScale from '../../components/atoms/TouchableScale';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
-import CustomHeader, { CustomHeaderIconBorder, CustomHeaderStyles } from '../../components/molecules/CustomHeader';
+import { CustomHeaderIconBorder, CustomHeaderStyles } from '../../components/molecules/CustomHeader';
 import NoRecord from '../../components/organisms/NoRecord';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
+import NavigationService from '../../navigations/NavigationService';
 import { initColors } from '../../res/colors';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
+import Regex from '../../utils/Regex';
 import { headerStyles, sliderStylesFunc, stylesFunc } from './styles';
 
 const HEADER_ICON_SIZE_RIGHT = CustomHeaderIconBorder.size * 0.7;
 const RATING_SIZE = constants.window_dimensions.height * 0.3;
-const OPTION_MAX_HEIGHT = constants.window_dimensions.height * 0.2;
 
 const splitArray = (array, n) => {
     let [...arr] = array;
@@ -34,6 +33,7 @@ const splitArray = (array, n) => {
 };
 
 const RATING_JSON = {
+    Entry: require('../../assets/rating_json/1_star_entry.json'),
     1: require('../../assets/rating_json/1_star.json'),
     2: require('../../assets/rating_json/2_star.json'),
     3: require('../../assets/rating_json/3_star.json'),
@@ -46,7 +46,7 @@ export default ({ navigation, route }) => {
 
     // #region :: STYLES & THEME START's FROM HERE 
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[PITSTOP_TYPES.JOVI]], Appearance.getColorScheme() === "dark");
-    const styles = { ...stylesFunc(colors), ...styles2(colors) };
+    const styles = { ...stylesFunc(colors), };
     const sliderStyles = sliderStylesFunc(colors);
     const customheaderStyles = { ...CustomHeaderStyles(colors.primary), ...headerStyles(colors) };
     // #endregion :: STYLES & THEME END's FROM HERE     
@@ -54,13 +54,16 @@ export default ({ navigation, route }) => {
     // #region :: RENDER HEADER START's FROM HERE 
     const _renderHeader = () => {
         return (
-            <SafeAreaView style={customheaderStyles.primaryContainer}>
+            <>
                 <StatusBar backgroundColor={colors.primary} animated barStyle={"light-content"} />
-                <TouchableOpacity style={{ position: 'absolute', right: constants.spacing_horizontal, top: Platform.OS === "android" ? getStatusBarHeight(false) : getStatusBarHeight(false) * 1.5, }}>
+                <TouchableOpacity
+                    wait={0}
+                    onPress={() => { NavigationService.NavigationActions.common_actions.goBack() }}
+                    style={customheaderStyles.iconContainer}>
                     <VectorIcon color={"#fff"} type="MaterialCommunityIcons" name='close' size={HEADER_ICON_SIZE_RIGHT} />
                 </TouchableOpacity>
-
-            </SafeAreaView >
+                <SafeAreaView />
+            </>
         )
     }
 
@@ -69,6 +72,7 @@ export default ({ navigation, route }) => {
     // #region :: STATE's & REF's START's FROM HERE 
     const [rating, setRating] = React.useState(3);
     const [switchVal, setSwitchVal] = React.useState(true);
+    const [amount, setAmount] = React.useState('');
     const [query, updateQuery] = React.useState({
         data: [],
         isLoading: false,
@@ -76,6 +80,26 @@ export default ({ navigation, route }) => {
         errorText: '',
     });
     // #endregion :: STATE's & REF's END's FROM HERE 
+
+    // #region :: ROBOT / JSON ANIMATION START's FROM HERE 
+    const animatedValues = React.useRef(new Animated.Value(0)).current;
+    const robotAnimation = (toValue = 0, reAnimate = true, onComplete = () => { }) => {
+        Animated.timing(animatedValues, {
+            toValue: toValue,
+            useNativeDriver: true,
+            duration: 300,
+            easing: Easing.ease
+        }).start(finished => {
+            if (finished) {
+                if (reAnimate) {
+                    robotAnimation(1, false);
+                    onComplete();
+                }
+            }
+        });
+    }
+
+    // #endregion :: ROBOT / JSON ANIMATION END's FROM HERE 
 
     // #region :: LOADING AND ERROR UI START's FROM HERE 
     if (query.isLoading) {
@@ -118,13 +142,13 @@ export default ({ navigation, route }) => {
             colors={['rgba(0,0,0,0.3)', colors.primary,]}
             style={styles.primaryContainer}>
             {_renderHeader()}
-            <KeyboardAwareScrollView contentContainerStyle={{ flexGrow: 1, }} bounces={false} nestedScrollEnabled>
+            <KeyboardAwareScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 30 }} bounces={false} nestedScrollEnabled>
                 {/* ****************** Start of UPPER VIEW ****************** */}
                 <View style={{ flex: 1, paddingTop: getStatusBarHeight(false), }}>
                     <Text fontFamily='PoppinsMedium' style={styles.rateJoviHeading}>{`Rate your Jovi`}</Text>
                     <Text fontFamily='PoppinsLight' style={styles.helpUsText}>{`Your rating helps us improve`}</Text>
 
-                    <View style={{ ...styles.jsonContainer, }}>
+                    <Animated.View style={{ ...styles.jsonContainer, opacity: animatedValues }}>
                         <AnimatedLottieView
                             source={RATING_JSON[rating]}
                             autoPlay
@@ -136,7 +160,7 @@ export default ({ navigation, route }) => {
                                 width: RATING_SIZE,
                             }}
                         />
-                    </View>
+                    </Animated.View>
                 </View>
 
                 {/* ****************** End of UPPER VIEW ****************** */}
@@ -209,12 +233,21 @@ export default ({ navigation, route }) => {
                                     borderColor: colors.white,
                                     margin: 0,
                                 }}
+                                maxLength={4}
                                 placeholder=""
                                 selectionColor={colors.white}
                                 style={{
                                     paddingVertical: 5,
                                     color: colors.white,
                                     fontSize: 12
+                                }}
+                                contextMenuHidden
+                                keyboardType={Platform.OS === "android" ? "numeric" : "number-pad"}
+                                value={amount}
+                                onChangeText={(text) => {
+                                    if (Regex.numberWithSpace.test(text)) {
+                                        setAmount(text)
+                                    }
                                 }}
                             />
 
@@ -226,7 +259,9 @@ export default ({ navigation, route }) => {
                     {/* ****************** Start of RATING SLIDER ****************** */}
                     <RatingSliderUI
                         onIndexChange={(value) => {
-                            setRating(value);
+                            robotAnimation(0, true, () => {
+                                setRating(value);
+                            });
                         }}
                     />
 
@@ -250,6 +285,7 @@ export default ({ navigation, route }) => {
                 <TextWithBoxUI
                     colors={colors}
                     text={`Submit`}
+                    onPress={() => { NavigationService.NavigationActions.common_actions.goBack() }}
                     containerStyle={styles.reciptSubmitButton}
                 />
             </View>
@@ -322,10 +358,10 @@ const RatingSliderUI = ({ onIndexChange = (value) => undefined }) => {
 
 // #region :: TEXT BOX  START's FROM HERE ##usage: for showing text with box
 
-const TextWithBoxUI = ({ colors = initColors, text = '', containerStyle = {} }) => {
+const TextWithBoxUI = ({ onPress = () => { }, colors = initColors, text = '', containerStyle = {} }) => {
 
     return (
-        <View style={{
+        <TouchableOpacity activeOpacity={0.9} onPress={onPress} style={{
             borderColor: colors.white,
             borderWidth: 1,
             borderRadius: 7,
@@ -336,11 +372,11 @@ const TextWithBoxUI = ({ colors = initColors, text = '', containerStyle = {} }) 
             marginBottom: 10,
             ...containerStyle
         }}>
-            <Text fontFamily='PoppinsRegular' style={{
+            <Text ontFamily='PoppinsRegular' style={{
                 fontSize: 12,
                 color: colors.white,
             }} numberOfLines={1}>{`${text}`}</Text>
-        </View>
+        </TouchableOpacity>
     )
 
 }
@@ -385,10 +421,4 @@ const RatingCardUI = ({ dataArr = [], itemKey = 'text', colors = initColors, }) 
 
 // #endregion :: RATING CARD END's FROM HERE 
 
-
-const styles2 = (colors = initColors) => StyleSheet.create({
-
-
-
-});//end of stylesFunc
 
