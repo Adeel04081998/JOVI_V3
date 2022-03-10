@@ -119,7 +119,7 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
                 data.map((item, index) => ( */}
             <React.Fragment key={`generic-item-key-${'index'}`}>
                 <View style={{ ...textContainer, ...styles.container }} >
-                    <Text style={styles.mainText} >{data?.header}</Text>
+                    <Text style={styles.mainText} numberOfLines={1} >{data?.header}</Text>
                     <TouchableOpacity onPress={() => onPressViewMore()}>
                         <Text style={styles.viewMoreBtn} >{showMoreBtnText || `View More`}</Text>
                     </TouchableOpacity>
@@ -158,6 +158,9 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
     mainText: {
         color: colors.text,
         fontSize: 16,
+        flex:0.8,
+     
+        // paddingHorizontal:10,
     },
     viewMoreBtn: {
         color: colors.primary || '#6D51BB', // colors.primary here should be the theme color of specific category
