@@ -127,7 +127,7 @@ export default ({ route }) => {
             )}
             leftCustom={(
                 <TouchableScale wait={0} onPress={() => {
-                    NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderChat.screen_name, { orderID: orderIDParam,riderProfilePic:state.userPic }, ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name)
+                    NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderChat.screen_name, { orderID: orderIDParam,riderProfilePic:state.userPic, }, ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name)
                 }} style={styles.iconContainer}>
                     <SvgXml xml={svgs.order_chat_header_receipt(isRiderFound ? colors.primary : colors.grey)} height={HEADER_ICON_SIZE_RIGHT} width={HEADER_ICON_SIZE_RIGHT} />
                 </TouchableScale>
@@ -141,7 +141,7 @@ export default ({ route }) => {
             </View>
         }
         return <View style={styles.footerContainer}>
-            {isRiderFound && <><TouchableOpacity onPress={() => openDialer(userReducer?.customerHelpNumber)} style={styles.footerItemContainer}>
+            {isRiderFound && <><TouchableOpacity onPress={() => openDialer(state?.riderContactNo)} style={styles.footerItemContainer}>
                 {renderCallIcon()}
                 <Text style={{ marginLeft: 10, color: colors.black }}>Jovi Rider</Text>
             </TouchableOpacity>
@@ -164,8 +164,8 @@ export default ({ route }) => {
                         currentPitstop = { ...item, index: i };
                     }
                     if (![3, 4, 5, 9].includes(item.joviJobStatus)) {
+                        updatedPitstops.push(item);
                     }
-                    updatedPitstops.push(item);
                 });
                 if (!currentPitstop) {
                     currentPitstop = res.data.order.pitStopsList[res.data.order.pitStopsList.length - 1];

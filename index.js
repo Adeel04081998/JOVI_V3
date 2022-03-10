@@ -9,6 +9,8 @@ import { Provider } from 'react-redux';
 import { store, persistor } from './src/redux/store';
 import { PersistGate } from 'redux-persist/integration/react';
 import { sharedSetHeadersInfo } from "./src/helpers/SharedActions";
+import messaging from '@react-native-firebase/messaging';
+import actions from "./src/redux/actions";
 
 
 ScrollView.defaultProps = ScrollView.defaultProps || {};
@@ -52,3 +54,10 @@ const RNRedux = () => (
 )
 
 AppRegistry.registerComponent(appName, () => RNRedux);
+
+// Register background handler
+messaging().setBackgroundMessageHandler(async remoteMessage => {
+    console.log('Message handled in the background!', remoteMessage);
+    store.dispatch(actions.fcmAction({ ...remoteMessage }));
+
+});

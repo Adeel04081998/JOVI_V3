@@ -47,4 +47,5 @@ export default {
     },
     i8_markaz: { latitude: 33.6685534, longitude: 73.0727673 },
     recording_duration_max_limit: 2,
+    server_time_format: "DD/MM/YYYY H:mm",
 }

@@ -215,6 +215,9 @@ export interface GiftedChatProps<TMessage extends IMessage = IMessage> {
     props: Message<TMessage>['props'],
     nextProps: Message<TMessage>['props'],
   ): boolean
+  /** subtract keyboard height when keyboard open :: Platform android only
+  */
+  subKeyboardHeight?: boolean
 }
 
 export interface GiftedChatState<TMessage extends IMessage = IMessage> {
@@ -224,6 +227,8 @@ export interface GiftedChatState<TMessage extends IMessage = IMessage> {
   typingDisabled: boolean
   text?: string
   messages?: TMessage[]
+  isKeyboardVisible?: boolean,
+  keyboardHeight?: number,
 }
 
 class GiftedChat<TMessage extends IMessage = IMessage> extends React.Component<
@@ -243,12 +248,12 @@ class GiftedChat<TMessage extends IMessage = IMessage> extends React.Component<
     disableComposer: false,
     messageIdGenerator: () => uuidGenerator(),
     user: {},
-    onSend: () => {},
+    onSend: () => { },
     locale: null,
     timeFormat: TIME_FORMAT,
     dateFormat: DATE_FORMAT,
     loadEarlier: false,
-    onLoadEarlier: () => {},
+    onLoadEarlier: () => { },
     isLoadingEarlier: false,
     renderLoading: null,
     renderLoadEarlier: null,
@@ -302,6 +307,7 @@ class GiftedChat<TMessage extends IMessage = IMessage> extends React.Component<
     minComposerHeight: MIN_COMPOSER_HEIGHT,
     maxComposerHeight: MAX_COMPOSER_HEIGHT,
     wrapInSafeArea: true,
+    subKeyboardHeight: false,
   }
 
   static propTypes = {
@@ -414,6 +420,9 @@ class GiftedChat<TMessage extends IMessage = IMessage> extends React.Component<
     typingDisabled: false,
     text: undefined,
     messages: undefined,
+    isKeyboardVisible: false,
+    keyboardHeight: 0,
+
   }
 
   constructor(props: GiftedChatProps<TMessage>) {
@@ -642,6 +651,11 @@ class GiftedChat<TMessage extends IMessage = IMessage> extends React.Component<
       const newMessagesContainerHeight = this.getMessagesContainerHeightWithKeyboard()
       this.setState({
         messagesContainerHeight: newMessagesContainerHeight,
+        ...(this.props.subKeyboardHeight && Platform.OS === "android") && {
+          isKeyboardVisible: true,
+          keyboardHeight: (e.endCoordinates ? e.endCoordinates.height : e.end.height) - 80,
+        },
+
       })
     }
   }
@@ -656,6 +670,10 @@ class GiftedChat<TMessage extends IMessage = IMessage> extends React.Component<
       const newMessagesContainerHeight = this.getBasicMessagesContainerHeight()
       this.setState({
         messagesContainerHeight: newMessagesContainerHeight,
+        ...(this.props.subKeyboardHeight && Platform.OS === "android") && {
+          isKeyboardVisible: false,
+          keyboardHeight: 0,
+        },
       })
     }
   }
@@ -690,11 +708,14 @@ class GiftedChat<TMessage extends IMessage = IMessage> extends React.Component<
 
   renderMessages() {
     const { messagesContainerStyle, ...messagesContainerProps } = this.props
+    
     const fragment = (
       <View
         style={[
           {
+            // flex: 1,
             height: this.state.messagesContainerHeight,
+            paddingTop: this.state.isKeyboardVisible ? this.state.keyboardHeight : 0
             // backgroundColor: 'red',
           },
           messagesContainerStyle,
@@ -892,7 +913,7 @@ class GiftedChat<TMessage extends IMessage = IMessage> extends React.Component<
           >
             <View style={styles.container} onLayout={this.onMainViewLayout}>
               {this.renderMessages()}
-              
+
               {this.renderInputToolbar()}
             </View>
           </ActionSheetProvider>

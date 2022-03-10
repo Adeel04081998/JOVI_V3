@@ -42,9 +42,10 @@ export default {
 
     "GET_VENDOR_DASHBOARD_CATEGORY_ID": "api/Menu/Vendor/GetDashboardCatIDs",//USED IN SHARED ACTION FOR GETTING CATEGORY ID's AND STORING IN REDUCER
     "GET_VENDOR_DASHBOARD_CATEGORY_ID_DETAIL": "api/Menu/Vendor/CategorizationByID",//USED IN GENERIC LIST
+    "SEND_ORDER_MESSAGE_TO_RIDER": "api/Order/Chat",//USED IN ORDER CHAT
+    "GET_ORDER_MESSAGE": "api/Order/Chat/List/V2",//USED IN ORDER CHAT FOR GETTING CHAT 
     //Get Rider Location
     "GetRiderLocation":"api/User/Customer/GetRidersLatestLocation",
-    "SEND_MESSAGE_TO_RIDER": "api/Order/Chat",//USED IN ORDER CHAT
 }
 
 

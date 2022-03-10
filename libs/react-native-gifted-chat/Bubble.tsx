@@ -9,6 +9,7 @@ import {
   StyleProp,
   ViewStyle,
   TextStyle,
+  TouchableOpacity,
 } from 'react-native'
 
 import QuickReplies from './QuickReplies'
@@ -159,6 +160,7 @@ export interface BubbleProps<TMessage extends IMessage> {
   containerToPreviousStyle?: LeftRightStyle<ViewStyle>
   usernameStyle?: TextStyle
   quickReplyStyle?: StyleProp<ViewStyle>
+  isFile?:boolean
   onPress?(context?: any, message?: any): void
   onLongPress?(context?: any, message?: any): void
   onQuickReply?(replies: Reply[]): void
@@ -387,7 +389,7 @@ export default class Bubble<
       if (this.props.renderMessageImage) {
         return this.props.renderMessageImage(messageImageProps)
       }
-      return <MessageImage {...messageImageProps} />
+      return <MessageImage {...messageImageProps} isFile={this.props.currentMessage.isFile??false} />
     }
     return null
   }
@@ -534,11 +536,12 @@ export default class Bubble<
             wrapperStyle && wrapperStyle[position],
           ]}
         >
-          <TouchableWithoutFeedback
-            onPress={this.onPress}
+          <TouchableOpacity
+            // onPress={this.onPress}
             onLongPress={this.onLongPress}
-            accessibilityTraits='text'
-            {...this.props.touchableProps}
+            activeOpacity={1}
+          // accessibilityTraits='text'
+          // {...this.props.touchableProps}
           >
             <View>
               {this.renderBubbleContent()}
@@ -554,7 +557,7 @@ export default class Bubble<
                 {this.renderTicks()}
               </View>
             </View>
-          </TouchableWithoutFeedback>
+          </TouchableOpacity>
         </View>
         {this.renderQuickReplies()}
       </View>

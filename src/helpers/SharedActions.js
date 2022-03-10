@@ -740,9 +740,11 @@ export const sharedFetchOrder = (orderID = 0, successCb = () => { }, errCb = () 
         Endpoints.FetchOrder + '/' + orderID,
         (response) => {
             console.log('sharedFetchOrder', response);
-            if (response.data.order.orderStatus === 3) {
-                NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
-                return;
+            if (response.data.statusCode === 200) {
+                if (response.data.order.orderStatus === 3) {
+                    NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
+                    return;
+                }
             }
             successCb(response);
         },
@@ -889,7 +891,9 @@ export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder 
     // '18' replaced
     // '17' jovi job completed
     // '16' order completed
-    const notificationTypes = ["1", "11", "12", "13", "14", "18", "17", "16"]
+    // '2' Chat message at INDEX 8
+
+    const notificationTypes = ["1", "11", "12", "13", "14", "18", "17", "16", "2",]
     console.log('fcmReducer------OrderPitstops', fcmReducer);
     const jobNotify = fcmReducer.notifications?.find(x => (x.data && (notificationTypes.includes(`${x.data.NotificationType}`))) ? x : false) ?? false;
     if (jobNotify) {
@@ -901,20 +905,26 @@ export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder 
             // console.log("[Order Processing] Rider Assigned By Firbase...");
             fetchOrder();
         }
-        if (data.NotificationType == notificationTypes[2] || data.NotificationType == notificationTypes[3] || data.NotificationType == notificationTypes[7]) {
+        else if (data.NotificationType == notificationTypes[2] || data.NotificationType == notificationTypes[3] || data.NotificationType == notificationTypes[7]) {
             // console.log("[Order Processing] Order Cancelled By Firbase...");
             orderCompletedOrCancelled();
         }
-        if (data.NotificationType == notificationTypes[4] || data.NotificationType == notificationTypes[5] || data.NotificationType == notificationTypes[6]) {
+        else if (data.NotificationType == notificationTypes[4] || data.NotificationType == notificationTypes[5] || data.NotificationType == notificationTypes[6]) {
             fetchOrder()
         }
+        else if (data.NotificationType == notificationTypes[8]) {
+            fetchOrder({
+                loadChat: true,
+                notificationData: jobNotify,
+            })
+        }
         else {
+
         }
         //  To remove old notification
         dispatch(actions.fcmAction({ notifyClientID }));
     } else console.log("[Order OrderPitstops] Job notification not found!!");
 }
-
 export const sharedOnCategoryPress = (item, index) => {
     const pitstopType = item.value;
     const routes = {

@@ -1,10 +1,11 @@
 import AnimatedLottieView from 'lottie-react-native';
 import * as React from 'react';
-import { Appearance, Platform, SafeAreaView, Text as RNText, TextInput as RNTextInput } from 'react-native';
+import { Appearance, KeyboardAvoidingView, Platform, SafeAreaView, TextInput as RNTextInput } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { useSelector } from 'react-redux';
 import { GiftedChat } from '../../../libs/react-native-gifted-chat';
 import RecordButton from '../../../libs/react-native-gifted-chat/RecordButton';
+import ChangeWindowManager from '../../../NativeModules/ChangeWindowManager';
 import svgs from '../../assets/svgs';
 import AudioplayerMultiple from '../../components/atoms/AudioplayerMultiple';
 import Image from '../../components/atoms/Image';
@@ -14,9 +15,9 @@ import TouchableScale from '../../components/atoms/TouchableScale';
 import View from '../../components/atoms/View';
 import CustomHeader, { CustomHeaderIconBorder, CustomHeaderStyles } from '../../components/molecules/CustomHeader';
 import ImageWithTextInput from '../../components/organisms/ImageWithTextInput';
-import { sharedLaunchCameraorGallery } from '../../helpers/Camera';
-import { getRandomInt, renderFile, sharedConfirmationAlert, sharedExceptionHandler, uuidGenerator, VALIDATION_CHECK } from '../../helpers/SharedActions';
-import { multipartPostRequest, postRequest } from '../../manager/ApiManager';
+import NoRecord from '../../components/organisms/NoRecord';
+import { renderFile, sharedExceptionHandler, sharedFetchOrder, sharedNotificationHandlerForOrderScreens, uuidGenerator, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { getRequest, multipartPostRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
@@ -25,23 +26,28 @@ import constants from '../../res/constants';
 import FontFamily from '../../res/FontFamily';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
-import { CHAT_STATIC_DATA, IMAGES_STATIC } from './StaticData';
 import { headerStyles, stylesFunc } from './styles';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat)
 
 const HEADER_ICON_SIZE_LEFT = CustomHeaderIconBorder.size * 0.7;
 const HEADER_ICON_SIZE_RIGHT = CustomHeaderIconBorder.size * 0.6;
 
-const DATA = CHAT_STATIC_DATA(40, 20);
-const MY_USER_ID = DATA.MY_USER_ID;
-const MY_USER = DATA.MY_USER;
 const CHAT_TYPE_ENUM = { image: "image", audio: "audio", text: "text" };
 const padToTwo = (number) => (number <= 9 ? `0${number}` : number);
 let attachmentProps = null;
 
 export default ({ navigation, route }) => {
 
+    // #region :: REDUCER  START's FROM HERE 
+    const fcmReducer = useSelector(store => store.fcmReducer);
     const enumsReducer = useSelector(c => c.enumsReducer);
     const userReducer = store.getState().userReducer;
+    const MY_USER = {
+        _id: userReducer.id,
+        name: `${userReducer.firstName} ${userReducer.lastName}`,
+    }
     const orderID = route?.params?.orderID;
     const riderPicture = route?.params?.riderProfilePic;
     const getEnumValue = (value) => {
@@ -55,6 +61,49 @@ export default ({ navigation, route }) => {
         }
         return typeNo;
     }
+
+    // #endregion :: REDUCER  END's FROM HERE 
+
+    // #region :: FCM HANDLING START's FROM HERE 
+    const goToHome = () => {
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
+    }
+    const orderCancelledOrCompleted = () => {
+        goToHome();
+    }
+
+    React.useEffect(() => {
+        //middle param will be use for rider change
+        sharedNotificationHandlerForOrderScreens(fcmReducer, (prop) => {
+            if (prop?.loadChat) {
+                console.log('props when new chat', prop);
+                let message = prop.notificationData.notification.body;
+                const date = dayjs(prop.notificationData.data.ExpiryDate, constants.server_time_format);
+                let msgObj = {
+                    audio: "",
+                    audioDuration: "",
+                    createdAt: new Date(date),
+                    fileType: 0,
+                    image: "",
+                    imageThumbnail: "",
+                    isReceived: true,
+                    orderID: orderID,
+                    text: message,
+                    user: prop.notificationData?.data?.user ?? { _id: '9411158e-8a53-4849-ba1d-7b3ffcd97fa6', name: 'Shahid Mehmood', image: 'staging/Rider/2022/1/15/rn_image_picker_lib_temp_d9ea8fff-9935-4dee-a009-8e26ac7c3637_163149.jpg' },
+                    userType: 2,
+                    userTypeStr: "Rider",
+                    _id: new Date().getTime()
+                }
+                setMessages([{
+                    ...msgObj
+                }, ...messages]);
+            }
+        }, orderCancelledOrCompleted);
+        return () => {
+        }
+    }, [fcmReducer]);
+
+    // #endregion :: FCM HANDLING END's FROM HERE 
 
     // #region :: STYLES & THEME START's FROM HERE 
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[PITSTOP_TYPES.JOVI]], Appearance.getColorScheme() === "dark");
@@ -82,12 +131,7 @@ export default ({ navigation, route }) => {
                             <SvgXml xml={svgs.order_chat_header_receipt(colors.primary)} height={HEADER_ICON_SIZE_RIGHT} width={HEADER_ICON_SIZE_RIGHT} />
                         </TouchableScale>
                     )}
-                    centerCustom={() => (
-                        <View style={customheaderStyles.imageNameContainer}>
-                            <Image source={{ uri: renderFile(riderPicture) }} style={customheaderStyles.image} tapToOpen={false} />
-                            <Text fontFamily='PoppinsSemiBold' style={customheaderStyles.name} numberOfLines={1}>{`Order ID # ${orderID}`}</Text>
-                        </View>
-                    )}
+                    title={'Order#: ' + orderID}
                     defaultColor={colors.primary}
                 />
             </SafeAreaView>
@@ -105,35 +149,13 @@ export default ({ navigation, route }) => {
         isLoading: false,
         error: false,
         errorText: '',
-        refreshing: false,
     });
     const [messages, setMessages] = React.useState([]);
-    const [images, setImages] = React.useState([]);
     const [micTimer, toggleMicTimer] = React.useState(false);
     const [showPickOption, toggleShowPickOption] = React.useState(false);
+    const [riderID, setRiderID] = React.useState('');
 
     // #endregion :: STATE's & REF's END's FROM HERE 
-
-    // #region :: LOADING AND ERROR UI START's FROM HERE 
-    if (query.isLoading) {
-        return <View style={styles.primaryContainer}>
-            {_renderHeader()}
-            <AnimatedLottieView
-                source={require('../../assets/gifs/Processingloading.json')}
-                autoPlay
-                loop
-                style={{
-                    height: '100%',
-                    width: "100%",
-                    alignSelf: "center",
-                    marginTop: 10,
-                    marginBottom: 15,
-                }}
-            />
-        </View>
-    }
-
-    // #endregion :: LOADING AND ERROR UI END's FROM HERE 
 
     // #region :: STOPWATCH START's FROM HERE 
     const timerTextRef = React.useRef(null);
@@ -220,35 +242,137 @@ export default ({ navigation, route }) => {
 
     // #endregion :: STOPWATCH END's FROM HERE 
 
+    // #region :: ON ATTACHMENT PRESS START's FROM HERE 
     const onAttachmentPress = (props) => {
         attachmentProps = props;
         toggleShowPickOption(true);
     }
 
+    // #endregion :: ON ATTACHMENT PRESS END's FROM HERE 
+
+    // #region :: API IMPLEMENTATION START's FROM HERE 
     React.useEffect(() => {
-        console.log('enumsReducer ,', enumsReducer);
-        const newData = DATA.data.sort(function (a, b) {
-            return new Date(b.createdAt) - new Date(a.createdAt)
+        ChangeWindowManager.setAdjustResize();
+        loadData();
+        getRiderIDFromServer();
+        return () => {
+            ChangeWindowManager.setAdjustPan();
+        };
+    }, []);
+
+
+    const loadData = () => {
+        updateQuery({
+            data: [],
+            isLoading: true,
+            error: false,
+            errorText: '',
+        });
+
+        getRequest(`${Endpoints.GET_ORDER_MESSAGE}?orderID=${orderID}`, (res) => {
+            console.log('resssss ', res);
+            if (res.data.statusCode === 200) {
+                const resData = res.data.chatListV2;
+                let newData = resData;
+
+                newData = newData.map(i => {
+                    const date = dayjs(i.createdAt, constants.server_time_format);
+                    return {
+                        ...i,
+                        createdAt: new Date(date),
+                    }
+                });
+
+                // {/* ****************** Start of WHEN USER IS NOT SEND BY BACKEND ****************** */} 
+                // at time of implementation we request for updation that's why we are adding below code
+                if (newData.length > 0) {
+                    if (!("user" in newData[0])) {
+                        newData = newData.map((i) => {
+                            return {
+                                ...i,
+                                user: {
+                                    "_id": i.senderID,
+                                    "name": i.senderName,
+                                    "image": i.senderPicture,
+                                }
+                            }
+                        })
+                    }
+                }
+
+                // {/* ****************** End of WHEN USER IS NOT SEND BY BACKEND ****************** */}
+
+                setMessages(newData);
+
+                updateQuery({
+                    isLoading: false,
+                    error: false,
+                    errorText: '',
+                    data: newData,
+                });
+                return
+            } else {
+                setMessages([]);
+                const errMessage = res.data?.message ?? 'Something went wrong!';
+                if (`${errMessage}`.trim().toLowerCase() === "record not found") {
+                    updateQuery({
+                        isLoading: false,
+                        error: false,
+                        errorText: '',
+                        data: [],
+                    });
+                    return;
+                }
+                updateQuery({
+                    isLoading: false,
+                    error: true,
+                    errorText: errMessage,
+                    data: [],
+                });
+                return;
+            }
+
+
+        }, (err) => {
+            sharedExceptionHandler(err);
+            updateQuery({
+                errorText: sharedExceptionHandler(err),
+                isLoading: false,
+                error: true,
+                data: [],
+            })
         })
+    };//end of loadData
 
-        setMessages(newData);
-        return () => { }
-    }, [])
+    // #endregion :: API IMPLEMENTATION END's FROM HERE 
 
+    // #region :: GET ORDER DETAIL - USED FOR GETTING RIDER ID START's FROM HERE 
+    const getRiderIDFromServer = () => {
+        sharedFetchOrder(orderID, (res) => {
+            if (res.data.statusCode === 200) {
+                setRiderID(res.data.order.riderID);
+            } else {
+                setRiderID('');
+            }
+        });
+    };
+
+    // #endregion :: GET ORDER DETAIL - USED FOR GETTING RIDER ID END's FROM HERE 
+
+    // #region :: SEND MESSAGE TO RIDER START's FROM HERE 
     const onMessageSend = React.useCallback((messages = []) => {
+        console.log('messages', messages);
         setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
     }, []);
 
-    // #region :: SEND MESSAGE TO RIDER START's FROM HERE 
     const sendMessageToRider = (type = "", text, item) => {
 
         let formData = new FormData();
-        formData.append("OrderID", "63342266");
-        formData.append("UserID", "3d407674-eae5-4f62-86df-7b1f28bebe2c");//CURRENT USER ID
-        formData.append("ReceiverID", "70ea8ed1-e773-4e0a-a969-f97777187d54"); //RIDER ID
+        formData.append("OrderID", `${orderID}`);
+        formData.append("UserID", MY_USER._id);//CURRENT USER ID
+        formData.append("ReceiverID", riderID); //RIDER ID
         const chatType = getEnumValue(type);
         formData.append("Type", chatType);
-        console.log('SEND_MESSAGE_TO_RIDER item ', item);
         if (item) {
             formData.append("File", {
                 uri: Platform.OS === 'android' ? item.uri : item.uri.replace("file://", ""),
@@ -257,31 +381,64 @@ export default ({ navigation, route }) => {
             });
         }
 
-        if (VALIDATION_CHECK(text)) {
-            formData.append("Message", text);
-        } else {
-            formData.append("Message", item?.text ?? '');
+        if (chatType === CHAT_TYPE_ENUM.audio) {
+            formData.append("AudioDuration", '');
         }
-
-
-        console.log('SEND_MESSAGE_TO_RIDER formData --- ', formData);
-
-        multipartPostRequest(Endpoints.SEND_MESSAGE_TO_RIDER, formData, (res) => {
-            console.log('SEND_MESSAGE_TO_RIDER', res);
+        if (VALIDATION_CHECK(text)) {
+            formData.append("Message", text?.trim());
+        } else {
+            formData.append("Message", item?.text?.trim() ?? '');
+        }
+        console.log('resssss 2222 PARAM ', formData);
+        multipartPostRequest(Endpoints.SEND_ORDER_MESSAGE_TO_RIDER, formData, (res) => {
+            console.log('resssss 22222 ', res);
             if ((res.data?.statusCode ?? 400) === 200) {
                 //REQUEST SUCCESSFULLY....
                 return
             }
 
-
         }, (err) => {
-            console.log('SEND_MESSAGE_TO_RIDER ERROR ', err);
             sharedExceptionHandler(err);
         }, false, { Authorization: `Bearer ${userReducer?.token?.authToken}` });
-    }//end of sendMessageToRider    
+    };//end of sendMessageToRider    
 
     // #endregion :: SEND MESSAGE TO RIDER END's FROM HERE 
 
+    // #region :: LOADING AND ERROR UI START's FROM HERE 
+    if (query.isLoading) {
+        return <View style={styles.primaryContainer}>
+            {_renderHeader()}
+            <View style={{
+                flex: 1,
+                marginTop: -80,
+                alignItems: "center",
+                justifyContent: "center",
+            }}>
+                <AnimatedLottieView
+                    source={require('../../assets/LoadingView/OrderChat.json')}
+                    autoPlay
+                    loop
+                    style={{
+                        height: 120,
+                        width: 120,
+                    }}
+                />
+            </View>
+        </View>
+    } else if (query.error) {
+        return <View style={styles.primaryContainer}>
+            {_renderHeader()}
+            <NoRecord
+                color={colors}
+                title={query.errorText}
+                buttonText={`Refresh`}
+                onButtonPress={() => { loadData() }} />
+        </View>
+    }
+
+    // #endregion :: LOADING AND ERROR UI END's FROM HERE 
+
+    // #region :: UI START's FROM HERE 
     return (
         <View style={styles.primaryContainer}>
             {_renderHeader()}
@@ -295,6 +452,7 @@ export default ({ navigation, route }) => {
                         propOnSend({
                             _id: uuidGenerator(),
                             image: `${item.uri}`,
+                            isFile: true,
                             ...VALIDATION_CHECK(item?.text ?? '') && {
                                 text: item?.text ?? '',
                             },
@@ -305,7 +463,6 @@ export default ({ navigation, route }) => {
                     toggleShowPickOption(false);
                 }}
             />
-
             <GiftedChat
                 ref={giftedChatRef}
                 renderAvatar={null}
@@ -313,14 +470,16 @@ export default ({ navigation, route }) => {
                 showUserAvatar={false}
                 messages={messages}
                 onSend={messages => onMessageSend(messages)}
-                user={MY_USER_ID}
+                user={{ _id: userReducer.id }}
+
                 {...micTimer && {
                     renderComposer: renderMicTimer
                 }}
                 renderMessageAudio={(props) => {
                     const currentMessage = props.currentMessage;
-                    const isMyUser = currentMessage.user._id === MY_USER_ID._id;
-                    const audioMessage = JSON.parse(currentMessage.audio);
+                    const isMyUser = currentMessage.user._id === userReducer.id;
+
+                    const audioMessage = renderFile(currentMessage.audio);
                     return (
                         <View style={{ paddingTop: 6, }}>
                             <AudioplayerMultiple
@@ -340,7 +499,7 @@ export default ({ navigation, route }) => {
                                     }
                                 }}
                                 timeContainerStyle={{}}
-                                audioURL={audioMessage.uri}
+                                audioURL={audioMessage}
                                 // forceStopAll={isDeleted || forceDeleted}
                                 width={Platform.OS === "ios" ? "90%" : "95%"}
                             />
@@ -417,13 +576,13 @@ export default ({ navigation, route }) => {
                         </View>
                     )
                 }}
-            // keyboardShouldPersistTaps='never'
-            // {...platformConf}
-            // isKeyboardInternallyHandled
-
+            // subKeyboardHeight
 
             />
-
+            {/* {Platform.OS === 'android' && <KeyboardAvoidingView behavior={'padding'} keyboardVerticalOffset={20} />} */}
         </View>
     )
+
+    // #endregion :: UI END's FROM HERE 
+
 };//end of EXPORT DEFAULT
