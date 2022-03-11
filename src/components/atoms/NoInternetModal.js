@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Modal, Button, Alert } from 'react-native'
 import React from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import ReduxActions from '../../redux/actions'
 import useNetInfo from '../../hooks/useNetInfo'
 const Content = ({ onRetry, isRetrying }) => (
@@ -15,7 +15,9 @@ const Content = ({ onRetry, isRetrying }) => (
 export default () => {
     const [isRetrying, setIsRetrying] = React.useState(false)
     const netInfo = useNetInfo();
+    const modalReducer = useSelector(state => state.modalReducer);
     const IS_CONNECTED = netInfo.isConnected && netInfo.isInternetReachable;
+    const currentModal = React.useRef(null);
     const dispatch = useDispatch();
     const onRetry = () => {
         if (!IS_CONNECTED) Alert.alert("Error!", "Oops! Looks like your device is not connected to the Internet.");
@@ -23,13 +25,30 @@ export default () => {
     }
     React.useEffect(() => {
         if (!IS_CONNECTED) {
+            if (modalReducer?.visible&&currentModal.current===null) {
+                console.log('modalReducer', modalReducer);
+                currentModal.current = { ...modalReducer };
+            }
             dispatch(ReduxActions.setModalAction({
                 visible: true,
                 ModalContent: <Content onRetry={onRetry} isRetrying={isRetrying} />,
                 onPress: () => { },
+                noInternetModal: true,
                 disabled: true
             }))
-        } else dispatch(ReduxActions.closeModalAction())
+        } else {
+            if (modalReducer?.noInternetModal) {
+                if (currentModal.current) {
+                    dispatch(ReduxActions.setModalAction({
+                        ...currentModal.current,
+                        noInternetModal:false,
+                    }));
+                    currentModal.current = null;
+                } else {
+                    dispatch(ReduxActions.closeModalAction())
+                }
+            }
+        }
     }, [netInfo])
 
     return null;
