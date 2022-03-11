@@ -162,6 +162,7 @@ export default ({ route }) => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
     }
     const orderCancelledOrCompleted = () => {
+        if (!isFocused) return;
         goToHome();
     }
     const onOrderNavigationPress = (route = '', extraParams = {}) => {
