@@ -11,7 +11,7 @@ import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import { CustomHeaderIconBorder, CustomHeaderStyles } from '../../components/molecules/CustomHeader';
-import { sharedExceptionHandler } from '../../helpers/SharedActions';
+import { sharedExceptionHandler, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
@@ -389,7 +389,7 @@ export default ({ navigation, route }) => {
 
                 <TextWithBoxUI
 
-                    disabled={disableSubmit}
+                    disabled={rating < 4 ? disableSubmit : (switchVal ? (!VALIDATION_CHECK(amount)) : switchVal)}
                     colors={colors}
                     text={`Submit`}
                     onPress={() => { onSubmitPress(); }}
