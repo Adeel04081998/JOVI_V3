@@ -45,7 +45,9 @@ export default {
     "SEND_ORDER_MESSAGE_TO_RIDER": "api/Order/Chat",//USED IN ORDER CHAT
     "GET_ORDER_MESSAGE": "api/Order/Chat/List/V2",//USED IN ORDER CHAT FOR GETTING CHAT 
     //Get Rider Location
-    "GetRiderLocation":"api/User/Customer/GetRidersLatestLocation",
+    "GetRiderLocation": "api/User/Customer/GetRidersLatestLocation",
+    "GET_RIDER_ORDER_RATING_REASON": "api/Order/Rating/Reasons", //USED IN RATE RIDER 
+    "SUBMIT_RATING_FOR_RIDER_ORDER": "api/Order/OrderRating", //USED IN RATE RIDER 
 }
 
 

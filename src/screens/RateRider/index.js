@@ -1,7 +1,8 @@
 import AnimatedLottieView from 'lottie-react-native';
 import * as React from 'react';
-import { Animated, Appearance, Easing, Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet } from 'react-native';
+import { Animated, Appearance, Easing, Platform, SafeAreaView, ScrollView, StatusBar } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { useSelector } from 'react-redux';
 import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-aware-scroll-view';
 import Switch from '../../components/atoms/Switch';
 import Text from '../../components/atoms/Text';
@@ -10,8 +11,10 @@ import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import { CustomHeaderIconBorder, CustomHeaderStyles } from '../../components/molecules/CustomHeader';
-import NoRecord from '../../components/organisms/NoRecord';
+import { sharedExceptionHandler } from '../../helpers/SharedActions';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
+import { postRequest } from '../../manager/ApiManager';
+import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
 import { initColors } from '../../res/colors';
 import constants from '../../res/constants';
@@ -20,8 +23,10 @@ import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import Regex from '../../utils/Regex';
 import { headerStyles, sliderStylesFunc, stylesFunc } from './styles';
 
+// #region :: CONSTANT's START's FROM HERE 
 const HEADER_ICON_SIZE_RIGHT = CustomHeaderIconBorder.size * 0.7;
 const RATING_SIZE = constants.window_dimensions.height * 0.3;
+let selectedItem = null;
 
 const splitArray = (array, n) => {
     let [...arr] = array;
@@ -42,7 +47,24 @@ const RATING_JSON = {
 }
 const NUMBER_OF_COLUMN = 2;
 
+// #endregion :: CONSTANT's END's FROM HERE 
+
 export default ({ navigation, route }) => {
+
+    const orderID = 120;
+
+    // #region :: REDUCER START's FROM HERE 
+    const messagesReducer = useSelector(s => s.messagesReducer);
+    const joviRatingTitle = messagesReducer?.homeScreenDataViewModel?.joviRatingTitleList[0];
+    React.useEffect(() => {
+        updateData(pre => ({
+            ...pre,
+            heading: joviRatingTitle?.header ?? 'Rate your Jovi',
+            headingDescription: joviRatingTitle?.body ?? 'Your rating helps us improve',
+        }))
+    }, [joviRatingTitle]);
+
+    // #endregion :: REDUCER END's FROM HERE 
 
     // #region :: STYLES & THEME START's FROM HERE 
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[PITSTOP_TYPES.JOVI]], Appearance.getColorScheme() === "dark");
@@ -69,25 +91,13 @@ export default ({ navigation, route }) => {
 
     // #endregion :: RENDER HEADER END's FROM HERE 
 
-    // #region :: STATE's & REF's START's FROM HERE 
-    const [rating, setRating] = React.useState(3);
-    const [switchVal, setSwitchVal] = React.useState(true);
-    const [amount, setAmount] = React.useState('');
-    const [query, updateQuery] = React.useState({
-        data: [],
-        isLoading: false,
-        error: false,
-        errorText: '',
-    });
-    // #endregion :: STATE's & REF's END's FROM HERE 
-
     // #region :: ROBOT / JSON ANIMATION START's FROM HERE 
     const animatedValues = React.useRef(new Animated.Value(0)).current;
     const robotAnimation = (toValue = 0, reAnimate = true, onComplete = () => { }) => {
         Animated.timing(animatedValues, {
             toValue: toValue,
             useNativeDriver: true,
-            duration: 300,
+            duration: 250,
             easing: Easing.ease
         }).start(finished => {
             if (finished) {
@@ -101,39 +111,129 @@ export default ({ navigation, route }) => {
 
     // #endregion :: ROBOT / JSON ANIMATION END's FROM HERE 
 
-    // #region :: LOADING AND ERROR UI START's FROM HERE 
-    if (query.isLoading) {
-        return <View style={styles.primaryContainer}>
-            {_renderHeader()}
-            <View style={{
-                flex: 1,
-                marginTop: -80,
-                alignItems: "center",
-                justifyContent: "center",
-            }}>
-                <AnimatedLottieView
-                    source={require('../../assets/LoadingView/OrderChat.json')}
-                    autoPlay
-                    loop
-                    style={{
-                        height: 120,
-                        width: 120,
-                    }}
-                />
-            </View>
-        </View>
-    } else if (query.error) {
-        return <View style={styles.primaryContainer}>
-            {_renderHeader()}
-            <NoRecord
-                color={colors}
-                title={query.errorText}
-                buttonText={`Refresh`}
-                onButtonPress={() => { loadData() }} />
-        </View>
+    // #region :: STATE's & REF's START's FROM HERE 
+    const skipEffect = React.useRef(false);
+    const [rating, setRating] = React.useState(2);//1 TO 5
+    const [switchVal, setSwitchVal] = React.useState(true);
+    const [disableSubmit, setDisableSubmit] = React.useState(true);
+    const [amount, setAmount] = React.useState('');
+    const [ratingData, setRatingData] = React.useState([]);//ALL RATING GETTING FROM SERVER
+    const [data, updateData] = React.useState({
+        heading: joviRatingTitle?.header ?? 'Rate your Jovi',
+        headingDescription: joviRatingTitle?.body ?? 'Your rating helps us improve',
+        commentData: [],
+    })
+
+    // #endregion :: STATE's & REF's END's FROM HERE 
+
+    // #region :: API IMPLEMENTATION START's FROM HERE 
+    React.useEffect(() => {
+        loadData();
+        return () => { };
+    }, []);
+
+    const loadData = () => {
+        const params = {
+            ratingLevel: 0
+        };
+
+        postRequest(Endpoints.GET_RIDER_ORDER_RATING_REASON, params, (res) => {
+            if (res.data.statusCode === 200) {
+                const resData = (res.data.reasonsList?.ratingLevels ?? []);
+                setRatingData(resData);
+            } else {
+                return
+            }
+        }, (err) => {
+            sharedExceptionHandler(err);
+
+        })
+    };//end of loadData
+
+    // #endregion :: API IMPLEMENTATION END's FROM HERE 
+
+    // #region :: CHANGE COMMENT DATA ON RATING OR RATING DATA CHANGED START's FROM HERE 
+    const setDataAccToRating = () => {
+        const isRatingExist = ratingData.findIndex(x => x.ratingLevel === rating);
+        if (isRatingExist !== -1) {
+            const newData = ratingData[isRatingExist].reasonsList.map(i => ({ ...i, isSelected: false, }));
+            updateData(pre => ({
+                ...pre,
+                commentData: newData,
+            }))
+            return
+        }
+    };//end of setDataAccToRating
+
+    React.useEffect(() => {
+        if (skipEffect.current) {
+            skipEffect.current = false;
+            return
+        }
+        setDisableSubmit(true);
+        setAmount('');
+        setDataAccToRating();
+
+        return () => { }
+    }, [rating, ratingData])
+
+    // #endregion :: CHANGE COMMENT DATA ON RATING OR RATING DATA CHANGED END's FROM HERE 
+
+    // #region :: ON SUBMIT PRESS START's FROM HERE 
+    const onSubmitPress = () => {
+        //ADDING RATING TO SERVER
+        const params = {
+            "customOrderID": orderID,
+            "rating": rating,
+            "description": selectedItem?.description ?? '',
+            "tipAmount": amount
+        };
+        console.log('PARAMS  ', params);
+
+        postRequest(Endpoints.SUBMIT_RATING_FOR_RIDER_ORDER, params, (res) => {
+            if (res.data.statusCode === 200) {
+                NavigationService.NavigationActions.common_actions.goBack()
+            } else {
+                sharedExceptionHandler(res);
+                return
+            }
+        }, (err) => {
+            sharedExceptionHandler(err);
+
+        })
     }
 
-    // #endregion :: LOADING AND ERROR UI END's FROM HERE 
+
+    // #endregion :: ON SUBMIT PRESS END's FROM HERE 
+
+    // #region :: ON COMMENT SELECTION CHANGE START's FROM HERE 
+    const changeCommentSelection = (item, childIndex) => {
+        const newCommentData = data.commentData;
+        const arrayIndex = newCommentData.findIndex(i => item[childIndex].ratingReasonID === i.ratingReasonID);
+        let isAnySelected = false;
+        for (let i = 0; i < newCommentData.length; i++) {
+            if (i === arrayIndex) {
+                selectedItem = newCommentData[i];
+                isAnySelected = true;
+                newCommentData[i].isSelected = true;
+            }
+            else {
+                newCommentData[i].isSelected = false;
+            }
+        }
+        if (isAnySelected) {
+            setDisableSubmit(false);
+        } else {
+            setDisableSubmit(true);
+        }
+        skipEffect.current = true;
+        updateData(pre => ({
+            ...pre,
+            commentData: newCommentData
+        }));
+    }
+
+    // #endregion :: ON COMMENT SELECTION CHANGE END's FROM HERE 
 
     // #region :: UI START's FROM HERE 
     return (
@@ -145,8 +245,8 @@ export default ({ navigation, route }) => {
             <KeyboardAwareScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 30 }} bounces={false} nestedScrollEnabled>
                 {/* ****************** Start of UPPER VIEW ****************** */}
                 <View style={{ flex: 1, paddingTop: getStatusBarHeight(false), }}>
-                    <Text fontFamily='PoppinsMedium' style={styles.rateJoviHeading}>{`Rate your Jovi`}</Text>
-                    <Text fontFamily='PoppinsLight' style={styles.helpUsText}>{`Your rating helps us improve`}</Text>
+                    <Text fontFamily='PoppinsMedium' style={styles.rateJoviHeading}>{`${data.heading}`}</Text>
+                    <Text fontFamily='PoppinsLight' style={styles.helpUsText}>{`${data.headingDescription}`}</Text>
 
                     <Animated.View style={{ ...styles.jsonContainer, opacity: animatedValues }}>
                         <AnimatedLottieView
@@ -175,12 +275,15 @@ export default ({ navigation, route }) => {
                             {/* ****************** Start of COMMENT OPTION's ****************** */}
                             <ScrollView style={{ flex: 0, flexGrow: 0, }} contentContainerStyle={{ flexGrow: 0, }} bounces={false}>
                                 <View style={{ alignItems: "center", justifyContent: "center", }}>
-                                    {splitArray(new Array(4).fill({ name: 'Order was late' }), NUMBER_OF_COLUMN).map((item, index) => {
+                                    {splitArray(data.commentData, NUMBER_OF_COLUMN).map((item, index) => {
                                         return (
                                             <View style={{ maxWidth: constants.window_dimensions.width * 0.8, }} key={index}>
-                                                <RatingCardUI colors={colors}
-                                                    itemKey={'name'}
-                                                    dataArr={item} />
+                                                <RatingCardUI
+                                                    colors={colors}
+                                                    itemKey={'description'}
+                                                    dataArr={item}
+                                                    onPress={(childIndex) => { changeCommentSelection(item, childIndex); }}
+                                                />
                                             </View>
                                         )
                                     })}
@@ -199,6 +302,7 @@ export default ({ navigation, route }) => {
                                     <View style={styles.switchContainer}>
                                         <Switch
                                             onToggleSwitch={(bool) => {
+                                                setAmount('');
                                                 setSwitchVal(bool)
                                             }}
                                             switchVal={switchVal}
@@ -259,6 +363,7 @@ export default ({ navigation, route }) => {
                     {/* ****************** Start of RATING SLIDER ****************** */}
                     <RatingSliderUI
                         onIndexChange={(value) => {
+                            skipEffect.current = false;
                             robotAnimation(0, true, () => {
                                 setRating(value);
                             });
@@ -283,9 +388,11 @@ export default ({ navigation, route }) => {
                 />
 
                 <TextWithBoxUI
+
+                    disabled={disableSubmit}
                     colors={colors}
                     text={`Submit`}
-                    onPress={() => { NavigationService.NavigationActions.common_actions.goBack() }}
+                    onPress={() => { onSubmitPress(); }}
                     containerStyle={styles.reciptSubmitButton}
                 />
             </View>
@@ -302,7 +409,7 @@ export default ({ navigation, route }) => {
 // #region :: RATING SLIDER UI START's FROM HERE 
 const DOT_LENGTH = 5;
 const RatingSliderUI = ({ onIndexChange = (value) => undefined }) => {
-    const [selectedIndex, setSelectedIndex] = React.useState(2)
+    const [selectedIndex, setSelectedIndex] = React.useState(1) //0 TO 4
     const SLIDER_WIDTH = constants.window_dimensions.width * 0.7;
 
     React.useEffect(() => {
@@ -358,11 +465,11 @@ const RatingSliderUI = ({ onIndexChange = (value) => undefined }) => {
 
 // #region :: TEXT BOX  START's FROM HERE ##usage: for showing text with box
 
-const TextWithBoxUI = ({ onPress = () => { }, colors = initColors, text = '', containerStyle = {} }) => {
+const TextWithBoxUI = ({ onPress = () => { }, colors = initColors, text = '', containerStyle = {}, isSelected = false, disabled = false, }) => {
 
     return (
         <TouchableOpacity activeOpacity={0.9} onPress={onPress} style={{
-            borderColor: colors.white,
+            borderColor: disabled ? 'grey' : colors.white,
             borderWidth: 1,
             borderRadius: 7,
             paddingVertical: 5,
@@ -370,11 +477,12 @@ const TextWithBoxUI = ({ onPress = () => { }, colors = initColors, text = '', co
             alignItems: "center",
             justifyContent: "center",
             marginBottom: 10,
+            backgroundColor: isSelected ? colors.white : 'transparent',
             ...containerStyle
-        }}>
+        }} disabled={isSelected || disabled}>
             <Text ontFamily='PoppinsRegular' style={{
                 fontSize: 12,
-                color: colors.white,
+                color: disabled ? 'grey' : isSelected ? colors.primary : colors.white,
             }} numberOfLines={1}>{`${text}`}</Text>
         </TouchableOpacity>
     )
@@ -384,8 +492,7 @@ const TextWithBoxUI = ({ onPress = () => { }, colors = initColors, text = '', co
 // #endregion :: TEXT BOX  END's FROM HERE 
 
 // #region :: RATING CARD START's FROM HERE ##usage: for showing text using array
-const RatingCardUI = ({ dataArr = [], itemKey = 'text', colors = initColors, }) => {
-
+const RatingCardUI = ({ dataArr = [], itemKey = 'text', colors = initColors, onPress = (childIndex) => { } }) => {
     if ((dataArr.length < 1)) return null;
     return (
         <View style={{ width: "100%", flexDirection: "row", alignItems: "center", }}>
@@ -399,6 +506,8 @@ const RatingCardUI = ({ dataArr = [], itemKey = 'text', colors = initColors, }) 
                                 <TextWithBoxUI
                                     colors={colors}
                                     text={`${item[itemKey]}`}
+                                    isSelected={item.isSelected}
+                                    onPress={() => { onPress(index) }}
                                     containerStyle={{
                                         ...(index === 0) && {
                                             marginRight: 16,
@@ -411,7 +520,7 @@ const RatingCardUI = ({ dataArr = [], itemKey = 'text', colors = initColors, }) 
                 </>
             ) : (
                 <View style={{ flex: 1, }}>
-                    <TextWithBoxUI colors={colors} text={`${dataArr[0][itemKey]}`} />
+                    <TextWithBoxUI colors={colors} text={`${dataArr[0][itemKey]}`} isSelected={dataArr[0].isSelected} onPress={() => onPress(0)} />
                 </View>
             )}
         </View>
@@ -420,5 +529,3 @@ const RatingCardUI = ({ dataArr = [], itemKey = 'text', colors = initColors, }) 
 }
 
 // #endregion :: RATING CARD END's FROM HERE 
-
-

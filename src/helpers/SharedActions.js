@@ -30,7 +30,7 @@ export const sharedExceptionHandler = err => {
     const TOAST_SHOW = 3000;
     if (err) {
         if (err.data) {
-            if (error?.data?.StatusCode === 401) return;
+            if (err?.data?.StatusCode === 401) return;
             else if (err.data.errors) {
                 var errorKeys = Object.keys(err.data.errors),
                     errorStr = "";
