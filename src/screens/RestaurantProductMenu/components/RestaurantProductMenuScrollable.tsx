@@ -189,7 +189,7 @@ const RestaurantProductMenuScrollable = (props: Props) => {
             }
         }, [props.data]);
         return (
-            <View>
+            <View style={{ marginHorizontal: 10}}>
                 <View style={[style.row]}>
                     {props.data && props.data.map((food: any, i: number) => (
                         <TouchableScale
@@ -281,7 +281,7 @@ const RestaurantProductMenuScrollable = (props: Props) => {
 
                 {props.renderAboveItems && props.renderAboveItems()}
 
-                <View style={{ paddingHorizontal: 0,paddingBottom:40}}>
+                <View style={{ paddingHorizontal: 0, paddingBottom: 40 }}>
                     {props.data && props.data.map((food: any, parentIndex: number) => {
                         return (
                             <View
