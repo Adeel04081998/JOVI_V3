@@ -114,6 +114,8 @@ const ProductQuantityCard = (props: Props) => {
     const decrementQuantity = () => {
         setState(pre => ({ ...pre, quantity: pre.quantity - 1 }));
     }
+    console.log("state.quantity", state.quantity);
+    
 
     if(props.fromCart && state.quantity <= 0) return <View style={{
         justifyContent:  "center",
@@ -124,7 +126,7 @@ const ProductQuantityCard = (props: Props) => {
         alignItems: "center",
         flexDirection: "row",
         backgroundColor: colors.white,
-    }}><Text>...Please wait</Text></View>;
+    }}><Text>Deleting...</Text></View>;
     return (
         <View style={{
             width: state.quantity > 0 || props.outOfStock ? CARD_ITEM_SIZE * 0.88 : ITEM_SIZE,
