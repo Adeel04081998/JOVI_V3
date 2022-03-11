@@ -76,7 +76,27 @@ export default ({ navigation, route }) => {
         //middle param will be use for rider change
         sharedNotificationHandlerForOrderScreens(fcmReducer, (prop) => {
             if (prop?.loadChat) {
-                loadData();
+                console.log('props when new chat', prop);
+                let message = prop.notificationData.notification.body;
+                const date = dayjs(prop.notificationData.data.ExpiryDate, constants.server_time_format);
+                let msgObj = {
+                    audio: "",
+                    audioDuration: "",
+                    createdAt: new Date(date),
+                    fileType: 0,
+                    image: "",
+                    imageThumbnail: "",
+                    isReceived: true,
+                    orderID: orderID,
+                    text: message,
+                    user: { _id: prop.notificationData?.data?._id??'', name:  prop.notificationData?.data?.name??'', image:  prop.notificationData?.data?.image??''},
+                    userType: 2,
+                    userTypeStr: "Rider",
+                    _id: new Date().getTime()
+                }
+                setMessages([{
+                    ...msgObj
+                }, ...messages]);
             }
         }, orderCancelledOrCompleted);
         return () => {
@@ -111,12 +131,7 @@ export default ({ navigation, route }) => {
                             <SvgXml xml={svgs.order_chat_header_receipt(colors.primary)} height={HEADER_ICON_SIZE_RIGHT} width={HEADER_ICON_SIZE_RIGHT} />
                         </TouchableScale>
                     )}
-                    centerCustom={() => (
-                        <View style={customheaderStyles.imageNameContainer}>
-                            {/* <Image source={{ uri: renderFile(riderPicture) }} style={customheaderStyles.image} tapToOpen={false} /> */}
-                            <Text fontFamily='PoppinsSemiBold' style={customheaderStyles.name} numberOfLines={1}>{`Order ID # ${orderID}`}</Text>
-                        </View>
-                    )}
+                    title={'Order#: ' + orderID}
                     defaultColor={colors.primary}
                 />
             </SafeAreaView>
@@ -346,6 +361,7 @@ export default ({ navigation, route }) => {
 
     // #region :: SEND MESSAGE TO RIDER START's FROM HERE 
     const onMessageSend = React.useCallback((messages = []) => {
+        console.log('messages', messages);
         setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
     }, []);
 
@@ -369,9 +385,9 @@ export default ({ navigation, route }) => {
             formData.append("AudioDuration", '');
         }
         if (VALIDATION_CHECK(text)) {
-            formData.append("Message", text);
+            formData.append("Message", text?.trim());
         } else {
-            formData.append("Message", item?.text ?? '');
+            formData.append("Message", item?.text?.trim() ?? '');
         }
         console.log('resssss 2222 PARAM ', formData);
         multipartPostRequest(Endpoints.SEND_ORDER_MESSAGE_TO_RIDER, formData, (res) => {
@@ -436,6 +452,7 @@ export default ({ navigation, route }) => {
                         propOnSend({
                             _id: uuidGenerator(),
                             image: `${item.uri}`,
+                            isFile: true,
                             ...VALIDATION_CHECK(item?.text ?? '') && {
                                 text: item?.text ?? '',
                             },

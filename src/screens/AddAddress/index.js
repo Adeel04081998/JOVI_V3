@@ -217,7 +217,7 @@ export default (props) => {
             NavigationService.NavigationActions.common_actions.goBack();
         }
     };
-
+    
     return (
         <SafeAreaView style={styles.safeArea}>
             <View style={styles.container} >

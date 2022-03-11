@@ -102,7 +102,7 @@ export default {
                 mainText: {
                     color: colors.text,
                     fontSize: 18,
-                    fontWeight:'bold'
+                    fontWeight:'600'
                 },
                 viewMoreBtn: {
                     color: colors.primary || '#6D51BB', // colors.theme here should be the theme color of specific category

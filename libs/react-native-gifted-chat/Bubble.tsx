@@ -160,6 +160,7 @@ export interface BubbleProps<TMessage extends IMessage> {
   containerToPreviousStyle?: LeftRightStyle<ViewStyle>
   usernameStyle?: TextStyle
   quickReplyStyle?: StyleProp<ViewStyle>
+  isFile?:boolean
   onPress?(context?: any, message?: any): void
   onLongPress?(context?: any, message?: any): void
   onQuickReply?(replies: Reply[]): void
@@ -388,7 +389,7 @@ export default class Bubble<
       if (this.props.renderMessageImage) {
         return this.props.renderMessageImage(messageImageProps)
       }
-      return <MessageImage {...messageImageProps} />
+      return <MessageImage {...messageImageProps} isFile={this.props.currentMessage.isFile??false} />
     }
     return null
   }

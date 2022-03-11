@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Animated, Easing, StyleProp, TextStyle, GestureResponderEvent, ViewStyle } from 'react-native';
+import { Animated, Easing, StyleProp, TextStyle, GestureResponderEvent, ViewStyle, Platform } from 'react-native';
 import { NumberProp, SvgXml } from 'react-native-svg';
 import { VALIDATION_CHECK } from '../../helpers/SharedActions';
 import sharedStyles from '../../res/sharedStyles';
@@ -40,28 +40,28 @@ const defaultProps = {
 const CategoryCardItem = (props: Props) => {
     const transFormAngle = React.useRef(new Animated.Value(0)).current;
     const animatedBackground = React.useRef(new Animated.Value(0)).current;
-    const animateBackgroundColorPressIn = (event: GestureResponderEvent) => {
-        Animated.timing(animatedBackground,{
-            toValue:1,
-            duration:20,
-            easing: Easing.ease,
-            useNativeDriver:true,
-        }).start();
-        if(props.onPressIn){
-            props.onPressIn(event);
-        }
-    }
-    const animateBackgroundColorPressOut = (event: GestureResponderEvent) => {
-        Animated.timing(animatedBackground,{
-            toValue:0,
-            duration:20,
-            easing: Easing.ease,
-            useNativeDriver:true,
-        }).start();
-        if(props.onPressIn){
-            props.onPressIn(event);
-        }
-    }
+    // const animateBackgroundColorPressIn = (event: GestureResponderEvent) => {
+    //     Animated.timing(animatedBackground,{
+    //         toValue:1,
+    //         duration:20,
+    //         easing: Easing.ease,
+    //         useNativeDriver:true,
+    //     }).start();
+    //     if(props.onPressIn){
+    //         props.onPressIn(event);
+    //     }
+    // }
+    // const animateBackgroundColorPressOut = (event: GestureResponderEvent) => {
+    //     Animated.timing(animatedBackground,{
+    //         toValue:0,
+    //         duration:20,
+    //         easing: Easing.ease,
+    //         useNativeDriver:true,
+    //     }).start();
+    //     if(props.onPressIn){
+    //         props.onPressIn(event);
+    //     }
+    // }
     useEffect(() => {
         Animated.timing(transFormAngle, {
             duration: 600,
@@ -90,40 +90,41 @@ const CategoryCardItem = (props: Props) => {
             width: props.width,
 
         }]}
-        activeOpacity={.9}
+        activeOpacity={.7}
         >
-            <AnimatedView style={{position:'absolute',width:'100%',height:'100%',borderRadius: 10,backgroundColor:props.pressBackgroundColor,opacity:animatedBackground.interpolate({
+            {/* <AnimatedView style={{position:'absolute',width:'100%',height:'100%',borderRadius: 10,backgroundColor:props.pressBackgroundColor,opacity:animatedBackground.interpolate({
                 inputRange:[0,1],
                 outputRange:[0,0.7]
-            })}} />
+            })}} /> */}
             <AnimatedView style={[{
-                opacity: transFormAngle.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0.2, 1]
-                }),
-                transform: [{
-                    rotate: transFormAngle.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: ['270deg', '360deg']
-                    })
-                }]
+                // opacity: transFormAngle.interpolate({
+                //     inputRange: [0, 1],
+                //     outputRange: [0.2, 1]
+                // }),
+                // transform: [{
+                //     rotate: transFormAngle.interpolate({
+                //         inputRange: [0, 1],
+                //         outputRange: ['270deg', '360deg']
+                //     })
+                // }]
             }, props.imageContainerStyle, {
                 justifyContent: 'center',
                 alignItems: "center",
             }]}>
-                <SvgXml xml={props.xml} height={"80%"} width={"90%"} />
+                <SvgXml xml={props.xml} height={"70%"} width={"70%"} />
             </AnimatedView>
             {VALIDATION_CHECK(props.title) &&
                 <Text
                     numberOfLines={1}
                     style={[{
-                        opacity: transFormAngle.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: [0.2, 1]
-                        }),
+                        // opacity: transFormAngle.interpolate({
+                        //     inputRange: [0, 1],
+                        //     outputRange: [0.2, 1]
+                        // }),
                         color: "#272727",
                         textAlign: "center",
                         fontSize: 16,
+                        bottom: 5
                     }, props.textStyle]}
                     fontFamily={"PoppinsMedium"} >{props.title}</Text>
             }

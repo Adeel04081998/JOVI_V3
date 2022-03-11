@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { ActivityIndicator, Appearance, Platform, StyleSheet, View } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
-import { confirmServiceAvailabilityForLocation, sharedStartingRegionPK } from '../../../helpers/SharedActions';
+import { confirmServiceAvailabilityForLocation, sharedExceptionHandler, sharedStartingRegionPK } from '../../../helpers/SharedActions';
 import VectorIcon from '../VectorIcon';
 import { addressInfo, hybridLocationPermission } from '../../../helpers/Location';
 import Button from '../../molecules/Button';
@@ -28,6 +28,7 @@ export default (props) => {
   /******************************************* START OF VARIABLE INITIALIZATION **********************************/
 
 
+  const FETCH_ADDRESS_TYPE = Object.freeze({ 0: "pin", 1: "selectedLocation" })
 
   const HEIGHT = constants.window_dimensions.height;
   const WIDTH = constants.window_dimensions.width;
@@ -97,7 +98,7 @@ export default (props) => {
 
   const onRegionChange = (region) => {
     // setPlaceName('')
-    if(!disabledRef.current){
+    if (!disabledRef.current) {
       disabledRef.current = false;
       forceUpdate();
     }
@@ -108,9 +109,10 @@ export default (props) => {
     const { latitude, longitude } = region
     coordinatesRef.current = {
       latitude,
-      longitude
+      longitude,
+      type: FETCH_ADDRESS_TYPE[0]
     }
-    
+
   };
 
   useEffect(() => {
@@ -172,6 +174,11 @@ export default (props) => {
           index={0}
           onLocationSelected={(data, geometry) => {
             const { lat, lng } = geometry.location
+            coordinatesRef.current = {
+              latitude: lat,
+              longitude: lng,
+              type: FETCH_ADDRESS_TYPE[1]
+            }
             mapView.current.animateToCoordinate({
               latitude: lat,
               longitude: lng
@@ -283,11 +290,16 @@ export default (props) => {
     else false
   }
 
+
   const cb = (loaderBool) => {
     disabledRef.current = false
     setLoader(loaderBool)
   }
 
+  const FETCH_ADDRESSTYPE = () => {
+    return coordinatesRef.current?.type === FETCH_ADDRESS_TYPE[1] ? true : false
+  }
+  console.log('FETCH_ADDRESSTYPE() ==>>>', FETCH_ADDRESSTYPE());
   const renderContinueButton = () => {
     return (
       <Button
@@ -297,33 +309,26 @@ export default (props) => {
             return;
           }
           disabledRef.current = true
-          const { latitude, longitude } = coordinatesRef.current
+          const { latitude, longitude, type } = coordinatesRef.current
           confirmServiceAvailabilityForLocation(postRequest, latitude || props.route?.params?.latitude, longitude || props.route?.params?.longitude,
             async (resp) => {
-              let adrInfo = await addressInfo(latitude || props.route?.params?.latitude, longitude  || props.route?.params?.longitude, cb)
+              let adrInfo = await addressInfo(latitude || props.route?.params?.latitude, longitude || props.route?.params?.longitude, cb)
               placeNameRef.current = adrInfo.address
-              setPlaceName(adrInfo.address)
               let placeObj = {
-                title: placeNameRef.current,
-                latitude: latitude || props.route?.params?.latitude ,
-                longitude: longitude  || props.route?.params?.longitude,
+                title: FETCH_ADDRESSTYPE() ? placeName : placeNameRef.current,
+                latitude: latitude || props.route?.params?.latitude,
+                longitude: longitude || props.route?.params?.longitude,
                 latitudeDelta: LATITUDE_DELTA,
                 longitudeDelta: LONGITUDE_DELTA,
-                city: adrInfo.city
+                city: FETCH_ADDRESSTYPE() ? '' : adrInfo.city
               }
+              setPlaceName(FETCH_ADDRESSTYPE() ? placeName : placeNameRef.current)
               props.onConfirmLoc(placeObj)
+
             }, (error) => {
               setLoader(false)
               disabledRef.current = false
-              console.log(((error?.response) ? error.response : {}), error);
-              if (error?.data?.statusCode === 417) {
-                if (error.areaLock) { } else {
-                  error?.data?.message && Toast.error(error?.data?.message);
-                }
-              }
-              else {
-                Toast.error('An Error Occurred!');
-              }
+              sharedExceptionHandler(error)
             })
 
         }
@@ -331,7 +336,8 @@ export default (props) => {
         wait={0}
         disabled={disabledCheck()}
         isLoading={loader}
-        text="Confirm Location" style={styles.confirmBtn} />
+        text="Confirm Location" style={{ ...styles.confirmBtn, width: '95%' }} />
+
     )
   }
 
@@ -389,7 +395,7 @@ const styles = StyleSheet.create({
     left: '50%',
     top: '50%'
   },
-  confirmBtn: { position: 'absolute', bottom: 0, borderRadius: 0 },
+  confirmBtn: { position: 'absolute', bottom: 15, borderRadius: 10 },
   headerLeftIconView: {
     justifyContent: 'center',
     backgroundColor: '#FFFFFF',

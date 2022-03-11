@@ -5,6 +5,13 @@ import { store } from '../redux/store';
 import GV from '../utils/GV';
 import Axios from './Axios';
 const dispatch = store.dispatch;
+const noInternetHandler = (requestCallback, params) => {
+    const DELAY = 5000;
+    let _timeoutID = setTimeout(() => {
+        requestCallback.apply(this, params);
+        clearTimeout(_timeoutID);
+    }, DELAY);
+}
 
 export const refreshTokenMiddleware = (requestCallback, params) => {
     const userReducer = store.getState().userReducer;
@@ -29,7 +36,7 @@ export const refreshTokenMiddleware = (requestCallback, params) => {
             else {
                 dispatch(ReduxActions.setUserAction({ ...res.data }))
                 requestCallback.apply(this, params);
-                if (__DEV__) Toast.success("Its only for DEV => User session refreshed....", 10000)
+                if (__DEV__) Toast.success("Its only for DEV => User session refreshed....", 3000)
             }
         },
         err => {
@@ -42,7 +49,6 @@ export const refreshTokenMiddleware = (requestCallback, params) => {
 };
 
 export const postRequest = async (url, data, onSuccess = () => { }, onError = () => { }, headers = {}, showLoader = true, customLoader = null) => {
-    if (!GV.NET_INFO_REF?.current?.isConnected) return Toast.info("No Internet connection!", 5000)
     if (customLoader) {
         customLoader(true);
     }
@@ -52,9 +58,14 @@ export const postRequest = async (url, data, onSuccess = () => { }, onError = ()
         onSuccess(res);
 
     } catch (error) {
-        console.log("[ApiManager].postRequest.error", JSON.stringify(error));
-        if (error?.data?.StatusCode === 401) return refreshTokenMiddleware(postRequest, [url, data, onSuccess, onError, headers, false, customLoader]);
-        onError(error);
+        // console.log("[ApiManager].postRequest.error", JSON.stringify(error));
+        if (error?.data?.StatusCode === 401) {
+            return refreshTokenMiddleware(postRequest, [url, data, onSuccess, onError, headers, false, customLoader]);
+        } else {
+            if (error === "Network Error" || error?.message === 'Network Error') {
+                noInternetHandler(postRequest, [url, data, onSuccess, onError, headers, showLoader, customLoader])
+            } else onError(error);
+        }
     } finally {
         if (customLoader) {
             customLoader(false);
@@ -62,19 +73,22 @@ export const postRequest = async (url, data, onSuccess = () => { }, onError = ()
     }
 };
 export const getRequest = async (url, onSuccess = () => { }, onError = () => { }, headers = {}, showLoader = true) => {
-    if (!GV.NET_INFO_REF?.current?.isConnected) return Toast.info("No Internet connection!", 5000)
     try {
         let res = await Axios.get(url, headers);
         // console.log("[ApiManager].getRequest.res", JSON.stringify(res));
         onSuccess(res);
     } catch (error) {
-        console.log("[ApiManager].getRequest.error wqoieuoiqwueioquweiouqw", error);
-        if (error?.data?.StatusCode === 401) return refreshTokenMiddleware(getRequest, [url, onSuccess, onError, headers, false]);
-        onError(error);
+        // console.log("[ApiManager].getRequest.error", error);
+        if (error?.data?.StatusCode === 401) {
+            return refreshTokenMiddleware(getRequest, [url, onSuccess, onError, headers, false]);
+        } else {
+            if (error === "Network Error" || error?.message === 'Network Error') {
+                noInternetHandler(getRequest, [url, onSuccess, onError, headers, showLoader])
+            } else onError(error)
+        };
     }
 };
 export const multipartPostRequest = (url, formData, onSuccess = () => { }, onError = () => { }, showLoader = false, header = {}) => {
-    if (!GV.NET_INFO_REF?.current?.isConnected) return Toast.info("No Internet connection!", 5000)
     fetch(`${GV.BASE_URL.current}/${url}`, {
         method: 'post',
         headers: {
@@ -84,15 +98,32 @@ export const multipartPostRequest = (url, formData, onSuccess = () => { }, onErr
         body: formData
     })
         .then((res) => {
-            console.log("[multipartPostRequest].res", res);
+            // console.log("[multipartPostRequest].res", res);
             return res.json();
         })
         .then((data) => {
-            console.log("[multipartPostRequest].data", data);
-            onSuccess(data)
+            // console.log("[multipartPostRequest].data", data);
+            if (data?.StatusCode === 401 || data?.data?.StatusCode === 401) {
+                return refreshTokenMiddleware(multipartPostRequest, [url, formData, onSuccess, onError, showLoader, header]);
+            } else {
+                if (data === "Network Error" || data?.message === 'Network Error') {
+                    noInternetHandler(multipartPostRequest, [url, formData, onSuccess, onError, showLoader, header])
+                } else {
+                    onSuccess(data)
+                }
+            }
+
         })
         .catch(err => {
-            console.log("[multipartPostRequest].err", err);
-            onError(err)
+            // console.log("[multipartPostRequest].err", err);
+            if (err?.data?.StatusCode === 401) {
+                return refreshTokenMiddleware(multipartPostRequest, [url, formData, onSuccess, onError, showLoader, header]);
+            } else {
+                if (err === "Network Error" || err?.message === 'Network Error') {
+                    noInternetHandler(multipartPostRequest, [url, formData, onSuccess, onError, showLoader, header])
+                } else {
+                    onError(err)
+                }
+            }
         })
 }

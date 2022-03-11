@@ -3,7 +3,9 @@ import { option } from "yargs";
 import { initColors } from "../../res/colors";
 import constants from "../../res/constants";
 import FontFamily from "../../res/FontFamily";
+import sharedStyles from "../../res/sharedStyles";
 const SPACING_VERTICAL = 10;
+
 export default {
     styles(colors = initColors) {
         return StyleSheet.create({
@@ -12,7 +14,12 @@ export default {
                 backgroundColor: colors.Whisper || "#F6F5FA",
             },
             gifLoader: {
-                height: '93%', width: '101%', paddingLeft: 10, paddingTop: 8, paddingHorizontal: 5, display: 'flex', justifyContent: 'center', alignContent: 'center',
+                // height:'93%',
+                height: constants.window_dimensions.height / -1, 
+                width: '101%', paddingLeft: 10,
+                // paddingTop:8,
+                paddingVertical: 15,
+                paddingHorizontal: 5, display: 'flex', justifyContent: 'center', alignContent: 'center',
             },
             imageCarousal: {
                 marginHorizontal: 10,
@@ -22,7 +29,7 @@ export default {
                 // resizeMode: "contain"
             },
             wrapper: {
-                margin: SPACING_VERTICAL, paddingBottom: Platform.select({ android: 160, ios: 140 })
+                margin: SPACING_VERTICAL, paddingBottom: Platform.select({ android: 160, ios: 140 }),
             },
             greetingMainContainer: {
                 margin: 0,
@@ -33,7 +40,7 @@ export default {
             greetingHeaderText: {
                 fontSize: 16,
                 color: '#272727',
-                fontWeight: 'normal',
+                fontWeight: '600',
 
             },
             greetingBodyText: {
@@ -91,7 +98,8 @@ export default {
 
             },
             cat_item_container: {
-                marginHorizontal: 3, justifyContent: 'center', borderRadius: 10
+                marginHorizontal: 3, justifyContent: 'center', borderRadius: 10,
+                ...sharedStyles._styles().placefor_specific_shadow
             },
             cat_img_container: {
                 width: 80, justifyContent: 'center', alignContent: 'center', alignItems: 'center', alignSelf: 'center'

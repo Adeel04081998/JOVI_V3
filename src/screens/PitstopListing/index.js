@@ -218,6 +218,7 @@ const PistopListingChild = React.memo(({ route, }) => {
             colors={colors}
             homeStyles={listingStyles}
             onSearch={onSearchHandler}
+            fontSize={12}
         />
 
         <Filters

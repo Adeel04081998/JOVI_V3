@@ -2,24 +2,30 @@ import { useIsFocused } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
+import { number } from 'yargs';
 import Text from '../../../components/atoms/Text';
 import TouchableOpacity from '../../../components/atoms/TouchableOpacity';
 import VectorIcon from '../../../components/atoms/VectorIcon';
 import View from '../../../components/atoms/View';
 import AppStyles from '../../../res/AppStyles';
 import { initColors } from '../../../res/colors';
+import constants from '../../../res/constants';
 import FontFamily from '../../../res/FontFamily';
 
 // #region :: INTERFACE START's FROM HERE 
 interface Props {
     colors: typeof initColors;
     size?: number;
+    cardSize?: number;
+    textSize?: number;
     updateQuantity?: (quantity: number) => void;
     initialQuantity?: string | number;
     outOfStock?: boolean;
     outOfStockText?: string;
     pitstopItemID: number | string;
     marketID: number | string;
+    screenName : number,
+    fromCart: boolean
 }
 
 const defaultProps = {
@@ -27,13 +33,21 @@ const defaultProps = {
     updateQuantity: undefined,
     initialQuantity: 0,
     outOfStock: false,
-    outOfStockText: 'Out of stock'
+    outOfStockText: 'Out of stock',
+    screenName:1,
+    fromCart: false
+
 };
 
 // #endregion :: INTERFACE END's FROM HERE 
 
 const ProductQuantityCard = (props: Props) => {
     const ITEM_SIZE = props?.size ?? defaultProps.size;
+    const CARD_ITEM_SIZE = props?.cardSize ?? ITEM_SIZE;
+    const TEXT_ICON_SIZE=props?.textSize ?? ITEM_SIZE;
+
+    // const ITEM_SIZE = props.screenName === 2? constants.window_dimensions.width * 0.35 : props.size;
+
     const cartReducer = useSelector((store: any) => { return store.cartReducer; });
     const isFocused = useIsFocused();
     const colors = props.colors;
@@ -42,7 +56,7 @@ const ProductQuantityCard = (props: Props) => {
     const [state, setState] = React.useState({ quantity: parseInt(`${props?.initialQuantity ?? defaultProps.initialQuantity}`), });
     const delayCbRef = React.useRef<any>(null);
     const skipEffect = React.useRef<boolean>(false);
-    const skipCartEffect = React.useRef<boolean>(true);
+    const firstPitstop = React.useRef<boolean>(false);
 
     React.useEffect(() => {
         setState(pre => ({ ...pre, quantity: parseInt(`${props?.initialQuantity ?? defaultProps.initialQuantity}`), }));
@@ -50,6 +64,11 @@ const ProductQuantityCard = (props: Props) => {
     }, [props.initialQuantity])
 
     React.useEffect(() => {
+        if(firstPitstop.current){
+            firstPitstop.current = false;
+            props.updateQuantity && props.updateQuantity(1);
+            return;
+        }
         if (skipEffect.current) {
             skipEffect.current = false;
             return;
@@ -64,10 +83,6 @@ const ProductQuantityCard = (props: Props) => {
     }, [state.quantity])
 
     React.useEffect(() => {
-        if (skipCartEffect.current) {
-            skipCartEffect.current = false;
-            return;
-        }
         const forceUpdate = cartReducer.pitstops.length < 1 ? true : cartReducer?.forceUpdate ?? false;
         if ((!isFocused && state.quantity > 0) || forceUpdate) {
             const pitstops = cartReducer.pitstops;
@@ -90,18 +105,31 @@ const ProductQuantityCard = (props: Props) => {
 
     const incrementQuantity = () => {
         setState(pre => ({ ...pre, quantity: pre.quantity + 1 }))
+        if(cartReducer.pitstops.length < 1) {
+            // props.updateQuantity && props.updateQuantity(1);
+            firstPitstop.current = true;
+        }
     }
 
     const decrementQuantity = () => {
         setState(pre => ({ ...pre, quantity: pre.quantity - 1 }));
     }
 
-
+    if(props.fromCart && state.quantity <= 0) return <View style={{
+        justifyContent:  "center",
+        paddingHorizontal: 0,
+        position: 'absolute',
+        bottom: 6,
+        right: 8,
+        alignItems: "center",
+        flexDirection: "row",
+        backgroundColor: colors.white,
+    }}><Text>...Please wait</Text></View>;
     return (
         <View style={{
-            width: state.quantity > 0 || props.outOfStock ? ITEM_SIZE * 0.8 : ITEM_SIZE * 0.15,
-            height: state.quantity > 0 || props.outOfStock ? ITEM_SIZE * 0.25 : ITEM_SIZE * 0.15,
-            borderRadius: ITEM_SIZE * 0.25,
+            width: state.quantity > 0 || props.outOfStock ? CARD_ITEM_SIZE * 0.88 : ITEM_SIZE,
+            height: state.quantity > 0 || props.outOfStock ? CARD_ITEM_SIZE * 0.25 : ITEM_SIZE,
+            borderRadius: ITEM_SIZE,
             justifyContent: state.quantity > 0 && !props.outOfStock ? "space-between" : "center",
             paddingHorizontal: state.quantity > 0 || props.outOfStock ? 8 : 0,
             ...styles.primaryContainer,
@@ -122,17 +150,17 @@ const ProductQuantityCard = (props: Props) => {
                             <TouchableOpacity wait={0} onPress={decrementQuantity}
                                 hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}>
                                 {state.quantity === 1 ?
-                                    <VectorIcon color={colors.primary} name={"delete"} type="MaterialCommunityIcons" size={ITEM_SIZE * 0.15} />
+                                    <VectorIcon color={colors.primary} name={"delete"} type="MaterialCommunityIcons" size={TEXT_ICON_SIZE} />
                                     :
-                                    <VectorIcon color={colors.primary} name="minus" type="Feather" size={ITEM_SIZE * 0.15} />
+                                    <VectorIcon color={colors.primary} name="minus" type="Feather" size={TEXT_ICON_SIZE} />
                                 }
                             </TouchableOpacity>
-                            <Text style={styles.text}>{state.quantity}</Text>
+                            <Text style={{...styles.text,fontSize:TEXT_ICON_SIZE*0.7}}>{state.quantity}</Text>
                         </>
                     }
-                    <TouchableOpacity wait={0} onPress={incrementQuantity}
+                    <TouchableOpacity wait={0} onPress={incrementQuantity}style={{}}
                         hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}>
-                        <VectorIcon color={colors.primary} name="plus" type="Feather" size={ITEM_SIZE * 0.15} />
+                        <VectorIcon color={colors.primary} name="plus" type="Feather" size={TEXT_ICON_SIZE} />
                     </TouchableOpacity>
                 </>
             }

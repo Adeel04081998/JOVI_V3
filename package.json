@@ -12,7 +12,7 @@
     "dev_android": "cd android&&./gradlew clean&&./gradlew --stop&&cd - &&npx react-native run-android",
     "ipod": "npx react-native run-ios --simulator \"iPod touch (7th generation)\"",
     "branch_change_new_packages": "yarn && cd android && ./gradlew clean && ./gradlew --stop && cd .. &&  npx react-native run-android && cd ios && pod install && cd .. && npx react-native run-ios",
-    "build_android": "cd android&&./gradlew clean&&./gradlew --stop&& ./gradlew bundleRelease &&cd - &&yarn run:android:staging",
+    "build_android": "cd android&&./gradlew clean&&./gradlew --stop&& ./gradlew bundleRelease &&cd - &&npx react-native run-android --variant=release",
     "qa_codepush_ios_v2_staging": "appcenter codepush release-react -a cibaksolutionspk-gmail.com/JOVI-IOS-V3 -d Staging",
     "qa_codepush_ios_v2_production": "appcenter codepush release-react -a cibaksolutionspk-gmail.com/JOVI-IOS-V3 -d Production",
     "_comment": "[qa_codepush_ios_v2_staging, qa_codepush_ios_v2_production] As we have updated the app name from v3 to v2 so don't be confused with `cibaksolutionspk-gmail.com/JOVI-IOS-V3` in ios v2 commands",

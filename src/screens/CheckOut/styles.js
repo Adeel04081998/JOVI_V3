@@ -21,6 +21,7 @@ export default {
                 borderRadius: 10,
                 flexDirection: 'row',
                 margin: TOPSPACING,
+                marginHorizontal: 10,
                 alignItems: 'center',
                 justifyContent: 'space-between'
             },
@@ -32,27 +33,34 @@ export default {
 
             },
             vouchertxtStyle: {
-                color: '#fff', textAlign: 'left', paddingLeft: 20, flex: 1
+                color: '#fff', textAlign: 'left', paddingLeft: 20, flex: 1, top: Platform.OS === "android" ? 1 : 1, justifyContent: "center", alignContent: 'center', alignSelf: 'center'
             },
             voucherSecondaryContainer: {
                 backgroundColor: colors.white, borderRadius: 2, marginRight: 15, width: '25%', height: 28, justifyContent: 'center', alignSelf: 'center', alignContent: 'center'
             },
             voucherSeeAllTxtstyle: {
-                color: colors.primary, marginHorizontal: 10, fontSize: 14, alignSelf: 'center', justifyContent: 'center', alignContent: 'center', alignItems: 'center'
+                color: colors.primary, fontSize: 14,
+                alignSelf: 'center', justifyContent: 'center',
+                alignContent: 'center', alignItems: 'center',
+                textAlign: "center",
+                paddingVertical: 3.8
+
             },
             receiptMainContainer: {
-                backgroundColor: colors.white, flex: 1, margin: TOPSPACING, borderRadius: 8, ...AppStyles.shadow, elevation: 2
+                backgroundColor: colors.white, flex: 1, margin: TOPSPACING,
+                marginHorizontal:10,
+                borderRadius: 8, ...AppStyles.shadow, elevation: 2,
             },
             receiptPrimaryContainer: {
                 flexDirection: 'row', margin: 12, marginBottom: 0,
 
             },
             orderReciptTxt: {
-                color: colors.primary, fontSize: 14, paddingHorizontal: 10
+                color: colors.primary, fontSize: 14, paddingHorizontal: 10, top: 2
             },
 
             detailTxt: {
-                color: colors.primary, fontSize: 12
+                color: colors.primary, fontSize: 13
             },
             dashedLine: {
                 color: "#707070",

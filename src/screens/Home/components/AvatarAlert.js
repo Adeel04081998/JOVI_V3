@@ -10,7 +10,7 @@ let numberOfLines = 2
 
 export default ({ messagesReducer, homeStyles }) => {
     const SCALE_IMAGE = {
-        height: constants.window_dimensions.height / (Platform.OS === 'ios' ?  (deviceInfoModule.hasNotch() ? 10 :8)   : 8),
+        height: constants.window_dimensions.height / (Platform.OS === 'ios' ? (deviceInfoModule.hasNotch() ? 10 : 8) : 8),
     }
     const { height, width, top } = SCALE_IMAGE;
     const alertMsgList = messagesReducer?.homeScreenDataViewModel?.alertMsgList;
@@ -18,7 +18,7 @@ export default ({ messagesReducer, homeStyles }) => {
     else {
         const alertMessage = alertMsgList[0];
         return (
-            <AnimatedView style={{ marginTop: 30, }}>
+            <AnimatedView style={{ marginTop: 30, marginVertical: 5 }}>
                 <AnimatedView style={homeStyles.alertMsgPrimaryContainer}>
                     <AnimatedView style={homeStyles.alertMsgSecondaryContainer}>
                         <Text style={homeStyles.alertMsgHeaderText} numberOfLines={1} fontFamily='PoppinsMedium'>
@@ -31,7 +31,7 @@ export default ({ messagesReducer, homeStyles }) => {
                     <AnimatedView style={homeStyles.alertMsgSvgView()}>
                         <LottieView
                             source={require('../../../assets/gifs/animated_cat.json')}
-                            style={{ position: 'absolute', height: height, bottom: Platform.OS === 'android' ? -2 : -1, opacity: 1, marginHorizontal:-10 }}
+                            style={{ position: 'absolute', height: height, bottom: Platform.OS === 'android' ? -2 : -1, opacity: 1, marginHorizontal: -10 }}
                             resizeMode='contain'
                             renderMode='SOFTWARE'
                             hardwareAccelerationAndroid={true}

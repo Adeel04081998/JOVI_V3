@@ -3,6 +3,7 @@ import { Animated, Easing } from 'react-native';
 import AnimatedView from '../../../components/atoms/AnimatedView';
 import Text from '../../../components/atoms/Text';
 import View from '../../../components/atoms/View';
+import FontFamily from '../../../res/FontFamily';
 export default ({ messagesReducer, homeStyles, userReducer, colors }) => {
     const greetingsList = messagesReducer?.homeScreenDataViewModel?.greetingsList;
     if (!greetingsList?.length) return <View style={{ paddingVertical: 5 }} />
@@ -18,7 +19,7 @@ export default ({ messagesReducer, homeStyles, userReducer, colors }) => {
         React.useLayoutEffect(() => {
             Animated.timing(greetingAnimation, {
                 toValue: 1,
-                duration: 400,
+                duration: 700,
                 useNativeDriver: true,
                 easing: Easing.ease
             }).start();
@@ -28,23 +29,23 @@ export default ({ messagesReducer, homeStyles, userReducer, colors }) => {
                 {
                     ...homeStyles.greetingMainContainer,
                     opacity: greetingAnimation,
-                    transform: [{
-                        translateX: greetingAnimation.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: [-100, 0]
-                        })
-                    }]
+                    // transform: [{
+                    //     translateX: greetingAnimation.interpolate({
+                    //         inputRange: [0, 1],
+                    //         outputRange: [-100, 0]
+                    //     })
+                    // }]
                 },
                 { margin: 5 }
             ]} >
             <Text style={[homeStyles.greetingHeaderText,]} numberOfLines={1} fontFamily='PoppinsRegular' >
                 {beforeName ? `${String(beforeName)}` : null}
-                {isNameExists && <Text style={{ color: colors.BlueVoilet || "#6D51BB", alignSelf: 'center', fontSize: 16, fontWeight: 'normal', }} numberOfLines={1} fontFamily='PoppinsRegular'>
+                {isNameExists && <Text style={{ color: colors.BlueVoilet || "#6D51BB", alignSelf: 'center', fontSize: 16, fontWeight: '600', }} numberOfLines={1} fontFamily='PoppinsRegular'>
                     {`${userReducer["firstName"]}`}
                 </Text>}
                 {afterName ? `${String(afterName)}` : null}
             </Text>
-            <Text style={homeStyles.greetingBodyText} numberOfLines={2} fosntFamily='PoppinsLight'>
+            <Text style={[homeStyles.greetingBodyText, { fontFamily: FontFamily.Poppins.Light }]} numberOfLines={2} >
                 {`${String(greetingMessage.body.replace(REGEX, ""))}`}
             </Text>
         </AnimatedView>

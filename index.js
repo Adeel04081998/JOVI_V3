@@ -8,6 +8,7 @@ import { name as appName } from './app.json';
 import { Provider } from 'react-redux';
 import { store, persistor } from './src/redux/store';
 import { PersistGate } from 'redux-persist/integration/react';
+import { sharedSetHeadersInfo } from "./src/helpers/SharedActions";
 import messaging from '@react-native-firebase/messaging';
 import actions from "./src/redux/actions";
 
@@ -43,6 +44,7 @@ LogBox.ignoreLogs([
     'Please report: Excessive number of pending callbacks: 501.',//BECAUSE OF LISTHEADERCOMPONENT IN FLATLIST
 ])
 LogBox.ignoreAllLogs();
+sharedSetHeadersInfo();
 const RNRedux = () => (
     <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
