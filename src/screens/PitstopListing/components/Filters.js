@@ -21,6 +21,7 @@ export default ({ filterConfig, screenName = '', selectedFilters, parentFilterHa
     const _listRef = React.useRef(null);
     const { filtersData } = state;
     const isFilterIcon = filterConfig.filterScreenIcon
+    const isFilterTitleShown = filterConfig.filterTitleShown
     const checkSelectedFilter = (item) => {
         // return state.activeTab === item.vendorDashboardCatID;
         return (selectedFilters ?? []).find(x => x === item.vendorDashboardCatID);
@@ -42,8 +43,8 @@ export default ({ filterConfig, screenName = '', selectedFilters, parentFilterHa
             setState(pre => ({ ...pre, activeTab: selectedFilter, filtersData: uniqueArray([selectedFilter, ...filtersList]) }));
         }
     }, []);
-    return (<View style={_styles.parentContainer}>
-        { isFilterIcon && <Text numberOfLines={1} fontFamily='PoppinsSemiBold' style={_styles.filterTitle}>
+    return (<View style={[_styles.parentContainer, { paddingTop: isFilterTitleShown ? 0 : 10 }]}>
+        {isFilterTitleShown && <Text numberOfLines={1} fontFamily='PoppinsSemiBold' style={[_styles.filterTitle, { paddingVertical: isFilterTitleShown ? 5: SPACING_VERTICAL, marginTop: isFilterTitleShown ? 5 : 0 }]}>
             Filters
         </Text>}
         <View style={[_styles.scrollParent, { marginHorizontal: isFilterIcon ? 0 : -10, paddingLeft: isFilterIcon ? 0 : 10 }]}>
