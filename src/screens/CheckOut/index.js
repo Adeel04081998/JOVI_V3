@@ -43,7 +43,6 @@ export default () => {
     const cartReducer = useSelector(store => store.cartReducer);
     const userReducer = useSelector(store => store.userReducer);
     const totalPitstop = cartReducer.pitstops.length ?? ""
-    const estimatedDeliveryTime = cartReducer.orderEstimateTime || ""
     const [vouchersList, setVouchersList] = useState([])
     const dispatch = useDispatch();
     const [switchVal, setSwitchVal] = useState(true)
@@ -367,9 +366,9 @@ export default () => {
                         color={colors}
                         right={{ value: totalPitstop }}
                         middle={{ value: estimatedDeliveryTime }}
-                        contentContainerStyle={{ marginBottom: 0, marginVertical: 0, marginTop: 5, borderRadius: 8, paddingVertical: 5 }}
-                        rightContainerStyle={{}}
-                        middleContainerStyle={{ flex: 2 }}
+                        contentContainerStyle={{ marginBottom: 0, marginVertical: 0, marginTop: 5, borderRadius: 8, paddingVertical: 4 }}
+                        rightContainerStyle={{flex:0}}
+                        middleContainerStyle={{ flex: 3,   }}
                         leftContainerStyle={{ paddingRight: 15 }}
                     />
                     <DeliveryAddress
