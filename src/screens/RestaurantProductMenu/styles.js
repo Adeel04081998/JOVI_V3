@@ -7,6 +7,30 @@ export const stylesFunc = (colors) => StyleSheet.create({
 })
 
 export const itemStylesFunc = (colors) => StyleSheet.create({
+    discountTypeText: {
+        color: colors.primary,
+        fontSize: 10,
+        maxWidth: "90%",
+    },
+    discountTypeText1: {
+        color: colors.primary,
+        fontSize: 10,
+    },
+    discountTypeIcon: { marginRight: 4, },
+    discountTypeContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        // marginTop: -6,
+        marginLeft: 10,
+        marginRight: 10,
+    },
+    discountPrice: {
+        color: "#C1C1C1",
+        fontSize: 12,
+        textDecorationLine: "line-through",
+        textDecorationColor: '#C1C1C1',
+        textAlign: "center",
+    },
     image: {
         width: 120,
         height: 90,
@@ -21,7 +45,7 @@ export const itemStylesFunc = (colors) => StyleSheet.create({
         color: "#6B6B6B",
         fontSize: 12,
         marginBottom: 10,
-        paddingRight:9
+        paddingRight: 9
     },
     name: {
         color: "#272727",
