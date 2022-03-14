@@ -262,7 +262,7 @@ export default ({ navigation, route }) => {
 
         setEstVal("");
 
-        setSwitch(false);
+        setSwitch(true);
 
         setEstTime({ text: "Estimated Time", value: 0 })
         setCollapsed(true)
@@ -323,33 +323,38 @@ export default ({ navigation, route }) => {
     /************   Start of functions of Pitstop location Component Funcs    **************/
 
 
-    const handleLocationSelected = (data, geometry, index, pinData, modifyPitstops = true, forceMode) => {
+    const handleLocationSelected = (locData, geometry, index, pinData, modifyPitstops = true, forceMode) => {
         locationHandler()
         const { lat, lng } = geometry.location
         Keyboard.dismiss();
-        let city = "";
-        if (data) {
-            const addressObj = data;
-            if (addressObj?.terms && Array.isArray(addressObj?.terms) && addressObj?.terms?.length >= 2) {
-                city = addressObj.terms[addressObj.terms.length - 2]?.value;
-            }
-            else if (addressObj?.plus_code?.compound_code) {
-                city = addressObj.plus_code.compound_code.replace(/\,/gi, "")?.split(/\s/gi)?.[1];
-            }
-        }
-        else if (pinData) {
-            const addressObj = pinData?.addressObj;
-            if (addressObj?.plus_code?.compound_code) {
-                city = addressObj.plus_code.compound_code.replace(/\,/gi, "")?.split(/\s/gi)?.[1];
-            }
-        }
+        confirmServiceAvailabilityForLocation(postRequest, lat, lng, (resp) => {
+            const { data } = resp
+            latitudeRef.current = lat
+            longitudeRef.current = lng
+            setCityVal(data.googleAddressViewModel.city)
+            setLocationVal(locData && (locData.name ? locData.name : locData.description))
+            setScrollEnabled(true)
+            toggleCardData(PITSTOP_CARD_TYPES["description"], colors.primary)
+        }, (error) => {
+            sharedExceptionHandler(error);
+        })
+        // if (data) {
+        //     const addressObj = data;
+        //     if (addressObj?.terms && Array.isArray(addressObj?.terms) && addressObj?.terms?.length >= 2) {
+        //         city = addressObj.terms[addressObj.terms.length - 2]?.value;
+        //     }
+        //     else if (addressObj?.plus_code?.compound_code) {
+        //         city = addressObj.plus_code.compound_code.replace(/\,/gi, "")?.split(/\s/gi)?.[1];
+        //     }
+        // }
+        // else if (pinData) {
+        //     const addressObj = pinData?.addressObj;
+        //     if (addressObj?.plus_code?.compound_code) {
+        //         city = addressObj.plus_code.compound_code.replace(/\,/gi, "")?.split(/\s/gi)?.[1];
+        //     }
+        // }
 
-        latitudeRef.current = lat
-        longitudeRef.current = lng
-        setCityVal(city)
-        setLocationVal(data && (data.name ? data.name : data.description))
-        setScrollEnabled(true)
-        toggleCardData(PITSTOP_CARD_TYPES["description"], colors.primary)
+
     };
 
     const onLocationSearchInputChange = (value) => {
@@ -490,12 +495,10 @@ export default ({ navigation, route }) => {
     };//end of deleteRecording
 
     React.useEffect(() => {
-        console.log('micPressmicPressmicPressmicPress', micPress);
     }, [micPress])
     const recordingPress = async (closeSecond = false) => {
         if (!micPress) {
             askForAudioRecordPermission((allowRecording) => {
-                console.log('[allowRecording] ', allowRecording);
                 if (allowRecording) {
                     const fileName = "record-" + new Date().getTime() + ".mp4";
                     recorderRef.current = new Recorder(fileName).record();
@@ -520,7 +523,6 @@ export default ({ navigation, route }) => {
                     const path = recorderRef.current._fsPath;
                     RNMediaMeta.get(`${path}`)
                         .then(metadata => {
-                            console.log('metadata', metadata);
                             if (`${metadata.duration}` > `0`) {
 
                                 const obj = {
@@ -539,7 +541,6 @@ export default ({ navigation, route }) => {
 
                                 pitStopVoiceNote(obj, false);
                                 toggleCardData(PITSTOP_CARD_TYPES["estimated-time"]);
-                                console.log('closeSecond   ', closeSecond);
                                 if (closeSecond) {
                                     updateCardOnHeaderPress(updateCardOnHeaderPressItem);
                                 }
@@ -576,7 +577,6 @@ export default ({ navigation, route }) => {
                             }
                         })
                         .catch(err => {
-                            console.log('recorderRef.current Media meta Error   ', err)
                             setIsRecord(false);
                             setMicPress(false);
                         });
@@ -742,7 +742,6 @@ export default ({ navigation, route }) => {
                 onNearbyLocationPress={() => locationHandler()}
                 clearInputField={() => setLocationVal('')}
                 handleInputFocused={(index, isFocus) => {
-                    console.log('isFocus ==>>>', isFocus);
                     setScrollEnabled(isFocus)
                 }}
                 handleSetFavClicked={handleSetFavClicked}
@@ -921,7 +920,7 @@ export default ({ navigation, route }) => {
                                             reset={false}
                                             getTime={(time) => {
                                                 recordTimeRef.current?.setNativeProps({ text: time.substring(time.indexOf(":") + 1, time.length) })
-                                                if (time === "00:00:05") {
+                                                if (time === "00:02:00") {
                                                     getRecordingDuration(false)
                                                 }
                                             }}
@@ -1038,10 +1037,10 @@ export default ({ navigation, route }) => {
         let pitstopData = {
             pitstopIndex: route?.params?.pitstopIndex ?? null, // on update will get from params, 
             title: locationVal,
-            description,
+            description: description.trim(),
             pitstopName: 'Jovi Job',
             pitstopType: route.params.pitstopType,
-            nameval,
+            nameval: nameval.trim(),
             imageData,
             voiceNote,
             estTime,
@@ -1049,14 +1048,9 @@ export default ({ navigation, route }) => {
             latitude: latitudeRef.current,
             longitude: longitudeRef.current
         }
-        confirmServiceAvailabilityForLocation(postRequest, latitudeRef.current, longitudeRef.current, (resp) => {
             sharedAddUpdatePitstop(pitstopData, false, [], false, false, clearData);
             setLoader(false)
-        }, (error) => {
-            console.log("[confirmServiceAvailabilityForLocation].error", error);
-            sharedExceptionHandler(error);
-            setLoader(false)
-        })
+      
     }//end of save and continue function
 
     return (

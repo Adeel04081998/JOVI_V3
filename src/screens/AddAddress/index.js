@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
-import { Alert, Appearance, BackHandler, PixelRatio, ScrollView } from 'react-native'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
+import React, { useRef, useState } from 'react'
+import { Alert, Appearance, BackHandler, PixelRatio, Platform, ScrollView } from 'react-native'
 import { SvgXml } from 'react-native-svg';
 import { useDispatch, useSelector } from 'react-redux';
 import svgs from '../../assets/svgs';
@@ -23,6 +22,7 @@ import GV from '../../utils/GV';
 import ReduxActions from "../../redux/actions/index";
 import addressStyles from './styles';
 import Toast from '../../components/atoms/Toast';
+import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-aware-scroll-view';
 
 
 
@@ -43,6 +43,7 @@ export default (props) => {
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
     const styles = addressStyles(colors, HEIGHT, WIDTH)
     const { AddressTypeEnum } = useSelector(obj => obj.enumsReducer)
+    const scrollRef = useRef(null)
     const dispatch = useDispatch()
     const finalDestinationObj = props?.route?.params?.finalDestObj ?? {};
     let initState = {
@@ -102,13 +103,13 @@ export default (props) => {
                 color: colors.black,
                 selected: false
             },
-        ]
+        ],
+        "isOtherPressed": false
     }
     const [state, setState] = useState(initState)
     const { inputs, addressTypeList, selectedRegion } = state;
 
     const backAction = () => {
-        console.log('here in backAction');
         onBackPress()
         return true
     };
@@ -120,7 +121,11 @@ export default (props) => {
             BackHandler.removeEventListener("hardwareBackPress", backAction);
     }, []);
 
-
+    // React.useEffect(() => {
+    //     setTimeout(() => {
+    //         scrollRef.current.scrollTo({y:90})
+    //     }, 200);
+    // }, [state.isOtherPressed])
 
     const IS_DISABLED = () => {
         let addressType = addressTypeList.find(x => x.selected === true);
@@ -146,10 +151,10 @@ export default (props) => {
                         "longitude": props.route?.params?.finalDestObj.longitude,
                         "latitudeDelta": LATITUDE_DELTA,
                         "longitudeDelta": LONGITUDE_DELTA,
-                        "note": inputs[2].val,
+                        "note": inputs[2].val.trim(),
                         "city": props.route?.params?.finalDestObj.city,
                         "addressType": addressType[0]?.key || '',
-                        "addressTypeStr": inputs[3].val || ''
+                        "addressTypeStr": inputs[3].val.trim() || ''
                     },
                     res => {
                         console.log("ADDorUPDATE ADDRESS.RESPONSE", res);
@@ -187,6 +192,7 @@ export default (props) => {
     }
 
     const onPresslabel = (item, index) => {
+        scrollRef.current.scrollToEnd()
         let modifiedArray = addressTypeList.map((object, idx) => {
             if (idx === index) {
                 return { ...object, selected: !object.selected }
@@ -197,7 +203,8 @@ export default (props) => {
         else inputs[3].shown = false
         setState(pre => ({
             ...pre,
-            addressTypeList: modifiedArray
+            addressTypeList: modifiedArray,
+            isOtherPressed: true
         }))
     }
 
@@ -217,7 +224,7 @@ export default (props) => {
             NavigationService.NavigationActions.common_actions.goBack();
         }
     };
-    
+
     return (
         <SafeAreaView style={styles.safeArea}>
             <View style={styles.container} >
@@ -249,7 +256,7 @@ export default (props) => {
                         NavigationService.NavigationActions.stack_actions.pop(1);
                     }} />
                 <View style={styles.modalView} >
-                    <KeyboardAwareScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 15 }} >
+                    <KeyboardAwareScrollView ref={scrollRef} contentContainerStyle={{ flexGrow: 1}} >
 
                         <Text style={styles.mainText} fontFamily="PoppinsMedium" >Your current location</Text>
                         <View style={styles.inputContainer}>
@@ -268,7 +275,7 @@ export default (props) => {
                                     inputs.map((item, index) => {
                                         return (
                                             index !== 3 &&
-                                            <TextInput key={`textinput  ${item.key}`} value={item.val} placeholder={item.placeHolder} onChangeText={(text) => { onChangeText(text, index) }} />
+                                            <TextInput key={`textinput  ${item.key}`} value={item.val} placeholder={item.placeHolder} onChangeText={(text) => { onChangeText(text, index) }} maxLength={50} />
                                         )
                                     })
                                 }
@@ -294,24 +301,24 @@ export default (props) => {
                                 return (
                                     index == 3 ?
                                         item.shown === true &&
-                                        <TextInput key={`textinput  ${item.key}`} value={item.val} placeholder={item.placeHolder} onChangeText={(text) => { onChangeText(text, index) }} containerStyle={{ width: WIDTH - 50, alignSelf: 'center' }} />
+                                        <TextInput key={`textinput  ${item.key}`} value={item.val} placeholder={item.placeHolder} onChangeText={(text) => { onChangeText(text, index) }} containerStyle={{ width: WIDTH - 50, alignSelf: 'center' }} maxLength={50} />
                                         : null
                                 )
                             })
                         }
-                        <Button
-                            onPress={onPressSaveAndContinue}
-                            disabled={IS_DISABLED()}
-                            wait={0}
-                            text="Save and Continue"
-                            textStyle={{
-                                fontSize: 16,
-                                fontFamily: FontFamily.Poppins.Regular
-                            }}
-                            style={{ width: WIDTH * 0.9, alignSelf: 'center' }}
-                        />
-                    </KeyboardAwareScrollView>
 
+                    </KeyboardAwareScrollView>
+                    <Button
+                        onPress={onPressSaveAndContinue}
+                        disabled={IS_DISABLED()}
+                        wait={0}
+                        text="Save and Continue"
+                        textStyle={{
+                            fontSize: 16,
+                            fontFamily: FontFamily.Poppins.Regular
+                        }}
+                        style={{ width: WIDTH * 0.9, alignSelf: 'center',marginVertical:5 }}
+                    />
                 </View>
             </View>
         </SafeAreaView>

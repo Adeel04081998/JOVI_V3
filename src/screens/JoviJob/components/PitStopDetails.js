@@ -43,6 +43,7 @@ const PitStopDetails = (props) => {
                 multiline={true}
                 titleStyle={{ opacity: 0.8, color: '#000', fontFamily: FontFamily.Poppins.Regular, fontSize: 12 }}
                 value={props.description}
+                maxLength={250}
                 onChangeText={props.onChangeDescription}
                 // onSubmitEditing={() => Keyboard.dismiss()}
             />

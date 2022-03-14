@@ -16,7 +16,7 @@ import View from '../../components/atoms/View';
 import CustomHeader, { CustomHeaderIconBorder, CustomHeaderStyles } from '../../components/molecules/CustomHeader';
 import ImageWithTextInput from '../../components/organisms/ImageWithTextInput';
 import NoRecord from '../../components/organisms/NoRecord';
-import { renderFile, sharedExceptionHandler, sharedFetchOrder, sharedNotificationHandlerForOrderScreens, uuidGenerator, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { padToTwo, renderFile, sharedExceptionHandler, sharedFetchOrder, sharedNotificationHandlerForOrderScreens, uuidGenerator, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { getRequest, multipartPostRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
@@ -35,7 +35,7 @@ const HEADER_ICON_SIZE_LEFT = CustomHeaderIconBorder.size * 0.7;
 const HEADER_ICON_SIZE_RIGHT = CustomHeaderIconBorder.size * 0.6;
 
 const CHAT_TYPE_ENUM = { image: "image", audio: "audio", text: "text" };
-const padToTwo = (number) => (number <= 9 ? `0${number}` : number);
+
 let attachmentProps = null;
 
 export default ({ navigation, route }) => {

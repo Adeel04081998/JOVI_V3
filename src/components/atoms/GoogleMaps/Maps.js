@@ -112,7 +112,7 @@ export default (props) => {
       longitude,
       type: FETCH_ADDRESS_TYPE[0]
     }
-
+    disabledRef.current = false
   };
 
   useEffect(() => {
@@ -132,7 +132,7 @@ export default (props) => {
 
 
   /******************************************* START OF LOCATION SEARCH UI **********************************/
-
+console.log('placeName ==>>>>',placeName);
 
   const renderLocationSearchUI = () => {
     return (
@@ -183,6 +183,7 @@ export default (props) => {
               latitude: lat,
               longitude: lng
             }, 300);
+            console.log('data',data);
             setPlaceName(data.name ? data.name : data.description)
           }}
           handleOnInputChange={(text) => {
@@ -297,6 +298,7 @@ export default (props) => {
   }
 
   const FETCH_ADDRESSTYPE = () => {
+    console.log('coordinatesRef.current?.type',coordinatesRef.current?.type);
     return coordinatesRef.current?.type === FETCH_ADDRESS_TYPE[1] ? true : false
   }
   console.log('FETCH_ADDRESSTYPE() ==>>>', FETCH_ADDRESSTYPE());
@@ -312,17 +314,21 @@ export default (props) => {
           const { latitude, longitude, type } = coordinatesRef.current
           confirmServiceAvailabilityForLocation(postRequest, latitude || props.route?.params?.latitude, longitude || props.route?.params?.longitude,
             async (resp) => {
-              let adrInfo = await addressInfo(latitude || props.route?.params?.latitude, longitude || props.route?.params?.longitude, cb)
-              placeNameRef.current = adrInfo.address
+              console.log('resp ==>>>>', resp);
+              const { data } = resp
+              // let adrInfo = await addressInfo(latitude || props.route?.params?.latitude, longitude || props.route?.params?.longitude, cb)
+              placeNameRef.current = data.googleAddressViewModel.title
               let placeObj = {
                 title: FETCH_ADDRESSTYPE() ? placeName : placeNameRef.current,
                 latitude: latitude || props.route?.params?.latitude,
                 longitude: longitude || props.route?.params?.longitude,
                 latitudeDelta: LATITUDE_DELTA,
                 longitudeDelta: LONGITUDE_DELTA,
-                city: FETCH_ADDRESSTYPE() ? '' : adrInfo.city
+                city: FETCH_ADDRESSTYPE() ? '' : data.googleAddressViewModel.city
               }
+              cb(false)
               setPlaceName(FETCH_ADDRESSTYPE() ? placeName : placeNameRef.current)
+              console.log('placeObj ==>>>>',placeObj);
               props.onConfirmLoc(placeObj)
 
             }, (error) => {

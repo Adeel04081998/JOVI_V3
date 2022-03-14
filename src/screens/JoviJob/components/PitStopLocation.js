@@ -86,6 +86,7 @@ const PitStopLocation = (props) => {
                 containerStyle={{ marginTop: 30, alignSelf: 'center', zIndex: -1, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.light_input_border, borderRadius: 10 }}
                 titleStyle={{ opacity: 0.8, color: '#000', fontFamily: FontFamily.Poppins.Regular, fontSize: 12 }}
                 value={props.nameVal}
+                maxLength={50}
                 returnKeyType="done"
                 onChangeText={props.onChangeName}
                 style={{
