@@ -183,7 +183,6 @@ console.log('placeName ==>>>>',placeName);
               latitude: lat,
               longitude: lng
             }, 300);
-            console.log('data',data);
             setPlaceName(data.name ? data.name : data.description)
           }}
           handleOnInputChange={(text) => {

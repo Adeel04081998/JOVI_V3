@@ -338,23 +338,6 @@ export default ({ navigation, route }) => {
         }, (error) => {
             sharedExceptionHandler(error);
         })
-        // if (data) {
-        //     const addressObj = data;
-        //     if (addressObj?.terms && Array.isArray(addressObj?.terms) && addressObj?.terms?.length >= 2) {
-        //         city = addressObj.terms[addressObj.terms.length - 2]?.value;
-        //     }
-        //     else if (addressObj?.plus_code?.compound_code) {
-        //         city = addressObj.plus_code.compound_code.replace(/\,/gi, "")?.split(/\s/gi)?.[1];
-        //     }
-        // }
-        // else if (pinData) {
-        //     const addressObj = pinData?.addressObj;
-        //     if (addressObj?.plus_code?.compound_code) {
-        //         city = addressObj.plus_code.compound_code.replace(/\,/gi, "")?.split(/\s/gi)?.[1];
-        //     }
-        // }
-
-
     };
 
     const onLocationSearchInputChange = (value) => {
@@ -410,50 +393,6 @@ export default ({ navigation, route }) => {
         }
         toggleCardData(PITSTOP_CARD_TYPES["estimated-time"]);
         updateImagesData(slicedImages);
-        // for (let i = 0; i < picData.assets.length; i++) {
-        //     pitStopImage({
-        //         id: Math.floor(Math.random() * 100000),
-        //         fileName: picData.assets[i].uri.split('/').pop(),
-        //         path: picData.assets[i].uri,
-        //         isUploading: true,
-        //     }, null)
-        // }
-        // console.log('picData ==>>>', picData);
-
-
-        // const obj = {
-        //     id: Math.floor(Math.random() * 100000),
-        //     uri: Platform.OS === 'android' ? picData.uri : picData.uri.replace("file://", ""),
-        //     name: picData.uri.split('/').pop(),
-        //     type: picData.type,
-        // }
-        // let formData = new FormData()
-        // for (let index = 0; index < [{ ...obj }].length; index++) {
-
-        //     formData.append(`JoviImageList[${index}].JoviImage`, obj[index])
-        //     formData.append(`JoviImageList[${index}].JoviImageID`, 0)
-        //     formData.append(`JoviImageList[${index}].FileType`, 21) //21 because of adding in order
-        //     formData.append(`JoviImageList[${index}].FileExtensionType`, 1)
-        // }
-
-        // multipartPostRequest(
-        //     Endpoints.ADD_PITSTOPIMAGE,
-        //     formData,
-        //     res => {
-        //         //SUCCESS HANDLER
-        //         const resAt0 = res.joviImageReturnViewModelList[0];
-        //         pitStopImage({
-        //             id: resAt0.joviImageID,
-        //             fileName: resAt0.joviImage.split('/').pop(),
-        //             path: resAt0.joviImage,
-        //             ...resAt0,
-        //         }, null);
-        //         toggleCardData(PITSTOP_CARD_TYPES["estimated-time"]);
-        //     },
-        //     err => {
-        //         pitStopImage(null, imageData.lastIndex);
-        //     },
-        //     {})
     };
 
 
@@ -472,25 +411,6 @@ export default ({ navigation, route }) => {
     const deleteRecording = async () => {
         if (isRecord) {
             setIsDeleted(true);
-            // pitStopVoiceNote(null, true);
-            // const joviImageID = recorderRef.current?.joviImageID ?? -1;
-            // console.log('VR IS===> on del joviImageID', joviImageID);
-
-            // if (joviImageID !== -1) { 
-
-            // }
-            // Multipart.deleteFile(joviImageID, { ...parentProps, dispatch: parentDispatch }, () => {
-            //     //SUCCESS HANDLER
-
-            //     updateProgress(0);
-            // }, () => {
-            //     //ERROR HANDLER
-            //     setIsDeleted(false);
-
-            //     updateProgress(0);
-            // });
-
-
         }
     };//end of deleteRecording
 
@@ -544,36 +464,6 @@ export default ({ navigation, route }) => {
                                 if (closeSecond) {
                                     updateCardOnHeaderPress(updateCardOnHeaderPressItem);
                                 }
-
-
-                                // updateProgress(0);
-                                // setRecordingUploading(false);
-                                // Multipart.upload([{ ...obj }], { ...parentProps, dispatch: parentDispatch }, false, (uploadPercentage) => {
-                                //     //UPLOAD PROGRESS HANDLER
-                                //     updateProgress(parseInt(uploadPercentage));
-                                // }, (res) => {
-                                //     //SUCCESS HANDLER
-
-                                //     const resAt0 = res.joviImageReturnViewModelList[0];
-
-                                //     pitStopVoiceNote({
-                                //         _fsPath: renderPicture(resAt0.joviImage),
-                                //         ...resAt0,
-                                //     }, false);
-
-                                //     setIsRecord(true);
-                                //     toggleCardData(PITSTOP_CARD_TYPES["estimated-time"]);
-                                //     updateProgress(0);
-                                //     setRecordingUploading(false);
-
-                                // }, () => {
-                                //     //ERROR HANDLER
-                                //     updateProgress(0);
-                                //     setIsRecord(false);
-                                //     setIsDeleted(true);
-                                //     setRecordingUploading(false);
-                                // })
-
                             }
                         })
                         .catch(err => {
@@ -835,11 +725,9 @@ export default ({ navigation, route }) => {
                     colors={colors}
                     recordingItem={recordingItem}
                     onDeleteComplete={() => {
-                        console.log('onDeleteComplete --- ');
                         recordingItem = null;
                     }}
                     onRecordingComplete={(recordItem) => {
-                        console.log('onRecordingComplete--  ', recordItem);
                         recordingItem = recordItem;
                         if (closeSecondCard) {
                             updateCardOnHeaderPress(updateCardOnHeaderPressItem);
@@ -847,98 +735,13 @@ export default ({ navigation, route }) => {
                         }
                     }}
                     onPlayerStopComplete={() => {
-                        console.log('onPlayerStopComplete--  ');
                         if (closeSecondCard) {
                             updateCardOnHeaderPress(updateCardOnHeaderPressItem);
                             closeSecondCard = false;
                         }
-                    }} />
-                {/* <View style={styles.voiceNoteContainer} >
-                    {recordingUploading ?
-                        <View style={descriptionStyles.progress}>
-                            <View style={{
-                                ...descriptionStyles.progressActive,
-                                backgroundColor: colors.primary,
-                                maxWidth: `${progress}%`,
-                            }} />
-                        </View>
-                        : isRecord ?
-                            <View style={{ ...styles.rowContainer, maxWidth: "90%", marginRight: 12, }}>
-                                <AudioplayerMultiple
-                                    activeTheme={colors}
-                                    audioURL={recorderRef.current?._fsPath}
-                                    forceStopAll={isDeleted || forceDeleted}
-                                    width={Platform.OS === "ios" ? "90%" : "95%"}
-                                />
-
-                                <TouchableOpacity onPress={deleteRecording} style={{ marginTop: -20 }}>
-                                    <VectorIcon
-                                        name={"delete-outline"}
-                                        type="MaterialCommunityIcons"
-                                        color={"red"}
-                                        size={30} />
-                                </TouchableOpacity>
-
-                            </View>
-                            :
-                            <>
-                                <TouchableOpacity style={{
-                                    ...descriptionStyles.micIconContainer,
-                                    ...!micPress && {
-                                        height: 40,
-                                        width: 40,
-                                        backgroundColor: colors.primary,
-                                    }
-
-                                }}
-                                    activeOpacity={1}
-                                    onPressIn={() => { recordingPress(false) }}>
-                                    {micPress ?
-                                        <RNImage
-                                            source={require('../../assets/gifs/Record.gif')}
-                                            style={{ height: 50, width: 50, }} />
-                                        :
-                                        <View style={{ height: 30, width: 30, borderRadius: 30 / 2, backgroundColor: colors.primary, justifyContent: "center", alignItems: 'center' }} >
-                                            <VectorIcon name="keyboard-voice" type="MaterialIcons" color={colors.textColor} size={20} />
-                                        </View>
-                                    }
-                                </TouchableOpacity>
-
-                                {micPress ?
-                                    <>
-                                        <RNTextInput
-                                            ref={recordTimeRef}
-                                            multiline={false}
-                                            showSoftInputOnFocus={false}
-                                            editable={false}
-                                            caretHidden={true}
-                                            placeholder={""}
-                                            style={{ width: 65, color: 'red', fontSize: 15, borderRadius: 20, height: 40, paddingRight: 15, borderColor: "transparent", borderWidth: 0, paddingTop: 8, paddingBottom: 9 }}
-                                        />
-                                        <StopWatch
-                                            start={true}
-                                            reset={false}
-                                            getTime={(time) => {
-                                                recordTimeRef.current?.setNativeProps({ text: time.substring(time.indexOf(":") + 1, time.length) })
-                                                if (time === "00:02:00") {
-                                                    getRecordingDuration(false)
-                                                }
-                                            }}
-                                            options={{
-                                                container: { backgroundColor: '#fff', display: "none" },
-                                                text: { fontSize: 14, color: colors.primary, display: "none" }
-                                            }}
-                                        />
-                                    </>
-                                    :
-                                    <Text style={{
-                                        ...descriptionStyles.recordVoiceText,
-                                    }}>{'Record your voice note'}</Text>
-                                }
-                            </>
-                    }
-                </View> */}
-
+                    }}
+                    caption="Record your voice note."
+                    />
             </PitStopDetails>
         )
     }

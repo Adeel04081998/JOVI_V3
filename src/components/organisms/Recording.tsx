@@ -6,6 +6,7 @@ import { initColors } from "../../res/colors";
 import constants from "../../res/constants";
 import FontFamily from "../../res/FontFamily";
 import AudioplayerMultiple from "../atoms/AudioplayerMultiple";
+import Text from "../atoms/Text";
 import TouchableOpacity from "../atoms/TouchableOpacity";
 import VectorIcon from "../atoms/VectorIcon";
 import View from "../atoms/View";
@@ -20,11 +21,13 @@ interface Props {
     onDeleteComplete?: () => void;
     onRecordingRef?: (recorderRef: any) => void;
     recordingItem?: any;
+    caption?: string;
 };
 const defaultProps = {
     useHold: true,
     onRecordingComplete: undefined,
     onPlayerStopComplete: undefined,
+    caption: ""
 };
 
 const padToTwo = (number: number | string) => (number <= 9 ? `0${number}` : number);
@@ -225,7 +228,8 @@ const Recording = React.forwardRef((props: Props, ref) => {
                                 setStopRecording(false);
                             }}
                         />
-                        {micTimer && renderMicTimer()}
+                    
+                        {micTimer ? renderMicTimer() :  props.caption !== '' && <Text style={{paddingLeft: 10, fontSize: 12, color: colors.black}} fontFamily={"PoppinsLight"} >{props.caption}</Text>}
                     </View>
 
                     {/* ****************** End of MIC ICON ****************** */}
