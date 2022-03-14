@@ -1,6 +1,6 @@
 import AnimatedLottieView from 'lottie-react-native';
 import * as React from 'react';
-import { Animated, Appearance, Easing, Platform, SafeAreaView, ScrollView, StatusBar } from 'react-native';
+import { Animated, Appearance, Easing, Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useSelector } from 'react-redux';
 import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-aware-scroll-view';
@@ -11,7 +11,8 @@ import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import { CustomHeaderIconBorder, CustomHeaderStyles } from '../../components/molecules/CustomHeader';
-import { sharedExceptionHandler, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import AnimatedModal from '../../components/organisms/AnimatedModal';
+import { sharedExceptionHandler, sharedFetchOrder, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
@@ -21,7 +22,10 @@ import constants from '../../res/constants';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import Regex from '../../utils/Regex';
+import OrderRecipt from '../CheckOut/components/OrderRecipt';
 import { headerStyles, sliderStylesFunc, stylesFunc } from './styles';
+import CheckoutStyles from "../CheckOut/styles";
+import RatingOrderRecipt from './components/RatingOrderRecipt';
 
 // #region :: CONSTANT's START's FROM HERE 
 const HEADER_ICON_SIZE_RIGHT = CustomHeaderIconBorder.size * 0.7;
@@ -51,11 +55,11 @@ const NUMBER_OF_COLUMN = 2;
 
 export default ({ navigation, route }) => {
 
-    const orderID = 120;
+    const orderID = 67649554;
 
     // #region :: REDUCER START's FROM HERE 
-    const messagesReducer = useSelector(s => s.messagesReducer);
-    const joviRatingTitle = messagesReducer?.homeScreenDataViewModel?.joviRatingTitleList[0];
+    const messagesReducer = useSelector(s => s?.messagesReducer);
+    const joviRatingTitle = messagesReducer?.homeScreenDataViewModel?.joviRatingTitle;
     React.useEffect(() => {
         updateData(pre => ({
             ...pre,
@@ -71,6 +75,9 @@ export default ({ navigation, route }) => {
     const styles = { ...stylesFunc(colors), };
     const sliderStyles = sliderStylesFunc(colors);
     const customheaderStyles = { ...CustomHeaderStyles(colors.primary), ...headerStyles(colors) };
+    const checkOutStyles = CheckoutStyles.styles(colors);
+    const cartReducer = useSelector(store => store.cartReducer);
+
     // #endregion :: STYLES & THEME END's FROM HERE     
 
     // #region :: RENDER HEADER START's FROM HERE 
@@ -81,7 +88,10 @@ export default ({ navigation, route }) => {
                 <TouchableOpacity
                     wait={0}
                     onPress={() => { NavigationService.NavigationActions.common_actions.goBack() }}
-                    style={customheaderStyles.iconContainer}>
+                    style={{
+                        ...customheaderStyles.iconContainer,
+                        zIndex: receiptVisible ? -9 : 9999,
+                    }}>
                     <VectorIcon color={"#fff"} type="MaterialCommunityIcons" name='close' size={HEADER_ICON_SIZE_RIGHT} />
                 </TouchableOpacity>
                 <SafeAreaView />
@@ -115,6 +125,8 @@ export default ({ navigation, route }) => {
     const skipEffect = React.useRef(false);
     const [rating, setRating] = React.useState(2);//1 TO 5
     const [switchVal, setSwitchVal] = React.useState(true);
+    const [receiptVisible, setReceiptVisible] = React.useState(false);
+    const [receiptData, setReceiptData] = React.useState({});
     const [disableSubmit, setDisableSubmit] = React.useState(true);
     const [amount, setAmount] = React.useState('');
     const [ratingData, setRatingData] = React.useState([]);//ALL RATING GETTING FROM SERVER
@@ -123,6 +135,29 @@ export default ({ navigation, route }) => {
         headingDescription: joviRatingTitle?.body ?? 'Your rating helps us improve',
         commentData: [],
     })
+
+    const getOrderDetailFromServer = () => {
+        sharedFetchOrder(orderID, (res) => {
+            console.log('res from sjared fetch order ', res);
+            console.log('res from sjared fetch order cartReducer ', cartReducer);
+            if (res.data.statusCode === 200) {
+                const apiRes = res.data.order;
+                const obj = {
+                    discount: apiRes.chargeBreakdown.discount,
+                    serviceCharges: apiRes.serviceCharges,
+
+
+                }
+                setReceiptData(res.data.order);
+            } else {
+                setReceiptData({});
+            }
+        });
+    };
+    React.useEffect(() => {
+        getOrderDetailFromServer();
+        return () => { };
+    }, [])
 
     // #endregion :: STATE's & REF's END's FROM HERE 
 
@@ -385,10 +420,12 @@ export default ({ navigation, route }) => {
                     colors={colors}
                     text={`Receipt`}
                     containerStyle={styles.reciptSubmitButton}
+                    onPress={() => {
+                        setReceiptVisible(true);
+                    }}
                 />
 
                 <TextWithBoxUI
-
                     disabled={rating < 4 ? disableSubmit : (switchVal ? (!VALIDATION_CHECK(amount)) : switchVal)}
                     colors={colors}
                     text={`Submit`}
@@ -399,7 +436,31 @@ export default ({ navigation, route }) => {
 
             {/* ****************** End of RECIPT & SUBMIT BUTTON ****************** */}
             <SafeAreaView />
-        </LinearGradient >
+
+            {receiptVisible &&
+                <AnimatedModal
+                    position={"bottom"}
+                    visible={receiptVisible}
+                    onRequestClose={() => { setReceiptVisible(false) }}
+                    contentContainerStyle={{ backgroundColor: 'transparent', }}
+                    skipBottom>
+
+                    <RatingOrderRecipt
+                        containerStyle={{ maxHeight: constants.window_dimensions.height * 0.7 }}
+                        checkOutStyles={checkOutStyles}
+                        colors={colors}
+                        data={receiptData?.pitStopsList ?? []}
+                        totalGST={receiptData?.chargeBreakdown?.totalProductGST ?? ''}
+                        serviceCharges={receiptData?.serviceCharges ?? ''}
+                        discount={receiptData?.chargeBreakdown?.discount ?? ''}
+                        total={receiptData?.chargeBreakdown?.estimateTotalAmount ?? ''}
+                        onRightTextPress={() => {
+                            setReceiptVisible(false);
+                        }}
+                    />
+                </AnimatedModal>
+            }
+        </LinearGradient>
     )
 
     // #endregion :: UI END's FROM HERE 

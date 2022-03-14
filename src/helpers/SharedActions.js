@@ -959,3 +959,4 @@ export const sharedSetHeadersInfo = async () => {
 };
 export const sharedGetHeadersInfo = () => headersInfo;
 
+const makeArrayRepeated = (arr, repeats) => [].concat(...Array.from({ length: repeats }, () => arr));
