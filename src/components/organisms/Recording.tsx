@@ -28,7 +28,7 @@ const defaultProps = {
 };
 
 const padToTwo = (number: number | string) => (number <= 9 ? `0${number}` : number);
-let recordingItem: RecordButtonItemProps | undefined = undefined;;
+let recordingItem: RecordButtonItemProps | undefined | null = undefined;;
 
 const Recording = React.forwardRef((props: Props, ref) => {
     const colors = props.colors;
@@ -42,10 +42,15 @@ const Recording = React.forwardRef((props: Props, ref) => {
 
     // #endregion :: STATE & REF's END's FROM HERE 
     React.useEffect(() => {
-        console.log('recordingItem ', props.recordingItem,);
-        if (!VALIDATION_CHECK(recordingItem))
-            recordingItem = props.recordingItem;
-        forceUpdate();
+        console.log('props.recordingItem ', props.recordingItem,);
+        console.log('recordingItem ', recordingItem,);
+        if (VALIDATION_CHECK(props.recordingItem)) {
+            if (!VALIDATION_CHECK(recordingItem)) {
+                recordingItem = props.recordingItem;
+                forceUpdate();
+            }
+        }
+
     }, [props.recordingItem])
 
     // #region :: STOPWATCH START's FROM HERE 
@@ -133,19 +138,22 @@ const Recording = React.forwardRef((props: Props, ref) => {
     // #endregion :: STOPWATCH END's FROM HERE 
 
     React.useEffect(() => {
-        if (stopAudioPlayer) {
-            recordingItem = undefined;
-            forceUpdate();
+        console.log('recordingItem in stop audio player ', recordingItem);
+        if (stopAudioPlayer && recordingItem) {
             setStopAudioPlayer(false);
             handlePlayerCompletion();
+            recordingItem = null;
         }
     }, [stopAudioPlayer])
 
     React.useEffect(() => {
+        console.log('stopRecording useEffect--  ', stopRecording);
         if (stopRecording) {
-            recordButtonRef.current?.setDuration(`${padToTwo(time.current.min)} : ${padToTwo(time.current.sec)}`)
+
+            console.log('recordButtonRef.current ', recordButtonRef.current);
+            recordButtonRef.current && recordButtonRef.current.setDuration(`${padToTwo(time.current.min)} : ${padToTwo(time.current.sec)}`)
             resetTimer();
-            setStopRecording(false);
+            // setStopRecording(false);
             return
         }
         return () => { }
@@ -205,15 +213,16 @@ const Recording = React.forwardRef((props: Props, ref) => {
                             ref={recordButtonRef}
                             stop={stopRecording}
                             renderComposer={(val: boolean) => {
-                                // if (val)
-                                //     setStopRecording(true);
+                                if (val)
+                                    setStopRecording(false);
                                 handleStart(val);
                                 toggleMicTimer(val);
                             }}
                             onRecordAudio={(item) => {
+
                                 recordingItem = item;
-                                setStopRecording(false);
                                 handleOnCompletion(item);
+                                setStopRecording(false);
                             }}
                         />
                         {micTimer && renderMicTimer()}
