@@ -10,7 +10,7 @@ import { sharedOnCategoryPress } from '../../../helpers/SharedActions';
 // import { PITSTOP_TYPES } from '../../../utils/GV';
 // import { useSelector } from 'react-redux';
 // import { Alert } from 'react-native';
-const CONTAINER_WIDTH = ((constants.screen_dimensions.width) * 0.22);
+const CONTAINER_WIDTH = ((constants.screen_dimensions.width) * 0.227);
 const CONTAINER_HEIGHT = constants.screen_dimensions.width * 0.3;
 export default React.memo(({ homeStyles }) => {
     // const userReducer = useSelector(store => store.userReducer);
@@ -39,15 +39,15 @@ export default React.memo(({ homeStyles }) => {
     }
     return <AnimatedView style={[homeStyles.categoriesCardPrimaryContainer]}>
         <Text style={homeStyles.categoriesCardTittleText}>Categories</Text>
-        <AnimatedView style={{ flexDirection: 'row'}}>
+        <AnimatedView style={{ flexDirection: 'row',  }}>
             {ENUMS.PITSTOP_TYPES.filter(x => x.isActive).map((x, i) => {
                 return <CategoryCardItem
                     key={`category card item${i}`}
                     xml={x.icon}
                     title={x.text}
-                    containerStyle={homeStyles.cat_item_container}
+                    containerStyle={[homeStyles.cat_item_container, {marginHorizontal:0, marginLeft: i === 0 ?0:5 ,  }]}
                     height={CONTAINER_HEIGHT}
-                    width={CONTAINER_WIDTH}
+                    width={CONTAINER_WIDTH }
                     pressBackgroundColor={x.color}
                     textStyle={{ fontSize: 12, padding: 2 }}
                     imageContainerStyle={[homeStyles.cat_img_container]}

@@ -2,7 +2,9 @@ import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import React, { useState } from 'react';
 import { Animated, Appearance, Easing, ScrollView } from "react-native";
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
+// import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
+import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-aware-scroll-view';
+
 import { useDispatch, useSelector } from 'react-redux';
 import AddressesList from "../../components/atoms/FinalDestination/AddressesList";
 import SafeAreaView from "../../components/atoms/SafeAreaView";
@@ -106,6 +108,8 @@ export default () => {
             />
         </View>
     }
+    const inputRef = React.useRef(null);
+
     return (
         <View style={homeStyles.container}>
             <SafeAreaView style={{ flex: 1 }}>
@@ -125,10 +129,12 @@ export default () => {
                     opacity: homeFadeIn.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1] }),
                     // transform: [{ scale: homeFadeIn.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] }) }]
                 }}>
-                    <KeyboardAwareScrollView style={{}} showsVerticalScrollIndicator={false}
-                    //  alwaysBounceHorizontal={false}
-                    //  alwaysBounceVertical={false}
-                    //  bounces={false}
+                    <KeyboardAwareScrollView style={{}}
+                        showsVerticalScrollIndicator={false}
+                        enableOnAndroid
+                        keyboardDismissMode="interactive"
+                        keyboardShouldPersistTaps="handled"
+
                     >
                         <Greetings messagesReducer={messagesReducer} homeStyles={homeStyles} userReducer={userReducer} colors={colors} />
                         {
