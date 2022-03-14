@@ -41,7 +41,6 @@ const RecordButton = React.forwardRef<Recorder, Props>((props: Props, ref: any) 
     React.useEffect(() => {
         const lastNumber = duration.slice(duration.length - 1);
         const secondNumber = duration.slice(1);
-
         if (parseInt(`${lastNumber}`) > 0 || parseInt(`${secondNumber}`) > 0) {
 
             if (props.onRecordAudio) {
@@ -120,7 +119,7 @@ const RecordButton = React.forwardRef<Recorder, Props>((props: Props, ref: any) 
     React.useImperativeHandle(ref, () => ({
         setDuration,
         recorderRef,
-    }), [setDuration,recorderRef])
+    }), [setDuration, recorderRef])
 
     return (
         <TouchableOpacity

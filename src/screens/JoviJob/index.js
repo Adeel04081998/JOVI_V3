@@ -43,7 +43,7 @@ let closeSecondCard = false;
 let recordingItem = null;
 
 export default ({ navigation, route }) => {
-
+    console.log('recordingItem in jovi job --- ', recordingItem);
     const transition = (
         <Transition.Together>
             <Transition.Out
