@@ -100,7 +100,7 @@ export default ({ route }) => {
                 let updatedPitstops = [];
                 totalActivePitstops.map((item, i) => {
                     updatedPitstops.push({ ...item, isFinalDestination: i === (totalActivePitstops.length - 1) });
-                    if (item.joviJobStatus === 2 || item.joviJobStatus === 7) {
+                    if (item.joviJobStatus === 2) {
                         progress += increment;
                     }
                     if (i === (totalActivePitstops.length - 1)) return;
