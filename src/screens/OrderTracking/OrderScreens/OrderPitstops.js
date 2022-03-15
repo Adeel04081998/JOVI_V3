@@ -12,13 +12,13 @@ import VectorIcon from '../../../components/atoms/VectorIcon';
 import View from '../../../components/atoms/View';
 import CustomHeader, { CustomHeaderIconBorder } from '../../../components/molecules/CustomHeader';
 import OrderEstTimeCard from '../../../components/organisms/Card/OrderEstTimeCard';
-import { renderPrice, sharedFetchOrder, sharedGenerateProductItem, sharedNotificationHandlerForOrderScreens } from '../../../helpers/SharedActions';
+import { renderPrice, sharedFetchOrder, sharedGenerateProductItem, sharedNotificationHandlerForOrderScreens, sharedRiderRating } from '../../../helpers/SharedActions';
 import NavigationService from '../../../navigations/NavigationService';
 import ROUTES from '../../../navigations/ROUTES';
 import constants from '../../../res/constants';
 import theme from '../../../res/theme';
 import GV, { ORDER_STATUSES, PITSTOP_TYPES_INVERTED } from '../../../utils/GV';
-
+import { orderPitstopStyles as _styles } from '../styles';
 const HEADER_ICON_SIZE_LEFT = CustomHeaderIconBorder.size * 0.7;
 const HEADER_ICON_SIZE_RIGHT = CustomHeaderIconBorder.size * 0.6;
 const IMAGE_SIZE = constants.window_dimensions.width * 0.3;
@@ -38,8 +38,8 @@ const ICON_BORDER = {
 };
 export default ({ route }) => {
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[2]], Appearance.getColorScheme() === "dark");
-    const styles = _styles(colors);
-    const orderIDParam = route?.params?.orderID ?? 32992782;
+    const styles = _styles(colors, ICON_BORDER, SPACING);
+    const orderIDParam = route?.params?.orderID ?? 0;
     const fcmReducer = useSelector(store => store.fcmReducer);
     const userReducer = useSelector(store => store.userReducer);
     const [state, setState] = React.useState({
@@ -125,12 +125,19 @@ export default ({ route }) => {
                     <SvgXml xml={svgs.order_chat_header_location(colors.primary)} height={HEADER_ICON_SIZE_LEFT} width={HEADER_ICON_SIZE_LEFT} />
                 </TouchableScale>
             )}
-            leftCustom={(
-                <TouchableScale wait={0} onPress={() => {
+            leftCustom={(<>
+                <TouchableOpacity disabled={!isRiderFound} onPress={() => {
+                    NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderChat.screen_name, { orderID: orderIDParam, riderProfilePic: state.userPic, }, ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name)
+                }} style={{ ...styles.iconContainer }}>
+                    <VectorIcon size={25} name={'md-chatbubble-ellipses'} type={'Ionicons'} color={isRiderFound ? colors.primary : colors.grey} />
+                </TouchableOpacity>
+                {/* <TouchableScale wait={0} onPress={() => {
                     NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderChat.screen_name, { orderID: orderIDParam,riderProfilePic:state.userPic, }, ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name)
                 }} style={styles.iconContainer}>
-                    <SvgXml xml={svgs.order_chat_header_receipt(isRiderFound ? colors.primary : colors.grey)} height={HEADER_ICON_SIZE_RIGHT} width={HEADER_ICON_SIZE_RIGHT} />
-                </TouchableScale>
+                <VectorIcon size={25} name={'md-chatbubble-ellipses'} type={'Ionicons'} color={colors.white} />
+                    // <SvgXml xml={svgs.order_chat_header_receipt(isRiderFound ? colors.primary : colors.grey)} height={HEADER_ICON_SIZE_RIGHT} width={HEADER_ICON_SIZE_RIGHT} />
+                </TouchableScale> */}
+            </>
             )}
         />
     }
@@ -180,8 +187,12 @@ export default ({ route }) => {
     const goToHome = () => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
     }
-    const orderCancelledOrCompleted = () => {
-        goToHome();
+    const orderCancelledOrCompleted = (status) => {
+        if (status.orderCompleted) {
+            sharedRiderRating(orderIDParam);
+        } else {
+            goToHome();
+        }
     }
     const openDialer = (number) => {
         Linking.openURL(`tel:${number}`)
@@ -244,43 +255,3 @@ export default ({ route }) => {
         </SafeAreaView>
     );
 }
-const _styles = (colors) => StyleSheet.create({
-    safeArea: {
-        flex: 1,
-    },
-    container: {
-        flex: 1
-    },
-    pitstopsContainer: {
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-
-        elevation: 5,
-        flex: 1, backgroundColor: colors.white, marginVertical: SPACING, marginHorizontal: SPACING, borderRadius: 10,
-    },
-    dashContainer: { flex: 1, flexWrap: 'nowrap', position: 'absolute', left: 40, top: 50, },
-    dashLine: { fontSize: 12, height: '100%', maxWidth: 5, color: colors.black, flexWrap: 'nowrap', },
-    itemContainer: { display: 'flex', flexDirection: 'row', justifyContent: 'space-between' },
-    pitstopGreyCricle: { width: 55, height: 55, borderRadius: 27.5, display: 'flex', justifyContent: 'center', alignItems: 'center', },
-    pitstopWiseCircle: { width: 35, height: 35, borderRadius: 17.5, display: 'flex', justifyContent: 'center', alignItems: 'center', },
-    pitstopInfoContainer: { flex: 1, marginTop: 3, marginHorizontal: SPACING, display: 'flex', flexDirection: 'column' },
-    footerItemContainer: { flex: 1, display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', },
-    footerContainer: { height: 72, display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', backgroundColor: colors.white },
-    iconContainer: {
-        height: ICON_BORDER.size,
-        width: ICON_BORDER.size,
-
-        borderColor: ICON_BORDER.color,
-        borderWidth: ICON_BORDER.width,
-        borderRadius: ICON_BORDER.borderRadius,
-
-        alignItems: "center",
-        justifyContent: "center",
-        marginHorizontal: 8,
-    }
-});

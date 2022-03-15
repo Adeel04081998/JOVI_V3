@@ -56,42 +56,49 @@ const ReceiptItem = (props: Props) => {
 
     // #endregion :: DOT COLOR using Pitstoptype END's FROM HERE 
 
+    // #region :: COLOR & STYLE START's FROM HERE 
     const isJoviJob = props?.isJoviJob ?? defaultProps.isJoviJob;
     const colors = props.colors;
     const styles = stylesFunc(colors, dotColor());
     const itemStyles = itemStylesFunc(colors);
 
+    // #endregion :: COLOR & STYLE END's FROM HERE 
+
+    // #region :: STATE, REF & EFFECT START's FROM HERE 
     const [showDetail, toggleShowDetail] = React.useState(defaultProps.showDetail);
     React.useEffect(() => {
         toggleShowDetail(props?.showDetail ?? !showDetail);
         return () => { };
     }, [props.showDetail])
 
+    // #endregion :: STATE, REF & EFFECT END's FROM HERE 
+
+    // #region :: sub item item getting START's FROM HERE 
     const getItemDetail = (item: any) => {
-        let name = item.pitStopItemName;
+        const dp = item.price || item.discountedPrice || item.actualPrice;
+        const p = item.price || item.actualPrice;
+        let name = item.productItemName || item.pitStopItemName;
         let quantity = item.quantity;
-        let actualPrice = item.discountedPrice ? item.actualPrice : '';
-        let discountedPrice = item.discountedPrice ? item.discountedPrice : item.actualPrice;
+        let actualPrice = dp ? p : '';
+        let discountedPrice = dp ? dp : p;
 
         if (isJoviJob) {
             name = item.title;
             quantity = '';
             actualPrice = '';
             discountedPrice = item.estimatePrice;
-        } else {
-            name = item.pitStopItemName;
-            quantity = item.quantity;
-            actualPrice = item.discountedPrice ? item.actualPrice : '';
-            discountedPrice = item.discountedPrice ? item.discountedPrice : item.actualPrice;
         }
 
         return { name, quantity, actualPrice, discountedPrice };
     }
 
-    const subItem = () => {
+    // #endregion :: sub item item getting END's FROM HERE 
+
+    // #region :: SUB ITEM UI START's FROM HERE 
+    const renderSubItem = () => {
 
         return (
-            <View style={[{ marginTop: -6, }, props.itemPrimaryContainerStyle]}>
+            <View style={[{ marginTop: 0, }, props.itemPrimaryContainerStyle]}>
                 {(props?.itemData ?? []).map((item, index) => {
                     const { name, quantity, discountedPrice, actualPrice, } = getItemDetail(item);
                     return (
@@ -115,6 +122,9 @@ const ReceiptItem = (props: Props) => {
             </View>
         )
     }
+
+    // #endregion :: SUB ITEM UI END's FROM HERE 
+
     return (
         <View style={[props.containerStyle]}>
 
@@ -129,9 +139,7 @@ const ReceiptItem = (props: Props) => {
 
             {/* ****************** End of TITLE ****************** */}
 
-            {showDetail && subItem()}
-
-
+            {showDetail && renderSubItem()}
 
         </View>
     );
@@ -181,7 +189,8 @@ const stylesFunc = (colors: typeof initColors, dotColor: any) => StyleSheet.crea
         marginRight: 5,
     },
     titlePrimaryContainer: {
-        paddingVertical: 10,
+        paddingTop: 10,
+        paddingBottom: 6,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",

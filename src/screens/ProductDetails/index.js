@@ -188,10 +188,10 @@ export default (props) => {
         let discountedPriceWithoutGstWithoutJovi = discountTypeCallbacks[1](totalAmountWithoutGst, discountAmount);
         let discountedPriceWithoutGst = discountedPriceWithoutGstWithoutJovi;
         if (generalProductOrDealDetail.isJoviDiscount) {
-            totalJoviDiscount = joviDiscountRate > 0 ? totalAmountWithoutGst * (joviDiscountRate / 100) : 0;
+            totalJoviDiscount = joviDiscountRate > 0 ? Math.round(totalAmountWithoutGst * (joviDiscountRate / 100)) : 0;
             discountedPriceWithoutGst = totalJoviDiscount > discountedPriceWithoutGst ? discountedPriceWithoutGst : discountedPriceWithoutGst - totalJoviDiscount;
         }
-        const totalGst = ((generalProductOrDealDetail.gstPercentage / 100) * totalAmountWithoutGst);
+        const totalGst = Math.round(((generalProductOrDealDetail.gstPercentage / 100) * totalAmountWithoutGst));
         let discountedPriceWithGst = discountedPriceWithoutGst + totalGst;
         const totalPriceWithoutDiscount = discountedPriceWithGst + totalDiscount;
         // console.log('discountedPrice', totalAmountWithoutGst, discountedPriceWithoutGst, (totalAddOnPrice + generalProductOrDealDetail.itemPrice) * 0.2, (totalAddOnPrice + generalProductOrDealDetail.itemPrice) - ((20 / 100) * (totalAddOnPrice + generalProductOrDealDetail.itemPrice)));

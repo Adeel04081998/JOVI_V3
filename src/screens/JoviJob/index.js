@@ -35,12 +35,15 @@ import Regex from '../../utils/Regex';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../redux/actions';
 import FontFamily from '../../res/FontFamily';
+import Recording from '../../components/organisms/Recording';
 
 export const PITSTOP_CARD_TYPES = Object.freeze({ "location": 0, "description": 1, "estimated-time": 2, "buy-for-me": 3, "estimated-price": 4, });
 let updateCardOnHeaderPressItem = {};
+let closeSecondCard = false;
+let recordingItem = null;
 
 export default ({ navigation, route }) => {
-
+    console.log('recordingItem in jovi job --- ', recordingItem);
     const transition = (
         <Transition.Together>
             <Transition.Out
@@ -194,6 +197,7 @@ export default ({ navigation, route }) => {
     const [recordingUploading, setRecordingUploading] = useState(false);
     const [isRecord, setIsRecord] = useState(false);
     const recorderRef = useRef(null);
+    const customRecordingRef = useRef(null);
     const recordTimeRef = useRef(null);
     const [micPress, setMicPress] = useState(false);
     const [isDeleted, setIsDeleted] = useState(false);
@@ -677,13 +681,12 @@ export default ({ navigation, route }) => {
 
                     if (idx === 2 && isOpened) { //AHMED KH RHA KOI 2 ko change nh kry ga... ;-P
                         //WHEN DESCRIPTION TOGGLE  
-                        // console.log('micPress ', micPress);
-                        if (micPress) {
-                            recordingPress(true);
-                        } else {
-                            setForceDeleted(true);
-                            updateStateaaa();
-                        }
+                        closeSecondCard = true;
+                        customRecordingRef.current?.setStopRecording(true);
+                        customRecordingRef.current?.setStopAudioPlayer(true);
+
+                        return
+
                     } else {
                         updateCardOnHeaderPress(updateCardOnHeaderPressItem);
                     }
@@ -828,8 +831,30 @@ export default ({ navigation, route }) => {
 
 
                 <Text style={styles.attachment} >Voice Notes</Text>
-
-                <View style={styles.voiceNoteContainer} >
+                <Recording
+                    ref={customRecordingRef}
+                    colors={colors}
+                    recordingItem={recordingItem}
+                    onDeleteComplete={() => {
+                        console.log('onDeleteComplete --- ');
+                        recordingItem = null;
+                    }}
+                    onRecordingComplete={(recordItem) => {
+                        console.log('onRecordingComplete--  ', recordItem);
+                        recordingItem = recordItem;
+                        if (closeSecondCard) {
+                            updateCardOnHeaderPress(updateCardOnHeaderPressItem);
+                            closeSecondCard = false;
+                        }
+                    }}
+                    onPlayerStopComplete={() => {
+                        console.log('onPlayerStopComplete--  ');
+                        if (closeSecondCard) {
+                            updateCardOnHeaderPress(updateCardOnHeaderPressItem);
+                            closeSecondCard = false;
+                        }
+                    }} />
+                {/* <View style={styles.voiceNoteContainer} >
                     {recordingUploading ?
                         <View style={descriptionStyles.progress}>
                             <View style={{
@@ -913,7 +938,7 @@ export default ({ navigation, route }) => {
                                 }
                             </>
                     }
-                </View>
+                </View> */}
 
             </PitStopDetails>
         )

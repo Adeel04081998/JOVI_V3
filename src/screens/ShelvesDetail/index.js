@@ -241,7 +241,7 @@ export default ({ navigation, route }) => {
             },
         }
 
-        // sharedAddUpdatePitstop(pitstopDetails,)
+        sharedAddUpdatePitstop(pitstopDetails,)
 
         // if (Math.random() < 0) {
         //     undoQuantity(parentIndex, index);

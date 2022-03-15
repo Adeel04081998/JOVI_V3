@@ -10,7 +10,7 @@ Axios.interceptors.request.use(
         try {
             config.baseURL = GV.BASE_URL.current;
             config.timeout = 60 * 1000; // 1 MINUTE
-            config.timeoutErrorMessage = "Oops something went wrong"
+            // config.timeoutErrorMessage = "Oops something went wrong"
             config.headers['isNewApp'] = "true"; // for device and app info in future
             config.headers['deviceInfo'] = JSON.stringify({ ...sharedGetHeadersInfo() }); // for device and app info in future
             const userReducer = store.getState().userReducer;

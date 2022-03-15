@@ -1,6 +1,7 @@
 import GV from "../../../GV";
+import ENUMS from "../../../ENUMS";
 export const env = {
-    name: "DEBUG",
+    name: ENUMS.ENVS.DEBUG,
     BASE_URL: GV.BASE_URL.current,
     GOOGLE_API_KEY: "AIzaSyDjL10bWGX7XL65Np6izZTFagOlz2vzgOA",
     CODE_PUSH_DEP_KEYS: {

@@ -297,6 +297,7 @@ export const secToHourMinSec = (sec = 1,) => {
 }//end of secToHourMinSec
 
 export const renderFile = picturePath => {
+    // console.log("[renderFile].picturePath", picturePath)
     const userReducer = store.getState().userReducer;
     return `${GV.BASE_URL.current}/api/Common/S3File/${encodeURIComponent(
         picturePath,
@@ -677,9 +678,9 @@ export const array_move = (arr, old_index, new_index) => {
 export const sharedGetPrice = (item, lineThrough) => {
     let _price = 0;
     if (lineThrough && item.discountAmount) {
-        _price = item.gstAddedPrice || item.itemPrice || item.price || 0;
-    } else {
         _price = item.discountedPrice || item.gstAddedPrice || item.itemPrice || item.price || 0;
+    } else {
+        _price = item.gstAddedPrice || item.itemPrice || item.price || 0;
     }
     return renderPrice(_price);
 }
@@ -890,7 +891,7 @@ export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder 
     // '14' out of stock
     // '18' replaced
     // '17' jovi job completed at index 6
-    // '16' order completed
+    // '16' order completed at index 7
     // '2' Chat message at INDEX 8
 
     const notificationTypes = ["1", "11", "12", "13", "14", "18", "17", "16", "2",]
@@ -907,7 +908,9 @@ export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder 
         }
         else if (data.NotificationType == notificationTypes[2] || data.NotificationType == notificationTypes[3] || data.NotificationType == notificationTypes[7]) {
             // console.log("[Order Processing] Order Cancelled By Firbase...");
-            orderCompletedOrCancelled();
+            orderCompletedOrCancelled({
+                orderCompleted: data.NotificationType == notificationTypes[7]
+            });
         }
         else if (data.NotificationType == notificationTypes[4] || data.NotificationType == notificationTypes[5] || data.NotificationType == notificationTypes[6]) {
             fetchOrder()
@@ -959,3 +962,16 @@ export const sharedSetHeadersInfo = async () => {
 };
 export const sharedGetHeadersInfo = () => headersInfo;
 
+export const makeArrayRepeated = (arr, repeats) => [].concat(...Array.from({ length: repeats }, () => arr));
+
+export const sharedRiderRating = (orderID=0,currentRoute = null) => {
+    NavigationService.NavigationActions.common_actions.reset_with_filter_invert([ROUTES.APP_DRAWER_ROUTES.Home.screen_name], {
+        name: ROUTES.APP_DRAWER_ROUTES.RateRider.screen_name,
+        params: { orderID }
+    });
+    // if(currentRoute){
+    //     NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.RateRider.screen_name,{orderID},currentRoute);
+    // }else{
+    //     NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.RateRider.screen_name,{orderID});
+    // }
+}
