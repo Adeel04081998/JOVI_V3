@@ -149,7 +149,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
     props.onActiveIndexChanged && props.onActiveIndexChanged(currentIndex);
     if (timer && flatListRef.current) {
       flatListRef.current.scrollToIndex({
-        index: currentIndex,
+        index: currentIndex < dataWithPlaceholders.length - 1 ? currentIndex : 0,
         animated: true,
       });
     }
