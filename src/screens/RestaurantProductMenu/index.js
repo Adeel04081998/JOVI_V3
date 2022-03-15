@@ -271,10 +271,6 @@ export default ({ navigation, route }) => {
                     )
                 }}
                 renderItem={(parentItem, item, parentIndex, index) => {
-                    if (item.name.includes("The Chicken Wooper")) {
-
-                        console.log('item ', item);
-                    }
 
                     const discountedPrice = item.discountPrice ? item.discountPrice : item.price;
 
@@ -341,13 +337,23 @@ export default ({ navigation, route }) => {
 
                                     {VALIDATION_CHECK(item.price) &&
                                         <View style={{ flexDirection: "row", alignItems: "center", }}>
+
+                                            {/* ****************** Start of PRICE CHARGE FROM CUSTOMER ****************** */}
                                             <Text fontFamily='PoppinsMedium' style={itemStyles.price}>{price}</Text>
-                                            {(parseInt(`${item.discountType}`) === parseInt(`${ENUMS.PROMO_VALUE_TYPE.Percentage.value}`) && item.discount > 0) &&
+
+                                            {/* ****************** End of PRICE CHARGE FROM CUSTOMER ****************** */}
+
+
+                                            {/* ****************** Start of DISCOUNT PRICE ****************** */}
+                                            {(item.discountPrice > 0 && item.discount > 0) &&
                                                 <Text style={{
                                                     ...itemStyles.discountPrice,
                                                     marginLeft: 6,
                                                 }} numberOfLines={1}>{renderPrice(item.price)}</Text>
                                             }
+
+                                            {/* ****************** End of DISCOUNT PRICE ****************** */}
+
                                         </View>
                                     }
                                 </View>
