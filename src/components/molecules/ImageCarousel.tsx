@@ -38,7 +38,7 @@ interface ImageCarouselProps {
   onActiveIndexChanged?: (index: number) => void;
   aspectRatio?: number | undefined;
   theme: Object;
-  onPress?: (item: any) => void;
+  onPress?: (item: any, index : any) => void;
 }
 const defaultProps = {
   autoPlay: false,
@@ -174,7 +174,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
             return <View />;
           }
           return (
-            <TouchableOpacity activeOpacity={0.8} key={index} onPress={() => { props.onPress && props.onPress(item); }} disabled={!(props?.onPress ?? false) ? true : false}>
+            <TouchableOpacity activeOpacity={0.8} key={index} onPress={() => { props.onPress && props.onPress(item, index); }} disabled={!(props?.onPress ?? false) ? true : false}>
               <View style={[{
                 width: props.width ?? ITEM_WIDTH,
                 // backgroundColor: "blue"

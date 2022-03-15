@@ -15,6 +15,10 @@ import constants from '../res/constants';
 import ENUMS from '../utils/ENUMS';
 import GV, { ORDER_STATUSES, PITSTOP_TYPES } from '../utils/GV';
 import Regex from '../utils/Regex';
+import firestore from '@react-native-firebase/firestore'
+import dayjs from 'dayjs';
+import { hybridLocationPermission } from './Location';
+
 const dispatch = store.dispatch;
 export const sharedGetDeviceInfo = async () => {
     let model = DeviceInfo.getModel();
@@ -938,8 +942,11 @@ export const sharedOnCategoryPress = (item, index) => {
 }
 
 export const sharedGetCurrentLocation = (onSuccess = () => { }, onError = () => { }) => {
+    hybridLocationPermission();
+
     navigator.geolocation?.getCurrentPosition(({ coords }) => onSuccess(coords),
         (error) => {
+            console.log("error==>", error);
             if (error) {
                 // CustomToast.error("An error accured while fetching your current location, please try again.")
                 onError(error)
@@ -963,7 +970,7 @@ export const sharedGetHeadersInfo = () => headersInfo;
 
 export const makeArrayRepeated = (arr, repeats) => [].concat(...Array.from({ length: repeats }, () => arr));
 
-export const sharedRiderRating = (orderID=0,currentRoute = null) => {
+export const sharedRiderRating = (orderID = 0, currentRoute = null) => {
     NavigationService.NavigationActions.common_actions.reset_with_filter_invert([ROUTES.APP_DRAWER_ROUTES.Home.screen_name], {
         name: ROUTES.APP_DRAWER_ROUTES.RateRider.screen_name,
         params: { orderID }
@@ -973,4 +980,58 @@ export const sharedRiderRating = (orderID=0,currentRoute = null) => {
     // }else{
     //     NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.RateRider.screen_name,{orderID});
     // }
+}
+export const sharedAddUpdateFirestoreRecord = async (data = {}) => {
+    try {
+
+
+        let latitude = null
+        let longitude = null
+        sharedGetCurrentLocation((coords) => {
+            console.log("coord", coords);
+            latitude = coords?.latitude
+            longitude = coords?.longitude
+
+        }, err => {
+            console.log("err", err);
+
+        })
+
+
+        const DATE_TIME_FORMATE = "DD-MM-YYYY  HH:mm:ss";
+        let adsCollection = null
+        const db = firestore()
+        let time = dayjs().format("DD-MM-YYYY  HH")
+        adsCollection = db.collection("Adeel")
+        adsCollection.doc(time).set({ createdAt: dayjs().format(DATE_TIME_FORMATE) });
+        adsCollection.doc(time).collection("Adeel").doc('9811988198189812919821289').set({
+            // console.log("latitite=>", latitude)
+            ...data,
+            latitude: latitude,
+            longitude: longitude,
+            createdAt: dayjs().format(DATE_TIME_FORMATE)
+        })
+        console.log("hehre",
+            adsCollection.doc(time).collection("Adeel").doc('9811988198189812919821289').set({
+                // console.log("latitite=>", latitude)
+                ...data,
+                latitude: latitude,
+                longitude: longitude,
+                createdAt: dayjs().format(DATE_TIME_FORMATE)
+            })
+        );
+
+
+    } catch (error) {
+        console.log("firestore error=>", error);
+
+    }
+
+
+
+
+
+
+
+
 }
