@@ -677,9 +677,9 @@ export const array_move = (arr, old_index, new_index) => {
 export const sharedGetPrice = (item, lineThrough) => {
     let _price = 0;
     if (lineThrough && item.discountAmount) {
-        _price = item.gstAddedPrice || item.itemPrice || item.price || 0;
-    } else {
         _price = item.discountedPrice || item.gstAddedPrice || item.itemPrice || item.price || 0;
+    } else {
+        _price = item.gstAddedPrice || item.itemPrice || item.price || 0;
     }
     return renderPrice(_price);
 }

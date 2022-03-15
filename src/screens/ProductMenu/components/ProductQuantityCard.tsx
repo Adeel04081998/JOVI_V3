@@ -117,16 +117,17 @@ const ProductQuantityCard = (props: Props) => {
     console.log("state.quantity", state.quantity);
     
 
-    if(props.fromCart && state.quantity <= 0) return <View style={{
-        justifyContent:  "center",
-        paddingHorizontal: 0,
-        position: 'absolute',
-        bottom: 6,
-        right: 8,
-        alignItems: "center",
-        flexDirection: "row",
-        backgroundColor: colors.white,
-    }}><Text>Deleting...</Text></View>;
+    // if(props.fromCart && state.quantity <= 0) return <View style={{
+    //     justifyContent:  "center",
+    //     paddingHorizontal: 0,
+    //     position: 'absolute',
+    //     bottom: 6,
+    //     right: 8,
+    //     alignItems: "center",
+    //     flexDirection: "row",
+    //     backgroundColor: colors.white,
+    // }}><Text>Deleting...</Text></View>;
+    if(props.fromCart && state.quantity <= 0) return null;
     return (
         <View style={{
             width: state.quantity > 0 || props.outOfStock ? CARD_ITEM_SIZE * 0.88 : ITEM_SIZE,
