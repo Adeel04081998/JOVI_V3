@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { ScrollView, StyleProp, ViewStyle } from 'react-native'
 import { SvgXml } from 'react-native-svg'
 import svgs from '../../../assets/svgs'
 import AnimatedView from '../../../components/atoms/AnimatedView'
@@ -6,18 +7,14 @@ import Text from '../../../components/atoms/Text'
 import TouchableOpacity from '../../../components/atoms/TouchableOpacity'
 import View from '../../../components/atoms/View'
 import DashedLine from '../../../components/organisms/DashedLine'
-import { renderPrice, sharedCalculatedTotals, sharedGenerateProductItem, sharedGetPrice, VALIDATION_CHECK } from '../../../helpers/SharedActions'
+import ReceiptItem from '../../../components/organisms/ReceiptItem'
+import { renderPrice, VALIDATION_CHECK } from '../../../helpers/SharedActions'
+import { initColors } from '../../../res/colors'
 import { PITSTOP_TYPES } from '../../../utils/GV'
-import DefaultColors, { initColors } from '../../../res/colors';
-import { Appearance, ScrollView, StyleProp, ViewStyle } from 'react-native'
-
-
-const subDetailListTxtFontFamily = 'PoppinsRegular'
 interface Props {
     data?: any[];
     checkOutStyles: any;
     colors?: typeof initColors;
-    showDetail?: boolean;
     totalGST?: string | number;
     serviceCharges?: string | number;
     discount?: string | number;
@@ -30,7 +27,6 @@ interface Props {
 
 const defaultProps = {
     colors: initColors,
-    showDetail: true,
     totalGST: '',
     serviceCharges: '',
     discount: '',
@@ -44,47 +40,9 @@ const defaultProps = {
 // const RatingOrderRecipt= ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData = [] }) => {
 const RatingOrderRecipt = (props: Props) => {
     const checkOutStyles = props.checkOutStyles;
-    const colors = props.colors;
-    const defaultColors = Appearance.getColorScheme() === "dark" ? DefaultColors.dark_mode : DefaultColors.light_mode;
-
-    React.useEffect(() => {
-        setShowDetails(props?.showDetail ?? false);
-    }, [props.showDetail]);
-    const [showDetails, setShowDetails] = useState(false);
+    const colors = props?.colors ?? defaultProps.colors;
 
     const pitStops = props.data || []
-    const onShowDetails = () => {
-        setShowDetails(!showDetails)
-    }
-    const RenderSubPitStopDetailsUi = ({ data = [] }) => {
-        return (
-            <>
-                {data.map((item: any, i: number) => {
-                    const pitStopItemName = item.productItemName;
-                    const pitstopActualPrice = item.actualPrice;
-                    const pitstopDiscountedPrice = item.price;
-
-                    return <View style={{ flex: 1, flexDirection: 'row', marginBottom: -2, justifyContent: "space-between", marginTop: 4, }} key={i}>
-                        <Text style={[checkOutStyles.reciptSubDetailspitStopItemName, {}]} numberOfLines={3} fontFamily={subDetailListTxtFontFamily}>
-                            {`${sharedGenerateProductItem(pitStopItemName, item?.quantity ?? null,)}`}
-                        </Text>
-                        <View style={{ justifyContent: 'flex-end', alignItems: "center", flexDirection: 'row', paddingHorizontal: 5, flex: 1 }}>
-                            {VALIDATION_CHECK(pitstopDiscountedPrice) &&
-                                <Text style={checkOutStyles.reciptSubDetailspitStopItemPrice} fontFamily={subDetailListTxtFontFamily}>{renderPrice({ showZero: true, price: pitstopDiscountedPrice, })}</Text>
-                            }
-                            {VALIDATION_CHECK(pitstopActualPrice) &&
-                                <Text style={checkOutStyles.reciptSubDetailspitStopItemPriceLineThrough} fontFamily={subDetailListTxtFontFamily}>{renderPrice({ showZero: true, price: pitstopActualPrice, })}</Text>
-                            }
-                        </View>
-                    </View>
-                })
-                }
-
-            </>
-        )
-    }
-
-
 
     const RenderGSTServiceChargeUi = ({ }) => {
         return (
@@ -119,16 +77,7 @@ const RatingOrderRecipt = (props: Props) => {
         )
     }
 
-    const dotColor = (pitstopType: any) => {
-        let clrs = defaultColors.default;
-        if (pitstopType === PITSTOP_TYPES.DEFAULT) clrs = defaultColors.restaurant
-        if (pitstopType === PITSTOP_TYPES.JOVI) clrs = defaultColors.jovi
-        if (pitstopType === PITSTOP_TYPES.RESTAURANT) clrs = defaultColors.restaurant
-        if (pitstopType === PITSTOP_TYPES.SUPER_MARKET) clrs = defaultColors.jovi_mart
-        if (pitstopType === PITSTOP_TYPES.PHARMACY) clrs = defaultColors.pharamcy
-        if (pitstopType === PITSTOP_TYPES.JOVI_MART) clrs = defaultColors.jovi_mart
-        return clrs;
-    }
+
 
     const Wrapper = props.useScrollView ? ScrollView : View;
     return (
@@ -147,51 +96,27 @@ const RatingOrderRecipt = (props: Props) => {
             </View>
             <Wrapper>
                 <AnimatedView style={{ margin: 12, marginTop: 0, }} >
-                    {
-                        pitStops.map((x, i) => {
-                            if (i === pitStops.length - 1) return;//final destination is not in receipt
-                            const isJoviJob = x.pitstopType === PITSTOP_TYPES.JOVI;
-                            let pitStopNumber = i + 1
-                            let pitstopName = x.title
-                            let individualPitstopTotal = x.jobAmount;
-                            let checkOutItemsListVM = x?.jobItemsListViewModel ?? [];
+                    {pitStops.map((x, i) => {
+                        if (i === pitStops.length - 1) return;//final destination is not in receipt
+                        const isJoviJob = x.pitstopType === PITSTOP_TYPES.JOVI;
+                        const pitstopName = isJoviJob ? 'Jovi Job' : x.title
+                        const individualPitstopTotal = x.jobAmount;
+                        const checkOutItemsListVM = x?.jobItemsListViewModel ?? [];
 
-                            if (isJoviJob) {
-                                checkOutItemsListVM = [{
-                                    "productItemName": pitstopName,
-                                    "price": x.paidAmount || x.jobAmount,
-                                    "actualPrice": '',
-                                    ...x,
-                                }];
-                                pitstopName = 'Jovi Job'
 
-                            }
-                            return <View style={{ flex: 1 }} key={i}>
-                                <View style={{
-                                    flexDirection: 'row', alignItems: 'center', flex: 1, paddingVertical: i === 0 ? 0 : 0,
-                                    // marginTop: i === 0  ? 0 : 7,
-                                    marginTop: showDetails === false ? 0 : (i === 0 ? 0 : 7)
-
-                                }}>
-                                    <View style={{ width: 10, height: 10, borderRadius: 10, backgroundColor: dotColor(x.pitstopType)?.primary, }} />
-                                    <Text style={[checkOutStyles.reciptMainDetailsPitstopNo, {
-                                        color: "#272727",
-                                    }]} fontFamily='PoppinsMedium'>{`Pitstop 0${pitStopNumber} - `}</Text>
-                                    <Text style={[checkOutStyles.reciptMainDetailsPitstopName, {
-                                        color: "#272727",
-                                    }]} fontFamily='PoppinsMedium' numberOfLines={1}>{`${pitstopName}`.substring(0, 25)}</Text>
-                                    {!showDetails &&
-                                        <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
-                                            <Text style={checkOutStyles.reciptMainDetailsindividualPitstopTotal} fontFamily='PoppinsMedium'>{`${renderPrice({ showZero: true, price: individualPitstopTotal })}`}</Text>
-                                        </View>
-                                    }
-                                </View>
-                                {showDetails &&
-                                    <RenderSubPitStopDetailsUi data={checkOutItemsListVM} />
-                                }
-                            </View>
-                        })
-                    }
+                        return <View style={{ flex: 0 }} key={i}>
+                            <ReceiptItem
+                                colors={colors}
+                                title={pitstopName}
+                                type={x.pitstopType}
+                                pitstopNumber={i + 1}
+                                isJoviJob={isJoviJob}
+                                itemData={checkOutItemsListVM}
+                                showDetail={true}
+                                totalPrice={individualPitstopTotal}
+                            />
+                        </View>
+                    })}
 
                 </AnimatedView>
                 <RenderGSTServiceChargeUi />
