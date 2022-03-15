@@ -16,6 +16,8 @@ import sharedStyles from '../../../res/sharedStyles';
 import NavigationService from '../../../navigations/NavigationService';
 import ROUTES from '../../../navigations/ROUTES';
 import { useSelector } from 'react-redux';
+import ImageBackground from '../../atoms/ImageBackground';
+import CardDealHover from '../../../screens/PitstopListing/components/CardDealHover';
 
 export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCatID = 0, imageStyles = {}, themeColors = null, showMoreBtnText = "", cb = () => { }, textContainer = {} }) => {
     const SPACING_BOTTOM = 0;
@@ -75,7 +77,10 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
             const { title, description, image, averagePrice } = item;
             return (
                 <TouchableOpacity activeOpacity={0.8} style={{ padding: 10 }} onPress={() => sharedOnVendorPress(item, index)}>
-                    <Image source={{ uri: renderFile(image) }} style={[styles.image_Small, imageStyles]} tapToOpen={false} />
+                    <ImageBackground source={{ uri: renderFile(image) }} style={[styles.image_Small, imageStyles]} tapToOpen={false} >
+                        <CardDealHover colors={colors} text={item?.discountTitle ?? ''} />
+                        <CardDealHover colors={colors} text={item?.discountPercentage ?? ''} />
+                    </ImageBackground>
                     <View style={styles.subContainer}>
                         <Text style={styles.title} numberOfLines={1} >{title}</Text>
                     </View>
@@ -90,7 +95,10 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
             const { title, description, estTime, distance, image, averagePrice } = item;
             return (
                 <TouchableOpacity activeOpacity={0.8} onPress={() => sharedOnVendorPress(item, index)}>
-                    <Image source={{ uri: renderFile(image) }} style={[styles.image, imageStyles]} tapToOpen={false} />
+                    <ImageBackground source={{ uri: renderFile(image) }} style={[styles.image, imageStyles]} tapToOpen={false} >
+                        <CardDealHover colors={colors} text={item?.discountTitle ?? ''} />
+                        <CardDealHover colors={colors} text={item?.discountPercentage ?? ''} />
+                    </ImageBackground>
                     <View style={styles.subContainer}>
                         <Text style={styles.title} numberOfLines={1} >{title}</Text>
                         {(distance || estTime) &&
