@@ -2,7 +2,7 @@ import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import {
   Animated, Dimensions,
   FlatList, ImageStyle, StyleProp,
-  StyleSheet, TouchableWithoutFeedback,
+  StyleSheet, TouchableOpacity, TouchableWithoutFeedback,
   View,
   ViewStyle
 } from 'react-native';
@@ -38,6 +38,7 @@ interface ImageCarouselProps {
   onActiveIndexChanged?: (index: number) => void;
   aspectRatio?: number | undefined;
   theme: Object;
+  onPress?: (item: any) => void;
 }
 const defaultProps = {
   autoPlay: false,
@@ -57,6 +58,7 @@ const defaultProps = {
   aspectRatio: undefined,
   uriKey: "",
   theme: {},
+  onPress: undefined,
 };
 
 let timer: any = null;
@@ -71,7 +73,6 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
 
   // #region :: VIEW ABILITY START's FROM HERE 
   const handleOnViewableItemsChanged = useCallback(({ viewableItems }) => {
-
     if (skipHandleView.current) {
       setTimeout(() => {
         skipHandleView.current = false;
@@ -79,13 +80,14 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
       return
     };
 
+
     const itemsInView = viewableItems.filter(({ item }: { item: any }) => VALIDATION_CHECK(item?.uri ?? props?.uriKey ?? ''));
     if (itemsInView.length !== 0) {
       updateCurrentIndex(itemsInView[0].index);
       return;
     }
 
-  }, [props.data]);//end of handleOnViewableItemsChanged
+  }, []);//end of handleOnViewableItemsChanged
 
   const viewabilityConfig = {
     viewAreaCoveragePercentThreshold: 50,
@@ -98,13 +100,13 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
   const [dataWithPlaceholders, setDataWithPlaceholders] = useState<any[]>([]);
 
   const [currentIndex, updateCurrentIndex] = useState<number>(0);
+  const [metaData, toggleMetaData] = useState<boolean>(false);
   const flatListRef = useRef<FlatList<any>>(null);
 
   useEffect(() => {
     setDataWithPlaceholders(props.data);
 
     updateCurrentIndex(0);
-
   }, [props.data]);
 
   // #region :: AUTOPLAY START's FROM HERE 
@@ -129,9 +131,10 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
     if (!props.autoPlay) return
     if (timer) { clearInterval(timer); timer = null; }
     timer = setInterval(() => {
+
       if (flatListRef.current) {
         updateCurrentIndex((oldIndex: number) => {
-          if (oldIndex === props.data.length - 1) {
+          if (oldIndex === dataWithPlaceholders.length - 1) {
             return oldIndex - oldIndex;
           } else {
             return oldIndex + 1;
@@ -150,6 +153,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
         animated: true,
       });
     }
+    toggleMetaData(p => !p);
   }, [currentIndex])//endo of useEffect for currentIndex
 
 
@@ -162,7 +166,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
       <Animated.FlatList
         ref={flatListRef}
         data={[...dataWithPlaceholders,]}
-
+        // extraData={metaData}
 
         renderItem={({ item, index }) => {
 
@@ -170,13 +174,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
             return <View />;
           }
           return (
-            <TouchableWithoutFeedback key={index} onPressIn={() => {
-              clearInterval(timer);
-              timer = null;
-            }}
-              onPressOut={() => {
-                startAutoplay();
-              }}>
+            <TouchableOpacity activeOpacity={0.8} key={index} onPress={() => { props.onPress && props.onPress(item); }} disabled={!(props?.onPress ?? false) ? true : false}>
               <View style={[{
                 width: props.width ?? ITEM_WIDTH,
                 // backgroundColor: "blue"
@@ -193,7 +191,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
                   }]} />
                 </View>
               </View>
-            </TouchableWithoutFeedback>
+            </TouchableOpacity>
           );
         }}
         onScrollToIndexFailed={onScrollToIndexFailed}
@@ -202,6 +200,16 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
           offset: (props.width ?? ITEM_WIDTH) * index,
           index,
         })}
+        onScrollBeginDrag={() => {
+          console.log('SCROLL DTAG START');
+          skipHandleView.current = false;
+          clearInterval(timer);
+          timer = null;
+        }}
+        onScrollEndDrag={() => {
+          console.log('SCROLL DTAG END');
+          startAutoplay();
+        }}
         automaticallyAdjustContentInsets={false}
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -224,14 +232,21 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
       {/* ****************** Start of FOOTER ****************** */}
       {VALIDATION_CHECK(props.pagination) &&
         <View style={[footerStyles.primaryContainer, props.paginationContainerStyle]}>
-          {props.data.map((item, index) => {
-            return (
-              <View style={[footerStyles.dot, {
-                backgroundColor: theme.primary,
-                opacity: index === currentIndex ? 1 : 0.5,
-              }, props.paginationDotStyle]} key={index} />
-            )
-          })}
+          <FlatList
+            data={dataWithPlaceholders}
+            extraData={metaData}
+            horizontal
+            style={{ flexGrow: 0, }}
+            contentContainerStyle={{ alignItems: "center", justifyContent: "center", flexGrow: 0, }}
+            renderItem={({ item: _, index }) => {
+              return (
+                <View style={[footerStyles.dot, {
+                  backgroundColor: theme.primary,
+                  opacity: index === currentIndex ? 1 : 0.5,
+                }, props.paginationDotStyle]} key={index} />
+              )
+            }}
+          />
         </View>
       }
 

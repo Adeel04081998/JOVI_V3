@@ -158,7 +158,7 @@ export default () => {
                             containerStyle={homeStyles.imageCarousal}
                             height={170}
                             autoPlay
-                            autoPlayInterval={10}
+                            autoPlayInterval={3}
                         />
                         <View style={homeStyles.wrapper}>
                             <Search colors={colors} homeStyles={homeStyles} fontSize={12} />
