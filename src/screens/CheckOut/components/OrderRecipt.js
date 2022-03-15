@@ -6,7 +6,8 @@ import Text from '../../../components/atoms/Text'
 import TouchableOpacity from '../../../components/atoms/TouchableOpacity'
 import View from '../../../components/atoms/View'
 import DashedLine from '../../../components/organisms/DashedLine'
-import { renderPrice, sharedCalculatedTotals, sharedGetPrice } from '../../../helpers/SharedActions'
+import ReceiptItem from '../../../components/organisms/ReceiptItem'
+import { renderPrice, sharedCalculatedTotals, sharedGenerateProductItem, sharedGetPrice } from '../../../helpers/SharedActions'
 import { PITSTOP_TYPES } from '../../../utils/GV'
 
 
@@ -25,8 +26,9 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                     {data.map((item, i) => {
                         let pitStopItemName = item.pitStopItemName
                         return <View style={{ flex: 1, flexDirection: 'row', marginBottom: -2, justifyContent: "space-between" }} key={i}>
-                            <Text style={[checkOutStyles.reciptSubDetailspitStopItemName, {  }]} numberOfLines={1} fontFamily={subDetailListTxtFontFamily}>
-                                {`${pitStopItemName}`.trimStart()}
+                            <Text style={[checkOutStyles.reciptSubDetailspitStopItemName, {}]} numberOfLines={1} fontFamily={subDetailListTxtFontFamily}>
+                                {/* {`${pitStopItemName}`.trimStart()} */}
+                                {sharedGenerateProductItem(pitStopItemName, item?.quantity)}
                             </Text>
                             {/* <Text style={{fontSize:12, color:colors.grey, borderWidth:1, marginHorizontal:-15}} numberOfLines={1} fontFamily={subDetailListTxtFontFamily}>
                               xl
@@ -122,13 +124,22 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                 <AnimatedView style={{ margin: 12, marginTop: 0, }} >
                     {
                         pitStops.map((x, i) => {
-                            console.log("x", x);
+                            const isJoviJob = x.pitstopType === PITSTOP_TYPES.JOVI;
                             let pitStopNumber = i + 1
                             let pitstopName = x.pitstopName
                             let individualPitstopTotal = x.individualPitstopTotal;
-                            let checkOutItemsListVM = x.checkOutItemsListVM
+                            let checkOutItemsListVM = x?.checkOutItemsListVM ?? (isJoviJob ? [{ ...x, isJoviJob }] : []);
                             return <View style={{ flex: 1 }} key={i}>
-                                <View style={{
+                                <ReceiptItem
+                                    title={pitstopName}
+                                    type={x.pitstopType}
+                                    pitstopNumber={i + 1}
+                                    isJoviJob={isJoviJob}
+                                    itemData={checkOutItemsListVM}
+                                    showDetail={showDetails}
+                                    totalPrice={individualPitstopTotal}
+                                />
+                                {/* <View style={{
                                     flexDirection: 'row', alignItems: 'center', flex: 1, paddingVertical: i === 0 ? 0 : 0,
                                     // marginTop: i === 0  ? 0 : 7,
                                     marginTop: showDetails === false ? 0 : (i === 0 ? 0 : 7)
@@ -145,7 +156,7 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                                         </View>
                                     }
                                 </View>
-                                <RenderSubPitStopDetailsUi pitstopDetail={secondData} data={checkOutItemsListVM} />
+                                <RenderSubPitStopDetailsUi pitstopDetail={secondData} data={checkOutItemsListVM} /> */}
                             </View>
                         })
                     }
