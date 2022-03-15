@@ -6,7 +6,7 @@ import Text from '../../../components/atoms/Text'
 import TouchableOpacity from '../../../components/atoms/TouchableOpacity'
 import View from '../../../components/atoms/View'
 import DashedLine from '../../../components/organisms/DashedLine'
-import { renderPrice, sharedCalculatedTotals, sharedGetPrice, VALIDATION_CHECK } from '../../../helpers/SharedActions'
+import { renderPrice, sharedCalculatedTotals, sharedGenerateProductItem, sharedGetPrice, VALIDATION_CHECK } from '../../../helpers/SharedActions'
 import { PITSTOP_TYPES } from '../../../utils/GV'
 import DefaultColors, { initColors } from '../../../res/colors';
 import { Appearance, ScrollView, StyleProp, ViewStyle } from 'react-native'
@@ -64,13 +64,17 @@ const RatingOrderRecipt = (props: Props) => {
                     const pitstopActualPrice = item.actualPrice;
                     const pitstopDiscountedPrice = item.price;
 
-                    return <View style={{ flex: 1, flexDirection: 'row', marginBottom: -2, justifyContent: "space-between" }} key={i}>
-                        <Text style={[checkOutStyles.reciptSubDetailspitStopItemName, {}]} numberOfLines={1} fontFamily={subDetailListTxtFontFamily}>
-                            {`${pitStopItemName}`.trimStart()}
+                    return <View style={{ flex: 1, flexDirection: 'row', marginBottom: -2, justifyContent: "space-between", marginTop: 4, }} key={i}>
+                        <Text style={[checkOutStyles.reciptSubDetailspitStopItemName, {}]} numberOfLines={3} fontFamily={subDetailListTxtFontFamily}>
+                            {`${sharedGenerateProductItem(pitStopItemName, item?.quantity ?? null,)}`}
                         </Text>
                         <View style={{ justifyContent: 'flex-end', alignItems: "center", flexDirection: 'row', paddingHorizontal: 5, flex: 1 }}>
-                            <Text style={checkOutStyles.reciptSubDetailspitStopItemPrice} fontFamily={subDetailListTxtFontFamily}>{renderPrice({ showZero: true, price: pitstopDiscountedPrice, })}</Text>
-                            <Text style={checkOutStyles.reciptSubDetailspitStopItemPriceLineThrough} fontFamily={subDetailListTxtFontFamily}>{renderPrice({ showZero: true, price: pitstopActualPrice, })}</Text>
+                            {VALIDATION_CHECK(pitstopDiscountedPrice) &&
+                                <Text style={checkOutStyles.reciptSubDetailspitStopItemPrice} fontFamily={subDetailListTxtFontFamily}>{renderPrice({ showZero: true, price: pitstopDiscountedPrice, })}</Text>
+                            }
+                            {VALIDATION_CHECK(pitstopActualPrice) &&
+                                <Text style={checkOutStyles.reciptSubDetailspitStopItemPriceLineThrough} fontFamily={subDetailListTxtFontFamily}>{renderPrice({ showZero: true, price: pitstopActualPrice, })}</Text>
+                            }
                         </View>
                     </View>
                 })
@@ -146,10 +150,22 @@ const RatingOrderRecipt = (props: Props) => {
                     {
                         pitStops.map((x, i) => {
                             if (i === pitStops.length - 1) return;//final destination is not in receipt
+                            const isJoviJob = x.pitstopType === PITSTOP_TYPES.JOVI;
                             let pitStopNumber = i + 1
                             let pitstopName = x.title
                             let individualPitstopTotal = x.jobAmount;
                             let checkOutItemsListVM = x?.jobItemsListViewModel ?? [];
+
+                            if (isJoviJob) {
+                                checkOutItemsListVM = [{
+                                    "productItemName": pitstopName,
+                                    "price": x.paidAmount || x.jobAmount,
+                                    "actualPrice": '',
+                                    ...x,
+                                }];
+                                pitstopName = 'Jovi Job'
+
+                            }
                             return <View style={{ flex: 1 }} key={i}>
                                 <View style={{
                                     flexDirection: 'row', alignItems: 'center', flex: 1, paddingVertical: i === 0 ? 0 : 0,
@@ -158,8 +174,12 @@ const RatingOrderRecipt = (props: Props) => {
 
                                 }}>
                                     <View style={{ width: 10, height: 10, borderRadius: 10, backgroundColor: dotColor(x.pitstopType)?.primary, }} />
-                                    <Text style={checkOutStyles.reciptMainDetailsPitstopNo} fontFamily='PoppinsMedium'>{`Pit Stop 0${pitStopNumber}-`}</Text>
-                                    <Text style={checkOutStyles.reciptMainDetailsPitstopName} fontFamily='PoppinsMedium' numberOfLines={1}>{`${pitstopName}`.substring(0, 25)}</Text>
+                                    <Text style={[checkOutStyles.reciptMainDetailsPitstopNo, {
+                                        color: "#272727",
+                                    }]} fontFamily='PoppinsMedium'>{`Pitstop 0${pitStopNumber} - `}</Text>
+                                    <Text style={[checkOutStyles.reciptMainDetailsPitstopName, {
+                                        color: "#272727",
+                                    }]} fontFamily='PoppinsMedium' numberOfLines={1}>{`${pitstopName}`.substring(0, 25)}</Text>
                                     {!showDetails &&
                                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
                                             <Text style={checkOutStyles.reciptMainDetailsindividualPitstopTotal} fontFamily='PoppinsMedium'>{`${renderPrice({ showZero: true, price: individualPitstopTotal })}`}</Text>
