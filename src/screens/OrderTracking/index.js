@@ -12,7 +12,7 @@ import VectorIcon from "../../components/atoms/VectorIcon";
 import View from "../../components/atoms/View";
 import AnimatedProgressWheel from "../../components/molecules/AnimatedProgressWheel";
 import CustomHeader from "../../components/molecules/CustomHeader";
-import { sharedExceptionHandler, sharedFetchOrder, sharedNotificationHandlerForOrderScreens, sharedOrderNavigation } from "../../helpers/SharedActions";
+import { sharedExceptionHandler, sharedFetchOrder, sharedNotificationHandlerForOrderScreens, sharedOrderNavigation, sharedRiderRating } from "../../helpers/SharedActions";
 import { getRequest } from "../../manager/ApiManager";
 import Endpoints from "../../manager/Endpoints";
 import NavigationService from "../../navigations/NavigationService";
@@ -23,6 +23,7 @@ import ENUMS from "../../utils/ENUMS";
 import GV, { ORDER_STATUSES, PITSTOP_TYPES_INVERTED } from "../../utils/GV";
 import { PanGestureHandler } from 'react-native-gesture-handler';
 import { useIsFocused } from "@react-navigation/native";
+import _styles from './styles';
 const circleCurveSvgXml = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-1.9919999999999998 11.235 2.0079999999999996 0.764">
 <path d="M 0.016 11.993 q -0.313 -0.031 -0.376 -0.283 c -0.2 -0.629 -1.065 -0.618 -1.271 -0.005 c -0.051 0.206 -0.149 0.258 -0.361 0.292" fill="#fff"/>
 </svg>`;
@@ -162,9 +163,13 @@ export default ({ route }) => {
     const goToHome = () => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
     }
-    const orderCancelledOrCompleted = () => {
+    const orderCancelledOrCompleted = (status) => {
         if (!isFocused) return;
-        goToHome();
+        if(status.orderCompleted){
+            sharedRiderRating(orderIDParam);            
+        }else{
+            goToHome();
+        }
     }
     const onOrderNavigationPress = (route = '', extraParams = {}) => {
         NavigationService.NavigationActions.common_actions.navigate(route, { orderID: orderIDParam, ...extraParams });
@@ -350,51 +355,3 @@ export default ({ route }) => {
         </SafeAreaView>
     );
 };
-
-const _styles = (colors, WIDTH, SCALED_HEIGHT) => StyleSheet.create({
-    safeArea: {
-        flex: 1,
-    },
-    container: {
-        flex: 1
-    },
-    headerContainer: {
-        backgroundColor: 'transparent',
-        borderBottomWidth: 0,
-        position: 'absolute',
-        top: Platform.select({ ios: 30, android: 0 }),
-        zIndex: 9999
-    },
-    mapMarkerStyle: {
-        zIndex: 3,
-        position: 'absolute',
-        marginTop: -15,
-        marginLeft: -11,
-        left: WIDTH / 2,
-        top: ((SCALED_HEIGHT * 1.3) - SCALED_HEIGHT) / 2,
-    },
-    bottomViewContainer: {
-        position: 'absolute',
-        bottom: 0,
-        width: '100%',
-        height: 300,
-        backgroundColor: 'white',
-        display: 'flex',
-        alignItems: 'center',
-    },
-    orderInformationContainer: { height: 200, marginTop: 50, alignItems: 'center', display: 'flex', },
-    joviTitle: { fontSize: 20, marginTop: 10, fontWeight: 'bold', color: colors.black },
-    orderCaption: { fontSize: 14, marginTop: 10, fontWeight: 'bold', color: colors.black },
-    currentPitstopTime: { textAlign: 'center', color: colors.black, fontSize: 14, marginTop: 10 },
-    orderNavigationContainer: { position: 'absolute', width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, top: 75 },
-    orderNavigationButton: { height: 42, width: 42, borderRadius: 21, display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: colors.primary },
-    orderProgressContainer: {
-        display: 'flex',
-        alignItems: 'center',
-        marginTop: -120,
-        backgroundColor: colors.white,
-        padding: 25,
-        borderTopEndRadius: 150,
-        borderTopLeftRadius: 150,
-    },
-});

@@ -55,7 +55,7 @@ const NUMBER_OF_COLUMN = 2;
 
 export default ({ navigation, route }) => {
 
-    const orderID = 67649554;
+    const orderID = route?.params?.orderID ?? 0;//67649554;
 
     // #region :: REDUCER START's FROM HERE 
     const messagesReducer = useSelector(s => s?.messagesReducer);
