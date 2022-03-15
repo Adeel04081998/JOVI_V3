@@ -297,6 +297,7 @@ export const secToHourMinSec = (sec = 1,) => {
 }//end of secToHourMinSec
 
 export const renderFile = picturePath => {
+    // console.log("[renderFile].picturePath", picturePath)
     const userReducer = store.getState().userReducer;
     return `${GV.BASE_URL.current}/api/Common/S3File/${encodeURIComponent(
         picturePath,

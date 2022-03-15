@@ -113,6 +113,8 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
     }
     if (!data)
         return null
+
+    console.log("data...", data.vendorList[0]);
     return (
         <View style={{ paddingBottom: SPACING_BOTTOM }}>
             {/* {
@@ -134,7 +136,7 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
                     horizontal={true}
                     flatlistProps={{
                         showsHorizontalScrollIndicator: false,
-                        contentContainerStyle: { marginLeft: 0 ,  paddingRight:10}
+                        contentContainerStyle: { marginLeft: 0, paddingRight: 10 }
                     }}
                 />
             </React.Fragment>
@@ -158,8 +160,8 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
     mainText: {
         color: colors.text,
         fontSize: 16,
-        flex:0.8,
-     
+        flex: 0.8,
+
         // paddingHorizontal:10,
     },
     viewMoreBtn: {
@@ -186,15 +188,15 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
         height: 200,
         width: 180,
         borderRadius: 10,
-        marginRight: Platform.OS === 'ios'?10: 10,
+        marginRight: Platform.OS === 'ios' ? 10 : 10,
         // marginHorizontal: 5,
         flex: 1,
         // paddingHorizontal: 10,
         // paddingVertical: 10,
         marginVertical: 5,
         left: 10,
-       
-        
+
+
     },
     image: {
         height: height,

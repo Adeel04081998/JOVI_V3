@@ -21,7 +21,7 @@ export default ({ colors, data = {}, onPressPitstop = () => { }, containerStyles
     const renderBody = () => {
         return <>
             <ImageBackground source={{ uri: renderFile(image) }} style={[styles.image, imageStyles]} tapToOpen={false} >
-                {data.isClose &&
+                {(data.isClosed || data.isClose) &&
                     <View style={{
                         ...StyleSheet.absoluteFillObject,
                         alignItems: 'center',
