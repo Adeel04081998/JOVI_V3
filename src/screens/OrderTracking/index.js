@@ -56,6 +56,7 @@ export default ({ route }) => {
     const isRiderFound = state.subStatusName === ORDER_STATUSES.RiderFound;
     const colorChangeAnimation = React.useRef(new Animated.Value(0)).current;
     const loadAnimation = React.useRef(new Animated.Value(0)).current;
+    const loadAnimationCurrentValue = React.useRef(0);
     const fetchRiderLocationRef = React.useRef(null);
     const renderUI = {
         [ORDER_STATUSES.TransferProblem]: () => renderProcessingUI(),
@@ -168,18 +169,24 @@ export default ({ route }) => {
     const onOrderNavigationPress = (route = '', extraParams = {}) => {
         NavigationService.NavigationActions.common_actions.navigate(route, { orderID: orderIDParam, ...extraParams });
     }
-    React.useEffect(() => {
-        fetchOrderDetails();
+    const modalAnimation = (toValue = 1 , firstTimeLoad = false) => {
         Animated.timing(loadAnimation, {
-            toValue: 1,
+            toValue: toValue,
             useNativeDriver: true,
             duration: 500,
             easing: Easing.ease
         }).start(finished => {
             if (finished) {
-                setComponentLoaded(true);
+                if(firstTimeLoad){
+                    setComponentLoaded(true);
+                }
+                loadAnimationCurrentValue.current = toValue;
             }
         });
+    }
+    React.useEffect(() => {
+        fetchOrderDetails();
+        modalAnimation(1,true);
         return () => {
             if (fetchRiderLocationRef.current) {
                 clearInterval(fetchRiderLocationRef.current);
@@ -297,6 +304,9 @@ export default ({ route }) => {
                     customPitstops={state.pitStopsList}
                     customCenter={state.currentPitstop}
                     smoothRiderPlacement
+                    onMapPress={() => {
+                        modalAnimation(loadAnimationCurrentValue.current===0?1:0);
+                    }}
                 />}
             </Animated.View>
             {/* <PanGestureHandler
@@ -311,9 +321,10 @@ export default ({ route }) => {
                 onLayout={(e) => { console.log('e-onLayout', e); }}
                 style={{
                     ...styles.bottomViewContainer, opacity: loadAnimation, transform: [{
-                        translateY: componentLoaded ? translateY : loadAnimation.interpolate({
+                        translateY: loadAnimation.interpolate({
+                        // translateY: componentLoaded ? translateY : loadAnimation.interpolate({
                             inputRange: [0, 1],
-                            outputRange: [300, 0]
+                            outputRange: [600, 0]
                         })
                     }]
                 }}>
