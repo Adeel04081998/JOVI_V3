@@ -961,4 +961,16 @@ export const sharedSetHeadersInfo = async () => {
 };
 export const sharedGetHeadersInfo = () => headersInfo;
 
-const makeArrayRepeated = (arr, repeats) => [].concat(...Array.from({ length: repeats }, () => arr));
+export const makeArrayRepeated = (arr, repeats) => [].concat(...Array.from({ length: repeats }, () => arr));
+
+export const sharedRiderRating = (orderID=0,currentRoute = null) => {
+    NavigationService.NavigationActions.common_actions.reset_with_filter_invert([ROUTES.APP_DRAWER_ROUTES.Home.screen_name], {
+        name: ROUTES.APP_DRAWER_ROUTES.RateRider.screen_name,
+        params: { orderID }
+    });
+    // if(currentRoute){
+    //     NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.RateRider.screen_name,{orderID},currentRoute);
+    // }else{
+    //     NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.RateRider.screen_name,{orderID});
+    // }
+}

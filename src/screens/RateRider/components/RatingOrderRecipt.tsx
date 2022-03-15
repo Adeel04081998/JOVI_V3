@@ -145,6 +145,7 @@ const RatingOrderRecipt = (props: Props) => {
                 <AnimatedView style={{ margin: 12, marginTop: 0, }} >
                     {
                         pitStops.map((x, i) => {
+                            if (i === pitStops.length - 1) return;//final destination is not in receipt
                             let pitStopNumber = i + 1
                             let pitstopName = x.title
                             let individualPitstopTotal = x.jobAmount;
