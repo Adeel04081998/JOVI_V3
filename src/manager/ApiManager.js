@@ -6,6 +6,11 @@ import GV from '../utils/GV';
 import Axios from './Axios';
 const dispatch = store.dispatch;
 const noInternetHandler = (requestCallback, params) => {
+    if ((GV.NET_INFO_REF.current.isConnected && GV.NET_INFO_REF.current.isInternetReachable)) {
+        //WHEN INTERNET IS CONNECTED BUT THERE WAS SOME ERROR FROM SERVER
+        Toast.error('Something went wrong!')
+        return;
+    }
     const DELAY = 5000;
     let _timeoutID = setTimeout(() => {
         requestCallback.apply(this, params);
