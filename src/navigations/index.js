@@ -33,6 +33,7 @@ import OrderProcessingError from '../screens/OrderProcessingError';
 import SharedMapView from '../components/atoms/GoogleMaps/SharedMapView';
 import OrderTracking from '../screens/OrderTracking';
 import OrderChat from '../screens/OrderChat';
+import RateRider from '../screens/RateRider';
 import OrderPitstops from '../screens/OrderTracking/OrderScreens/OrderPitstops';
 
 const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES, APP_DRAWER_ROUTES, APP_DRAWER_STACK } = ROUTES;
@@ -43,7 +44,7 @@ const AppDrawerStack = (props) => {
                 key={`AppDrawerss-Screen-key-${index}-${routeInfo.id}`}
                 name={routeInfo.screen_name}
                 component={AppDrawerComponents[routeInfo.componenet]}
-                options={{...options(),...routeInfo.options??{}}}
+                options={{ ...options(), ...routeInfo.options ?? {} }}
 
             />
         ))}
@@ -82,6 +83,7 @@ const AppDrawerComponents = {
     OrderTracking,
     OrderChat,
     OrderPitstops,
+    RateRider,
 }//will open with Slide Animation
 const ContainerStack = createStackNavigator();
 const Stack = createNativeStackNavigator();
@@ -94,7 +96,7 @@ const options = () => ({
         open: { animation: "timing", config: { duration: 400 } },
         close: { animation: "timing", config: { duration: 400 } }
     },
-    animation:'slide_from_right',
+    animation: 'slide_from_right',
     // cardStyleInterpolator: forSlide
 })
 const forSlide = ({ current, next, inverted, layouts: { screen } }) => {

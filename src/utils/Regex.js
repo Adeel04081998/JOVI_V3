@@ -3,6 +3,7 @@ export default {
     passwordHard: /^(?=.*\d).{8,100}$/,
     password: /^.{6,}$/,
     numberOnly: /^[0-9]+$/,
+    numberWithSpace: /^[\d]*$/,
     pkCellNo: /^((\+92)?(0092)?(92)?(0)?)(3)([0-9]{9})$/,
     name: /^[a-zA-Z]{2,}$/,
     Space_Regex: /\s/g,
