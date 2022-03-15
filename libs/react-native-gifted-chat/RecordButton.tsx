@@ -26,6 +26,7 @@ interface Props {
     renderComposer: any
     stop?: boolean;
     onRecordAudio?: (item: RecordButtonItemProps) => void;
+    useHold?: boolean;
 };
 
 const defaultProps = {
@@ -40,7 +41,6 @@ const RecordButton = React.forwardRef<Recorder, Props>((props: Props, ref: any) 
     React.useEffect(() => {
         const lastNumber = duration.slice(duration.length - 1);
         const secondNumber = duration.slice(1);
-
         if (parseInt(`${lastNumber}`) > 0 || parseInt(`${secondNumber}`) > 0) {
 
             if (props.onRecordAudio) {
@@ -65,6 +65,7 @@ const RecordButton = React.forwardRef<Recorder, Props>((props: Props, ref: any) 
     React.useEffect(() => {
         if (props.stop) {
             recordingPress(false);
+
         }
     }, [props.stop])
 
@@ -117,20 +118,31 @@ const RecordButton = React.forwardRef<Recorder, Props>((props: Props, ref: any) 
 
     React.useImperativeHandle(ref, () => ({
         setDuration,
-    }), [setDuration])
+        recorderRef,
+    }), [setDuration, recorderRef])
 
     return (
         <TouchableOpacity
             accessible
             style={[GCSendStyles.container, {
             }, props.containerStyle]}
-            onPressIn={() => {
-                recordingPress(true,);
-            }}
-
-            onPressOut={() => {
-                recordingPress(false);
-            }}
+            {...props.useHold ? {
+                onPress: () => {
+                    if (isMicPress) {
+                        recordingPress(false);
+                    } else {
+                        recordingPress(true);
+                    }
+                }
+            } :
+                {
+                    onPressIn: () => {
+                        recordingPress(true,);
+                    },
+                    onPressOut: () => {
+                        recordingPress(false);
+                    }
+                }}
             activeOpacity={1}>
             <View>
                 {props.children || (
