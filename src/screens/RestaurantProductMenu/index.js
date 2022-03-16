@@ -6,7 +6,7 @@ import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import NoRecord from '../../components/organisms/NoRecord';
 import ProductCard from '../../components/organisms/Card/ProductCard';
-import { renderFile, renderPrice, sharedExceptionHandler, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { renderFile, renderPrice, sharedExceptionHandler, sharedGetFinalDestintionRequest, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import constants from '../../res/constants';
@@ -92,8 +92,7 @@ export default ({ navigation, route }) => {
         });
         const params = {
             "pitstopID": pitstopID,//3738   4024,
-            "latitude": 33.654227,
-            "longitude": 73.044831
+            ...sharedGetFinalDestintionRequest(),
         };
         postRequest(Endpoints.GET_RESTAURANT_PRODUCT_MENU_LIST, params, (res) => {
             console.log('response ', res);
@@ -275,6 +274,7 @@ export default ({ navigation, route }) => {
                     const discountedPrice = item.discountPrice ? item.discountPrice : item.price;
 
                     const price = (item?.hasOptions ?? false) ? renderPrice(discountedPrice, 'from Rs.') : renderPrice(`${discountedPrice}`);
+
                     if (parentItem?.isTopDeal ?? false) {
                         return (
                             <View style={{ backgroundColor: colors.screen_background }}>
@@ -291,6 +291,9 @@ export default ({ navigation, route }) => {
                                         description: item.description,
                                         title: item.name,
                                         price: price,
+                                        discount: item.price,
+                                        discountAmount: item.discount,
+                                        discountType: item.discountType
                                     }} />
 
                             </View>
@@ -316,7 +319,7 @@ export default ({ navigation, route }) => {
                                                 <View style={itemStyles.discountTypeContainer}>
                                                     {(parseInt(`${item.discountType}`) === parseInt(`${ENUMS.PROMO_VALUE_TYPE.Percentage.value}`) && item.discount > 0) && (
                                                         <>
-                                                            <SvgXml xml={svgs.discount(colors.primary)} height={15} width={15} style={itemStyles.discountTypeIcon} />
+                                                            {/* <SvgXml xml={svgs.discount(colors.primary)} height={15} width={15} style={itemStyles.discountTypeIcon} /> */}
                                                             <Text style={itemStyles.discountTypeText} numberOfLines={1}>{`${renderPrice({ price: item.discount, showZero: true }, '-', '%', /[^\d.]/g)}`}</Text>
                                                         </>
                                                     )

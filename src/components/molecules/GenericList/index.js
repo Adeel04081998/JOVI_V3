@@ -16,6 +16,8 @@ import sharedStyles from '../../../res/sharedStyles';
 import NavigationService from '../../../navigations/NavigationService';
 import ROUTES from '../../../navigations/ROUTES';
 import { useSelector } from 'react-redux';
+import ImageBackground from '../../atoms/ImageBackground';
+import CardDealHover from '../../../screens/PitstopListing/components/CardDealHover';
 
 export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCatID = 0, imageStyles = {}, themeColors = null, showMoreBtnText = "", cb = () => { }, textContainer = {} }) => {
     const SPACING_BOTTOM = 0;
@@ -72,10 +74,15 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
 
     const cardTypeUI = {
         1: (item, index) => {
-            const { title, description, image, averagePrice } = item;
+            // console.log("[cardTypeUI].item", item);
+            const { title, description, image, averagePrice, estTime, distance } = item;
+            const DISTANCE = distance || estTime;
             return (
                 <TouchableOpacity activeOpacity={0.8} style={{ padding: 10 }} onPress={() => sharedOnVendorPress(item, index)}>
-                    <Image source={{ uri: renderFile(image) }} style={[styles.image_Small, imageStyles]} tapToOpen={false} />
+                    <ImageBackground source={{ uri: renderFile(image) }} style={[styles.image_Small, imageStyles]} tapToOpen={false} >
+                        <CardDealHover colors={colors} text={item?.discountTitle ?? ''} />
+                        <CardDealHover colors={colors} text={item?.discountPercentage ?? ''} />
+                    </ImageBackground>
                     <View style={styles.subContainer}>
                         <Text style={styles.title} numberOfLines={1} >{title}</Text>
                     </View>
@@ -83,19 +90,29 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
                     {averagePrice &&
                         <Text style={styles.title} >Rs. {averagePrice}</Text>
                     }
+                    {DISTANCE &&
+                        <View style={{ ...styles.iconContainer, flexDirection: "row", alignItems: "center", alignSelf: "flex-end", bottom: 5 }} >
+                            <VectorIcon name={item.distance ? "map-marker" : "clock-time-four"} type={DISTANCE ? "FontAwesome" : "MaterialCommunityIcons"} color={colors.primary || "#6D51BB"} size={15} style={{ marginRight: 5 }} />
+                            <Text style={styles.estTime} >{DISTANCE}</Text>
+                        </View>
+                    }
                 </TouchableOpacity>
             )
         },
         2: (item, index) => {
             const { title, description, estTime, distance, image, averagePrice } = item;
+            const DISTANCE = distance || estTime;
             return (
                 <TouchableOpacity activeOpacity={0.8} onPress={() => sharedOnVendorPress(item, index)}>
-                    <Image source={{ uri: renderFile(image) }} style={[styles.image, imageStyles]} tapToOpen={false} />
+                    <ImageBackground source={{ uri: renderFile(image) }} style={[styles.image, imageStyles]} tapToOpen={false} >
+                        <CardDealHover colors={colors} text={item?.discountTitle ?? ''} />
+                        <CardDealHover colors={colors} text={item?.discountPercentage ?? ''} />
+                    </ImageBackground>
                     <View style={styles.subContainer}>
                         <Text style={styles.title} numberOfLines={1} >{title}</Text>
-                        {(distance || estTime) &&
+                        {DISTANCE &&
                             <View style={styles.iconContainer} >
-                                <VectorIcon name={item.distance ? "map-marker" : "clock-time-four"} type={item.distance ? "FontAwesome" : "MaterialCommunityIcons"} color={colors.primary || "#6D51BB"} size={15} style={{ marginRight: 5 }} />
+                                <VectorIcon name={item.distance ? "map-marker" : "clock-time-four"} type={DISTANCE ? "FontAwesome" : "MaterialCommunityIcons"} color={colors.primary || "#6D51BB"} size={15} style={{ marginRight: 5 }} />
                                 <Text style={styles.estTime} >{estTime || distance}</Text>
                             </View>
                         }
@@ -113,6 +130,8 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
     }
     if (!data)
         return null
+
+    // console.log("data...", data.vendorList[0]);
     return (
         <View style={{ paddingBottom: SPACING_BOTTOM }}>
             {/* {
@@ -134,7 +153,7 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
                     horizontal={true}
                     flatlistProps={{
                         showsHorizontalScrollIndicator: false,
-                        contentContainerStyle: { marginLeft: 0 ,  paddingRight:10}
+                        contentContainerStyle: { marginLeft: 0, paddingRight: 10 }
                     }}
                 />
             </React.Fragment>
@@ -158,8 +177,8 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
     mainText: {
         color: colors.text,
         fontSize: 16,
-        flex:0.8,
-     
+        flex: 0.8,
+
         // paddingHorizontal:10,
     },
     viewMoreBtn: {
@@ -186,15 +205,15 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
         height: 200,
         width: 180,
         borderRadius: 10,
-        marginRight: Platform.OS === 'ios'?10: 10,
+        marginRight: Platform.OS === 'ios' ? 10 : 10,
         // marginHorizontal: 5,
         flex: 1,
         // paddingHorizontal: 10,
         // paddingVertical: 10,
         marginVertical: 5,
         left: 10,
-       
-        
+
+
     },
     image: {
         height: height,

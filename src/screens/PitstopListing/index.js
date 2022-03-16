@@ -60,12 +60,14 @@ const PistopListing = ({ route }) => {
     const { height, width } = SCALE_IMAGE;
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]], Appearance.getColorScheme() === "dark");
     const listingStyles = stylesheet.styles(colors, width, height);
-    if (!isLoadedRef.current) {
-        isLoadedRef.current = true;
-        setInterval(() => {
+    React.useEffect(()=>{
+        if (!isLoadedRef.current) {
+            isLoadedRef.current = true;
             setState(pre => ({ ...pre, loaded: true }));
-        }, 300);
-    }
+            // setInterval(() => {
+            // }, 100);
+        }
+    },[]);
     const onBackPress = () => {
         NavigationService.NavigationActions.common_actions.goBack();
     }
@@ -307,7 +309,7 @@ const PistopListingChild = React.memo(({ route, }) => {
             const xAxis = scrollEvent?.x ?? 0;
             scrollRef.current && scrollRef.current.scrollTo({ y: yAxis, x: xAxis, animated: true });
         }
-    }, [scrollEvent]));
+    }, []));
     return (
         // <View style={listingStyles.container}>
         //     <SafeAreaView style={{ flex: 1 }}>

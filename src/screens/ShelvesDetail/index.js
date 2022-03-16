@@ -7,7 +7,7 @@ import TouchableScale from '../../components/atoms/TouchableScale';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import NoRecord from '../../components/organisms/NoRecord';
-import { getRandomInt, isNextPage, renderFile, sharedAddUpdatePitstop, sharedExceptionHandler, uniqueKeyExtractor, sharedAddToCartKeys, sharedGetPitstopData } from '../../helpers/SharedActions';
+import { getRandomInt, isNextPage, renderFile, sharedAddUpdatePitstop, sharedExceptionHandler, uniqueKeyExtractor, sharedAddToCartKeys, sharedGetPitstopData, sharedGetFinalDestintionRequest } from '../../helpers/SharedActions';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
@@ -55,8 +55,6 @@ export default ({ navigation, route }) => {
     // #region :: STATE's & REF's START's FROM HERE 
     const animScroll = React.useRef(new Animated.Value(0)).current;
     const _apiRes = React.useRef({});
-    const userReducer = useSelector(store => store.userReducer);
-    const [finalDestination, updateFinalDestination] = React.useState(userReducer.finalDestObj);
 
     const [shelveData, updateShelveData] = React.useState(shelveArr);
     const [shelveMetaData, toggleShelveMetaData] = React.useState(false);
@@ -90,8 +88,6 @@ export default ({ navigation, route }) => {
             error: false,
         });
         const params = {
-            "latitude": finalDestination.latitude,
-            "longitude": finalDestination.longitude,
             "searchItem": "",
             "categoryID": 0,
             "tagID": tagID,
@@ -101,6 +97,7 @@ export default ({ navigation, route }) => {
             "productItemsPerPage": PITSTOP_ITEM_LIST_MAX_COUNT,
             "marketID": marketID,
             "skipCatPagination": true,
+            ...sharedGetFinalDestintionRequest()
         };
 
         postRequest(Endpoints.GET_PRODUCT_MENU_LIST, params, (res) => {
@@ -241,7 +238,7 @@ export default ({ navigation, route }) => {
             },
         }
 
-        // sharedAddUpdatePitstop(pitstopDetails,)
+        sharedAddUpdatePitstop(pitstopDetails,)
 
         // if (Math.random() < 0) {
         //     undoQuantity(parentIndex, index);

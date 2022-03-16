@@ -10,7 +10,6 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import Foundation from 'react-native-vector-icons/Foundation';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -20,25 +19,22 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import RNSplashScreen from './NativeModules/RNSplashScreen';
 import BottomAllignedModal from './src/components/atoms/BottomAllignedModal';
+import NoInternetModal from "./src/components/atoms/NoInternetModal";
 import View from './src/components/atoms/View';
+import BaseUrlPrompt from "./src/components/molecules/BaseUrlPrompt";
 import Robot from './src/components/organisms/Robot';
-import { sharedClearReducers, sharedGetDashboardCategoryIApi, sharedGetEnumsApi, sharedGetFilters, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedLogoutUser, sharedSendFCMTokenToServer } from './src/helpers/SharedActions';
+import { sharedClearReducers, sharedGetDashboardCategoryIApi, sharedGetEnumsApi, sharedGetFilters, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedSendFCMTokenToServer } from './src/helpers/SharedActions';
+import { postRequest } from './src/manager/ApiManager';
 import RootStack from "./src/navigations";
 import { _NavgationRef } from './src/navigations/NavigationService';
-import Modal from './src/components/atoms/Modal';
-import AppTheme from './src/res/theme';
-import AddAddress from './src/screens/AddAddress';
-import Maps from './src/components/atoms/GoogleMaps/Maps';
-import { postRequest } from './src/manager/ApiManager';
-import { fcmService } from './src/utils/FCMServices';
 import actions from './src/redux/actions';
-import { localNotificationService } from './src/utils/LocalNotificationServices';
-import CheckOut from './src/screens/CheckOut';
-import Map from './src/screens/Map';
+import AppTheme from './src/res/theme';
 import { env } from './src/utils/configs';
+import ENUMS from "./src/utils/ENUMS";
+import { fcmService } from './src/utils/FCMServices';
 import GV from './src/utils/GV';
-import NoInternetModal from "./src/components/atoms/NoInternetModal";
-
+import { localNotificationService } from './src/utils/LocalNotificationServices';
+// Alert.alert("ENV", JSON.stringify(env));
 
 // #region :: VECTOR ICON LOAD START's FROM HERE 
 AntDesign.loadFont();
@@ -145,6 +141,7 @@ const App = () => {
         <SafeAreaProvider>
             <SafeAreaView style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
                 <StatusBar backgroundColor={'#fff'} barStyle={"dark-content"} />
+                {env.name === ENUMS.ENVS.STAGING ? <BaseUrlPrompt /> : null}
                 <NavigationContainer theme={theme} ref={_NavgationRef} >
                     <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
                         <RootStack />

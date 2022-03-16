@@ -2,11 +2,12 @@ import lodash from 'lodash'; // 4.0.8
 import AnimatedLottieView from 'lottie-react-native';
 import React from 'react';
 import { ActivityIndicator, Alert, Appearance, FlatList, SafeAreaView } from 'react-native';
+import { useSelector } from 'react-redux';
 import View from '../../components/atoms/View';
 import AnimatedFlatlist from '../../components/molecules/AnimatedScrolls/AnimatedFlatlist';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import NoRecord from '../../components/organisms/NoRecord';
-import { getKeyByValue, isNextPage, renderFile, sharedAddToCartKeys, sharedAddUpdatePitstop, sharedExceptionHandler, sharedGetPitstopData, uniqueKeyExtractor } from '../../helpers/SharedActions';
+import { getKeyByValue, isNextPage, renderFile, sharedAddToCartKeys, sharedAddUpdatePitstop, sharedExceptionHandler, sharedGetFinalDestintionRequest, sharedGetPitstopData, uniqueKeyExtractor } from '../../helpers/SharedActions';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
@@ -37,6 +38,7 @@ export default ({ navigation, route }) => {
     const headerTitle = route?.params?.item?.categoryName ?? '';
     const getStoredQuantities = sharedGetPitstopData({ marketID }, "marketID");
 
+
     // #endregion :: ROUTE PARAM's END's FROM HERE 
 
     // #region :: STYLES & THEME START's FROM HERE 
@@ -48,7 +50,6 @@ export default ({ navigation, route }) => {
 
     // #region :: STATE's & REF's START's FROM HERE 
 
-    const [finalDestination, updateFinalDestination] = React.useState(store.getState().userReducer?.finalDestination ?? {});
     const [paginationInfo, updatePaginationInfo] = React.useState(DEFAULT_PAGINATION_INFO);
     const [data, updateData] = React.useState([]);
     const [metaData, toggleMetaData] = React.useState(false);
@@ -79,8 +80,6 @@ export default ({ navigation, route }) => {
             refreshing: append,
         });
         const params = {
-            "latitude": finalDestination?.latitude ?? 33.654227,
-            "longitude": finalDestination?.longitude ?? 73.044831,
             "searchItem": "",
             "categoryID": categoryID,
             "catPageNumber": 1,
@@ -89,6 +88,7 @@ export default ({ navigation, route }) => {
             "productItemsPerPage": paginationInfo.itemPerRequest,
             "marketID": marketID,
             "skipCatPagination": true,
+            ...sharedGetFinalDestintionRequest()
         };
 
         console.log('PARAM ', params);

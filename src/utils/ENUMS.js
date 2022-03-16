@@ -183,4 +183,9 @@ export default {
         "Fixed": 1,
         "Percentage": 2,
     },
+    "ENVS": {
+        "STAGING": "STAGING",
+        "DEBUG": "DEBUG",
+        "RELEASE": "RELEASE"
+    }
 }

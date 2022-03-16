@@ -9,6 +9,7 @@ import View from "../../../components/atoms/View";
 import { renderFile } from "../../../helpers/SharedActions";
 import constants from "../../../res/constants";
 import sharedStyles from "../../../res/sharedStyles";
+import CardDealHover from "./CardDealHover";
 
 export default ({ colors, data = {}, onPressPitstop = () => { }, containerStyles = {}, containerProps = {}, index, imageStyles = { width: '100%' }, renderWithoutTouchableOpacity = false }) => {
     const { title, description, estTime, distanceFromLocation, image, averagePrice } = data;
@@ -21,7 +22,7 @@ export default ({ colors, data = {}, onPressPitstop = () => { }, containerStyles
     const renderBody = () => {
         return <>
             <ImageBackground source={{ uri: renderFile(image) }} style={[styles.image, imageStyles]} tapToOpen={false} >
-                {data.isClose &&
+                {(data.isClosed || data.isClose) &&
                     <View style={{
                         ...StyleSheet.absoluteFillObject,
                         alignItems: 'center',
@@ -42,6 +43,8 @@ export default ({ colors, data = {}, onPressPitstop = () => { }, containerStyles
                         </View>
                     </View>
                 }
+                <CardDealHover colors={colors} text={data?.discountTitle ?? ''} />
+                <CardDealHover colors={colors} text={data?.discountPercentage ?? ''} />
             </ImageBackground>
             <View style={styles.subContainer}>
                 <Text style={styles.title} numberOfLines={1} >{title}</Text>
