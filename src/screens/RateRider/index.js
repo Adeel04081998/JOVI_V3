@@ -26,6 +26,7 @@ import OrderRecipt from '../CheckOut/components/OrderRecipt';
 import { headerStyles, sliderStylesFunc, stylesFunc } from './styles';
 import CheckoutStyles from "../CheckOut/styles";
 import RatingOrderRecipt from './components/RatingOrderRecipt';
+import RatingSliderUI from './components/RatingSliderUI';
 
 // #region :: CONSTANT's START's FROM HERE 
 const HEADER_ICON_SIZE_RIGHT = CustomHeaderIconBorder.size * 0.7;
@@ -55,7 +56,7 @@ const NUMBER_OF_COLUMN = 2;
 
 export default ({ navigation, route }) => {
 
-    const orderID = route?.params?.orderID ?? 0;//67649554;
+    const orderID = route?.params?.orderID ?? 67649554;//67649554;
 
     // #region :: REDUCER START's FROM HERE 
     const messagesReducer = useSelector(s => s?.messagesReducer);
@@ -466,63 +467,6 @@ export default ({ navigation, route }) => {
     // #endregion :: UI END's FROM HERE 
 
 };//end of EXPORT DEFAULT
-
-// #region :: RATING SLIDER UI START's FROM HERE 
-const DOT_LENGTH = 5;
-const RatingSliderUI = ({ onIndexChange = (value) => undefined }) => {
-    const [selectedIndex, setSelectedIndex] = React.useState(1) //0 TO 4
-    const SLIDER_WIDTH = constants.window_dimensions.width * 0.7;
-
-    React.useEffect(() => {
-        if (onIndexChange) {
-            onIndexChange(selectedIndex + 1);
-        }
-        return () => { };
-    }, [selectedIndex])
-    return (
-        <View style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: 'space-between',
-            alignSelf: "center",
-            backgroundColor: '#fff',
-            width: SLIDER_WIDTH,
-            height: 2,
-            marginTop: "10%",
-        }}>
-            {new Array(DOT_LENGTH).fill().map((_, index) => {
-                const isFirstOrLast = index === 0 ? "first" : index === DOT_LENGTH - 1 ? "last" : null;
-                return (
-                    <TouchableOpacity
-                        key={index}
-                        onPress={() => {
-                            setSelectedIndex(index);
-                        }}
-                        wait={0}
-                        disabled={index === selectedIndex}
-                        activeOpacity={0.9}
-                        style={{
-                            borderColor: '#fff',
-                            borderWidth: selectedIndex === index ? 2 : 0,
-                            borderRadius: 10,
-                            padding: 10,
-                            ...isFirstOrLast === "first" && {
-                                marginLeft: -15,
-                            },
-                            ...isFirstOrLast === "last" && {
-                                marginRight: -15,
-                            },
-                        }}>
-                        <View style={{ backgroundColor: '#fff', width: 10, height: 10, borderRadius: 99, }} />
-                    </TouchableOpacity>
-                )
-            })}
-        </View>
-    )
-
-}
-
-// #endregion :: RATING SLIDER UI END's FROM HERE 
 
 // #region :: TEXT BOX  START's FROM HERE ##usage: for showing text with box
 

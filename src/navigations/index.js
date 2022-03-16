@@ -34,6 +34,7 @@ import SharedMapView from '../components/atoms/GoogleMaps/SharedMapView';
 import OrderTracking from '../screens/OrderTracking';
 import OrderChat from '../screens/OrderChat';
 import RateRider from '../screens/RateRider';
+import OrderHistory from '../screens/OrderHistory';
 import OrderPitstops from '../screens/OrderTracking/OrderScreens/OrderPitstops';
 
 const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES, APP_DRAWER_ROUTES, APP_DRAWER_STACK } = ROUTES;
@@ -84,6 +85,7 @@ const AppDrawerComponents = {
     OrderChat,
     OrderPitstops,
     RateRider,
+    OrderHistory,
 }//will open with Slide Animation
 const ContainerStack = createStackNavigator();
 const Stack = createNativeStackNavigator();
