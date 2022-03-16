@@ -296,12 +296,16 @@ export const secToHourMinSec = (sec = 1,) => {
 
 }//end of secToHourMinSec
 
-export const renderFile = picturePath => {
+export const renderFile = (picturePath = "") => {
     // console.log("[renderFile].picturePath", picturePath)
-    const userReducer = store.getState().userReducer;
-    return `${GV.BASE_URL.current}/api/Common/S3File/${encodeURIComponent(
-        picturePath,
-    )}?access_token=${userReducer?.token?.authToken}`;
+    const splitedPath = String(picturePath).split(":");
+    if (splitedPath.length && splitedPath[0] === "https") return picturePath;
+    else {
+        const userReducer = store.getState().userReducer;
+        return `${GV.BASE_URL.current}/api/Common/S3File/${encodeURIComponent(
+            picturePath,
+        )}?access_token=${userReducer?.token?.authToken}`;
+    }
 };
 
 export const renderPrice = (price, prefix = "Rs. ", suffix = "", reg = Regex.price,) => {
@@ -320,10 +324,12 @@ export const renderPrice = (price, prefix = "Rs. ", suffix = "", reg = Regex.pri
 }
 
 export const renderDistance = (distance, suffix = "m", prefix = "", reg = Regex.distanceM,) => {
-    prefix = `${prefix}`.trim();
-    suffix = `${suffix}`.trim();
-    distance = `${distance}`.trim().replace(reg, '').trim();
-    return prefix.length > 0 ? `${prefix} ${distance}${suffix}` : `${distance}${suffix}`;
+    return distance; // WILL BE STRING VALUE WITH PRE/SUFFIX (e.g M, KM) FROM SERVER
+    // COMMENTED BECUASE VALUE WOULD BE HANDELED ON SERVER SIDE
+    // prefix = `${prefix}`.trim();
+    // suffix = `${suffix}`.trim();
+    // distance = `${distance}`.trim().replace(reg, '').trim();
+    // return prefix.length > 0 ? `${prefix} ${distance}${suffix}` : `${distance}${suffix}`;
 }
 
 export const isNextPage = (totalItem, itemPerRequest, currentRequestCount) => {
@@ -964,7 +970,7 @@ export const sharedGetHeadersInfo = () => headersInfo;
 
 export const makeArrayRepeated = (arr, repeats) => [].concat(...Array.from({ length: repeats }, () => arr));
 
-export const sharedRiderRating = (orderID=0,currentRoute = null) => {
+export const sharedRiderRating = (orderID = 0, currentRoute = null) => {
     NavigationService.NavigationActions.common_actions.reset_with_filter_invert([ROUTES.APP_DRAWER_ROUTES.Home.screen_name], {
         name: ROUTES.APP_DRAWER_ROUTES.RateRider.screen_name,
         params: { orderID }
@@ -974,4 +980,12 @@ export const sharedRiderRating = (orderID=0,currentRoute = null) => {
     // }else{
     //     NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.RateRider.screen_name,{orderID});
     // }
+}
+
+export const sharedGetFinalDestintionRequest = () => {
+    const userReducer = store.getState().userReducer;
+    return {
+        latitude: userReducer.finalDestObj.latitude,
+        longitude: userReducer.finalDestObj.longitude,
+    };
 }

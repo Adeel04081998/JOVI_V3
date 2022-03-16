@@ -188,7 +188,8 @@ const ProductMenuItemCard = (props: Props) => {
                             <View style={itemStyles.discountTypeContainer}>
                                 {parseInt(`${props.item.discountType}`) === parseInt(`${ENUMS.PROMO_VALUE_TYPE.Percentage.value}`) && (
                                     <>
-                                        <SvgXml xml={svgs.discount(props.colors.primary)} height={15} width={15} style={itemStyles.discountTypeIcon} />
+                                        {/* <SvgXml xml={svgs.discount(props.colors.primary)} height={15} width={15} style={itemStyles.discountTypeIcon} /> */}
+                                      <View style={itemStyles.discountTypeIcon} />
                                         <Text style={itemStyles.discountTypeText} numberOfLines={1}>{`${renderPrice(props.item.discountAmount, '-', '%', /[^\d.]/g)}`}</Text>
                                     </>
                                 )
