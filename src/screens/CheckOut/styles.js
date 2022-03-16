@@ -2,6 +2,7 @@ import { Platform, StyleSheet } from "react-native";
 import { getStatusBarHeight } from "../../helpers/StatusBarHeight";
 import AppStyles from "../../res/AppStyles";
 import { initColors } from "../../res/colors";
+import FontFamily from "../../res/FontFamily";
 const SPACING_VERTICAL = 10;
 // const TOPSPACING = 8
 // const RECEIPTPiTSTOPMAINTXTCOLOR = "#6B6B6B"
@@ -48,7 +49,7 @@ export default {
             },
             receiptMainContainer: {
                 backgroundColor: colors.white, flex: 1, margin: TOPSPACING,
-                marginHorizontal:10,
+                marginHorizontal: 10,
                 borderRadius: 8, ...AppStyles.shadow, elevation: 2,
             },
             receiptPrimaryContainer: {
@@ -66,10 +67,14 @@ export default {
                 color: "#707070",
             },
             reciptMainDetailsPitstopNo: {
-                marginLeft: 4, fontSize: 12, color: RECEIPTPiTSTOPMAINTXTCOLOR
+                marginLeft: 4, fontSize: 12,
+                color: "#272727",//  RECEIPTPiTSTOPMAINTXTCOLOR,
+                fontFamily: FontFamily.Poppins.Medium,
             },
             reciptMainDetailsPitstopName: {
-                fontSize: 12, color: RECEIPTPiTSTOPMAINTXTCOLOR,
+                fontSize: 12,
+                color: "#272727",//  RECEIPTPiTSTOPMAINTXTCOLOR,
+                fontFamily: FontFamily.Poppins.Medium,
             },
             reciptMainDetailsindividualPitstopTotal: {
                 justifyContent: 'flex-end', fontSize: 12, color: RECEIPTPiTSTOPMAINTXTCOLOR
@@ -79,7 +84,8 @@ export default {
                 fontSize: subDetailListTxtFontSize,
                 textAlign: 'justify',
                 paddingHorizontal: 20,
-                flex: 1
+                flex: 1,
+                paddingTop: 5
 
             },
             reciptSubDetailspitStopItemPrice: {

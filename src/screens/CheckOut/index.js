@@ -41,6 +41,7 @@ export default () => {
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED['10']], Appearance.getColorScheme() === "dark");
     const checkOutStyles = StyleSheet.styles(colors)
     const cartReducer = useSelector(store => store.cartReducer);
+    console.log("cartReducer",cartReducer);
     const userReducer = useSelector(store => store.userReducer);
     const totalPitstop = cartReducer.pitstops.length ?? ""
     const estimatedDeliveryTime = cartReducer.orderEstimateTime || ""
@@ -206,7 +207,7 @@ export default () => {
                 // ref => https://cibak.atlassian.net/browse/TJA-3225 ==> Mudassir
                 // "pitstopDistances": state.pitstopDistances
             };
-            console.log('Final Order Payload',finalOrder);
+            console.log('Final Order Payload', finalOrder);
             postRequest(Endpoints.CreateUpdateOrder, finalOrder, (res) => {
                 console.log('order place res', res);
                 if (res.data.statusCode === 200) {
@@ -367,9 +368,9 @@ export default () => {
                         color={colors}
                         right={{ value: totalPitstop }}
                         middle={{ value: estimatedDeliveryTime }}
-                        contentContainerStyle={{ marginBottom: 0, marginVertical: 0, marginTop: 5, borderRadius: 8, paddingVertical: 5 }}
-                        rightContainerStyle={{}}
-                        middleContainerStyle={{ flex: 2 }}
+                        contentContainerStyle={{ marginBottom: 0, marginVertical: 0, marginTop: 5, borderRadius: 8, paddingVertical: 4 }}
+                        rightContainerStyle={{ flex: 0 }}
+                        middleContainerStyle={{ flex: 3, }}
                         leftContainerStyle={{ paddingRight: 15 }}
                     />
                     <DeliveryAddress

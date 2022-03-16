@@ -426,7 +426,6 @@ export default (props) => {
 
     }, [])
     const inputRef = React.useRef(null);
-
     return (
         <>
             {loading ? renderLoader() :
@@ -474,7 +473,7 @@ export default (props) => {
 
                             <AnimatedView style={[productDetailsStyles.primaryContainer]}>
                                 <Text style={productDetailsStyles.productNametxt} numberOfLines={1} fontFamily="PoppinsMedium">{productName}</Text>
-                                {productDetails ? <Text style={productDetailsStyles.productDescriptionTxt} fontFamily="PoppinsRegular" numberOfLines={2}>{`${productDetails}`}</Text> : null}
+                                {productDetails ? <Text style={productDetailsStyles.productDescriptionTxt} fontFamily="PoppinsRegular" >{`${productDetails}`}</Text> : null}
                                 <AnimatedView style={productDetailsStyles.productPriceContainer}>
                                     <Text style={productDetailsStyles.productPricelabel} fontFamily="PoppinsRegular">Price:</Text>
                                     <Text style={productDetailsStyles.productPricetxt}
@@ -570,6 +569,42 @@ const RenderProductImages = React.memo(({ images, colors }) => {
 
 const RenderPutItemInCartBox = ({ addToCardAnimation, setState }) => {
     const animateAddToCart = React.useRef(new Animated.Value(0)).current;
+    const RenderLottieUi = () => {
+        return (
+            <AnimatedLottieView
+                source={require('../../assets/gifs/Add To Cart.json')}
+                onAnimationFinish={() => {
+                    animateLoader(0);
+                    // NavigationService.NavigationActions.common_actions.goBack()
+
+                }}
+
+
+                style={{ justifyContent: 'flex-end', alignContent: 'center', alignSelf: 'center', width: "90%" }}
+
+                resizeMode={'contain'}
+                autoPlay loop={false}
+            />
+        )
+    }
+    const RenderImageView = () => {
+        return (
+            <Animated.Image
+                source={require('../../assets/gifs/AddToCart.gif')}
+                resizeMethod={'auto'}
+                resizeMode={'contain'}
+                style={{ justifyContent: 'flex-end', alignContent: 'center', alignSelf: 'center', width: "90%" }}
+                height={70}
+                width={40}
+                onLoadEnd={async () => {
+                    if (Platform.OS === 'ios') {
+                        await sleep(2);
+                    }
+                    // animateLoader(0)
+                }}
+            />
+        )
+    }
     const animateLoader = (toValue = 1) => {
         Animated.timing(animateAddToCart, {
             toValue: toValue,
@@ -586,7 +621,7 @@ const RenderPutItemInCartBox = ({ addToCardAnimation, setState }) => {
     }
     React.useEffect(() => {
 
-        let timeToshowGif = Platform.OS === 'ios' ? (deviceInfoModule.hasNotch() ? 2800 : 4000) : 6000
+        let timeToshowGif = Platform.OS === 'ios' ? (deviceInfoModule.hasNotch() ? 2800 : 4000) : 2000
         if (addToCardAnimation === true) {
             animateLoader();
             // setTimeout(() => {
@@ -598,7 +633,7 @@ const RenderPutItemInCartBox = ({ addToCardAnimation, setState }) => {
     }, [addToCardAnimation]);
     return (
         <AnimatedView style={{ opacity: animateAddToCart, display: addToCardAnimation === true ? 'flex' : 'none', position: 'absolute', height: "100%", backgroundColor: 'rgba(0,0,1,0.5)', width: '100%', justifyContent: 'flex-start', alignContent: 'flex-start' }}>
-
+            {/* 
             {addToCardAnimation && <Animated.Image
                 source={require('../../assets/gifs/AddToCart.gif')}
                 resizeMethod={'auto'}
@@ -607,10 +642,13 @@ const RenderPutItemInCartBox = ({ addToCardAnimation, setState }) => {
                 height={70}
                 width={40}
                 onLoadEnd={async () => {
-                    await sleep(Platform.OS === 'ios' ? 2 : 1);
-                    animateLoader(0)
+                    if (Platform.OS === 'ios') {
+                        await sleep(Platform.OS === 'ios' ? 2 : 0.3);
+                    }
+                    // animateLoader(0)
                 }}
-            />}
+            />
+            } */}
 
             {/* <AnimatedLottieView
                 source={require('../../assets/gifs/Add To Cart.json')}
@@ -623,6 +661,11 @@ const RenderPutItemInCartBox = ({ addToCardAnimation, setState }) => {
                 resizeMode={'contain'}
                 autoPlay loop={false}
             /> */}
+
+
+
+            {addToCardAnimation ? (Platform.OS === 'ios' ? RenderImageView() : RenderLottieUi()) : <View />
+            }
         </AnimatedView>
     )
 }

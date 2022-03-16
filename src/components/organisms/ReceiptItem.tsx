@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { Appearance, StyleProp, StyleSheet, TextStyle, ViewStyle } from "react-native";
 import { renderPrice, sharedGenerateProductItem, VALIDATION_CHECK } from "../../helpers/SharedActions";
@@ -101,6 +100,7 @@ const ReceiptItem = (props: Props) => {
         return (
             <View style={[{ marginTop: 0, }, props.itemPrimaryContainerStyle]}>
                 {(props?.itemData ?? []).map((item, index) => {
+                    
                     const { name, quantity, discountedPrice, actualPrice, } = getItemDetail(item);
                     return (
                         <View key={index} style={[{ ...itemStyles.primaryContainer, paddingTop: index === 0 ? 0 : 4, }, props.itemContainerStyle]}>
@@ -132,9 +132,9 @@ const ReceiptItem = (props: Props) => {
             {/* ****************** Start of TITLE ****************** */}
             <View style={[styles.titlePrimaryContainer, props.titleContainerStyle]}>
                 <View style={styles.titleDot} />
-                <Text fontFamily="PoppinsMedium" style={[styles.title, props.titleStyle]}>{`Pitstop ${`${props.pitstopNumber}`.padStart(2, '0')} - ${props.title}`}</Text>
+                <Text fontFamily="PoppinsMedium" style={[styles.title, props.titleStyle]} numberOfLines={1}>{`Pitstop ${`${props.pitstopNumber}`.padStart(2, '0')} - ${props.title}`}</Text>
                 {(!showDetail && VALIDATION_CHECK(props.totalPrice)) && <>
-                    <Text style={{ fontSize: 12, color: "#272727", }}>{renderPrice({ price: props.totalPrice, showZero: true })}</Text>
+                    <Text style={{ color: "#272727", fontSize: 12, }} fontFamily="PoppinsMedium">{renderPrice({ price: props.totalPrice, showZero: true })}</Text>
                 </>}
             </View>
 
