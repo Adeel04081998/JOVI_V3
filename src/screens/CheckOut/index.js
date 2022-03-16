@@ -95,8 +95,14 @@ export default () => {
                     if (item.isJoviJob && !item.isDestinationPitstop) {
                         let minEstimateTime = item.estTime?.text?.split(' ')[0]?.split('-')[0] ?? '';
                         let maxEstimateTime = item.estTime?.text?.split(' ')[0]?.split('-')[1] ?? '';
-                        minEstimateTime = minEstimateTime.length === 1 ? '00:0' + minEstimateTime : '00:' + minEstimateTime;
-                        maxEstimateTime = maxEstimateTime.length === 1 ? '00:0' + maxEstimateTime : '00:' + maxEstimateTime;
+                        if(item.estTime?.text?.includes('hour')){
+                            minEstimateTime = '01:00';
+                            maxEstimateTime = '01:00';//as instructed by tabish, he was saying that in 1hour+ case, send same value for min max
+                        }else{
+                            minEstimateTime = minEstimateTime.length === 1 ? '00:0' + minEstimateTime : '00:' + minEstimateTime;
+                            maxEstimateTime = maxEstimateTime.length === 1 ? '00:0' + maxEstimateTime : '00:' + maxEstimateTime;
+                            maxEstimateTime = maxEstimateTime.replace('60','59');
+                        }
                         return {
                             "pitstopID": null,
                             "title": item.title,
@@ -108,7 +114,7 @@ export default () => {
                             "longitudeDelta": item.longitudeDelta ?? 6,
                             "addressID": item.addressID ? item.addressID : null,
                             "buyForMe": item.buyForMe ? true : false,
-                            "estimateTime": '00:20',//to be removed from backend, because according to new design, it will be min estimate time and max estimate time
+                            // "estimateTime": '00:20',//to be removed from backend, because according to new design, it will be min estimate time and max estimate time
                             "minEstimateTime": minEstimateTime,
                             "maxEstimateTime": maxEstimateTime,
                             // "estimateTime": item.estTime.value,
@@ -212,9 +218,6 @@ export default () => {
                 if (res.data.statusCode === 200) {
                     Toast.success('Order Placed!!');
                     dispatch(actions.clearCartAction());
-                    dispatch(actions.setUserAction({
-                        ordersList: [res.data.createUpdateOrderVM.orderID]
-                    }));
                     sharedOrderNavigation(res.data?.createUpdateOrderVM?.orderID ?? 0, res.data?.createUpdateOrderVM?.subStatusName ?? '', null, true);
                 } else {
                     setState(pre => ({ ...pre, isLoading: false }));
