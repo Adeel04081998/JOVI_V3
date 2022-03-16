@@ -53,7 +53,7 @@ export default ({ navigation, route }) => {
     const [data, updateData] = React.useState({ onGoingData: [], historyData: [] });
     const [metaData, toggleMetaData] = React.useState(false);
     const [query, updateQuery] = React.useState({
-        isLoading: false,
+        isLoading: true,
         error: false,
         errorText: '',
         refreshing: false,
