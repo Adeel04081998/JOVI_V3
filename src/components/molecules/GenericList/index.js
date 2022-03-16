@@ -74,7 +74,9 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
 
     const cardTypeUI = {
         1: (item, index) => {
-            const { title, description, image, averagePrice } = item;
+            // console.log("[cardTypeUI].item", item);
+            const { title, description, image, averagePrice, estTime, distance } = item;
+            const DISTANCE = distance || estTime;
             return (
                 <TouchableOpacity activeOpacity={0.8} style={{ padding: 10 }} onPress={() => sharedOnVendorPress(item, index)}>
                     <ImageBackground source={{ uri: renderFile(image) }} style={[styles.image_Small, imageStyles]} tapToOpen={false} >
@@ -88,11 +90,18 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
                     {averagePrice &&
                         <Text style={styles.title} >Rs. {averagePrice}</Text>
                     }
+                    {DISTANCE &&
+                        <View style={{ ...styles.iconContainer, flexDirection: "row", alignItems: "center", alignSelf: "flex-end", bottom: 5 }} >
+                            <VectorIcon name={item.distance ? "map-marker" : "clock-time-four"} type={DISTANCE ? "FontAwesome" : "MaterialCommunityIcons"} color={colors.primary || "#6D51BB"} size={15} style={{ marginRight: 5 }} />
+                            <Text style={styles.estTime} >{DISTANCE}</Text>
+                        </View>
+                    }
                 </TouchableOpacity>
             )
         },
         2: (item, index) => {
             const { title, description, estTime, distance, image, averagePrice } = item;
+            const DISTANCE = distance || estTime;
             return (
                 <TouchableOpacity activeOpacity={0.8} onPress={() => sharedOnVendorPress(item, index)}>
                     <ImageBackground source={{ uri: renderFile(image) }} style={[styles.image, imageStyles]} tapToOpen={false} >
@@ -101,9 +110,9 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
                     </ImageBackground>
                     <View style={styles.subContainer}>
                         <Text style={styles.title} numberOfLines={1} >{title}</Text>
-                        {(distance || estTime) &&
+                        {DISTANCE &&
                             <View style={styles.iconContainer} >
-                                <VectorIcon name={item.distance ? "map-marker" : "clock-time-four"} type={item.distance ? "FontAwesome" : "MaterialCommunityIcons"} color={colors.primary || "#6D51BB"} size={15} style={{ marginRight: 5 }} />
+                                <VectorIcon name={item.distance ? "map-marker" : "clock-time-four"} type={DISTANCE ? "FontAwesome" : "MaterialCommunityIcons"} color={colors.primary || "#6D51BB"} size={15} style={{ marginRight: 5 }} />
                                 <Text style={styles.estTime} >{estTime || distance}</Text>
                             </View>
                         }
@@ -122,7 +131,7 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
     if (!data)
         return null
 
-    console.log("data...", data.vendorList[0]);
+    // console.log("data...", data.vendorList[0]);
     return (
         <View style={{ paddingBottom: SPACING_BOTTOM }}>
             {/* {
