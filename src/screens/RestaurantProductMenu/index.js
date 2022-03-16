@@ -274,6 +274,7 @@ export default ({ navigation, route }) => {
                     const discountedPrice = item.discountPrice ? item.discountPrice : item.price;
 
                     const price = (item?.hasOptions ?? false) ? renderPrice(discountedPrice, 'from Rs.') : renderPrice(`${discountedPrice}`);
+
                     if (parentItem?.isTopDeal ?? false) {
                         return (
                             <View style={{ backgroundColor: colors.screen_background }}>
@@ -290,6 +291,9 @@ export default ({ navigation, route }) => {
                                         description: item.description,
                                         title: item.name,
                                         price: price,
+                                        discount: item.price,
+                                        discountAmount: item.discount,
+                                        discountType: item.discountType
                                     }} />
 
                             </View>
