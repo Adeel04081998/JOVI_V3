@@ -232,7 +232,7 @@ const ScrollableList = (props: Props) => {
                     }} style={[style.indicator, {
                         width: widthValue,
                         height: 30,
-                        borderRadius:  15,
+                        borderRadius: 15,
                         top: -30.9,
                         backgroundColor: 'white',
                         borderWidth: 0.5,
@@ -326,15 +326,19 @@ const ScrollableList = (props: Props) => {
                                     :
                                     <Text style={style.sectionTitle}>{food.categoryName}</Text>
                                 }
-                                <AnimatedFlatlist
+                                <FlatList
                                     data={food[props.itemListPropertyName]}
+                                    numColumns={3}
+                                    showsVerticalScrollIndicator={false}
+                                    columnWrapperStyle={props.renderItemColumnWrapperStyle}
+                                    //@ts-ignore
                                     flatlistProps={{
                                         numColumns: 3,
                                         showVerticalScrollIndicator: false,
                                         columnWrapperStyle: props.renderItemColumnWrapperStyle,
                                     }}
                                     //@ts-ignore
-                                    renderItem={(singleFood, index) => {
+                                    renderItem={({ item: singleFood, index }) => {
                                         return <View key={uniqueKeyExtractor()}>
                                             {props.renderItem && props.renderItem(food, singleFood, parentIndex, index)}
                                         </View>

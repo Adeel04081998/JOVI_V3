@@ -6,7 +6,7 @@ import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import NoRecord from '../../components/organisms/NoRecord';
 import ProductCard from '../../components/organisms/Card/ProductCard';
-import { renderFile, renderPrice, sharedExceptionHandler, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { renderFile, renderPrice, sharedExceptionHandler, sharedGetFinalDestintionRequest, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import constants from '../../res/constants';
@@ -23,6 +23,9 @@ import ROUTES from '../../navigations/ROUTES';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import ENUMS from '../../utils/ENUMS';
+import svgs from '../../assets/svgs';
+import { SvgXml } from 'react-native-svg';
 
 const WINDOW_HEIGHT = constants.window_dimensions.height;
 const PITSTOPS = {
@@ -89,8 +92,7 @@ export default ({ navigation, route }) => {
         });
         const params = {
             "pitstopID": pitstopID,//3738   4024,
-            "latitude": 33.654227,
-            "longitude": 73.044831
+            ...sharedGetFinalDestintionRequest(),
         };
         postRequest(Endpoints.GET_RESTAURANT_PRODUCT_MENU_LIST, params, (res) => {
             console.log('response ', res);
@@ -268,7 +270,10 @@ export default ({ navigation, route }) => {
                     )
                 }}
                 renderItem={(parentItem, item, parentIndex, index) => {
-                    const price = (item?.hasOptions ?? false) ? renderPrice(item.price, 'from Rs.') : renderPrice(`${item.price}`);
+
+                    const discountedPrice = item.discountPrice ? item.discountPrice : item.price;
+
+                    const price = (item?.hasOptions ?? false) ? renderPrice(discountedPrice, 'from Rs.') : renderPrice(`${discountedPrice}`);
                     if (parentItem?.isTopDeal ?? false) {
                         return (
                             <View style={{ backgroundColor: colors.screen_background }}>
@@ -301,7 +306,28 @@ export default ({ navigation, route }) => {
 
                                 <View style={itemStyles.detailContainer}>
                                     {VALIDATION_CHECK(item.name) &&
-                                        <Text fontFamily='PoppinsBold' style={itemStyles.name} numberOfLines={1}>{`${item.name}`}</Text>
+                                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                                            <Text fontFamily='PoppinsBold' style={itemStyles.name} numberOfLines={1}>{`${item.name}`}</Text>
+
+
+                                            {/* ****************** Start of DISCOUNT TYPE ****************** */}
+                                            {parseInt(`${item.discountType}`) !== parseInt(`${ENUMS.PROMO_VALUE_TYPE.Empty.value}`) &&
+                                                <View style={itemStyles.discountTypeContainer}>
+                                                    {(parseInt(`${item.discountType}`) === parseInt(`${ENUMS.PROMO_VALUE_TYPE.Percentage.value}`) && item.discount > 0) && (
+                                                        <>
+                                                            {/* <SvgXml xml={svgs.discount(colors.primary)} height={15} width={15} style={itemStyles.discountTypeIcon} /> */}
+                                                            <Text style={itemStyles.discountTypeText} numberOfLines={1}>{`${renderPrice({ price: item.discount, showZero: true }, '-', '%', /[^\d.]/g)}`}</Text>
+                                                        </>
+                                                    )
+
+                                                    }
+                                                </View>
+                                            }
+
+                                            {/* ****************** End of DISCOUNT TYPE ****************** */}
+
+
+                                        </View>
                                     }
 
                                     {VALIDATION_CHECK(item.description) &&
@@ -309,7 +335,25 @@ export default ({ navigation, route }) => {
                                     }
 
                                     {VALIDATION_CHECK(item.price) &&
-                                        <Text fontFamily='PoppinsMedium' style={itemStyles.price}>{price}</Text>
+                                        <View style={{ flexDirection: "row", alignItems: "center", }}>
+
+                                            {/* ****************** Start of PRICE CHARGE FROM CUSTOMER ****************** */}
+                                            <Text fontFamily='PoppinsMedium' style={itemStyles.price}>{price}</Text>
+
+                                            {/* ****************** End of PRICE CHARGE FROM CUSTOMER ****************** */}
+
+
+                                            {/* ****************** Start of DISCOUNT PRICE ****************** */}
+                                            {(item.discountPrice > 0 && item.discount > 0) &&
+                                                <Text style={{
+                                                    ...itemStyles.discountPrice,
+                                                    marginLeft: 6,
+                                                }} numberOfLines={1}>{renderPrice(item.price)}</Text>
+                                            }
+
+                                            {/* ****************** End of DISCOUNT PRICE ****************** */}
+
+                                        </View>
                                     }
                                 </View>
 

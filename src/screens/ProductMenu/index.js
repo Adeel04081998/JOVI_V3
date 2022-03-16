@@ -8,7 +8,7 @@ import TouchableScale from '../../components/atoms/TouchableScale';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import NoRecord from '../../components/organisms/NoRecord';
-import { isNextPage, renderFile, sharedAddToCartKeys, sharedAddUpdatePitstop, sharedExceptionHandler, sharedGetPitstopData, uniqueKeyExtractor, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { isNextPage, renderFile, sharedAddToCartKeys, sharedAddUpdatePitstop, sharedExceptionHandler, sharedGetFinalDestintionRequest, sharedGetPitstopData, uniqueKeyExtractor, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
@@ -69,7 +69,6 @@ export default ({ navigation, route }) => {
     const [metaData, toggleMetaData] = React.useState(false);
     const [isClosed, toggleIsClosed] = React.useState(false);
 
-    const [finalDestination, updateFinalDestination] = React.useState(store.getState().userReducer?.finalDestination ?? {});
     const [paginationInfo, updatePaginationInfo] = React.useState(DEFAULT_PAGINATION_INFO);
     const [query, updateQuery] = React.useState({
         isLoading: true,
@@ -99,19 +98,17 @@ export default ({ navigation, route }) => {
             refreshing: append,
         });
         const params = {
-            "latitude": finalDestination?.latitude ?? 33.654227,
-            "longitude": finalDestination?.longitude ?? 73.044831,
             "searchItem": "",
             "categoryID": 0,
             "catPageNumber": currentRequestNumber,
             "catItemsPerPage": paginationInfo.itemPerRequest,
             "productPageNumber": 1,
             "productItemsPerPage": HORIZONTAL_MAX_ITEM_PER_REQUEST,
-            "marketID": marketID
+            "marketID": marketID,
+            ...sharedGetFinalDestintionRequest(),
         };
 
         postRequest(Endpoints.GET_PRODUCT_MENU_LIST, params, (res) => {
-            console.log('tesssssss ', res);
             if (res.data.statusCode === 404) {
                 updateQuery({
                     errorText: res.data.message,

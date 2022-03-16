@@ -3,7 +3,7 @@
 // * Get Service charges from server on swapped array
 
 import React from 'react';
-import { Alert, Appearance, ScrollView } from 'react-native';
+import { Alert, Appearance } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { useDispatch, useSelector } from 'react-redux';
 import DeliveryAddress from "../../components/atoms/DeliveryAddress";
@@ -22,13 +22,12 @@ import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedCalculatedTotals
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import ReduxActions from '../../redux/actions';
-import constants from '../../res/constants';
 import sharedStyles from '../../res/sharedStyles';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES } from '../../utils/GV';
 import ProductQuantityCard from '../ProductMenu/components/ProductQuantityCard';
 import stylesheet from './styles';
-import { pencil_icon, percent_icon, routes_icon } from './svgs/cart_svgs';
+import { pencil_icon, routes_icon } from './svgs/cart_svgs';
 const BottomLine = () => (
   <View
     style={{
@@ -70,8 +69,9 @@ export default () => {
   }
   const onEditPress = (product) => {
     console.log("[onEditPress].pitstop", product);
-    if (product.pitstopType === PITSTOP_TYPES.JOVI) NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.JoviJob.screen_name, { pitstopItemObj: product });
-    else Alert.alert("Dear lakaas! Bug ni bnana, \n Abi sirf JOVI job ko edit kr skty hain ap log! Bug ni bnana!")
+    return Alert.alert("Dear lakaas! Bug ni bnana, \n Abi sirf JOVI job ko edit kr skty hain ap log! Bug ni bnana!")
+    // if (product.pitstopType === PITSTOP_TYPES.JOVI) NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.JoviJob.screen_name, { pitstopItemObj: product });
+    // else Alert.alert("Dear lakaas! Bug ni bnana, \n Abi sirf JOVI job ko edit kr skty hain ap log! Bug ni bnana!")
     // else NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, {
     //   propItem: {
     //     itemDetails: { ...product },
@@ -181,14 +181,14 @@ export default () => {
                 </Text>
               </TouchableScale>
             </View>
-            {IS_DISCOUNTED_VENDOR && (
+            {/* {IS_DISCOUNTED_VENDOR && (
               <SvgXml
                 xml={percent_icon(dynamiColors.primary)}
                 height={15}
                 width={15}
                 style={{ margin: 5 }}
               />
-            )}
+            )} */}
           </View>
 
           <View style={{ flexDirection: 'row', alignItems: 'center', maxWidth: "40%" }}>
@@ -324,7 +324,7 @@ export default () => {
                 >
                   {title}
                 </Text>
-                {
+                {/* {
                   IS_DISCOUNTED &&
                   <SvgXml
                     xml={percent_icon(dynamiColors.primary)}
@@ -332,7 +332,7 @@ export default () => {
                     width={15}
                     style={{ marginHorizontal: 5, width: "10%", top: 5 }}
                   />
-                }
+                } */}
 
               </View>
               <TouchableScale style={{ width: "10%" }} onPress={() => onEditPress(product)}>

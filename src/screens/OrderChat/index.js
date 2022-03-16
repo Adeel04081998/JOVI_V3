@@ -16,7 +16,7 @@ import View from '../../components/atoms/View';
 import CustomHeader, { CustomHeaderIconBorder, CustomHeaderStyles } from '../../components/molecules/CustomHeader';
 import ImageWithTextInput from '../../components/organisms/ImageWithTextInput';
 import NoRecord from '../../components/organisms/NoRecord';
-import { padToTwo, renderFile, sharedExceptionHandler, sharedFetchOrder, sharedNotificationHandlerForOrderScreens, uuidGenerator, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { renderFile, sharedExceptionHandler, sharedFetchOrder, sharedNotificationHandlerForOrderScreens, sharedRiderRating, uuidGenerator, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { getRequest, multipartPostRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
@@ -68,10 +68,13 @@ export default ({ navigation, route }) => {
     const goToHome = () => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
     }
-    const orderCancelledOrCompleted = () => {
-        goToHome();
+    const orderCancelledOrCompleted = (status) => {
+        if(status.orderCompleted){
+            sharedRiderRating(orderID);            
+        }else{
+            goToHome();
+        }
     }
-
     React.useEffect(() => {
         //middle param will be use for rider change
         sharedNotificationHandlerForOrderScreens(fcmReducer, (prop) => {

@@ -55,18 +55,20 @@ const RestaurantProductMenuHeader = (props: Props) => {
 
     // #region :: RENDER BOTTOM DETAIL START's FROM HERE 
     const _renderBottomDetail = (text: string, value: string, iconName: string | { xml: any }, iconType: IconTypeProps = "Ionicons") => {
-        return (
-            <View style={styles.bottomDetailPrimaryContainer}>
-                {typeof iconName === "string" ?
-                    <VectorIcon name={iconName} type={iconType} color={colors.primary} style={styles.bottomDetailIcon} />
-                    :
-                    <SvgXml xml={iconName.xml} height={20} width={20} style={{ top: -2, marginRight: 6, }} />
-                }
-                <Text fontFamily="PoppinsMedium" style={styles.bottomDetailText}>{`${`${text}`.replace(':', '')}: `}</Text>
-                <Text style={styles.bottomDetailValue}>{`${value}`}</Text>
-            </View>
-        )
-    };
+        if(value){
+            return (
+                    <View style={styles.bottomDetailPrimaryContainer}>
+                        {typeof iconName === "string" ?
+                            <VectorIcon name={iconName} type={iconType} color={colors.primary} style={styles.bottomDetailIcon} />
+                            :
+                            <SvgXml xml={iconName.xml} height={20} width={20} style={{ top: -2, marginRight: 6, }} />
+                        }
+                        <Text fontFamily="PoppinsMedium" style={styles.bottomDetailText}>{`${`${text}`.replace(':', '')}: `}</Text>
+                        <Text style={styles.bottomDetailValue}>{`${value}`}</Text>
+                    </View>
+                )
+        } else return null    
+    }; 
 
     // #endregion :: RENDER BOTTOM DETAIL END's FROM HERE 
 

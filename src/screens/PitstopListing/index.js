@@ -295,7 +295,7 @@ const PistopListingChild = React.memo(({ route, }) => {
             const xAxis = scrollEvent?.x ?? 0;
             scrollRef.current && scrollRef.current.scrollTo({ y: yAxis, x: xAxis, animated: true });
         }
-    }, [scrollEvent]));
+    }, []));
     return (
         // <View style={listingStyles.container}>
         //     <SafeAreaView style={{ flex: 1 }}>

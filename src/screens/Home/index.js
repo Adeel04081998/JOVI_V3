@@ -157,6 +157,8 @@ export default () => {
                             uriKey="promoImg"
                             containerStyle={homeStyles.imageCarousal}
                             height={170}
+                            autoPlay
+                            autoPlayInterval={3}
                         />
                         <View style={homeStyles.wrapper}>
                             <Search colors={colors} homeStyles={homeStyles} fontSize={12} />
