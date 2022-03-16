@@ -296,12 +296,16 @@ export const secToHourMinSec = (sec = 1,) => {
 
 }//end of secToHourMinSec
 
-export const renderFile = picturePath => {
+export const renderFile = (picturePath = "") => {
     // console.log("[renderFile].picturePath", picturePath)
-    const userReducer = store.getState().userReducer;
-    return `${GV.BASE_URL.current}/api/Common/S3File/${encodeURIComponent(
-        picturePath,
-    )}?access_token=${userReducer?.token?.authToken}`;
+    const splitedPath = String(picturePath).split(":");
+    if (splitedPath.length && splitedPath[0] === "https") return picturePath;
+    else {
+        const userReducer = store.getState().userReducer;
+        return `${GV.BASE_URL.current}/api/Common/S3File/${encodeURIComponent(
+            picturePath,
+        )}?access_token=${userReducer?.token?.authToken}`;
+    }
 };
 
 export const renderPrice = (price, prefix = "Rs. ", suffix = "", reg = Regex.price,) => {
