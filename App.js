@@ -4,7 +4,7 @@ import { LogBox, Platform, StatusBar, StyleSheet, useColorScheme } from 'react-n
 import CodePush from "react-native-code-push"; //for codepush
 import Geolocation from 'react-native-geolocation-service';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import Toast from 'react-native-toast-message';
+import Toast, { BaseToast } from 'react-native-toast-message';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
@@ -20,6 +20,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import RNSplashScreen from './NativeModules/RNSplashScreen';
 import BottomAllignedModal from './src/components/atoms/BottomAllignedModal';
 import NoInternetModal from "./src/components/atoms/NoInternetModal";
+import { _toastRef } from "./src/components/atoms/Toast";
 import View from './src/components/atoms/View';
 import BaseUrlPrompt from "./src/components/molecules/BaseUrlPrompt";
 import Robot from './src/components/organisms/Robot';
@@ -135,7 +136,34 @@ const App = () => {
         "[react-native-gesture-handler] Seems like you\'re using an old API with gesture components, check out new Gestures system!",
     ]);
     navigator.geolocation = Geolocation;
-
+    const toastConfig = {
+        success: ({ text1, ...rest }) => (
+            <BaseToast
+                text1NumberOfLines={10}
+                text2NumberOfLines={10}
+                {...rest}
+                style={{ borderLeftColor: '#7359BE', height: 'auto', minHeight: 50, padding: 5 }}
+                contentContainerStyle={{ paddingHorizontal: 15, }}
+                text1Style={{ fontWeight: "900", fontSize: 14 }}
+                text1={text1}
+                text2={null}
+                onTrailingIconPress={() => Toast.hide()}
+            />
+        ),
+        error: ({ text1, ...rest }) => (
+            <BaseToast
+                text1NumberOfLines={10}
+                text2NumberOfLines={20}
+                {...rest}
+                style={{ borderLeftColor: '#EB297F', height: 'auto', minHeight: 50, padding: 5 }}
+                contentContainerStyle={{ paddingHorizontal: 15, }}
+                text1Style={{ fontWeight: '900', fontSize: 14 }}
+                text1={text1}
+                text2={null}
+                onTrailingIconPress={() => Toast.hide()}
+            />
+        )
+    };
     if (!state.appLoaded) return null;
     return (
         <SafeAreaProvider>
@@ -149,7 +177,13 @@ const App = () => {
                     </View>
                 </NavigationContainer>
                 <Robot />
-                <Toast />
+                <Toast
+                    // // config={toastConfig}
+                    // ref={ref => {
+                    //     _toastRef.current = ref;
+                    //     Toast.setRef(ref);
+                    // }} 
+                    />
                 <NoInternetModal />
             </SafeAreaView>
             <SharedGetApis />

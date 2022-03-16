@@ -1,6 +1,11 @@
+import React from 'react'
 import Toast from 'react-native-toast-message';
+
+export const _toastRef = React.createRef({});
+const _toastRefMessage = React.createRef("");
 export default {
     success: (message, visibilityTime = 3000, position = "top", autoHide = true, onShow = () => { }, onHide = () => { }, onPress = () => { }) => {
+        if (message.length === 0) return;
         Toast.show({
             type: "success",
             text1: 'Success',
@@ -14,6 +19,7 @@ export default {
         });
     },
     info: (message, visibilityTime = 3000, position = "top", autoHide = true, onShow = () => { }, onHide = () => { }, onPress = () => { }) => {
+        if (message.length === 0) return;
         Toast.show({
             type: "info",
             text1: 'Info',
@@ -27,6 +33,7 @@ export default {
         });
     },
     error: (message, visibilityTime = 3000, position = "top", autoHide = true, onShow = () => { }, onHide = () => { }, onPress = () => { }) => {
+        if (message.length === 0) return;
         Toast.show({
             type: "error",
             text1: 'Error',

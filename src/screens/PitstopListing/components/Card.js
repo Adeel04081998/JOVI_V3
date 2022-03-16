@@ -21,7 +21,7 @@ export default ({ colors, data = {}, onPressPitstop = () => { }, containerStyles
     const styles = cardStyles(colors, height, width);
     const renderBody = () => {
         return <>
-            <ImageBackground source={{ uri: renderFile(image) }} style={[styles.image, imageStyles]} tapToOpen={false} >
+            {/* <ImageBackground source={{ uri: renderFile(image) }} style={[styles.image, imageStyles]} tapToOpen={false} >
                 {(data.isClosed || data.isClose) &&
                     <View style={{
                         ...StyleSheet.absoluteFillObject,
@@ -45,7 +45,35 @@ export default ({ colors, data = {}, onPressPitstop = () => { }, containerStyles
                 }
                 <CardDealHover colors={colors} text={data?.discountTitle ?? ''} />
                 <CardDealHover colors={colors} text={data?.discountPercentage ?? ''} />
-            </ImageBackground>
+            </ImageBackground> */}
+            <View>
+                <Image source={{ uri: renderFile(image) }} style={[styles.image, imageStyles]} />
+                <View style={{ position: "absolute", ...StyleSheet.absoluteFillObject}} >
+                    {(data.isClosed || data.isClose) &&
+                        <View style={{
+                            ...StyleSheet.absoluteFillObject,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: 'rgba(0,0,0,0.5)',
+                            borderRadius: 10,
+                        }}>
+                            <View style={{
+                                backgroundColor: colors.primary,
+                                paddingVertical: constants.spacing_vertical,
+                                width: constants.window_dimensions.width * 0.3,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                borderRadius: 10,
+                            }}>
+                                <Text style={{ fontSize: 12, color: colors.white, }}>{`Opens`}</Text>
+                                <Text fontFamily="PoppinsMedium" style={{ fontSize: 16, textAlign: "center", color: colors.white, }}>{`${data?.pitstopOpeningTimeStr ?? ''}`}</Text>
+                            </View>
+                        </View>
+                    }
+                    <CardDealHover colors={colors} text={data?.discountTitle ?? ''} />
+                    <CardDealHover colors={colors} text={data?.discountPercentage ?? ''} />
+                </View>
+            </View>
             <View style={styles.subContainer}>
                 <Text style={styles.title} numberOfLines={1} >{title}</Text>
                 {(distanceFromLocation || estTime) &&
