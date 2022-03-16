@@ -4,7 +4,7 @@ import { Appearance } from "react-native";
 const { THEME_VALUES } = GV;
 export default {
     getTheme: (themeValue = THEME_VALUES.DEFAULT, isDarkMode = Appearance.getColorScheme() === "dark") => {
-        let initTheme = isDarkMode ? colors.dark_mode : colors.light_mode;
+        let initTheme = isDarkMode ? colors.light_mode : colors.light_mode;
         if(themeValue === THEME_VALUES.ALL){
             return {
                 ...initTheme.default,

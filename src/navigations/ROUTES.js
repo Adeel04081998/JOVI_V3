@@ -111,6 +111,10 @@ const APP_DRAWER_ROUTES = {
         screen_name: "RATE_RIDER", // || Rate your jovi
         options: { animation: 'slide_from_bottom' },
     },
+    "OrderHistory": {
+        screen_name: "ORDER_HISTORY",
+        options: null,
+    },
 
 
 }

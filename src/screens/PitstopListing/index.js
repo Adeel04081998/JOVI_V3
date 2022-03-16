@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { Animated, Appearance, Easing, SafeAreaView, ScrollView } from 'react-native';
+import { Alert, Animated, Appearance, Easing, SafeAreaView, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
@@ -15,6 +15,7 @@ import ROUTES from '../../navigations/ROUTES';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
+import Advertisment from '../../components/atoms/Advertisment/index'
 
 import stylesheet from './styles';
 
@@ -30,6 +31,7 @@ import AllPitstopsListing from './components/AllPitstopsListing';
 import CardLoader from './components/CardLoader';
 import Categories from './components/Categories';
 import Filters from './components/Filters';
+import ENUMS from '../../utils/ENUMS';
 
 
 const SPACING_VERTICAL = 10;
@@ -58,12 +60,14 @@ const PistopListing = ({ route }) => {
     const { height, width } = SCALE_IMAGE;
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]], Appearance.getColorScheme() === "dark");
     const listingStyles = stylesheet.styles(colors, width, height);
-    if (!isLoadedRef.current) {
-        isLoadedRef.current = true;
-        setInterval(() => {
+    React.useEffect(()=>{
+        if (!isLoadedRef.current) {
+            isLoadedRef.current = true;
             setState(pre => ({ ...pre, loaded: true }));
-        }, 300);
-    }
+            // setInterval(() => {
+            // }, 100);
+        }
+    },[]);
     const onBackPress = () => {
         NavigationService.NavigationActions.common_actions.goBack();
     }
@@ -210,7 +214,7 @@ const PistopListingChild = React.memo(({ route, }) => {
     }
     React.useEffect(() => {
         scrollEvent = null;
-        getAdvertisements();
+        // getAdvertisements();
     }, [])
     const renderFilters = () => (<View style={{ ...listingStyles.wrapper, paddingBottom: 0, zIndex: 100, paddingTop: SPACING_VERTICAL }}>
         <Search
@@ -250,14 +254,24 @@ const PistopListingChild = React.memo(({ route, }) => {
             })
         }]
     }}>
-        <ImageCarousel
+        <Advertisment adTypes={[ENUMS.ADVERTISMENT_TYPE.VENDOR_LISTING]}
+            // pitstopType={PITSTOP_TYPES.RESTAURANT}
+            colors={colors}
+            onAdPressCb={() => {
+                Alert.alert("Ahmed Chutya")
+                
+            }}
+        />
+
+
+        {/* <ImageCarousel
             // aspectRatio={16 / 7}
             data={promotionsReducer?.dashboardContentListViewModel?.dashboardPromoListVM ?? []} // Hardcoded url added for QA testing only if there is no data in db => Mudassir
             uriKey="promoImg"
             containerStyle={{ ...listingStyles.imageCarousal }}
             height={128}
             theme={colors}
-        />
+        /> */}
         <View style={{ ...listingStyles.wrapper, paddingBottom: SPACING_VERTICAL, marginHorizontal: 0 }}>
             {vendorDashboardCategoryIDReducer.map((item, index) => {
                 return (

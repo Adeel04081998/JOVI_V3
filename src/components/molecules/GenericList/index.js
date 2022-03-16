@@ -74,7 +74,7 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
 
     const cardTypeUI = {
         1: (item, index) => {
-            console.log("[cardTypeUI].item", item);
+            // console.log("[cardTypeUI].item", item);
             const { title, description, image, averagePrice, estTime, distance } = item;
             const DISTANCE = distance || estTime;
             return (
@@ -131,7 +131,7 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
     if (!data)
         return null
 
-    console.log("data...", data.vendorList[0]);
+    // console.log("data...", data.vendorList[0]);
     return (
         <View style={{ paddingBottom: SPACING_BOTTOM }}>
             {/* {

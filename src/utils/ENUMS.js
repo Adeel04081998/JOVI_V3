@@ -1,6 +1,22 @@
 import svgs from "../assets/svgs"
 
 export default {
+    "ADVERTISMENT_TYPE": {
+        "HOME": 1,
+        "VENDOR_LISTING": 2,
+        "SPECIFIC_VENDOR": 3,
+        "POPUP_AD": 4,
+    },
+    "FIRESTORE_STRUCTURE": [
+        {
+            text: "Digital Inventory",
+            value: 1
+        },
+        {
+            text: "Behaviour Log",
+            value: 2
+        },
+    ],
     "NETWORK_LIST": [
         {
             "text": "Jazz",

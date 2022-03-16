@@ -4,12 +4,12 @@ import constants from '../../res/constants'
 import { initColors } from '../../res/colors';
 import View from './View';
 import Text from './Text';
-const DATA = [{ title: "Browsing" }, { title: "Cart" }, { title: "Checkout" }];
+const DEFAULT_DATA = [{ title: "Browsing" }, { title: "Cart" }, { title: "Checkout" }];
 const CIRCLE_HEIGHT = 20;
 const { width, height } = constants.screen_dimensions;
-export default ({ maxHighlight = 0 }) => {
+export default ({ maxHighlight = 0, DATA = DEFAULT_DATA, hideText = false, containerStyle = {}, selectedBarStyle = {}, selectedCircleStyle = {}, invert = false }) => {
     const colors = initColors;
-    const styles = _styles(colors);
+    const styles = _styles(colors, DATA.length);
     const StrEnum = {
         "0": "Browsing",
         "1": "Cart",
@@ -37,31 +37,44 @@ export default ({ maxHighlight = 0 }) => {
                 {
                     DATA.map((p, i) => (
                         <React.Fragment key={`progress-key-${i}`}>
-                            <View style={[styles.bar, { backgroundColor: highlight(i) }]} />
-                            <View style={[styles.circle, { borderColor: highlight(i) }]} />
+                            {invert ?
+                                <>
+                                    <View style={[styles.circle, { borderColor: highlight(i) }, selectedCircleStyle]} />
+                                    {i !== DATA.length - 1 &&
+                                        <View style={[styles.bar, { backgroundColor: highlight(i) }, selectedBarStyle]} />
+                                    }
+                                </>
+                                :
+                                <>
+                                    <View style={[styles.bar, { backgroundColor: highlight(i) }, selectedBarStyle]} />
+                                    <View style={[styles.circle, { borderColor: highlight(i) }, selectedCircleStyle]} />
+                                </>
+                            }
                         </React.Fragment>
                     ))
                 }
-                <View style={{ width, backgroundColor: colors.grey, paddingVertical: 2 }} />
+                <View style={[{ backgroundColor: colors.grey, paddingVertical: 2 }, containerStyle]} />
 
             </View>
-            <View style={{ flexDirection: "row", alignItems: "center", paddingVertical: 1 }}>
-                {
-                    DATA.map((p, i) => (
-                        <React.Fragment key={`progress-key-${i}`} >
-                            <View style={{ width: (width + (CIRCLE_HEIGHT * 2)) / 7 }} />
-                            <Text style={{ color: highlight(i), fontSize: 12, paddingLeft: _paddingLeft(i) }} fontFamily="PoppinsRegular">{StrEnum[i]}</Text>
-                        </React.Fragment>
-                    ))
-                }
-            </View>
+            {!hideText &&
+                <View style={{ flexDirection: "row", alignItems: "center", paddingVertical: 1 }}>
+                    {
+                        DATA.map((p, i) => (
+                            <React.Fragment key={`progress-key-${i}`} >
+                                <View style={{ width: (width + (CIRCLE_HEIGHT * 2)) / 7 }} />
+                                <Text style={{ color: highlight(i), fontSize: 12, paddingLeft: _paddingLeft(i) }} fontFamily="PoppinsRegular">{StrEnum[i]}</Text>
+                            </React.Fragment>
+                        ))
+                    }
+                </View>
+            }
         </>
     )
 }
 
-const _styles = (colors = initColors) => StyleSheet.create({
+const _styles = (colors = initColors, len) => StyleSheet.create({
     bar: {
-        width: (width - CIRCLE_HEIGHT * 3) / 4, backgroundColor: colors.primary, paddingVertical: 2
+        width: (width - CIRCLE_HEIGHT * len) / len, backgroundColor: colors.primary, paddingVertical: 2
     },
     circle: {
         height: CIRCLE_HEIGHT, width: CIRCLE_HEIGHT, borderRadius: CIRCLE_HEIGHT / 2, borderWidth: 3, borderColor: colors.primary, backgroundColor: colors.white

@@ -35,10 +35,11 @@ interface ImageCarouselProps {
   paginationContainerStyle?: StyleProp<ViewStyle>;
   paginationDotStyle?: StyleProp<ViewStyle>;
 
-  onActiveIndexChanged?: (index: number) => void;
+  onActiveIndexChanged?: (item: any, index: number) => void;
   aspectRatio?: number | undefined;
   theme: Object;
-  onPress?: (item: any) => void;
+  onPress?: (item: any, index: any) => void;
+  onLoadEnd?: (item: any, index: any) => void;
 }
 const defaultProps = {
   autoPlay: false,
@@ -59,6 +60,7 @@ const defaultProps = {
   uriKey: "",
   theme: {},
   onPress: undefined,
+  onLoadEnd: undefined
 };
 
 let timer: any = null;
@@ -146,7 +148,12 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
 
   React.useEffect(() => {
     skipHandleView.current = true;
-    props.onActiveIndexChanged && props.onActiveIndexChanged(currentIndex);
+    if (props.onActiveIndexChanged) {
+
+      const item = dataWithPlaceholders[currentIndex];
+      props.onActiveIndexChanged(item, currentIndex);
+
+    }
     if (timer && flatListRef.current) {
       flatListRef.current.scrollToIndex({
         index: currentIndex < dataWithPlaceholders.length - 1 ? currentIndex : 0,
@@ -174,7 +181,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
             return <View />;
           }
           return (
-            <TouchableOpacity activeOpacity={0.8} key={index} onPress={() => { props.onPress && props.onPress(item); }} disabled={!(props?.onPress ?? false) ? true : false}>
+            <TouchableOpacity activeOpacity={0.8} key={index} onPress={() => { props.onPress && props.onPress(item, index); }} disabled={!(props?.onPress ?? false) ? true : false}>
               <View style={[{
                 width: props.width ?? ITEM_WIDTH,
                 // backgroundColor: "blue"
@@ -187,8 +194,9 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
                     ...VALIDATION_CHECK(props.aspectRatio) && {
                       aspectRatio: props.aspectRatio,
                     }
-
-                  }]} />
+                  }]}
+                    onLoadEnd={() => { props.onLoadEnd && props.onLoadEnd(item, index) }}
+                  />
                 </View>
               </View>
             </TouchableOpacity>

@@ -15,6 +15,10 @@ import constants from '../res/constants';
 import ENUMS from '../utils/ENUMS';
 import GV, { ORDER_STATUSES, PITSTOP_TYPES } from '../utils/GV';
 import Regex from '../utils/Regex';
+import firestore from '@react-native-firebase/firestore'
+import dayjs from 'dayjs';
+import { hybridLocationPermission } from './Location';
+
 const dispatch = store.dispatch;
 export const sharedGetDeviceInfo = async () => {
     let model = DeviceInfo.getModel();
@@ -945,8 +949,11 @@ export const sharedOnCategoryPress = (item, index) => {
 }
 
 export const sharedGetCurrentLocation = (onSuccess = () => { }, onError = () => { }) => {
+    hybridLocationPermission();
+
     navigator.geolocation?.getCurrentPosition(({ coords }) => onSuccess(coords),
         (error) => {
+            console.log("error==>", error);
             if (error) {
                 // CustomToast.error("An error accured while fetching your current location, please try again.")
                 onError(error)
@@ -980,6 +987,38 @@ export const sharedRiderRating = (orderID = 0, currentRoute = null) => {
     // }else{
     //     NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.RateRider.screen_name,{orderID});
     // }
+}
+export const sharedAddUpdateFirestoreRecord = async (data = {}) => {
+
+    try {
+        // console.log("if sharedAddUpdateFirestoreRecord data=>>>", data);
+        sharedGetCurrentLocation(async (coords) => {
+            let adsCollection = null
+            const db = firestore()
+            let userID, hardwareID = ""
+            let time = dayjs().format("DD-MM-YYYY  HH")
+            const DATE_TIME_FORMATE = dayjs().format("DD-MM-YYYY  HH:mm:ss")
+            hardwareID = (await sharedGetDeviceInfo()).deviceID
+            const userReducer = store.getState().userReducer;
+            const curentDateTime = new Date().getTime()
+            if (!userID) {
+                userID = userReducer.id
+                concatedId = `${userID}-${hardwareID}-${curentDateTime}`
+            }
+            if (!adsCollection) adsCollection = db.collection(ENUMS.FIRESTORE_STRUCTURE[0].text)
+            adsCollection.doc(time).set({ createdAt: DATE_TIME_FORMATE });
+            adsCollection.doc(time).collection(ENUMS.FIRESTORE_STRUCTURE[1].text).doc(concatedId).set({ ...data, userID, latitude: coords.latitude, longitude: coords.longitude, createdAt: DATE_TIME_FORMATE })
+        }, err => {
+            console.log("err", err);
+            sharedExceptionHandler(err)
+
+        })
+
+    } catch (error) {
+        sharedExceptionHandler(error)
+        console.log("firestore error=>", error);
+
+    }
 }
 
 export const sharedGetFinalDestintionRequest = () => {

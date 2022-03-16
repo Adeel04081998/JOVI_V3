@@ -8,7 +8,8 @@ import constants from "../../../res/constants";
 import AppStyles from "../../../res/AppStyles";
 import Text from "../../atoms/Text";
 import FontFamily from "../../../res/FontFamily";
-import { VALIDATION_CHECK } from "../../../helpers/SharedActions";
+import { renderPrice, VALIDATION_CHECK } from "../../../helpers/SharedActions";
+import ENUMS from "../../../utils/ENUMS";
 
 // #region :: INTERFACE START's FROM HERE 
 const WINDOW_WIDTH = Dimensions.get('window').width;
@@ -17,7 +18,10 @@ interface ProductCardItem {
     title?: string;
     description?: string;
     price?: string;
+    discount?: string | number;
+    discountAmount?: string | number;
     image: ImageSourcePropType;
+    discountType?: typeof ENUMS.PROMO_VALUE_TYPE,
 }
 
 type Props = React.ComponentProps<typeof Animated.View> & {
@@ -78,13 +82,52 @@ const ProductCard = (props: Props) => {
                         tapToOpen={false}
                     />
 
-                    <Text style={styles.title} numberOfLines={1}>{`${propItem.title}`}</Text>
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                        <Text style={{ ...styles.title, flex: 1 }} numberOfLines={1}>{`${propItem.title}`}</Text>
+                        {/* ****************** Start of DISCOUNT TYPE ****************** */}
+                        {parseInt(`${propItem.discountType}`) !== parseInt(`${ENUMS.PROMO_VALUE_TYPE.Empty.value}`) &&
+                            <View style={styles.discountTypeContainer}>
+                                {(parseInt(`${propItem.discountType}`) === parseInt(`${ENUMS.PROMO_VALUE_TYPE.Percentage.value}`) && (propItem?.discountAmount ?? 0) > 0) && (
+                                    <>
+                                        <Text style={styles.discountTypeText} numberOfLines={1}>{`${renderPrice({ price: propItem.discountAmount, showZero: true }, '-', '%', /[^\d.]/g)}`}</Text>
+                                    </>
+                                )
 
-                    <Text style={{...styles.description,
-                    height:40,
+                                }
+                            </View>
+                        }
+
+                        {/* ****************** End of DISCOUNT TYPE ****************** */}
+                    </View>
+
+                    <Text style={{
+                        ...styles.description,
+                        height: 40,
                     }} numberOfLines={2}>{`${propItem.description}`}</Text>
 
-                    <Text style={styles.price}>{`${propItem.price}`}</Text>
+                    {VALIDATION_CHECK(propItem.price) &&
+                        <View style={{ flexDirection: "row", alignItems: "center", }}>
+
+                            {/* ****************** Start of PRICE CHARGE FROM CUSTOMER ****************** */}
+                            <Text style={styles.price}>{`${propItem.price}`}</Text>
+
+                            {/* ****************** End of PRICE CHARGE FROM CUSTOMER ****************** */}
+
+
+                            {/* ****************** Start of DISCOUNT PRICE ****************** */}
+                            {((propItem?.discount ?? 0) > 0 && (propItem?.discountAmount ?? 0) > 0) &&
+                                <Text style={{
+                                    ...styles.discountPrice,
+                                    marginLeft: 6,
+                                }} numberOfLines={1}>{renderPrice(propItem.discount)}</Text>
+                            }
+
+                            {/* ****************** End of DISCOUNT PRICE ****************** */}
+
+                        </View>
+                    }
+
+                    {/* <Text style={styles.price}>{`${propItem.price}`}</Text> */}
 
                 </>
             }
@@ -97,6 +140,26 @@ export default React.memo(ProductCard);
 
 // #region :: STYLES START's FROM HERE 
 const stylesFunc = (colors: typeof initColors) => StyleSheet.create({
+    discountPrice: {
+        color: "#C1C1C1",
+        fontSize: 12,
+        textDecorationLine: "line-through",
+        textDecorationColor: '#C1C1C1',
+        textAlign: "center",
+    },
+    discountTypeText: {
+        color: colors.primary,
+        fontSize: 10,
+    },
+    discountTypeIcon: { marginRight: 4, },
+    discountTypeContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        // marginTop: -6,
+        marginLeft: 10,
+        marginRight: 10,
+    },
+
     price: {
         color: colors.primary,
         fontSize: 15,
