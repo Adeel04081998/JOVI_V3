@@ -3017,4 +3017,22 @@ joviMan:(color="#fff")=>(`<svg xmlns="http://www.w3.org/2000/svg" width="7.468" 
 </g>
 </svg>`),
 
+  modalClosedIcon: () => `<svg xmlns="http://www.w3.org/2000/svg" id="Component_463_1" data-name="Component 463 – 1" width="102.681" height="50.001" viewBox="0 0 102.681 50.001">
+    <path id="Subtraction_1" data-name="Subtraction 1" d="M-281.319-6753H-381a24.834,24.834,0,0,0,17.667-7.332A24.831,24.831,0,0,0-356-6778a24.844,24.844,0,0,1,1.965-9.731,24.915,24.915,0,0,1,5.358-7.946,24.914,24.914,0,0,1,7.947-5.358A24.844,24.844,0,0,1-331-6803a24.844,24.844,0,0,1,9.731,1.965,24.913,24.913,0,0,1,7.947,5.358,24.916,24.916,0,0,1,5.358,7.946A24.844,24.844,0,0,1-306-6778a25.09,25.09,0,0,0,24.68,25Zm-100,0H-384v-.178a25.421,25.421,0,0,0,2.683.176Z" transform="translate(384 6803)" fill="#fff"/>
+    <path id="Icon_ionic-ios-arrow-down" data-name="Icon ionic-ios-arrow-down" d="M12.471,16.264l4.75-4.754a.894.894,0,0,1,1.268,0,.905.905,0,0,1,0,1.272l-5.382,5.386a.9.9,0,0,1-1.238.026L6.449,12.785a.9.9,0,0,1,1.268-1.272Z" transform="translate(65.469 30.429) rotate(180)" fill="#6b6b6b"/>
+    <path id="Icon_ionic-ios-arrow-down-2" data-name="Icon ionic-ios-arrow-down" d="M12.471,16.264l4.75-4.754a.894.894,0,0,1,1.268,0,.905.905,0,0,1,0,1.272l-5.382,5.386a.9.9,0,0,1-1.238.026L6.449,12.785a.9.9,0,0,1,1.268-1.272Z" transform="translate(65.469 39.429) rotate(180)" fill="#6b6b6b"/>
+    <path id="Icon_ionic-ios-arrow-down-3" data-name="Icon ionic-ios-arrow-down" d="M12.471,16.264l4.75-4.754a.894.894,0,0,1,1.268,0,.905.905,0,0,1,0,1.272l-5.382,5.386a.9.9,0,0,1-1.238.026L6.449,12.785a.9.9,0,0,1,1.268-1.272Z" transform="translate(65.469 48.429) rotate(180)" fill="#6b6b6b"/>
+  </svg>`,
+  orderBottomBar: () => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24.44" height="28.057" viewBox="0 0 24.44 28.057">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_20602" data-name="Rectangle 20602" width="24.44" height="28.057" fill="#a3abb4"/>
+    </clipPath>
+  </defs>
+  <g id="Group_15080" data-name="Group 15080" clip-path="url(#clip-path)">
+    <path id="Path_27018" data-name="Path 27018" d="M22.8,144.977H1.642A2.041,2.041,0,0,1,0,142.588V125.533H24.439v8.126q0,4.615,0,9.23a2.086,2.086,0,0,1-.535,1.48,2.374,2.374,0,0,1-1.109.608m-11.683-9.582c-.472-.475-.917-.931-1.373-1.378a.821.821,0,1,0-1.156,1.162q.952.964,1.917,1.916a.812.812,0,0,0,1.237,0q2.087-2.075,4.16-4.163a1.076,1.076,0,0,0,.265-.464.78.78,0,0,0-.4-.881.8.8,0,0,0-.961.129c-.493.474-.972.963-1.456,1.447l-2.235,2.236" transform="translate(0 -116.92)" fill="#a3abb4"/>
+    <path id="Path_27019" data-name="Path 27019" d="M19.777,0V6.927H8.983c.051-.1.087-.178.131-.254,1.1-1.913,2.209-3.823,3.3-5.74A1.713,1.713,0,0,1,14.029,0c1.818.008,3.635,0,5.453,0Z" transform="translate(-8.367 -0.001)" fill="#a3abb4"/>
+    <path id="Path_27020" data-name="Path 27020" d="M190.77,6.959V.052c.083,0,.169-.011.255-.011h5.505A1.6,1.6,0,0,1,198,.869q1.727,2.967,3.441,5.942c.022.039.039.081.071.148Z" transform="translate(-177.68 -0.037)" fill="#a3abb4"/>
+  </g>
+</svg>`,
 }

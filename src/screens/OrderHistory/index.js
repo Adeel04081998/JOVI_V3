@@ -77,7 +77,7 @@ export default ({ navigation, route }) => {
                     )}
                     rightCustom={(
                         <TouchableScale wait={0} onPress={() => {
-                            NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name, { orderID: orderID }, ROUTES.APP_DRAWER_ROUTES.OrderChat.screen_name)
+                            NavigationService.NavigationActions.common_actions.goBack();
                         }} style={customheaderStyles.iconContainer}>
                             <SvgXml xml={svgs.hamburgerHome(colors.primary)} height={HEADER_ICON_SIZE} width={HEADER_ICON_SIZE} />
                         </TouchableScale>
@@ -241,8 +241,6 @@ export default ({ navigation, route }) => {
     return (
         <View style={styles.primaryContainer}>
             {_renderHeader()}
-
-
 
             <FlatList
                 data={data.historyData}

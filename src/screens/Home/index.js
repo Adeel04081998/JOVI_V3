@@ -3,7 +3,9 @@ import LottieView from "lottie-react-native";
 import React, { useState } from 'react';
 import { Animated, Appearance, Easing, ScrollView } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
+import { SvgXml } from "react-native-svg";
 import { useDispatch, useSelector } from 'react-redux';
+import svgs from "../../assets/svgs";
 import AddressesList from "../../components/atoms/FinalDestination/AddressesList";
 import SafeAreaView from "../../components/atoms/SafeAreaView";
 import Text from "../../components/atoms/Text";
@@ -15,6 +17,8 @@ import BottomBarComponent from '../../components/organisms/BottomBarComponent';
 import { sharedConfirmationAlert, sharedExceptionHandler, sharedLogoutUser, sharedOrderNavigation } from "../../helpers/SharedActions";
 import { getRequest } from "../../manager/ApiManager";
 import Endpoints from "../../manager/Endpoints";
+import NavigationService from "../../navigations/NavigationService";
+import ROUTES from "../../navigations/ROUTES";
 import preference_manager from "../../preference_manager";
 import ReduxActions from '../../redux/actions';
 import theme from "../../res/theme";
@@ -22,6 +26,7 @@ import GV from "../../utils/GV";
 import AvatarAlert from "./components/AvatarAlert";
 import Categories from './components/Categories';
 import Greetings from './components/Greetings';
+import RenderBottomBarComponent from "./components/RenderBottomBarComponent";
 import Search from './components/Search';
 import stylesheet from './styles';
 export default () => {
@@ -181,18 +186,7 @@ export default () => {
                     </KeyboardAwareScrollView>
                 </Animated.View>}
             </SafeAreaView>
-            <BottomBarComponent leftData={[{ id: 1, iconName: "home", title: "Home" }, { id: 2, iconName: "person", title: "Profile" }]} rightData={[{ id: 3, iconName: "wallet", title: "Wallet" }, {
-                id: 4, iconType: "AntDesign", iconName: "logout", title: "Logout", onPress: () => {
-                    sharedConfirmationAlert("Alert", "Log me out and remove all the cache?",
-                        [
-                            { text: "No", onPress: () => { } },
-                            {
-                                text: "Yes", onPress: () => preference_manager.clearAllCacheAsync().then(() => sharedLogoutUser())
-                            },
-                        ]
-                    )
-                }
-            }]} />
+            <RenderBottomBarComponent />
         </View>
     );
 };
