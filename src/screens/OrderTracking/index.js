@@ -49,9 +49,13 @@ export default ({ route }) => {
         orderEstimateTimeRange: ' - ',
         totalActivePitstops: 0,
     });
+    const [estimateTime, setEstimateTime] = React.useState({
+        orderEstimateTimeViewModel: {},
+    });
     const [realtimeChangingState, setRealTimeState] = React.useState({
         riderLocation: null,
     });
+    const [modalOpened,setModalOpened] = React.useState(true);
     const [componentLoaded, setComponentLoaded] = React.useState(false);
     const circleColor = state.subStatusName === ORDER_STATUSES.RiderFound ? '#37c130' : colors.primary;
     const isRiderFound = state.subStatusName === ORDER_STATUSES.RiderFound;
@@ -59,6 +63,7 @@ export default ({ route }) => {
     const loadAnimation = React.useRef(new Animated.Value(0)).current;
     const loadAnimationCurrentValue = React.useRef(0);
     const fetchRiderLocationRef = React.useRef(null);
+    const fetchOrderEstimationRef = React.useRef(null);
     const renderUI = {
         [ORDER_STATUSES.TransferProblem]: () => renderProcessingUI(),
         [ORDER_STATUSES.RiderProblem]: () => renderProcessingUI(),
@@ -106,7 +111,7 @@ export default ({ route }) => {
                     if (i === (totalActivePitstops.length - 1)) return;
                     const pitstopType = item.catID === '0' ? 2 : parseInt(item.catID);
                     const focusedPitstop = ENUMS.PITSTOP_TYPES.filter(pt => pt.value === pitstopType)[0];
-                     if (!currentPitstop && item.joviJobStatus !== 2 && item.joviJobStatus !== 7) {
+                    if (!currentPitstop && item.joviJobStatus !== 2 && item.joviJobStatus !== 7) {
                         currentPitstop = { ...item, index: i };
                     }
 
@@ -118,6 +123,7 @@ export default ({ route }) => {
                 if (!currentPitstop) {
                     currentPitstop = { ...res.data.order.pitStopsList[res.data.order.pitStopsList.length - 1], index: totalActivePitstops.length - 1 };
                 }
+                fetchOrderEstimateInterval();
                 setState(pre => ({ ...pre, ...res.data.order, pitStopsList: updatedPitstops, totalActivePitstops, currentPitstop, progress: progress, isLoading: false, circularPitstops }))
                 // setState(pre => ({ ...pre, ...res.data.order, pitStopsList: updatedPitstops, currentPitstop, progress: res.data.order.completedJobPercentage, isLoading: false, circularPitstops }))
             } else {
@@ -160,6 +166,28 @@ export default ({ route }) => {
         }
         fetchRiderLocationRef.current = setInterval(fetchRiderLocationRequest, (userReducer?.fetchRiderLocationInterval || 5) * 1000);
     }
+    const fetchOrderEstimateInterval = () => {
+        const fetchOrderEstimation = () => {
+            if (!isFocused) return;
+            getRequest(Endpoints.OrderEstimateTime + '/' + orderIDParam, (res) => {
+                if (res.data.statusCode === 200) {
+                    setEstimateTime(pre => ({
+                        ...pre,
+                        orderEstimateTimeViewModel: res.data.orderEstimateTimeViewModel,
+                        orderEstimateTime: res.data.orderEstimateTime,
+                        estimateTime: res.data.estimateTime,
+                    }));
+                }
+                console.log('res [fetchOrderEstimation] - ', res);
+            }, () => { }, {}, false);
+        }
+        if (fetchOrderEstimationRef.current) {
+            clearInterval(fetchOrderEstimationRef.current);
+        } else if (!fetchOrderEstimationRef.current) {
+            fetchOrderEstimation();
+        }
+        fetchOrderEstimationRef.current = setInterval(fetchOrderEstimation, (userReducer?.fetchOrderEstimateTimeInterval || 5) * 1000);
+    }
     const goToHome = () => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
     }
@@ -184,6 +212,8 @@ export default ({ route }) => {
             if (finished) {
                 if(firstTimeLoad){
                     setComponentLoaded(true);
+                }else{
+                    setModalOpened(toValue === 1);
                 }
                 loadAnimationCurrentValue.current = toValue;
             }
@@ -195,6 +225,9 @@ export default ({ route }) => {
         return () => {
             if (fetchRiderLocationRef.current) {
                 clearInterval(fetchRiderLocationRef.current);
+            }
+            if (fetchOrderEstimationRef.current) {
+                clearInterval(fetchOrderEstimationRef.current);
             }
         }
     }, []);
@@ -218,10 +251,11 @@ export default ({ route }) => {
 
     }
     const renderTime = (timeFontSize = 22, minutesUI = 10) => {
-        return <>
-            <Text style={{ fontSize: timeFontSize, color: 'black', fontWeight: 'bold' }} fontFamily={'PoppinsBold'} >{isRiderFound && state.currentPitstop ? state.currentPitstop.pitstopEstimateTime : state.orderEstimateTimeRange}</Text>
+        let opacity = !estimateTime.orderEstimateTimeViewModel.orderEstimateTimeStr?0:1;
+        return <View style={{opacity:opacity}}>
+            <Text style={{ fontSize: timeFontSize, color: 'black', fontWeight: 'bold' }} fontFamily={'PoppinsBold'} >{" "}{estimateTime.orderEstimateTimeViewModel?.orderEstimateTimeStr?.replace('min','')?.trim()}</Text>
             <Text style={{ fontSize: minutesUI, marginTop: 5, justifyContent: 'center', alignItems: 'center', textAlign: 'center' }} >{` minutes \nuntil delivered`}</Text>
-        </>
+        </View>
     }
     const renderTimeUI = (noCircle = false) => {
         return <>
@@ -310,10 +344,22 @@ export default ({ route }) => {
                     customCenter={state.currentPitstop}
                     smoothRiderPlacement
                     onMapPress={() => {
-                        modalAnimation(loadAnimationCurrentValue.current===0?1:0);
+                        if(loadAnimationCurrentValue.current===0){
+                            return;
+                        }
+                        modalAnimation(0);
                     }}
                 />}
             </Animated.View>
+            {
+                !modalOpened?<TouchableOpacity onPress={()=>{
+                    modalAnimation(1);
+                }} style={{position:'absolute',bottom:0,width:'100%',display:'flex',alignContent:'center',justifyContent:'center'}}>
+                    <SvgXml xml={svgs.modalClosedIcon()} style={{alignSelf:'center'}}/>
+                </TouchableOpacity>
+                :
+                <></>
+            }
             {/* <PanGestureHandler
                 onGestureEvent={onPanGestureEvent}
                 onHandlerStateChange={onHandlerStateChange}

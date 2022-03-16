@@ -48,6 +48,7 @@ export default {
     "GetRiderLocation": "api/User/Customer/GetRidersLatestLocation",
     "GET_RIDER_ORDER_RATING_REASON": "api/Order/Rating/Reasons", //USED IN RATE RIDER 
     "SUBMIT_RATING_FOR_RIDER_ORDER": "api/Order/OrderRating", //USED IN RATE RIDER 
+    "OrderEstimateTime": "api/Order/OrderEstimateTimeV2", //Order Estimate Time
 }
 
 
