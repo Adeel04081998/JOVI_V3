@@ -39,7 +39,7 @@ import OrderPitstops from '../screens/OrderTracking/OrderScreens/OrderPitstops';
 
 const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES, APP_DRAWER_ROUTES, APP_DRAWER_STACK } = ROUTES;
 const AppDrawerStack = (props) => {
-    return <Stack.Navigator screenOptions={stackOpts} initialRouteName={APP_DRAWER_ROUTES.OrderHistory.screen_name} >
+    return <Stack.Navigator screenOptions={stackOpts} initialRouteName={APP_DRAWER_ROUTES.Home.screen_name} >
         {(APP_DRAWER_STACK || []).map((routeInfo, index) => (
             <Stack.Screen
                 key={`AppDrawerss-Screen-key-${index}-${routeInfo.id}`}
