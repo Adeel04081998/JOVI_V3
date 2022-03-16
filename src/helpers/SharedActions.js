@@ -982,47 +982,33 @@ export const sharedRiderRating = (orderID = 0, currentRoute = null) => {
     // }
 }
 export const sharedAddUpdateFirestoreRecord = async (data = {}) => {
+
     try {
-
-
-        let latitude = null
-        let longitude = null
-        sharedGetCurrentLocation((coords) => {
-            console.log("coord", coords);
-            latitude = coords?.latitude
-            longitude = coords?.longitude
-
+        // console.log("if sharedAddUpdateFirestoreRecord data=>>>", data);
+        sharedGetCurrentLocation(async (coords) => {
+            let adsCollection = null
+            const db = firestore()
+            let userID, hardwareID = ""
+            let time = dayjs().format("DD-MM-YYYY  HH")
+            const DATE_TIME_FORMATE = dayjs().format("DD-MM-YYYY  HH:mm:ss")
+            hardwareID = (await sharedGetDeviceInfo()).deviceID
+            const userReducer = store.getState().userReducer;
+            const curentDateTime = new Date().getTime()
+            if (!userID) {
+                userID = userReducer.id
+                concatedId = `${userID}-${hardwareID}-${curentDateTime}`
+            }
+            if (!adsCollection) adsCollection = db.collection(ENUMS.FIRESTORE_STRUCTURE[0].text)
+            adsCollection.doc(time).set({ createdAt: DATE_TIME_FORMATE });
+            adsCollection.doc(time).collection(ENUMS.FIRESTORE_STRUCTURE[1].text).doc(concatedId).set({ ...data, userID, latitude: coords.latitude, longitude: coords.longitude, createdAt: DATE_TIME_FORMATE })
         }, err => {
             console.log("err", err);
+            sharedExceptionHandler(err)
 
         })
-
-
-        const DATE_TIME_FORMATE = "DD-MM-YYYY  HH:mm:ss";
-        let adsCollection = null
-        const db = firestore()
-        let time = dayjs().format("DD-MM-YYYY  HH")
-        adsCollection = db.collection("Adeel")
-        adsCollection.doc(time).set({ createdAt: dayjs().format(DATE_TIME_FORMATE) });
-        adsCollection.doc(time).collection("Adeel").doc('9811988198189812919821289').set({
-            // console.log("latitite=>", latitude)
-            ...data,
-            latitude: latitude,
-            longitude: longitude,
-            createdAt: dayjs().format(DATE_TIME_FORMATE)
-        })
-        console.log("hehre",
-            adsCollection.doc(time).collection("Adeel").doc('9811988198189812919821289').set({
-                // console.log("latitite=>", latitude)
-                ...data,
-                latitude: latitude,
-                longitude: longitude,
-                createdAt: dayjs().format(DATE_TIME_FORMATE)
-            })
-        );
-
 
     } catch (error) {
+        sharedExceptionHandler(error)
         console.log("firestore error=>", error);
 
     }

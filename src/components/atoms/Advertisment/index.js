@@ -10,11 +10,10 @@ import ImageCarousel from '../../molecules/ImageCarousel';
 import lodash from 'lodash'; // 4.0.8
 export default ({ adTypes = [], colors = {}, onAdPressCb = null }) => {
     const [data, setData] = useState([])
-    console.log("data=>", data);
+    // console.log("data", data);
+    const [isFirestoreHit, setisFirestoreHit] = useState(true)
     const onPressHandler = (item, index) => {
         sharedOnVendorPress(item, index)
-        // sharedAddUpdateFirestoreRecord(item)
-
     }
     const getAdvertisements = () => {
         postRequest(Endpoints.GET_ADVERTISEMENTS, {
@@ -28,22 +27,31 @@ export default ({ adTypes = [], colors = {}, onAdPressCb = null }) => {
     React.useEffect(() => {
         getAdvertisements();
     }, [])
+
     return (
-
-
         <ImageCarousel
             data={data ?? []}
             uriKey="advertisementFile"
-            containerStyle={{
-                borderRadius: 12,
-            }}
+            containerStyle={{ borderRadius: 12, }}
             height={138}
             paginationDotStyle={{ borderColor: 'red', backgroundColor: colors.primary, }}
             onPress={onPressHandler}
+            onActiveIndexChanged={(item, index) => {
+                if (isFirestoreHit) return
+                sharedAddUpdateFirestoreRecord(item)
+            }}
+            onLoadEnd={(item, index) => {
+                if (index === 0 && isFirestoreHit) {
+                    // console.log("if here isFirestoreHit", isFirestoreHit);
+                    sharedAddUpdateFirestoreRecord(item)
+                    setisFirestoreHit(false)
+
+                }
+            }}
 
 
 
         />
-
     )
+
 }
