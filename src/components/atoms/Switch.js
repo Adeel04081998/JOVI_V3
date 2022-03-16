@@ -29,7 +29,9 @@ export default (props) => {
         props.onToggleSwitch(bool)
     }
     const onPress = () => {
-        if (remainingAmount === 0) return Toast.error('Maximum amount reached!')
+        if (props.type === 1) {
+            if (remainingAmount === 0) return Toast.error('Maximum amount reached!')
+        }
         if (active) {
             Animated.timing(animatedValue, {
                 toValue: 4,

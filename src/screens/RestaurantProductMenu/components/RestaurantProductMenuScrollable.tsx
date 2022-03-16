@@ -92,11 +92,11 @@ const RestaurantProductMenuScrollable = (props: Props) => {
     // #endregion :: VERTICAL LAYOUT HANDLER END's FROM HERE 
 
     // #region :: ON HORIZONTAL ITEM PRESS  START's FROM HERE 
-    const handleScroll = (categoryID: any, name: any) => {
+    const handleScroll = (categoryID: any, name: any,skipAnimation=false) => {
         const content = tabs.current.find((singleTab: any) => singleTab.categoryID === categoryID);
         currentTabRef.current = content;
         scrollRef.current && scrollRef.current.scrollTo({ y: content.yy + 2 })
-
+        if(skipAnimation)return;
         Animated.timing(value, {
             toValue: content.x,
             duration: 200,
@@ -150,6 +150,10 @@ const RestaurantProductMenuScrollable = (props: Props) => {
             currentTabAnimation(tabs?.current[tabs?.current?.length - 1], tabs?.current?.length - 1);
             return;
         }
+        if (scrollY < 1) {
+            currentTabAnimation(tabs?.current[0], 0);
+            return;
+        }
         tabs.current.forEach((tab: any, i: number) => {
 
             if (!("height" in tab)) {
@@ -185,7 +189,10 @@ const RestaurantProductMenuScrollable = (props: Props) => {
         const [currentTabState, setCurrentTabState] = React.useState(props.data ? props.data[0] : {});
         React.useEffect(() => {
             if (Object.keys(currentTabState ?? {}).length === 0 && props.data.length > 0) {
+                setTimeout(() => {
                 setCurrentTabState(props.data[0]);
+            }, 100);
+
             }
         }, [props.data]);
         return (
@@ -194,7 +201,7 @@ const RestaurantProductMenuScrollable = (props: Props) => {
                     {props.data && props.data.map((food: any, i: number) => (
                         <TouchableScale
                             key={uniqueKeyExtractor()}
-                            onPress={e => handleScroll(food.categoryID, food.categoryName)}
+                            onPress={e => handleScroll(food.categoryID, food.categoryName,true)}
                             onLayout={e => handleTab(food.categoryID, food.categoryName, e.nativeEvent.layout, i)}
                             style={{
                                 backgroundColor: "#F2F1F6",
@@ -215,8 +222,12 @@ const RestaurantProductMenuScrollable = (props: Props) => {
                 }]}>
                     <Animated.View onLayout={() => {
                         if (currentTabRef.current?.name) {
-                            setCurrentTabState(currentTabRef.current);
+                            setTimeout(() => {
+                                setCurrentTabState(currentTabRef.current,);
+                            }, 100);
                         }
+
+
                     }} style={[style.indicator, {
                         width: widthValue,
                         height: 45,
@@ -281,7 +292,7 @@ const RestaurantProductMenuScrollable = (props: Props) => {
 
                 {props.renderAboveItems && props.renderAboveItems()}
 
-                <View style={{ paddingHorizontal: 0,paddingBottom:40}}>
+                <View style={{ paddingHorizontal: 0, paddingBottom: 40 }}>
                     {props.data && props.data.map((food: any, parentIndex: number) => {
                         return (
                             <View
@@ -329,6 +340,7 @@ const stylesFunc = (colors: typeof initColors) => StyleSheet.create({
     },
     indicator: {
         height: 3,
+        // position:'absolute',
         backgroundColor: colors?.primary ?? "#D70F64",
     },
     tab: {

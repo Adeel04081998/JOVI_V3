@@ -12,7 +12,7 @@ import CustomHeader from '../../components/molecules/CustomHeader';
 import GenericList from '../../components/molecules/GenericList';
 import ImageCarousel from '../../components/molecules/ImageCarousel';
 import BottomBarComponent from '../../components/organisms/BottomBarComponent';
-import { sharedConfirmationAlert, sharedExceptionHandler, sharedLogoutUser, sharedOrderNavigation } from "../../helpers/SharedActions";
+import { sharedConfirmationAlert, sharedExceptionHandler, sharedLogoutUser, sharedOrderNavigation, uniqueKeyExtractor } from "../../helpers/SharedActions";
 import { getRequest } from "../../manager/ApiManager";
 import Endpoints from "../../manager/Endpoints";
 import preference_manager from "../../preference_manager";
@@ -139,7 +139,7 @@ export default () => {
                                     {
                                         // [...userReducer.openOrders, ...userReducer.openOrders, ...userReducer.openOrders, ...userReducer.openOrders].map((item, i) => {
                                         userReducer.openOrders.map((item, i) => {
-                                            return <Text style={{ margin: 10, backgroundColor: colors.primary, color: colors.white, borderRadius: 5, padding: 5, textAlign: "center", paddingTop: 7 }} onPress={() => {
+                                            return <Text key={`userReducer.openOrders ${i}`} style={{ margin: 10, backgroundColor: colors.primary, color: colors.white, borderRadius: 5, padding: 5, textAlign: "center", paddingTop: 7 }} onPress={() => {
                                                 onOrderPress(item);
                                             }}>{item.orderID}</Text>
                                         })
@@ -168,7 +168,7 @@ export default () => {
 
                             {isFinalDestinationSelected && vendorDashboardCategoryIDReducer.map((item, index) => {
                                 return (
-                                    <View style={{ marginHorizontal: -10, }}>
+                                    <View key={uniqueKeyExtractor()} style={{ marginHorizontal: -10, }}>
                                         <GenericList vendorDashboardCatID={item.vendorDashboardCatID} textContainer={{ paddingHorizontal: 10 }} />
 
                                     </View>

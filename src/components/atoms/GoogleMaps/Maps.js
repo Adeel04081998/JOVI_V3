@@ -267,7 +267,7 @@ console.log('placeName ==>>>>',placeName);
 
   const renderCurrentLocationButton = () => {
     return (
-      <TouchableOpacity onPress={getCurrentPosition} style={{ bottom: HEIGHT * 0.1, position: "absolute", right: 10, zIndex: 6 }} >
+      <TouchableOpacity onPress={getCurrentPosition} style={{ bottom: 85, position: "absolute", right: 10, zIndex: 6 }} >
         <View style={styles.headerLeftIconView} >
           <SvgXml style={{ alignSelf: 'center', marginTop: 1.5 }} xml={svgs.locateMeIcon()} height={18} width={18} />
         </View>

@@ -118,8 +118,6 @@ const ScrollableList = (props: Props) => {
 
     // #region :: ON VERTICAL SCROLL START's FROM HERE 
     const handleOnScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-        console.log('[handleOnScroll].e ==>>>', e.nativeEvent);
-
         const scrollY = e.nativeEvent.contentOffset.y
         let updatedTap = tabs.current;
         const endReached = sharedHandleInfinityScroll(e);
@@ -190,12 +188,13 @@ const ScrollableList = (props: Props) => {
                 setCurrentTabState(props.data[0]);
             }
         }, [props.data]);
+        console.log('currentTabState ==>>>>', currentTabState);
+
         return (
             <View style={{ paddingTop: 5, height: 45, marginHorizontal: 10 }}>
                 <View style={[style.row]}>
                     {props.data && props.data.map((food: any, i: number) => (
                         <>
-                            {console.log('food ==>>>', food, 'i ==>>>', i)}
 
                             <TouchableScale
                                 key={uniqueKeyExtractor()}

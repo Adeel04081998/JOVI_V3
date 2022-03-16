@@ -181,11 +181,15 @@ const Recording = React.forwardRef((props: Props, ref) => {
         setStopAudioPlayer(true);
     };
 
+    const isRecording = () => micTimer
+
     React.useImperativeHandle(ref, () => ({
         setStopAudioPlayer,
         setStopRecording,
         recordingItem,
-    }), [setStopAudioPlayer])
+        micTimer,
+        isRecording
+    }), [setStopAudioPlayer, setStopRecording, isRecording])
     return (
         <>
             {(recordingItem) ?
@@ -228,8 +232,8 @@ const Recording = React.forwardRef((props: Props, ref) => {
                                 setStopRecording(false);
                             }}
                         />
-                    
-                        {micTimer ? renderMicTimer() :  props.caption !== '' && <Text style={{paddingLeft: 10, fontSize: 12, color: colors.black}} fontFamily={"PoppinsLight"} >{props.caption}</Text>}
+
+                        {micTimer ? renderMicTimer() : props.caption !== '' && <Text style={{ paddingLeft: 10, fontSize: 12, color: colors.black }} fontFamily={"PoppinsLight"} >{props.caption}</Text>}
                     </View>
 
                     {/* ****************** End of MIC ICON ****************** */}

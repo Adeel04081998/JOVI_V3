@@ -43,7 +43,6 @@ let closeSecondCard = false;
 let recordingItem = null;
 
 export default ({ navigation, route }) => {
-    console.log('recordingItem in jovi job --- ', recordingItem);
     const transition = (
         <Transition.Together>
             <Transition.Out
@@ -86,36 +85,36 @@ export default ({ navigation, route }) => {
             "title": "Pitstop Details",
             "desc": "What Would You Like Your Jovi To Do ?",
             "svg": svgs.pitstopPin(),
-            // "isOpened": false,
-            "isOpened": __DEV__ ? true : false,
+            "isOpened": false,
+            // "isOpened": __DEV__ ? true : false,
             "headerColor": colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["description"],
-            // "disabled": true,
-            "disabled": __DEV__ ? false : true,
+            "disabled": true,
+            // "disabled": __DEV__ ? false : true,
         },
         {
             "idx": 3,
             "title": "Estimated Waiting Time",
             "desc": "What Is The Estimated Time Of The Job ?",
             "svg": svgs.pitStopEstTime(),
-            // "isOpened": false,
-            "isOpened": __DEV__ ? true : false,
+            "isOpened": false,
+            // "isOpened": __DEV__ ? true : false,
             "headerColor": colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["estimated-time"],
-            // "disabled": true,
-            "disabled": __DEV__ ? false : true,
+            "disabled": true,
+            // "disabled": __DEV__ ? false : true,
         },
         {
             "idx": 4,
             "title": "Buy For Me ?",
             "desc": "Do You Want Us To Buy For You ?",
             "svg": svgs.pitStopBuy(),
-            "isOpened": __DEV__ ? true : false,
-            // "isOpened": false,
+            // "isOpened": __DEV__ ? true : false,
+            "isOpened": false,
             "headerColor": colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["buy-for-me"],
-            // "disabled": true,
-            "disabled": __DEV__ ? false : true,
+            "disabled": true,
+            // "disabled": __DEV__ ? false : true,
 
         },
         {
@@ -123,19 +122,22 @@ export default ({ navigation, route }) => {
             "title": "Estimated Price",
             "desc": "What is the Estimated Price?",
             "svg": svgs.pitStopEstPrice(),
-            // "isOpened": false,
-            "isOpened": __DEV__ ? true : false,
+            "isOpened": false,
+            // "isOpened": __DEV__ ? true : false,
             "headerColor": colors.lightGreyBorder,
             "key": PITSTOP_CARD_TYPES["estimated-price"],
-            // "disabled": true,
-            "disabled": __DEV__ ? false : true,
+            "disabled": true,
+            // "disabled": __DEV__ ? false : true,
 
         },
     ]
     const [cardData, setCardData] = useState(initCartData)
 
+    const cardRef = React.useRef(initCartData);
     /******** End of Main variables *******/
-
+    React.useEffect(() => {
+        cardRef.current = cardData;
+    }, [cardData]);
 
 
 
@@ -154,8 +156,8 @@ export default ({ navigation, route }) => {
     const [nameval, setNameVal] = useState('')
     const [cityVal, setCityVal] = useState('')
     const [placeName, setPlaceName] = useState('')
-    // const [locationVal, setLocationVal] = useState('')
-    const [locationVal, setLocationVal] = useState(__DEV__ ? 'Islamabad' : '')
+    const [locationVal, setLocationVal] = useState('')
+    // const [locationVal, setLocationVal] = useState(__DEV__ ? 'Islamabad' : '')
     const [scrollEnabled, setScrollEnabled] = useState(true)
     const latitudeRef = React.useRef(__DEV__ ? constants.i8_markaz.latitude : null);
     const longitudeRef = React.useRef(__DEV__ ? constants.i8_markaz.longitude : null);
@@ -184,8 +186,8 @@ export default ({ navigation, route }) => {
 
     /******** Start of Pitstop Details variables *******/
 
-    const [description, setDescription] = useState(__DEV__ ? 'HELLOO' : '')
-    // const [description, setDescription] = useState('')
+    // const [description, setDescription] = useState(__DEV__ ? 'HELLOO' : '')
+    const [description, setDescription] = useState('')
     const [imageData, updateImagesData] = useState([]);
 
     const [, updateStateaaa] = React.useState();
@@ -215,18 +217,18 @@ export default ({ navigation, route }) => {
         return store.cartReducer;
     });
     const remainingAmount = cartReducer.joviRemainingAmount;
-    // const [estVal, setEstVal] = useState('')
-    const [estVal, setEstVal] = useState(__DEV__ ? "1500" : '')
+    const [estVal, setEstVal] = useState('')
+    // const [estVal, setEstVal] = useState(__DEV__ ? "1500" : '')
     const [initialEstVal, setInitialEstVal] = useState('')
     const [switchVal, setSwitch] = useState(remainingAmount === 0 ? false : true);
-    const [estTime, setEstTime] = React.useState({
-        text: __DEV__ ? '0-15 mins' : "Estimated Time",
-        value: __DEV__ ? 1 : 0
-    });
     // const [estTime, setEstTime] = React.useState({
-    //     text: "Estimated Time",
-    //     value: 0
+    //     text: __DEV__ ? '0-15 mins' : "Estimated Time",
+    //     value: __DEV__ ? 1 : 0
     // });
+    const [estTime, setEstTime] = React.useState({
+        text: "Estimated Time",
+        value: 0
+    });
     const [collapsed, setCollapsed] = React.useState(true);
 
 
@@ -312,8 +314,10 @@ export default ({ navigation, route }) => {
 
 
     const toggleCardData = (key = PITSTOP_CARD_TYPES["location"], color = colors.primary) => {
+        const cardData = cardRef.current;
         const index = cardData.findIndex(i => i.key === key);
         cardData[index].headerColor = color;
+        cardData[index].isOpened = true;
         setCardData(cardData);
         forceUpdate()
     };//end of toggleCardData
@@ -391,102 +395,19 @@ export default ({ navigation, route }) => {
                 isUploading: true,
             }))
         }
-        toggleCardData(PITSTOP_CARD_TYPES["estimated-time"]);
+        // toggleCardData(PITSTOP_CARD_TYPES["estimated-time"]);
         updateImagesData(slicedImages);
+
     };
 
-
-
-    const pitStopVoiceNote = (obj = null, del = false) => {
-        if (del) {
-            setVoiceNote({})
-            setIsDeleted(true)
-            setIsRecord(false)
-        } else {
-            toggleCardData(PITSTOP_CARD_TYPES["estimated-time"]);
-            setVoiceNote(obj)
-        }
-    };
-
-    const deleteRecording = async () => {
-        if (isRecord) {
-            setIsDeleted(true);
-        }
-    };//end of deleteRecording
 
     React.useEffect(() => {
     }, [micPress])
-    const recordingPress = async (closeSecond = false) => {
-        if (!micPress) {
-            askForAudioRecordPermission((allowRecording) => {
-                if (allowRecording) {
-                    const fileName = "record-" + new Date().getTime() + ".mp4";
-                    recorderRef.current = new Recorder(fileName).record();
-                    setMicPress(true);
-                }
-            })
-        } else {
-            getRecordingDuration(closeSecond)
-        }
-    };//end of recordingPress
 
-
-
-    const getRecordingDuration = (closeSecond) => {
-        if (recorderRef.current !== null) {
-            recorderRef.current.stop((error) => {
-                if (Platform.OS === "ios") {
-                    new Player("playerDestroyer.mp4").prepare((err) => { }).destroy(); //ADDING THIS TO DESTROY RECORDER FOR iOS Devices 
-                }
-
-                if (!error) {
-                    const path = recorderRef.current._fsPath;
-                    RNMediaMeta.get(`${path}`)
-                        .then(metadata => {
-                            if (`${metadata.duration}` > `0`) {
-
-                                const obj = {
-                                    id: Math.floor(Math.random() * 100000),
-                                    uri: Platform.OS === "android" ? `file://${path}` : path,
-                                    name: path.split('/').pop(),
-                                    type: "audio/mp4",
-                                }
-
-                                setIsRecord(true);
-                                setRecordingUploading(false);
-                                setMicPress(false);
-                                //SUCCESS HANDLER
-
-                                // const resAt0 = res.joviImageReturnViewModelList[0];
-
-                                pitStopVoiceNote(obj, false);
-                                toggleCardData(PITSTOP_CARD_TYPES["estimated-time"]);
-                                if (closeSecond) {
-                                    updateCardOnHeaderPress(updateCardOnHeaderPressItem);
-                                }
-                            }
-                        })
-                        .catch(err => {
-                            setIsRecord(false);
-                            setMicPress(false);
-                        });
-                }
-                else {
-                    Alert.alert("Error Occurred while Recording Audio!");
-                    setIsRecord(false);
-                    setMicPress(false);
-                }
-            });
-        } else {
-            setMicPress(false);
-            setIsRecord(false);
-        }
-    }
     /************   End of functions of Pitstop Details Component  Funcs   **************/
 
 
     // /************   Start of MAIN UI function     **************/
-
     const renderMainUI = (idx, title, desc, svg, isOpened, key, headerColor, disabled, index) => {
         return (
             <Animated.View
@@ -516,15 +437,19 @@ export default ({ navigation, route }) => {
         let isDisable = true;
         if (disabled) {
             if (index === 1 && locationVal.length) {
+                // console.log('index wise Condition','1',index,index === 1 && locationVal.length);
                 isDisable = false;
             }
-            if (index === 2 && description.length || imageData.length || Object.keys(voiceNote).length) {
+            else if (index === 2 && (description.length || imageData.length || Object.keys(voiceNote).length)) {
+                // console.log('index wise Condition','2',index,index === 2 && description.length || imageData.length || Object.keys(voiceNote).length);
                 isDisable = false;
             }
-            if (index === 3 && estTime.text.includes('mins') || estTime.text.includes('hour')) {
-                isDisable = false;
+            else if (index === 3 && estTime.value > 0) {
+                // console.log('index wise Condition','3',index,index === 3 && estTime.value > 0);
+                isDisable = false
             }
-            if (index === 4 && estTime.text.includes('mins') || estTime.text.includes('hour')) {
+            else if (index === 4 && (estTime.value !== 0)) {
+                // console.log('index wise Condition','4',index, );
                 isDisable = false;
             }
 
@@ -550,7 +475,6 @@ export default ({ navigation, route }) => {
         ref.current.animateNextTransition();
     }
 
-
     const renderHeader = (idx, title, desc, svg, isOpened, key, headerColor, index, disabled) => {
         const isDisabled = disabledHandler(index, disabled);
 
@@ -565,18 +489,16 @@ export default ({ navigation, route }) => {
                 activeOpacity={0.9}
                 disabled={isDisabled}
                 onHeaderPress={() => {
+                    const isRecording=customRecordingRef.current?.isRecording()??false;
                     updateCardOnHeaderPressItem = {
                         idx, title, desc, svg, isOpened, headerColor, index, disabled, isDisabled
                     };
 
-                    if (idx === 2 && isOpened) { //AHMED KH RHA KOI 2 ko change nh kry ga... ;-P
-                        //WHEN DESCRIPTION TOGGLE  
+                    if (idx === 2 && isOpened && isRecording) { //AHMED KH RHA KOI 2 ko change nh kry ga... ;-P
+                        //WHEN DESCRIPTION TOGGLE 
                         closeSecondCard = true;
                         customRecordingRef.current?.setStopRecording(true);
                         customRecordingRef.current?.setStopAudioPlayer(true);
-
-                        return
-
                     } else {
                         updateCardOnHeaderPress(updateCardOnHeaderPressItem);
                     }
@@ -741,7 +663,7 @@ export default ({ navigation, route }) => {
                         }
                     }}
                     caption="Record your voice note."
-                    />
+                />
             </PitStopDetails>
         )
     }
@@ -762,6 +684,7 @@ export default ({ navigation, route }) => {
                 estTime={estTime}
                 isOpened={isDisabled ? false : isOpened}
                 onEstTimePress={(item) => {
+                    console.log('item ==>>>', item);
                     setEstTime(item);
                     setCollapsed(true);
                     toggleCardData(PITSTOP_CARD_TYPES["buy-for-me"]);
@@ -851,9 +774,9 @@ export default ({ navigation, route }) => {
             latitude: latitudeRef.current,
             longitude: longitudeRef.current
         }
-            sharedAddUpdatePitstop(pitstopData, false, [], false, false, clearData);
-            setLoader(false)
-      
+        sharedAddUpdatePitstop(pitstopData, false, [], false, false, clearData);
+        setLoader(false)
+
     }//end of save and continue function
 
     return (
