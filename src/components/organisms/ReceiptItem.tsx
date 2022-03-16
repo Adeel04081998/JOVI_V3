@@ -133,7 +133,7 @@ const ReceiptItem = (props: Props) => {
                 <View style={styles.titleDot} />
                 <Text fontFamily="PoppinsMedium" style={[styles.title, props.titleStyle]}>{`Pitstop ${`${props.pitstopNumber}`.padStart(2, '0')} - ${props.title}`}</Text>
                 {(!showDetail && VALIDATION_CHECK(props.totalPrice)) && <>
-                    <Text style={{ fontSize: 12, color: "#272727", }}>{renderPrice({ price: props.totalPrice, showZero: true })}</Text>
+                    <Text style={{ color: "#272727", fontSize: 12, }} fontFamily="PoppinsMedium">{renderPrice({ price: props.totalPrice, showZero: true })}</Text>
                 </>}
             </View>
 
