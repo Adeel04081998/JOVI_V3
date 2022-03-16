@@ -223,6 +223,7 @@ export default (props) => {
         }
 
     };
+    console.log('inputs ==>>>',inputs);
     const onChangeHandler = (val, index) => {
         if (isNaN(val)) return;
         if (val?.length === 4 && inputs.length === 4) {
@@ -264,7 +265,7 @@ export default (props) => {
                         autoCapitalize="none"
                         placeholder=""
                         ref={inputRef.current[index]}
-                        value={input}
+                        // value={input}
                         style={[styles.otpCode]}
                         keyboardType="numeric"
                         maxLength={1}
