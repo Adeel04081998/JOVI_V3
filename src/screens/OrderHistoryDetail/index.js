@@ -1,14 +1,18 @@
 import AnimatedLottieView from 'lottie-react-native';
 import * as React from 'react';
-import { Appearance, FlatList, SafeAreaView } from 'react-native';
+import { Appearance, Button as RNButton, FlatList, InputAccessoryView, Keyboard, Platform, SafeAreaView, TextInput as RNTextInput } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SvgXml } from 'react-native-svg';
+import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-aware-scroll-view';
 import svgs from '../../assets/svgs';
 import Text from '../../components/atoms/Text';
+import TextInput from '../../components/atoms/TextInput';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import TouchableScale from '../../components/atoms/TouchableScale';
 import View from '../../components/atoms/View';
+import Button from '../../components/molecules/Button';
 import CustomHeader, { CustomHeaderIconBorder, CustomHeaderStyles } from '../../components/molecules/CustomHeader';
+import AnimatedModal from '../../components/organisms/AnimatedModal';
 import Card from '../../components/organisms/Card';
 import DashedLine from '../../components/organisms/DashedLine';
 import NoRecord from '../../components/organisms/NoRecord';
@@ -25,6 +29,8 @@ import HistoryItemCardUI from '../OrderHistory/components/HistoryItemCardUI';
 import { headerFuncStyles, stylesFunc } from './styles';
 
 const HEADER_ICON_SIZE = CustomHeaderIconBorder.size * 0.6;
+const NUMBER_OF_INPUT_LINE = 4
+const INPUT_ACCESSORY_VIEW_ID = 'feedbackDoneButton';
 
 export default ({ navigation, route }) => {
 
@@ -54,6 +60,7 @@ export default ({ navigation, route }) => {
         error: false,
         errorText: '',
     });
+    const [feedbackModal, updateFeedbackModal] = React.useState({ visible: false, text: '', });
 
     // #endregion :: STATE's & REF's END's FROM HERE 
 
@@ -132,7 +139,8 @@ export default ({ navigation, route }) => {
     // #endregion :: API IMPLEMENTATION END's FROM HERE 
 
     // #region :: LOADING AND ERROR UI START's FROM HERE 
-    if (query.isLoading) {
+    // if (query.isLoading) {
+    if (false) {
         return <View style={styles.primaryContainer}>
             {_renderHeader()}
             <HistoryItemCardUI
@@ -159,7 +167,8 @@ export default ({ navigation, route }) => {
                 />
             </View>
         </View>
-    } else if (query.error) {
+        // } else if (query.error) {
+    } else if (false) {
         return <View style={styles.primaryContainer}>
             {_renderHeader()}
             <HistoryItemCardUI
@@ -239,6 +248,18 @@ export default ({ navigation, route }) => {
 
     // #endregion :: FLATLIST RENDER ITEM END's FROM HERE 
 
+    const openFeedbackModal = () => {
+        updateFeedbackModal(p => ({
+            ...p,
+            visible: true,
+        }))
+    }
+    const closeFeedbackModal = () => {
+        updateFeedbackModal(p => ({
+            ...p,
+            visible: false,
+        }))
+    }
     // #region :: UI START's FROM HERE 
     return (
         <View style={styles.primaryContainer}>
@@ -308,13 +329,73 @@ export default ({ navigation, route }) => {
                     <Text style={styles.buttonText}>{`Complaint`}</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.buttonContainerRight} activeOpacity={0.5}>
+                <TouchableOpacity style={styles.buttonContainerRight} activeOpacity={0.5} onPress={() => { openFeedbackModal() }}>
                     <Text style={styles.buttonText}>{`Feedback`}</Text>
                 </TouchableOpacity>
             </View>
 
             {/* ****************** End of BUTTON ****************** */}
 
+            {feedbackModal.visible &&
+                <AnimatedModal
+                    position='center'
+                    useKeyboardAvoidingView
+                    visible={feedbackModal.visible}
+                    onRequestClose={() => { closeFeedbackModal(); }}
+                    contentContainerStyle={{ borderRadius: 7, width: "95%", maxHeight: "60%", }}>
+
+                    <View style={{ paddingHorizontal: constants.spacing_horizontal * 2, marginVertical: constants.spacing_vertical * 1.5, }}>
+                        <Text fontFamily='PoppinsSemiBold' style={{ fontSize: 18, color: "#272727", textAlign: "center" }}>{`Feedback`}</Text>
+                        <Text style={{ fontSize: 14, color: "#272727", paddingTop: 30, paddingBottom: 10, }}>{`Enter your feedback`}</Text>
+                        <RNTextInput
+                            style={{
+                                borderColor: "#272727",
+                                borderWidth: 0.5,
+                                borderRadius: 5,
+                                paddingHorizontal: 8,
+                                paddingVertical: 10,
+                                textAlignVertical: "top",
+                                minHeight: (Platform.OS === 'ios' && NUMBER_OF_INPUT_LINE) ? (20 * NUMBER_OF_INPUT_LINE) : null,
+                            }}
+                            textAlignVertical="top"
+                            multiline={true} // ios fix for centering it at the top-left corner 
+                            numberOfLines={Platform.OS === "ios" ? null : NUMBER_OF_INPUT_LINE}
+                            inputAccessoryViewID={INPUT_ACCESSORY_VIEW_ID}
+                        />
+
+                        <View style={{
+                            flexDirection: "row", alignItems: "center", justifyContent: "space-between",
+                            marginTop: constants.spacing_vertical * 2,
+                            marginBottom: constants.spacing_vertical * 0.8,
+                            marginLeft: constants.spacing_horizontal * 4, marginRight: constants.spacing_horizontal * 2,
+                        }}>
+                            <Button
+                                onPress={() => { }}
+                                style={{ width: "48%", height: 40, borderRadius: 5, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.primary, }}
+                                textStyle={{ color: colors.primary, fontFamily: FontFamily.Poppins.Medium, fontSize: 16 }}
+                                text={`Cancel`}
+                            />
+                            <Button
+                                onPress={() => { }}
+                                style={{ width: "48%", height: 40, borderRadius: 5, }}
+                                textStyle={{ fontFamily: FontFamily.Poppins.Medium, fontSize: 16 }}
+                                text={`Submit`}
+                            />
+                        </View>
+                    </View>
+                </AnimatedModal>
+            }
+
+            <InputAccessoryView nativeID={INPUT_ACCESSORY_VIEW_ID}>
+                <View style={{ backgroundColor: '#fff', alignItems: "flex-end", }}>
+                    <RNButton
+                        onPress={() => {
+                            Keyboard.dismiss();
+                        }}
+                        title="Done"
+                    />
+                </View>
+            </InputAccessoryView>
         </View>
     )
 

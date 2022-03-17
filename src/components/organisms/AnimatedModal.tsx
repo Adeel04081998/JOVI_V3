@@ -1,6 +1,7 @@
 import React from 'react';
 import { Animated, Easing, Platform, StyleProp, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-aware-scroll-view';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import constants from '../../res/constants';
 const AnimatedToucableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
@@ -29,6 +30,9 @@ interface Props {
     skipBottom?: boolean;
     /** android only */
     androidSkipBottom?: number;
+
+    useKeyboardAvoidingView?: boolean;
+    scrollEnabled?: boolean;
 }
 
 const defaultProps = {
@@ -38,6 +42,8 @@ const defaultProps = {
     position: "bottom",
     skipStatusBar: true,
     androidSkipBottom: 30,
+    useKeyboardAvoidingView: false,
+    scrollEnabled: false,
 }
 
 const AnimatedModal = (props: Props) => {
@@ -115,8 +121,23 @@ const AnimatedModal = (props: Props) => {
 
     // #endregion :: POSITION STYLING END's FROM HERE 
 
+    const Wrapper = props.useKeyboardAvoidingView ? KeyboardAwareScrollView : View;
     return (
-        <View style={{ position: 'absolute', height: HEIGHT, width: WIDTH, top: 0, zIndex: 999, }}>
+        <Wrapper style={{
+            backgroundColor: 'transparent', position: 'absolute',
+            height: HEIGHT, width: WIDTH,
+            top: 0, zIndex: 999,
+        }}
+            {...props.useKeyboardAvoidingView && {
+                contentContainerStyle: { flexGrow: 1, },
+                scrollEnabled: props.scrollEnabled,
+                bounces: false,
+                showsVerticalScrollIndicator: false,
+                showsHorizontalScrollIndicator: false,
+
+            }
+            }>
+            {/* <View style={{ position: 'absolute', height: HEIGHT, width: WIDTH, top: 0, zIndex: 999, }}> */}
             <AnimatedToucableOpacity
                 activeOpacity={1}
                 disabled={props.disableOutsidePress}
@@ -124,9 +145,8 @@ const AnimatedModal = (props: Props) => {
                     props.onRequestClose && props.onRequestClose();
                 }}
                 style={[{
-                    flex: 1, opacity: openAnimation, backgroundColor: 'rgba(0,0,0,0.5)',
-
-
+                    flex: 1, opacity: openAnimation,
+                    // backgroundColor: 'rgba(0,0,0,0.5)',
                 },
                 props.containerStyle
                 ]} />
@@ -162,7 +182,8 @@ const AnimatedModal = (props: Props) => {
                     {props.children}
                 </Animated.View>
             </View>
-        </View>
+            {/* </View> */}
+        </Wrapper>
     )
 }
 
