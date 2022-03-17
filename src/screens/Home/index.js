@@ -149,7 +149,7 @@ export default () => {
                                 <ScrollView horizontal contentContainerStyle={{ flexDirection: "row", justifyContent: "flex-start", alignItems: "center" }} style={{ borderRadius: 5, borderWidth: .5, borderColor: colors.primary, margin: 5 }}>
                                     {
                                         // [...userReducer.openOrders, ...userReducer.openOrders, ...userReducer.openOrders, ...userReducer.openOrders].map((item, i) => {
-                                        userReducer.openOrders.map((item, i) => {
+                                        (userReducer.openOrders.reverse()).map((item, i) => {
                                             return <Text key={`userReducer.openOrders ${i}`} style={{ margin: 10, backgroundColor: colors.primary, color: colors.white, borderRadius: 5, padding: 5, textAlign: "center", paddingTop: 7 }} onPress={() => {
                                                 onOrderPress(item);
                                             }}>{item.orderID}</Text>

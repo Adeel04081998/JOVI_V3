@@ -16,7 +16,7 @@ import View from '../../components/atoms/View';
 import CustomHeader, { CustomHeaderIconBorder, CustomHeaderStyles } from '../../components/molecules/CustomHeader';
 import ImageWithTextInput from '../../components/organisms/ImageWithTextInput';
 import NoRecord from '../../components/organisms/NoRecord';
-import { renderFile, sharedExceptionHandler, sharedFetchOrder, sharedNotificationHandlerForOrderScreens, sharedRiderRating, uuidGenerator, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { padToTwo, renderFile, sharedExceptionHandler, sharedFetchOrder, sharedNotificationHandlerForOrderScreens, sharedRiderRating, uuidGenerator, VALIDATION_CHECK, validURL } from '../../helpers/SharedActions';
 import { getRequest, multipartPostRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
@@ -69,9 +69,9 @@ export default ({ navigation, route }) => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
     }
     const orderCancelledOrCompleted = (status) => {
-        if(status.orderCompleted){
-            sharedRiderRating(orderID);            
-        }else{
+        if (status.orderCompleted) {
+            sharedRiderRating(orderID);
+        } else {
             goToHome();
         }
     }
@@ -92,7 +92,7 @@ export default ({ navigation, route }) => {
                     isReceived: true,
                     orderID: orderID,
                     text: message,
-                    user: { _id: prop.notificationData?.data?._id??'', name:  prop.notificationData?.data?.name??'', image:  prop.notificationData?.data?.image??''},
+                    user: { _id: prop.notificationData?.data?._id ?? '', name: prop.notificationData?.data?.name ?? '', image: prop.notificationData?.data?.image ?? '' },
                     userType: 2,
                     userTypeStr: "Rider",
                     _id: new Date().getTime()
@@ -384,8 +384,12 @@ export default ({ navigation, route }) => {
             });
         }
 
-        if (chatType === CHAT_TYPE_ENUM.audio) {
-            formData.append("AudioDuration", '');
+        console.log('itemammamaam on sending ', item);
+        if (type === CHAT_TYPE_ENUM.audio) {
+            const dm = item.duration.split(':')[0].trim();
+            const sm = item.duration.split(':')[1].trim();
+            const second = (parseInt(`${dm}`) * 60) + parseInt(`${sm}`);
+            formData.append("AudioDuration", second);
         }
         if (VALIDATION_CHECK(text)) {
             formData.append("Message", text?.trim());
@@ -481,8 +485,10 @@ export default ({ navigation, route }) => {
                 renderMessageAudio={(props) => {
                     const currentMessage = props.currentMessage;
                     const isMyUser = currentMessage.user._id === userReducer.id;
+                    const isLocal = currentMessage?.isFile ?? false;
+                    const audioMessage = isLocal ? currentMessage.audio : renderFile(currentMessage.audio);
 
-                    const audioMessage = renderFile(currentMessage.audio);
+                    console.log('isLocal after', audioMessage);
                     return (
                         <View style={{ paddingTop: 6, }}>
                             <AudioplayerMultiple
@@ -551,8 +557,13 @@ export default ({ navigation, route }) => {
                                 }}
                                 onRecordAudio={(item) => {
                                     const { onSend: propOnSend } = rsProps;
-                                    sendMessageToRider(CHAT_TYPE_ENUM.audio, null, item)
-                                    propOnSend({ _id: uuidGenerator(), audio: `${JSON.stringify(item)}`, user: MY_USER, createdAt: new Date(), }, true)
+                                    // sendMessageToRider(CHAT_TYPE_ENUM.audio, null, item)
+                                    propOnSend({
+                                        _id: uuidGenerator(), audio: item.uri, isFile: true,
+
+                                        // `${JSON.stringify(item)}`,
+                                        user: MY_USER, createdAt: new Date(),
+                                    }, true)
                                     setStopRecording(false);
                                 }}
                             />

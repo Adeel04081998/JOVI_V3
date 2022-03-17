@@ -135,7 +135,7 @@ const ReceiptItem = (props: Props) => {
 
     return (
         <>
-            <View style={[props.containerStyle, (props.showLeftBorder || true) && {
+            <View style={[props.containerStyle, (props.showLeftBorder) && {
                 borderLeftWidth: 5,
                 borderLeftColor: dotColor(),
             }]}>

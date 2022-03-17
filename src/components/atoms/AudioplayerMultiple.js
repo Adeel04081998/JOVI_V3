@@ -12,7 +12,7 @@ import { useIsFocused } from '@react-navigation/native';
 let timer = null;
 const playerRefArr = [];
 let isLastPlaying = false;
-
+const mainBundle = Platform.OS === 'ios' ? encodeURIComponent(Sound.MAIN_BUNDLE) : Sound.MAIN_BUNDLE;
 export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', width = "90%", forceStopAll = false, timeStyle = {}, maximumTrackTintColor = `rgba(115, 89, 190, 0.5)`, timeContainerStyle = null }) => {
     // let isPlaying = (chatPlayingVoice && chatPlayingVoiceIndex === index);
 
@@ -55,8 +55,10 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
 
 
     const setupSoundPlayer = async () => {
-
+        Sound.setCategory("Playback", true);
+        console.log('audioURL ',audioURL);
         const chatAudioplayer = new Sound(audioURL, '', error => {
+            console.log('audioURL audioMessage error ', error);
             if (error) {
                 return;
             }

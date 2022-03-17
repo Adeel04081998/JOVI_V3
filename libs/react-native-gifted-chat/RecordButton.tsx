@@ -16,6 +16,7 @@ export interface RecordButtonItemProps {
     uri: string;
     name: string;
     type: "audio/mp4" | "mp4" | "mp3";
+    duration?: string | number;
 }
 
 interface Props {
@@ -51,6 +52,7 @@ const RecordButton = React.forwardRef<Recorder, Props>((props: Props, ref: any) 
                     uri: Platform.OS === "android" ? `file://${path}` : path,
                     name: path.split('/').pop(),
                     type: "audio/mp4",
+                    duration: `${duration}`,
                 };
                 props.onRecordAudio(obj);
             }

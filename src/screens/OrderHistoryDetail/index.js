@@ -204,6 +204,7 @@ export default ({ navigation, route }) => {
         return (
             <View style={{ flex: 0, }} key={index}>
                 <ReceiptItem
+                    showLeftBorder
                     colors={colors}
                     showItemTotalPrice
                     title={pitstopName}
@@ -267,6 +268,7 @@ export default ({ navigation, route }) => {
 
             <HistoryItemCardUI
                 colors={colors}
+                noOfPitstops={navigationParams.noOfPitstops}
                 isDelivered={navigationParams.isDelivered}
                 orderID={navigationParams.orderID}
                 dateTime={navigationParams.dateTime}
@@ -296,24 +298,24 @@ export default ({ navigation, route }) => {
                 <View style={{ paddingTop: 20, paddingBottom: 12, }}>
                     <ServiceChargesUI
                         text='GST'
-                        value={`120`}
+                        value={`${data?.chargeBreakdown?.totalProductGST ?? ''}`}
                     />
                     <ServiceChargesUI
                         text={`Service Charges (Incl S.T 76)`}
-                        value={`120`}
+                        value={`${data?.serviceCharges ?? ''}`}
                     />
                     <DashedLine contentContainerStyle={{ paddingVertical: 8, }} />
 
                     <ServiceChargesUI
                         text={`Discount`}
-                        value={`158`}
+                        value={`${data?.chargeBreakdown?.discount ?? ''}`}
                         pricePrefix='Rs. -'
                     />
                     <DashedLine contentContainerStyle={{ paddingVertical: 8, }} />
 
                     <TotalChargesUI
                         text={`Estimated Total`}
-                        value={`4924`}
+                        value={`${data?.totalAmount ?? ''}`}
                     />
                 </View>
 
@@ -370,7 +372,7 @@ export default ({ navigation, route }) => {
                             marginLeft: constants.spacing_horizontal * 4, marginRight: constants.spacing_horizontal * 2,
                         }}>
                             <Button
-                                onPress={() => {closeFeedbackModal(); }}
+                                onPress={() => { closeFeedbackModal(); }}
                                 style={{ width: "48%", height: 40, borderRadius: 5, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.primary, }}
                                 textStyle={{ color: colors.primary, fontFamily: FontFamily.Poppins.Medium, fontSize: 16 }}
                                 text={`Cancel`}
