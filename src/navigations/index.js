@@ -165,7 +165,7 @@ const AppDrawers = (props) => {
     // console.log("[AppDrawers].props", props)
     return <Drawer.Navigator screenOptions={stackOpts} initialRouteName={APP_ROUTES.AppDrawerStack.screen_name}>
         {(APP_STACKS || []).map((routeInfo, index) => {
-            console.log('routeInfo', AppComponents);
+            // console.log('routeInfo', AppComponents);
             return <Drawer.Screen
                 key={`AppDrawers-Screen-key-${index}-${routeInfo.id}`}
                 name={routeInfo.screen_name}

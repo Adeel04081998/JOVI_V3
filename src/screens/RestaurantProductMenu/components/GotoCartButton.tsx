@@ -41,8 +41,8 @@ const GotoCartButton = (props: Props) => {
     const styles = stylesFunc(colors, insets, props);
 
     const cartReducer = useSelector((store: any) => store.cartReducer);
-    const { itemsCount, subTotal } = cartReducer;
-    const price = props?.price ?? subTotal;
+    const { itemsCount, itemsTotalWithDiscounts } = cartReducer;
+    const price = props?.price ?? itemsTotalWithDiscounts;
     const count = props?.count ?? itemsCount;
 
     if (!count) return null;

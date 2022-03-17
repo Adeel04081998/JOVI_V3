@@ -127,7 +127,7 @@ const ProductQuantityCard = (props: Props) => {
     //     flexDirection: "row",
     //     backgroundColor: colors.white,
     // }}><Text>Deleting...</Text></View>;
-    if(props.fromCart && state.quantity <= 0) return null;
+    // if(props.fromCart && state.quantity <= 0) return null;
     return (
         <View style={{
             width: state.quantity > 0 || props.outOfStock ? CARD_ITEM_SIZE * 0.88 : ITEM_SIZE,

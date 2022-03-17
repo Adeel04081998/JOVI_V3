@@ -230,7 +230,7 @@ export default (props) => {
                 actionKey: propItem.pitStopItemID ? "pitStopItemID" : "pitStopDealID",
                 estimatePrepTime: pitstopType === PITSTOP_TYPES.RESTAURANT ? generalProductOrDealDetail.estimateTime : "",
                 totalJoviDiscount: state.totalJoviDiscount,
-                ...!optionsListArr.length ? { ...sharedAddToCartKeys(null, state.generalProductOrDealDetail).item } : {},
+                ...!optionsListArr.length ? { ...sharedAddToCartKeys(null, { ...state.generalProductOrDealDetail, pitstopType }).item } : {},
 
             },
             vendorDetails: {

@@ -376,6 +376,7 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
         joviCalculation = 0,
         vendorMaxEstTime = "",
         estimateTime = "",
+        itemsTotalWithDiscounts = 0,
         gst = 0,
         total = 0;
     pitstops = pitstops.map((pitstop, index) => {
@@ -402,7 +403,9 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
                 gst += product._totalGst * product.quantity;
                 discount += product._totalDiscount * product.quantity;
                 _pitTotal += product._itemPrice * product.quantity;
-                subTotal += _pitTotal + discount;
+                // subTotal += _pitTotal + discount;
+                itemsTotalWithDiscounts += _pitTotal;
+                subTotal += product._priceForSubtotals * product.quantity;
                 itemsCount += product.quantity;
 
             })
@@ -410,13 +413,14 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
         }
         return _pitstop;
     })
+    console.log("joviPitstopsTotal", joviPitstopsTotal);
     estimateTime = sharedCalculateMaxTime([...pitstops].filter(_p => _p.pitstopType === PITSTOP_TYPES.RESTAURANT), "vendorMaxEstTime")
-    console.log("estimateTime", estimateTime);
+    // console.log("estimateTime", estimateTime);
     subTotal = subTotal + joviPitstopsTotal;
-    total = (subTotal - discount);
+    total = itemsTotalWithDiscounts + joviPitstopsTotal;
     joviCalculation = joviRemainingAmount - (joviPitstopsTotal + joviPrevOrdersPitstopsAmount)
     joviRemainingAmount = joviCalculation <= 0 ? 0 : joviCalculation;
-    dispatch(ReduxActions.setCartAction({ pitstops, joviRemainingAmount, subTotal, itemsCount, joviPitstopsTotal, joviPrevOrdersPitstopsAmount, joviCalculation, total, estimateTime, gst, discount }));
+    dispatch(ReduxActions.setCartAction({ pitstops, joviRemainingAmount, subTotal, itemsTotalWithDiscounts, itemsCount, joviPitstopsTotal, joviPrevOrdersPitstopsAmount, joviCalculation, total, estimateTime, gst, discount }));
 };
 export const sharedDiscountsCalculator = (
     originalPrice = 0,
@@ -840,8 +844,10 @@ export const sharedAddToCartKeys = (restaurant = null, item = null) => {
     }
     if (item) {
         item._itemPrice = item.discountedPrice > 0 ? item.discountedPrice : item.gstAddedPrice > 0 ? item.gstAddedPrice : item.itemPrice;
+        item._priceForSubtotals = item.gstAddedPrice > 0 ? item.gstAddedPrice : item.itemPrice;
         item._itemPriceWithoutDiscount = item.gstAddedPrice;
-        item._totalDiscount = item?.discountType === ENUMS.DISCOUNT_TYPES.Percentage ? sharedDiscountsCalculator(item._itemPriceWithoutDiscount, item.discountAmount)._discountAmount : item.discountAmount; // if discount type is fixed then discount amount would be the discounted price
+        item._toCalculateDiscountOnAmount = item.actualPrice || item.itemPrice || item.gstAddedPrice;
+        item._totalDiscount = item?.discountType === ENUMS.DISCOUNT_TYPES.Percentage ? sharedDiscountsCalculator(item._toCalculateDiscountOnAmount, item.discountAmount)._discountAmount : item.discountAmount; // if discount type is fixed then discount amount would be the discounted price
         item._totalGst = item.gstAmount;
     }
     return {

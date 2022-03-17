@@ -63,7 +63,7 @@ export default () => {
     useFocusEffect(
         React.useCallback(() => {
             getRequest(Endpoints.GetOpenOrders, (res) => {
-                console.log('[GetOpenOrders] res', res);
+                // console.log('[GetOpenOrders] res', res);
                 if (res.data.statusCode === 200) {
                     const openOrders = res.data?.getOpenOrderDetails?.openOrderList ?? [];
                     dispatch(ReduxActions.setUserAction({ openOrders, noOfOpenOrders: openOrders.length }));

@@ -17,7 +17,7 @@ const INIT_CART_DATA = {
   orderEstimateTime: null
 };
 
-const userReducer = (state = { prevOrders: [] }, action) => {
+const userReducer = (state = { prevOrders: [], finalDestObj: {} }, action) => {
   switch (action.type) {
     case TYPES.SET_USER_ACTION:
       return { ...state, ...action.payload };

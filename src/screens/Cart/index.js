@@ -44,7 +44,7 @@ const BottomLine = () => (
 
 // }
 export default () => {
-  const cartReducer = useSelector(store => store.cartReducer);
+  const { cartReducer } = useSelector(store => ({ cartReducer: store.cartReducer }));
   const dispatch = useDispatch();
   console.log('[CART_SCREEN] cartReducer', cartReducer);
   const [expanded, setExpanded] = React.useState([0]);
@@ -54,6 +54,7 @@ export default () => {
     Appearance.getColorScheme() === 'dark',
   );
   const cartStyles = stylesheet.styles(colors);
+
   React.useEffect(() => {
     sharedGetServiceCharges()
   }, [])
@@ -374,9 +375,9 @@ export default () => {
                 initialQuantity={quantity}
                 colors={dynamiColors}
                 outOfStock={false}
-                textSize={18}
-                size={100}
-                cardSize={100}
+                textSize={quantity ? 18 : 18}
+                size={quantity ? 100 : 18}
+                cardSize={quantity ? 100 : 18}
                 updateQuantity={(quantity) => {
                   incDecDelHandler(quantity)
                 }}
@@ -410,6 +411,7 @@ export default () => {
     return (
       <View style={{ paddingHorizontal: 10 }}>
         {row('Subtotal', sharedCalculatedTotals().subTotal, true)}
+        {/* {row('GST', sharedCalculatedTotals().gst)} */}
         {sharedCalculatedTotals().discount ? row('Discount', `- ${sharedCalculatedTotals().discount}`) : null}
         {row(`Service Charges (Incl S.T ${sharedCalculatedTotals().serviceTax})`, sharedCalculatedTotals().serviceCharges)}
         <BottomLine />
@@ -451,9 +453,10 @@ export default () => {
           }
           updateData={(newData) => {
             // setData(newData) 
-            if (expanded.length === 1) {
-              expandCollapeHanlder(expanded.findIndex(x => x))
-            }
+            // if (expanded.length === 1) {
+            //   expandCollapeHanlder(expanded.findIndex(x => x))
+            // }
+            sharedGetServiceCharges();
             sharedAddUpdatePitstop(null, false, newData)
           }}
           ListFooterComponent={<View>

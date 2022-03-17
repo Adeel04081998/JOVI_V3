@@ -40,9 +40,7 @@ const IMAGE_SIZE = constants.window_dimensions.width * 0.3;
 export default () => {
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED['10']], Appearance.getColorScheme() === "dark");
     const checkOutStyles = StyleSheet.styles(colors)
-    const cartReducer = useSelector(store => store.cartReducer);
-    console.log("cartReducer",cartReducer);
-    const userReducer = useSelector(store => store.userReducer);
+    const { userReducer, cartReducer } = useSelector(store => ({ userReducer: store.userReducer, cartReducer: store.cartReducer }));
     const totalPitstop = cartReducer.pitstops.length ?? ""
     const estimatedDeliveryTime = cartReducer.orderEstimateTime || ""
     const [vouchersList, setVouchersList] = useState([])
@@ -54,9 +52,11 @@ export default () => {
     const walletAmount = userReducer.balance || 0;
     const instructionForRider = GV.RIDER_INSTRUCTIONS.current;
     const [state, setState] = React.useState({
-        chargeBreakdown: null,
+        chargeBreakdown: cartReducer.chargeBreakdown,
         isLoading: false,
     });
+    console.log("[Checkout] cartReducer", cartReducer);
+
 
     // const estimateServiceCharge = () => {
     //     let payload = newJoviPitstop ? {
@@ -96,13 +96,13 @@ export default () => {
                     if (item.isJoviJob && !item.isDestinationPitstop) {
                         let minEstimateTime = item.estTime?.text?.split(' ')[0]?.split('-')[0] ?? '';
                         let maxEstimateTime = item.estTime?.text?.split(' ')[0]?.split('-')[1] ?? '';
-                        if(item.estTime?.text?.includes('hour')){
+                        if (item.estTime?.text?.includes('hour')) {
                             minEstimateTime = '01:00';
                             maxEstimateTime = '01:00';//as instructed by tabish, he was saying that in 1hour+ case, send same value for min max
-                        }else{
+                        } else {
                             minEstimateTime = minEstimateTime.length === 1 ? '00:0' + minEstimateTime : '00:' + minEstimateTime;
                             maxEstimateTime = maxEstimateTime.length === 1 ? '00:0' + maxEstimateTime : '00:' + maxEstimateTime;
-                            maxEstimateTime = maxEstimateTime.replace('60','59');
+                            maxEstimateTime = maxEstimateTime.replace('60', '59');
                         }
                         return {
                             "pitstopID": null,
@@ -335,14 +335,14 @@ export default () => {
         )
     }
 
-    React.useEffect(() => {
-        sharedGetServiceCharges(null, (res) => {
-            setState(pre => ({
-                ...pre,
-                chargeBreakdown: res.data.chargeBreakdown,
-            }));
-        });
-    }, []);
+    // React.useEffect(() => {
+    //     sharedGetServiceCharges(null, (res) => {
+    //         setState(pre => ({
+    //             ...pre,
+    //             chargeBreakdown: res.data.chargeBreakdown,
+    //         }));
+    //     });
+    // }, []);
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }} >
             <CustomHeader

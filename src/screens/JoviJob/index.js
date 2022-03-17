@@ -216,6 +216,7 @@ export default ({ navigation, route }) => {
     const cartReducer = useSelector((store) => {
         return store.cartReducer;
     });
+    console.log("JOVI cartReducer", cartReducer);
     const remainingAmount = cartReducer.joviRemainingAmount;
     const [estVal, setEstVal] = useState('')
     // const [estVal, setEstVal] = useState(__DEV__ ? "1500" : '')
@@ -240,7 +241,6 @@ export default ({ navigation, route }) => {
 
 
     const clearData = () => {
-        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name);
         setCardData(initCartData);
         setNameVal("");
         setCityVal("");
@@ -267,7 +267,8 @@ export default ({ navigation, route }) => {
         setSwitch(true);
 
         setEstTime({ text: "Estimated Time", value: 0 })
-        setCollapsed(true)
+        setCollapsed(true);
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name);
 
     }
     /*****************************     Start of  useEffect            ***********************************/
