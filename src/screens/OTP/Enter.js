@@ -69,7 +69,7 @@ export default () => {
             return setForcePattern(true)
         }
         const onSuccess = (res) => {
-            // console.log("res...", res);
+            console.log("res...", res);
             const { statusCode, message } = res.data;
             if (statusCode === 417) return Toast.error(message);
             NavigationService.NavigationActions.common_actions.navigate(ROUTES.AUTH_ROUTES.VerifyOTP.screen_name, { payload })
