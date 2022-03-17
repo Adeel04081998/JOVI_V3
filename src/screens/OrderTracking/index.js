@@ -55,7 +55,7 @@ export default ({ route }) => {
     const [realtimeChangingState, setRealTimeState] = React.useState({
         riderLocation: null,
     });
-    const [modalOpened,setModalOpened] = React.useState(true);
+    const [modalOpened, setModalOpened] = React.useState(true);
     const [componentLoaded, setComponentLoaded] = React.useState(false);
     const circleColor = state.subStatusName === ORDER_STATUSES.RiderFound ? '#37c130' : colors.primary;
     const isRiderFound = state.subStatusName === ORDER_STATUSES.RiderFound;
@@ -92,7 +92,7 @@ export default ({ route }) => {
             if (res.data.statusCode === 200) {
                 let allowedOrderStatuses = [ORDER_STATUSES.Processing, ORDER_STATUSES.RiderFound, ORDER_STATUSES.FindingRider, ORDER_STATUSES.RiderProblem, ORDER_STATUSES.TransferProblem];
                 if (!allowedOrderStatuses.includes(res.data.order.subStatusName)) {
-                    sharedOrderNavigation(orderIDParam, res.data.order.subStatusName, ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name);
+                    sharedOrderNavigation(orderIDParam, res.data.order.subStatusName, ROUTES.APP_DRAWER_ROUTES.OrderTracking.screen_name, null, false, res.data?.order?.pitStopsList ?? []);
                     return;
                 }
                 let progress = 0;
@@ -179,7 +179,9 @@ export default ({ route }) => {
                     }));
                 }
                 console.log('res [fetchOrderEstimation] - ', res);
-            }, () => { }, {}, false);
+            }, (err) => {
+                console.log('err [fetchOrderEstimation] - ', err);
+            }, {}, false);
         }
         if (fetchOrderEstimationRef.current) {
             clearInterval(fetchOrderEstimationRef.current);
@@ -193,16 +195,16 @@ export default ({ route }) => {
     }
     const orderCancelledOrCompleted = (status) => {
         if (!isFocused) return;
-        if(status.orderCompleted){
-            sharedRiderRating(orderIDParam);            
-        }else{
+        if (status.orderCompleted) {
+            sharedRiderRating(orderIDParam);
+        } else {
             goToHome();
         }
     }
     const onOrderNavigationPress = (route = '', extraParams = {}) => {
         NavigationService.NavigationActions.common_actions.navigate(route, { orderID: orderIDParam, ...extraParams });
     }
-    const modalAnimation = (toValue = 1 , firstTimeLoad = false) => {
+    const modalAnimation = (toValue = 1, firstTimeLoad = false) => {
         Animated.timing(loadAnimation, {
             toValue: toValue,
             useNativeDriver: true,
@@ -210,9 +212,9 @@ export default ({ route }) => {
             easing: Easing.ease
         }).start(finished => {
             if (finished) {
-                if(firstTimeLoad){
+                if (firstTimeLoad) {
                     setComponentLoaded(true);
-                }else{
+                } else {
                     setModalOpened(toValue === 1);
                 }
                 loadAnimationCurrentValue.current = toValue;
@@ -221,7 +223,7 @@ export default ({ route }) => {
     }
     React.useEffect(() => {
         fetchOrderDetails();
-        modalAnimation(1,true);
+        modalAnimation(1, true);
         return () => {
             if (fetchRiderLocationRef.current) {
                 clearInterval(fetchRiderLocationRef.current);
@@ -251,9 +253,9 @@ export default ({ route }) => {
 
     }
     const renderTime = (timeFontSize = 22, minutesUI = 10) => {
-        let opacity = !estimateTime.orderEstimateTimeViewModel.orderEstimateTimeStr?0:1;
-        return <View style={{opacity:opacity}}>
-            <Text style={{ fontSize: timeFontSize, color: 'black', fontWeight: 'bold' }} fontFamily={'PoppinsBold'} >{" "}{estimateTime.orderEstimateTimeViewModel?.orderEstimateTimeStr?.replace('min','')?.trim()}</Text>
+        let opacity = !estimateTime.orderEstimateTimeViewModel.orderEstimateTimeStr ? 0 : 1;
+        return <View style={{ opacity: opacity }}>
+            <Text style={{ fontSize: timeFontSize, color: 'black', fontWeight: 'bold' }} fontFamily={'PoppinsBold'} >{" "}{estimateTime.orderEstimateTimeViewModel?.orderEstimateTimeStr?.replace('min', '')?.trim()}</Text>
             <Text style={{ fontSize: minutesUI, marginTop: 5, justifyContent: 'center', alignItems: 'center', textAlign: 'center' }} >{` minutes \nuntil delivered`}</Text>
         </View>
     }
@@ -344,7 +346,7 @@ export default ({ route }) => {
                     customCenter={state.currentPitstop}
                     smoothRiderPlacement
                     onMapPress={() => {
-                        if(loadAnimationCurrentValue.current===0){
+                        if (loadAnimationCurrentValue.current === 0) {
                             return;
                         }
                         modalAnimation(0);
@@ -352,13 +354,13 @@ export default ({ route }) => {
                 />}
             </Animated.View>
             {
-                !modalOpened?<TouchableOpacity onPress={()=>{
+                !modalOpened ? <TouchableOpacity onPress={() => {
                     modalAnimation(1);
-                }} style={{position:'absolute',bottom:0,width:'100%',display:'flex',alignContent:'center',justifyContent:'center'}}>
-                    <SvgXml xml={svgs.modalClosedIcon()} style={{alignSelf:'center'}}/>
+                }} style={{ position: 'absolute', bottom: 0, width: '100%', display: 'flex', alignContent: 'center', justifyContent: 'center' }}>
+                    <SvgXml xml={svgs.modalClosedIcon()} style={{ alignSelf: 'center' }} />
                 </TouchableOpacity>
-                :
-                <></>
+                    :
+                    <></>
             }
             {/* <PanGestureHandler
                 onGestureEvent={onPanGestureEvent}
@@ -373,7 +375,7 @@ export default ({ route }) => {
                 style={{
                     ...styles.bottomViewContainer, opacity: loadAnimation, transform: [{
                         translateY: loadAnimation.interpolate({
-                        // translateY: componentLoaded ? translateY : loadAnimation.interpolate({
+                            // translateY: componentLoaded ? translateY : loadAnimation.interpolate({
                             inputRange: [0, 1],
                             outputRange: [600, 0]
                         })

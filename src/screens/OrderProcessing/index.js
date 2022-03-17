@@ -7,7 +7,7 @@ import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import OrderEstTimeCard from '../../components/organisms/Card/OrderEstTimeCard';
 import DashedLine from '../../components/organisms/DashedLine';
-import { renderPrice, sharedFetchOrder, sharedGenerateProductItem, sharedNotificationHandlerForOrderScreens, sharedOrderNavigation } from '../../helpers/SharedActions';
+import { checkIfFirstPitstopRestaurant, renderPrice, sharedFetchOrder, sharedGenerateProductItem, sharedNotificationHandlerForOrderScreens, sharedOrderNavigation } from '../../helpers/SharedActions';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
@@ -19,6 +19,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import ROUTES from '../../navigations/ROUTES';
 import NavigationService, { _NavgationRef } from '../../navigations/NavigationService';
 import actions from '../../redux/actions';
+import { getRequest } from '../../manager/ApiManager';
+import Endpoints from '../../manager/Endpoints';
 
 const DOUBLE_SPACING = constants.spacing_horizontal + 6;
 const IMAGE_SIZE = constants.window_dimensions.width * 0.3;
@@ -27,7 +29,6 @@ export default ({ navigation, route }) => {
     console.log('_NavgationRef', _NavgationRef.current)
     const pitstopType = route?.params?.pitstopType ?? PITSTOP_TYPES.JOVI;
     const fcmReducer = useSelector(store => store.fcmReducer);
-    const dispatch = useDispatch();
     const orderIDParam = route?.params?.orderID ?? 0;
     const showBack = route?.params?.showBack ?? false;
     // #region :: STYLES & THEME START's FROM HERE 
@@ -45,7 +46,7 @@ export default ({ navigation, route }) => {
                     rightIconName='home'
                     hideFinalDestination
                     title={'Processing'}
-                    leftIconName={showBack?'chevron-back':null}
+                    leftIconName={showBack ? 'chevron-back' : null}
                     rightIconColor={colors.primary}
                     rightIconSize={22}
                     onRightIconPress={() => {
@@ -64,6 +65,9 @@ export default ({ navigation, route }) => {
         pitStopsList: [],
         isLoading: true,
         chargeBreakdown: {},
+        orderEstimateTimeViewModel: null,
+        orderEstimateTime: null,
+        estimateTime: null,
     });
 
     // #endregion :: STATE's & REF's END's FROM HERE 
@@ -71,15 +75,36 @@ export default ({ navigation, route }) => {
         sharedFetchOrder(orderIDParam, (res) => {
             if (res.data.statusCode === 200) {
                 let allowedOrderStatuses = [ORDER_STATUSES.VendorApproval, ORDER_STATUSES.VendorProblem, ORDER_STATUSES.Initiated];
+                const isFirstPitstopRestaurant = checkIfFirstPitstopRestaurant(res.data?.order?.pitStopsList);
+                if (!isFirstPitstopRestaurant) {
+                    allowedOrderStatuses = [
+                        ...allowedOrderStatuses,
+                        ORDER_STATUSES.FindingRider,
+                        ORDER_STATUSES.RiderProblem,
+                    ];
+                }
                 if (!allowedOrderStatuses.includes(res.data.order.subStatusName)) {
-                    sharedOrderNavigation(orderIDParam, res.data.order.subStatusName, ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name);
+                    sharedOrderNavigation(orderIDParam, res.data.order.subStatusName, ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name, null, false, res.data?.order?.pitStopsList ?? []);
                     return;
                 }
-                setState(pre => ({ ...pre, ...res.data.order, isLoading: false }))
+                setState(pre => ({ ...pre, ...res.data.order, pitStopsList: res.data.order.pitStopsList.filter(item => ![3, 4, 5, 9].includes(item.joviJobStatus)), isLoading: false }))
             } else {
                 setState(pre => ({ ...pre, isLoading: false }))
             }
         });
+    }
+    const fetchEstimateTime = () => {
+        getRequest(Endpoints.OrderEstimateTime + '/' + orderIDParam, (res) => {
+            if (res.data.statusCode === 200) {
+                setState(pre => ({
+                    ...pre,
+                    orderEstimateTimeViewModel: res.data.orderEstimateTimeViewModel,
+                    orderEstimateTime: res.data.orderEstimateTime,
+                    estimateTime: res.data.estimateTime,
+                }));
+            }
+            console.log('res [fetchOrderEstimation] - ', res);
+        }, () => { }, {}, false);
     }
     const goToHome = () => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
@@ -89,10 +114,11 @@ export default ({ navigation, route }) => {
     }
     React.useEffect(() => {
         fetchOrderDetails();
+        fetchEstimateTime();
         return () => { };
     }, []);
     React.useEffect(() => {
-        sharedNotificationHandlerForOrderScreens(fcmReducer,fetchOrderDetails,orderCancelledOrCompleted);
+        sharedNotificationHandlerForOrderScreens(fcmReducer, fetchOrderDetails, orderCancelledOrCompleted);
         return () => {
         }
     }, [fcmReducer]);
@@ -122,7 +148,7 @@ export default ({ navigation, route }) => {
                 imageHeight={IMAGE_SIZE * 0.6}
                 color={colors}
                 middle={{
-                    value: state.orderEstimateTime
+                    value: state.orderEstimateTimeViewModel ? state.orderEstimateTimeViewModel?.orderEstimateTime?.trim() : ' - ',
                     // value: `Now ${data.OrderEstimateTime.replace('min'.toLowerCase().trim(), 'min')}`
                 }} />
 
