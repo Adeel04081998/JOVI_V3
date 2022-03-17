@@ -20,16 +20,17 @@ import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import RatingSliderUI from '../RateRider/components/RatingSliderUI';
 import { headerFuncStyles, stylesFunc, historyItemFuncStyles, onGoingItemFuncStyles } from './styles';
 import SetpProgress from '../../components/atoms/StepProgress';
-import BarDottedLine from './BarDottedLine';
+import BarDottedLine from './components/BarDottedLine';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import { initColors } from '../../res/colors';
 import { getRequest, postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
+import HistoryItemCardUI from './components/HistoryItemCardUI';
 
 
 const HEADER_ICON_SIZE = CustomHeaderIconBorder.size * 0.6;
 
-const TYPE_COLOR = {
+export const ORDER_HISTORY_TYPE_COLOR = {
     inProgress: "#F99E00",
     inProgressIncomplete: "#C1C1C1",
     delivered: "#31C55D",
@@ -58,7 +59,6 @@ export default ({ navigation, route }) => {
         errorText: '',
         refreshing: false,
     });
-
 
     // #endregion :: STATE's & REF's END's FROM HERE 
 
@@ -231,7 +231,10 @@ export default ({ navigation, route }) => {
                 color={colors}
                 title={query.errorText}
                 buttonText={`Refresh`}
-                onButtonPress={() => { }} />
+                onButtonPress={() => {
+                    loadHistoryData(paginationInfo.currentRequestNumber);
+                    loadOnGoingData();
+                }} />
         </View>
     }
 
@@ -255,7 +258,7 @@ export default ({ navigation, route }) => {
                                 key={index}
                                 colors={colors}
                                 orderID={item.orderID}
-                                atPoint={item.currentPitstop}
+                                atPoint={item.currentPitstop ? item.currentPitstop : 1}
                                 noOfPitstops={item.totalPitstops}
                                 paymentMethod={item.paymentMethod}
                                 estDeliveryTime={item.estDeliveryTime}
@@ -301,7 +304,8 @@ export default ({ navigation, route }) => {
 
 
 const OnGoingItemCardUI = ({ colors = initColors, orderID = '', atPoint = 0, noOfPitstops = '', paymentMethod = '', estDeliveryTime = '' }) => {
-    const onGoingItemStyles = onGoingItemFuncStyles(colors, TYPE_COLOR);
+    console.log('atPoint ', atPoint);
+    const onGoingItemStyles = onGoingItemFuncStyles(colors, ORDER_HISTORY_TYPE_COLOR);
     return (
         <Card contentContainerStyle={onGoingItemStyles.contentContainerStyle}>
             <View style={onGoingItemStyles.orderDetailContainer}>
@@ -315,10 +319,10 @@ const OnGoingItemCardUI = ({ colors = initColors, orderID = '', atPoint = 0, noO
             <BarDottedLine
                 selectedIndex={atPoint}
                 length={noOfPitstops}
-                selectedBarColor={TYPE_COLOR.inProgress}
-                selectedCircleColor={TYPE_COLOR.inProgress}
-                unSelectedBarColor={TYPE_COLOR.inProgressIncomplete}
-                unSelectedCircleColor={TYPE_COLOR.inProgressIncomplete}
+                selectedBarColor={ORDER_HISTORY_TYPE_COLOR.inProgress}
+                selectedCircleColor={ORDER_HISTORY_TYPE_COLOR.inProgress}
+                unSelectedBarColor={ORDER_HISTORY_TYPE_COLOR.inProgressIncomplete}
+                unSelectedCircleColor={ORDER_HISTORY_TYPE_COLOR.inProgressIncomplete}
                 customSelectedCircle={() => {
                     return (
                         <View style={onGoingItemStyles.barSelectedIconContainer}>
@@ -346,44 +350,7 @@ const OnGoingItemCardUI = ({ colors = initColors, orderID = '', atPoint = 0, noO
 
 
 // #region :: HISTORY ITEM CARD UI START's FROM HERE 
-const HistoryItemCardUI = ({ colors = initColors, isDelivered, orderID = '', noOfPitstops = '', dateTime = '' }) => {
-    const historyItemStyles = historyItemFuncStyles(colors);
 
-    const dotColor = () => {
-        return isDelivered ? TYPE_COLOR.delivered : TYPE_COLOR.cancelled;
-    }
-    const deliveryStatus = () => {
-        return isDelivered ? 'Order Delivered' : 'Cancelled';
-    }
-
-    return (
-        <Card contentContainerStyle={historyItemStyles.contentContainerStyle}>
-            <View style={{ ...historyItemStyles.cubeIconContainer, backgroundColor: dotColor(), }}>
-                <VectorIcon name='cube-outline' size={40} color={colors.white} />
-            </View>
-
-            <View style={historyItemStyles.bodyPrimaryContainer}>
-                <View style={historyItemStyles.orderPitstopContainer}>
-                    <Text fontFamily='PoppinsMedium' style={historyItemStyles.orderText}>{`Order ID: ${orderID}`}</Text>
-                    <Text fontFamily='PoppinsMedium' style={historyItemStyles.noPitstopText}>{`${`${noOfPitstops}`.padStart(2, '0')} Pitstops`}</Text>
-                </View>
-
-                <View style={historyItemStyles.deliveryStatusContainer}>
-                    <View style={historyItemStyles.orderDeliveredContainer}>
-                        <View style={{ ...historyItemStyles.orderDeliveredDot, backgroundColor: dotColor(), }} />
-                        <Text fontFamily='PoppinsMedium' style={historyItemStyles.orderDeliveredText}>{`${deliveryStatus()}`}</Text>
-                    </View>
-                    {VALIDATION_CHECK(dateTime) &&
-                        <View style={{ ...historyItemStyles.datetimeContainer, backgroundColor: dotColor(), }}>
-                            <Text style={historyItemStyles.dateTimeText}>{`${dateTime}`}</Text>
-                        </View>
-                    }
-                </View>
-
-            </View>
-        </Card>
-    )
-}
 
 // #endregion :: HISTORY ITEM CARD UI END's FROM HERE 
 
@@ -407,4 +374,4 @@ const RenderTitle = ({ title = '' }) => {
     )
 }
 
-     // #endregion :: TITLE UI END's FROM HERE 
+ // #endregion :: TITLE UI END's FROM HERE 

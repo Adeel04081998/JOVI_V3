@@ -15,6 +15,10 @@ interface Props {
     itemData?: [];
     isJoviJob?: boolean;
     showDetail?: boolean;
+    showItemTotalPrice?: boolean;
+    showLeftBorder?: boolean;
+    customTitleBelowUI?: () => React.ReactNode;
+    customEndUI?: () => React.ReactNode;
 
     containerStyle?: StyleProp<ViewStyle>;
     titleContainerStyle?: StyleProp<ViewStyle>;
@@ -32,9 +36,11 @@ interface Props {
 const defaultProps = {
     title: '',
     totalPrice: '',
+    showItemTotalPrice: false,
     type: PITSTOP_TYPES.DEFAULT,
     pitstopNumber: 1,
     isJoviJob: false,
+    showLeftBorder: false,
     showDetail: true,
 };
 
@@ -100,8 +106,9 @@ const ReceiptItem = (props: Props) => {
         return (
             <View style={[{ marginTop: 0, }, props.itemPrimaryContainerStyle]}>
                 {(props?.itemData ?? []).map((item, index) => {
-                    
+
                     const { name, quantity, discountedPrice, actualPrice, } = getItemDetail(item);
+
                     return (
                         <View key={index} style={[{ ...itemStyles.primaryContainer, paddingTop: index === 0 ? 0 : 4, }, props.itemContainerStyle]}>
                             <Text style={[itemStyles.name, props.itemTitleStyle]}>{sharedGenerateProductItem(name, quantity)}</Text>
@@ -127,22 +134,28 @@ const ReceiptItem = (props: Props) => {
     // #endregion :: SUB ITEM UI END's FROM HERE 
 
     return (
-        <View style={[props.containerStyle]}>
+        <>
+            <View style={[props.containerStyle, (props.showLeftBorder || true) && {
+                borderLeftWidth: 5,
+                borderLeftColor: dotColor(),
+            }]}>
 
-            {/* ****************** Start of TITLE ****************** */}
-            <View style={[styles.titlePrimaryContainer, props.titleContainerStyle]}>
-                <View style={styles.titleDot} />
-                <Text fontFamily="PoppinsMedium" style={[styles.title, props.titleStyle]} numberOfLines={1}>{`Pitstop ${`${props.pitstopNumber}`.padStart(2, '0')} - ${props.title}`}</Text>
-                {(!showDetail && VALIDATION_CHECK(props.totalPrice)) && <>
-                    <Text style={{ color: "#272727", fontSize: 12, }} fontFamily="PoppinsMedium">{renderPrice({ price: props.totalPrice, showZero: true })}</Text>
-                </>}
+                {/* ****************** Start of TITLE ****************** */}
+                <View style={[styles.titlePrimaryContainer, props.titleContainerStyle]}>
+                    <View style={styles.titleDot} />
+                    <Text fontFamily="PoppinsMedium" style={[styles.title, props.titleStyle]} numberOfLines={1}>{`Pitstop ${`${props.pitstopNumber}`.padStart(2, '0')} - ${props.title}`}</Text>
+                    {((!showDetail || props.showItemTotalPrice) && VALIDATION_CHECK(props.totalPrice)) && <>
+                        <Text style={{ color: props.showItemTotalPrice ? dotColor() : "#272727", fontSize: 12, }} fontFamily="PoppinsMedium">{renderPrice({ price: props.totalPrice, showZero: true })}</Text>
+                    </>}
+                </View>
+
+                {/* ****************** End of TITLE ****************** */}
+                {props.customTitleBelowUI && props.customTitleBelowUI()}
+                {showDetail && renderSubItem()}
+
             </View>
-
-            {/* ****************** End of TITLE ****************** */}
-
-            {showDetail && renderSubItem()}
-
-        </View>
+            {props.customEndUI && props.customEndUI()}
+        </>
     );
 }//end of FUNCTION
 

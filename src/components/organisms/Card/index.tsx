@@ -2,27 +2,33 @@ import * as React from "react";
 import { StyleProp, StyleSheet, ViewStyle } from "react-native";
 import AppStyles from "../../../res/AppStyles";
 import constants from "../../../res/constants";
+import TouchableOpacity from "../../atoms/TouchableOpacity";
+import TouchableScale from "../../atoms/TouchableScale";
 import View from "../../atoms/View";
 
 // #region :: INTERFACE START's FROM HERE 
-interface Props {
+type Props = React.ComponentProps<typeof TouchableOpacity> & {
+
     children?: any;
     contentContainerStyle?: StyleProp<ViewStyle>;
-
+    onPress?: () => void;
+    useScale?: boolean;
 };
 
 const defaultProps = {
+    onPress: undefined,
+    useScale: false,
 };
 // #endregion :: INTERFACE END's FROM HERE 
 
 const OrderEstTimeCard = (props: Props) => {
 
     const styles = stylesFunc();
-
+    const Wrapper = props.onPress ? props.useScale ? TouchableScale : TouchableOpacity : View;
     return (
-        <View style={[styles.primaryContainer, props.contentContainerStyle]}>
+        <Wrapper {...props}  style={[styles.primaryContainer, props.contentContainerStyle]} >
             {props.children}
-        </View>
+        </Wrapper>
     );
 }
 

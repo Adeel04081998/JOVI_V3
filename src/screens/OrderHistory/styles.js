@@ -112,7 +112,9 @@ export const historyItemFuncStyles = (colors = initColors) => StyleSheet.create(
         fontSize: 12,
         paddingBottom: 4,
     },
-    orderPitstopContainer: {},
+    orderPitstopContainer: {
+        flex: 1,
+    },
     bodyPrimaryContainer: {
         flexDirection: "row",
         alignItems: "center",

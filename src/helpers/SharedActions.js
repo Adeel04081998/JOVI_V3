@@ -1028,3 +1028,11 @@ export const sharedGetFinalDestintionRequest = () => {
         longitude: userReducer.finalDestObj.longitude,
     };
 }
+
+export const getBottomPadding = (insets, bottom = 0, extraBottom = 0) => {
+    if (Platform.OS === "ios") {
+        return insets.bottom > 0 ? insets.bottom + extraBottom : bottom;
+    } else {
+        return bottom;
+    }
+}
