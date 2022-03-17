@@ -370,7 +370,7 @@ export default ({ navigation, route }) => {
                             marginLeft: constants.spacing_horizontal * 4, marginRight: constants.spacing_horizontal * 2,
                         }}>
                             <Button
-                                onPress={() => { }}
+                                onPress={() => {closeFeedbackModal(); }}
                                 style={{ width: "48%", height: 40, borderRadius: 5, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.primary, }}
                                 textStyle={{ color: colors.primary, fontFamily: FontFamily.Poppins.Medium, fontSize: 16 }}
                                 text={`Cancel`}
