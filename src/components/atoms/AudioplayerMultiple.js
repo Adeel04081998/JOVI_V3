@@ -4,7 +4,7 @@ import Slider from '@react-native-community/slider';
 import { SvgXml } from "react-native-svg";
 import svgs, { pauseIcon, playIcon } from "../../assets/svgs/index";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { secToHourMinSec } from "../../helpers/SharedActions";
+import { secToHourMinSec, validURL } from "../../helpers/SharedActions";
 import Sound from "react-native-sound";
 import { useIsFocused } from '@react-navigation/native';
 
@@ -56,9 +56,10 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
 
     const setupSoundPlayer = async () => {
         Sound.setCategory("Playback", true);
-        console.log('audioURL ',audioURL);
-        const chatAudioplayer = new Sound(audioURL, '', error => {
-            console.log('audioURL audioMessage error ', error);
+        const localPath = !validURL(audioURL) && Platform.OS === "android" ? audioURL.replace('file://', '') : audioURL;
+        const mainPath = !validURL(audioURL) && Platform.OS === "android" ? Sound.MAIN_BUNDLE : '';
+
+        const chatAudioplayer = new Sound(localPath, mainPath, error => {
             if (error) {
                 return;
             }

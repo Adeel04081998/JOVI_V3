@@ -488,7 +488,6 @@ export default ({ navigation, route }) => {
                     const isLocal = currentMessage?.isFile ?? false;
                     const audioMessage = isLocal ? currentMessage.audio : renderFile(currentMessage.audio);
 
-                    console.log('isLocal after', audioMessage);
                     return (
                         <View style={{ paddingTop: 6, }}>
                             <AudioplayerMultiple
@@ -557,11 +556,11 @@ export default ({ navigation, route }) => {
                                 }}
                                 onRecordAudio={(item) => {
                                     const { onSend: propOnSend } = rsProps;
-                                    // sendMessageToRider(CHAT_TYPE_ENUM.audio, null, item)
+                                    sendMessageToRider(CHAT_TYPE_ENUM.audio, null, item)
                                     propOnSend({
-                                        _id: uuidGenerator(), audio: item.uri, isFile: true,
-
-                                        // `${JSON.stringify(item)}`,
+                                        _id: uuidGenerator(),
+                                        audio: item.uri,
+                                        isFile: true,
                                         user: MY_USER, createdAt: new Date(),
                                     }, true)
                                     setStopRecording(false);
