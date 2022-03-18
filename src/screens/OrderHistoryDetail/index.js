@@ -324,6 +324,7 @@ export default ({ navigation, route }) => {
                 isDelivered={navigationParams.isDelivered}
                 orderID={navigationParams.orderID}
                 dateTime={navigationParams.dateTime}
+                disabled
             />
 
             <Card contentContainerStyle={{
