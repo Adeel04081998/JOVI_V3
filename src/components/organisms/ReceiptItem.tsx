@@ -41,7 +41,7 @@ const defaultProps = {
 const ReceiptItem = (props: Props) => {
 
     // #region :: DOT COLOR using Pitstoptype START's FROM HERE 
-    const defaultColors = Appearance.getColorScheme() === "dark" ? DefaultColors.dark_mode : DefaultColors.light_mode;
+    const defaultColors = Appearance.getColorScheme() === "dark" ? DefaultColors.light_mode : DefaultColors.light_mode;
     const dotColor = () => {
         const pitstopType = props?.type ?? defaultProps.type;
         let dotColor = defaultColors.default;
