@@ -9,7 +9,6 @@ import RNMediaMeta from "../../../RNMediaMeta";
 import StopWatch from "react-native-stopwatch-timer/lib/stopwatch";
 import { Recorder, Player } from '@react-native-community/audio-toolkit';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
-
 import CardHeader from './components/CardHeader';
 import PitStopBuy from './components/PitStopBuy';
 import PitStopDetails from './components/PitStopDetails';
@@ -36,6 +35,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../redux/actions';
 import FontFamily from '../../res/FontFamily';
 import Recording from '../../components/organisms/Recording';
+import TextRN from '../../components/atoms/Text';
 
 export const PITSTOP_CARD_TYPES = Object.freeze({ "location": 0, "description": 1, "estimated-time": 2, "buy-for-me": 3, "estimated-price": 4, });
 let updateCardOnHeaderPressItem = {};
@@ -272,18 +272,20 @@ export default ({ navigation, route }) => {
     }
     /*****************************     Start of  useEffect            ***********************************/
 
-
+    const setData = (data = route.params.pitstopItemObj) => {
+        const { title, nameval, imageData, voiceNote, estTime, description, estimatePrice } = data;
+        setLocationVal(title)
+        setNameVal(nameval)
+        updateImagesData(imageData ?? [])
+        setVoiceNote(voiceNote)
+        setEstTime(estTime)
+        setDescription(description)
+        setEstVal(estimatePrice)
+    }
     // to be used for editing purposes
     useEffect(() => {
         if (route?.params?.pitstopItemObj) {
-            const { title, nameval, imageData, voiceNote, estTime, description, estimatePrice } = route.params.pitstopItemObj;
-            setLocationVal(title)
-            setNameVal(nameval)
-            updateImagesData(imageData)
-            setVoiceNote(voiceNote)
-            setEstTime(estTime)
-            setDescription(description)
-            setEstVal(estimatePrice)
+            setData();
         }
     }, [route])
 
@@ -489,7 +491,7 @@ export default ({ navigation, route }) => {
                 activeOpacity={0.9}
                 disabled={isDisabled}
                 onHeaderPress={() => {
-                    const isRecording=customRecordingRef.current?.isRecording()??false;
+                    const isRecording = customRecordingRef.current?.isRecording() ?? false;
                     updateCardOnHeaderPressItem = {
                         idx, title, desc, svg, isOpened, headerColor, index, disabled, isDisabled
                     };
@@ -778,11 +780,31 @@ export default ({ navigation, route }) => {
         setLoader(false)
 
     }//end of save and continue function
+    const userReducer = useSelector(state => state.userReducer);
 
     return (
         <SafeAreaView style={{ flex: 1 }} >
             <CustomHeader leftIconColor={colors.primary} rightIconColor={colors.primary} leftIconSize={30} onLeftIconPress={() => common_actions.goBack()} />
-
+            {
+                userReducer.recentJoviPitstops && userReducer.recentJoviPitstops.length > 0 &&
+                <View style={{
+                    width: '100%',
+                }}>
+                    <TextRN style={{ margin: 5, left: 5,color: colors.black, fontSize: 16 }}>Previous Orders</TextRN>
+                    <ScrollView horizontal contentContainerStyle={{ flexDirection: "row", paddingHorizontal: 10, paddingVertical: 10, justifyContent: "flex-start", alignItems: "center" }}>
+                        {
+                            userReducer.recentJoviPitstops?.map((item, i) => {
+                                return <TouchableOpacity style={{ display: 'flex', flexDirection: 'column', paddingLeft: 10, alignItems: 'flex-start', justifyContent: 'center', borderWidth: 0.3, marginHorizontal: 3, borderRadius: 7, borderColor: colors.black, width: 192, padding: 5, backgroundColor: colors.white, height: 50, }} onPress={() => {
+                                    setData(item)
+                                }}>
+                                    <TextRN style={{ fontSize: 12, color: colors.black }} fontFamily={'PoppinsRegular'} numberOfLines={1}>{item.title}</TextRN>
+                                    <TextRN style={{ fontSize: 8, marginTop: 3, color: 'rgba(0, 0, 0, 0.6)' }} numberOfLines={1}>{item.timeStamp}</TextRN>
+                                </TouchableOpacity>
+                            })
+                        }
+                    </ScrollView>
+                </View>
+            }
             <Transitioning.View
                 ref={ref}
                 transition={transition}
