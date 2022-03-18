@@ -4,7 +4,7 @@ import Slider from '@react-native-community/slider';
 import { SvgXml } from "react-native-svg";
 import svgs, { pauseIcon, playIcon } from "../../assets/svgs/index";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { secToHourMinSec } from "../../helpers/SharedActions";
+import { secToHourMinSec, validURL } from "../../helpers/SharedActions";
 import Sound from "react-native-sound";
 import { useIsFocused } from '@react-navigation/native';
 
@@ -12,7 +12,7 @@ import { useIsFocused } from '@react-navigation/native';
 let timer = null;
 const playerRefArr = [];
 let isLastPlaying = false;
-
+const mainBundle = Platform.OS === 'ios' ? encodeURIComponent(Sound.MAIN_BUNDLE) : Sound.MAIN_BUNDLE;
 export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', width = "90%", forceStopAll = false, timeStyle = {}, maximumTrackTintColor = `rgba(115, 89, 190, 0.5)`, timeContainerStyle = null }) => {
     // let isPlaying = (chatPlayingVoice && chatPlayingVoiceIndex === index);
 
@@ -55,8 +55,11 @@ export default AudioPlayer = ({ activeTheme, loader = false, audioURL = '', widt
 
 
     const setupSoundPlayer = async () => {
+        Sound.setCategory("Playback", true);
+        const localPath = !validURL(audioURL) && Platform.OS === "android" ? audioURL.replace('file://', '') : audioURL;
+        const mainPath = !validURL(audioURL) && Platform.OS === "android" ? Sound.MAIN_BUNDLE : '';
 
-        const chatAudioplayer = new Sound(audioURL, '', error => {
+        const chatAudioplayer = new Sound(localPath, mainPath, error => {
             if (error) {
                 return;
             }

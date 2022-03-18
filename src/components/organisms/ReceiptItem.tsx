@@ -15,6 +15,10 @@ interface Props {
     itemData?: [];
     isJoviJob?: boolean;
     showDetail?: boolean;
+    showItemTotalPrice?: boolean;
+    showLeftBorder?: boolean;
+    customTitleBelowUI?: () => React.ReactNode;
+    customEndUI?: () => React.ReactNode;
 
     containerStyle?: StyleProp<ViewStyle>;
     titleContainerStyle?: StyleProp<ViewStyle>;
@@ -27,21 +31,26 @@ interface Props {
     itemDiscountedPriceStyle?: StyleProp<TextStyle>;
     /** Price with line through or Price before discount */
     itemActualPriceStyle?: StyleProp<TextStyle>;
+
+    useInHistory?: boolean;
 }
 
 const defaultProps = {
     title: '',
     totalPrice: '',
+    showItemTotalPrice: false,
     type: PITSTOP_TYPES.DEFAULT,
     pitstopNumber: 1,
     isJoviJob: false,
+    showLeftBorder: false,
     showDetail: true,
+    useInHistory: false,
 };
 
 const ReceiptItem = (props: Props) => {
 
     // #region :: DOT COLOR using Pitstoptype START's FROM HERE 
-    const defaultColors = Appearance.getColorScheme() === "dark" ? DefaultColors.dark_mode : DefaultColors.light_mode;
+    const defaultColors = Appearance.getColorScheme() === "dark" ? DefaultColors.light_mode : DefaultColors.light_mode;
     const dotColor = () => {
         const pitstopType = props?.type ?? defaultProps.type;
         let dotColor = defaultColors.default;
@@ -82,6 +91,11 @@ const ReceiptItem = (props: Props) => {
         let actualPrice = dp ? p : '';
         let discountedPrice = dp ? dp : p;
 
+        if (props.useInHistory && !isJoviJob) {
+            actualPrice = parseInt(`${item.actualPrice}`) !== parseInt(`${item.price}`) ? parseInt(`${item.actualPrice}`) : '';
+            discountedPrice = item.price;
+        }
+
         if (isJoviJob) {
             name = item.title;
             quantity = '';
@@ -100,8 +114,9 @@ const ReceiptItem = (props: Props) => {
         return (
             <View style={[{ marginTop: 0, }, props.itemPrimaryContainerStyle]}>
                 {(props?.itemData ?? []).map((item, index) => {
-                    
+
                     const { name, quantity, discountedPrice, actualPrice, } = getItemDetail(item);
+
                     return (
                         <View key={index} style={[{ ...itemStyles.primaryContainer, paddingTop: index === 0 ? 0 : 4, }, props.itemContainerStyle]}>
                             <Text style={[itemStyles.name, props.itemTitleStyle]}>{sharedGenerateProductItem(name, quantity)}</Text>
@@ -127,22 +142,28 @@ const ReceiptItem = (props: Props) => {
     // #endregion :: SUB ITEM UI END's FROM HERE 
 
     return (
-        <View style={[props.containerStyle]}>
+        <>
+            <View style={[props.containerStyle, (props.showLeftBorder) && {
+                borderLeftWidth: 5,
+                borderLeftColor: dotColor(),
+            }]}>
 
-            {/* ****************** Start of TITLE ****************** */}
-            <View style={[styles.titlePrimaryContainer, props.titleContainerStyle]}>
-                <View style={styles.titleDot} />
-                <Text fontFamily="PoppinsMedium" style={[styles.title, props.titleStyle]} numberOfLines={1}>{`Pitstop ${`${props.pitstopNumber}`.padStart(2, '0')} - ${props.title}`}</Text>
-                {(!showDetail && VALIDATION_CHECK(props.totalPrice)) && <>
-                    <Text style={{ color: "#272727", fontSize: 12, }} fontFamily="PoppinsMedium">{renderPrice({ price: props.totalPrice, showZero: true })}</Text>
-                </>}
+                {/* ****************** Start of TITLE ****************** */}
+                <View style={[styles.titlePrimaryContainer, props.titleContainerStyle]}>
+                    <View style={styles.titleDot} />
+                    <Text fontFamily="PoppinsMedium" style={[styles.title, props.titleStyle]} numberOfLines={1}>{`Pitstop ${`${props.pitstopNumber}`.padStart(2, '0')} - ${props.title}`}</Text>
+                    {((!showDetail || props.showItemTotalPrice) && VALIDATION_CHECK(props.totalPrice)) && <>
+                        <Text style={{ color: props.showItemTotalPrice ? dotColor() : "#272727", fontSize: 12, }} fontFamily="PoppinsMedium">{renderPrice({ price: props.totalPrice, showZero: true })}</Text>
+                    </>}
+                </View>
+
+                {/* ****************** End of TITLE ****************** */}
+                {props.customTitleBelowUI && props.customTitleBelowUI()}
+                {showDetail && renderSubItem()}
+
             </View>
-
-            {/* ****************** End of TITLE ****************** */}
-
-            {showDetail && renderSubItem()}
-
-        </View>
+            {props.customEndUI && props.customEndUI()}
+        </>
     );
 }//end of FUNCTION
 

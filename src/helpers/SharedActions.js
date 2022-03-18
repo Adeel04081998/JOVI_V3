@@ -1039,3 +1039,23 @@ export const sharedGetFinalDestintionRequest = () => {
         longitude: userReducer.finalDestObj.longitude,
     };
 }
+
+export const getBottomPadding = (insets, bottom = 0, extraBottom = 0) => {
+    if (Platform.OS === "ios") {
+        return insets.bottom > 0 ? insets.bottom + extraBottom : bottom;
+    } else {
+        return bottom;
+    }
+}
+
+export const padToTwo = (number) => (number <= 9 ? `0${number}` : number);
+
+export const validURL=(str)=> {
+    var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+      '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+    return !!pattern.test(str);
+  }

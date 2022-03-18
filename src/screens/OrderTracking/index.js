@@ -323,7 +323,7 @@ export default ({ route }) => {
                 rightIconName={'home'}
                 leftIconColor={colors.black}
             />
-            <Animated.View style={{
+            {!__DEV__ && <Animated.View style={{
                 ...styles.container, transform: [{
                     translateY: loadAnimation.interpolate({
                         inputRange: [0, 1],
@@ -352,7 +352,7 @@ export default ({ route }) => {
                         modalAnimation(0);
                     }}
                 />}
-            </Animated.View>
+            </Animated.View>}
             {
                 !modalOpened ? <TouchableOpacity onPress={() => {
                     modalAnimation(1);
