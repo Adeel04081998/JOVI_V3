@@ -138,7 +138,7 @@ const AnimatedModal = (props: Props) => {
             }
             }>
             {/* <View style={{ position: 'absolute', height: HEIGHT, width: WIDTH, top: 0, zIndex: 999, }}> */}
-            <AnimatedToucableOpacity
+            {/* <AnimatedToucableOpacity
                 activeOpacity={1}
                 disabled={props.disableOutsidePress}
                 onPress={() => {
@@ -146,17 +146,23 @@ const AnimatedModal = (props: Props) => {
                 }}
                 style={[{
                     flex: 1, opacity: openAnimation,
-                    // backgroundColor: 'rgba(0,0,0,0.5)',
+                    backgroundColor: 'red',
                 },
                 props.containerStyle
-                ]} />
+                ]} /> */}
 
-            <View
+            <AnimatedToucableOpacity
+                disabled={props.disableOutsidePress}
+                onPress={() => {
+                    props.onRequestClose && props.onRequestClose();
+                }}
+                activeOpacity={1}
                 style={[
                     getPositionStyle(),
                     props.skipStatusBar && {
                         marginTop: getStatusBarHeight(true),
                     },
+                    props.containerStyle
                 ]}>
                 <Animated.View style={[{
                     width: '100%',
@@ -181,7 +187,7 @@ const AnimatedModal = (props: Props) => {
                 ]}>
                     {props.children}
                 </Animated.View>
-            </View>
+            </AnimatedToucableOpacity>
             {/* </View> */}
         </Wrapper>
     )

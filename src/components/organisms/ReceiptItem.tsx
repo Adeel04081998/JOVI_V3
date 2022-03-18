@@ -31,6 +31,8 @@ interface Props {
     itemDiscountedPriceStyle?: StyleProp<TextStyle>;
     /** Price with line through or Price before discount */
     itemActualPriceStyle?: StyleProp<TextStyle>;
+
+    useInHistory?: boolean;
 }
 
 const defaultProps = {
@@ -42,6 +44,7 @@ const defaultProps = {
     isJoviJob: false,
     showLeftBorder: false,
     showDetail: true,
+    useInHistory: false,
 };
 
 const ReceiptItem = (props: Props) => {
@@ -87,6 +90,11 @@ const ReceiptItem = (props: Props) => {
         let quantity = item.quantity;
         let actualPrice = dp ? p : '';
         let discountedPrice = dp ? dp : p;
+
+        if (props.useInHistory && !isJoviJob) {
+            actualPrice = parseInt(`${item.actualPrice}`) !== parseInt(`${item.price}`) ? parseInt(`${item.actualPrice}`) : '';
+            discountedPrice = item.price;
+        }
 
         if (isJoviJob) {
             name = item.title;

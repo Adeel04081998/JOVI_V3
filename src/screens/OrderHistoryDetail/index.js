@@ -18,7 +18,7 @@ import DashedLine from '../../components/organisms/DashedLine';
 import NoRecord from '../../components/organisms/NoRecord';
 import ReceiptItem from '../../components/organisms/ReceiptItem';
 import { getBottomPadding, makeArrayRepeated, renderPrice, sharedExceptionHandler, VALIDATION_CHECK } from '../../helpers/SharedActions';
-import { getRequest } from '../../manager/ApiManager';
+import { getRequest, postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
 import constants from '../../res/constants';
@@ -31,6 +31,7 @@ import { headerFuncStyles, stylesFunc } from './styles';
 const HEADER_ICON_SIZE = CustomHeaderIconBorder.size * 0.6;
 const NUMBER_OF_INPUT_LINE = 4
 const INPUT_ACCESSORY_VIEW_ID = 'feedbackDoneButton';
+const FEEDBACK_INPUT_MINIMUM_LENGTH = 4;
 
 export default ({ navigation, route }) => {
 
@@ -60,7 +61,7 @@ export default ({ navigation, route }) => {
         error: false,
         errorText: '',
     });
-    const [feedbackModal, updateFeedbackModal] = React.useState({ visible: false, text: '', });
+    const [feedbackModal, updateFeedbackModal] = React.useState({ visible: false, text: '', submitLoading: false, });
 
     // #endregion :: STATE's & REF's END's FROM HERE 
 
@@ -105,11 +106,10 @@ export default ({ navigation, route }) => {
             errorText: '',
         });
         getRequest(`${Endpoints.FetchOrder}/${navigationParams.orderID}`, (res) => {
+            console.log('resresresres resData ', res);
             const statusCode = res.data?.statusCode ?? 404;
-            console.log('resresresres ', statusCode);
             if (statusCode === 200) {
                 const resData = res.data?.order ?? {};
-                console.log('resresresres resData ', resData);
                 updateQuery({
                     isLoading: false,
                     error: false,
@@ -131,7 +131,7 @@ export default ({ navigation, route }) => {
             updateQuery({
                 isLoading: false,
                 error: true,
-                errorText: sharedExceptionHandler(res),
+                errorText: sharedExceptionHandler(err),
             });
         })
     };//end of loadData
@@ -193,17 +193,19 @@ export default ({ navigation, route }) => {
         if (index === (data?.pitStopsList ?? []).length - 1) return;//final destination is not in receipt
         const isJoviJob = item.pitstopType === PITSTOP_TYPES.JOVI;
         const pitstopName = isJoviJob ? 'Jovi Job' : item.title
-        const individualPitstopTotal = isJoviJob ? item.jobAmount || item.estimatePrice : item.jobAmount;
+        const individualPitstopTotal = isJoviJob ? item.paidAmount : item.paidAmount;
         let checkOutItemsListVM = item?.jobItemsListViewModel ?? [];
         if (isJoviJob) {
             checkOutItemsListVM = [{
                 ...item,
+                estimatePrice: individualPitstopTotal,
             }];
         }
 
         return (
             <View style={{ flex: 0, }} key={index}>
                 <ReceiptItem
+                    useInHistory
                     showLeftBorder
                     colors={colors}
                     showItemTotalPrice
@@ -256,11 +258,33 @@ export default ({ navigation, route }) => {
         }))
     }
     const closeFeedbackModal = () => {
+        if (feedbackModal.submitLoading) return;
         updateFeedbackModal(p => ({
-            ...p,
+            text: '',
+            submitLoading: false,
             visible: false,
         }))
     }
+
+    const onFeedbackSubmitPress = () => {
+        if (`${feedbackModal.text.trim()}`.length < FEEDBACK_INPUT_MINIMUM_LENGTH) return;
+        updateFeedbackModal(p => ({ ...p, submitLoading: true }));
+        const params = {
+            "description": feedbackModal.text,
+            "orderID": navigationParams.orderID,
+        };
+        postRequest(Endpoints.ADD_ORDER_FEEDBACK, params, (res) => {
+            console.log('ress ', res);
+            updateFeedbackModal(p => ({ ...p, submitLoading: false }));
+            sharedExceptionHandler(res);
+            closeFeedbackModal();
+        }, (err) => {
+            console.log('err ', err);
+            sharedExceptionHandler(err);
+            updateFeedbackModal(p => ({ ...p, submitLoading: false }));
+        });
+    }
+
     // #region :: UI START's FROM HERE 
     return (
         <View style={styles.primaryContainer}>
@@ -298,24 +322,24 @@ export default ({ navigation, route }) => {
                 <View style={{ paddingTop: 20, paddingBottom: 12, }}>
                     <ServiceChargesUI
                         text='GST'
-                        value={`${data?.chargeBreakdown?.totalProductGST ?? ''}`}
+                        value={`${data?.orderReceiptVM?.chargeBreakdown?.totalProductGST ?? 0}`}
                     />
                     <ServiceChargesUI
-                        text={`Service Charges (Incl S.T 76)`}
-                        value={`${data?.serviceCharges ?? ''}`}
+                        text={`Service Charges (Incl S.T ${data?.orderReceiptVM?.gst ?? 0})`}
+                        value={`${data?.orderReceiptVM?.serviceChargesIncTax ?? 0}`}
                     />
                     <DashedLine contentContainerStyle={{ paddingVertical: 8, }} />
 
                     <ServiceChargesUI
                         text={`Discount`}
-                        value={`${data?.chargeBreakdown?.discount ?? ''}`}
+                        value={`${data?.orderReceiptVM?.discount ?? 0}`}
                         pricePrefix='Rs. -'
                     />
                     <DashedLine contentContainerStyle={{ paddingVertical: 8, }} />
 
                     <TotalChargesUI
-                        text={`Estimated Total`}
-                        value={`${data?.totalAmount ?? ''}`}
+                        text={`Total`}
+                        value={`${data?.orderReceiptVM?.totalAmount ?? 0}`}
                     />
                 </View>
 
@@ -359,10 +383,19 @@ export default ({ navigation, route }) => {
                                 textAlignVertical: "top",
                                 minHeight: (Platform.OS === 'ios' && NUMBER_OF_INPUT_LINE) ? (20 * NUMBER_OF_INPUT_LINE) : null,
                             }}
+                            autoCorrect={false}
                             textAlignVertical="top"
                             multiline={true} // ios fix for centering it at the top-left corner 
                             numberOfLines={Platform.OS === "ios" ? null : NUMBER_OF_INPUT_LINE}
                             inputAccessoryViewID={INPUT_ACCESSORY_VIEW_ID}
+                            value={feedbackModal.text}
+                            maxLength={250}
+                            onChangeText={(text) => {
+                                updateFeedbackModal(p => ({
+                                    ...p,
+                                    text: text,
+                                }))
+                            }}
                         />
 
                         <View style={{
@@ -378,9 +411,12 @@ export default ({ navigation, route }) => {
                                 text={`Cancel`}
                             />
                             <Button
-                                onPress={() => { }}
+                                onPress={() => { onFeedbackSubmitPress(); }}
                                 style={{ width: "48%", height: 40, borderRadius: 5, }}
                                 textStyle={{ fontFamily: FontFamily.Poppins.Medium, fontSize: 16 }}
+                                disabled={`${feedbackModal.text.trim()}`.length < FEEDBACK_INPUT_MINIMUM_LENGTH}
+                                isLoading={feedbackModal.submitLoading}
+                                loaderSize={"small"}
                                 text={`Submit`}
                             />
                         </View>
@@ -393,6 +429,7 @@ export default ({ navigation, route }) => {
                     <RNButton
                         onPress={() => {
                             Keyboard.dismiss();
+                            onFeedbackSubmitPress();
                         }}
                         title="Done"
                     />

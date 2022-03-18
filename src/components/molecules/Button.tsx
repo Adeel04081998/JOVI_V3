@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Animated, Easing, TouchableOpacity, ActivityIndicator, GestureResponderEvent, TextProps, TextStyle } from "react-native";
+import { Animated, Easing, TouchableOpacity, ActivityIndicator, GestureResponderEvent, TextProps, TextStyle, ColorValue } from "react-native";
 import Text from "../atoms/Text";
 // import TouchableOpacity from "../atoms/TouchableOpacity";
 import debounce from 'lodash.debounce'; // 4.0.8
@@ -12,7 +12,9 @@ export type ButtonProps = React.ComponentProps<typeof TouchableOpacity> & {
     text?: string;
     textStyle?: TextStyle;
     wait: number,
-    isLoading?: boolean,
+    isLoading?: boolean;
+    loaderSize?: number | 'small' | 'large' | undefined;
+    loaderColor?: ColorValue;
     activeOpacity?: number;
     iconName?: string,
     iconType?: any,
@@ -30,7 +32,8 @@ const defaultProps = {
     activeOpacity: 0.9,
     wait: 0.4,
     isLoading: false,
-
+    loaderSize: "large",
+    loaderColor: "white",
     leftComponent: undefined,
     rightComponent: undefined,
 };
@@ -54,7 +57,7 @@ const Button = (props: ButtonProps, textProps: TextProps) => {
             }
         });
     };//end of animateIn
-    const onPressParent = debounce(props.onPress,props.wait * 1000,{ leading: false, trailing: true, });
+    const onPressParent = debounce(props.onPress, props.wait * 1000, { leading: false, trailing: true, });
     const animateOut = (event: GestureResponderEvent) => {
         Animated.timing(buttonMargin, {
             toValue: 1,
@@ -64,7 +67,7 @@ const Button = (props: ButtonProps, textProps: TextProps) => {
         }).start((finished) => {
             if (finished && props.onPress) {
                 // if(isPressed.current){
-                    // return;
+                // return;
                 // }
                 // console.log('onPressParent',isPressed.current);
                 onPressParent(event);
@@ -138,7 +141,7 @@ const Button = (props: ButtonProps, textProps: TextProps) => {
                     fontWeight: '500',
                     color: "#fff",
                     textAlign: "center",
-                }, props.textStyle]}>{props.isLoading ? <ActivityIndicator color="white" size="large" /> : props.text}</Text>
+                }, props.textStyle]}>{props.isLoading ? <ActivityIndicator color={props.loaderColor} size={props.loaderSize} /> : props.text}</Text>
 
                 {props.rightComponent && props.rightComponent()}
             </View>
