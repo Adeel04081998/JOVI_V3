@@ -79,27 +79,28 @@ export default ({ navigation, route }) => {
         //middle param will be use for rider change
         sharedNotificationHandlerForOrderScreens(fcmReducer, (prop) => {
             if (prop?.loadChat) {
-                console.log('props when new chat', prop);
-                let message = prop.notificationData.notification.body;
-                const date = dayjs(prop.notificationData.data.ExpiryDate, constants.server_time_format);
-                let msgObj = {
-                    audio: "",
-                    audioDuration: "",
-                    createdAt: new Date(date),
-                    fileType: 0,
-                    image: "",
-                    imageThumbnail: "",
-                    isReceived: true,
-                    orderID: orderID,
-                    text: message,
-                    user: { _id: prop.notificationData?.data?._id??'', name:  prop.notificationData?.data?.name??'', image:  prop.notificationData?.data?.image??''},
-                    userType: 2,
-                    userTypeStr: "Rider",
-                    _id: new Date().getTime()
-                }
-                setMessages([{
-                    ...msgObj
-                }, ...messages]);
+                loadData();//when notifications are missed incase of internet off, then all messages aren't loaded
+                // console.log('props when new chat', prop);
+                // let message = prop.notificationData.notification.body;
+                // const date = dayjs(prop.notificationData.data.ExpiryDate, constants.server_time_format);
+                // let msgObj = {
+                //     audio: "",
+                //     audioDuration: "",
+                //     createdAt: new Date(date),
+                //     fileType: 0,
+                //     image: "",
+                //     imageThumbnail: "",
+                //     isReceived: true,
+                //     orderID: orderID,
+                //     text: message,
+                //     user: { _id: prop.notificationData?.data?._id??'', name:  prop.notificationData?.data?.name??'', image:  prop.notificationData?.data?.image??''},
+                //     userType: 2,
+                //     userTypeStr: "Rider",
+                //     _id: new Date().getTime()
+                // }
+                // setMessages([{
+                //     ...msgObj
+                // }, ...messages]);
             }
         }, orderCancelledOrCompleted);
         return () => {
