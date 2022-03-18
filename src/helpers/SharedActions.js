@@ -782,8 +782,19 @@ export const sharedHandleInfinityScroll = (event) => {
     if (Math.ceil(mHeight + Y) >= cSize) return true;
     return false;
 }
-export const sharedOrderNavigation = (orderID = null, orderStatus = null, replacingRoute = null, newOrder = null, showBack = false) => {
+export const checkIfFirstPitstopRestaurant = (pitstopsList = [], extraIgnoredStatuses = []) => {
+    let isFirstPitstopRestaurant = null;
+    const ignoredStatuses = [3, 4, 5, ...extraIgnoredStatuses];
+    pitstopsList?.map((item) => {
+        if (isFirstPitstopRestaurant === null && item?.pitstopType === 4 && !ignoredStatuses.includes(item?.joviJobStatus)) {
+            isFirstPitstopRestaurant = true;
+        }
+    });
+    return isFirstPitstopRestaurant;
+}
+export const sharedOrderNavigation = (orderID = null, orderStatus = null, replacingRoute = null, newOrder = null, showBack = false, pitstopsList = []) => {
     console.log('orderID', orderID);
+    const isFirstPitstopRestaurant = checkIfFirstPitstopRestaurant(pitstopsList);
     const navigationLogic = (route) => {
         if (newOrder) {
             NavigationService.NavigationActions.common_actions.reset_with_filter_invert([ROUTES.APP_DRAWER_ROUTES.Home.screen_name], {
@@ -805,11 +816,11 @@ export const sharedOrderNavigation = (orderID = null, orderStatus = null, replac
         [ORDER_STATUSES.VendorProblem]: goToOrderProcessing,
         [ORDER_STATUSES.CustomerApproval]: goToOrderProcessingError,
         [ORDER_STATUSES.CustomerProblem]: goToOrderProcessingError,
-        [ORDER_STATUSES.FindingRider]: goToOrderTracking,
+        [ORDER_STATUSES.FindingRider]: isFirstPitstopRestaurant ? goToOrderTracking : goToOrderProcessing,
         [ORDER_STATUSES.Initiated]: goToOrderTracking,
         [ORDER_STATUSES.Processing]: goToOrderTracking,
         [ORDER_STATUSES.RiderFound]: goToOrderTracking,
-        [ORDER_STATUSES.RiderProblem]: goToOrderTracking,
+        [ORDER_STATUSES.RiderProblem]: isFirstPitstopRestaurant ? goToOrderTracking : goToOrderProcessing,
         [ORDER_STATUSES.TransferProblem]: goToOrderTracking,
     };
     orderStatusEnum[orderStatus ?? '']();

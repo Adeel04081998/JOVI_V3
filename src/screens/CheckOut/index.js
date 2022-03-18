@@ -41,7 +41,7 @@ export default () => {
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED['10']], Appearance.getColorScheme() === "dark");
     const checkOutStyles = StyleSheet.styles(colors)
     const cartReducer = useSelector(store => store.cartReducer);
-    console.log("cartReducer",cartReducer);
+    console.log("cartReducer", cartReducer);
     const userReducer = useSelector(store => store.userReducer);
     const totalPitstop = cartReducer.pitstops.length ?? ""
     const estimatedDeliveryTime = cartReducer.orderEstimateTime || ""
@@ -96,13 +96,13 @@ export default () => {
                     if (item.isJoviJob && !item.isDestinationPitstop) {
                         let minEstimateTime = item.estTime?.text?.split(' ')[0]?.split('-')[0] ?? '';
                         let maxEstimateTime = item.estTime?.text?.split(' ')[0]?.split('-')[1] ?? '';
-                        if(item.estTime?.text?.includes('hour')){
+                        if (item.estTime?.text?.includes('hour')) {
                             minEstimateTime = '01:00';
                             maxEstimateTime = '01:00';//as instructed by tabish, he was saying that in 1hour+ case, send same value for min max
-                        }else{
+                        } else {
                             minEstimateTime = minEstimateTime.length === 1 ? '00:0' + minEstimateTime : '00:' + minEstimateTime;
                             maxEstimateTime = maxEstimateTime.length === 1 ? '00:0' + maxEstimateTime : '00:' + maxEstimateTime;
-                            maxEstimateTime = maxEstimateTime.replace('60','59');
+                            maxEstimateTime = maxEstimateTime.replace('60', '59');
                         }
                         return {
                             "pitstopID": null,
@@ -217,9 +217,9 @@ export default () => {
             postRequest(Endpoints.CreateUpdateOrder, finalOrder, (res) => {
                 console.log('order place res', res);
                 if (res.data.statusCode === 200) {
-                    Toast.success('Order Placed!!');
+                    Toast.success(res.data.message ?? 'Order Placed!!');
                     dispatch(actions.clearCartAction());
-                    sharedOrderNavigation(res.data?.createUpdateOrderVM?.orderID ?? 0, res.data?.createUpdateOrderVM?.subStatusName ?? '', null, true);
+                    sharedOrderNavigation(res.data?.createUpdateOrderVM?.orderID ?? 0, res.data?.createUpdateOrderVM?.subStatusName ?? '', null, true, false, finalOrder.pitStopsList);
                 } else {
                     setState(pre => ({ ...pre, isLoading: false }));
                 }
