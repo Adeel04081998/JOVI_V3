@@ -10,7 +10,7 @@ import View from '../../components/atoms/View';
 import CustomHeader, { CustomHeaderIconBorder, CustomHeaderStyles } from '../../components/molecules/CustomHeader';
 import Card from '../../components/organisms/Card';
 import NoRecord from '../../components/organisms/NoRecord';
-import { isNextPage, sharedExceptionHandler, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { isNextPage, sharedExceptionHandler, sharedOrderNavigation, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import constants from '../../res/constants';
@@ -257,6 +257,7 @@ export default ({ navigation, route }) => {
                             <OnGoingItemCardUI
                                 key={index}
                                 colors={colors}
+                                item={item}
                                 orderID={item.orderID}
                                 atPoint={item.currentPitstop ? item.currentPitstop : 1}
                                 noOfPitstops={item.totalPitstops}
@@ -303,11 +304,12 @@ export default ({ navigation, route }) => {
 };//end of EXPORT DEFAULT
 
 
-const OnGoingItemCardUI = ({ colors = initColors, orderID = '', atPoint = 0, noOfPitstops = '', paymentMethod = '', estDeliveryTime = '' }) => {
-    console.log('atPoint ', atPoint);
+const OnGoingItemCardUI = ({ colors = initColors, orderID = '', atPoint = 0, noOfPitstops = '', paymentMethod = '', estDeliveryTime = '', item }) => {
     const onGoingItemStyles = onGoingItemFuncStyles(colors, ORDER_HISTORY_TYPE_COLOR);
     return (
-        <Card contentContainerStyle={onGoingItemStyles.contentContainerStyle}>
+        <Card contentContainerStyle={onGoingItemStyles.contentContainerStyle} onPress={() => {
+            sharedOrderNavigation(orderID, item.subStatusName, null, null, true, item.pitstopList)
+        }}>
             <View style={onGoingItemStyles.orderDetailContainer}>
                 <Text fontFamily='PoppinsSemiBold' style={onGoingItemStyles.orderIDText}>{`Order id # ${orderID}`}</Text>
                 <Text style={onGoingItemStyles.inProgressText}>{`In Progress`}</Text>

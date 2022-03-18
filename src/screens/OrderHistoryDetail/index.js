@@ -3,10 +3,8 @@ import * as React from 'react';
 import { Appearance, Button as RNButton, FlatList, InputAccessoryView, Keyboard, Platform, SafeAreaView, TextInput as RNTextInput } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SvgXml } from 'react-native-svg';
-import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-aware-scroll-view';
 import svgs from '../../assets/svgs';
 import Text from '../../components/atoms/Text';
-import TextInput from '../../components/atoms/TextInput';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import TouchableScale from '../../components/atoms/TouchableScale';
 import View from '../../components/atoms/View';
@@ -28,10 +26,13 @@ import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import HistoryItemCardUI from '../OrderHistory/components/HistoryItemCardUI';
 import { headerFuncStyles, stylesFunc } from './styles';
 
+// #region :: CONSTANT's START's FROM HERE 
 const HEADER_ICON_SIZE = CustomHeaderIconBorder.size * 0.6;
 const NUMBER_OF_INPUT_LINE = 4
 const INPUT_ACCESSORY_VIEW_ID = 'feedbackDoneButton';
 const FEEDBACK_INPUT_MINIMUM_LENGTH = 4;
+
+// #endregion :: CONSTANT's END's FROM HERE 
 
 export default ({ navigation, route }) => {
 
@@ -139,8 +140,7 @@ export default ({ navigation, route }) => {
     // #endregion :: API IMPLEMENTATION END's FROM HERE 
 
     // #region :: LOADING AND ERROR UI START's FROM HERE 
-    // if (query.isLoading) {
-    if (false) {
+    if (query.isLoading) {
         return <View style={styles.primaryContainer}>
             {_renderHeader()}
             <HistoryItemCardUI
@@ -167,8 +167,7 @@ export default ({ navigation, route }) => {
                 />
             </View>
         </View>
-        // } else if (query.error) {
-    } else if (false) {
+    } else if (query.error) {
         return <View style={styles.primaryContainer}>
             {_renderHeader()}
             <HistoryItemCardUI
@@ -251,6 +250,7 @@ export default ({ navigation, route }) => {
 
     // #endregion :: FLATLIST RENDER ITEM END's FROM HERE 
 
+    // #region :: FEEDBACK OPEN & CLOSE MODAL START's FROM HERE 
     const openFeedbackModal = () => {
         updateFeedbackModal(p => ({
             ...p,
@@ -266,6 +266,10 @@ export default ({ navigation, route }) => {
         }))
     }
 
+
+    // #endregion :: FEEDBACK OPEN & CLOSE MODAL END's FROM HERE 
+
+    // #region :: ON FEEDBACK BUTTON PRESS START's FROM HERE 
     const onFeedbackSubmitPress = () => {
         if (`${feedbackModal.text.trim()}`.length < FEEDBACK_INPUT_MINIMUM_LENGTH) return;
         updateFeedbackModal(p => ({ ...p, submitLoading: true }));
@@ -284,6 +288,30 @@ export default ({ navigation, route }) => {
             updateFeedbackModal(p => ({ ...p, submitLoading: false }));
         });
     }
+
+    // #endregion :: ON FEEDBACK BUTTON PRESS END's FROM HERE 
+
+    // #region :: COMPLAINT & FEEDBACK BUTTON START's FROM HERE 
+    const _renderButton = () => {
+        return (
+            <>
+                {/* ****************** Start of BUTTON ****************** */}
+                <View style={styles.buttonPrimaryContainer}>
+                    <TouchableOpacity style={styles.buttonContainerLeft} activeOpacity={0.5}>
+                        <Text style={styles.buttonText}>{`Complaint`}</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.buttonContainerRight} activeOpacity={0.5} onPress={() => { openFeedbackModal() }}>
+                        <Text style={styles.buttonText}>{`Feedback`}</Text>
+                    </TouchableOpacity>
+                </View>
+
+                {/* ****************** End of BUTTON ****************** */}
+            </>
+        )
+    }
+
+    // #endregion :: COMPLAINT & FEEDBACK BUTTON END's FROM HERE 
 
     // #region :: UI START's FROM HERE 
     return (
@@ -348,19 +376,8 @@ export default ({ navigation, route }) => {
 
             </Card>
 
+            {_renderButton()}
 
-            {/* ****************** Start of BUTTON ****************** */}
-            <View style={styles.buttonPrimaryContainer}>
-                <TouchableOpacity style={styles.buttonContainerLeft} activeOpacity={0.5}>
-                    <Text style={styles.buttonText}>{`Complaint`}</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.buttonContainerRight} activeOpacity={0.5} onPress={() => { openFeedbackModal() }}>
-                    <Text style={styles.buttonText}>{`Feedback`}</Text>
-                </TouchableOpacity>
-            </View>
-
-            {/* ****************** End of BUTTON ****************** */}
 
             {feedbackModal.visible &&
                 <AnimatedModal
