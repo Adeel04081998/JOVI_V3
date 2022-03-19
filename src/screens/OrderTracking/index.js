@@ -239,6 +239,7 @@ export default ({ route }) => {
                 clearInterval(fetchRiderLocationRef.current);
             }
         } else {
+            fetchOrderDetails();
             if (isRiderFound) {
                 fetchRiderLocation();
             }
