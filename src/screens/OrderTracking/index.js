@@ -1,6 +1,6 @@
 import AnimatedLottieView from "lottie-react-native";
 import React from "react";
-import { Animated, Appearance, Easing, PixelRatio, Platform, StyleSheet } from "react-native";
+import { Animated, Appearance, Easing, Image, PixelRatio, Platform, StyleSheet } from "react-native";
 import { SvgXml } from "react-native-svg";
 import { useSelector } from "react-redux";
 import svgs from "../../assets/svgs";
@@ -289,8 +289,9 @@ export default ({ route }) => {
     const renderProgressCircle = () => {
         const sizeSvg = 137
         return <>
-            <View style={{ position: 'absolute', marginTop: -125 }}>
+            <View style={{ position: 'absolute', marginTop: -165 }}>
                 {/* <SvgXml style={{ top: -10, }} height={137} width={WIDTH} xml={circleCurveSvgXml} /> */}
+                <Image source={require('../../assets/images/Path36964.png')} />
             </View>
             <View style={styles.orderProgressContainer}>
 
