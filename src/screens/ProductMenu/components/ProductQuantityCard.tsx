@@ -25,7 +25,7 @@ interface Props {
     pitstopItemID: number | string;
     marketID: number | string;
     screenName : number,
-    fromCart: boolean
+    fromCart: boolean,
 }
 
 const defaultProps = {
@@ -98,6 +98,8 @@ const ProductQuantityCard = (props: Props) => {
                 skipEffect.current = true;
             }
             setState(pre => ({ ...pre, quantity: updatedQuantity }));
+        }else{
+            skipEffect.current = false;
         }
     }, [cartReducer]);
 
