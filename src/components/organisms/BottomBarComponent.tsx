@@ -268,7 +268,6 @@ const BottomBarComponent = (props: Props) => {
         // const isActive = (item?.key ?? '') === activeRoute;
         const isActive = item.id === 1 ? true : false;
         const iconColor = isActive ? colors.primary : VALIDATION_CHECK(item?.iconColor ?? '') ? item.iconType : '#A3ABB4';
-        console.log('rightDate', item);
         const notificationSize = 18;
         return (
             <TouchableOpacity style={{
