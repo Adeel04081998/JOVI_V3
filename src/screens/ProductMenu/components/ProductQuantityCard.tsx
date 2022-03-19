@@ -104,7 +104,7 @@ const ProductQuantityCard = (props: Props) => {
     }, [cartReducer]);
 
 
-    //
+    
 
     const incrementQuantity = () => {
         setState(pre => ({ ...pre, quantity: pre.quantity + 1 }))
