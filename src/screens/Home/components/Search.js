@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform } from 'react-native';
+import { Keyboard, Platform } from 'react-native';
 import TextInput from '../../../components/atoms/TextInput';
 import VectorIcon from '../../../components/atoms/VectorIcon';
 import View from '../../../components/atoms/View';
@@ -12,6 +12,14 @@ export default ({ colors, homeStyles, onSearch = () => { }, placeholder = null, 
     const [state, setState] = React.useState({
         value: '',
     });
+    React.useEffect(() => {
+        if (Platform.OS === 'android') {
+            const keyboardWillHide = () => {
+                Keyboard.dismiss();
+            }
+            Keyboard.addListener('keyboardDidHide', keyboardWillHide);
+        }
+    }, []);
     return (
         <View style={{
             flexDirection: "row",
