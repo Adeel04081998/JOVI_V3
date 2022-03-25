@@ -38,7 +38,8 @@ export const initColors = {
     "grey": "#6B6B6B",
     "ASH_TO_ASH": "#4D4D4D",
     "dull_primary": '#F0F4F9',
-    "light_input_border": "#CACDD1"
+    "light_input_border": "#CACDD1",
+    "green": 'green'
 }
 export default {
 

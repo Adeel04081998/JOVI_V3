@@ -24,19 +24,16 @@ export default (props) => {
   const onConfirmLoc = (finalDestObj) => {
     if (props.route.params.index === 0) {
 
-      console.log('here in 0');
       props.route.params.onNavigateBack && props.route.params.onNavigateBack(finalDestObj.title);
       dispatch(ReduxActions.setUserFinalDestAction({ finalDestObj }))
       NavigationService.NavigationActions.common_actions.goBack();
 
     } else if (props.route.params.index === 1) {
-      console.log('here in 1');
 
       props.route.params.onNavigateBack && props.route.params.onNavigateBack(finalDestObj);
       NavigationService.NavigationActions.common_actions.goBack();
     }
     else if (props.route.params.index === 3) {
-      console.log('here in 3');
 
       NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.AddAddress.screen_name, {
         finalDestObj,
@@ -44,7 +41,6 @@ export default (props) => {
         isFromEdit
       })
     } else {
-      console.log('here in else');
 
       dispatch(ReduxActions.setUserFinalDestAction({ finalDestObj }))
       NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.AddAddress.screen_name, {

@@ -597,10 +597,8 @@ const RenderPutItemInCartBox = ({ addToCardAnimation, setState }) => {
                 height={70}
                 width={40}
                 onLoadEnd={async () => {
-                    if (Platform.OS === 'ios') {
-                        await sleep(2);
-                    }
-                    // animateLoader(0)
+                    // await sleep(0);
+                     animateLoader(0)
                 }}
             />
         )

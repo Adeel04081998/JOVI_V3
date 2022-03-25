@@ -1,6 +1,6 @@
 import { useIsFocused } from '@react-navigation/native';
 import React from 'react';
-import { Alert, Platform, StatusBar } from 'react-native';
+import { Alert, AppState, Platform, StatusBar } from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
 import DeviceInfo from 'react-native-device-info';
 import Toast from '../components/atoms/Toast';
@@ -955,7 +955,6 @@ export const sharedGetCurrentLocation = (onSuccess = () => { }, onError = () => 
         (error) => {
             console.log("error==>", error);
             if (error) {
-                // CustomToast.error("An error accured while fetching your current location, please try again.")
                 onError(error)
             }
         },
@@ -1027,4 +1026,12 @@ export const sharedGetFinalDestintionRequest = () => {
         latitude: userReducer.finalDestObj.latitude,
         longitude: userReducer.finalDestObj.longitude,
     };
+}
+
+export const sharedForegroundCallbackHandler = (cb = () => { }) => {
+    return AppState.addEventListener('change', nextAppState=>{
+        if(nextAppState === 'active' || nextAppState === 'inactive'){
+            cb();
+        }
+    });
 }

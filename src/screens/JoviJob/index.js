@@ -155,7 +155,6 @@ export default ({ navigation, route }) => {
 
     const [nameval, setNameVal] = useState('')
     const [cityVal, setCityVal] = useState('')
-    const [placeName, setPlaceName] = useState('')
     const [locationVal, setLocationVal] = useState('')
     // const [locationVal, setLocationVal] = useState(__DEV__ ? 'Islamabad' : '')
     const [scrollEnabled, setScrollEnabled] = useState(true)
@@ -195,17 +194,19 @@ export default ({ navigation, route }) => {
 
 
 
-    const [progress, updateProgress] = useState(0);
-    const [recordingUploading, setRecordingUploading] = useState(false);
-    const [isRecord, setIsRecord] = useState(false);
-    const recorderRef = useRef(null);
     const customRecordingRef = useRef(null);
-    const recordTimeRef = useRef(null);
     const [micPress, setMicPress] = useState(false);
     const [isDeleted, setIsDeleted] = useState(false);
     const [forceDeleted, setForceDeleted] = useState(false);
     const [loader, setLoader] = useState(false);
     const [voiceNote, setVoiceNote] = useState({})
+
+
+    //refs used for validation of card header toggle arrow icon
+    const descriptionRef = React.useRef(null)
+    const imageRef = React.useRef(null)
+    const voiceNoteRef = React.useRef(null)
+
 
     /******** End of Pitstop Details variables *******/
 
@@ -253,10 +254,8 @@ export default ({ navigation, route }) => {
 
         updateImagesData([]);
 
-        setRecordingUploading(false);
 
 
-        setIsRecord(false);
 
         setMicPress(false);
         setIsDeleted(false);
@@ -298,7 +297,6 @@ export default ({ navigation, route }) => {
     React.useEffect(() => {
         if (isDeleted) {
             setVoiceNote({});
-            setIsRecord(false);
             setIsDeleted(false);
         }
     }, [isDeleted])
@@ -312,16 +310,27 @@ export default ({ navigation, route }) => {
 
 
 
-
-    const toggleCardData = (key = PITSTOP_CARD_TYPES["location"], color = colors.primary) => {
-        const cardData = cardRef.current;
+    const toggleCardData = (key = PITSTOP_CARD_TYPES["location"], color = colors.primary, val, typeNum) => {
+        let headerBool = true
+        let imagesArr = typeNum === 1 ? val : []
+        let descriptionStr = typeNum === 0 ? val : ''
+        let voiceNoteObj = typeNum === 2 ? val : {}
         const index = cardData.findIndex(i => i.key === key);
+        if (key === PITSTOP_CARD_TYPES["buy-for-me"] && switchVal) {
+            cardData[index + 1].headerColor = color;
+            cardData[index + 1].isOpened = headerBool
+        }
+        if (index === 2) {
+            if (!descriptionStr.length && !imagesArr.length && !Object.keys(voiceNoteObj).length) headerBool = false
+        }
         cardData[index].headerColor = color;
-        cardData[index].isOpened = true;
+        cardData[index].isOpened = headerBool
         setCardData(cardData);
         forceUpdate()
+        imagesArr = []
+        descriptionStr = ''
+        voiceNoteObj = {}
     };//end of toggleCardData
-
 
 
     /************   Start of functions of Pitstop location Component Funcs    **************/
@@ -395,7 +404,8 @@ export default ({ navigation, route }) => {
                 isUploading: true,
             }))
         }
-        // toggleCardData(PITSTOP_CARD_TYPES["estimated-time"]);
+        toggleCardData(PITSTOP_CARD_TYPES["estimated-time"], colors.primary, slicedImages, 1);
+        imageRef.current = slicedImages
         updateImagesData(slicedImages);
 
     };
@@ -431,7 +441,6 @@ export default ({ navigation, route }) => {
     /************   End of MAIN UI function  **************/
 
 
-
     // /************   Start of Shared Card Header function     **************/
     const disabledHandler = (index, disabled) => {
         let isDisable = true;
@@ -444,11 +453,11 @@ export default ({ navigation, route }) => {
                 // console.log('index wise Condition','2',index,index === 2 && description.length || imageData.length || Object.keys(voiceNote).length);
                 isDisable = false;
             }
-            else if (index === 3 && estTime.value > 0) {
+            else if (index === 3 && (description.length || imageData.length || Object.keys(voiceNote).length) && estTime.value > 0) {
                 // console.log('index wise Condition','3',index,index === 3 && estTime.value > 0);
                 isDisable = false
             }
-            else if (index === 4 && (estTime.value !== 0)) {
+            else if (index === 4 && (description.length || imageData.length || Object.keys(voiceNote).length) && (estTime.value > 0) && switchVal) {
                 // console.log('index wise Condition','4',index, );
                 isDisable = false;
             }
@@ -489,16 +498,18 @@ export default ({ navigation, route }) => {
                 activeOpacity={0.9}
                 disabled={isDisabled}
                 onHeaderPress={() => {
-                    const isRecording=customRecordingRef.current?.isRecording()??false;
+                    const isRecording = customRecordingRef.current?.isRecording() ?? false;
                     updateCardOnHeaderPressItem = {
                         idx, title, desc, svg, isOpened, headerColor, index, disabled, isDisabled
                     };
-
                     if (idx === 2 && isOpened && isRecording) { //AHMED KH RHA KOI 2 ko change nh kry ga... ;-P
                         //WHEN DESCRIPTION TOGGLE 
                         closeSecondCard = true;
                         customRecordingRef.current?.setStopRecording(true);
                         customRecordingRef.current?.setStopAudioPlayer(true);
+                        setTimeout(() => {
+                            updateCardOnHeaderPress(updateCardOnHeaderPressItem);
+                        }, 5);
                     } else {
                         updateCardOnHeaderPress(updateCardOnHeaderPressItem);
                     }
@@ -535,7 +546,6 @@ export default ({ navigation, route }) => {
 
 
     /************   End of Body function     **************/
-
 
 
     /************   Start of pitstopLocation component     **************/
@@ -575,8 +585,9 @@ export default ({ navigation, route }) => {
                 description={description}
                 isOpened={isDisabled ? false : isOpened}
                 onChangeDescription={(t) => {
+                    descriptionRef.current = t
                     setDescription(t)
-                    toggleCardData(PITSTOP_CARD_TYPES["estimated-time"]);
+                    toggleCardData(PITSTOP_CARD_TYPES["estimated-time"], colors.primary, t, 0);
                 }}>
                 <View>
                     <Button
@@ -631,6 +642,8 @@ export default ({ navigation, route }) => {
                                     }]}>
                                         <VectorIcon name="closecircleo" type="AntDesign" size={15} style={{ position: 'absolute', top: 0, right: 0 }} onPress={() => {
                                             let tempArr = imageData.filter((item, _indx) => _indx !== index)
+                                            imageRef.current = tempArr
+                                            toggleCardData(PITSTOP_CARD_TYPES["estimated-time"], colors.primary, tempArr, 1)
                                             updateImagesData(tempArr)
                                         }} />
                                         <Image source={{ uri: item.path }} style={{ height: 30, width: 30, resizeMode: "cover", borderRadius: 6 }} />
@@ -648,19 +661,27 @@ export default ({ navigation, route }) => {
                     recordingItem={recordingItem}
                     onDeleteComplete={() => {
                         recordingItem = null;
+                        voiceNoteRef.current = {}
+                        setVoiceNote({})
+                        toggleCardData(PITSTOP_CARD_TYPES["estimated-time"], colors.primary)
+
                     }}
                     onRecordingComplete={(recordItem) => {
                         recordingItem = recordItem;
+                        voiceNoteRef.current = recordItem
                         if (closeSecondCard) {
                             updateCardOnHeaderPress(updateCardOnHeaderPressItem);
                             closeSecondCard = false;
                         }
+                        setVoiceNote(recordingItem)
+                        toggleCardData(PITSTOP_CARD_TYPES["estimated-time"], colors.primary, recordItem, 2)
                     }}
                     onPlayerStopComplete={() => {
                         if (closeSecondCard) {
                             updateCardOnHeaderPress(updateCardOnHeaderPressItem);
                             closeSecondCard = false;
                         }
+
                     }}
                     caption="Record your voice note."
                 />
@@ -772,7 +793,8 @@ export default ({ navigation, route }) => {
             estTime,
             estimatePrice: parseInt(estVal),
             latitude: latitudeRef.current,
-            longitude: longitudeRef.current
+            longitude: longitudeRef.current,
+            buyForMe: switchVal
         }
         sharedAddUpdatePitstop(pitstopData, false, [], false, false, clearData);
         setLoader(false)

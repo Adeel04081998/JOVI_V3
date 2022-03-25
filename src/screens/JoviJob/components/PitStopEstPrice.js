@@ -15,6 +15,7 @@ import joviJobStyles from '../styles';
 export default React.memo((props) => {
     const [icon, setIcon] = React.useState();
     const isSliderUse = React.useRef(true);
+    const sliderTimeoutId = React.useRef(null);
     const [, updateState] = React.useState();
     const forceUpdate = React.useCallback(() => updateState({}), []);
 
@@ -63,7 +64,7 @@ export default React.memo((props) => {
 
                     minimumValue={0}
                     maximumValue={remainingAmount}
-                    step={isSliderUse.current ? getSliderStep() : 1}
+                    step={getSliderStep()}
                     onResponderStart={() => {
                         if (!isSliderUse.current) {
                             isSliderUse.current = true;
@@ -75,8 +76,11 @@ export default React.memo((props) => {
                         props.onSliderChange(val);
                     }}
                     onValueChange={(val) => {
+                        clearTimeout(sliderTimeoutId.current)
                         isSliderUse.current = true;
-                        props.onSliderChange(val);
+                        sliderTimeoutId.current = setTimeout(() => {
+                            props.onSliderChange(val);
+                        }, 100);
 
                     }}
                     minimumTrackTintColor={colors.primary}

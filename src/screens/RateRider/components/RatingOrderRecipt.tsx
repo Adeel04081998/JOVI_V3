@@ -101,7 +101,12 @@ const RatingOrderRecipt = (props: Props) => {
                         const isJoviJob = x.pitstopType === PITSTOP_TYPES.JOVI;
                         const pitstopName = isJoviJob ? 'Jovi Job' : x.title
                         const individualPitstopTotal = x.jobAmount;
-                        const checkOutItemsListVM = x?.jobItemsListViewModel ?? [];
+                        let checkOutItemsListVM = x?.jobItemsListViewModel ?? [];
+                        if (isJoviJob) {
+                            checkOutItemsListVM = [{
+                                ...x,
+                            }]
+                        }
 
 
                         return <View style={{ flex: 0 }} key={i}>
