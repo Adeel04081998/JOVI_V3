@@ -265,10 +265,10 @@ export default ({ navigation, route }) => {
                                     </View>
                                 </>
                                     :
-                                    !item.isSkipped && !isJoviJob && <>
+                                    !item.isSkipped && !isJoviJob &&item.availableItems.length>0 && <>
                                         <CardSubTitle type={CARD_SUB_TITLE_TYPES.accepted} />
                                         <View style={styles.greyCardContainer}>
-                                            {item.jobItemsListViewModel.map((childItem, childIndex) => {
+                                            {item.availableItems.map((childItem, childIndex) => {
                                                 return (
                                                     <CardText
                                                         key={childIndex}
