@@ -2,12 +2,9 @@ import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import React, { useState } from 'react';
 import { Animated, Appearance, Easing, ScrollView } from "react-native";
+import { useDispatch, useSelector } from 'react-redux';
 // import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-aware-scroll-view';
-import { SvgXml } from "react-native-svg";
-
-import { useDispatch, useSelector } from 'react-redux';
-import svgs from "../../assets/svgs";
 import AddressesList from "../../components/atoms/FinalDestination/AddressesList";
 import SafeAreaView from "../../components/atoms/SafeAreaView";
 import Text from "../../components/atoms/Text";
@@ -15,13 +12,9 @@ import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import GenericList from '../../components/molecules/GenericList';
 import ImageCarousel from '../../components/molecules/ImageCarousel';
-import BottomBarComponent from '../../components/organisms/BottomBarComponent';
-import { sharedConfirmationAlert, sharedExceptionHandler, sharedLogoutUser, sharedOrderNavigation, uniqueKeyExtractor } from "../../helpers/SharedActions";
+import { sharedExceptionHandler, sharedOrderNavigation, uniqueKeyExtractor } from "../../helpers/SharedActions";
 import { getRequest } from "../../manager/ApiManager";
 import Endpoints from "../../manager/Endpoints";
-import NavigationService from "../../navigations/NavigationService";
-import ROUTES from "../../navigations/ROUTES";
-import preference_manager from "../../preference_manager";
 import ReduxActions from '../../redux/actions';
 import theme from "../../res/theme";
 import GV from "../../utils/GV";
@@ -58,17 +51,23 @@ export default () => {
         }))
     };
     const onOrderPress = (order) => {
-        sharedOrderNavigation(order.orderID, order.subStatusName);
+        sharedOrderNavigation(order.orderID, order.subStatusName, null, null, false, order?.pitstopList ?? []);
     }
     useFocusEffect(
         React.useCallback(() => {
-            getRequest(Endpoints.GetOpenOrders, (res) => {
-                console.log('[GetOpenOrders] res', res);
-                if (res.data.statusCode === 200) {
-                    const openOrders = res.data?.getOpenOrderDetails?.openOrderList ?? [];
+            getRequest(Endpoints.GET_CUSTOMER_ONGOING_ORDER, (res) => {
+                const statusCode = res.data?.statusCode ?? 404;
+                console.log('[GET_CUSTOMER_ONGOING_ORDER]', res);
+                if (statusCode === 200) {
+                    const openOrders = res.data?.onGoingOrders?.onGoingOrdersList ?? [];
                     dispatch(ReduxActions.setUserAction({ openOrders, noOfOpenOrders: openOrders.length }));
+                }else{
+                    dispatch(ReduxActions.setUserAction({ openOrders:[], noOfOpenOrders: 0 }));
                 }
-            }, (err) => { sharedExceptionHandler(err); });
+            }, (err) => {
+                sharedExceptionHandler(err);
+                dispatch(ReduxActions.setUserAction({ openOrders: [], noOfOpenOrders: 0 }));
+            })
             if (!(!!userReducer?.finalDestObj)) {
                 gotoFinalDestinationModal();
             }

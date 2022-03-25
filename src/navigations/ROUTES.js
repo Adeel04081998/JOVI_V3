@@ -115,6 +115,10 @@ const APP_DRAWER_ROUTES = {
         screen_name: "ORDER_HISTORY",
         options: null,
     },
+    "OrderHistoryDetail": {
+        screen_name: "ORDER_HISTORY_DETAIL",
+        options: { animation: 'slide_from_bottom' },
+    },
 
 
 }

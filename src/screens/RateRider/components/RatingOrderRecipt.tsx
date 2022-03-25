@@ -108,7 +108,6 @@ const RatingOrderRecipt = (props: Props) => {
                             }]
                         }
 
-
                         return <View style={{ flex: 0 }} key={i}>
                             <ReceiptItem
                                 colors={colors}
@@ -137,7 +136,7 @@ interface PriceInter {
     checkOutStyles: any,
     text: any, value: any,
 }
-const RenderGSTPrice1 = ({ checkOutStyles, text, value }: PriceInter) => {
+export const RenderGSTPrice1 = ({ checkOutStyles, text, value }: PriceInter) => {
     if (!VALIDATION_CHECK(value)) return null;
     return (
         <View style={checkOutStyles.gstPrimaryContainer}>
@@ -149,7 +148,7 @@ const RenderGSTPrice1 = ({ checkOutStyles, text, value }: PriceInter) => {
     )
 }
 
-const RenderGSTPrice2 = ({ checkOutStyles, text, value }: PriceInter) => {
+export const RenderGSTPrice2 = ({ checkOutStyles, text, value }: PriceInter) => {
     if (!VALIDATION_CHECK(value)) return null;
     return (
         <View style={{ flex: 1, flexDirection: 'column', marginHorizontal: 12, borderWidth: 0, paddingVertical: -9 }}>
@@ -163,7 +162,7 @@ const RenderGSTPrice2 = ({ checkOutStyles, text, value }: PriceInter) => {
     )
 }
 
-const RenderTotal = ({ text, value }: PriceInter) => {
+export const RenderTotal = ({ text, value }: PriceInter) => {
     if (!VALIDATION_CHECK(value)) return null;
     return (
         <View style={{ flex: 1, flexDirection: 'column', padding: 10, paddingVertical: 8 }}>

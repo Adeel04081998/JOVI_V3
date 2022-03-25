@@ -1,6 +1,6 @@
 import AnimatedLottieView from "lottie-react-native";
 import React from "react";
-import { Animated, Appearance, Easing, PixelRatio, Platform, StyleSheet } from "react-native";
+import { Animated, Appearance, Easing, Image, PixelRatio, Platform, StyleSheet } from "react-native";
 import { SvgXml } from "react-native-svg";
 import { useSelector } from "react-redux";
 import svgs from "../../assets/svgs";
@@ -92,7 +92,7 @@ export default ({ route }) => {
             if (res.data.statusCode === 200) {
                 let allowedOrderStatuses = [ORDER_STATUSES.Processing, ORDER_STATUSES.RiderFound, ORDER_STATUSES.FindingRider, ORDER_STATUSES.RiderProblem, ORDER_STATUSES.TransferProblem];
                 if (!allowedOrderStatuses.includes(res.data.order.subStatusName)) {
-                    sharedOrderNavigation(orderIDParam, res.data.order.subStatusName, ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name);
+                    sharedOrderNavigation(orderIDParam, res.data.order.subStatusName, ROUTES.APP_DRAWER_ROUTES.OrderTracking.screen_name, null, false, res.data?.order?.pitStopsList ?? []);
                     return;
                 }
                 let progress = 0;
@@ -179,7 +179,9 @@ export default ({ route }) => {
                     }));
                 }
                 console.log('res [fetchOrderEstimation] - ', res);
-            }, () => { }, {}, false);
+            }, (err) => {
+                console.log('err [fetchOrderEstimation] - ', err);
+            }, {}, false);
         }
         if (fetchOrderEstimationRef.current) {
             clearInterval(fetchOrderEstimationRef.current);
@@ -237,6 +239,7 @@ export default ({ route }) => {
                 clearInterval(fetchRiderLocationRef.current);
             }
         } else {
+            fetchOrderDetails();
             if (isRiderFound) {
                 fetchRiderLocation();
             }
@@ -288,8 +291,9 @@ export default ({ route }) => {
     const renderProgressCircle = () => {
         const sizeSvg = 137
         return <>
-            <View style={{ position: 'absolute', marginTop: -125 }}>
+            <View style={{ position: 'absolute', marginTop: -165 }}>
                 {/* <SvgXml style={{ top: -10, }} height={137} width={WIDTH} xml={circleCurveSvgXml} /> */}
+                <Image source={require('../../assets/images/Path36964.png')} />
             </View>
             <View style={styles.orderProgressContainer}>
 
@@ -323,7 +327,7 @@ export default ({ route }) => {
                 rightIconName={'home'}
                 leftIconColor={colors.black}
             />
-            <Animated.View style={{
+            {!__DEV__ && <Animated.View style={{
                 ...styles.container, transform: [{
                     translateY: loadAnimation.interpolate({
                         inputRange: [0, 1],
@@ -352,7 +356,7 @@ export default ({ route }) => {
                         modalAnimation(0);
                     }}
                 />}
-            </Animated.View>
+            </Animated.View>}
             {
                 !modalOpened ? <TouchableOpacity onPress={() => {
                     modalAnimation(1);

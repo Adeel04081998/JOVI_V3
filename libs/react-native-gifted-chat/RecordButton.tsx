@@ -1,7 +1,7 @@
 import { Recorder, Player } from '@react-native-community/audio-toolkit';
 import * as React from "react";
 import { StyleProp, StyleSheet, View as RNView, ViewStyle, Image as RNImage, Platform, Alert } from "react-native";
-import { check, PERMISSIONS, RESULTS } from 'react-native-permissions';
+import { check, checkMultiple, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import { SvgXml, Text } from "react-native-svg";
 import svgs from "../../src/assets/svgs";
 import TouchableOpacity from "../../src/components/atoms/TouchableOpacity";
@@ -16,6 +16,7 @@ export interface RecordButtonItemProps {
     uri: string;
     name: string;
     type: "audio/mp4" | "mp4" | "mp3";
+    duration?: string | number;
 }
 
 interface Props {
@@ -51,6 +52,7 @@ const RecordButton = React.forwardRef<Recorder, Props>((props: Props, ref: any) 
                     uri: Platform.OS === "android" ? `file://${path}` : path,
                     name: path.split('/').pop(),
                     type: "audio/mp4",
+                    duration: `${duration}`,
                 };
                 props.onRecordAudio(obj);
             }
@@ -76,8 +78,8 @@ const RecordButton = React.forwardRef<Recorder, Props>((props: Props, ref: any) 
             check(Platform.OS === "android" ? PERMISSIONS.ANDROID.RECORD_AUDIO : PERMISSIONS.IOS.MICROPHONE)
                 .then((result: any) => {
                     if (result === RESULTS.GRANTED) {
-                        const fileName = "record-" + new Date().getTime() + ".mp4";
-                        recorderRef.current = new Recorder(fileName).record();
+                        const fileName = "testingrecord" + new Date().getTime() + ".mp4";
+                        recorderRef.current = new Recorder(fileName, { channels: 2, bitrate: 256000, sampleRate: 44100, quality: "max", format: "mp4", encoder: "mp4" }).record();
                         setIsMicPress(true);
                         props.renderComposer(true);
                     } else {
@@ -123,7 +125,6 @@ const RecordButton = React.forwardRef<Recorder, Props>((props: Props, ref: any) 
 
     return (
         <TouchableOpacity
-            accessible
             style={[GCSendStyles.container, {
             }, props.containerStyle]}
             {...props.useHold ? {

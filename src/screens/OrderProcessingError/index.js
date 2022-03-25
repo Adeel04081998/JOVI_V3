@@ -10,8 +10,9 @@ import Button from '../../components/molecules/Button';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import OrderEstTimeCard from '../../components/organisms/Card/OrderEstTimeCard';
 import DashedLine from '../../components/organisms/DashedLine';
-import { renderPrice, sharedConfirmationAlert, sharedExceptionHandler, sharedFetchOrder, sharedGenerateProductItem, sharedNotificationHandlerForOrderScreens, sharedOrderNavigation } from '../../helpers/SharedActions';
-import { postRequest } from '../../manager/ApiManager';
+import SitBackAnimation from '../../components/organisms/SitBackAnimation';
+import { checkIfFirstPitstopRestaurant, renderPrice, sharedConfirmationAlert, sharedExceptionHandler, sharedFetchOrder, sharedGenerateProductItem, sharedNotificationHandlerForOrderScreens, sharedOrderNavigation } from '../../helpers/SharedActions';
+import { getRequest, postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
@@ -46,7 +47,7 @@ export default ({ navigation, route }) => {
                     rightIconName='home'
                     hideFinalDestination
                     title={'Approval'}
-                    leftIconName={showBack?'chevron-back':null}
+                    leftIconName={showBack ? 'chevron-back' : null}
                     rightIconSize={22}
                     rightIconColor={colors.primary}
                     onRightIconPress={() => {
@@ -68,6 +69,11 @@ export default ({ navigation, route }) => {
         isLoading: true,
         orderActionLoading: false,
         chargeBreakdown: {},
+        orderEstimateTimeViewModel: null,
+        orderEstimateTime: null,
+        estimateTime: null,
+        sitBackAnimation: false,
+        postSitBackAnimationData: null,
     });
 
     // #endregion :: STATE's & REF's END's FROM HERE 
@@ -77,11 +83,30 @@ export default ({ navigation, route }) => {
     const orderCancelledOrCompleted = () => {
         goToHome();
     }
+    const goToOrderTracking = (status = '', pitstopsList = []) => {
+        sharedOrderNavigation(orderIDParam, status, ROUTES.APP_DRAWER_ROUTES.OrderProcessingError.screen_name, null, false, pitstopsList = [] ?? []);
+        return;
+    }
+    const sitBackAnimation = (orderStatus = '', pitstopsList = []) => {
+        setState(pre => ({
+            ...pre,
+            sitBackAnimation: true,
+            postSitBackAnimationData: {
+                orderStatus,
+                pitstopsList,
+            }
+        }));
+    }
     const fetchOrderDetails = () => {
         sharedFetchOrder(orderIDParam, (res) => {
             let allowedOrderStatuses = [ORDER_STATUSES.CustomerApproval, ORDER_STATUSES.CustomerProblem];
             if (!allowedOrderStatuses.includes(res.data.order.subStatusName)) {
-                sharedOrderNavigation(orderIDParam, res.data.order.subStatusName, ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name);
+                if (res.data.order.subStatusName === ORDER_STATUSES.RiderFound) {
+                    sitBackAnimation(res.data.order.subStatusName, res.data?.order?.pitStopsList ?? []);
+                } else {
+                    goToOrderTracking(res.data.order.subStatusName, res.data?.order?.pitStopsList ?? []);
+                    // sharedOrderNavigation(orderIDParam, res.data.order.subStatusName, ROUTES.APP_DRAWER_ROUTES.OrderProcessingError.screen_name, null, false, res.data?.order?.pitStopsList ?? []);
+                }
                 return;
             }
             let updatedPitstops = res.data.order.pitStopsList.map((item, i) => {
@@ -107,13 +132,27 @@ export default ({ navigation, route }) => {
 
         });
     }
+    const fetchEstimateTime = () => {
+        getRequest(Endpoints.OrderEstimateTime + '/' + orderIDParam, (res) => {
+            if (res.data.statusCode === 200) {
+                setState(pre => ({
+                    ...pre,
+                    orderEstimateTimeViewModel: res.data.orderEstimateTimeViewModel,
+                    orderEstimateTime: res.data.orderEstimateTime,
+                    estimateTime: res.data.estimateTime,
+                }));
+            }
+            console.log('res [fetchOrderEstimation] - ', res);
+        }, () => { }, {}, false);
+    }
     React.useEffect(() => {
-        sharedNotificationHandlerForOrderScreens(fcmReducer,fetchOrderDetails,orderCancelledOrCompleted);
+        sharedNotificationHandlerForOrderScreens(fcmReducer, fetchOrderDetails, orderCancelledOrCompleted);
         return () => {
         }
     }, [fcmReducer]);
     React.useEffect(() => {
         fetchOrderDetails();
+        fetchEstimateTime();
         return () => { };
     }, []);
 
@@ -130,7 +169,9 @@ export default ({ navigation, route }) => {
                 const { statusCode, orderStatusVM } = response.data;
                 if (statusCode === 200) {
                     if (isConfirm) {
-                        NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderTracking.screen_name, {orderID:orderIDParam}, ROUTES.APP_DRAWER_ROUTES.OrderProcessingError.screen_name);
+                        const isFirstPitstopRestaurant = checkIfFirstPitstopRestaurant(state.pitStopsList);
+                        const routeToGo = isFirstPitstopRestaurant ? ROUTES.APP_DRAWER_ROUTES.OrderTracking.screen_name : ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name;
+                        NavigationService.NavigationActions.stack_actions.replace(routeToGo, { orderID: orderIDParam }, ROUTES.APP_DRAWER_ROUTES.OrderProcessingError.screen_name);
                     } else {
                         NavigationService.NavigationActions.common_actions.goBack();
                     }
@@ -196,12 +237,14 @@ export default ({ navigation, route }) => {
     return (
         <View style={styles.primaryContainer}>
             {_renderHeader()}
-
+            {state.sitBackAnimation && <SitBackAnimation onComplete={() => {
+                goToOrderTracking(state?.postSitBackAnimationData?.orderStatus, state?.postSitBackAnimationData?.pitstopsList)
+            }} />}
             <OrderEstTimeCard
                 imageHeight={IMAGE_SIZE * 0.6}
                 color={colors}
                 middle={{
-                    value: state.orderEstimateTime,
+                    value: state.orderEstimateTimeViewModel ? state.orderEstimateTimeViewModel?.orderEstimateTime?.trim() : ' - ',
                 }} />
 
             <AnimatedFlatlist
@@ -246,10 +289,10 @@ export default ({ navigation, route }) => {
                                     </View>
                                 </>
                                     :
-                                    !item.isSkipped && !isJoviJob && <>
+                                    !item.isSkipped && !isJoviJob && item.availableItems.length > 0 && <>
                                         <CardSubTitle type={CARD_SUB_TITLE_TYPES.accepted} />
                                         <View style={styles.greyCardContainer}>
-                                            {item.jobItemsListViewModel.map((childItem, childIndex) => {
+                                            {item.availableItems.map((childItem, childIndex) => {
                                                 return (
                                                     <CardText
                                                         key={childIndex}
