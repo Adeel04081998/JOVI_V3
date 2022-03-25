@@ -3,6 +3,7 @@ import { Animated, Appearance, ColorValue, Dimensions, Easing, StyleSheet, Touch
 import Svg, { Color, Path } from 'react-native-svg';
 import { VALIDATION_CHECK } from "../../helpers/SharedActions";
 import { useDeviceOrientation } from "../../hooks/useDeviceOrientation";
+import { initColors } from "../../res/colors";
 import constants from "../../res/constants";
 import theme from "../../res/theme";
 import GV from "../../utils/GV";
@@ -11,6 +12,7 @@ import AnimatedView from "../atoms/AnimatedView";
 import Text from "../atoms/Text";
 import TouchableOpacity from "../atoms/TouchableOpacity";
 import VectorIcon from "../atoms/VectorIcon";
+import BottomCategoryList from "../molecules/BottomCategoryList";
 import CategoryCircular from "../molecules/CategoryCircular";
 import { mockData } from "../molecules/mockData";
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TC);
@@ -42,7 +44,7 @@ type Props = React.ComponentProps<typeof View> & {
     leftData?: BottomBarItem[];
     rightData?: BottomBarItem[];
 
-    colors: Object;
+    colors: typeof initColors;
     buttonSize?: number;
 };
 
@@ -58,13 +60,13 @@ const defaultProps = {
     rightData: [],
 
     buttonSize: 60,
-    colors: null,
+    colors: undefined,
 };
 
 // #endregion :: INTERFACE END's FROM HERE 
 
 const BottomBarComponent = (props: Props) => {
-    const colors = props.colors ?? theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
+    const colors: typeof initColors = props?.colors ?? theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
 
     // #region :: PROP VAIABLE START's FROM HERE 
     const width = props.width ?? defaultProps.width;
@@ -85,7 +87,6 @@ const BottomBarComponent = (props: Props) => {
     const crossIconAnimation = React.useRef(new Animated.Value(0)).current;
     const fullScreenAnimation = React.useRef(new Animated.Value(0)).current;
     const [maxWidth, setMaxWidth] = React.useState<any>(width);
-    const [activeRoute, updateActiveRoute] = React.useState<any>(null);
     const [isCloseIcon, toggleCloseIcon] = React.useState(false);
 
     // #endregion :: STATE & REF's END's FROM HERE 
@@ -281,7 +282,7 @@ const BottomBarComponent = (props: Props) => {
                     item.onPress && item.onPress();
                 }}>
                 {
-                    item.notification && (item.notificationCount!== undefined && item.notificationCount!== null?item.notificationCount > 0:true) ?
+                    item.notification && (item.notificationCount !== undefined && item.notificationCount !== null ? item.notificationCount > 0 : true) ?
                         <View style={{
                             height: notificationSize, width: notificationSize,
                             borderRadius: notificationSize / 2,
@@ -324,6 +325,7 @@ const BottomBarComponent = (props: Props) => {
 
     return (
         <View style={isCloseIcon ? { flex: 1, flexGrow: 1, ...StyleSheet.absoluteFillObject } : { flexGrow: 0, flex: 0 }}>
+
             <AnimatedView style={{
                 ...StyleSheet.absoluteFillObject,
                 position: "absolute",
@@ -334,6 +336,7 @@ const BottomBarComponent = (props: Props) => {
                 // display: isCloseIcon ? "flex" : "none",
                 opacity: fullScreenAnimation
             }} />
+
 
             <View style={{ flex: 1, zIndex: 999 }}>
                 <View style={[styles.container, {}]}>
@@ -376,8 +379,11 @@ const BottomBarComponent = (props: Props) => {
 
                 {/* ****************** Start of CIRCULAR CATEGORIES ****************** */}
                 {/* {isCloseIcon && */}
-                <CategoryCircular data={mockData} isShown={isCloseIcon} />
-                {/* } */}
+                <BottomCategoryList isShown={isCloseIcon} onClose={() => {
+                    toggleCloseIcon(false);
+                }} />
+                {/* //  <CategoryCircular data={mockData} isShown={isCloseIcon} /> 
+                } */}
 
                 {/* ****************** End of CIRCULAR CATEGORIES ****************** */}
             </View>

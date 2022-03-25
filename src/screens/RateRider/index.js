@@ -12,7 +12,7 @@ import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import { CustomHeaderIconBorder, CustomHeaderStyles } from '../../components/molecules/CustomHeader';
 import AnimatedModal from '../../components/organisms/AnimatedModal';
-import { sharedExceptionHandler, sharedFetchOrder, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { sharedExceptionHandler, sharedFetchOrder, splitArray, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
@@ -33,14 +33,6 @@ const HEADER_ICON_SIZE_RIGHT = CustomHeaderIconBorder.size * 0.7;
 const RATING_SIZE = constants.window_dimensions.height * 0.3;
 let selectedItem = null;
 
-const splitArray = (array, n) => {
-    let [...arr] = array;
-    let res = [];
-    while (arr.length) {
-        res.push(arr.splice(0, n));
-    }
-    return res;
-};
 
 const RATING_JSON = {
     Entry: require('../../assets/rating_json/1_star_entry.json'),

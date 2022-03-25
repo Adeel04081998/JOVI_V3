@@ -5,7 +5,7 @@ import Text from '../Text';
 import ENUMS from '../../../utils/ENUMS';
 import TouchableOpacity from '../TouchableOpacity';
 import theme from '../../../res/theme';
-import GV from '../../../utils/GV';
+import GV, { PITSTOP_TYPES } from '../../../utils/GV';
 import SafeAreaView from "../../atoms/SafeAreaView";
 import AveragePrice from './components/AveragePrice';
 import CustomHeader from '../../molecules/CustomHeader';
@@ -40,7 +40,7 @@ export default (props) => {
     const _renderHeaderRightButton = () => {
         return (
             <TouchableOpacity onPress={handleclearAllPress} style={{}} >
-                <Text style={{ color: "#C1C1C1" , fontSize:14,}} fontFamily='PoppinsRegular'>{`Clear`}</Text>
+                <Text style={{ color: "#C1C1C1", fontSize: 14, }} fontFamily='PoppinsRegular'>{`Clear`}</Text>
             </TouchableOpacity>
         )
     }
@@ -68,7 +68,7 @@ export default (props) => {
         }
         if (state[Filter_ACTIVE_INDEX]) {
             const listing = (vendorFilterViewModel?.filtersList ?? []).filter(item => item.vendorDashboardCatID === state[Filter_ACTIVE_INDEX])[0];
-            NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.PitstopsVerticalList.screen_name, { pitstopType: route.params.pitstopType??4, updatedFilters:{cuisines:state[CUSINE_ACTIVE_INDEX]}, listingObj: { ...listing } },ROUTES.APP_DRAWER_ROUTES.Filter.screen_name);
+            NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.PitstopsVerticalList.screen_name, { pitstopType: route.params.pitstopType ?? 4, updatedFilters: { cuisines: state[CUSINE_ACTIVE_INDEX] }, listingObj: { ...listing } }, ROUTES.APP_DRAWER_ROUTES.Filter.screen_name);
             return;
         }
         NavigationService.NavigationActions.common_actions.goBack();
@@ -113,25 +113,25 @@ export default (props) => {
                     scrollEnabled={false}
                     activeFilterBy={state.activeAvergePrice}
                 />
-                <Cuisine
-                    data={cuisineList}
-                    filterTypeStyle={{ paddingVertical: 10, color: 'black', fontSize: 17, }}
-                    colors={colors}
-                    onPress={(item, index) => { handleOnPress(item.categoryID, CUSINE_ACTIVE_INDEX) }}
-                    activeCusine={state.activeCusine}
-                />
+                    <Cuisine
+                        data={cuisineList}
+                        filterTypeStyle={{ paddingVertical: 10, color: 'black', fontSize: 17, }}
+                        colors={colors}
+                        onPress={(item, index) => { handleOnPress(item.categoryID, CUSINE_ACTIVE_INDEX) }}
+                        activeCusine={state.activeCusine}
+                    />
             </ScrollView>
-            <View style={{width:'100%', justifyContent:'center', alignSelf:'center', }}>
+            <View style={{ width: '100%', justifyContent: 'center', alignSelf: 'center', }}>
 
-            <Button
-                onPress={onApplyPress}
-                // disabled={enableDisableButton}
-                text='Apply'
-                textStyle={{fontSize: 14, color: colors.white}}
-                wait={2}
-                style={{width: WIDTH * 0.75, height: HEIGHT * 0.065,  alignSelf: "center", marginBottom: 10, backgroundColor: "#ED4C42", borderRadius: 25 }}
-                
-            />
+                <Button
+                    onPress={onApplyPress}
+                    // disabled={enableDisableButton}
+                    text='Apply'
+                    textStyle={{ fontSize: 14, color: colors.white }}
+                    wait={2}
+                    style={{ width: WIDTH * 0.75, height: HEIGHT * 0.065, alignSelf: "center", marginBottom: 10, backgroundColor: "#ED4C42", borderRadius: 25 }}
+
+                />
             </View>
         </SafeAreaView>
     )

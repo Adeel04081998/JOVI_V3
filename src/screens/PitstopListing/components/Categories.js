@@ -13,26 +13,26 @@ const SPACING_VERTICAL = 10;
 const CONTAINER_WIDTH = ((constants.screen_dimensions.width) * 0.17);
 const CONTAINER_HEIGHT = constants.screen_dimensions.width * 0.195;
 
-export default ({ CategoriesTabConfig = {}, selectedCategories = [], parentCategoryHandler = () => { }, colors }) => {
+export default ({ CategoriesTabConfig = {}, selectedCategories = [], parentCategoryHandler = () => { }, colors, itemKeys = { id: 'categoryID', name: 'categoryName', image: 'image' }, }) => {
     const isRendered = React.useRef(false);
     const [state, setState] = React.useState({ activeTab: null });
     const categoriesTagsReducer = useSelector(state => state.categoriesTagsReducer);
-    const categoriesList = categoriesTagsReducer?.vendorFilterViewModel?.cuisine?.categoriesList ?? [];
+    const categoriesList = itemKeys.id === "categoryID" ? categoriesTagsReducer?.vendorFilterViewModel?.cuisine?.categoriesList ?? [] : categoriesTagsReducer?.vendorFilterViewModel?.tagsList ?? [];
     const checkSelectedTab = (item) => {
         // return state.activeTab === item.categoryID;
-        return (selectedCategories ?? []).find(x => x === item.categoryID);
+        return (selectedCategories ?? []).find(x => x === item[itemKeys.id]);
     }
-    const selectedStyle = (item,index) => {
+    const selectedStyle = (item, index) => {
         const style = {
             height: CONTAINER_HEIGHT,
             width: CONTAINER_WIDTH,
             marginBottom: 5,
             justifyContent: 'center',
-            left:10,
+            left: 10,
             backgroundColor: '#fff',
             // ...sharedStyles._styles().shadow,
             ...styles.cat_item_container,
-            marginRight:categoriesList.length-1===index ?20:8,
+            marginRight: categoriesList.length - 1 === index ? 20 : 8,
         };
         return style;
     }
@@ -42,33 +42,31 @@ export default ({ CategoriesTabConfig = {}, selectedCategories = [], parentCateg
         }, 1000);
     }, []);
     const CategoryCardItemComponent = isRendered.current ? CategoryCardItemSimple : CategoryCardItem;
-    return (<View style={{ marginTop: 10, overflow: 'visible', marginHorizontal:-10 }}>
+    return (<View style={{ marginTop: 10, overflow: 'visible', marginHorizontal: -10 }}>
         {CategoriesTabConfig.categoryTitle && <Text numberOfLines={1} fontFamily='PoppinsSemiBold' style={styles.categoryTitle}>
             Cuisine
         </Text>}
         <AnimatedFlatlist
-            data={
-                categoriesList
-            }
+            data={categoriesList}
             delay={250}
             renderItem={(x, i) => {
-                    return <CategoryCardItemComponent
-                        key={`category card item${i}`}
-                        xml={x.image}
-                        title={x.categoryName}
-                        containerStyleOverride={true}
-                        containerOverrideStyle={{
-                            backgroundColor: checkSelectedTab(x) ? colors.primary + '20' : '#fff',
-                            borderColor: checkSelectedTab(x) ? colors.primary : '',
-                            borderWidth: checkSelectedTab(x) ? 2 : 0,
-                            paddingTop:3,
-                            height: '100%', 
+                return <CategoryCardItemComponent
+                    key={`category card item${i}`}
+                    xml={x[itemKeys.image]}
+                    title={x[itemKeys.name]}
+                    containerStyleOverride={true}
+                    containerOverrideStyle={{
+                        backgroundColor: checkSelectedTab(x) ? colors.primary + '20' : '#fff',
+                        borderColor: checkSelectedTab(x) ? colors.primary : '',
+                        borderWidth: checkSelectedTab(x) ? 2 : 0,
+                        paddingTop: 3,
+                        height: '100%',
 
-                        }}
-                        textStyle={styles.cardTextStyle}
-                        imageContainerStyle={[{ height: CONTAINER_HEIGHT * 0.5, marginVertical: 5 }, styles.cat_img_container]}
-                        onPress={() => { setState(pre => ({ ...pre, activeTab: pre.activeTab === x.categoryID ? null : x.categoryID })); parentCategoryHandler(x, 'categoryID', 'cuisines') }}
-                    />
+                    }}
+                    textStyle={styles.cardTextStyle}
+                    imageContainerStyle={[{ height: CONTAINER_HEIGHT * 0.5, marginVertical: 5 }, styles.cat_img_container]}
+                    onPress={() => { setState(pre => ({ ...pre, activeTab: pre.activeTab === x[itemKeys.id] ? null : x[itemKeys.id] })); parentCategoryHandler(x, [itemKeys.id], 'cuisines') }}
+                />
             }}
             horizontal={true}
             itemContainerStyleCb={selectedStyle}
@@ -78,13 +76,13 @@ export default ({ CategoriesTabConfig = {}, selectedCategories = [], parentCateg
 
 
 const styles = StyleSheet.create({
-    cat_img_container:{
+    cat_img_container: {
         width: 80, justifyContent: 'center', alignContent: 'center', alignItems: 'center', alignSelf: 'center'
     },
-    cat_item_container:{
-        justifyContent: 'center', borderRadius: 10, 
-        
+    cat_item_container: {
+        justifyContent: 'center', borderRadius: 10,
+
     },
-    categoryTitle:{ fontSize: 15, color: "#272727", paddingVertical: SPACING_VERTICAL },
-    cardTextStyle:{ fontSize: 12, paddingHorizontal: 2, },
+    categoryTitle: { fontSize: 15, color: "#272727", paddingVertical: SPACING_VERTICAL },
+    cardTextStyle: { fontSize: 12, paddingHorizontal: 2, },
 }) 

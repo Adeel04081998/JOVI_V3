@@ -33,7 +33,6 @@ import Categories from './components/Categories';
 import Filters from './components/Filters';
 import ENUMS from '../../utils/ENUMS';
 
-
 const SPACING_VERTICAL = 10;
 // const renderLoader = (styles) => {
 //     return <View style={styles.gifLoader}>
@@ -50,6 +49,7 @@ const SPACING_VERTICAL = 10;
 
 let scrollEvent = null;
 const PistopListing = ({ route }) => {
+
     const [state, setState] = React.useState({ loaded: false });
     const { pitstopType } = route.params;
     const isLoadedRef = React.useRef(false);
@@ -60,14 +60,14 @@ const PistopListing = ({ route }) => {
     const { height, width } = SCALE_IMAGE;
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]], Appearance.getColorScheme() === "dark");
     const listingStyles = stylesheet.styles(colors, width, height);
-    React.useEffect(()=>{
+    React.useEffect(() => {
         if (!isLoadedRef.current) {
             isLoadedRef.current = true;
             setState(pre => ({ ...pre, loaded: true }));
             // setInterval(() => {
             // }, 100);
         }
-    },[]);
+    }, []);
     const onBackPress = () => {
         NavigationService.NavigationActions.common_actions.goBack();
     }
@@ -84,29 +84,31 @@ const PistopListing = ({ route }) => {
 const PistopListingChild = React.memo(({ route, }) => {
     const { pitstopType } = route.params;
     const vendorDashboardCategoryIDReducer = useSelector(s => s.vendorDashboardCategoryIDReducer)?.data ?? [];
+    const categoryItem = route.params?.categoryItem ?? {};
+    const size = Object.keys(categoryItem).length;
 
     const [state, setState] = React.useState({
         filters: {
             filter: [],
-            cuisines: [],
+            cuisines: size > 0 ? [categoryItem.item.tagID] : [],
             averagePrice: null,
             search: '',
         },
     });
     const filtersRef = React.useRef({
         filter: [],
-        cuisines: [],
+        cuisines: size > 0 ? [categoryItem.item.tagID] : [],
         averagePrice: null,
         search: '',
     });
     const [fetchData, setFetchDataUseEffect] = React.useState(null);
-    const scaleAnimation = React.useRef(new Animated.Value(1)).current;
+    const scaleAnimation = React.useRef(new Animated.Value(size > 0 ? 0 : 1)).current;
     const isRequestSent = React.useRef(false);
     // const promotionsReducer = {};
     const promotionsReducer = useSelector(state => state.promotionsReducer);
     const categoriesTagsReducer = useSelector(state => state.categoriesTagsReducer);
     const [categoryAnimation, setCategoryAnimation] = React.useState({
-        allRestaurant: false,
+        allRestaurant: size > 0 ? true : false,
     });
     const pitstopSpecific = {
         [PITSTOP_TYPES.RESTAURANT]: {
@@ -121,7 +123,7 @@ const PistopListingChild = React.memo(({ route, }) => {
             filterTitleShown: true,
             filterScreenIcon: false,
             searchPlaceHolder: 'What do you want to order?',
-            categorySection: false,
+            categorySection: true,
             pitstopListingTitle: 'All Supermarkets'
         },
     }
@@ -216,6 +218,10 @@ const PistopListingChild = React.memo(({ route, }) => {
         scrollEvent = null;
         // getAdvertisements();
     }, [])
+
+
+
+
     const renderFilters = () => (<View style={{ ...listingStyles.wrapper, paddingBottom: 0, zIndex: 100, paddingTop: SPACING_VERTICAL }}>
         <Search
             placeholder={currentPitstopType.searchPlaceHolder}
@@ -235,12 +241,21 @@ const PistopListingChild = React.memo(({ route, }) => {
             goToFilters={goToFilters} />
 
         {currentPitstopType.categorySection &&
-            <Categories
-                parentCategoryHandler={onFilterChange}
-                selectedCategories={state.filters.cuisines}
-                CategoriesTabConfig={currentPitstopType}
-                colors={colors}
-            />
+            <>
+                <Categories
+                    parentCategoryHandler={onFilterChange}
+                    selectedCategories={state.filters.cuisines}
+                    CategoriesTabConfig={currentPitstopType}
+                    colors={colors}
+                    {...pitstopType === PITSTOP_TYPES.SUPER_MARKET && {
+                        itemKeys: {
+                            id: "tagID",
+                            name: "tagName",
+                            image: "tagImage",
+                        }
+                    }}
+                />
+            </>
         }
     </View>);
     const renderCarouselNdListing = () => (<Animated.View style={{
@@ -259,7 +274,7 @@ const PistopListingChild = React.memo(({ route, }) => {
             colors={colors}
             onAdPressCb={() => {
                 Alert.alert("Ahmed Chutya")
-                
+
             }}
         />
 
@@ -286,6 +301,7 @@ const PistopListingChild = React.memo(({ route, }) => {
 
         </View>
     </Animated.View>);
+
     const renderAllRestaurantsListing = () => (<Animated.View style={{
         ...listingStyles.wrapper,
         marginTop: -10
