@@ -1,5 +1,6 @@
 import React from 'react';
-import { ImageSourcePropType,Image, Animated, StyleProp, ViewStyle, Easing } from 'react-native';
+import { ImageSourcePropType, Image, Animated, StyleProp, ViewStyle, Easing } from 'react-native';
+import colors from '../../res/colors';
 import constants from '../../res/constants';
 import Text from '../atoms/Text';
 import View from '../atoms/View';
@@ -21,28 +22,48 @@ const SitBackAnimation = (props: Props) => {
         Animated.timing(bottomAnimation, {
             toValue,
             useNativeDriver: true,
-            duration: 300,
+            duration: 500,
             easing: Easing.ease,
         }).start();
     }
     React.useEffect(() => {
         animateBottom();
+        setTimeout(()=>{
+            if(props.onComplete){
+                props.onComplete();
+            }
+        },2500);
     }, []);
     return (
         <View style={{ height, width, position: 'absolute', top: 0, zIndex: 9999 }}>
-            <View style={{
-                height:'50%',
-                width: '100%',
-            }}>
-                {/* <Image source={require('../../assets/gifs/Rider-Allocation---Day-2.gif')} resizeMode={'cover'} style={{ width: '100%', height: '100%' }} /> */}
-            </View>
             <Animated.View style={{
-                height:'50%',
+                height: '50%',
+                width: '100%',
+                backgroundColor: colors.light_mode.default.primary,
+                opacity: bottomAnimation,
+            }}>
+                <Image source={require('../../assets/gifs/RiderAllocation-Day(New).gif')} resizeMode={'cover'} style={{ width: '100%', height: '100%' }} />
+            </Animated.View>
+            <Animated.View
+                style={{
+                    position: 'absolute',
+                    top: -20,
+                    transform: [{
+                        translateY: bottomAnimation.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [300, 0],
+                        })
+                    }],
+                }}>
+                <Image source={require('../../assets/images/sitBackSlide.png')} height={200} width={'100%'} />
+            </Animated.View>
+            <Animated.View style={{
+                height: '50%',
                 width: '100%',
                 backgroundColor: 'white',
-                display:'flex',
-                alignItems:'center',
-                paddingTop:100,
+                display: 'flex',
+                alignItems: 'center',
+                paddingTop: 100,
                 transform: [{
                     translateY: bottomAnimation.interpolate({
                         inputRange: [0, 1],
@@ -50,7 +71,8 @@ const SitBackAnimation = (props: Props) => {
                     })
                 }],
             }}>
-                <Text fontFamily={'PoppinsBold'} style={{fontSize:20,color:'black'}}>Sit Back & Relax</Text>
+
+                <Text fontFamily={'PoppinsBold'} style={{ fontSize: 20, color: 'black' }}>Sit Back & Relax</Text>
             </Animated.View>
         </View>
     );

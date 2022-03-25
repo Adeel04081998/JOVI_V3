@@ -903,7 +903,7 @@ export const sharedOnVendorPress = (pitstop, index) => {
     }
     NavigationService.NavigationActions.common_actions.navigate(routes[pitstop.pitstopType], { ...pitstop, pitstopID });
 }
-export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder = () => { }, orderCompletedOrCancelled = () => { }) => {
+export const   sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder = () => { }, orderCompletedOrCancelled = () => { }) => {
     // console.log("[Order Processing].fcmReducer", fcmReducer);
     // '1',  For job related notification
     // '11',  For rider allocated related notification

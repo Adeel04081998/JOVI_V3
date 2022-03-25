@@ -21,6 +21,7 @@ import NavigationService, { _NavgationRef } from '../../navigations/NavigationSe
 import actions from '../../redux/actions';
 import { getRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
+import SitBackAnimation from '../../components/organisms/SitBackAnimation';
 
 const DOUBLE_SPACING = constants.spacing_horizontal + 6;
 const IMAGE_SIZE = constants.window_dimensions.width * 0.3;
@@ -68,9 +69,25 @@ export default ({ navigation, route }) => {
         orderEstimateTimeViewModel: null,
         orderEstimateTime: null,
         estimateTime: null,
+        sitBackAnimation: false,
+        postSitBackAnimationData: null,
     });
 
     // #endregion :: STATE's & REF's END's FROM HERE 
+    const goToOrderTracking = (status = '', pitstopsList = []) => {
+        sharedOrderNavigation(orderIDParam, status, ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name, null, false, pitstopsList = [] ?? []);
+        return;
+    }
+    const sitBackAnimation = (orderStatus='',pitstopsList = []) => {
+        setState(pre=>({
+            ...pre,
+            sitBackAnimation:true,
+            postSitBackAnimationData:{
+                orderStatus,
+                pitstopsList,
+            }
+        }));
+    }
     const fetchOrderDetails = () => {
         sharedFetchOrder(orderIDParam, (res) => {
             if (res.data.statusCode === 200) {
@@ -84,7 +101,13 @@ export default ({ navigation, route }) => {
                     ];
                 }
                 if (!allowedOrderStatuses.includes(res.data.order.subStatusName)) {
-                    sharedOrderNavigation(orderIDParam, res.data.order.subStatusName, ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name, null, false, res.data?.order?.pitStopsList ?? []);
+                    if (res.data.order.subStatusName === ORDER_STATUSES.RiderFound) {
+                        sitBackAnimation(res.data.order.subStatusName, res.data?.order?.pitStopsList ?? []);
+                    } else {
+                        goToOrderTracking(res.data.order.subStatusName, res.data?.order?.pitStopsList ?? []);
+                        // sharedOrderNavigation(orderIDParam, res.data.order.subStatusName, ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name, null, false, res.data?.order?.pitStopsList ?? []);
+
+                    }
                     return;
                 }
                 setState(pre => ({ ...pre, ...res.data.order, pitStopsList: res.data.order.pitStopsList.filter(item => ![3, 4, 5, 9].includes(item.joviJobStatus)), isLoading: false }))
@@ -143,7 +166,9 @@ export default ({ navigation, route }) => {
     return (
         <View style={styles.primaryContainer}>
             {_renderHeader()}
-
+            {state.sitBackAnimation&&<SitBackAnimation onComplete={()=>{
+                goToOrderTracking(state?.postSitBackAnimationData?.orderStatus,state?.postSitBackAnimationData?.pitstopsList)
+            }} />}
             <OrderEstTimeCard
                 imageHeight={IMAGE_SIZE * 0.6}
                 color={colors}
