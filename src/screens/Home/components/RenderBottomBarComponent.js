@@ -15,7 +15,7 @@ import { useSelector } from 'react-redux';
 
 export default React.memo(({ homeStyles }) => {
     const userReducer = useSelector(state => state.userReducer);
-    const ordersCount = userReducer.openOrders.length;
+    const ordersCount = userReducer?.openOrders?.length;
     return (
         <BottomBarComponent
             leftData={[{ id: 1, iconName: "home", title: "Home" }, { id: 2, iconName: "person", title: "Profile" }]}
