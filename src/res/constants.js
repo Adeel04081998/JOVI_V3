@@ -1,7 +1,7 @@
 import { Dimensions } from "react-native";
 export default {
     DEFAULT_JOVI_IMAGE: require('../assets/Logo/image_default.png'),
-    app_version: '4.4',
+    app_version: '100.19',
     url_qa: "https://qa-api.jovi-app.com",
     url_qasprint_v1: "https://qasprintv1-api.jovi-app.com",
     url_ngRok: "https://tabish.ngrok.io",
@@ -37,7 +37,6 @@ export default {
         "iconActiveColor": "#05B7ED",
         "navTextColor": "#C1C1C1",
         "navActiveTextColor": "white",
-        "mudassir": "white"
     },
     sharedStartingRegionPK: {
         latitude: 25.96146850382255,

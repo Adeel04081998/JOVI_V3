@@ -343,7 +343,7 @@ export default () => {
 
             <Text style={{ color: colors.black, fontSize: 12 }} numberOfLines={1}>
               {
-                pitstopType === PITSTOP_TYPES.RESTAURANT ? product?.selectedOptions?.map(obj => obj.tittle).join(", ") : description
+                pitstopType === PITSTOP_TYPES.RESTAURANT ? product?.selectedOptions?.map(obj => `${obj.tittle} (Rs. ${obj.optionPrice})`).join(", ") : description
               }
             </Text>
             <Text
@@ -410,9 +410,9 @@ export default () => {
     };
     return (
       <View style={{ paddingHorizontal: 10 }}>
-        {row('Subtotal', sharedCalculatedTotals().subTotal, true)}
+        {row(`Subtotal (Inc GST ${sharedCalculatedTotals().gst})`, sharedCalculatedTotals().subTotal, false)}
         {/* {row('GST', sharedCalculatedTotals().gst)} */}
-        {sharedCalculatedTotals().discount ? row('Discount', `- ${sharedCalculatedTotals().discount}`) : null}
+        {sharedCalculatedTotals().discount ? row('Total Discount', `- ${sharedCalculatedTotals().discount}`) : null}
         {row(`Service Charges (Incl S.T ${sharedCalculatedTotals().serviceTax})`, sharedCalculatedTotals().serviceCharges)}
         <BottomLine />
         {row('Total', sharedCalculatedTotals().total, true)}
@@ -500,8 +500,10 @@ export default () => {
                     {
                       text: "Yes",
                       onPress: () => {
-                        NavigationService.NavigationActions.common_actions.goBack();
                         dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
+                        setTimeout(() => {
+                          NavigationService.NavigationActions.common_actions.goBack();
+                        }, 0);
                       }
                     },
                   ],

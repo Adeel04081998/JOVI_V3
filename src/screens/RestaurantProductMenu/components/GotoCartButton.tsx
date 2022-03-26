@@ -29,7 +29,7 @@ const defaultProps = {
     text: "Go to cart",
     count: null,
     price: null,
-    bottom:0
+    bottom: 0
 };
 // #endregion :: INTERFACE END's FROM HERE 
 
@@ -41,8 +41,9 @@ const GotoCartButton = (props: Props) => {
     const styles = stylesFunc(colors, insets, props);
 
     const cartReducer = useSelector((store: any) => store.cartReducer);
-    const { itemsCount, itemsTotalWithDiscounts } = cartReducer;
-    const price = props?.price ?? itemsTotalWithDiscounts;
+    const { itemsCount = 0, total = 0, serviceTax = 0, serviceCharges = 0 } = cartReducer;
+    // const price = props?.price ?? (total + serviceTax + serviceCharges); If we want to show totals with service charges uncomment this line
+    const price = props?.price ?? total;
     const count = props?.count ?? itemsCount;
 
     if (!count) return null;
