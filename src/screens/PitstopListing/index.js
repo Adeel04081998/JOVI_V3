@@ -121,7 +121,7 @@ const PistopListingChild = React.memo(({ route, }) => {
         },
         [PITSTOP_TYPES.SUPER_MARKET]: {
             filterTitleShown: true,
-            filterScreenIcon: false,
+            filterScreenIcon: true,
             searchPlaceHolder: 'What do you want to order?',
             categorySection: true,
             pitstopListingTitle: 'All Supermarkets'
@@ -198,7 +198,7 @@ const PistopListingChild = React.memo(({ route, }) => {
         allRestaurantAnimation(isAllDisSelected ? 1 : 0);
     }
     const goToFilters = () => {
-        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Filter.screen_name, { activeAvergePrice: filtersRef.current.averagePrice, activeCusine: filtersRef.current.cuisines[0], activeFilterBy: filtersRef.current.filter[0], backCB: backFromFiltersHandler });
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Filter.screen_name, { activeAvergePrice: filtersRef.current.averagePrice, activeCusine: filtersRef.current.cuisines[0], activeFilterBy: filtersRef.current.filter[0], backCB: backFromFiltersHandler, pitstopType, });
     }
     const handleInfinityScroll = (event) => {
         let mHeight = event.nativeEvent.layoutMeasurement.height;
@@ -350,7 +350,7 @@ const PistopListingChild = React.memo(({ route, }) => {
                 {renderCarouselNdListing()}
                 {renderAllRestaurantsListing()}
             </ScrollView>
-            <BottomBarComponent colors={colors} leftData={[{ id: 1, iconName: "home", title: "Home" }, { id: 2, iconName: "person", title: "Profile" }]} rightData={[{ id: 3, iconName: "wallet", title: "Wallet" }, { id: 4, iconName: "pin", title: "Location" }]} />
+            <BottomBarComponent pitstopType={pitstopType} screenName={ROUTES.APP_DRAWER_ROUTES.PitstopListing.screen_name} colors={colors} leftData={[{ id: 1, iconName: "home", title: "Home" }, { id: 2, iconName: "person", title: "Profile" }]} rightData={[{ id: 3, iconName: "wallet", title: "Wallet" }, { id: 4, iconName: "pin", title: "Location" }]} />
             {/* </SafeAreaView>
         </View> */}
         </>

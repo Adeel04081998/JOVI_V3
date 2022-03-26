@@ -1,10 +1,9 @@
 import * as React from "react";
-import { Animated, ColorValue, Easing, StyleSheet, TouchableOpacity } from "react-native";
-import Svg, { Circle, Color, Path, SvgXml } from "react-native-svg";
-import { makeArrayRepeated, sharedOnCategoryPress, splitArray, VALIDATION_CHECK } from "../../helpers/SharedActions";
+import { Animated, Easing, StyleSheet } from "react-native";
+import Svg, { Circle, SvgXml } from "react-native-svg";
+import { makeArrayRepeated, splitArray, VALIDATION_CHECK } from "../../helpers/SharedActions";
 import NavigationService from "../../navigations/NavigationService";
 import ROUTES from "../../navigations/ROUTES";
-import AppStyles from "../../res/AppStyles";
 import { initColors } from "../../res/colors";
 import constants from "../../res/constants";
 import { PITSTOP_TYPES } from "../../utils/GV";
@@ -13,7 +12,6 @@ import TouchableScale from "../atoms/TouchableScale";
 import View from "../atoms/View";
 import BottomCategoryListStaticData from "./BottomCategoryListStaticData";
 import FlatListCarousel from "./FlatListCarousel";
-import ImageCarousel from "./ImageCarousel";
 
 const data = makeArrayRepeated(BottomCategoryListStaticData, 1);
 

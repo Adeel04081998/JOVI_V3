@@ -949,14 +949,18 @@ export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder 
         dispatch(actions.fcmAction({ notifyClientID }));
     } else console.log("[Order OrderPitstops] Job notification not found!!");
 }
-export const sharedOnCategoryPress = (item, index) => {
+export const sharedOnCategoryPress = (item, index, useReplace = false) => {
     const pitstopType = item.value;
     const routes = {
         4: ROUTES.APP_DRAWER_ROUTES.PitstopListing.screen_name,
         1: ROUTES.APP_DRAWER_ROUTES.PitstopListing.screen_name,
         2: ROUTES.APP_DRAWER_ROUTES.JoviJob.screen_name,
     }
-    NavigationService.NavigationActions.common_actions.navigate(routes[pitstopType], { pitstopType });
+    if (useReplace) {
+        NavigationService.NavigationActions.stack_actions.replace(routes[pitstopType], { pitstopType });
+    } else {
+        NavigationService.NavigationActions.common_actions.navigate(routes[pitstopType], { pitstopType });
+    }
 }
 
 export const sharedGetCurrentLocation = (onSuccess = () => { }, onError = () => { }) => {

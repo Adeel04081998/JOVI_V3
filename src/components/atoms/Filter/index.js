@@ -19,8 +19,16 @@ const Filter_ACTIVE_INDEX = "activeFilterBy";
 const AV_PRICE_ACTIVE_INDEX = "activeAvergePrice";
 export default (props) => {
     const { route } = props;
+    const pitstopType = route.params?.pitstopType ?? 0;
+    const itemKeys = React.useRef(pitstopType === PITSTOP_TYPES.SUPER_MARKET ? {
+        id: "tagID",
+        name: "tagName",
+    } : {
+        id: "categoryID",
+        name: "categoryName",
+    });
     const { vendorFilterViewModel } = useSelector(state => state.categoriesTagsReducer);
-    const cuisineList = vendorFilterViewModel?.cuisine ?? {}
+    const cuisineList = pitstopType === PITSTOP_TYPES.SUPER_MARKET ? { tagName: 'Cuisines (Need to confirm)', categoriesList: vendorFilterViewModel?.tagsList ?? [], } : vendorFilterViewModel?.cuisine ?? {}
     const filterList = vendorFilterViewModel?.filtersList ?? {}
     const averagePriceList = ENUMS.AVERAGE_PRICE_FILTERS ?? {}
     const WIDTH = constants.window_dimensions.width
@@ -113,13 +121,21 @@ export default (props) => {
                     scrollEnabled={false}
                     activeFilterBy={state.activeAvergePrice}
                 />
-                    <Cuisine
-                        data={cuisineList}
-                        filterTypeStyle={{ paddingVertical: 10, color: 'black', fontSize: 17, }}
-                        colors={colors}
-                        onPress={(item, index) => { handleOnPress(item.categoryID, CUSINE_ACTIVE_INDEX) }}
-                        activeCusine={state.activeCusine}
-                    />
+                <Cuisine
+                    data={cuisineList}
+                    filterTypeStyle={{ paddingVertical: 10, color: 'black', fontSize: 17, }}
+                    colors={colors}
+                    onPress={(item, index) => { handleOnPress(item[itemKeys.current.id], CUSINE_ACTIVE_INDEX) }}
+                    activeCusine={state.activeCusine}
+                    {...pitstopType === PITSTOP_TYPES.SUPER_MARKET && {
+                        itemKeys: {
+                            id: "tagID",
+                            name: "tagName",
+                            image: "tagImage",
+                        }
+                    }}
+
+                />
             </ScrollView>
             <View style={{ width: '100%', justifyContent: 'center', alignSelf: 'center', }}>
 

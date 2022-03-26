@@ -3,16 +3,18 @@ import { Animated, Appearance, ColorValue, Dimensions, Easing, StyleSheet, Touch
 import Svg, { Color, Path } from 'react-native-svg';
 import { VALIDATION_CHECK } from "../../helpers/SharedActions";
 import { useDeviceOrientation } from "../../hooks/useDeviceOrientation";
+import ROUTES from "../../navigations/ROUTES";
 import { initColors } from "../../res/colors";
 import constants from "../../res/constants";
 import theme from "../../res/theme";
-import GV from "../../utils/GV";
+import GV, { PITSTOP_TYPES } from "../../utils/GV";
 import { getPath } from '../../utils/Path';
 import AnimatedView from "../atoms/AnimatedView";
 import Text from "../atoms/Text";
 import TouchableOpacity from "../atoms/TouchableOpacity";
 import VectorIcon from "../atoms/VectorIcon";
 import BottomCategoryList from "../molecules/BottomCategoryList";
+import BottomMainCircularCategory from "../molecules/BottomMainCircularCategory";
 import CategoryCircular from "../molecules/CategoryCircular";
 import { mockData } from "../molecules/mockData";
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TC);
@@ -46,6 +48,10 @@ type Props = React.ComponentProps<typeof View> & {
 
     colors: typeof initColors;
     buttonSize?: number;
+    showCategories?: boolean;
+
+    screenName?: string;
+    pitstopType?: string | number;
 };
 
 const defaultProps = {
@@ -61,6 +67,11 @@ const defaultProps = {
 
     buttonSize: 60,
     colors: undefined,
+
+    showCategories: false,
+
+    screenName: ROUTES.APP_DRAWER_ROUTES.Home.screen_name,
+    pitstopType: PITSTOP_TYPES.JOVI,
 };
 
 // #endregion :: INTERFACE END's FROM HERE 
@@ -379,9 +390,20 @@ const BottomBarComponent = (props: Props) => {
 
                 {/* ****************** Start of CIRCULAR CATEGORIES ****************** */}
                 {/* {isCloseIcon && */}
-                <BottomCategoryList isShown={isCloseIcon} onClose={() => {
-                    toggleCloseIcon(false);
-                }} />
+                {props.showCategories ?
+                    <BottomCategoryList isShown={isCloseIcon} onClose={() => {
+                        toggleCloseIcon(false);
+                    }} />
+                    :
+                    <BottomMainCircularCategory
+                        pitstopType={props?.pitstopType ?? defaultProps.pitstopType}
+                        screenName={props?.screenName ?? defaultProps.screenName}
+                        isShown={isCloseIcon}
+                        onClose={() => {
+                            toggleCloseIcon(false);
+                        }} />
+                }
+
                 {/* //  <CategoryCircular data={mockData} isShown={isCloseIcon} /> 
                 } */}
 

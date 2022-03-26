@@ -189,7 +189,7 @@ export default () => {
                     </KeyboardAwareScrollView>
                 </Animated.View>}
             </SafeAreaView>
-            <RenderBottomBarComponent />
+            <RenderBottomBarComponent showCategories />
         </View>
     );
 };

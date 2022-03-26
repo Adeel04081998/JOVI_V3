@@ -13,11 +13,12 @@ import ROUTES from '../../../navigations/ROUTES';
 import preference_manager from '../../../preference_manager';
 import { useSelector } from 'react-redux';
 
-export default React.memo(({ homeStyles }) => {
+export default React.memo(({ homeStyles, showCategories = false }) => {
     const userReducer = useSelector(state => state.userReducer);
-    const ordersCount = userReducer.openOrders.length;
+    const ordersCount = (userReducer?.openOrders ?? []).length;
     return (
         <BottomBarComponent
+            showCategories={showCategories}
             leftData={[{ id: 1, iconName: "home", title: "Home" }, { id: 2, iconName: "person", title: "Profile" }]}
             rightData={[
                 {
