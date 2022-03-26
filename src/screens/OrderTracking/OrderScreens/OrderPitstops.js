@@ -13,6 +13,8 @@ import View from '../../../components/atoms/View';
 import CustomHeader, { CustomHeaderIconBorder } from '../../../components/molecules/CustomHeader';
 import OrderEstTimeCard from '../../../components/organisms/Card/OrderEstTimeCard';
 import { renderPrice, sharedFetchOrder, sharedGenerateProductItem, sharedNotificationHandlerForOrderScreens, sharedRiderRating } from '../../../helpers/SharedActions';
+import { getRequest } from '../../../manager/ApiManager';
+import Endpoints from '../../../manager/Endpoints';
 import NavigationService from '../../../navigations/NavigationService';
 import ROUTES from '../../../navigations/ROUTES';
 import constants from '../../../res/constants';
@@ -54,6 +56,9 @@ export default ({ route }) => {
         orderEstimateTimeRange: '40 - 50',
         currentPitstop: null,
         subStatusName: '',
+        orderEstimateTimeViewModel: null,
+        orderEstimateTime: null,
+        estimateTime: null,
     });
     const isRiderFound = state.subStatusName === ORDER_STATUSES.RiderFound;
     const RenderPitstop = ({ pitstop = {}, index = 0 }) => {
@@ -85,7 +90,7 @@ export default ({ route }) => {
         const renderItems = () => {
             if (isJoviJob) return <View style={styles.itemContainer}>
                 <Text style={{ fontSize: 12, color: colors.black, maxWidth: '75%', ...isSkippedOrCanclledStyles }}>{pitstop.title}</Text>
-                <Text style={{ fontSize: 12, color: colors.black, ...isSkippedOrCanclledStyles }}>{renderPrice(pitstop.estimatePrice ?? 10)}</Text>
+                <Text style={{ fontSize: 12, color: colors.black, ...isSkippedOrCanclledStyles }}>{renderPrice(pitstop.estimatePrice ?? 0)}</Text>
             </View>
             return pitstop.jobItemsListViewModel?.map((item, i) => {
                 return <View key={i} style={styles.itemContainer}>
@@ -177,12 +182,26 @@ export default ({ route }) => {
                 if (!currentPitstop) {
                     currentPitstop = res.data.order.pitStopsList[res.data.order.pitStopsList.length - 1];
                 }
-                setState(pre => ({ ...pre, ...res.data.order, pitStopsList: updatedPitstops, currentPitstop, isLoading: false, }))
+                setState(pre => ({ ...pre, ...res.data.order, pitStopsList: updatedPitstops, currentPitstop, isLoading: false, }));
                 // setState(pre => ({ ...pre, ...res.data.order, pitStopsList: [...updatedPitstops,...updatedPitstops,...updatedPitstops, ...updatedPitstops], currentPitstop, isLoading: false, }))
             } else {
                 setState(pre => ({ ...pre, isLoading: false }))
             }
         });
+        fetchEstimateTime();
+    }
+    const fetchEstimateTime = () => {
+        getRequest(Endpoints.OrderEstimateTime + '/' + orderIDParam, (res) => {
+            if (res.data.statusCode === 200) {
+                setState(pre => ({
+                    ...pre,
+                    orderEstimateTimeViewModel: res.data.orderEstimateTimeViewModel,
+                    orderEstimateTime: res.data.orderEstimateTime,
+                    estimateTime: res.data.estimateTime,
+                }));
+            }
+            console.log('res [fetchOrderEstimation] - ', res);
+        }, () => { }, {}, false);
     }
     const goToHome = () => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
@@ -230,7 +249,9 @@ export default ({ route }) => {
                     imageHeight={IMAGE_SIZE * 0.6}
                     color={colors}
                     right={{ value: state.totalPitstops }}
-                    middle={{ value: state.orderEstimateTime }}
+                    middle={{
+                        value: state.orderEstimateTimeViewModel ? state.orderEstimateTimeViewModel?.orderEstimateTime?.trim() : ' - ',
+                    }}
                     contentContainerStyle={{ marginBottom: 0, marginVertical: 0, marginTop: 10, borderRadius: 8 }}
                     rightContainerStyle={{}}
                     middleContainerStyle={{ flex: 2 }}

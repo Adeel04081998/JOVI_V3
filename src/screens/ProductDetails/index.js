@@ -596,11 +596,17 @@ const RenderPutItemInCartBox = ({ addToCardAnimation, setState }) => {
                 style={{ justifyContent: 'flex-end', alignContent: 'center', alignSelf: 'center', width: "90%" }}
                 height={70}
                 width={40}
+                // onLoadEnd={async () => {
+                //     if (Platform.OS === 'ios') {
+                //         await sleep(2);
+                //     }
+                //     // animateLoader(0)
+                // }}
+
                 onLoadEnd={async () => {
-                    if (Platform.OS === 'ios') {
-                        await sleep(2);
-                    }
-                    // animateLoader(0)
+                    deviceInfoModule.hasNotch() ?
+                        await sleep(2) : await sleep(2)
+                    animateLoader(0)
                 }}
             />
         )

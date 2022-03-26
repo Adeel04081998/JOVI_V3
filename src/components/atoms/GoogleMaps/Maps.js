@@ -11,13 +11,8 @@ import svgs from '../../../assets/svgs';
 import TouchableOpacity from '../TouchableOpacity';
 import { SvgXml } from 'react-native-svg';
 import constants from '../../../res/constants';
-import Toast from '../Toast';
 import LocationSearch from '../LocationSearch';
-import NavigationService from '../../../navigations/NavigationService';
-import SafeAreaView from '../SafeAreaView';
 import { postRequest } from '../../../manager/ApiManager';
-import Text from '../Text';
-import TouchableScale from '../TouchableScale';
 
 
 const LATITUDE_DELTA = 0.01;
@@ -28,7 +23,7 @@ export default (props) => {
   /******************************************* START OF VARIABLE INITIALIZATION **********************************/
 
 
-  const FETCH_ADDRESS_TYPE = Object.freeze({ 0: "pin", 1: "selectedLocation" })
+  const FETCH_ADDRESS_TYPE = Object.freeze({ 0: "pin", 1: "selectedLocation" }) //enum for getting address title for specific selection
 
   const HEIGHT = constants.window_dimensions.height;
   const WIDTH = constants.window_dimensions.width;
@@ -40,13 +35,13 @@ export default (props) => {
   };
 
   const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
+  const styles = mapStyles(colors, HEIGHT, WIDTH, ICON_BORDER)
   const [placeName, setPlaceName] = useState('')
   const mapView = useRef(null)
   const placeNameRef = useRef(null)
   const coordinatesRef = useRef(null)
   const [ready, setMapReady] = useState(false)
   const [loader, setLoader] = useState(false)
-  const [region, setRegion] = useState(sharedStartingRegionPK)
   const disabledRef = useRef(false)
 
 
@@ -81,7 +76,6 @@ export default (props) => {
       }
     }, (error) => {
       mapView.current && mapView.current.animateToRegion(sharedStartingRegionPK);
-      // Toast.error("Location is either turned off or unresponsive!");
     }, {
       timeout: 3000,
     });
@@ -132,38 +126,13 @@ export default (props) => {
 
 
   /******************************************* START OF LOCATION SEARCH UI **********************************/
-console.log('placeName ==>>>>',placeName);
 
   const renderLocationSearchUI = () => {
     return (
-      <View style={{
-        position: 'absolute',
-        top: 0,
-        height: HEIGHT * 0.08,
-        width: WIDTH,
-        backgroundColor: colors.white,
-        flexDirection: 'row',
-        zIndex: 10,
-        borderBottomWidth: 3,
-        borderBottomColor: colors.primary,
-        justifyContent: 'center',
-        paddingTop: WIDTH * 0.0085,
-        paddingLeft: 5
-      }}>
+      <View style={styles.locationSearchView}>
         <TouchableOpacity
           onPress={() => props.onBackPress()}
-          style={{
-            height: ICON_BORDER.size,
-            width: ICON_BORDER.size,
-            borderColor: ICON_BORDER.color,
-            borderWidth: ICON_BORDER.width,
-            borderRadius: ICON_BORDER.borderRadius,
-            // alignSelf: Platform.OS === "android" ? "center" : 'flex-end',
-            alignItems: "center",
-            justifyContent: "center",
-            // marginVertical: Platform.OS === "android" ? 0 : 11,
-            // marginLeft: 10,
-          }}>
+          style={styles.backBtnStyle}>
           <VectorIcon
             name={"chevron-back"}
             type={"Ionicons"}
@@ -235,7 +204,6 @@ console.log('placeName ==>>>>',placeName);
     return (
       <MapView
         ref={mapView}
-        // region={region}
         provider={PROVIDER_GOOGLE} // remove if not using Google Maps
         style={styles.map}
         initialRegion={sharedStartingRegionPK}
@@ -244,7 +212,6 @@ console.log('placeName ==>>>>',placeName);
         onRegionChangeComplete={onRegionChangeComplete}
         showsUserLocation={true}
         showsMyLocationButton={false}
-        // followsUserLocation={true}
         zoomControlEnabled={false}
         zoomEnabled={true}
         showsCompass={false}
@@ -285,6 +252,11 @@ console.log('placeName ==>>>>',placeName);
 
 
   /******************************************* START OF CONTINUE BUTTON UI **********************************/
+
+
+
+
+
   const disabledCheck = () => {
     if (disabledRef.current) return true
     else false
@@ -297,52 +269,50 @@ console.log('placeName ==>>>>',placeName);
   }
 
   const FETCH_ADDRESSTYPE = () => {
-    console.log('coordinatesRef.current?.type',coordinatesRef.current?.type);
     return coordinatesRef.current?.type === FETCH_ADDRESS_TYPE[1] ? true : false
   }
-  console.log('FETCH_ADDRESSTYPE() ==>>>', FETCH_ADDRESSTYPE());
+
+
+  const onConfirmLocation = async () => {
+    setLoader(true)
+    if (disabledRef.current) {
+      return;
+    }
+    disabledRef.current = true
+    const { latitude, longitude, type } = coordinatesRef.current
+    confirmServiceAvailabilityForLocation(postRequest, latitude || props.route?.params?.latitude, longitude || props.route?.params?.longitude,
+      async (resp) => {
+        const { data } = resp
+        // let adrInfo = await addressInfo(latitude || props.route?.params?.latitude, longitude || props.route?.params?.longitude, cb)
+        placeNameRef.current = data.googleAddressViewModel.title
+        let placeObj = {
+          title: FETCH_ADDRESSTYPE() ? placeName : placeNameRef.current,
+          latitude: latitude || props.route?.params?.latitude,
+          longitude: longitude || props.route?.params?.longitude,
+          latitudeDelta: LATITUDE_DELTA,
+          longitudeDelta: LONGITUDE_DELTA,
+          city: FETCH_ADDRESSTYPE() ? '' : data.googleAddressViewModel.city
+        }
+        cb(false)
+        setPlaceName(FETCH_ADDRESSTYPE() ? placeName : placeNameRef.current)
+        props.onConfirmLoc(placeObj)
+
+      }, (error) => {
+        setLoader(false)
+        disabledRef.current = false
+        sharedExceptionHandler(error)
+      })
+  }
+
+
   const renderContinueButton = () => {
     return (
       <Button
-        onPress={async () => {
-          setLoader(true)
-          if (disabledRef.current) {
-            return;
-          }
-          disabledRef.current = true
-          const { latitude, longitude, type } = coordinatesRef.current
-          confirmServiceAvailabilityForLocation(postRequest, latitude || props.route?.params?.latitude, longitude || props.route?.params?.longitude,
-            async (resp) => {
-              console.log('resp ==>>>>', resp);
-              const { data } = resp
-              // let adrInfo = await addressInfo(latitude || props.route?.params?.latitude, longitude || props.route?.params?.longitude, cb)
-              placeNameRef.current = data.googleAddressViewModel.title
-              let placeObj = {
-                title: FETCH_ADDRESSTYPE() ? placeName : placeNameRef.current,
-                latitude: latitude || props.route?.params?.latitude,
-                longitude: longitude || props.route?.params?.longitude,
-                latitudeDelta: LATITUDE_DELTA,
-                longitudeDelta: LONGITUDE_DELTA,
-                city: FETCH_ADDRESSTYPE() ? '' : data.googleAddressViewModel.city
-              }
-              cb(false)
-              setPlaceName(FETCH_ADDRESSTYPE() ? placeName : placeNameRef.current)
-              console.log('placeObj ==>>>>',placeObj);
-              props.onConfirmLoc(placeObj)
-
-            }, (error) => {
-              setLoader(false)
-              disabledRef.current = false
-              sharedExceptionHandler(error)
-            })
-
-        }
-        }
+        onPress={onConfirmLocation}
         wait={0}
         disabled={disabledCheck()}
         isLoading={loader}
         text="Confirm Location" style={{ ...styles.confirmBtn, width: '95%' }} />
-
     )
   }
 
@@ -381,7 +351,7 @@ console.log('placeName ==>>>>',placeName);
 
 
 
-const styles = StyleSheet.create({
+const mapStyles = (colors, height, width, icon_border) => StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'flex-end',
@@ -409,6 +379,30 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     elevation: 4
   },
+  locationSearchView: {
+    position: 'absolute',
+    top: 0,
+    height: height * 0.08,
+    width: width,
+    backgroundColor: colors.white,
+    flexDirection: 'row',
+    zIndex: 10,
+    borderBottomWidth: 3,
+    borderBottomColor: colors.primary,
+    justifyContent: 'center',
+    paddingTop: width * 0.0085,
+    paddingLeft: 5
+  },
+  backBtnStyle: {
+    height: icon_border.size,
+    width: icon_border.size,
+    borderColor: icon_border.color,
+    borderWidth: icon_border.width,
+    borderRadius: icon_border.borderRadius,
+    alignItems: "center",
+    justifyContent: "center",
+  }
+
 });
 
 

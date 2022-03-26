@@ -26,6 +26,8 @@ interface BottomBarItem {
     title: string;
     onPress?: () => void;
     customComponent?: () => void;
+    notification?: boolean;
+    notificationCount?: number;
 }
 
 type Props = React.ComponentProps<typeof View> & {
@@ -266,7 +268,7 @@ const BottomBarComponent = (props: Props) => {
         // const isActive = (item?.key ?? '') === activeRoute;
         const isActive = item.id === 1 ? true : false;
         const iconColor = isActive ? colors.primary : VALIDATION_CHECK(item?.iconColor ?? '') ? item.iconType : '#A3ABB4';
-
+        const notificationSize = 18;
         return (
             <TouchableOpacity style={{
                 flex: 1,
@@ -278,6 +280,28 @@ const BottomBarComponent = (props: Props) => {
                 onPress={() => {
                     item.onPress && item.onPress();
                 }}>
+                {
+                    item.notification && (item.notificationCount!== undefined && item.notificationCount!== null?item.notificationCount > 0:true) ?
+                        <View style={{
+                            height: notificationSize, width: notificationSize,
+                            borderRadius: notificationSize / 2,
+                            position: 'absolute',
+                            backgroundColor: colors.primary,
+                            zIndex: 999,
+                            top: -5,
+                            right: 20,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            alignContent: 'center'
+                        }}>
+                            {
+                                item.notificationCount && item.notificationCount > 0 ? <Text style={{ color: colors.white, fontSize: 10, marginTop: 1 }}>{item.notificationCount}</Text> : null
+                            }
+                        </View>
+                        :
+                        null
+                }
                 {VALIDATION_CHECK(item.customComponent) ?
                     item.customComponent
                     :

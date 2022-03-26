@@ -32,7 +32,7 @@ export default React.memo((props) => {
             </View>
             <View
                 style={[styles.arrow, { backgroundColor: props.headerBackgroundColor ? props.headerBackgroundColor : colors.lightGreyBorder }]}>
-                <VectorIcon name={props.isOpened ?  "keyboard-arrow-up" : "keyboard-arrow-down"} type="MaterialIcons" color={colors.textColor} />
+                <VectorIcon name={props.isOpened ? "keyboard-arrow-up" : "keyboard-arrow-down"} type="MaterialIcons" color={colors.textColor} />
             </View>
         </TouchableOpacity >
     );
