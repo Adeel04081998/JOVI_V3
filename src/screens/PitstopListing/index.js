@@ -60,14 +60,14 @@ const PistopListing = ({ route }) => {
     const { height, width } = SCALE_IMAGE;
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]], Appearance.getColorScheme() === "dark");
     const listingStyles = stylesheet.styles(colors, width, height);
-    React.useEffect(()=>{
+    React.useEffect(() => {
         if (!isLoadedRef.current) {
             isLoadedRef.current = true;
             setState(pre => ({ ...pre, loaded: true }));
             // setInterval(() => {
             // }, 100);
         }
-    },[]);
+    }, []);
     const onBackPress = () => {
         NavigationService.NavigationActions.common_actions.goBack();
     }
@@ -255,12 +255,7 @@ const PistopListingChild = React.memo(({ route, }) => {
         }]
     }}>
         <Advertisment adTypes={[ENUMS.ADVERTISMENT_TYPE.VENDOR_LISTING]}
-            // pitstopType={PITSTOP_TYPES.RESTAURANT}
             colors={colors}
-            onAdPressCb={() => {
-                Alert.alert("Ahmed Chutya")
-                
-            }}
         />
 
 

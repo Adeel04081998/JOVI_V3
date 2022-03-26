@@ -469,6 +469,12 @@ const CardText = ({ title = '', price = '', type, quantity = null, options = nul
                     fontSize: 12,
                     color: "#272727",
                 }} numberOfLines={1}>{`${renderPrice(`${price}`)}`}</Text>
+                {/* 
+<Text fontFamily='PoppinsMedium' style={{
+                    maxWidth: "30%",
+                    fontSize: 12,
+                    color: "#272727",
+                }} numberOfLines={1}>{`${renderPrice({showZero:true,price:`${price}`})}`}</Text> */}
             </View>
         </>
     )

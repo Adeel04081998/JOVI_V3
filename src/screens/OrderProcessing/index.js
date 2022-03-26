@@ -78,11 +78,11 @@ export default ({ navigation, route }) => {
         sharedOrderNavigation(orderIDParam, status, ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name, null, false, pitstopsList = [] ?? []);
         return;
     }
-    const sitBackAnimation = (orderStatus='',pitstopsList = []) => {
-        setState(pre=>({
+    const sitBackAnimation = (orderStatus = '', pitstopsList = []) => {
+        setState(pre => ({
             ...pre,
-            sitBackAnimation:true,
-            postSitBackAnimationData:{
+            sitBackAnimation: true,
+            postSitBackAnimationData: {
                 orderStatus,
                 pitstopsList,
             }
@@ -166,8 +166,8 @@ export default ({ navigation, route }) => {
     return (
         <View style={styles.primaryContainer}>
             {_renderHeader()}
-            {state.sitBackAnimation&&<SitBackAnimation onComplete={()=>{
-                goToOrderTracking(state?.postSitBackAnimationData?.orderStatus,state?.postSitBackAnimationData?.pitstopsList)
+            {state.sitBackAnimation && <SitBackAnimation onComplete={() => {
+                goToOrderTracking(state?.postSitBackAnimationData?.orderStatus, state?.postSitBackAnimationData?.pitstopsList)
             }} />}
             <OrderEstTimeCard
                 imageHeight={IMAGE_SIZE * 0.6}
@@ -315,7 +315,11 @@ export default ({ navigation, route }) => {
 
                     {/* ****************** Start of DISCOUNT ****************** */}
                     <OrderProcessingChargesUI title='Discount'
-                        value={renderPrice(state.chargeBreakdown.discount)} />
+                        // value={renderPrice(state.chargeBreakdown.discount)} 
+                        value={`${renderPrice({ showZero: true, price: state.chargeBreakdown.discount }, 'Rs -')}`}
+
+
+                    />
                     {/* value={parseInt(renderPrice(state.chargeBreakdown.discount)) > 0 ? renderPrice(state.chargeBreakdown?.discount) : renderPrice(state.chargeBreakdown.discount)} /> */}
                     <DashedLine />
 

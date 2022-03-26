@@ -324,7 +324,12 @@ export const renderPrice = (price, prefix = "Rs. ", suffix = "", reg = Regex.pri
     prefix = `${prefix}`.trim();
     suffix = `${suffix}`.trim();
     price = `${price}`.trim().replace(reg, '').trim();
-    return parseInt(`${price}`) < 1 ? showZero ? `${prefix} ${price}${suffix}` : '' : suffix.length > 0 ? `${prefix} ${price}${suffix}` : `${prefix} ${price}`;
+    if (price) {
+        return parseInt(`${price}`) < 1 ? showZero ? `${prefix} ${price}${suffix}` : '' : suffix.length > 0 ? `${prefix} ${price}${suffix}` : `${prefix} ${price}`;
+    } else {
+        price = `${0}`.trim().replace(reg, '').trim();
+        return `${prefix} ${price}${suffix}`
+    }
 }
 
 export const renderDistance = (distance, suffix = "m", prefix = "", reg = Regex.distanceM,) => {
@@ -903,7 +908,7 @@ export const sharedOnVendorPress = (pitstop, index) => {
     }
     NavigationService.NavigationActions.common_actions.navigate(routes[pitstop.pitstopType], { ...pitstop, pitstopID });
 }
-export const   sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder = () => { }, orderCompletedOrCancelled = () => { }) => {
+export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder = () => { }, orderCompletedOrCancelled = () => { }) => {
     // console.log("[Order Processing].fcmReducer", fcmReducer);
     // '1',  For job related notification
     // '11',  For rider allocated related notification
@@ -1040,8 +1045,8 @@ export const sharedGetFinalDestintionRequest = () => {
 }
 
 export const sharedForegroundCallbackHandler = (cb = () => { }) => {
-    return AppState.addEventListener('change', nextAppState=>{
-        if(nextAppState === 'active' || nextAppState === 'inactive'){
+    return AppState.addEventListener('change', nextAppState => {
+        if (nextAppState === 'active' || nextAppState === 'inactive') {
             cb();
         }
     });
@@ -1056,12 +1061,12 @@ export const getBottomPadding = (insets, bottom = 0, extraBottom = 0) => {
 
 export const padToTwo = (number) => (number <= 9 ? `0${number}` : number);
 
-export const validURL=(str)=> {
-    var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-      '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-      '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-      '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+export const validURL = (str) => {
+    var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+        '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
     return !!pattern.test(str);
-  }
+}

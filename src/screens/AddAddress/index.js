@@ -66,7 +66,7 @@ export default (props) => {
             {
                 key: 4,
                 val: '',
-                placeHolder: 'e.g Jovi Office',
+                placeHolder: 'Add your label',
                 shown: false
             }
         ],
@@ -256,7 +256,7 @@ export default (props) => {
                         NavigationService.NavigationActions.stack_actions.pop(1);
                     }} />
                 <View style={styles.modalView} >
-                    <KeyboardAwareScrollView ref={scrollRef} contentContainerStyle={{ flexGrow: 1}} >
+                    <KeyboardAwareScrollView ref={scrollRef} contentContainerStyle={{ flexGrow: 1 }} >
 
                         <Text style={styles.mainText} fontFamily="PoppinsMedium" >Your current location</Text>
                         <View style={styles.inputContainer}>
@@ -281,7 +281,7 @@ export default (props) => {
                                 }
                             </View>
                         </View>
-                        <Text style={styles.labelTitle} fontFamily="PoppinsMedium" >ADD A LABEL</Text>
+                        <Text style={styles.labelTitle} fontFamily="PoppinsMedium" >SELECT A LABEL</Text>
                         <ScrollView horizontal contentContainerStyle={{ flex: 1, flexGrow: 1, justifyContent: 'center', alignItems: 'center', marginVertical: 10 }}>
                             {addressTypeList.map((item, index) => {
                                 return (
@@ -317,7 +317,7 @@ export default (props) => {
                             fontSize: 16,
                             fontFamily: FontFamily.Poppins.Regular
                         }}
-                        style={{ width: WIDTH * 0.9, alignSelf: 'center',marginVertical:5 }}
+                        style={{ width: WIDTH * 0.9, alignSelf: 'center', marginVertical: 5 }}
                     />
                 </View>
             </View>
