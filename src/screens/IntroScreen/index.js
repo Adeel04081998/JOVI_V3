@@ -50,9 +50,7 @@ const IntroScreen = ({ }) => {
                 cacheStrategy={'strong'}
                 // renderMode={'SOFTWARE'}
                 resizeMode='cover'
-                // source={require('../../assets/82423-developer-yoga.json')}
-                source={require('../../assets/Onboarding.json')}
-                // source={require('../../assets/100527-mobile-apps.json')}
+                source={require('../../assets/gifs/Onboarding.json')}
                 autoPlay
                 loop
             />
