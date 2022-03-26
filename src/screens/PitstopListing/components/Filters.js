@@ -15,8 +15,8 @@ const FILTER_ICON_HEIGHT = 35;
 const FILTER_ICON_SIZE = 17;
 
 export default ({ filterConfig, screenName = '', selectedFilters, parentFilterHandler = () => { }, colors, goToFilters, }) => {
-    const categoriesTagsReducer = useSelector(state => state.categoriesTagsReducer);
-    const filtersList = categoriesTagsReducer?.vendorFilterViewModel?.filtersList ?? [];
+    // const categoriesTagsReducer = useSelector(state => state.categoriesTagsReducer);
+    const filtersList = [{ vendorDashboardCatID: 1, name: 'Discounts', image: svgs.filterDicount("#6B6B6B") }];//categoriesTagsReducer?.vendorFilterViewModel?.filtersList ?? [];
     const [state, setState] = React.useState({ activeTab: null, filtersData: filtersList });
     const _listRef = React.useRef(null);
     const { filtersData } = state;
@@ -44,7 +44,7 @@ export default ({ filterConfig, screenName = '', selectedFilters, parentFilterHa
         }
     }, []);
     return (<View style={[_styles.parentContainer, { paddingTop: isFilterTitleShown ? 0 : 10 }]}>
-        {isFilterTitleShown && <Text numberOfLines={1} fontFamily='PoppinsSemiBold' style={[_styles.filterTitle, { paddingVertical: isFilterTitleShown ? 5: SPACING_VERTICAL, marginTop: isFilterTitleShown ? 5 : 0 }]}>
+        {isFilterTitleShown && <Text numberOfLines={1} fontFamily='PoppinsSemiBold' style={[_styles.filterTitle, { paddingVertical: isFilterTitleShown ? 5 : SPACING_VERTICAL, marginTop: isFilterTitleShown ? 5 : 0 }]}>
             Filters
         </Text>}
         <View style={[_styles.scrollParent, { marginHorizontal: isFilterIcon ? 0 : -10, paddingLeft: isFilterIcon ? 0 : 10 }]}>
@@ -56,8 +56,8 @@ export default ({ filterConfig, screenName = '', selectedFilters, parentFilterHa
                 data={filtersData}
                 flatlistProps={{ ref: _listRef }}
                 renderItem={(item, i) => {
-                    return <TouchableScale onPress={() => onChangeFilter(item)} style={_styles.filterTouchable}>
-                        {VALIDATION_CHECK(item.image) && <SvgXml height={FILTER_ICON_SIZE} width={FILTER_ICON_SIZE} xml={item.image} />}
+                    return <TouchableScale wait={0} onPress={() => onChangeFilter(item)} style={_styles.filterTouchable}>
+                        {VALIDATION_CHECK(item.image) && <SvgXml height={FILTER_ICON_SIZE} width={FILTER_ICON_SIZE} xml={item.image} fill={"#6B6B6B"} />}
                         <Text style={{ fontSize: 12, color: 'rgba(0,0,0,0.6)', paddingHorizontal: 5 }} fontFamily={'PoppinsBold'} >{item.name}</Text>
                     </TouchableScale>
                 }}

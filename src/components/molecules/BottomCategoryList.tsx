@@ -100,7 +100,7 @@ const BottomCategoryList = (props: Props) => {
                                 onRequestClose();
                                 NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.PitstopListing.screen_name, {
                                     pitstopType: PITSTOP_TYPES.SUPER_MARKET, categoryItem: {
-                                        item, index
+                                        item:{...item,tagName:item.tag}, index
                                     }
                                 })
                             }} />

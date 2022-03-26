@@ -30,8 +30,8 @@ export default ({ data = {}, filterType = "", filterTypeStyle, styles, colors, o
                 {
                     categoriesData.map((x, i) => {
                         const isActive = activeCusine === x[itemKeys.id];
-                        let borderColor = isActive ? "#F3B8B4" : "#C1C1C1"
-                        let color = isActive ? "#F94E41" : "black"
+                        let borderColor = isActive ? colors.primary : "#C1C1C1"
+                        let color = isActive ? colors.primary : "black"  
                         return <TouchableScale style={{
                             justifyContent: 'center', height: 25, borderWidth: 0.8, borderColor, borderRadius: 5, marginRight: 10, marginBottom: 10, alignItems: 'center', backgroundColor: '#FFFFFF',
                             transform: [{

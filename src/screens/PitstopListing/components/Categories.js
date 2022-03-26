@@ -13,11 +13,14 @@ const SPACING_VERTICAL = 10;
 const CONTAINER_WIDTH = ((constants.screen_dimensions.width) * 0.17);
 const CONTAINER_HEIGHT = constants.screen_dimensions.width * 0.195;
 
-export default ({ CategoriesTabConfig = {}, selectedCategories = [], parentCategoryHandler = () => { }, colors, itemKeys = { id: 'categoryID', name: 'categoryName', image: 'image' }, }) => {
+export default ({ CategoriesTabConfig = {}, paramItem = {}, selectedCategories = [], parentCategoryHandler = () => { }, colors, itemKeys = { id: 'categoryID', name: 'categoryName', image: 'image' }, }) => {
     const isRendered = React.useRef(false);
     const [state, setState] = React.useState({ activeTab: null });
     const categoriesTagsReducer = useSelector(state => state.categoriesTagsReducer);
-    const categoriesList = itemKeys.id === "categoryID" ? categoriesTagsReducer?.vendorFilterViewModel?.cuisine?.categoriesList ?? [] : categoriesTagsReducer?.vendorFilterViewModel?.tagsList ?? [];
+    let categoriesList = itemKeys.id === "categoryID" ? [...new Set([paramItem, ...(categoriesTagsReducer?.vendorFilterViewModel?.cuisine?.categoriesList ?? [])])] : [...new Set([paramItem, ...(categoriesTagsReducer?.vendorFilterViewModel?.tagsList ?? [])])];
+    if (itemKeys.id !== 'categoryID') {
+        categoriesList = [paramItem, ...categoriesList.filter(x => x[itemKeys.id] !== paramItem[itemKeys.id])];
+    }
     const checkSelectedTab = (item) => {
         // return state.activeTab === item.categoryID;
         return (selectedCategories ?? []).find(x => x === item[itemKeys.id]);

@@ -5,7 +5,7 @@ import Text from '../Text';
 import ENUMS from '../../../utils/ENUMS';
 import TouchableOpacity from '../TouchableOpacity';
 import theme from '../../../res/theme';
-import GV, { PITSTOP_TYPES } from '../../../utils/GV';
+import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../../utils/GV';
 import SafeAreaView from "../../atoms/SafeAreaView";
 import AveragePrice from './components/AveragePrice';
 import CustomHeader from '../../molecules/CustomHeader';
@@ -14,6 +14,7 @@ import Button from '../../molecules/Button';
 import NavigationService from '../../../navigations/NavigationService';
 import ROUTES from '../../../navigations/ROUTES';
 import constants from '../../../res/constants';
+import svgs from '../../../assets/svgs';
 const CUSINE_ACTIVE_INDEX = "activeCusine";
 const Filter_ACTIVE_INDEX = "activeFilterBy";
 const AV_PRICE_ACTIVE_INDEX = "activeAvergePrice";
@@ -29,11 +30,11 @@ export default (props) => {
     });
     const { vendorFilterViewModel } = useSelector(state => state.categoriesTagsReducer);
     const cuisineList = pitstopType === PITSTOP_TYPES.SUPER_MARKET ? { tagName: 'Cuisines (Need to confirm)', categoriesList: vendorFilterViewModel?.tagsList ?? [], } : vendorFilterViewModel?.cuisine ?? {}
-    const filterList = vendorFilterViewModel?.filtersList ?? {}
+    const filterList = [{ vendorDashboardCatID: 1, name: 'Discounts', image: svgs.filterDicount("#6B6B6B") }];//vendorFilterViewModel?.filtersList ?? {}
     const averagePriceList = ENUMS.AVERAGE_PRICE_FILTERS ?? {}
     const WIDTH = constants.window_dimensions.width
     const HEIGHT = constants.window_dimensions.height
-    const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark")
+    const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]], Appearance.getColorScheme() === "dark");
     const filterType = null
     const initState = {
         averagePrice: {},
@@ -145,7 +146,7 @@ export default (props) => {
                     text='Apply'
                     textStyle={{ fontSize: 14, color: colors.white }}
                     wait={2}
-                    style={{ width: WIDTH * 0.75, height: HEIGHT * 0.065, alignSelf: "center", marginBottom: 10, backgroundColor: "#ED4C42", borderRadius: 25 }}
+                    style={{ width: WIDTH * 0.75, height: HEIGHT * 0.065, alignSelf: "center", marginBottom: 10, backgroundColor: colors.primary, borderRadius: 25 }}
 
                 />
             </View>

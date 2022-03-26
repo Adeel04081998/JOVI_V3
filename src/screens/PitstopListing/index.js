@@ -247,6 +247,9 @@ const PistopListingChild = React.memo(({ route, }) => {
                     selectedCategories={state.filters.cuisines}
                     CategoriesTabConfig={currentPitstopType}
                     colors={colors}
+                    {...size > 0 && {
+                        paramItem: categoryItem?.item ?? {}
+                    }}
                     {...pitstopType === PITSTOP_TYPES.SUPER_MARKET && {
                         itemKeys: {
                             id: "tagID",
