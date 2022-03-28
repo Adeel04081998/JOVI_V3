@@ -37,7 +37,7 @@ import RateRider from '../screens/RateRider';
 import OrderHistory from '../screens/OrderHistory';
 import OrderHistoryDetail from '../screens/OrderHistoryDetail';
 import OrderPitstops from '../screens/OrderTracking/OrderScreens/OrderPitstops';
-
+import Legal from '../screens/Legal';
 const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES, APP_DRAWER_ROUTES, APP_DRAWER_STACK } = ROUTES;
 const AppDrawerStack = (props) => {
     return <Stack.Navigator screenOptions={stackOpts} initialRouteName={APP_DRAWER_ROUTES.Home.screen_name} >
@@ -88,6 +88,7 @@ const AppDrawerComponents = {
     RateRider,
     OrderHistory,
     OrderHistoryDetail,
+    Legal,
 }//will open with Slide Animation
 const ContainerStack = createStackNavigator();
 const Stack = createNativeStackNavigator();
