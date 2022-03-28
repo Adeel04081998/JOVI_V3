@@ -26,6 +26,8 @@ export default ({ adTypes = [], colors = {}, onAdPressCb = null }) => {
     React.useEffect(() => {
         getAdvertisements();
     }, [])
+// console.log("DATA=>>>", data);
+console.log("isFirestoreHit=>>>", isFirestoreHit);
 
     return (
         <ImageCarousel
@@ -46,7 +48,8 @@ export default ({ adTypes = [], colors = {}, onAdPressCb = null }) => {
 
                 }
             }}
-
+        autoPlay
+        autoPlayInterval={3}
 
 
         />
