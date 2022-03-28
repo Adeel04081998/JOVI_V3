@@ -80,6 +80,7 @@ import com.android.build.OutputFile
 
 project.ext.react = [
     enableHermes: true,  // clean and rebuild if changing
+    hermesFlagsRelease: ["-w"]
 ]
     //to be changed to false once verified that app will run without it-
 
