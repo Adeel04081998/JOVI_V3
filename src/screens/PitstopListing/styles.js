@@ -4,7 +4,7 @@ import constants from "../../res/constants";
 import sharedStyles from "../../res/sharedStyles";
 const SPACING_VERTICAL = 10;
 export default {
-    styles(colors = initColors,width,height) {
+    styles(colors = initColors, width, height) {
         return StyleSheet.create({
             container: {
                 flexGrow: 1,
@@ -14,7 +14,7 @@ export default {
                 height: '93%', width: '101%', paddingLeft: 10, paddingTop: 8, paddingHorizontal: 5, display: 'flex', justifyContent: 'center', alignContent: 'center',
             },
             restaurantLoader: {
-                paddingTop:-19, display: 'flex', justifyContent: 'center', alignContent: 'center',
+                paddingTop: -19, display: 'flex', justifyContent: 'center', alignContent: 'center',
             },
             imageCarousal: {
                 marginHorizontal: 10,
@@ -24,7 +24,7 @@ export default {
                 // resizeMode: "contain"
             },
             wrapper: {
-                margin: SPACING_VERTICAL,marginTop:0, paddingBottom: Platform.select({ android: 160, ios: 140 })
+                margin: SPACING_VERTICAL, marginTop: 0, paddingBottom: Platform.select({ android: 160, ios: 140 })
             },
             greetingMainContainer: {
                 margin: 0,
@@ -82,27 +82,17 @@ export default {
             cat_img_container: {
                 width: 80, justifyContent: 'center', alignContent: 'center', alignItems: 'center', alignSelf: 'center'
             },
-            allPitstopListing:{
+            allPitstopListing: {
                 container: {
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                     paddingHorizontal: 10,
                     paddingVertical: 10
                 },
-                itemContainer: {
-                    ...sharedStyles._styles(colors).shadow,
-                    backgroundColor: colors.white || '#fff',
-                    borderRadius: 10,
-                    marginHorizontal: 5,
-                    flex: 1,
-                    paddingHorizontal: 10,
-                    paddingVertical: 10,
-                    marginVertical: 5
-                },
                 mainText: {
                     color: colors.text,
                     fontSize: 18,
-                    fontWeight:'600'
+                    fontWeight: '600'
                 },
                 viewMoreBtn: {
                     color: colors.primary || '#6D51BB', // colors.theme here should be the theme color of specific category

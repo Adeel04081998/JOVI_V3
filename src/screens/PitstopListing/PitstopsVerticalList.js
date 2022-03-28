@@ -215,7 +215,7 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
             }
         }, []);
         return (
-            <TC key={index} activeOpacity={0.8} onPress={()=>{
+            <TC key={index} activeOpacity={0.8} onPress={() => {
                 sharedOnVendorPress(item, index)
             }} style={{
                 ...styles.itemContainer, height: 270, ...isAnimateable ? {
@@ -325,16 +325,6 @@ const _styles = (colors, width, height) => StyleSheet.create({
     container: {
         flexGrow: 1,
         backgroundColor: colors.Whisper || "#F6F5FA",
-    },
-    itemContainer: {
-        ...sharedStyles._styles(colors).shadow,
-        backgroundColor: colors.white || '#fff',
-        borderRadius: 10,
-        marginHorizontal: 5,
-        flex: 1,
-        paddingHorizontal: 10,
-        paddingVertical: 10,
-        marginVertical: 5
     },
     mainText: {
         color: colors.primary,
