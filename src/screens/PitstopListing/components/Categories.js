@@ -17,8 +17,8 @@ export default ({ CategoriesTabConfig = {}, paramItem = {}, selectedCategories =
     const isRendered = React.useRef(false);
     const [state, setState] = React.useState({ activeTab: null });
     const categoriesTagsReducer = useSelector(state => state.categoriesTagsReducer);
-    let categoriesList = itemKeys.id === "categoryID" ? [...new Set([paramItem, ...(categoriesTagsReducer?.vendorFilterViewModel?.cuisine?.categoriesList ?? [])])] : [...new Set([paramItem, ...(categoriesTagsReducer?.vendorFilterViewModel?.tagsList ?? [])])];
-    if (itemKeys.id !== 'categoryID') {
+    let categoriesList = itemKeys.id === "categoryID" ? (categoriesTagsReducer?.vendorFilterViewModel?.cuisine?.categoriesList ?? []) : (categoriesTagsReducer?.vendorFilterViewModel?.tagsList ?? []);
+    if (itemKeys.id !== 'categoryID' && Object.keys(paramItem).length>0) {
         categoriesList = [paramItem, ...categoriesList.filter(x => x[itemKeys.id] !== paramItem[itemKeys.id])];
     }
     const checkSelectedTab = (item) => {
@@ -88,4 +88,4 @@ const styles = StyleSheet.create({
     },
     categoryTitle: { fontSize: 15, color: "#272727", paddingVertical: SPACING_VERTICAL },
     cardTextStyle: { fontSize: 12, paddingHorizontal: 2, },
-}) 
+})

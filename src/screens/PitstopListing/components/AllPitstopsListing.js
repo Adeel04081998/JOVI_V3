@@ -61,7 +61,8 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
                 {
                     'categoryID': filters.cuisines[0] ?? '',
                 },
-            "pitstopType": pitstopType
+            "pitstopType": pitstopType,
+            "applyDiscountFilter":filters?.filter[0]?true:false,
         }, (res) => {
             setTimeout(() => {
                 isRequestSent.current = false;

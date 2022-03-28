@@ -166,7 +166,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
 
     }
     if (timer && flatListRef.current) {
-      flatListRef.current.scrollToIndex({
+      flatListRef.current?.scrollToIndex({
         index: currentIndex < dataWithPlaceholders.length - 1 ? currentIndex : 0,
         animated: true,
       });

@@ -14,9 +14,9 @@ const SPACING_VERTICAL = 10;
 const FILTER_ICON_HEIGHT = 35;
 const FILTER_ICON_SIZE = 17;
 
-export default ({ filterConfig, screenName = '', selectedFilters, parentFilterHandler = () => { }, colors, goToFilters, }) => {
-    // const categoriesTagsReducer = useSelector(state => state.categoriesTagsReducer);
-    const filtersList = [{ vendorDashboardCatID: 1, name: 'Discounts', image: svgs.filterDicount("#6B6B6B") }];//categoriesTagsReducer?.vendorFilterViewModel?.filtersList ?? [];
+export default ({ filterConfig, screenName = '', customData = null, selectedFilters, parentFilterHandler = () => { }, colors, goToFilters, }) => {
+    const categoriesTagsReducer = useSelector(state => state.categoriesTagsReducer);
+    const filtersList = customData ? customData : (categoriesTagsReducer?.vendorFilterViewModel?.filtersList ?? []);
     const [state, setState] = React.useState({ activeTab: null, filtersData: filtersList });
     const _listRef = React.useRef(null);
     const { filtersData } = state;

@@ -1,4 +1,5 @@
 import React from "react";
+import svgs from "../assets/svgs";
 import constants from "../res/constants";
 let initUrlRef = React.createRef(null);
 initUrlRef.current = __DEV__ ? constants.url_qasprint_v1 : constants.url_qasprint_v1;
@@ -23,6 +24,7 @@ export const PITSTOP_TYPES_INVERTED = {
     5: 'JOVI_MART',
     10: 'ALL',
 };
+export const FILTER_TAGS_PITSTOP_LISTING = [{ vendorDashboardCatID: 1, name: 'Discounts', image: svgs.filterDicount("#6B6B6B") }];
 export const ORDER_STATUSES = {
     'VendorApproval': 'VendorApproval',
     'VendorProblem': 'VendorProblem',
