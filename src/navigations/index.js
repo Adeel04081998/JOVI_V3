@@ -36,11 +36,12 @@ import OrderChat from '../screens/OrderChat';
 import RateRider from '../screens/RateRider';
 import OrderHistory from '../screens/OrderHistory';
 import OrderHistoryDetail from '../screens/OrderHistoryDetail';
+import Search from '../screens/Search';
 import OrderPitstops from '../screens/OrderTracking/OrderScreens/OrderPitstops';
 
 const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES, APP_DRAWER_ROUTES, APP_DRAWER_STACK } = ROUTES;
 const AppDrawerStack = (props) => {
-    return <Stack.Navigator screenOptions={stackOpts} initialRouteName={APP_DRAWER_ROUTES.Home.screen_name} >
+    return <Stack.Navigator screenOptions={stackOpts} initialRouteName={APP_DRAWER_ROUTES.Search.screen_name} >
         {(APP_DRAWER_STACK || []).map((routeInfo, index) => (
             <Stack.Screen
                 key={`AppDrawerss-Screen-key-${index}-${routeInfo.id}`}
@@ -88,6 +89,7 @@ const AppDrawerComponents = {
     RateRider,
     OrderHistory,
     OrderHistoryDetail,
+    Search,
 }//will open with Slide Animation
 const ContainerStack = createStackNavigator();
 const Stack = createNativeStackNavigator();
