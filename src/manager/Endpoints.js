@@ -54,6 +54,7 @@ export default {
     "OrderEstimateTime": "api/Order/OrderEstimateTimeV2", //Order Estimate Time
 
     "ADD_ORDER_FEEDBACK":"api/Order/Feedback/Add",//USED IN ORDER HISTORY DETAIL SCREEN for adding feedback for the order
+    "GET_LEGAL_CERTIFICATES":"api/Menu/Legal/ListByType/1",
 }
 
 
