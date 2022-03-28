@@ -24,7 +24,7 @@
     "set:env:staging": "node ./scripts/set-env.js --env staging",
     "set:env:release": "node ./scripts/set-env.js --env release",
     "run:android:debug": "yarn set:env:debug && yarn android --variant debug",
-    "run:android:staging": "yarn set:env:staging && yarn android --variant release",
+    "run:android:staging": "yarn set:env:staging && yarn build_android",
     "run:android:release": "yarn set:env:release && yarn android --variant release",
     "_comments": "we have added --variant release for both staging and release because we will use staging as a release for QA and actual release for Production",
     "run:ios:debug": "yarn set:env:debug && yarn ios --configuration Debug",

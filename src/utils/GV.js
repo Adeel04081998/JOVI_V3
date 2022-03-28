@@ -37,6 +37,7 @@ export const ORDER_STATUSES = {
     'RiderProblem': 'RiderProblem',
     'TransferProblem': 'TransferProblem',
 }
+export const isIOS = Platform.OS === 'ios';
 export default {
     BASE_URL: initUrlRef,
     SET_VALUE: 1,
