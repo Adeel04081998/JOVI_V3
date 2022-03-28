@@ -90,7 +90,7 @@ export default ({ route }) => {
         const renderItems = () => {
             if (isJoviJob) return <View style={styles.itemContainer}>
                 <Text style={{ fontSize: 12, color: colors.black, maxWidth: '75%', ...isSkippedOrCanclledStyles }}>{pitstop.title}</Text>
-                <Text style={{ fontSize: 12, color: colors.black, ...isSkippedOrCanclledStyles }}>{renderPrice(pitstop.estimatePrice ?? 10)}</Text>
+                <Text style={{ fontSize: 12, color: colors.black, ...isSkippedOrCanclledStyles }}>{renderPrice(pitstop.estimatePrice ?? 0)}</Text>
             </View>
             return pitstop.jobItemsListViewModel?.map((item, i) => {
                 return <View key={i} style={styles.itemContainer}>

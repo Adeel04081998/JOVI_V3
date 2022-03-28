@@ -138,9 +138,8 @@ export default ({ navigation, route }) => {
                 const obj = {
                     discount: apiRes.chargeBreakdown.discount,
                     serviceCharges: apiRes.serviceCharges,
-
-
                 }
+                console.log('res.data.order  ===>>>>',res.data.order);
                 setReceiptData(res.data.order);
             } else {
                 setReceiptData({});

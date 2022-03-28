@@ -1,6 +1,6 @@
 import { useIsFocused } from '@react-navigation/native';
 import React from 'react';
-import { Alert, Platform, StatusBar } from 'react-native';
+import { Alert, AppState, Platform, StatusBar } from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
 import DeviceInfo from 'react-native-device-info';
 import Toast from '../components/atoms/Toast';
@@ -903,7 +903,7 @@ export const sharedOnVendorPress = (pitstop, index) => {
     }
     NavigationService.NavigationActions.common_actions.navigate(routes[pitstop.pitstopType], { ...pitstop, pitstopID });
 }
-export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder = () => { }, orderCompletedOrCancelled = () => { }) => {
+export const   sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder = () => { }, orderCompletedOrCancelled = () => { }) => {
     // console.log("[Order Processing].fcmReducer", fcmReducer);
     // '1',  For job related notification
     // '11',  For rider allocated related notification
@@ -970,7 +970,6 @@ export const sharedGetCurrentLocation = (onSuccess = () => { }, onError = () => 
         (error) => {
             console.log("error==>", error);
             if (error) {
-                // CustomToast.error("An error accured while fetching your current location, please try again.")
                 onError(error)
             }
         },
@@ -1044,6 +1043,13 @@ export const sharedGetFinalDestintionRequest = () => {
     };
 }
 
+export const sharedForegroundCallbackHandler = (cb = () => { }) => {
+    return AppState.addEventListener('change', nextAppState=>{
+        if(nextAppState === 'active' || nextAppState === 'inactive'){
+            cb();
+        }
+    });
+}
 export const getBottomPadding = (insets, bottom = 0, extraBottom = 0) => {
     if (Platform.OS === "ios") {
         return insets.bottom > 0 ? insets.bottom + extraBottom : bottom;

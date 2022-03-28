@@ -61,6 +61,8 @@ export default () => {
                 if (statusCode === 200) {
                     const openOrders = res.data?.onGoingOrders?.onGoingOrdersList ?? [];
                     dispatch(ReduxActions.setUserAction({ openOrders, noOfOpenOrders: openOrders.length }));
+                }else{
+                    dispatch(ReduxActions.setUserAction({ openOrders:[], noOfOpenOrders: 0 }));
                 }
             }, (err) => {
                 sharedExceptionHandler(err);

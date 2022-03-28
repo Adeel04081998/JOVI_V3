@@ -58,6 +58,8 @@ const ImageWithTextInput = (props: Props) => {
         }
     }, [props.showPickOption])
     const onAttachmentPress = () => {
+        props.onRequestClose && props.onRequestClose();
+
         sharedConfirmationAlert("Alert", "Pick Option!", [{
             text: "Choose from Gallery", onPress: () => {
                 setImages([]);

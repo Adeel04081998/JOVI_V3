@@ -11,7 +11,6 @@ import theme from '../../res/theme';
 import GV from '../../utils/GV';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import SharedActions, { sendOTPToServer, sharedGetDeviceInfo, sharedInteval, sharedExceptionHandler } from '../../helpers/SharedActions';
-import Sms from "../../helpers/Sms";
 import RNOtpVerify from "react-native-otp-verify";
 import Regex from '../../utils/Regex';
 import NavigationService from '../../navigations/NavigationService';
@@ -20,7 +19,6 @@ import ROUTES from '../../navigations/ROUTES';
 import { postRequest } from '../../manager/ApiManager';
 import Toast from '../../components/atoms/Toast';
 import ReduxAction from '../../redux/actions/index'
-import FontFamily from '../../res/FontFamily';
 
 
 const SPACING = 20;
@@ -28,23 +26,22 @@ export default (props) => {
     const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark");
     const styles = otpStyles.styles(colors);
     const [inputs, setInputs] = React.useState(["", "", "", ""]);
-    const [tempArr, setTempArr] = React.useState(["", "", "", ""]);
-    const [typedCode, setTypedCode] = useState('')
     const [minutes, setMinutes] = React.useState("00");
     const [seconds, setSeconds] = React.useState("00");
     const [isLoading, setIsLoading] = React.useState(false);
     const [runInterval, setRunInterval] = React.useState(true);
     const intervalRef = React.useRef(null);
     const arrRef = React.useRef([]);
-    const [disableOnchange, setDisableOnChange] = useState(false)
     const disbleContinueButton = inputs?.includes('');
     const params = props.route.params;
     const cellNo = params.payload.phoneNumber; // should be redux value
-    const inputRef = useRef([]);
-    const _requestAgainSmsRef = useRef(true)
     const [requestAgain, setRequestAgain] = React.useState(true);
     const isRequestSent = React.useRef(false);
-
+    // refs to focus input 
+    const inputRef1 = useRef(null);
+    const inputRef2 = useRef(null);
+    const inputRef3 = useRef(null);
+    const inputRef4 = useRef(null);
 
     const dispatch = useDispatch()
     const listerner = (info) => {
@@ -83,24 +80,93 @@ export default (props) => {
             RNOtpVerify.removeListener()
         };
     }, [])
+
+
     const _customEffect = () => {
-        if (inputRef.current.length !== inputs.length) {
-            inputRef.current = Array(inputs.length).fill().map((_, i) => inputRef.current[i] || createRef());
-        };
+
         return () => {
             // console.log('RNOtpVerify.removeListener------')
             resetInterval()
             RNOtpVerify.removeListener();
         }
     };
-    useEffect(() => {
-        typedCode.length === 4 && Keyboard.dismiss();
-    }, [typedCode]);
+
+
 
     useEffect(_customEffect, []);
+    const refCallback = inputRef => node => {
+        inputRef.current = node;
+    };
 
+
+
+    const onOptChange = (index) => {
+        return (value) => {
+            if (isNaN(Number(value))) {
+                return;
+            }
+            const otpArrayCpy = inputs.concat();
+            otpArrayCpy[index] = value;
+            setInputs(otpArrayCpy);
+            let result = true
+            for (let i = 0; i < otpArrayCpy.length; i++) {
+                if (otpArrayCpy[i] <= 0) {
+                    result = false;
+                    break;
+                }
+            }
+            if (result) {
+                let _tempArr = otpArrayCpy.toString()
+                let tempStr = _tempArr.replace(/,/g, '')
+                verifyOtpToServer(tempStr, 'from onOptChange if')
+            }
+            if (value !== '') {
+                if (index === 0) {
+                    inputRef2.current.focus();
+                } else if (index === 1) {
+                    inputRef3.current.focus();
+                } else if (index === 2) {
+                    inputRef4.current.focus();
+                }
+            }
+        };
+    };
+
+
+
+    const onOTPKeyPress = (index) => {
+        return ({ nativeEvent: { key: value } }) => {
+            //autofocus to previous input if the value is blank and existing value is also blank
+            if (value === 'Backspace' && (inputs[index] === '')) {
+                if (index === 1) {
+                    inputRef1.current.focus();
+                } else if (index === 2) {
+                    inputRef2.current.focus();
+                } else if (index === 3) {
+                    inputRef3.current.focus();
+                }
+                if (Platform.OS === "android" && index > 0) {
+                    const otpArrayCpy = inputs.concat();
+                    otpArrayCpy[index - 1] = '';
+                    setInputs(otpArrayCpy);
+                }
+            }
+            else if (value !== 'Backspace' && Platform.OS === "ios" && value !== '') {
+                const lastThreeInputs = inputs.slice(1, inputs.length).find(x => x ? true : false)
+                arrRef.current = arrRef.current.concat(value)
+                if (arrRef.current.length === 4 && index === 0 && !lastThreeInputs) {
+                    console.log('here in else backspace');
+                    let _tempArr = arrRef.current.toString()
+                    let tempStr = _tempArr.replace(/,/g, '')
+                    setInputs(arrRef.current)
+                    verifyOtpToServer(tempStr, 'from onOTPKeyPress')
+                }
+            }
+        };
+    };
 
     const verifyOtpToServer = async (otpCode = inputs.join(''), tempStr) => {
+        Keyboard.dismiss()
         if (!isRequestSent.current) {
             isRequestSent.current = true;
             const payload = {
@@ -130,7 +196,7 @@ export default (props) => {
                 err => {
                     isRequestSent.current = false;
                     setInputs(["", "", "", ""])
-                    setTypedCode('')
+                    arrRef.current = []
                     sharedExceptionHandler(err)
                     // resetInterval()
                 },
@@ -143,7 +209,6 @@ export default (props) => {
     const resendOtp = () => {
         setRequestAgain(true)
         setInputs(["", "", "", ""])
-        setTypedCode('')
         const { appHash, isNewVersion, isWhatsapp, mobileNetwork, otpType, userType, phoneNumber } = params.payload;
         const payload = {
             'phoneNumber': phoneNumber,
@@ -180,129 +245,104 @@ export default (props) => {
                 RNOtpVerify.addListener(message => {
                     if (message === "Timeout Error.") return
                     let stringify = message.toString().match(Regex.androidOTP);
-                    let parsedValue = parseInt(stringify[0]);
                     let commaSplittedArray = stringify[0].split('');
                     setInputs(commaSplittedArray)
                     if (commaSplittedArray.length === 4) verifyOtpToServer(stringify[0], 'from sms listener if')
                     RNOtpVerify.removeListener()
-
-                    // SmsRetriever.removeSmsListener();
                 });
             }
         } catch (error) {
             console.log(`[_onSmsListenerPressed].catch`, JSON.stringify(error));
         }
     };
+
+
     const onChangeNumber = () => {
         NavigationService.NavigationActions.common_actions.goBack();
     }
 
 
-    const _onChange = (e, nextField) => {
-        e.persist();
-        if (e.nativeEvent.text === " " || e.nativeEvent.text === "") return;
-        if (isNaN(e.nativeEvent.text)) return;
-        if (!disableOnchange && e.nativeEvent.text && nextField < inputs.length) {
-            inputRef.current[nextField].current.focus();
-        };
-    };
-    const _focusNextField = (e, nextField, currentIndex) => {
-        if (e.nativeEvent.key === "Backspace") {
-            let prevField = nextField >= 2 ? nextField - 2 : 0;
-            if (inputs[currentIndex] !== "") return;
-            else if (inputs[currentIndex] === "") return inputRef.current[prevField].current.focus();
-        } else {
-            arrRef.current = [...arrRef.current, ...e.nativeEvent.key]
-            if (arrRef.current.length === 4) {
-                setInputs(arrRef.current)
-                let tempArr = arrRef.current.toString()
-                let tempStr = tempArr.replace(/,/g, '')
-                verifyOtpToServer(tempStr, 'from focus next field');
-            }
+    const renderTopUi = () => {
+        return (
+            <View style={{ marginVertical: 30 }} >
+                <Text style={{ textAlign: "center", color: '#000', fontWeight: '600', paddingVertical: 10 }} fontFamily={"PoppinsMedium"} >{"Verify Phone Number"}</Text>
+                <Text style={{ textAlign: "center", color: '#7D7D7D' }} fontFamily={"PoppinsMedium"}  >{`Code is sent to ${cellNo}`}</Text>
+            </View>
+        )
+    }
 
-        }
+    const renderInputsUi = () => {
+        return (
+            <View style={{ flexDirection: "row", justifyContent: "center" }}>
+                {[inputRef1, inputRef2, inputRef3, inputRef4].map(
+                    (inputRef, i) => (
+                        <TextInput
+                            ref={refCallback(inputRef)}
+                            onChangeText={onOptChange(i)}
+                            onKeyPress={onOTPKeyPress(i)}
+                            value={inputs[i]}
+                            maxLength={1}
+                            key={i}
+                            autoFocus={i === 0 ? true : undefined}
+                            style={[styles.otpCode]}
+                            keyboardType="numeric"
+                            underlineColorAndroid="transparent"
+                            autoCompleteType="tel"
+                            returnKeyType="next"
+                            textContentType="oneTimeCode"
+                        />
+                    )
+                )}
+            </View>
+        )
+    }
 
-    };
-    console.log('inputs ==>>>',inputs);
-    const onChangeHandler = (val, index) => {
-        if (isNaN(val)) return;
-        if (val?.length === 4 && inputs.length === 4) {
-            let arr = []
-            for (let index = 0; index < val.length; index++) {
-                arr.push(val[index])
-            }
-            setInputs(arr)
-            verifyOtpToServer(val, 'from first if');
-        }
-        else {
-            val = val.trim();
-            let newVal = "";
-            if (!val) {
-                inputs[index] = "";
-                newVal = typedCode.slice(0, typedCode.length - 1);
-            } else {
-                newVal = typedCode.concat(val);
-                inputs[index] = newVal[index];
-            };
-            setTypedCode(newVal)
-            setInputs(inputs)
-            if (newVal.length === 4) {
-                verifyOtpToServer(newVal, 'from second if');
-            }
-        }
-    };
+
+    const renderResendButtonUi = () => {
+        return (
+            <TouchableOpacity onPress={resendOtp}
+                // disabled={parseInt(seconds) !== 0}
+                disabled={requestAgain}
+                wait={1} >
+                <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 12, color: requestAgain ? 'grey' : "#7359BE", marginTop: 3 }}>{`Request again Get Via SMS`}</Text>
+            </TouchableOpacity>
+        )
+    }
+
+
+    const renderVerifyButtonUi = () => {
+        return (
+            <View style={styles.buttonView}>
+                <Button
+                    style={styles.continueButton}
+                    text={'Verify'}
+                    textStyle={{ color: '#fff', ...styles.textAlignCenter, fontSize: 14 }}
+                    onPress={() => verifyOtpToServer()}
+                    isLoading={isLoading}
+                    disabled={disbleContinueButton || isLoading}
+                />
+            </View>
+        )
+    }
+
+
+    const renderChangeNumberUi = () => {
+        return (
+            <TouchableOpacity onPress={onChangeNumber}>
+                <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 12, color: "#7359BE" }}>{`Change phone number`}</Text>
+            </TouchableOpacity>
+        )
+    }
+
+
     return <SafeAreaView style={{ flex: 1, backgroundColor: "#F6F5FA" }}>
-        <View style={{ marginVertical: 30 }} >
-            <Text style={{ textAlign: "center", color: '#000', fontWeight: '600', paddingVertical: 10 }} fontFamily={"PoppinsMedium"} >{"Verify Phone Number"}</Text>
-            <Text style={{ textAlign: "center", color: '#7D7D7D' }} fontFamily={"PoppinsMedium"}  >{`Code is sent to ${cellNo}`}</Text>
-        </View>
-        <View style={{ flexDirection: "row", justifyContent: "center" }}>
-            {
-                inputs.map((input, index) => (
-                    <TextInput
-                        key={`input-key-${index}`}
-                        autoCorrect={false}
-                        autoCapitalize="none"
-                        placeholder=""
-                        ref={inputRef.current[index]}
-                        // value={input}
-                        style={[styles.otpCode]}
-                        keyboardType="numeric"
-                        maxLength={1}
-                        autoFocus={index === 0 ? true : false}
-                        underlineColorAndroid="transparent"
-                        autoCompleteType="tel"
-                        returnKeyType="next"
-                        textContentType="oneTimeCode"
-                        onFocus={() => { }}
-                        onChangeText={val => onChangeHandler(val, index)}
-                        onKeyPress={e => _focusNextField(e, index + 1, index)}
-                        onChange={(e) => _onChange(e, index + 1, index)}
-                    />
-                ))
-            }
-        </View>
+        {renderTopUi()}
+        {renderInputsUi()}
         <Text style={{ textAlign: "center", paddingVertical: SPACING - 5 }}>{`${minutes}:${seconds}`}</Text>
         <Text style={{ textAlign: "center", fontSize: 16 }}>{`Didn't receive code?`}</Text>
-        <TouchableOpacity onPress={resendOtp}
-            // disabled={parseInt(seconds) !== 0}
-            disabled={requestAgain}
-            wait={1} >
-            <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 12, color: requestAgain ? 'grey' : "#7359BE", marginTop: 3 }}>{`Request again Get Via SMS`}</Text>
-        </TouchableOpacity>
-        <View style={styles.buttonView}>
-            <Button
-                style={styles.continueButton}
-                text={'Verify'}
-                textStyle={{ color: '#fff', ...styles.textAlignCenter, fontSize: 14 }}
-                onPress={() => verifyOtpToServer()}
-                isLoading={isLoading}
-                disabled={disbleContinueButton || isLoading}
-            />
-        </View>
-        <TouchableOpacity onPress={onChangeNumber}>
-            <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 12, color: "#7359BE" }}>{`Change phone number`}</Text>
-        </TouchableOpacity>
+        {renderResendButtonUi()}
+        {renderVerifyButtonUi()}
+        {renderChangeNumberUi()}
     </SafeAreaView>
 }
 

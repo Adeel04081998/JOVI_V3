@@ -18,16 +18,19 @@ import ROUTES from '../../../navigations/ROUTES';
 import { useSelector } from 'react-redux';
 import ImageBackground from '../../atoms/ImageBackground';
 import CardDealHover from '../../../screens/PitstopListing/components/CardDealHover';
+import { useIsFocused } from '@react-navigation/native';
 
 export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCatID = 0, imageStyles = {}, themeColors = null, showMoreBtnText = "", cb = () => { }, textContainer = {} }) => {
     const SPACING_BOTTOM = 0;
     const [data, setData] = React.useState(null);
     const isLoading = React.useRef(null);
+    const isFocused = useIsFocused();
     const userReducer = useSelector(store => store.userReducer);
     const finalDestination = userReducer?.finalDestObj ?? { latitude: 0, longitude: 0 };
     const ITEMS_PER_PAGE = userReducer.homeScreenItemsPerPage || 10;
 
     const fetchData = () => {
+        if(!isFocused) return;
         postRequest(Endpoints.GET_VENDOR_DASHBOARD_CATEGORY_ID_DETAIL,
             {
                 "vendorType": vendorType,

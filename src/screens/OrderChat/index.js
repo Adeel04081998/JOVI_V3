@@ -476,6 +476,7 @@ export default ({ navigation, route }) => {
                 renderAvatar={null}
                 showAvatarForEveryMessage={false}
                 showUserAvatar={false}
+                maxInputLength={200}
                 messages={messages}
                 onSend={messages => onMessageSend(messages)}
                 user={{ _id: userReducer.id }}

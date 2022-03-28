@@ -68,6 +68,7 @@ const CODE_PUSH_OPTIONS = {
 const App = () => {
     const { visible } = useSelector(state => state.modalReducer)
     const [state, setState] = React.useState({ appLoaded: false });
+
     const isDarkMode = useColorScheme() === "dark";
     const theme = isDarkMode ? {
         ...DefaultTheme,
@@ -83,6 +84,8 @@ const App = () => {
             ...AppTheme.getTheme(GV.THEME_VALUES.JOVI)
         }
     }
+    const colors = theme.colors
+
     function message(msg) {
         // console.log("Codepush message", msg);
     }
@@ -137,32 +140,50 @@ const App = () => {
     ]);
     navigator.geolocation = Geolocation;
     const toastConfig = {
-        success: ({ text1, ...rest }) => (
-            <BaseToast
+        success: ({ text1, ...rest }) => {
+            if (!(rest.text2)) return
+            return <BaseToast
                 text1NumberOfLines={10}
                 text2NumberOfLines={10}
                 {...rest}
-                style={{ borderLeftColor: '#7359BE', height: 'auto', minHeight: 50, padding: 5 }}
+                style={{ borderLeftColor: colors.green, height: 'auto', minHeight: 50, padding: 5 }}
                 contentContainerStyle={{ paddingHorizontal: 15, }}
                 text1Style={{ fontWeight: "900", fontSize: 14 }}
                 text1={text1}
-                text2={null}
+                text2={rest.text2}
                 onTrailingIconPress={() => Toast.hide()}
             />
-        ),
-        error: ({ text1, ...rest }) => (
-            <BaseToast
+        },
+        error: ({ text1, ...rest }) => {
+            if (!(rest.text2)) return
+            return <BaseToast
                 text1NumberOfLines={10}
                 text2NumberOfLines={20}
                 {...rest}
-                style={{ borderLeftColor: '#EB297F', height: 'auto', minHeight: 50, padding: 5 }}
+                style={{ borderLeftColor: colors.redColor, height: 'auto', minHeight: 50, padding: 5 }}
                 contentContainerStyle={{ paddingHorizontal: 15, }}
                 text1Style={{ fontWeight: '900', fontSize: 14 }}
                 text1={text1}
-                text2={null}
+                text2={rest.text2}
                 onTrailingIconPress={() => Toast.hide()}
             />
-        )
+        }
+        ,
+        info: ({ text1, ...rest }) => {
+            if (!(rest.text2)) return
+            return <BaseToast
+                text1NumberOfLines={10}
+                text2NumberOfLines={20}
+                {...rest}
+                style={{ borderLeftColor: colors.blueColor, height: 'auto', minHeight: 50, padding: 5 }}
+                contentContainerStyle={{ paddingHorizontal: 15, }}
+                text1Style={{ fontWeight: '900', fontSize: 14 }}
+                text1={text1}
+                text2={rest.text2}
+                onTrailingIconPress={() => Toast.hide()}
+            />
+        }
+
     };
     if (!state.appLoaded) return null;
     return (
@@ -178,12 +199,12 @@ const App = () => {
                 </NavigationContainer>
                 <Robot />
                 <Toast
-                    // // config={toastConfig}
-                    // ref={ref => {
-                    //     _toastRef.current = ref;
-                    //     Toast.setRef(ref);
-                    // }} 
-                    />
+                    config={toastConfig}
+                    ref={ref => {
+                        _toastRef.current = ref;
+                        Toast.setRef(ref);
+                    }}
+                />
                 <NoInternetModal />
             </SafeAreaView>
             <SharedGetApis />

@@ -9,7 +9,7 @@ import GV from '../../../utils/GV';
 import TextInput from '../../../components/atoms/TextInput';
 import FontFamily from '../../../res/FontFamily';
 
-const PitStopDetails = (props) => {
+const PitStopDetails = (props, ref) => {
     // colors.primary will recieve value from colors.js file's colors
     const WIDTH = constants.window_dimensions.width
     const HEIGHT = constants.window_dimensions.height
@@ -45,7 +45,7 @@ const PitStopDetails = (props) => {
                 value={props.description}
                 maxLength={250}
                 onChangeText={props.onChangeDescription}
-                // onSubmitEditing={() => Keyboard.dismiss()}
+            // onSubmitEditing={() => Keyboard.dismiss()}
             />
             <Text style={styles.attachment} >Attachments</Text>
             {props.children}

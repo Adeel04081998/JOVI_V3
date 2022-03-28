@@ -12,7 +12,7 @@ import VectorIcon from "../../components/atoms/VectorIcon";
 import View from "../../components/atoms/View";
 import AnimatedProgressWheel from "../../components/molecules/AnimatedProgressWheel";
 import CustomHeader from "../../components/molecules/CustomHeader";
-import { sharedExceptionHandler, sharedFetchOrder, sharedNotificationHandlerForOrderScreens, sharedOrderNavigation, sharedRiderRating } from "../../helpers/SharedActions";
+import { sharedExceptionHandler, sharedFetchOrder, sharedForegroundCallbackHandler, sharedNotificationHandlerForOrderScreens, sharedOrderNavigation, sharedRiderRating } from "../../helpers/SharedActions";
 import { getRequest } from "../../manager/ApiManager";
 import Endpoints from "../../manager/Endpoints";
 import NavigationService from "../../navigations/NavigationService";
@@ -246,8 +246,10 @@ export default ({ route }) => {
         }
     }, [isFocused]);
     React.useEffect(() => {
+        const subscription = sharedForegroundCallbackHandler(fetchOrderDetails)
         sharedNotificationHandlerForOrderScreens(fcmReducer, fetchOrderDetails, orderCancelledOrCompleted);
         return () => {
+            subscription.remove()
         }
     }, [fcmReducer]);
     const handleCircleAnimation = () => {
