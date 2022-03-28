@@ -14,6 +14,7 @@ import Card from './Card';
 import CardLoader from "./CardLoader";
 import { useSelector } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
+import { PITSTOP_TYPES } from '../../../utils/GV';
 
 
 
@@ -54,8 +55,14 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
             "marketItemsPerPage": paginationInfo.current.itemsPerPage,
             "marketID": 0,
             "searchItem": filters.search,
-            'categoryID': filters.cuisines[0] ?? '',
-            "pitstopType": pitstopType
+            ...pitstopType === PITSTOP_TYPES.SUPER_MARKET ? {
+                'tagID': filters.cuisines[0] ?? 0,
+            } :
+                {
+                    'categoryID': filters.cuisines[0] ?? '',
+                },
+            "pitstopType": pitstopType,
+            "applyDiscountFilter":filters?.filter[0]?true:false,
         }, (res) => {
             setTimeout(() => {
                 isRequestSent.current = false;
