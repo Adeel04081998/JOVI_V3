@@ -61,16 +61,16 @@ export default () => {
             {_renderHeader()}
             <View style={{ flex: 1 }}>
                 <View style={{ height: '55%' }}>
-                    <Image source={require('../../assets/images/contactUs.png')} resizeMode={'stretch'} style={{ height: '100%', width: '100%' }} />
+                    <Image source={require('../../assets/images/contactUs.png')} tapToOpen={false} resizeMode={'stretch'} style={{ height: '100%', width: '100%' }} />
                 </View>
                 <View style={{ height: '45%', marginTop: -30 }}>
-                    <View style={{ height: '30%', alignItems: 'center' }}>
+                    <View style={{ height: 115, alignItems: 'center' }}>
                         <Text style={_styles.contactUsTitle} fontFamily={'PoppinsBold'}>How can we Help You?</Text>
                         <Text style={_styles.contactUsText} >Experiencing Problems Signing Up?</Text>
                         <Text style={_styles.contactUsText} >We are here to help.</Text>
                         <Text style={_styles.contactUsText} >Please get in touch with us.</Text>
                     </View>
-                    <View style={{ height: 200, justifyContent: 'center', flexDirection: 'row', marginTop: 30 }}>
+                    <View style={{ height: 150, justifyContent: 'center', flexDirection: 'row' }}>
                         {_renderContactUsBlock(onDialerPress, 'Call', { name: 'call', type: 'Ionicons' }, { marginRight: 30 })}
                         {_renderContactUsBlock(onEmailPress)}
                     </View>
