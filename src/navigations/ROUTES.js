@@ -131,6 +131,10 @@ const APP_DRAWER_ROUTES = {
         screen_name: "FAQ",
         options: { animation: 'slide_from_bottom' },
     },
+    "ContactUs": {
+        screen_name: "CONTACT_US",
+        options: null,
+    },
 
 
 }
