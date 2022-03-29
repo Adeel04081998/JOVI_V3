@@ -441,12 +441,11 @@ export const sharedUniqueIdGenerator = (randomNum = 1000) => {
     return Math.floor(Math.random() * randomNum) + new Date().getTime();
 };
 const checkSameProduct = (currentCheckoutItems, newP) => {
-    const HAS_OPTIONS = newP.selectedOptions;
-    let newProductOptionsListIds = HAS_OPTIONS ? newP.selectedOptions.map(item => (item.itemOptionID)).slice().sort() : [];
+    let newProductOptionsListIds = newP.selectedOptions.map(item => (item.itemOptionID)).slice().sort();
     currentCheckoutItems.map((item, i) => {
-        let isOptionsSame = HAS_OPTIONS ? item.selectedOptions.map(x => (x.itemOptionID)).slice().sort().every(function (value, index) {
+        let isOptionsSame = item.selectedOptions.map(x => (x.itemOptionID)).slice().sort().every(function (value, index) {
             return value === newProductOptionsListIds[index];
-        }) : true;
+        });
         let isNotesSame = item.notes.toString().toLowerCase() === newP.notes.toString().toLowerCase();
         if (isOptionsSame && isNotesSame) {
             newP = { ...newP, quantity: newP.quantity + item.quantity, alreadyExisted: true, checkoutIndex: i };
@@ -464,7 +463,9 @@ export const sharedAddUpdatePitstop = (
     fromCart = false,
     cb = () => { },
     forceUpdate = false,
+    incDec = false,
 ) => {
+    console.log("arguments", arguments);
     const cartReducer = store.getState().cartReducer;
     if (swappedPitstops.length) {
         dispatch(ReduxActions.setCartAction({ pitstops: swappedPitstops }));
@@ -505,37 +506,48 @@ export const sharedAddUpdatePitstop = (
         const pitstopIdx = pitstops.findIndex(x => x[pitstopActionKey] === upcomingVendorDetails[pitstopActionKey]); //(x.pitstopID === pitstopDetails.pitstopID || x.smid === pitstopDetails.smid))
         if (pitstopIdx !== -1) {
             let currentPitstopItems = pitstops[pitstopIdx].checkOutItemsListVM;
-            console.log('[PITSTOP FOUND]', upcomingItemDetails.selectedOptions, pitstops[pitstopIdx]);
+            console.log('[PITSTOP FOUND]', pitstops[pitstopIdx]);
             let itemIndex = currentPitstopItems.findIndex(item => item[actionKey] === upcomingItemDetails[actionKey]);
             console.log('[itemIndex]', itemIndex);
-
-            if (!fromCart && itemIndex >= 0) {
+            if (!fromCart && upcomingItemDetails.selectedOptions?.length) {
                 console.log('[SELECTED OPTIONS EXIST]');
                 upcomingItemDetails = checkSameProduct(currentPitstopItems, upcomingItemDetails).newP;
-            }
-            if (upcomingItemDetails.alreadyExisted) {
-                console.log('[Update EXISTING CHECKOUT ITEMS]');
-                itemIndex = upcomingItemDetails.checkoutIndex;
-                if (!upcomingItemDetails.quantity) {
-                    console.log('[QUANTITY LESS THAN OR EQUAL TO ZERO]');
-                    if ((currentPitstopItems.length - 1) <= 0) pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIdx);
-                } else {
-                    currentPitstopItems[itemIndex] = { ...upcomingItemDetails, alreadyExisted: undefined, checkoutIndex: undefined, checkOutItemID: currentPitstopItems[itemIndex].checkOutItemID };
-                    pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
+                if (upcomingItemDetails.alreadyExisted) {
+                    console.log('[CHECKOUT ITEMS ALREADY EXIST]');
+                    itemIndex = upcomingItemDetails.checkoutIndex;
+                    if (!upcomingItemDetails.quantity) {
+                        console.log('[QUANTITY LESS THAN OR EQUAL TO ZERO]');
+                        if ((currentPitstopItems.length - 1) <= 0) pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIdx);
+                    } else {
+                        console.log('[Update EXISTING CHECKOUT ITEMS]');
+                        currentPitstopItems[itemIndex] = { ...upcomingItemDetails, alreadyExisted: undefined, checkoutIndex: undefined, checkOutItemID: currentPitstopItems[itemIndex].checkOutItemID };
+                        pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
+                    }
                 }
-            } else if (itemIndex !== -1 && !forceAddNewItem) {
+            }
+            // else if (itemIndex !== -1 && !forceAddNewItem) {
+            else if (itemIndex !== -1) {
                 if (!upcomingItemDetails.quantity) {
                     console.log('[QUANTITY LESS THAN OR EQUAL TO ZERO]');
-                    if ((currentPitstopItems.length - 1) <= 0) pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIdx);
+                    if ((currentPitstopItems.length - 1) <= 0) {
+                        pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIdx);
+                        console.log('[NO ITEMS EXIST IN PITSTOP SO PITSTOP HAS BEEN REMOVED FROM PITSTOSP]', pitstops);
+                    }
                     else {
                         console.log('[REMOVE SINGLE ITEM FROM CHECKOUT LIST..]');
                         currentPitstopItems = currentPitstopItems.filter((_item, idx) => idx !== itemIndex);
                         pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
                     }
                 } else {
-                    console.log('[INCREAMETN DECREACMENT QUANTITY]');
-                    currentPitstopItems[itemIndex] = { ...upcomingItemDetails, checkOutItemID: currentPitstopItems[itemIndex].checkOutItemID };
-                    pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
+                    if (incDec) {
+                        console.log('[INCREAMETN DECREACMENT QUANTITY]');
+                        currentPitstopItems[itemIndex] = { ...upcomingItemDetails, checkOutItemID: currentPitstopItems[itemIndex].checkOutItemID };
+                        pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
+                    } else {
+                        console.log('[UPDATE QUANTITY OF AN EXISTING ITEM]');
+                        currentPitstopItems[itemIndex] = { ...upcomingItemDetails, quantity: currentPitstopItems[itemIndex].quantity + upcomingItemDetails.quantity, checkOutItemID: currentPitstopItems[itemIndex].checkOutItemID };
+                        pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
+                    }
                 }
             } else {
                 console.log('[ADD NEW ITEM TO EXISTING CHECKOUT ITEMS]');
@@ -554,7 +566,7 @@ export const sharedAddUpdatePitstop = (
         }
     }
     console.log('[TO CALCULATE PITSTOPS]', pitstops);
-    cb();
+    cb && cb();
     cartReducer.forceUpdate = forceUpdate;
     if (!pitstops.length) {
         dispatch(ReduxActions.clearCartAction({ pitstops: [], forceUpdate }));
@@ -629,12 +641,15 @@ export const sharedGetServiceCharges = (payload = null, successCb = () => { }) =
     [...cartReducer.pitstops].map((item, i) => {
         if (item.checkOutItemsListVM) {
             item.checkOutItemsListVM.map((product, j) => {
+                console.log("product here...", product);
                 pitstopItems.push({
                     "itemPrice": product._itemPrice,
                     "gstAddedPrice": item.pitstopType === PITSTOP_TYPES.SUPER_MARKET ? product.gstAddedPrice : product.gstAddedPrice + product.totalJoviDiscount + product._totalDiscount,
                     "gstPercentage": product.gstPercentage,
-                    "itemDiscount": product.itemDiscount,
-                    "joviDiscount": product.joviDiscount,
+                    "itemDiscount": (product._totalDiscount - product._totalJoviDiscount),
+                    "joviDiscount": product._totalJoviDiscount,
+                    // "itemDiscount": product.itemDiscount,
+                    // "joviDiscount": product.joviDiscount,
                     "actualPrice": item.pitstopType === 1 ? product.actualPrice : product.gstAddedPrice + product.totalJoviDiscount + product._totalDiscount,
                     "gstAmount": product._totalGst,
                     "quantity": product.quantity,
@@ -861,6 +876,17 @@ export const sharedSubStringText = (str = "", start = 0, end = 14) => {
     return _string;
 }
 
+export const sharedCalculateJoviDiscount = (item) => {
+    // Base Price 375
+    // Jovi discount percentage 35%
+    // Jovi discountedAmount 131
+    let totalJoviDiscount = 0;
+    if (item.isJoviDiscount) {
+        totalJoviDiscount = Math.round((item.itemPrice || item.actualPrice || item.price) * (item.joviDiscount / 100));
+    }
+    return totalJoviDiscount;
+}
+
 export const sharedAddToCartKeys = (restaurant = null, item = null) => {
     if (restaurant) {
 
@@ -872,6 +898,7 @@ export const sharedAddToCartKeys = (restaurant = null, item = null) => {
         item._toCalculateDiscountOnAmount = item.actualPrice || item.itemPrice || item.gstAddedPrice;
         item._totalDiscount = item?.discountType === ENUMS.DISCOUNT_TYPES.Percentage ? sharedDiscountsCalculator(item._toCalculateDiscountOnAmount, item.discountAmount)._discountAmount : item.discountAmount; // if discount type is fixed then discount amount would be the discounted price
         item._totalGst = item.gstAmount;
+        item._totalJoviDiscount = sharedCalculateJoviDiscount(item)
     }
     return {
         restaurant,
@@ -922,7 +949,7 @@ export const sharedOnVendorPress = (pitstop, index) => {
     }
     NavigationService.NavigationActions.common_actions.navigate(routes[pitstop.pitstopType], { ...pitstop, pitstopID });
 }
-export const   sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder = () => { }, orderCompletedOrCancelled = () => { }) => {
+export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder = () => { }, orderCompletedOrCancelled = () => { }) => {
     // console.log("[Order Processing].fcmReducer", fcmReducer);
     // '1',  For job related notification
     // '11',  For rider allocated related notification
@@ -1063,8 +1090,8 @@ export const sharedGetFinalDestintionRequest = () => {
 }
 
 export const sharedForegroundCallbackHandler = (cb = () => { }) => {
-    return AppState.addEventListener('change', nextAppState=>{
-        if(nextAppState === 'active' || nextAppState === 'inactive'){
+    return AppState.addEventListener('change', nextAppState => {
+        if (nextAppState === 'active' || nextAppState === 'inactive') {
             cb();
         }
     });

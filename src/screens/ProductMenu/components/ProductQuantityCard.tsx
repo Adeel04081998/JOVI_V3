@@ -117,7 +117,6 @@ const ProductQuantityCard = (props: Props) => {
     const decrementQuantity = () => {
         setState(pre => ({ ...pre, quantity: pre.quantity - 1 }));
     }
-    console.log("state.quantity", state.quantity);
     
 
     // if(props.fromCart && state.quantity <= 0) return <View style={{

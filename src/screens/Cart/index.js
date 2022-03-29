@@ -59,7 +59,7 @@ export default () => {
     sharedGetServiceCharges()
   }, [])
   const incDecDelHandler = (pitstopDetails, pitstopIndex = null, isDeletePitstop = false) => {
-    sharedAddUpdatePitstop({ ...pitstopDetails }, isDeletePitstop, [], false, true);
+    sharedAddUpdatePitstop({ ...pitstopDetails }, isDeletePitstop, [], false, true, null, false, true);
   };
   const expandCollapeHanlder = (idx) => {
     let _list = [...expanded];

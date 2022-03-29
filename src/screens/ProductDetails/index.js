@@ -211,7 +211,6 @@ export default (props) => {
             }
         }));
     }
-    console.log("mud...", state.selectedOptions);
     const addToCartHandler = () => {
         let dataToSend = {
             pitstopType,
@@ -226,6 +225,7 @@ export default (props) => {
                 _itemPrice: state.discountedPriceWithGst,
                 _totalGst: state.totalGst,
                 _totalDiscount: state.totalDiscount,
+                _totalJoviDiscount: state.totalJoviDiscount,
                 // _priceForSubtotals: generalProductOrDealDetail.discountType > 0 ? state.discountedPriceWithGst : state.totalPriceWithoutDiscount,
                 _priceForSubtotals: state.totalPriceWithoutDiscount,
                 totalAddOnPrice,
