@@ -14,6 +14,9 @@ import NoRecord from '../../components/organisms/NoRecord';
 import { sharedExceptionHandler } from '../../helpers/SharedActions';
 import { getRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
+import NavigationService from '../../navigations/NavigationService';
+import ROUTES from '../../navigations/ROUTES';
+import constants from '../../res/constants';
 import FontFamily from '../../res/FontFamily';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
@@ -44,6 +47,18 @@ export default () => {
             sharedExceptionHandler(err);
         });
     }
+    const onPress = args => {
+        setState(pre => ({ ...pre, isLoadingHtml: true }));
+        getRequest(Endpoints.GET_LEGAL_HTML + `/${args.id}`, serverRes => {
+            if (serverRes.data.statusCode === 200) {
+                NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.WebView.screen_name, { html: serverRes.data._legalvm.description, title: args.title });
+            }
+            setState(pre => ({ ...pre, isLoadingHtml: false }));
+        }, serverErr => {
+            if (serverErr) sharedExceptionHandler(serverErr);
+            setState(pre => ({ ...pre, isLoadingHtml: false }));
+        });
+    };
     const _renderHeader = () => (<CustomHeader
         // containerStyle={customheaderStyles.containerStyle}
         leftCustom={(
@@ -61,28 +76,50 @@ export default () => {
         }}
         defaultColor={colors.primary}
     />)
+    const _renderLoader = (customStyles = {}) => (<View style={{
+        flex: 1,
+        marginTop: -80,
+        alignItems: "center",
+        justifyContent: "center",
+        ...customStyles
+    }}>
+        <AnimatedLottieView
+            source={require('../../assets/LoadingView/OrderChat.json')}
+            autoPlay
+            loop
+            style={{
+                height: 120,
+                width: 120,
+            }}
+        />
+    </View>);
+    const renderItem = (item,index) => (<TouchableOpacity
+        onPress={() => onPress(item)}
+        style={{
+            height: 50,
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingHorizontal: 10,
+            borderWidth: 0.5,
+            borderColor: "rgba(0,0,0,0.5)",
+            borderRadius: 5,
+            marginVertical: 10,
+            backgroundColor: colors.white
+        }}
+    >
+        <Text style={{ color: colors.black }} numberOfLines={1}>{item.title}</Text>
+        <VectorIcon size={20} color={colors.black} name={'keyboard-arrow-right'} type={'MaterialIcons'} />
+    </TouchableOpacity>);
     React.useEffect(() => {
         getData();
     }, []);
     if (state.isLoading) {
         return <View style={_styles.primaryContainer}>
             {_renderHeader()}
-            <View style={{
-                flex: 1,
-                marginTop: -80,
-                alignItems: "center",
-                justifyContent: "center",
-            }}>
-                <AnimatedLottieView
-                    source={require('../../assets/LoadingView/OrderChat.json')}
-                    autoPlay
-                    loop
-                    style={{
-                        height: 120,
-                        width: 120,
-                    }}
-                />
-            </View>
+            {_renderLoader()}
         </View>
     } else if (state.error) {
         return <View style={_styles.primaryContainer}>
@@ -99,6 +136,16 @@ export default () => {
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }}>
             {_renderHeader()}
+            {state.isLoadingHtml ? _renderLoader({
+                position: 'absolute',
+                top: 30,
+                marginTop: -50,
+                backgroundColor: 'rgba(0,0,0,0.1)',
+                zIndex: 9999,
+                height: constants.screen_dimensions.height,
+                width: constants.screen_dimensions.width,
+                justifyContent: 'center',
+            }) : null}
             <View style={{ flex: 1 }}>
                 <FlatList
                     data={
@@ -107,25 +154,7 @@ export default () => {
                     contentContainerStyle={{
                         padding: 10,
                     }}
-                    renderItem={({ item, index }) => (<TouchableOpacity
-                        style={{
-                            height: 50,
-                            width: '100%',
-                            display: 'flex',
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            paddingHorizontal: 10,
-                            borderWidth: 0.5,
-                            borderColor: "rgba(0,0,0,0.5)",
-                            borderRadius: 5,
-                            marginVertical: 10,
-                            backgroundColor: colors.white
-                        }}
-                    >
-                        <Text style={{ color: colors.black }} numberOfLines={1}>{item.title}</Text>
-                        <VectorIcon size={20} color={colors.black} name={'keyboard-arrow-right'} type={'MaterialIcons'} />
-                    </TouchableOpacity>)}
+                    renderItem={({ item, index }) => renderItem(item,index)}
                 />
             </View>
         </SafeAreaView>
