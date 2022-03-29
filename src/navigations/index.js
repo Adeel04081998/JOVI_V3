@@ -40,9 +40,11 @@ import OrderPitstops from '../screens/OrderTracking/OrderScreens/OrderPitstops';
 import Legal from '../screens/Legal';
 import WebView from '../components/organisms/WebView';
 import FAQ from '../screens/FAQ';
+import Wallet from '../screens/Wallet';
+import TopUp from '../screens/TopUp';
 const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES, APP_DRAWER_ROUTES, APP_DRAWER_STACK } = ROUTES;
 const AppDrawerStack = (props) => {
-    return <Stack.Navigator screenOptions={stackOpts} initialRouteName={APP_DRAWER_ROUTES.Home.screen_name} >
+    return <Stack.Navigator screenOptions={stackOpts} initialRouteName={APP_DRAWER_ROUTES.Wallet.screen_name} >
         {(APP_DRAWER_STACK || []).map((routeInfo, index) => (
             <Stack.Screen
                 key={`AppDrawerss-Screen-key-${index}-${routeInfo.id}`}
@@ -92,7 +94,9 @@ const AppDrawerComponents = {
     OrderHistoryDetail,
     Legal,
     WebView,
-    FAQ
+    FAQ,
+    Wallet,
+    TopUp
 }//will open with Slide Animation
 const ContainerStack = createStackNavigator();
 const Stack = createNativeStackNavigator();
