@@ -1,6 +1,6 @@
 
 export default {
-  otp: () => `<?xml version="1.0" encoding="utf-8"?>
+    otp: () => `<?xml version="1.0" encoding="utf-8"?>
   <!-- Generator: Adobe Illustrator 26.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
   <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
      viewBox="0 0 499.6 499.6" style="enable-background:new 0 0 499.6 499.6;" xml:space="preserve">
@@ -35,7 +35,7 @@ export default {
     c4.7-0.1,7.8-3.1,7.8-7.2s-3.3-7.2-8.1-7.2C245,132.2,240.6,132.2,236.1,132.2z"/>
   </svg>
   `,
-  cat: () => `<?xml version="1.0" encoding="utf-8"?>
+    cat: () => `<?xml version="1.0" encoding="utf-8"?>
     <!-- Generator: Adobe Illustrator 26.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
          viewBox="0 0 72.4 83" style="enable-background:new 0 0 72.4 83;" xml:space="preserve">
@@ -924,7 +924,7 @@ export default {
     </g>
     </svg>
     `,
-  food: () => `<svg id="Group_14924" data-name="Group 14924" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="68.393" height="61.111" viewBox="0 0 68.393 61.111">
+    food: () => `<svg id="Group_14924" data-name="Group 14924" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="68.393" height="61.111" viewBox="0 0 68.393 61.111">
   <defs>
     <clipPath id="clip-path">
       <rect id="Rectangle_20551" data-name="Rectangle 20551" width="68.393" height="61.111" fill="none"/>
@@ -1278,7 +1278,7 @@ export default {
   </g>
 </svg>
 `,
-  grocery: () => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 68.5 70.7" version="1.1" viewBox="0 0 68.5 70.7" xml:space="preserve">
+    grocery: () => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 68.5 70.7" version="1.1" viewBox="0 0 68.5 70.7" xml:space="preserve">
   <style type="text/css">
   
       .st65{opacity:0.39;}
@@ -2090,7 +2090,7 @@ export default {
   
   </svg>
   `,
-  pharmacy: () => `<svg id="Group_14956" data-name="Group 14956" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="41.415" height="58.85" viewBox="0 0 41.415 58.85">
+    pharmacy: () => `<svg id="Group_14956" data-name="Group 14956" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="41.415" height="58.85" viewBox="0 0 41.415 58.85">
     <defs>
       <clipPath id="clip-path">
         <rect id="Rectangle_20563" data-name="Rectangle 20563" width="41.415" height="58.85" fill="none"/>
@@ -2207,7 +2207,7 @@ export default {
     </g>
   </svg>
   `,
-  jovi: () => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="67.003" height="71.198" viewBox="0 0 67.003 71.198">
+    jovi: () => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="67.003" height="71.198" viewBox="0 0 67.003 71.198">
     <defs>
       <clipPath id="clip-path">
         <rect id="Rectangle_20601" data-name="Rectangle 20601" width="67.003" height="71.198" transform="translate(0 0)" fill="none"/>
@@ -2306,7 +2306,7 @@ export default {
     </g>
   </svg>
   `,
-  discount: (fill = "#27c787") => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="13" height="13" viewBox="0 0 13 13">
+    discount: (fill = "#27c787") => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="13" height="13" viewBox="0 0 13 13">
   <defs>
     <clipPath id="clip-path">
       <rect id="Rectangle_18449" data-name="Rectangle 18449" width="13" height="13" fill=${fill}/>
@@ -2319,54 +2319,54 @@ export default {
     <path id="Path_15428" data-name="Path 15428" d="M207.97,209A1.031,1.031,0,1,1,209,210.03,1.038,1.038,0,0,1,207.97,209" transform="translate(-201.26 -200.898)" fill=${fill}/>
   </g>
 </svg>`,
-  playIcon: (color) => (
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320.001 320.001" style="enable-background:new 0 0 320.001 320.001" xml:space="preserve"><path d="m295.84 146.049-256-144a16.026 16.026 0 0 0-15.904.128A15.986 15.986 0 0 0 16 16.001v288a15.986 15.986 0 0 0 7.936 13.824A16.144 16.144 0 0 0 32 320.001c2.688 0 5.408-.672 7.84-2.048l256-144c5.024-2.848 8.16-8.16 8.16-13.952s-3.136-11.104-8.16-13.952z" fill="${color}"/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/></svg>`
-  ),
-  pauseIcon: (color) => (
-    `<svg xmlns="http://www.w3.org/2000/svg" width="519.479" height="519.479" viewBox="0 0 519.479 519.479" style="enable-background:new 0 0 519.479 519.479" xml:space="preserve"><path d="M193.441 0h-75.484c-16.897 0-30.6 13.703-30.6 30.6v458.277c0 16.898 13.703 30.602 30.6 30.602h75.484c16.897 0 30.6-13.703 30.6-30.602V30.6c.001-16.897-13.702-30.6-30.6-30.6zm208.08 0h-75.484c-16.896 0-30.6 13.703-30.6 30.6v458.277c0 16.898 13.703 30.602 30.6 30.602h75.484c16.896 0 30.6-13.703 30.6-30.602V30.6c0-16.897-13.703-30.6-30.6-30.6z" xmlns="http://www.w3.org/2000/svg" fill="${color}"/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/></svg>`
-  ),
-  pinIconDesc: () =>
-    `<svg xmlns="http://www.w3.org/2000/svg" width="18.147" height="25.053" viewBox="0 0 18.147 25.053">
+    playIcon: (color) => (
+        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320.001 320.001" style="enable-background:new 0 0 320.001 320.001" xml:space="preserve"><path d="m295.84 146.049-256-144a16.026 16.026 0 0 0-15.904.128A15.986 15.986 0 0 0 16 16.001v288a15.986 15.986 0 0 0 7.936 13.824A16.144 16.144 0 0 0 32 320.001c2.688 0 5.408-.672 7.84-2.048l256-144c5.024-2.848 8.16-8.16 8.16-13.952s-3.136-11.104-8.16-13.952z" fill="${color}"/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/></svg>`
+    ),
+    pauseIcon: (color) => (
+        `<svg xmlns="http://www.w3.org/2000/svg" width="519.479" height="519.479" viewBox="0 0 519.479 519.479" style="enable-background:new 0 0 519.479 519.479" xml:space="preserve"><path d="M193.441 0h-75.484c-16.897 0-30.6 13.703-30.6 30.6v458.277c0 16.898 13.703 30.602 30.6 30.602h75.484c16.897 0 30.6-13.703 30.6-30.602V30.6c.001-16.897-13.702-30.6-30.6-30.6zm208.08 0h-75.484c-16.896 0-30.6 13.703-30.6 30.6v458.277c0 16.898 13.703 30.602 30.6 30.602h75.484c16.896 0 30.6-13.703 30.6-30.602V30.6c0-16.897-13.703-30.6-30.6-30.6z" xmlns="http://www.w3.org/2000/svg" fill="${color}"/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/></svg>`
+    ),
+    pinIconDesc: () =>
+        `<svg xmlns="http://www.w3.org/2000/svg" width="18.147" height="25.053" viewBox="0 0 18.147 25.053">
         <g id="pin" transform="translate(-70.573)">
         <g id="Group_1081" data-name="Group 1081" transform="translate(70.573)">
             <path id="Path_1619" data-name="Path 1619" d="M79.646,0a9.084,9.084,0,0,0-9.073,9.073c0,6.209,8.12,15.324,8.466,15.709a.817.817,0,0,0,1.216,0c.346-.385,8.466-9.5,8.466-15.709A9.084,9.084,0,0,0,79.646,0Zm0,13.638a4.565,4.565,0,1,1,4.565-4.565A4.57,4.57,0,0,1,79.646,13.638Z" transform="translate(-70.573)" fill="#dae0ec"/>
         </g>
         </g>
     </svg>`,
-  heartIconFilled: () => (
-    `<svg xmlns="http://www.w3.org/2000/svg" width="24.184" height="21.516" viewBox="0 0 24.184 21.516">
+    heartIconFilled: () => (
+        `<svg xmlns="http://www.w3.org/2000/svg" width="24.184" height="21.516" viewBox="0 0 24.184 21.516">
           <path id="heart" d="M22.266,2.106A6.5,6.5,0,0,0,17.429,0a6.084,6.084,0,0,0-3.8,1.312,7.774,7.774,0,0,0-1.536,1.6,7.77,7.77,0,0,0-1.536-1.6A6.083,6.083,0,0,0,6.756,0,6.5,6.5,0,0,0,1.919,2.106,7.559,7.559,0,0,0,0,7.268,9,9,0,0,0,2.4,13.16a51.147,51.147,0,0,0,6,5.636c.832.709,1.775,1.513,2.754,2.369a1.42,1.42,0,0,0,1.869,0c.979-.856,1.923-1.66,2.755-2.37a51.118,51.118,0,0,0,6-5.635,9,9,0,0,0,2.4-5.892,7.559,7.559,0,0,0-1.919-5.162Zm0,0" transform="translate(0)" fill="#7359be"/>
       </svg>`
-  ),
-  heartIconUnfilled: () => (
-    `<svg xmlns="http://www.w3.org/2000/svg" width="27.18" height="24.634" viewBox="0 0 27.18 24.634">
+    ),
+    heartIconUnfilled: () => (
+        `<svg xmlns="http://www.w3.org/2000/svg" width="27.18" height="24.634" viewBox="0 0 27.18 24.634">
         <path id="heart" d="M22.266,2.106A6.5,6.5,0,0,0,17.429,0a6.084,6.084,0,0,0-3.8,1.312,7.774,7.774,0,0,0-1.536,1.6,7.77,7.77,0,0,0-1.536-1.6A6.083,6.083,0,0,0,6.756,0,6.5,6.5,0,0,0,1.919,2.106,7.559,7.559,0,0,0,0,7.268,9,9,0,0,0,2.4,13.16a51.147,51.147,0,0,0,6,5.636c.832.709,1.775,1.513,2.754,2.369a1.42,1.42,0,0,0,1.869,0c.979-.856,1.923-1.66,2.755-2.37a51.118,51.118,0,0,0,6-5.635,9,9,0,0,0,2.4-5.892,7.844,7.844,0,0,0-1.023-3.927h0l-.9-1.235Zm0,0" transform="translate(1.501 1.5)" fill="none" stroke="#7359be" stroke-linejoin="round" stroke-width="3"/>
     </svg>`
-  ),
-  favHomeIcon: (fill = "#646464") => (
-    `<svg xmlns="http://www.w3.org/2000/svg" width="32.711" height="37.799" viewBox="0 0 32.711 37.799">
+    ),
+    favHomeIcon: (fill = "#646464") => (
+        `<svg xmlns="http://www.w3.org/2000/svg" width="32.711" height="37.799" viewBox="0 0 32.711 37.799">
       <path id="Subtraction_4" data-name="Subtraction 4" d="M16.356,37.8a4.038,4.038,0,0,1-2.875-1.187l-8.69-8.69A16.356,16.356,0,1,1,27.921,4.791a16.356,16.356,0,0,1,0,23.131l-8.69,8.69A4.038,4.038,0,0,1,16.356,37.8Zm.3-26.555-6.443,5.4V23.4a.444.444,0,0,0,.1.292.347.347,0,0,0,.261.1l4.4-.005.006-3.605a.647.647,0,0,1,.13-.446.493.493,0,0,1,.385-.148H17.32a.646.646,0,0,1,.494.179.608.608,0,0,1,.146.415l-.007,3.594H22.26a.442.442,0,0,0,.334-.125.545.545,0,0,0,.127-.361V16.643Zm.054-2.917-8.87,7.813a.925.925,0,0,0,.76.448,1.588,1.588,0,0,0,.981-.448l7.13-6.032L23.391,16.1a1.968,1.968,0,0,0,1.106.443.913.913,0,0,0,.792-.443Zm4.8,1.767.007,2.085,1.713,1.453V10.094Z" fill="${fill}"/>
   </svg>`
-  ),
-  favWorkIcon: (fill = "#646464") => (
-    `<svg xmlns="http://www.w3.org/2000/svg" id="pin" width="32.712" height="37.799" viewBox="0 0 32.712 37.799">
+    ),
+    favWorkIcon: (fill = "#646464") => (
+        `<svg xmlns="http://www.w3.org/2000/svg" id="pin" width="32.712" height="37.799" viewBox="0 0 32.712 37.799">
       <path id="Path_3195" data-name="Path 3195" d="M158.534,255.66a1.86,1.86,0,0,0,1.858,1.858h10.675a1.86,1.86,0,0,0,1.858-1.858v-3.044H158.534Z" transform="translate(-149.373 -233.966)" fill="${fill}"/>
       <path id="Path_3196" data-name="Path 3196" d="M171.067,188.35H160.392a1.86,1.86,0,0,0-1.858,1.858v.672h14.391v-.672A1.86,1.86,0,0,0,171.067,188.35Z" transform="translate(-149.373 -174.445)" fill="${fill}"/>
       <path id="Path_3197" data-name="Path 3197" d="M222.8,124.082h4.9v2.53h-4.9Z" transform="translate(-208.895 -114.922)" fill="${fill}"/>
       <path id="Path_3198" data-name="Path 3198" d="M62.373,4.791A16.356,16.356,0,1,0,39.243,27.922l8.69,8.69a4.075,4.075,0,0,0,5.751,0l8.69-8.69a16.356,16.356,0,0,0,0-23.131Zm-2.155,16.9a4.077,4.077,0,0,1-4.073,4.073H45.47A4.077,4.077,0,0,1,41.4,21.694V15.763A4.077,4.077,0,0,1,45.47,11.69h.672V8.053A1.108,1.108,0,0,1,47.25,6.946h7.117a1.107,1.107,0,0,1,1.107,1.107V11.69h.672a4.077,4.077,0,0,1,4.073,4.073Z" transform="translate(-34.452)" fill="${fill}"/>
   </svg>`
-  ),
-  favFriendsIcon: (fill = "#646464") => (
-    `<svg xmlns="http://www.w3.org/2000/svg" width="32.71" height="37.8" viewBox="0 0 32.71 37.8">
+    ),
+    favFriendsIcon: (fill = "#646464") => (
+        `<svg xmlns="http://www.w3.org/2000/svg" width="32.71" height="37.8" viewBox="0 0 32.71 37.8">
       <path id="Subtraction_5" data-name="Subtraction 5" d="M3095.356-4689.2a4.04,4.04,0,0,1-2.875-1.187l-8.69-8.691a16.243,16.243,0,0,1-4.79-11.564,16.254,16.254,0,0,1,4.79-11.566,16.249,16.249,0,0,1,11.565-4.791,16.248,16.248,0,0,1,11.564,4.791,16.254,16.254,0,0,1,4.79,11.566,16.243,16.243,0,0,1-4.79,11.564l-8.69,8.691A4.039,4.039,0,0,1,3095.356-4689.2Zm-7.176-17.291a.59.59,0,0,1,.59.588v3.141h5.692v-6.085a4.518,4.518,0,0,0-1.974-3.73,4.484,4.484,0,0,1-2.54.785,4.474,4.474,0,0,1-1.619-.3,2.838,2.838,0,0,1,.795,1.969,2.85,2.85,0,0,1-2.847,2.847h-.844v3.926a.589.589,0,0,0,.588.589h1.571v-3.141A.59.59,0,0,1,3088.18-4706.491Zm13.741,0a.59.59,0,0,1,.59.59v3.14h1.57a.589.589,0,0,0,.588-.588v-3.926h-.844a2.85,2.85,0,0,1-2.847-2.847,2.83,2.83,0,0,1,.795-1.969,4.477,4.477,0,0,1-1.619.3,4.515,4.515,0,0,1-3.42-1.57h-3.324a5.657,5.657,0,0,1,2.229,4.515v6.084h5.693v-3.14A.59.59,0,0,1,3101.921-4706.493Zm1.9-5.3a1.67,1.67,0,0,0-1.669,1.668,1.671,1.671,0,0,0,1.669,1.669h.688a.589.589,0,0,0,.588-.588v-1.472A1.278,1.278,0,0,0,3103.825-4711.792Zm-17.549,0a1.278,1.278,0,0,0-1.276,1.277v1.472a.589.589,0,0,0,.588.588h.688a1.671,1.671,0,0,0,1.669-1.669A1.67,1.67,0,0,0,3086.276-4711.792Zm13.879-7.852a3.341,3.341,0,0,0-3.337,3.337,3.341,3.341,0,0,0,3.337,3.337,3.341,3.341,0,0,0,3.337-3.337A3.341,3.341,0,0,0,3100.155-4719.644Zm-10.207,0a3.341,3.341,0,0,0-3.338,3.337,3.342,3.342,0,0,0,3.338,3.337,3.34,3.34,0,0,0,3.336-3.337A3.34,3.34,0,0,0,3089.948-4719.644Z" transform="translate(-3079 4727)" fill="${fill}"/>
   </svg>`
-  ),
-  favFamilyIcon: (fill = "#646464") => (
-    `<svg xmlns="http://www.w3.org/2000/svg" width="32.71" height="37.8" viewBox="0 0 32.71 37.8">
+    ),
+    favFamilyIcon: (fill = "#646464") => (
+        `<svg xmlns="http://www.w3.org/2000/svg" width="32.71" height="37.8" viewBox="0 0 32.71 37.8">
       <path id="Subtraction_6" data-name="Subtraction 6" d="M3095.356-4689.2a4.04,4.04,0,0,1-2.875-1.187l-8.69-8.691a16.243,16.243,0,0,1-4.79-11.564,16.254,16.254,0,0,1,4.79-11.566,16.249,16.249,0,0,1,11.565-4.791,16.248,16.248,0,0,1,11.564,4.791,16.254,16.254,0,0,1,4.79,11.566,16.243,16.243,0,0,1-4.79,11.564l-8.69,8.691A4.039,4.039,0,0,1,3095.356-4689.2Zm4.2-22.085h0a3.976,3.976,0,0,1,.015,2.406l.331.372a4.6,4.6,0,0,1,1.167,3.064v3.3a1.952,1.952,0,0,1-.114.659h5.432a.66.66,0,0,0,.658-.659v-6.593a4.592,4.592,0,0,0-1.751-3.615,4.613,4.613,0,0,1-3.526,1.638,4.6,4.6,0,0,1-2.213-.568Zm-6.882,3.653a3.285,3.285,0,0,0-.834,2.188v3.3a.66.66,0,0,0,.659.659h6.593a.66.66,0,0,0,.658-.659v-3.3a3.292,3.292,0,0,0-.833-2.188,3.934,3.934,0,0,1-3.123,1.529,3.928,3.928,0,0,1-3.121-1.529Zm-6.379-4.724h0a4.593,4.593,0,0,0-1.751,3.615v6.593a.66.66,0,0,0,.658.659h5.432a1.975,1.975,0,0,1-.114-.659v-3.3a4.6,4.6,0,0,1,1.167-3.064l.331-.372a3.98,3.98,0,0,1,.016-2.406,4.61,4.61,0,0,1-2.214.568,4.609,4.609,0,0,1-3.526-1.638Zm9.5-1.043a3.45,3.45,0,0,0-3.446,3.446,3.45,3.45,0,0,0,3.446,3.446,3.45,3.45,0,0,0,3.446-3.446A3.45,3.45,0,0,0,3095.8-4713.4Zm6.318-5.742a3.2,3.2,0,0,0-2.872,3.445,3.2,3.2,0,0,0,2.872,3.446,3.2,3.2,0,0,0,2.871-3.446A3.2,3.2,0,0,0,3102.114-4719.141Zm-12.637,0a3.2,3.2,0,0,0-2.871,3.445,3.2,3.2,0,0,0,2.871,3.446,3.2,3.2,0,0,0,2.872-3.446A3.2,3.2,0,0,0,3089.477-4719.141Z" transform="translate(-3079 4727)" fill="${fill}"/>
   </svg>`
-  ),
-  pitstopPin: () => `<svg id="Group_33050" data-name="Group 33050" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="67.333" height="55.532" viewBox="0 0 67.333 55.532">
+    ),
+    pitstopPin: () => `<svg id="Group_33050" data-name="Group 33050" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="67.333" height="55.532" viewBox="0 0 67.333 55.532">
     <defs>
       <clipPath id="clip-path">
         <rect id="Rectangle_25259" data-name="Rectangle 25259" width="67.333" height="55.532" fill="none"/>
@@ -2448,7 +2448,7 @@ export default {
     </g>
   </svg>
   `,
-  pitStopBuy: () => `<?xml version="1.0" encoding="UTF-8"?>
+    pitStopBuy: () => `<?xml version="1.0" encoding="UTF-8"?>
   <svg viewBox="0 0 347.23 330.06" xmlns="http://www.w3.org/2000/svg">
   <defs>
   </defs>
@@ -2478,7 +2478,7 @@ export default {
   </g>
   </svg>
   `,
-  pitStopEstTime: () => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="41.2" height="55.392" viewBox="0 0 41.2 55.392">
+    pitStopEstTime: () => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="41.2" height="55.392" viewBox="0 0 41.2 55.392">
   <defs>
     <clipPath id="clip-path">
       <rect id="Rectangle_29703" data-name="Rectangle 29703" width="30.099" height="49.583" fill="none"/>
@@ -2496,7 +2496,7 @@ export default {
   </g>
 </svg>
   `,
-  wallet: () => `<?xml version=“1.0” encoding=“utf-8"?>
+    wallet: () => `<?xml version=“1.0” encoding=“utf-8"?>
   <!-- Generator: Adobe Illustrator 26.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
   <svg version=“1.1” id=“Wallet” xmlns=“http://www.w3.org/2000/svg” xmlns:xlink=“http://www.w3.org/1999/xlink” x=“0px” y=“0px”
      viewBox=“0 0 19.2 17.2” style=“enable-background:new 0 0 19.2 17.2;” xml:space=“preserve”>
@@ -2513,7 +2513,7 @@ export default {
   <path id=“Oval” class=“st0" d=“M16.3,8.5c0-0.5-0.4-1-1-1c-0.5,0-1,0.4-1,1s0.4,1,1,1C15.9,9.5,16.3,9.1,16.3,8.5L16.3,8.5z”/>
   </svg>
 `,
-  cross: () => `
+    cross: () => `
   <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
   <g id="Group_14734" data-name="Group 14734" transform="translate(-15 -30)">
     <circle id="Ellipse_582" data-name="Ellipse 582" cx="15" cy="15" r="15" transform="translate(15 30)" fill="#dcdcdc"/>
@@ -2526,7 +2526,7 @@ export default {
   `,
 
 
-  shelveSeeAll: () => `<svg xmlns="http://www.w3.org/2000/svg" width="14.727" height="14.727" viewBox="0 0 14.727 14.727">
+    shelveSeeAll: () => `<svg xmlns="http://www.w3.org/2000/svg" width="14.727" height="14.727" viewBox="0 0 14.727 14.727">
 <g id="Icon_feather-grid" data-name="Icon feather-grid" transform="translate(-3.75 -3.75)">
   <path id="Path_19038" data-name="Path 19038" d="M4.5,4.5H9.644V9.644H4.5Z" fill="none" stroke="#272727" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
   <path id="Path_19039" data-name="Path 19039" d="M21,4.5h5.144V9.644H21Z" transform="translate(-8.417)" fill="none" stroke="#272727" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
@@ -2535,13 +2535,13 @@ export default {
 </g>
 </svg>`,
 
-  paymentMethod: () => `<svg id="Icon_ionic-md-wallet" data-name="Icon ionic-md-wallet" xmlns="http://www.w3.org/2000/svg" width="20.558" height="18.977" viewBox="0 0 20.558 18.977">
+    paymentMethod: () => `<svg id="Icon_ionic-md-wallet" data-name="Icon ionic-md-wallet" xmlns="http://www.w3.org/2000/svg" width="20.558" height="18.977" viewBox="0 0 20.558 18.977">
   <path id="Path_11775" data-name="Path 11775" d="M11.02,18.2V9.773a2.109,2.109,0,0,1,2.11-2.11h9.735V6.61a2.1,2.1,0,0,0-2.09-2.11H5.549A2.136,2.136,0,0,0,3.375,6.576V21.4a2.136,2.136,0,0,0,2.174,2.076H20.77a2.1,2.1,0,0,0,2.09-2.11V20.314H13.125A2.108,2.108,0,0,1,11.02,18.2Z" transform="translate(-3.375 -4.5)" fill="#6d51bb"/>
   <path id="Path_11776" data-name="Path 11776" d="M17.227,12.744v6.919a.793.793,0,0,0,.791.791h9.241a.793.793,0,0,0,.791-.791V12.744a.793.793,0,0,0-.791-.791H18.017A.793.793,0,0,0,17.227,12.744Zm3.81,5.036A1.582,1.582,0,1,1,22.514,16.3,1.582,1.582,0,0,1,21.037,17.78Z" transform="translate(-7.491 -6.715)" fill="#6d51bb"/>
 </svg>
 `,
 
-  locateMeIcon: () => `<svg xmlns="http://www.w3.org/2000/svg" width="17.044" height="17.044" viewBox="0 0 17.044 17.044">
+    locateMeIcon: () => `<svg xmlns="http://www.w3.org/2000/svg" width="17.044" height="17.044" viewBox="0 0 17.044 17.044">
 <g id="Group_24" data-name="Group 24" transform="translate(-3167 -1731)">
   <path id="Path_10" data-name="Path 10" d="M3175.521,1731a8.522,8.522,0,1,0,8.522,8.522A8.531,8.531,0,0,0,3175.521,1731Zm0,15.685a7.163,7.163,0,1,1,7.163-7.163A7.171,7.171,0,0,1,3175.521,1746.685Z" fill="#7359be"/>
   <path id="Path_11" data-name="Path 11" d="M3190.377,1750.463a3.915,3.915,0,1,0,3.915,3.915A3.919,3.919,0,0,0,3190.377,1750.463Zm0,6.47a2.555,2.555,0,1,1,2.556-2.555A2.558,2.558,0,0,1,3190.377,1756.933Z" transform="translate(-14.856 -14.856)" fill="#7359be"/>
@@ -2549,7 +2549,7 @@ export default {
 </g>
 </svg>`,
 
-  homeAddIcon: (color) => `<svg xmlns="http://www.w3.org/2000/svg" width="22.097" height="21.157" viewBox="0 0 22.097 21.157">
+    homeAddIcon: (color) => `<svg xmlns="http://www.w3.org/2000/svg" width="22.097" height="21.157" viewBox="0 0 22.097 21.157">
 <g id="home-svgrepo-com_1_" data-name="home-svgrepo-com (1)" transform="translate(0 -1.019)">
   <g id="Group_14667" data-name="Group 14667" transform="translate(0 1.019)">
     <path id="Path_26479" data-name="Path 26479" d="M3.783,22.176H18.314a2.4,2.4,0,0,0,2.4-2.4V9.763H22.1L20.656,1.019H1.441L0,9.763H1.381V19.775A2.4,2.4,0,0,0,3.783,22.176ZM4.263,9.763h13.57v9.531H12.82V14.7H9.277v4.6H4.263Z" transform="translate(0 -1.019)" fill="${color}"/>
@@ -2559,7 +2559,7 @@ export default {
 </g>
 </svg>`,
 
-  bagIcon: (color) => `<svg xmlns="http://www.w3.org/2000/svg" width="22.18" height="20.014" viewBox="0 0 22.18 20.014">
+    bagIcon: (color) => `<svg xmlns="http://www.w3.org/2000/svg" width="22.18" height="20.014" viewBox="0 0 22.18 20.014">
 <g id="business-bag-svgrepo-com" transform="translate(0 -29.884)">
   <g id="Group_14668" data-name="Group 14668" transform="translate(0 29.884)">
     <path id="Path_26480" data-name="Path 26480" d="M12.855,325.246a.5.5,0,0,1-.5.5H9.83a.5.5,0,0,1-.5-.5v-1.771L0,321.356V329.8a1.008,1.008,0,0,0,1.008,1.008H21.172A1.008,1.008,0,0,0,22.18,329.8v-8.434l-9.326,2.111Z" transform="translate(0 -310.792)" fill="${color}"/>
@@ -2569,29 +2569,29 @@ export default {
 </g>
 </svg>`,
 
-  relationIcon: (color) => `<svg xmlns="http://www.w3.org/2000/svg" width="25.777" height="19.298" viewBox="0 0 25.777 19.298">
+    relationIcon: (color) => `<svg xmlns="http://www.w3.org/2000/svg" width="25.777" height="19.298" viewBox="0 0 25.777 19.298">
 <path id="Path_26483" data-name="Path 26483" d="M9.467,7.4H9.459a38.393,38.393,0,0,0-4.36,0c-1.525.065-3.114,1.389-4.047,3.359A8.184,8.184,0,0,0,.27,14.025,24.632,24.632,0,0,0,0,17.722c.3,1.895,2.7,1.332,2.906,0L3.2,13.9a4.239,4.239,0,0,1,.317-1.517,2.535,2.535,0,0,1,.4-.661L4.054,18.7l-.082.583h6.607l-.088-.65.128-7.694a5.3,5.3,0,0,1,1.76-.418c-.025.052-.052.1-.078.157a8.184,8.184,0,0,0-.783,3.262,24.863,24.863,0,0,0-.271,3.695c.3,1.895,2.7,1.332,2.906,0l.292-3.818a4.239,4.239,0,0,1,.317-1.517,2.535,2.535,0,0,1,.4-.661l.145,6.976-.1.68h6.634l-.1-.745.1-6v.117l.021-1.022a2.594,2.594,0,0,1,.4.661,4.2,4.2,0,0,1,.317,1.517l.292,3.818c.281,1.821,2.906,1.857,2.906,0a24.565,24.565,0,0,0-.271-3.695,8.184,8.184,0,0,0-.783-3.262c-.959-2.025-2.2-3.1-4.081-3.317-1.16-.094-3.109.013-4.272-.021a5.542,5.542,0,0,0-.852.183A20.029,20.029,0,0,0,12.883,7.3c-1.4,0-2.782.235-3.416.1ZM18.525,0A3.424,3.424,0,1,1,15.1,3.424,3.425,3.425,0,0,1,18.525,0ZM7.25,0A3.424,3.424,0,1,1,3.826,3.424,3.425,3.425,0,0,1,7.25,0Z" transform="translate(0.001)" fill="${color}"/>
 </svg>`,
 
-  plusIcon: (color) => `<svg xmlns="http://www.w3.org/2000/svg" width="18.054" height="18.054" viewBox="0 0 18.054 18.054">
+    plusIcon: (color) => `<svg xmlns="http://www.w3.org/2000/svg" width="18.054" height="18.054" viewBox="0 0 18.054 18.054">
 <path id="_7019658931553239393" data-name="7019658931553239393" d="M8.579,17.519H15.6v7.024a.5.5,0,1,0,1,0V17.519H23.63a.5.5,0,0,0,0-1H16.606V9.492a.5.5,0,0,0-1,0v7.024H8.579a.5.5,0,1,0,0,1Z" transform="translate(-7.077 -7.99)" fill="none" stroke="${color}" stroke-width="2"/>
 </svg>`,
 
-  pinMap: () => `<svg xmlns="http://www.w3.org/2000/svg" width="28.576" height="40.29" viewBox="0 0 28.576 40.29">
+    pinMap: () => `<svg xmlns="http://www.w3.org/2000/svg" width="28.576" height="40.29" viewBox="0 0 28.576 40.29">
 <g id="location-sign-svgrepo-com" transform="translate(-59.531 1)">
   <path id="Path_26478" data-name="Path 26478" d="M73.818,0A13.3,13.3,0,0,0,60.531,13.288c0,7.053,12.056,23.53,12.569,24.228l.479.652a.3.3,0,0,0,.48,0l.479-.652c.514-.7,12.569-17.175,12.569-24.228A13.3,13.3,0,0,0,73.818,0Zm0,8.528a4.76,4.76,0,1,1-4.76,4.76A4.765,4.765,0,0,1,73.818,8.528Z" fill="#6d51bb" stroke="#3205ae" stroke-width="2"/>
 </g>
 </svg>`,
 
-  pinField: () => `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="30.816" viewBox="0 0 22 30.816">
+    pinField: () => `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="30.816" viewBox="0 0 22 30.816">
 <g id="location-sign-svgrepo-com" transform="translate(-59.531 1)">
   <path id="Path_26478" data-name="Path 26478" d="M70.531,0a10.011,10.011,0,0,0-10,10c0,5.308,9.073,17.708,9.459,18.233l.361.491a.224.224,0,0,0,.361,0l.36-.491c.387-.525,9.459-12.926,9.459-18.233A10.012,10.012,0,0,0,70.531,0Zm0,6.418A3.582,3.582,0,1,1,66.948,10,3.586,3.586,0,0,1,70.531,6.418Z" fill="#6d51bb" stroke="#3205ae" stroke-width="2"/>
 </g>
 </svg>`,
 
-  paymentCash: () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.17 12.8"><defs><style>.cls-1{fill:#6b6b6b;}</style></defs><g id="Layer_2" data-name="Layer 2"><g id="Wallet"><path id="Icon_payment-cash" data-name="Icon payment-cash" class="cls-1" d="M19.17.64V12.17a.86.86,0,0,1-.19.45.59.59,0,0,1-.45.18H.64a.57.57,0,0,1-.45-.18A.86.86,0,0,1,0,12.17V.64A.8.8,0,0,1,.19.19.62.62,0,0,1,.64,0H18.53A.64.64,0,0,1,19,.19.83.83,0,0,1,19.17.64ZM17.89,9V3.86a2.43,2.43,0,0,1-1.79-.75,2.45,2.45,0,0,1-.75-1.84H3.82a2.53,2.53,0,0,1-.75,1.84,2.44,2.44,0,0,1-1.8.75V9a2.47,2.47,0,0,1,1.8.74,2.54,2.54,0,0,1,.75,1.84H15.35A2.54,2.54,0,0,1,17.89,9ZM12.76,6.4a6.73,6.73,0,0,1-.18,1.42A4.68,4.68,0,0,1,12,9.17a3.25,3.25,0,0,1-1,1,2.75,2.75,0,0,1-2.77,0,3.14,3.14,0,0,1-1-1,4.68,4.68,0,0,1-.6-1.35A6.15,6.15,0,0,1,6.4,6.4,6.22,6.22,0,0,1,6.59,5a4.81,4.81,0,0,1,.6-1.35,3.25,3.25,0,0,1,1-1,2.75,2.75,0,0,1,2.77,0,3.25,3.25,0,0,1,1,1A4.81,4.81,0,0,1,12.58,5a6.83,6.83,0,0,1,.19,1.42ZM7.67,9h3.82V8H10.22V3.52H9.1L7.6,4.9l.79.79a5.48,5.48,0,0,0,.52-.56H9V8H7.67V9Z"/></g></g></svg>`,
+    paymentCash: () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.17 12.8"><defs><style>.cls-1{fill:#6b6b6b;}</style></defs><g id="Layer_2" data-name="Layer 2"><g id="Wallet"><path id="Icon_payment-cash" data-name="Icon payment-cash" class="cls-1" d="M19.17.64V12.17a.86.86,0,0,1-.19.45.59.59,0,0,1-.45.18H.64a.57.57,0,0,1-.45-.18A.86.86,0,0,1,0,12.17V.64A.8.8,0,0,1,.19.19.62.62,0,0,1,.64,0H18.53A.64.64,0,0,1,19,.19.83.83,0,0,1,19.17.64ZM17.89,9V3.86a2.43,2.43,0,0,1-1.79-.75,2.45,2.45,0,0,1-.75-1.84H3.82a2.53,2.53,0,0,1-.75,1.84,2.44,2.44,0,0,1-1.8.75V9a2.47,2.47,0,0,1,1.8.74,2.54,2.54,0,0,1,.75,1.84H15.35A2.54,2.54,0,0,1,17.89,9ZM12.76,6.4a6.73,6.73,0,0,1-.18,1.42A4.68,4.68,0,0,1,12,9.17a3.25,3.25,0,0,1-1,1,2.75,2.75,0,0,1-2.77,0,3.14,3.14,0,0,1-1-1,4.68,4.68,0,0,1-.6-1.35A6.15,6.15,0,0,1,6.4,6.4,6.22,6.22,0,0,1,6.59,5a4.81,4.81,0,0,1,.6-1.35,3.25,3.25,0,0,1,1-1,2.75,2.75,0,0,1,2.77,0,3.25,3.25,0,0,1,1,1A4.81,4.81,0,0,1,12.58,5a6.83,6.83,0,0,1,.19,1.42ZM7.67,9h3.82V8H10.22V3.52H9.1L7.6,4.9l.79.79a5.48,5.48,0,0,0,.52-.56H9V8H7.67V9Z"/></g></g></svg>`,
 
-  Percentage: () => `<svg xmlns="http://www.w3.org/2000/svg" width="30.961" height="32.234" viewBox="0 0 30.961 32.234">
+    Percentage: () => `<svg xmlns="http://www.w3.org/2000/svg" width="30.961" height="32.234" viewBox="0 0 30.961 32.234">
 <g id="Group_10198" data-name="Group 10198" transform="translate(-184 -1951)">
   <g id="promotions_1_" data-name="promotions (1)" transform="translate(184 1951)">
     <g id="Group_8199" data-name="Group 8199" transform="translate(0 0)" opacity="0.4">
@@ -2624,7 +2624,7 @@ export default {
 </svg>
 `,
 
-  compliance: () => `<svg xmlns="http://www.w3.org/2000/svg" width="18.036" height="20.3" viewBox="0 0 18.036 20.3">
+    compliance: () => `<svg xmlns="http://www.w3.org/2000/svg" width="18.036" height="20.3" viewBox="0 0 18.036 20.3">
 <g id="compliance" transform="translate(0.15 0.15)">
   <g id="Group_7579" data-name="Group 7579" transform="translate(0 0)">
     <g id="Group_7578" data-name="Group 7578">
@@ -2638,7 +2638,7 @@ export default {
 </g>
 </svg>
 `,
-  orderProcessing_jovi_box: () => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="76" height="76" viewBox="0 0 76 76">
+    orderProcessing_jovi_box: () => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="76" height="76" viewBox="0 0 76 76">
   <defs>
     <clipPath id="clip-path">
       <path id="Path_42908" data-name="Path 42908" d="M8.2.2H68.128a8,8,0,0,1,8,8V68.128a8,8,0,0,1-8,8H8.2a8,8,0,0,1-8-8V8.2A8,8,0,0,1,8.2.2Z" transform="translate(-0.2 -0.2)"/>
@@ -2677,10 +2677,10 @@ export default {
   </g>
 </svg>`,
 
-  dollar: () => `<svg xmlns="http://www.w3.org/2000/svg" width="23.091" height="15.424" viewBox="0 0 23.091 15.424">
+    dollar: () => `<svg xmlns="http://www.w3.org/2000/svg" width="23.091" height="15.424" viewBox="0 0 23.091 15.424">
 <path id="Icon_payment-cash" data-name="Icon payment-cash" d="M29.541,17.116V31.007a.99.99,0,0,1-.226.541.737.737,0,0,1-.541.226H7.216a.735.735,0,0,1-.541-.226.986.986,0,0,1-.226-.541V17.116a.988.988,0,0,1,.226-.541.738.738,0,0,1,.541-.226H28.774a.74.74,0,0,1,.541.226.993.993,0,0,1,.226.541ZM28.007,27.129V20.995a2.95,2.95,0,0,1-2.165-.9,3,3,0,0,1-.9-2.21H11.049a3,3,0,0,1-.9,2.21,2.952,2.952,0,0,1-2.165.9v6.134a2.955,2.955,0,0,1,2.165.9,3.007,3.007,0,0,1,.9,2.21H24.94a3,3,0,0,1,.9-2.21,2.954,2.954,0,0,1,2.165-.9Zm-6.179-3.067a7.9,7.9,0,0,1-.226,1.714,5.78,5.78,0,0,1-.722,1.624,3.92,3.92,0,0,1-1.218,1.218,3.312,3.312,0,0,1-3.337,0A3.907,3.907,0,0,1,15.109,27.4a5.765,5.765,0,0,1-.722-1.624,7.866,7.866,0,0,1-.226-1.714,7.873,7.873,0,0,1,.226-1.714,5.762,5.762,0,0,1,.722-1.624,3.92,3.92,0,0,1,1.218-1.218,3.312,3.312,0,0,1,3.337,0,3.939,3.939,0,0,1,1.218,1.218,5.782,5.782,0,0,1,.722,1.624,7.9,7.9,0,0,1,.226,1.714Zm-6.134,3.067h4.6V26H18.762V20.589H17.409l-1.8,1.669.947.947a7.384,7.384,0,0,0,.631-.676h.045V26H15.695v1.128Z" transform="translate(-6.449 -16.35)" fill="#6b6b6b"/>
 </svg>`,
-  wallet: () => `<?xml version="1.0" encoding="utf-8"?>
+    wallet: () => `<?xml version="1.0" encoding="utf-8"?>
   <!-- Generator: Adobe Illustrator 26.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
   <svg version="1.1" id="Wallet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
      viewBox="0 0 19.2 17.2" style="enable-background:new 0 0 19.2 17.2;" xml:space="preserve">
@@ -2697,7 +2697,7 @@ export default {
   <path id="Oval" class="st0" d="M16.3,8.5c0-0.5-0.4-1-1-1c-0.5,0-1,0.4-1,1s0.4,1,1,1C15.9,9.5,16.3,9.1,16.3,8.5L16.3,8.5z"/>
   </svg>  
 `,
-  filter: () => `<svg id="Group_13999" data-name="Group 13999" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18.804" height="16.445" viewBox="0 0 18.804 16.445">
+    filter: () => `<svg id="Group_13999" data-name="Group 13999" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18.804" height="16.445" viewBox="0 0 18.804 16.445">
 <defs>
   <clipPath id="clip-path">
     <rect id="Rectangle_19614" data-name="Rectangle 19614" width="18.804" height="16.445" fill="#272727"/>
@@ -2709,7 +2709,7 @@ export default {
 </g>
 </svg>
 `,
-  pitStopEstPrice: () => `<svg id="Group_42807" data-name="Group 42807" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="56.688" height="50" viewBox="0 0 56.688 50">
+    pitStopEstPrice: () => `<svg id="Group_42807" data-name="Group 42807" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="56.688" height="50" viewBox="0 0 56.688 50">
 <defs>
   <clipPath id="clip-path">
     <rect id="Rectangle_29704" data-name="Rectangle 29704" width="56.688" height="50" transform="translate(0 0)" fill="none"/>
@@ -2724,7 +2724,7 @@ export default {
   <path id="Path_42693" data-name="Path 42693" d="M32.067,62.331q1.642-.8,3.265-1.661a8.185,8.185,0,0,1-.24-4.595q1.144-.291,2.3-.607a7.558,7.558,0,0,0,.279,4.393c.734,1.779,2.576,2.273,4.475,1.2,1.818-1.036,2.491-2.705,2.456-5.18-.093-3.391.271-5.9,2.73-7.824,2.327-1.836,5.1-1.886,7.148.053q1.474-1.22,2.917-2.5.57.771,1.13,1.545Q57.1,48.392,55.652,49.57A6.741,6.741,0,0,1,56.7,53.694q-1.243.475-2.479.922a6.12,6.12,0,0,0-.922-3.973,2.735,2.735,0,0,0-4.248-.695c-1.529,1.159-1.7,2.642-1.625,5.6.093,3.486-1.069,5.9-4.1,7.576-2.715,1.49-5.773,1.353-7.282-.934q-1.71.882-3.44,1.7-.26-.782-.531-1.565" transform="translate(-17.159 -24.408)" fill="#00601d"/>
 </g>
 </svg>`,
-  productMenuHeaderLocation: (color) => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14" viewBox="0 0 14 14">
+    productMenuHeaderLocation: (color) => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14" viewBox="0 0 14 14">
 <defs>
   <clipPath id="clip-path">
     <rect id="Rectangle_43" data-name="Rectangle 43" width="14" height="14" transform="translate(0 0)" fill="${color}"/>
@@ -2749,7 +2749,7 @@ export default {
   </g>
 </g>
 </svg>`,
-  addOtherLocation: (color) => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18.5" height="22.617" viewBox="0 0 18.5 22.617">
+    addOtherLocation: (color) => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18.5" height="22.617" viewBox="0 0 18.5 22.617">
 <defs>
   <clipPath id="clip-path">
     <rect id="Rectangle_29984" data-name="Rectangle 29984" width="12.428" height="12.428" fill="${color}"/>
@@ -2769,7 +2769,7 @@ export default {
 </g>
 </svg>
 `,
-  order_chat_header_location: (color) => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30.219" height="21.095" viewBox="0 0 30.219 21.095">
+    order_chat_header_location: (color) => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30.219" height="21.095" viewBox="0 0 30.219 21.095">
 <defs>
   <clipPath id="clip-path">
     <rect id="Rectangle_27383" data-name="Rectangle 27383" width="30.219" height="21.095" fill="${color}"/>
@@ -2784,7 +2784,7 @@ export default {
 </g>
 </svg>
 `,
-  order_chat_header_receipt: (color) => `<svg id="Group_38353" data-name="Group 38353" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="19.676" height="26.802" viewBox="0 0 19.676 26.802">
+    order_chat_header_receipt: (color) => `<svg id="Group_38353" data-name="Group 38353" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="19.676" height="26.802" viewBox="0 0 19.676 26.802">
 <defs>
   <clipPath id="clip-path">
     <rect id="Rectangle_27345" data-name="Rectangle 27345" width="19.676" height="26.802" fill="${color}"/>
@@ -2794,7 +2794,7 @@ export default {
   <path id="Path_36967" data-name="Path 36967" d="M19.675,26.8H0V0H19.675ZM15.469,5.121H7.81V6.884h7.659ZM7.8,15.223H15.47V13.446H7.8ZM15.481,17.6H7.808v1.756h7.673Zm-.01-8.3H7.8v1.744h7.668Zm-9.883.857a.889.889,0,1,0-1.776.025.889.889,0,1,0,1.776-.025m0-4.166a.889.889,0,1,0-1.776.017.888.888,0,1,0,1.776-.017m0,12.5a.889.889,0,1,0-1.775-.025.888.888,0,1,0,1.775.025M3.812,14.325a.888.888,0,1,0,.886-.912.875.875,0,0,0-.886.912" transform="translate(0.001 -0.001)" fill="${color}"/>
 </g>
 </svg>`,
-  order_chat_send: (color = "#272727", opacity = 0.5) => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="23.333" height="23.348" viewBox="0 0 23.333 23.348">
+    order_chat_send: (color = "#272727", opacity = 0.5) => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="23.333" height="23.348" viewBox="0 0 23.333 23.348">
 <defs>
   <clipPath id="clip-path">
     <rect id="Rectangle_27375" data-name="Rectangle 27375" width="23.333" height="23.348" fill="${color}"/>
@@ -2806,7 +2806,7 @@ export default {
   </g>
 </g>
 </svg>`,
-  order_chat_mic: (color = "#272727", opacity = 0.5) => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="29.315" height="29.319" viewBox="0 0 29.315 29.319">
+    order_chat_mic: (color = "#272727", opacity = 0.5) => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="29.315" height="29.319" viewBox="0 0 29.315 29.319">
 <defs>
   <clipPath id="clip-path">
     <rect id="Rectangle_27376" data-name="Rectangle 27376" width="29.315" height="29.319" fill="${color}"/>
@@ -2819,7 +2819,7 @@ export default {
   </g>
 </g>
 </svg>`,
-  order_chat_attachment: (color = "#272727", opacity = 0.5) => `<svg xmlns="http://www.w3.org/2000/svg" width="29.41" height="29.416" viewBox="0 0 29.41 29.416">
+    order_chat_attachment: (color = "#272727", opacity = 0.5) => `<svg xmlns="http://www.w3.org/2000/svg" width="29.41" height="29.416" viewBox="0 0 29.41 29.416">
 <g id="Group_38442" data-name="Group 38442" opacity="${opacity}">
   <g id="Group_38443" data-name="Group 38443">
     <path id="Path_37018" data-name="Path 37018" d="M0,15.632V13.794c.017-.093.038-.186.051-.279.089-.614.14-1.237.272-1.842A14.408,14.408,0,0,1,6.465,2.554,14.2,14.2,0,0,1,17.121.216a14.256,14.256,0,0,1,9.272,5.6A14.292,14.292,0,0,1,29.272,16.7a14.188,14.188,0,0,1-3.565,7.75,14.469,14.469,0,0,1-8.44,4.739c-.543.1-1.095.154-1.642.229H13.786c-.359-.044-.718-.083-1.076-.134A14.763,14.763,0,0,1,.229,17.275C.131,16.731.075,16.18,0,15.632m12.221,8.387a6.348,6.348,0,0,0,4.353-1.96l7.107-7.106a1.653,1.653,0,0,0,.208-.236.672.672,0,0,0-.085-.867.687.687,0,0,0-.893-.059,2.451,2.451,0,0,0-.251.235q-3.544,3.542-7.089,7.084a5.134,5.134,0,1,1-7.291-7.231c1.708-1.73,3.436-3.441,5.156-5.159.386-.386.76-.786,1.168-1.146a3.191,3.191,0,0,1,4.263,4.749Q15.938,15.26,13,18.189a2.074,2.074,0,0,1-.19.175,1.244,1.244,0,0,1-1.956-.613,1.27,1.27,0,0,1,.393-1.352q2.92-2.908,5.829-5.826a.7.7,0,0,0,.08-1.042.686.686,0,0,0-1.039.055c-1.978,1.975-3.962,3.944-5.927,5.931A2.625,2.625,0,1,0,13.9,19.233c2.048-2.027,4.093-4.056,6.109-6.115A4.564,4.564,0,0,0,13.56,6.66c-2.148,2.1-4.266,4.235-6.376,6.376a6.192,6.192,0,0,0-1.772,4.01,6.572,6.572,0,0,0,6.809,6.974" transform="translate(0 0)" fill="${color}"/>
@@ -2827,7 +2827,7 @@ export default {
 </g>
 </svg>`,
 
-  startingPoint: () => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="62.98" height="36.986" viewBox="0 0 62.98 36.986">
+    startingPoint: () => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="62.98" height="36.986" viewBox="0 0 62.98 36.986">
 <defs>
   <clipPath id="clip-path">
     <rect id="Rectangle_29927" data-name="Rectangle 29927" width="28.164" height="27.947" fill="none"/>
@@ -2923,8 +2923,8 @@ export default {
   </g>
 </g>
 </svg>`,
-  riderIcon: () => (
-    `<svg xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" x="0px" y="0px" width="595.28px" height="841.89px" viewBox="0 0 595.28 841.89" xml:space="preserve">
+    riderIcon: () => (
+        `<svg xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" x="0px" y="0px" width="595.28px" height="841.89px" viewBox="0 0 595.28 841.89" xml:space="preserve">
         <path fill="#bfbfc9" d="m293.55 497.71c-64.72 0-114.19 52.46-114.19 117.19v53.55c0 64.72 49.47 117.19 114.19 117.19a114.18 114.18 0 0 0 114.19-114.19v-59.55a114.18 114.18 0 0 0-114.19-114.19z"/>
         <path fill="#e4414f" d="M361.11,745.56H233.18c0,26.16,18.54,40,41.42,40h45.1c22.87,0,41.41-13.84,41.41-40Z"/>
         <path fill="#cfd2db" d="m293.55 514.61c-57.12 0-100.78 46.31-100.78 103.43v47.27c0 57.12 43.66 103.43 100.78 103.43a100.79 100.79 0 0 0 100.79-100.74v-52.61a100.79 100.79 0 0 0-100.79-100.78z"/>
@@ -2959,9 +2959,9 @@ export default {
         <path fill="#de213c" d="m370.83 397.06c0 39-34.65 70.68-73.68 70.68s-73.69-31.64-73.69-70.68 12.07-113.6 73.69-117.68c64.57 5.62 73.68 78.62 73.68 117.68z"/>
         <path fill="#2d2c42" d="m297.15 359.45c26.3 0 50.09 7.59 67.28 19.85v-7.3a67.28 67.28 0 0 0-67.28-67.28 67.28 67.28 0 0 0-67.28 67.28v7.3c17.18-12.3 40.98-19.85 67.28-19.85z"/>
     </svg>`
-  ),
-  joviIcon: () => (
-    `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="45" height="44" viewBox="0 0 45 44">
+    ),
+    joviIcon: () => (
+        `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="45" height="44" viewBox="0 0 45 44">
         <defs>
           <pattern id="pattern" preserveAspectRatio="none" width="100%" height="100%" viewBox="0 0 145 142">
             <image width="145" height="142" xlink:href="data:image/png;base64,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"/>
@@ -2984,15 +2984,15 @@ export default {
           </g>
         </g>
       </svg>`
-  ),
-  hamburgerMenu: (color="#6d51bb") => (`<svg xmlns="http://www.w3.org/2000/svg" width="20.048" height="16.138" viewBox="0 0 20.048 16.138">
+    ),
+    hamburgerMenu: (color = "#6d51bb") => (`<svg xmlns="http://www.w3.org/2000/svg" width="20.048" height="16.138" viewBox="0 0 20.048 16.138">
     <g id="Icon_feather-menu" data-name="Icon feather-menu" transform="translate(1.5 1.5)">
       <path id="Path_9834" data-name="Path 9834" d="M4.5,18H18.105" transform="translate(-4.5 -11.431)" fill="none" stroke="${color}" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
       <path id="Path_9835" data-name="Path 9835" d="M4.5,9H21.548" transform="translate(-4.5 -9)" fill="none" stroke="${color}" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
       <path id="Path_9836" data-name="Path 9836" d="M4.5,27H14.787" transform="translate(-4.5 -13.862)" fill="none" stroke="${color}" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
     </g>
   </svg>`),
-  hamburgerHome:(color="#6d51bb")=>(`<svg xmlns="http://www.w3.org/2000/svg" width="23.783" height="22.605" viewBox="0 0 23.783 22.605">
+    hamburgerHome: (color = "#6d51bb") => (`<svg xmlns="http://www.w3.org/2000/svg" width="23.783" height="22.605" viewBox="0 0 23.783 22.605">
   <g id="Group_6815" data-name="Group 6815" transform="translate(0.891 -2.787)">
     <g id="_001-home" data-name="001-home" transform="translate(-0.891 2.787)">
       <g id="Group_2268" data-name="Group 2268" transform="translate(0 0)">
@@ -3008,7 +3008,7 @@ export default {
     </g>
   </g>
 </svg>`),
-joviMan:(color="#fff")=>(`<svg xmlns="http://www.w3.org/2000/svg" width="7.468" height="10.688" viewBox="0 0 7.468 10.688">
+    joviMan: (color = "#fff") => (`<svg xmlns="http://www.w3.org/2000/svg" width="7.468" height="10.688" viewBox="0 0 7.468 10.688">
 <g id="Group_35075" data-name="Group 35075" transform="translate(0)">
   <circle id="Ellipse_476" data-name="Ellipse 476" cx="1.508" cy="1.508" r="1.508" transform="translate(2.123 0)" fill="${color}"/>
   <path id="Path_10522" data-name="Path 10522" d="M359.413,107.4h-1.576a.117.117,0,0,0-.117.117v3.041a.118.118,0,0,0,.117.118h1.576a.373.373,0,0,0,.375-.371v-2.532a.373.373,0,0,0-.375-.373Z" transform="translate(-352.319 -104.297)" fill="${color}"/>
@@ -3018,13 +3018,13 @@ joviMan:(color="#fff")=>(`<svg xmlns="http://www.w3.org/2000/svg" width="7.468" 
 </svg>`),
 
 
-    modalClosedIcon: ()=>`<svg xmlns="http://www.w3.org/2000/svg" id="Component_463_1" data-name="Component 463 – 1" width="102.681" height="50.001" viewBox="0 0 102.681 50.001">
+    modalClosedIcon: () => `<svg xmlns="http://www.w3.org/2000/svg" id="Component_463_1" data-name="Component 463 – 1" width="102.681" height="50.001" viewBox="0 0 102.681 50.001">
     <path id="Subtraction_1" data-name="Subtraction 1" d="M-281.319-6753H-381a24.834,24.834,0,0,0,17.667-7.332A24.831,24.831,0,0,0-356-6778a24.844,24.844,0,0,1,1.965-9.731,24.915,24.915,0,0,1,5.358-7.946,24.914,24.914,0,0,1,7.947-5.358A24.844,24.844,0,0,1-331-6803a24.844,24.844,0,0,1,9.731,1.965,24.913,24.913,0,0,1,7.947,5.358,24.916,24.916,0,0,1,5.358,7.946A24.844,24.844,0,0,1-306-6778a25.09,25.09,0,0,0,24.68,25Zm-100,0H-384v-.178a25.421,25.421,0,0,0,2.683.176Z" transform="translate(384 6803)" fill="#fff"/>
     <path id="Icon_ionic-ios-arrow-down" data-name="Icon ionic-ios-arrow-down" d="M12.471,16.264l4.75-4.754a.894.894,0,0,1,1.268,0,.905.905,0,0,1,0,1.272l-5.382,5.386a.9.9,0,0,1-1.238.026L6.449,12.785a.9.9,0,0,1,1.268-1.272Z" transform="translate(65.469 30.429) rotate(180)" fill="#6b6b6b"/>
     <path id="Icon_ionic-ios-arrow-down-2" data-name="Icon ionic-ios-arrow-down" d="M12.471,16.264l4.75-4.754a.894.894,0,0,1,1.268,0,.905.905,0,0,1,0,1.272l-5.382,5.386a.9.9,0,0,1-1.238.026L6.449,12.785a.9.9,0,0,1,1.268-1.272Z" transform="translate(65.469 39.429) rotate(180)" fill="#6b6b6b"/>
     <path id="Icon_ionic-ios-arrow-down-3" data-name="Icon ionic-ios-arrow-down" d="M12.471,16.264l4.75-4.754a.894.894,0,0,1,1.268,0,.905.905,0,0,1,0,1.272l-5.382,5.386a.9.9,0,0,1-1.238.026L6.449,12.785a.9.9,0,0,1,1.268-1.272Z" transform="translate(65.469 48.429) rotate(180)" fill="#6b6b6b"/>
   </svg>`,
-  orderBottomBar: () => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24.44" height="28.057" viewBox="0 0 24.44 28.057">
+    orderBottomBar: () => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24.44" height="28.057" viewBox="0 0 24.44 28.057">
   <defs>
     <clipPath id="clip-path">
       <rect id="Rectangle_20602" data-name="Rectangle 20602" width="24.44" height="28.057" fill="#a3abb4"/>
@@ -3036,7 +3036,7 @@ joviMan:(color="#fff")=>(`<svg xmlns="http://www.w3.org/2000/svg" width="7.468" 
     <path id="Path_27020" data-name="Path 27020" d="M190.77,6.959V.052c.083,0,.169-.011.255-.011h5.505A1.6,1.6,0,0,1,198,.869q1.727,2.967,3.441,5.942c.022.039.039.081.071.148Z" transform="translate(-177.68 -0.037)" fill="#a3abb4"/>
   </g>
 </svg>`,
-filterDicount:(color="#27c787")=>`<svg id="Group_14002" data-name="Group 14002" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="17.264" height="12.952" viewBox="0 0 17.264 12.952">
+    filterDicount: (color = "#27c787") => `<svg id="Group_14002" data-name="Group 14002" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="17.264" height="12.952" viewBox="0 0 17.264 12.952">
 <defs>
   <clipPath id="clip-path">
     <rect id="Rectangle_19616" data-name="Rectangle 19616" width="17.264" height="12.952" fill="${color}" stroke="${color}" stroke-width="0.2"/>
@@ -3048,5 +3048,26 @@ filterDicount:(color="#27c787")=>`<svg id="Group_14002" data-name="Group 14002" 
   <path id="Path_18325" data-name="Path 18325" d="M100.794,79.309a1.617,1.617,0,1,1,1.635-1.576,1.621,1.621,0,0,1-1.635,1.576m.557-1.621a.538.538,0,0,0-.538-.533.55.55,0,0,0-.538.538.543.543,0,0,0,.552.537.53.53,0,0,0,.524-.543" transform="translate(-94.735 -72.656)" fill="${color}" stroke="${color}" stroke-width="0.2"/>
   <path id="Path_18326" data-name="Path 18326" d="M224.983,150.607a1.617,1.617,0,1,1-1.623,1.606,1.62,1.62,0,0,1,1.623-1.606m-.544,1.619a.539.539,0,0,0,.535.536.55.55,0,0,0,.541-.536.542.542,0,0,0-.549-.54.528.528,0,0,0-.527.54" transform="translate(-213.319 -143.836)" fill="${color}" stroke="${color}" stroke-width="0.2"/>
 </g>
+</svg>`,
+    voucherUISelected: (fill) => {
+        return `
+      <svg xmlns="http://www.w3.org/2000/svg" width="385" height="101" viewBox="0 0 385 101">
+        <g id="Exclusion_10" data-name="Exclusion 10" transform="translate(985 1162)" fill="#fbf9ff">
+          <path d="M -604.9998168945312 -1061.500122070312 L -980.0001220703125 -1061.500122070312 C -981.22412109375 -1061.500122070312 -982.37109375 -1061.862182617188 -983.2296752929688 -1062.51953125 C -984.0486450195312 -1063.146606445312 -984.4996337890625 -1063.96630859375 -984.4996337890625 -1064.827880859375 L -984.4996337890625 -1099.5107421875 C -983.1097412109375 -1099.600830078125 -981.8138427734375 -1100.062133789062 -980.8077392578125 -1100.832153320312 C -979.641845703125 -1101.724365234375 -978.9996948242188 -1102.921752929688 -978.9996948242188 -1104.203735351562 C -978.9996948242188 -1106.668701171875 -981.4238891601562 -1108.697631835938 -984.4987182617188 -1108.897705078125 L -984.4996337890625 -1158.172241210938 C -984.4996337890625 -1159.033813476562 -984.0486450195312 -1159.853515625 -983.2296752929688 -1160.480590820312 C -982.37109375 -1161.137939453125 -981.22412109375 -1161.499877929688 -980.0001220703125 -1161.499877929688 L -604.9998168945312 -1161.499877929688 C -603.7757568359375 -1161.499877929688 -602.6287841796875 -1161.137939453125 -601.7702026367188 -1160.480590820312 C -600.9512329101562 -1159.853515625 -600.500244140625 -1159.033813476562 -600.500244140625 -1158.172241210938 L -600.500244140625 -1108.897583007812 C -603.575439453125 -1108.696533203125 -606.0001831054688 -1106.667724609375 -606.0001831054688 -1104.203735351562 C -606.0001831054688 -1101.739135742188 -603.575439453125 -1099.709838867188 -600.500244140625 -1099.509765625 L -600.500244140625 -1064.827880859375 C -600.500244140625 -1063.96630859375 -600.9512329101562 -1063.146606445312 -601.7702026367188 -1062.51953125 C -602.6288452148438 -1061.862182617188 -603.7757568359375 -1061.500122070312 -604.9998168945312 -1061.500122070312 Z" stroke="none"/>
+          <path d="M -604.9998168945312 -1062.000122070312 C -602.8318481445312 -1062.000122070312 -601.000244140625 -1063.295043945312 -601.000244140625 -1064.827880859375 L -601.000244140625 -1099.05517578125 C -604.111083984375 -1099.44189453125 -606.5001831054688 -1101.603759765625 -606.5001831054688 -1104.203735351562 C -606.5001831054688 -1106.803100585938 -604.1111450195312 -1108.964599609375 -601.000244140625 -1109.352172851562 L -601.000244140625 -1158.172241210938 C -601.000244140625 -1158.874633789062 -601.3816528320312 -1159.553344726562 -602.0741577148438 -1160.08349609375 C -602.8460083007812 -1160.674438476562 -603.885009765625 -1160.999877929688 -604.9998168945312 -1160.999877929688 L -980.0001220703125 -1160.999877929688 C -981.1148681640625 -1160.999877929688 -982.1538696289062 -1160.674438476562 -982.9257202148438 -1160.08349609375 C -983.6182250976562 -1159.553344726562 -983.9996337890625 -1158.874633789062 -983.9996337890625 -1158.172241210938 L -983.9987182617188 -1109.352416992188 C -980.8880615234375 -1108.965698242188 -978.4996948242188 -1106.80419921875 -978.4996948242188 -1104.203735351562 C -978.4996948242188 -1102.762451171875 -979.2114868164062 -1101.424072265625 -980.5038452148438 -1100.435180664062 C -981.4736328125 -1099.69287109375 -982.6890258789062 -1099.217041015625 -983.9996337890625 -1099.0556640625 L -983.9996337890625 -1064.827880859375 C -983.9996337890625 -1063.295043945312 -982.1680908203125 -1062.000122070312 -980.0001220703125 -1062.000122070312 L -604.9998168945312 -1062.000122070312 M -604.9998168945312 -1061.000122070312 L -980.0001220703125 -1061.000122070312 C -982.7568359375 -1061.000122070312 -984.9996337890625 -1062.71728515625 -984.9996337890625 -1064.827880859375 L -984.9996337890625 -1099.994384765625 C -983.5316772460938 -1099.995361328125 -982.1511840820312 -1100.43359375 -981.1116333007812 -1101.229248046875 C -980.0721435546875 -1102.024658203125 -979.4996948242188 -1103.0810546875 -979.4996948242188 -1104.203735351562 C -979.4996948242188 -1106.525268554688 -981.966552734375 -1108.413940429688 -984.9987182617188 -1108.413940429688 L -984.9996337890625 -1158.172241210938 C -984.9996337890625 -1160.282836914062 -982.7568359375 -1161.999877929688 -980.0001220703125 -1161.999877929688 L -604.9998168945312 -1161.999877929688 C -602.2430419921875 -1161.999877929688 -600.000244140625 -1160.282836914062 -600.000244140625 -1158.172241210938 L -600.000244140625 -1108.413940429688 C -603.0344848632812 -1108.412963867188 -605.5001831054688 -1106.524658203125 -605.5001831054688 -1104.203735351562 C -605.5001831054688 -1101.88330078125 -603.0341186523438 -1099.99462890625 -600.0029296875 -1099.993530273438 C -600.0248413085938 -1100.010864257812 -600.0108642578125 -1101.1044921875 -600.0003051757812 -1101.68017578125 L -600.000244140625 -1064.827880859375 C -600.000244140625 -1062.71728515625 -602.2430419921875 -1061.000122070312 -604.9998168945312 -1061.000122070312 Z M -984.9977416992188 -1100.007934570312 L -984.9996337890625 -1100.007934570312 L -984.9996337890625 -1101.804321289062 C -984.9935913085938 -1101.054931640625 -984.9902954101562 -1100.135009765625 -984.9977416992188 -1100.0087890625 L -984.9977416992188 -1100.007934570312 Z M -600.0001220703125 -1106.553100585938 L -600.0021362304688 -1106.553100585938 C -600.0066528320312 -1107.240478515625 -600.012451171875 -1108.396240234375 -600.0003662109375 -1108.413696289062 L -600.0001220703125 -1106.553100585938 Z M -984.9977416992188 -1106.843383789062 L -984.9996337890625 -1106.843383789062 L -984.9996337890625 -1108.412109375 C -984.9832763671875 -1108.36474609375 -984.9830932617188 -1107.838012695312 -984.9971313476562 -1106.889282226562 L -984.9977416992188 -1106.843383789062 Z" stroke="none" fill="#6d51bb"/>
+        </g>
+      </svg>
+      `
+    },
+    voucherUI: (fill) => {
+        return `
+      <svg xmlns="http://www.w3.org/2000/svg" width="385" height="101" viewBox="0 0 385 101">
+      <path id="Exclusion_6" data-name="Exclusion 6" d="M-605-1061H-980c-2.757,0-5-1.717-5-3.828v-35.167a6.414,6.414,0,0,0,3.888-1.235,3.76,3.76,0,0,0,1.612-2.974c0-2.322-2.467-4.21-5.5-4.21v-49.758c0-2.111,2.243-3.828,5-3.828h375c2.757,0,5,1.717,5,3.828v49.758c-3.034,0-5.5,1.889-5.5,4.21s2.466,4.209,5.5,4.21c-.022-.017-.008-1.111,0-1.687v36.852C-600-1062.717-602.243-1061-605-1061Zm-380-39.008h0v-1.8c.006.749.009,1.669,0,1.8Zm385-6.545h0c0-.687-.01-1.843,0-1.861Zm-385-.29h0v-1.569c.016.047.017.574,0,1.523v.045Z" transform="translate(985 1162)" fill="#fff"/>
+    </svg>
+    
+      `
+    },
+    tickIcon: () => `<svg id="corrected" xmlns="http://www.w3.org/2000/svg" width="15" height="11.002" viewBox="0 0 15 11.002">
+    <path id="Path_1417" data-name="Path 1417" d="M14.938,12.083l-9.3,9.3a.209.209,0,0,1-.3,0L.061,16.1a.209.209,0,0,1,0-.3l1.283-1.283a.21.21,0,0,1,.3,0l3.85,3.849L13.359,10.5a.21.21,0,0,1,.3,0l1.283,1.283A.209.209,0,0,1,14.938,12.083Z" transform="translate(0 -10.443)" fill="#7359be"/>
 </svg>`,
 }

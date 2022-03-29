@@ -41,6 +41,7 @@ import Legal from '../screens/Legal';
 import WebView from '../components/organisms/WebView';
 import FAQ from '../screens/FAQ';
 import ContactUs from '../screens/ContactUs';
+import GoodyBag from '../screens/GoodyBag';
 const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES, APP_DRAWER_ROUTES, APP_DRAWER_STACK } = ROUTES;
 const AppDrawerStack = (props) => {
     return <Stack.Navigator screenOptions={stackOpts} initialRouteName={APP_DRAWER_ROUTES.Home.screen_name} >
@@ -95,6 +96,7 @@ const AppDrawerComponents = {
     WebView,
     FAQ,
     ContactUs,
+    GoodyBag,
 }//will open with Slide Animation
 const ContainerStack = createStackNavigator();
 const Stack = createNativeStackNavigator();

@@ -135,6 +135,10 @@ const APP_DRAWER_ROUTES = {
         screen_name: "CONTACT_US",
         options: null,
     },
+    "GoodyBag": {
+        screen_name: "GOODY_BAG",
+        options: null,
+    },
 
 
 }
