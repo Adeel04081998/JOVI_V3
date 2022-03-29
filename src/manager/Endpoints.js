@@ -56,6 +56,7 @@ export default {
     "ADD_ORDER_FEEDBACK":"api/Order/Feedback/Add",//USED IN ORDER HISTORY DETAIL SCREEN for adding feedback for the order
     "GET_LEGAL_CERTIFICATES":"api/Menu/Legal/ListByType/1",
     "GET_LEGAL_HTML":"api/Menu/Legal/List",
+    "GET_FAQs":"api/Menu/FAQ/List",
 }
 
 

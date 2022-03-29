@@ -95,20 +95,7 @@ export default () => {
     </View>);
     const renderItem = (item,index) => (<TouchableOpacity
         onPress={() => onPress(item)}
-        style={{
-            height: 50,
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            paddingHorizontal: 10,
-            borderWidth: 0.5,
-            borderColor: "rgba(0,0,0,0.5)",
-            borderRadius: 5,
-            marginVertical: 10,
-            backgroundColor: colors.white
-        }}
+        style={_styles.itemStyles}
     >
         <Text style={{ color: colors.black }} numberOfLines={1}>{item.title}</Text>
         <VectorIcon size={20} color={colors.black} name={'keyboard-arrow-right'} type={'MaterialIcons'} />
@@ -136,16 +123,7 @@ export default () => {
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }}>
             {_renderHeader()}
-            {state.isLoadingHtml ? _renderLoader({
-                position: 'absolute',
-                top: 30,
-                marginTop: -50,
-                backgroundColor: 'rgba(0,0,0,0.1)',
-                zIndex: 9999,
-                height: constants.screen_dimensions.height,
-                width: constants.screen_dimensions.width,
-                justifyContent: 'center',
-            }) : null}
+            {state.isLoadingHtml ? _renderLoader(_styles.screenLoaderStyles) : null}
             <View style={{ flex: 1 }}>
                 <FlatList
                     data={
@@ -166,4 +144,28 @@ const styles = (colors) => StyleSheet.create({
         flex: 1,
         backgroundColor: colors.white,
     },
+    screenLoaderStyles:{
+        position: 'absolute',
+        top: 30,
+        marginTop: -50,
+        backgroundColor: 'rgba(0,0,0,0.1)',
+        zIndex: 9999,
+        height: constants.screen_dimensions.height,
+        width: constants.screen_dimensions.width,
+        justifyContent: 'center',
+    },
+    itemStyles:{
+        height: 50,
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 10,
+        borderWidth: 0.5,
+        borderColor: "rgba(0,0,0,0.5)",
+        borderRadius: 5,
+        marginVertical: 10,
+        backgroundColor: colors.white
+    }
 });

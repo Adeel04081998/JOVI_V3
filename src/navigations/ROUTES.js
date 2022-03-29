@@ -127,6 +127,10 @@ const APP_DRAWER_ROUTES = {
         screen_name: "WEBVIEW",
         options: { animation: 'slide_from_bottom' },
     },
+    "FAQ": {
+        screen_name: "FAQ",
+        options: { animation: 'slide_from_bottom' },
+    },
 
 
 }
