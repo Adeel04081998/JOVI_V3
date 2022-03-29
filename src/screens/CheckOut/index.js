@@ -388,10 +388,11 @@ export default () => {
                         color={colors}
                         right={{ value: totalPitstop }}
                         middle={{ value: estimatedDeliveryTime }}
-                        contentContainerStyle={{ marginBottom: 0, marginVertical: 0, marginTop: 5, borderRadius: 8, paddingVertical: 4 }}
+                        contentContainerStyle={{ marginBottom: 0, marginVertical: 0, marginTop: 5, borderRadius: 8,paddingVertical:9}}
                         rightContainerStyle={{ flex: 0 }}
                         middleContainerStyle={{ flex: 3, }}
-                        leftContainerStyle={{ paddingRight: 15 }}
+                        leftContainerStyle={{paddingLeft:2, paddingRight:15}}
+
                     />
                     <DeliveryAddress
                         contianerStyle={{ margin: TOPSPACING, marginBottom: 2, padding: 0, borderRadius: 8 }}

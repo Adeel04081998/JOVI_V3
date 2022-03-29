@@ -78,7 +78,7 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                     <View style={{ flexDirection: "row", flex: 1, borderWidth: 0, marginTop: 7, }}>
                         <Text style={[checkOutStyles.gstCommonLabelTxtStyle, { textAlignVertical: 'center', }]} fontFamily='PoppinsRegular'>Discount</Text>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1, }}>
-                            {<Text style={[checkOutStyles.gstCommonPriceTxtStyle, { textAlignVertical: 'center', }]} fontFamily='PoppinsRegular'>{`${renderPrice({ showZero: true, price: sharedCalculatedTotals().discount }, 'Rs -')}`}</Text>}
+                            {<Text style={[checkOutStyles.gstCommonPriceTxtStyle, { textAlign: 'justify' }]} fontFamily='PoppinsRegular'>{`${renderPrice({ showZero: true, price: sharedCalculatedTotals().discount }, 'Rs -')}`}</Text>}
                         </View>
                     </View>
                 </View>
