@@ -52,7 +52,6 @@ export default ({ route }) => {
         chargeBreakdown: {},
         progress: 0,
         totalPitstops: 0,
-        currentPitstop: null,
         orderEstimateTimeRange: '40 - 50',
         currentPitstop: null,
         subStatusName: '',

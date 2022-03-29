@@ -2,10 +2,10 @@ import { useFocusEffect } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { Alert, Animated, Appearance, Easing, SafeAreaView, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
+import Advertisment from '../../components/atoms/Advertisment/index';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import GenericList from '../../components/molecules/GenericList';
-import ImageCarousel from '../../components/molecules/ImageCarousel';
 import BottomBarComponent from '../../components/organisms/BottomBarComponent';
 import { sharedExceptionHandler } from '../../helpers/SharedActions';
 import { postRequest } from '../../manager/ApiManager';
@@ -14,24 +14,21 @@ import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
-import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
-import Advertisment from '../../components/atoms/Advertisment/index'
-
-import stylesheet from './styles';
-
+import ENUMS from '../../utils/ENUMS';
+import GV, { FILTER_TAGS_PITSTOP_LISTING, PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 // const Search = React.lazy(()=>import('../Home/components/Search'));
 // const AllPitstopsListing = React.lazy(()=>import('./components/AllPitstopsListing'));
 // const CardLoader = React.lazy(()=>import('./components/CardLoader'));
 // const Categories = React.lazy(()=>import('./components/Categories'));
 // const Filters = React.lazy(()=>import('./components/Filters'));
-
 //
 import Search from '../Home/components/Search';
 import AllPitstopsListing from './components/AllPitstopsListing';
 import CardLoader from './components/CardLoader';
 import Categories from './components/Categories';
 import Filters from './components/Filters';
-import ENUMS from '../../utils/ENUMS';
+import stylesheet from './styles';
+
 
 
 const SPACING_VERTICAL = 10;
@@ -50,6 +47,7 @@ const SPACING_VERTICAL = 10;
 
 let scrollEvent = null;
 const PistopListing = ({ route }) => {
+
     const [state, setState] = React.useState({ loaded: false });
     const { pitstopType } = route.params;
     const isLoadedRef = React.useRef(false);
@@ -60,14 +58,14 @@ const PistopListing = ({ route }) => {
     const { height, width } = SCALE_IMAGE;
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]], Appearance.getColorScheme() === "dark");
     const listingStyles = stylesheet.styles(colors, width, height);
-    React.useEffect(()=>{
+    React.useEffect(() => {
         if (!isLoadedRef.current) {
             isLoadedRef.current = true;
             setState(pre => ({ ...pre, loaded: true }));
             // setInterval(() => {
             // }, 100);
         }
-    },[]);
+    }, []);
     const onBackPress = () => {
         NavigationService.NavigationActions.common_actions.goBack();
     }
@@ -84,29 +82,31 @@ const PistopListing = ({ route }) => {
 const PistopListingChild = React.memo(({ route, }) => {
     const { pitstopType } = route.params;
     const vendorDashboardCategoryIDReducer = useSelector(s => s.vendorDashboardCategoryIDReducer)?.data ?? [];
+    const categoryItem = route.params?.categoryItem ?? {};
+    const size = Object.keys(categoryItem).length;
 
     const [state, setState] = React.useState({
         filters: {
             filter: [],
-            cuisines: [],
+            cuisines: size > 0 ? [categoryItem.item.tagID] : [],
             averagePrice: null,
             search: '',
         },
     });
     const filtersRef = React.useRef({
         filter: [],
-        cuisines: [],
+        cuisines: size > 0 ? [categoryItem.item.tagID] : [],
         averagePrice: null,
         search: '',
     });
     const [fetchData, setFetchDataUseEffect] = React.useState(null);
-    const scaleAnimation = React.useRef(new Animated.Value(1)).current;
+    const scaleAnimation = React.useRef(new Animated.Value(size > 0 ? 0 : 1)).current;
     const isRequestSent = React.useRef(false);
     // const promotionsReducer = {};
     const promotionsReducer = useSelector(state => state.promotionsReducer);
     const categoriesTagsReducer = useSelector(state => state.categoriesTagsReducer);
     const [categoryAnimation, setCategoryAnimation] = React.useState({
-        allRestaurant: false,
+        allRestaurant: size > 0 ? true : false,
     });
     const pitstopSpecific = {
         [PITSTOP_TYPES.RESTAURANT]: {
@@ -119,9 +119,9 @@ const PistopListingChild = React.memo(({ route, }) => {
         },
         [PITSTOP_TYPES.SUPER_MARKET]: {
             filterTitleShown: true,
-            filterScreenIcon: false,
+            filterScreenIcon: true,
             searchPlaceHolder: 'What do you want to order?',
-            categorySection: false,
+            categorySection: true,
             pitstopListingTitle: 'All Supermarkets'
         },
     }
@@ -175,13 +175,13 @@ const PistopListingChild = React.memo(({ route, }) => {
         });
     }
     const backFromFiltersHandler = (updatedFilters) => {
-        if (updatedFilters.activeFilterBy) {
-            const listing = (categoriesTagsReducer?.vendorFilterViewModel?.filtersList ?? []).filter(item => item.vendorDashboardCatID === updatedFilters.activeFilterBy)[0];
-            onPressFilter(listing, { cuisines: updatedFilters.activeCusine });
-            return;
-        }
+        // if (updatedFilters.activeFilterBy) {
+        //     const listing = (categoriesTagsReducer?.vendorFilterViewModel?.filtersList ?? []).filter(item => item.vendorDashboardCatID === updatedFilters.activeFilterBy)[0];
+        //     onPressFilter(listing, { cuisines: updatedFilters.activeCusine });
+        //     return;
+        // }
         filtersRef.current.cuisines = updatedFilters.activeCusine ? [updatedFilters.activeCusine] : [];
-        filtersRef.current.activeFilterBy = updatedFilters.activeFilterBy ? [updatedFilters.activeFilterBy] : [];
+        filtersRef.current.filter = updatedFilters.activeFilterBy ? [updatedFilters.activeFilterBy] : [];
         filtersRef.current.averagePrice = updatedFilters.activeAvergePrice;
         setState(pre => ({
             ...pre,
@@ -196,7 +196,7 @@ const PistopListingChild = React.memo(({ route, }) => {
         allRestaurantAnimation(isAllDisSelected ? 1 : 0);
     }
     const goToFilters = () => {
-        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Filter.screen_name, { activeAvergePrice: filtersRef.current.averagePrice, activeCusine: filtersRef.current.cuisines[0], activeFilterBy: filtersRef.current.filter[0], backCB: backFromFiltersHandler });
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Filter.screen_name, { activeAvergePrice: filtersRef.current.averagePrice, activeCusine: filtersRef.current.cuisines[0], activeFilterBy: filtersRef.current.filter[0], backCB: backFromFiltersHandler, pitstopType, });
     }
     const handleInfinityScroll = (event) => {
         let mHeight = event.nativeEvent.layoutMeasurement.height;
@@ -216,6 +216,10 @@ const PistopListingChild = React.memo(({ route, }) => {
         scrollEvent = null;
         // getAdvertisements();
     }, [])
+
+
+
+
     const renderFilters = () => (<View style={{ ...listingStyles.wrapper, paddingBottom: 0, zIndex: 100, paddingTop: SPACING_VERTICAL }}>
         <Search
             placeholder={currentPitstopType.searchPlaceHolder}
@@ -229,18 +233,31 @@ const PistopListingChild = React.memo(({ route, }) => {
             colors={colors}
             filterConfig={currentPitstopType}
             selectedFilters={state.filters.filter}
-            parentFilterHandler={onPressFilter}
+            parentFilterHandler={onFilterChange}
             filtersData={categoriesTagsReducer?.vendorFilterViewModel?.filtersList}
             screenName={'Listing Page'}
+            customData={FILTER_TAGS_PITSTOP_LISTING}
             goToFilters={goToFilters} />
 
         {currentPitstopType.categorySection &&
-            <Categories
-                parentCategoryHandler={onFilterChange}
-                selectedCategories={state.filters.cuisines}
-                CategoriesTabConfig={currentPitstopType}
-                colors={colors}
-            />
+            <>
+                <Categories
+                    parentCategoryHandler={onFilterChange}
+                    selectedCategories={state.filters.cuisines}
+                    CategoriesTabConfig={currentPitstopType}
+                    colors={colors}
+                    {...size > 0 && {
+                        paramItem: categoryItem?.item ?? {}
+                    }}
+                    {...pitstopType === PITSTOP_TYPES.SUPER_MARKET && {
+                        itemKeys: {
+                            id: "tagID",
+                            name: "tagName",
+                            image: "tagImage",
+                        }
+                    }}
+                />
+            </>
         }
     </View>);
     const renderCarouselNdListing = () => (<Animated.View style={{
@@ -259,7 +276,7 @@ const PistopListingChild = React.memo(({ route, }) => {
             colors={colors}
             onAdPressCb={() => {
                 Alert.alert("Ahmed Chutya")
-                
+
             }}
         />
 
@@ -286,6 +303,7 @@ const PistopListingChild = React.memo(({ route, }) => {
 
         </View>
     </Animated.View>);
+
     const renderAllRestaurantsListing = () => (<Animated.View style={{
         ...listingStyles.wrapper,
         marginTop: -10
@@ -334,7 +352,7 @@ const PistopListingChild = React.memo(({ route, }) => {
                 {renderCarouselNdListing()}
                 {renderAllRestaurantsListing()}
             </ScrollView>
-            <BottomBarComponent colors={colors} leftData={[{ id: 1, iconName: "home", title: "Home" }, { id: 2, iconName: "person", title: "Profile" }]} rightData={[{ id: 3, iconName: "wallet", title: "Wallet" }, { id: 4, iconName: "pin", title: "Location" }]} />
+            <BottomBarComponent pitstopType={pitstopType} screenName={ROUTES.APP_DRAWER_ROUTES.PitstopListing.screen_name} colors={colors} leftData={[{ id: 1, iconName: "home", title: "Home" }, { id: 2, iconName: "person", title: "Profile" }]} rightData={[{ id: 3, iconName: "wallet", title: "Wallet" }, { id: 4, iconName: "pin", title: "Location" }]} />
             {/* </SafeAreaView>
         </View> */}
         </>

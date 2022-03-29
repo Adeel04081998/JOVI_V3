@@ -119,6 +119,22 @@ const APP_DRAWER_ROUTES = {
         screen_name: "ORDER_HISTORY_DETAIL",
         options: { animation: 'slide_from_bottom' },
     },
+    "Legal": {
+        screen_name: "LEGAL",
+        options: null,
+    },
+    "WebView": {
+        screen_name: "WEBVIEW",
+        options: { animation: 'slide_from_bottom' },
+    },
+    "FAQ": {
+        screen_name: "FAQ",
+        options: { animation: 'slide_from_bottom' },
+    },
+    "ContactUs": {
+        screen_name: "CONTACT_US",
+        options: null,
+    },
 
 
 }

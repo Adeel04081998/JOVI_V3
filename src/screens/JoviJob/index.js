@@ -273,14 +273,15 @@ export default ({ navigation, route }) => {
     /*****************************     Start of  useEffect            ***********************************/
 
     const setData = (data = route.params.pitstopItemObj) => {
-        const { title, nameval, imageData, voiceNote, estTime, description, estimatePrice } = data;
+        const { title, nameval, imageData, voiceNote, estTime, description, estimatePrice, buyForMe } = data;
         setLocationVal(title)
         setNameVal(nameval)
         updateImagesData(imageData ?? [])
-        setVoiceNote(voiceNote)
+        setVoiceNote(voiceNote ?? {})
         setEstTime(estTime)
         setDescription(description)
         setEstVal(estimatePrice)
+        setSwitch(buyForMe)
     }
     // to be used for editing purposes
     useEffect(() => {

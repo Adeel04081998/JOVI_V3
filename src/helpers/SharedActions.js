@@ -968,14 +968,18 @@ export const   sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrde
         dispatch(actions.fcmAction({ notifyClientID }));
     } else console.log("[Order OrderPitstops] Job notification not found!!");
 }
-export const sharedOnCategoryPress = (item, index) => {
+export const sharedOnCategoryPress = (item, index, useReplace = false) => {
     const pitstopType = item.value;
     const routes = {
         4: ROUTES.APP_DRAWER_ROUTES.PitstopListing.screen_name,
         1: ROUTES.APP_DRAWER_ROUTES.PitstopListing.screen_name,
         2: ROUTES.APP_DRAWER_ROUTES.JoviJob.screen_name,
     }
-    NavigationService.NavigationActions.common_actions.navigate(routes[pitstopType], { pitstopType });
+    if (useReplace) {
+        NavigationService.NavigationActions.stack_actions.replace(routes[pitstopType], { pitstopType });
+    } else {
+        NavigationService.NavigationActions.common_actions.navigate(routes[pitstopType], { pitstopType });
+    }
 }
 
 export const sharedGetCurrentLocation = (onSuccess = () => { }, onError = () => { }) => {
@@ -1075,12 +1079,21 @@ export const getBottomPadding = (insets, bottom = 0, extraBottom = 0) => {
 
 export const padToTwo = (number) => (number <= 9 ? `0${number}` : number);
 
-export const validURL=(str)=> {
-    var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-      '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-      '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-      '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+export const validURL = (str) => {
+    var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+        '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
     return !!pattern.test(str);
-  }
+}
+
+export const splitArray = (array, n) => {
+    let [...arr] = array;
+    let res = [];
+    while (arr.length) {
+        res.push(arr.splice(0, n));
+    }
+    return res;
+};

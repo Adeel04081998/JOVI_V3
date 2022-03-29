@@ -47,7 +47,7 @@ export default ({ colors, data = {}, onPressPitstop = () => { }, containerStyles
                 <CardDealHover colors={colors} text={data?.discountPercentage ?? ''} />
             </ImageBackground> */}
             <View>
-                <Image source={{ uri: renderFile(image) }} style={[styles.image, imageStyles]} tapToOpen={false} />
+                <Image source={{ uri: renderFile(image) }} tapToOpen={false} style={[styles.image, imageStyles]} />
                 <View style={{ position: "absolute", ...StyleSheet.absoluteFillObject}} >
                     {(data.isClosed || data.isClose) &&
                         <View style={{

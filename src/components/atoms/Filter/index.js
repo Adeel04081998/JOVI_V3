@@ -1,31 +1,38 @@
 import React, { useState } from 'react';
-import { Alert, Appearance, ScrollView, StyleSheet, View } from 'react-native';
+import { Appearance, ScrollView, View } from 'react-native';
 import { useSelector } from 'react-redux';
-import Text from '../Text';
-import ENUMS from '../../../utils/ENUMS';
-import TouchableOpacity from '../TouchableOpacity';
-import theme from '../../../res/theme';
-import GV from '../../../utils/GV';
-import SafeAreaView from "../../atoms/SafeAreaView";
-import AveragePrice from './components/AveragePrice';
-import CustomHeader from '../../molecules/CustomHeader';
-import Cuisine from './components/Cuisine';
-import Button from '../../molecules/Button';
 import NavigationService from '../../../navigations/NavigationService';
-import ROUTES from '../../../navigations/ROUTES';
 import constants from '../../../res/constants';
+import theme from '../../../res/theme';
+import ENUMS from '../../../utils/ENUMS';
+import GV, { FILTER_TAGS_PITSTOP_LISTING, PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../../utils/GV';
+import SafeAreaView from "../../atoms/SafeAreaView";
+import Button from '../../molecules/Button';
+import CustomHeader from '../../molecules/CustomHeader';
+import Text from '../Text';
+import TouchableOpacity from '../TouchableOpacity';
+import AveragePrice from './components/AveragePrice';
+import Cuisine from './components/Cuisine';
 const CUSINE_ACTIVE_INDEX = "activeCusine";
 const Filter_ACTIVE_INDEX = "activeFilterBy";
 const AV_PRICE_ACTIVE_INDEX = "activeAvergePrice";
 export default (props) => {
     const { route } = props;
+    const pitstopType = route.params?.pitstopType ?? 0;
+    const itemKeys = React.useRef(pitstopType === PITSTOP_TYPES.SUPER_MARKET ? {
+        id: "tagID",
+        name: "tagName",
+    } : {
+        id: "categoryID",
+        name: "categoryName",
+    });
     const { vendorFilterViewModel } = useSelector(state => state.categoriesTagsReducer);
-    const cuisineList = vendorFilterViewModel?.cuisine ?? {}
-    const filterList = vendorFilterViewModel?.filtersList ?? {}
+    const cuisineList = pitstopType === PITSTOP_TYPES.SUPER_MARKET ? { tagName: 'Categories', categoriesList: vendorFilterViewModel?.tagsList ?? [], } : vendorFilterViewModel?.cuisine ?? {}
+    const filterList = FILTER_TAGS_PITSTOP_LISTING;//vendorFilterViewModel?.filtersList ?? {}
     const averagePriceList = ENUMS.AVERAGE_PRICE_FILTERS ?? {}
     const WIDTH = constants.window_dimensions.width
     const HEIGHT = constants.window_dimensions.height
-    const colors = theme.getTheme(GV.THEME_VALUES.DEFAULT, Appearance.getColorScheme() === "dark")
+    const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]], Appearance.getColorScheme() === "dark");
     const filterType = null
     const initState = {
         averagePrice: {},
@@ -40,7 +47,7 @@ export default (props) => {
     const _renderHeaderRightButton = () => {
         return (
             <TouchableOpacity onPress={handleclearAllPress} style={{}} >
-                <Text style={{ color: "#C1C1C1" , fontSize:14,}} fontFamily='PoppinsRegular'>{`Clear`}</Text>
+                <Text style={{ color: "#C1C1C1", fontSize: 14, }} fontFamily='PoppinsRegular'>{`Clear`}</Text>
             </TouchableOpacity>
         )
     }
@@ -66,11 +73,11 @@ export default (props) => {
             [CUSINE_ACTIVE_INDEX]: state[CUSINE_ACTIVE_INDEX],
 
         }
-        if (state[Filter_ACTIVE_INDEX]) {
-            const listing = (vendorFilterViewModel?.filtersList ?? []).filter(item => item.vendorDashboardCatID === state[Filter_ACTIVE_INDEX])[0];
-            NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.PitstopsVerticalList.screen_name, { pitstopType: route.params.pitstopType??4, updatedFilters:{cuisines:state[CUSINE_ACTIVE_INDEX]}, listingObj: { ...listing } },ROUTES.APP_DRAWER_ROUTES.Filter.screen_name);
-            return;
-        }
+        // if (state[Filter_ACTIVE_INDEX]) {
+        //     const listing = (vendorFilterViewModel?.filtersList ?? []).filter(item => item.vendorDashboardCatID === state[Filter_ACTIVE_INDEX])[0];
+        //     NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.PitstopsVerticalList.screen_name, { pitstopType: route.params.pitstopType ?? 4, updatedFilters: { cuisines: state[CUSINE_ACTIVE_INDEX] }, listingObj: { ...listing } }, ROUTES.APP_DRAWER_ROUTES.Filter.screen_name);
+        //     return;
+        // }
         NavigationService.NavigationActions.common_actions.goBack();
         if (route.params.backCB) {
             route.params.backCB(dataToSend);
@@ -117,21 +124,29 @@ export default (props) => {
                     data={cuisineList}
                     filterTypeStyle={{ paddingVertical: 10, color: 'black', fontSize: 17, }}
                     colors={colors}
-                    onPress={(item, index) => { handleOnPress(item.categoryID, CUSINE_ACTIVE_INDEX) }}
+                    onPress={(item, index) => { handleOnPress(item[itemKeys.current.id], CUSINE_ACTIVE_INDEX) }}
                     activeCusine={state.activeCusine}
+                    {...pitstopType === PITSTOP_TYPES.SUPER_MARKET && {
+                        itemKeys: {
+                            id: "tagID",
+                            name: "tagName",
+                            image: "tagImage",
+                        }
+                    }}
+
                 />
             </ScrollView>
-            <View style={{width:'100%', justifyContent:'center', alignSelf:'center', }}>
+            <View style={{ width: '100%', justifyContent: 'center', alignSelf: 'center', }}>
 
-            <Button
-                onPress={onApplyPress}
-                // disabled={enableDisableButton}
-                text='Apply'
-                textStyle={{fontSize: 14, color: colors.white}}
-                wait={2}
-                style={{width: WIDTH * 0.75, height: HEIGHT * 0.065,  alignSelf: "center", marginBottom: 10, backgroundColor: "#ED4C42", borderRadius: 25 }}
-                
-            />
+                <Button
+                    onPress={onApplyPress}
+                    // disabled={enableDisableButton}
+                    text='Apply'
+                    textStyle={{ fontSize: 14, color: colors.white }}
+                    wait={2}
+                    style={{ width: WIDTH * 0.75, height: HEIGHT * 0.065, alignSelf: "center", marginBottom: 10, backgroundColor: colors.primary, borderRadius: 25 }}
+
+                />
             </View>
         </SafeAreaView>
     )
