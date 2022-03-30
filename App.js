@@ -143,7 +143,7 @@ const App = () => {
         "[react-native-gesture-handler] Seems like you\'re using an old API with gesture components, check out new Gestures system!",
     ]);
     navigator.geolocation = Geolocation;
-    const RenderToastTypeIcon = (uri, color) => {
+    const RenderToastSvgUi = (uri, color) => {
         return (
             <View style={{}}>
 
@@ -161,7 +161,7 @@ const App = () => {
             </View>
         )
     }
-    const renderToastCrossUi = () => {
+    const RenderToastCrossUi = () => {
         return (
             <TouchableOpacity onPress={() => { Toast.hide() }} style={{ right: 15, justifyContent: "center" }}>
                 <SvgXml
@@ -185,8 +185,8 @@ const App = () => {
                 text1={text1}
                 text2={rest.text2}
                 onTrailingIconPress={() => Toast.hide()}
-                renderLeadingIcon={() => { return (RenderToastTypeIcon(svgs.SuccesToastIcon(), "#217E3D")) }}
-                renderTrailingIcon={() => { return (renderToastCrossUi()) }}
+                renderLeadingIcon={() => { return (RenderToastSvgUi(svgs.SuccesToastIcon(), "#217E3D")) }}
+                renderTrailingIcon={() => { return (RenderToastCrossUi()) }}
             />
         },
         error: ({ text1, ...rest }) => {
@@ -203,8 +203,8 @@ const App = () => {
                 text1={text1}
                 text2={rest.text2}
                 onTrailingIconPress={() => Toast.hide()}
-                renderLeadingIcon={() => { return (RenderToastTypeIcon(svgs.ErrorToastIcon(), "#a40a0a")) }}
-                renderTrailingIcon={() => { return (renderToastCrossUi()) }}
+                renderLeadingIcon={() => { return (RenderToastSvgUi(svgs.ErrorToastIcon(), "#a40a0a")) }}
+                renderTrailingIcon={() => { return (RenderToastCrossUi()) }}
             />
         }
         ,
@@ -221,8 +221,8 @@ const App = () => {
                 text1={text1}
                 text2={rest.text2}
                 onTrailingIconPress={() => Toast.hide()}
-                renderLeadingIcon={() => { return (RenderToastTypeIcon(svgs.InformationToastIcon(), "#05478a")) }}
-                renderTrailingIcon={() => { return (renderToastCrossUi()) }}
+                renderLeadingIcon={() => { return (RenderToastSvgUi(svgs.InformationToastIcon(), "#05478a")) }}
+                renderTrailingIcon={() => { return (RenderToastCrossUi()) }}
             />
         },
         warning: ({ text1, ...rest }) => {
@@ -238,8 +238,8 @@ const App = () => {
                 text1={text1}
                 text2={rest.text2}
                 onTrailingIconPress={() => Toast.hide()}
-                renderLeadingIcon={() => { return (RenderToastTypeIcon(svgs.WarningToastIcon(), "#c57701")) }}
-                renderTrailingIcon={() => { return (renderToastCrossUi()) }}
+                renderLeadingIcon={() => { return (RenderToastSvgUi(svgs.WarningToastIcon(), "#c57701")) }}
+                renderTrailingIcon={() => { return (RenderToastCrossUi()) }}
             />
         },
 
