@@ -8,6 +8,9 @@ export const topUpStyles = (colors = initColors) => StyleSheet.create({
         flex: 1,
     },
     balanceContainer: {
+        backgroundColor: colors.white,
+        borderBottomLeftRadius: 26,
+        borderBottomRightRadius: 26,
         justifyContent: 'center',
         alignItems: 'center',
         paddingVertical: 25
@@ -61,7 +64,7 @@ export const topUpStyles = (colors = initColors) => StyleSheet.create({
         fontFamily: FontFamily.Poppins.Medium
     },
     dataContainerStyle: {
-        marginHorizontal: 20,
+        marginHorizontal: 10,
         marginVertical: 5,
         borderRadius: 10,
         shadowColor: "#000",
@@ -73,9 +76,9 @@ export const topUpStyles = (colors = initColors) => StyleSheet.create({
         shadowRadius: 1.41,
         elevation: 2,
         backgroundColor: colors.white,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems:'center',
+        // flexDirection: 'row',
+        // justifyContent: 'space-between',
+        // alignItems:'center',
         paddingHorizontal: 10,
         paddingVertical: 10
     },
@@ -94,5 +97,10 @@ export const topUpStyles = (colors = initColors) => StyleSheet.create({
     filterDateStyle: {
         color: '#ABABAB',
         fontSize: 12,
-    }
+    },
+    accountTitle: {
+        fontSize: 16,
+        color: colors.black,
+    },
+
 })

@@ -30,9 +30,12 @@ export const walletStyles = (colors = initColors) => StyleSheet.create({
     },
     topupButton: {
         width: 105,
-        alignSelf: 'center',
+        // alignSelf: 'center',
+        justifyContent:'center',
+        alignItems:'center',
         borderRadius: 220,
-        height: 45
+        height: 45,
+        backgroundColor: colors.primary
     },
     viewAllRow: {
         flexDirection: 'row',
@@ -54,6 +57,8 @@ export const walletStyles = (colors = initColors) => StyleSheet.create({
     filterButton: {
         width: 90,
         // alignSelf:'center',
+        justifyContent:'center',
+        alignItems:'center',
         borderRadius: 220,
         height: 35,
         marginHorizontal: 5
@@ -80,7 +85,7 @@ export const walletStyles = (colors = initColors) => StyleSheet.create({
         justifyContent: 'space-between',
         alignItems:'center',
         paddingHorizontal: 10,
-        paddingVertical: 10
+        paddingVertical: 15
     },
     svgCircle: {
         height: 25,
