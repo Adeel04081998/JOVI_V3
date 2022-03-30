@@ -2985,14 +2985,14 @@ export default {
         </g>
       </svg>`
   ),
-  hamburgerMenu: (color="#6d51bb") => (`<svg xmlns="http://www.w3.org/2000/svg" width="20.048" height="16.138" viewBox="0 0 20.048 16.138">
+  hamburgerMenu: (color = "#6d51bb") => (`<svg xmlns="http://www.w3.org/2000/svg" width="20.048" height="16.138" viewBox="0 0 20.048 16.138">
     <g id="Icon_feather-menu" data-name="Icon feather-menu" transform="translate(1.5 1.5)">
       <path id="Path_9834" data-name="Path 9834" d="M4.5,18H18.105" transform="translate(-4.5 -11.431)" fill="none" stroke="${color}" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
       <path id="Path_9835" data-name="Path 9835" d="M4.5,9H21.548" transform="translate(-4.5 -9)" fill="none" stroke="${color}" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
       <path id="Path_9836" data-name="Path 9836" d="M4.5,27H14.787" transform="translate(-4.5 -13.862)" fill="none" stroke="${color}" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
     </g>
   </svg>`),
-  hamburgerHome:(color="#6d51bb")=>(`<svg xmlns="http://www.w3.org/2000/svg" width="23.783" height="22.605" viewBox="0 0 23.783 22.605">
+  hamburgerHome: (color = "#6d51bb") => (`<svg xmlns="http://www.w3.org/2000/svg" width="23.783" height="22.605" viewBox="0 0 23.783 22.605">
   <g id="Group_6815" data-name="Group 6815" transform="translate(0.891 -2.787)">
     <g id="_001-home" data-name="001-home" transform="translate(-0.891 2.787)">
       <g id="Group_2268" data-name="Group 2268" transform="translate(0 0)">
@@ -3008,7 +3008,7 @@ export default {
     </g>
   </g>
 </svg>`),
-joviMan:(color="#fff")=>(`<svg xmlns="http://www.w3.org/2000/svg" width="7.468" height="10.688" viewBox="0 0 7.468 10.688">
+  joviMan: (color = "#fff") => (`<svg xmlns="http://www.w3.org/2000/svg" width="7.468" height="10.688" viewBox="0 0 7.468 10.688">
 <g id="Group_35075" data-name="Group 35075" transform="translate(0)">
   <circle id="Ellipse_476" data-name="Ellipse 476" cx="1.508" cy="1.508" r="1.508" transform="translate(2.123 0)" fill="${color}"/>
   <path id="Path_10522" data-name="Path 10522" d="M359.413,107.4h-1.576a.117.117,0,0,0-.117.117v3.041a.118.118,0,0,0,.117.118h1.576a.373.373,0,0,0,.375-.371v-2.532a.373.373,0,0,0-.375-.373Z" transform="translate(-352.319 -104.297)" fill="${color}"/>
@@ -3018,7 +3018,7 @@ joviMan:(color="#fff")=>(`<svg xmlns="http://www.w3.org/2000/svg" width="7.468" 
 </svg>`),
 
 
-    modalClosedIcon: ()=>`<svg xmlns="http://www.w3.org/2000/svg" id="Component_463_1" data-name="Component 463 – 1" width="102.681" height="50.001" viewBox="0 0 102.681 50.001">
+  modalClosedIcon: () => `<svg xmlns="http://www.w3.org/2000/svg" id="Component_463_1" data-name="Component 463 – 1" width="102.681" height="50.001" viewBox="0 0 102.681 50.001">
     <path id="Subtraction_1" data-name="Subtraction 1" d="M-281.319-6753H-381a24.834,24.834,0,0,0,17.667-7.332A24.831,24.831,0,0,0-356-6778a24.844,24.844,0,0,1,1.965-9.731,24.915,24.915,0,0,1,5.358-7.946,24.914,24.914,0,0,1,7.947-5.358A24.844,24.844,0,0,1-331-6803a24.844,24.844,0,0,1,9.731,1.965,24.913,24.913,0,0,1,7.947,5.358,24.916,24.916,0,0,1,5.358,7.946A24.844,24.844,0,0,1-306-6778a25.09,25.09,0,0,0,24.68,25Zm-100,0H-384v-.178a25.421,25.421,0,0,0,2.683.176Z" transform="translate(384 6803)" fill="#fff"/>
     <path id="Icon_ionic-ios-arrow-down" data-name="Icon ionic-ios-arrow-down" d="M12.471,16.264l4.75-4.754a.894.894,0,0,1,1.268,0,.905.905,0,0,1,0,1.272l-5.382,5.386a.9.9,0,0,1-1.238.026L6.449,12.785a.9.9,0,0,1,1.268-1.272Z" transform="translate(65.469 30.429) rotate(180)" fill="#6b6b6b"/>
     <path id="Icon_ionic-ios-arrow-down-2" data-name="Icon ionic-ios-arrow-down" d="M12.471,16.264l4.75-4.754a.894.894,0,0,1,1.268,0,.905.905,0,0,1,0,1.272l-5.382,5.386a.9.9,0,0,1-1.238.026L6.449,12.785a.9.9,0,0,1,1.268-1.272Z" transform="translate(65.469 39.429) rotate(180)" fill="#6b6b6b"/>
@@ -3036,7 +3036,7 @@ joviMan:(color="#fff")=>(`<svg xmlns="http://www.w3.org/2000/svg" width="7.468" 
     <path id="Path_27020" data-name="Path 27020" d="M190.77,6.959V.052c.083,0,.169-.011.255-.011h5.505A1.6,1.6,0,0,1,198,.869q1.727,2.967,3.441,5.942c.022.039.039.081.071.148Z" transform="translate(-177.68 -0.037)" fill="#a3abb4"/>
   </g>
 </svg>`,
-filterDicount:(color="#27c787")=>`<svg id="Group_14002" data-name="Group 14002" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="17.264" height="12.952" viewBox="0 0 17.264 12.952">
+  filterDicount: (color = "#27c787") => `<svg id="Group_14002" data-name="Group 14002" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="17.264" height="12.952" viewBox="0 0 17.264 12.952">
 <defs>
   <clipPath id="clip-path">
     <rect id="Rectangle_19616" data-name="Rectangle 19616" width="17.264" height="12.952" fill="${color}" stroke="${color}" stroke-width="0.2"/>
@@ -3049,4 +3049,103 @@ filterDicount:(color="#27c787")=>`<svg id="Group_14002" data-name="Group 14002" 
   <path id="Path_18326" data-name="Path 18326" d="M224.983,150.607a1.617,1.617,0,1,1-1.623,1.606,1.62,1.62,0,0,1,1.623-1.606m-.544,1.619a.539.539,0,0,0,.535.536.55.55,0,0,0,.541-.536.542.542,0,0,0-.549-.54.528.528,0,0,0-.527.54" transform="translate(-213.319 -143.836)" fill="${color}" stroke="${color}" stroke-width="0.2"/>
 </g>
 </svg>`,
+  SuccesToastIcon: (color = "#27c787") => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="67.999" height="74.62" viewBox="0 0 67.999 74.62">
+  <defs>
+    <filter id="Union_6" x="0" y="0" width="67.999" height="74.62" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Group_43420" data-name="Group 43420" transform="translate(-20 -14)">
+    <g transform="matrix(1, 0, 0, 1, 20, 14)" filter="url(#Union_6)">
+      <path id="Union_6-2" data-name="Union 6" d="M3444.544,6713.153l-1.937-6.979a25.008,25.008,0,1,1,12.018,1.688l-.02.019-6.783,6.212a2,2,0,0,1-3.278-.94Z" transform="translate(-3418 -6652)" fill="#217e3d"/>
+    </g>
+    <path id="Icon_awesome-check" data-name="Icon awesome-check" d="M8.42,22.7.363,14.644a1.24,1.24,0,0,1,0-1.753l1.753-1.753a1.24,1.24,0,0,1,1.753,0L9.3,16.566,20.922,4.94a1.24,1.24,0,0,1,1.753,0l1.753,1.753a1.24,1.24,0,0,1,0,1.753L10.173,22.7A1.24,1.24,0,0,1,8.42,22.7Z" transform="translate(42 34.423)" fill="#fff"/>
+  </g>
+</svg>
+`,
+  WarningToastIcon: () => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="67.999" height="74.62" viewBox="0 0 67.999 74.62">
+<defs>
+  <filter id="Union_6" x="0" y="0" width="67.999" height="74.62" filterUnits="userSpaceOnUse">
+    <feOffset dy="3" input="SourceAlpha"/>
+    <feGaussianBlur stdDeviation="3" result="blur"/>
+    <feFlood flood-opacity="0.161"/>
+    <feComposite operator="in" in2="blur"/>
+    <feComposite in="SourceGraphic"/>
+  </filter>
+</defs>
+<g id="Group_43421" data-name="Group 43421" transform="translate(-20 -121)">
+  <g transform="matrix(1, 0, 0, 1, 20, 121)" filter="url(#Union_6)">
+    <path id="Union_6-2" data-name="Union 6" d="M3444.544,6713.153l-1.937-6.979a25.008,25.008,0,1,1,12.018,1.688l-.02.019-6.783,6.212a2,2,0,0,1-3.278-.94Z" transform="translate(-3418 -6652)" fill="#c57701"/>
+  </g>
+  <path id="Icon_material-warning" data-name="Icon material-warning" d="M1.5,25.7H27.787L14.643,3Zm14.338-3.585h-2.39v-2.39h2.39Zm0-4.779h-2.39V12.559h2.39Z" transform="translate(39.5 136)" fill="#fff"/>
+</g>
+</svg>
+`,
+  ErrorToastIcon: () => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="67.999" height="74.62" viewBox="0 0 67.999 74.62">
+  <defs>
+    <filter id="Union_6" x="0" y="0" width="67.999" height="74.62" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Group_43422" data-name="Group 43422" transform="translate(-20 -228)">
+    <g transform="matrix(1, 0, 0, 1, 20, 228)" filter="url(#Union_6)">
+      <path id="Union_6-2" data-name="Union 6" d="M3444.544,6713.153l-1.937-6.979a25.008,25.008,0,1,1,12.018,1.688l-.02.019-6.783,6.212a2,2,0,0,1-3.278-.94Z" transform="translate(-3418 -6652)" fill="#a40a0a"/>
+    </g>
+    <g id="Group_43401" data-name="Group 43401">
+      <rect id="Rectangle_30033" data-name="Rectangle 30033" width="3" height="10" transform="translate(52 251)" fill="#fff"/>
+      <rect id="Rectangle_30034" data-name="Rectangle 30034" width="3" height="4" transform="translate(52 263)" fill="#fff"/>
+    </g>
+  </g>
+</svg>
+`,
+  InformationToastIcon: () => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="67.999" height="74.62" viewBox="0 0 67.999 74.62">
+  <defs>
+    <filter id="Union_6" x="0" y="0" width="67.999" height="74.62" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Group_43423" data-name="Group 43423" transform="translate(-20 -336)">
+    <g transform="matrix(1, 0, 0, 1, 20, 336)" filter="url(#Union_6)">
+      <path id="Union_6-2" data-name="Union 6" d="M3444.544,6713.153l-1.937-6.979a25.008,25.008,0,1,1,12.018,1.688l-.02.019-6.783,6.212a2,2,0,0,1-3.278-.94Z" transform="translate(-3418 -6652)" fill="#05478a"/>
+    </g>
+    <path id="Icon_awesome-info" data-name="Icon awesome-info" d="M1.041,22.076H2.082V14.559H1.041A1.041,1.041,0,0,1,0,13.518V11.032A1.041,1.041,0,0,1,1.041,9.991H6.869A1.041,1.041,0,0,1,7.91,11.032V22.076H8.95a1.041,1.041,0,0,1,1.041,1.041V25.6A1.041,1.041,0,0,1,8.95,26.643H1.041A1.041,1.041,0,0,1,0,25.6V23.117A1.041,1.041,0,0,1,1.041,22.076ZM5,0A3.747,3.747,0,1,0,8.742,3.747,3.747,3.747,0,0,0,5,0Z" transform="translate(49 353)" fill="#fff"/>
+  </g>
+</svg>
+`,
+  BubblesToastIcon: (color = "#27c787") => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="408" height="50" viewBox="0 0 408 50">
+<defs>
+  <filter id="Rectangle_29820" x="-9" y="-6" width="426" height="68" filterUnits="userSpaceOnUse">
+    <feOffset dy="3" input="SourceAlpha"/>
+    <feGaussianBlur stdDeviation="3" result="blur"/>
+    <feFlood flood-opacity="0.161"/>
+    <feComposite operator="in" in2="blur"/>
+    <feComposite in="SourceGraphic"/>
+  </filter>
+  <clipPath id="clip-path">
+    <g transform="matrix(1, 0, 0, 1, 0, 0)" filter="url(#Rectangle_29820)">
+      <rect id="Rectangle_29820-2" data-name="Rectangle 29820" width="408" height="50" rx="20" transform="translate(10 173)" fill="${color}"/>
+    </g>
+  </clipPath>
+</defs>
+<g id="Mask_Group_38645" data-name="Mask Group 38645" transform="translate(-10 -173)" clip-path="url(#clip-path)">
+  <path id="Union_5" data-name="Union 5" d="M3427,6726.2c0-15.9,21.937-28.8,49-28.8a82.831,82.831,0,0,1,10.032.6,6.028,6.028,0,0,1,11.83,1.669,6.144,6.144,0,0,1-.044.732c16.112,4.716,27.182,14.494,27.182,25.791,0,15.9-21.937,28.8-49,28.8S3427,6742.107,3427,6726.2Zm33.546-38.363a7.161,7.161,0,1,1,7.161,7.2A7.181,7.181,0,0,1,3460.547,6687.84Zm38.054-4.168a5.277,5.277,0,1,1,5.276,5.3A5.29,5.29,0,0,1,3498.6,6683.671Zm-20.355-6.062a3.016,3.016,0,1,1,3.016,3.031A3.025,3.025,0,0,1,3478.246,6677.609Zm-12.045-18.094a1.507,1.507,0,1,1,1.507,1.516A1.512,1.512,0,0,1,3466.2,6659.515Z" transform="translate(-3442 -6488)" fill="${color}"/>
+</g>
+</svg>
+`,
+  CrossToastIcon: (color = "#27c787") => `<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10">
+<path id="Icon_ionic-md-close" data-name="Icon ionic-md-close" d="M17.523,8.523l-1-1-4,4-4-4-1,1,4,4-4,4,1,1,4-4,4,4,1-1-4-4Z" transform="translate(-7.523 -7.523)" fill="#fff"/>
+</svg>
+`,
 }

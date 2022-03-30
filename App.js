@@ -1,9 +1,10 @@
 import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
 import React, { useEffect } from 'react';
-import { LogBox, Platform, StatusBar, StyleSheet, useColorScheme } from 'react-native';
+import { LogBox, Platform, StatusBar, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
 import CodePush from "react-native-code-push"; //for codepush
 import Geolocation from 'react-native-geolocation-service';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SvgXml } from "react-native-svg";
 import Toast, { BaseToast } from 'react-native-toast-message';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -17,7 +18,9 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import { useDispatch, useSelector } from 'react-redux';
+import { pkgConf } from "yargs";
 import RNSplashScreen from './NativeModules/RNSplashScreen';
+import svgs from "./src/assets/svgs";
 import BottomAllignedModal from './src/components/atoms/BottomAllignedModal';
 import NoInternetModal from "./src/components/atoms/NoInternetModal";
 import { _toastRef } from "./src/components/atoms/Toast";
@@ -29,6 +32,7 @@ import { postRequest } from './src/manager/ApiManager';
 import RootStack from "./src/navigations";
 import { _NavgationRef } from './src/navigations/NavigationService';
 import actions from './src/redux/actions';
+import constants from "./src/res/constants";
 import AppTheme from './src/res/theme';
 import { env } from './src/utils/configs';
 import ENUMS from "./src/utils/ENUMS";
@@ -139,33 +143,68 @@ const App = () => {
         "[react-native-gesture-handler] Seems like you\'re using an old API with gesture components, check out new Gestures system!",
     ]);
     navigator.geolocation = Geolocation;
+    const RenderToastTypeIcon = (uri, color) => {
+        return (
+            <View style={{}}>
+
+                <SvgXml
+                    xml={uri}
+                    style={{ position: 'absolute', bottom: 35, }}
+                />
+                <SvgXml
+                    xml={svgs.BubblesToastIcon(color)}
+                    style={{ position: 'absolute', bottom: 1, left: -6 }}
+
+
+                />
+
+            </View>
+        )
+    }
+    const renderToastCrossUi = () => {
+        return (
+            <TouchableOpacity onPress={() => { Toast.hide() }} style={{ right: 15, justifyContent: "center" }}>
+                <SvgXml
+                    xml={svgs.CrossToastIcon()}
+                    height={40}
+                />
+            </TouchableOpacity>
+        )
+    }
     const toastConfig = {
         success: ({ text1, ...rest }) => {
             if (!(rest.text2)) return
             return <BaseToast
                 text1NumberOfLines={10}
-                text2NumberOfLines={10}
+                text2NumberOfLines={5}
                 {...rest}
-                style={{ borderLeftColor: colors.green, height: 'auto', minHeight: 50, padding: 5 }}
-                contentContainerStyle={{ paddingHorizontal: 15, }}
+                style={{ borderLeftColor: '#42C757', minHeight: Platform.OS === 'android' ? 70 : 50, width: constants.window_dimensions.width - 15, top: constants.screen_dimensions.height / (Platform.OS === 'android' ? "95" : "20"), backgroundColor: '#42C757', borderRadius: 20, }}
+                contentContainerStyle={{ paddingHorizontal: 65 }}
                 text1Style={{ fontWeight: "900", fontSize: 14 }}
+                text2Style={{ color: 'white', fontSize: 14 }}
                 text1={text1}
                 text2={rest.text2}
                 onTrailingIconPress={() => Toast.hide()}
+                renderLeadingIcon={() => { return (RenderToastTypeIcon(svgs.SuccesToastIcon(), "#217E3D")) }}
+                renderTrailingIcon={() => { return (renderToastCrossUi()) }}
             />
         },
         error: ({ text1, ...rest }) => {
             if (!(rest.text2)) return
             return <BaseToast
                 text1NumberOfLines={10}
-                text2NumberOfLines={20}
+                text2NumberOfLines={5}
                 {...rest}
-                style={{ borderLeftColor: colors.redColor, height: 'auto', minHeight: 50, padding: 5 }}
-                contentContainerStyle={{ paddingHorizontal: 15, }}
+                style={{ borderLeftColor: '#D80D0D', top: constants.screen_dimensions.height / (Platform.OS === 'android' ? "95" : "20"), minHeight: Platform.OS === 'android' ? 70 : 50, width: constants.window_dimensions.width - 15, backgroundColor: '#D80D0D', borderRadius: 20 }}
+                contentContainerStyle={{ paddingHorizontal: 65 }}
                 text1Style={{ fontWeight: '900', fontSize: 14 }}
+                text2Style={{ color: 'white', fontSize: 14, }}
+
                 text1={text1}
                 text2={rest.text2}
                 onTrailingIconPress={() => Toast.hide()}
+                renderLeadingIcon={() => { return (RenderToastTypeIcon(svgs.ErrorToastIcon(), "#a40a0a")) }}
+                renderTrailingIcon={() => { return (renderToastCrossUi()) }}
             />
         }
         ,
@@ -173,16 +212,36 @@ const App = () => {
             if (!(rest.text2)) return
             return <BaseToast
                 text1NumberOfLines={10}
-                text2NumberOfLines={20}
+                text2NumberOfLines={4}
                 {...rest}
-                style={{ borderLeftColor: colors.blueColor, height: 'auto', minHeight: 50, padding: 5 }}
-                contentContainerStyle={{ paddingHorizontal: 15, }}
+                style={{ borderLeftColor: '#0070E0', top: constants.screen_dimensions.height / (Platform.OS === 'android' ? "95" : "20"), minHeight: Platform.OS === 'android' ? 70 : 50, width: constants.window_dimensions.width - 15, backgroundColor: '#0070E0', borderRadius: 20 }}
+                contentContainerStyle={{ paddingHorizontal: 65, }}
                 text1Style={{ fontWeight: '900', fontSize: 14 }}
+                text2Style={{ color: 'white', fontSize: 14 }}
                 text1={text1}
                 text2={rest.text2}
                 onTrailingIconPress={() => Toast.hide()}
+                renderLeadingIcon={() => { return (RenderToastTypeIcon(svgs.InformationToastIcon(), "#05478a")) }}
+                renderTrailingIcon={() => { return (renderToastCrossUi()) }}
             />
-        }
+        },
+        warning: ({ text1, ...rest }) => {
+            if (!(rest.text2)) return
+            return <BaseToast
+                text1NumberOfLines={10}
+                text2NumberOfLines={4}
+                {...rest}
+                style={{ borderLeftColor: '#F79C0B', top: constants.screen_dimensions.height / (Platform.OS === 'android' ? "95" : "20"), minHeight: Platform.OS === 'android' ? 70 : 50, width: constants.window_dimensions.width - 15, backgroundColor: '#F79C0B', borderRadius: 20 }}
+                contentContainerStyle={{ paddingHorizontal: 65, }}
+                text1Style={{ fontWeight: '900', fontSize: 14 }}
+                text2Style={{ color: 'white', fontSize: 14 }}
+                text1={text1}
+                text2={rest.text2}
+                onTrailingIconPress={() => Toast.hide()}
+                renderLeadingIcon={() => { return (RenderToastTypeIcon(svgs.WarningToastIcon(), "#c57701")) }}
+                renderTrailingIcon={() => { return (renderToastCrossUi()) }}
+            />
+        },
 
     };
     if (!state.appLoaded) return null;
