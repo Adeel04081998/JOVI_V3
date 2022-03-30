@@ -242,7 +242,7 @@ export default () => {
                     </View>
                 </View>
                 <View style={{ width: '20%' }} >
-                    <SvgXml xml={isOrder ? svgs.redArrow() : svgs.greenArrow()} />
+                    <SvgXml xml={isOrder ? svgs.redArrow() : svgs.greenArrow()} style={{alignSelf:'center'}} />
                     <Text numberOfLines={1} fontFamily="PoppinsMedium" style={styles.filterTypeStyle} >Rs. {isOrder && '-'}{item.amount}</Text>
                 </View>
             </View>

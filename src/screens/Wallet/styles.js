@@ -88,10 +88,10 @@ export const walletStyles = (colors = initColors) => StyleSheet.create({
         paddingVertical: 15
     },
     svgCircle: {
-        height: 25,
-        width: 25,
+        height: 26,
+        width: 26,
         backgroundColor: '#E2E2E2',
-        borderRadius: 25 / 2,
+        borderRadius: 26 / 2,
         justifyContent: 'center',
         alignItems: 'center'
     },
