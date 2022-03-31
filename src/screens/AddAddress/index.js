@@ -46,6 +46,10 @@ export default (props) => {
     const scrollRef = useRef(null)
     const dispatch = useDispatch()
     const finalDestinationObj = props?.route?.params?.finalDestObj ?? {};
+    const fromScreenIndex = props?.route?.params?.index ?? null
+    console.log('fromScreenIndex', fromScreenIndex);
+    console.log('props?.route?.params', props?.route?.params);
+
     let initState = {
         "inputs": [
             {
@@ -121,11 +125,35 @@ export default (props) => {
             BackHandler.removeEventListener("hardwareBackPress", backAction);
     }, []);
 
-    // React.useEffect(() => {
-    //     setTimeout(() => {
-    //         scrollRef.current.scrollTo({y:90})
-    //     }, 200);
-    // }, [state.isOtherPressed])
+    React.useEffect(() => {
+        if (props.route) {
+            if (props.route.params !== null && props.route.params !== undefined) {
+                if (fromScreenIndex === 4) {
+                    if (finalDestinationObj?.note) inputs[2].val = finalDestinationObj?.note
+                    if (finalDestinationObj?.house) inputs[2].val = finalDestinationObj?.house
+                    if (finalDestinationObj?.street) inputs[2].val = finalDestinationObj?.street
+                    if (finalDestinationObj?.addressType === parseInt(AddressTypeEnum[5].value)) {
+                        inputs[3].val = finalDestinationObj?.addressTypeStr
+                        inputs[3].shown = true
+                    }
+                    let modifiedArray = addressTypeList.map((item, index) => {
+                        if (item.key === finalDestinationObj.addressType.toString()) {
+                            return { ...item, selected: true }
+                        } else {
+                            return { ...item }
+                        }
+                    })
+                    setState(pre => ({
+                        ...pre,
+                        addressTypeList: modifiedArray,
+
+                    }))
+                }
+
+            }
+        }
+    }, [props.route]);
+
 
     const IS_DISABLED = () => {
         let addressType = addressTypeList.find(x => x.selected === true);
@@ -151,10 +179,12 @@ export default (props) => {
                         "longitude": props.route?.params?.finalDestObj.longitude,
                         "latitudeDelta": LATITUDE_DELTA,
                         "longitudeDelta": LONGITUDE_DELTA,
-                        "note": inputs[2].val.trim(),
+                        "note": inputs[2].val.trim() ?? '',
                         "city": props.route?.params?.finalDestObj.city,
-                        "addressType": addressType[0]?.key || '',
-                        "addressTypeStr": inputs[3].val.trim() || ''
+                        "addressType": addressType[0]?.key ?? '',
+                        "addressTypeStr": inputs[3].val.trim() ?? '',
+                        "house": inputs[1].val.trim() ?? '',
+                        "street": inputs[0].val.trim() ?? '',
                     },
                     res => {
                         console.log("ADDorUPDATE ADDRESS.RESPONSE", res);
@@ -178,15 +208,7 @@ export default (props) => {
                 );
 
             }, (error) => {
-                console.log(((error?.response) ? error.response : {}), error);
-                if (error?.data?.statusCode === 417) {
-                    if (error.areaLock) { } else {
-                        error?.data?.message && Toast.error(error?.data?.message);
-                    }
-                }
-                else {
-                    Toast.error('An Error Occurred!');
-                }
+                sharedExceptionHandler(error)
             })
 
     }
@@ -256,7 +278,7 @@ export default (props) => {
                         NavigationService.NavigationActions.stack_actions.pop(1);
                     }} />
                 <View style={styles.modalView} >
-                    <KeyboardAwareScrollView ref={scrollRef} contentContainerStyle={{ flexGrow: 1}} >
+                    <KeyboardAwareScrollView ref={scrollRef} contentContainerStyle={{ flexGrow: 1 }} >
 
                         <Text style={styles.mainText} fontFamily="PoppinsMedium" >Your current location</Text>
                         <View style={styles.inputContainer}>
@@ -317,7 +339,7 @@ export default (props) => {
                             fontSize: 16,
                             fontFamily: FontFamily.Poppins.Regular
                         }}
-                        style={{ width: WIDTH * 0.9, alignSelf: 'center',marginVertical:5 }}
+                        style={{ width: WIDTH * 0.9, alignSelf: 'center', marginVertical: 5 }}
                     />
                 </View>
             </View>
