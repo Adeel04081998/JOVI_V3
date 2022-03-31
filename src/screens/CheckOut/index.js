@@ -40,9 +40,7 @@ const IMAGE_SIZE = constants.window_dimensions.width * 0.3;
 export default () => {
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED['10']], Appearance.getColorScheme() === "dark");
     const checkOutStyles = StyleSheet.styles(colors)
-    const cartReducer = useSelector(store => store.cartReducer);
-    console.log("cartReducer", cartReducer);
-    const userReducer = useSelector(store => store.userReducer);
+    const { userReducer, cartReducer } = useSelector(store => ({ userReducer: store.userReducer, cartReducer: store.cartReducer }));
     const totalPitstop = cartReducer.pitstops.length ?? ""
     const estimatedDeliveryTime = cartReducer.orderEstimateTime || ""
     const [vouchersList, setVouchersList] = useState([])
@@ -54,9 +52,11 @@ export default () => {
     const walletAmount = userReducer.balance || 0;
     const instructionForRider = GV.RIDER_INSTRUCTIONS.current;
     const [state, setState] = React.useState({
-        chargeBreakdown: null,
+        chargeBreakdown: cartReducer.chargeBreakdown,
         isLoading: false,
     });
+    console.log("[Checkout] cartReducer", cartReducer);
+
 
     // const estimateServiceCharge = () => {
     //     let payload = newJoviPitstop ? {
@@ -352,14 +352,14 @@ export default () => {
         )
     }
 
-    React.useEffect(() => {
-        sharedGetServiceCharges(null, (res) => {
-            setState(pre => ({
-                ...pre,
-                chargeBreakdown: res.data.chargeBreakdown,
-            }));
-        });
-    }, []);
+    // React.useEffect(() => {
+    //     sharedGetServiceCharges(null, (res) => {
+    //         setState(pre => ({
+    //             ...pre,
+    //             chargeBreakdown: res.data.chargeBreakdown,
+    //         }));
+    //     });
+    // }, []);
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }} >
             <CustomHeader

@@ -44,7 +44,7 @@ const BottomLine = () => (
 
 // }
 export default () => {
-  const cartReducer = useSelector(store => store.cartReducer);
+  const { cartReducer } = useSelector(store => ({ cartReducer: store.cartReducer }));
   const dispatch = useDispatch();
   console.log('[CART_SCREEN] cartReducer', cartReducer);
   const [expanded, setExpanded] = React.useState([0]);
@@ -54,11 +54,12 @@ export default () => {
     Appearance.getColorScheme() === 'dark',
   );
   const cartStyles = stylesheet.styles(colors);
+
   React.useEffect(() => {
     sharedGetServiceCharges()
   }, [])
   const incDecDelHandler = (pitstopDetails, pitstopIndex = null, isDeletePitstop = false) => {
-    sharedAddUpdatePitstop({ ...pitstopDetails }, isDeletePitstop, [], false, true);
+    sharedAddUpdatePitstop({ ...pitstopDetails }, isDeletePitstop, [], false, true, null, false, true);
   };
   const expandCollapeHanlder = (idx) => {
     let _list = [...expanded];
@@ -342,7 +343,7 @@ export default () => {
 
             <Text style={{ color: colors.black, fontSize: 12 }} numberOfLines={1}>
               {
-                pitstopType === PITSTOP_TYPES.RESTAURANT ? product?.selectedOptions?.map(obj => obj.tittle).join(", ") : description
+                pitstopType === PITSTOP_TYPES.RESTAURANT ? product?.selectedOptions?.map(obj => `${obj.tittle} (Rs. ${obj.optionPrice})`).join(", ") : description
               }
             </Text>
             <Text
@@ -374,9 +375,9 @@ export default () => {
                 initialQuantity={quantity}
                 colors={dynamiColors}
                 outOfStock={false}
-                textSize={18}
-                size={100}
-                cardSize={100}
+                textSize={quantity ? 18 : 18}
+                size={quantity ? 100 : 18}
+                cardSize={quantity ? 100 : 18}
                 updateQuantity={(quantity) => {
                   incDecDelHandler(quantity)
                 }}
@@ -409,8 +410,9 @@ export default () => {
     };
     return (
       <View style={{ paddingHorizontal: 10 }}>
-        {row('Subtotal', sharedCalculatedTotals().subTotal, true)}
-        {sharedCalculatedTotals().discount ? row('Discount', `- ${sharedCalculatedTotals().discount}`) : null}
+        {row(`Subtotal (Inc GST ${sharedCalculatedTotals().gst})`, sharedCalculatedTotals().subTotal, false)}
+        {/* {row('GST', sharedCalculatedTotals().gst)} */}
+        {sharedCalculatedTotals().discount ? row('Total Discount', `- ${sharedCalculatedTotals().discount}`) : null}
         {row(`Service Charges (Incl S.T ${sharedCalculatedTotals().serviceTax})`, sharedCalculatedTotals().serviceCharges)}
         <BottomLine />
         {row('Total', sharedCalculatedTotals().total, true)}
@@ -451,9 +453,10 @@ export default () => {
           }
           updateData={(newData) => {
             // setData(newData) 
-            if (expanded.length === 1) {
-              expandCollapeHanlder(expanded.findIndex(x => x))
-            }
+            // if (expanded.length === 1) {
+            //   expandCollapeHanlder(expanded.findIndex(x => x))
+            // }
+            sharedGetServiceCharges();
             sharedAddUpdatePitstop(null, false, newData)
           }}
           ListFooterComponent={<View>
@@ -497,8 +500,10 @@ export default () => {
                     {
                       text: "Yes",
                       onPress: () => {
-                        NavigationService.NavigationActions.common_actions.goBack();
                         dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
+                        setTimeout(() => {
+                          NavigationService.NavigationActions.common_actions.goBack();
+                        }, 0);
                       }
                     },
                   ],

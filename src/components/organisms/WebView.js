@@ -8,6 +8,7 @@ import CustomHeader from '../molecules/CustomHeader';
 export default ({ screenStyles = {}, route }) => {
     const html = route?.params?.html;
     const title = route?.params?.title;
+    const uri = route?.params?.uri;
     return (
         <View style={{ flex: 1, flexDirection: 'column' }}>
             <CustomHeader 

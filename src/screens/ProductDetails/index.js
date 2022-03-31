@@ -183,7 +183,7 @@ export default (props) => {
         const discountAmount = generalProductOrDealDetail.itemDiscount;
         const joviDiscountRate = generalProductOrDealDetail.joviDiscount ?? 0;
         let totalAmountWithoutGst = totalAddOnPrice + generalProductOrDealDetail.itemPrice;
-        let totalDiscount = discountAmount > 0 ? totalAmountWithoutGst * (discountAmount / 100) : 0;
+        let totalDiscount = discountAmount > 0 ? Math.round(totalAmountWithoutGst * (discountAmount / 100)) : 0;
         let totalJoviDiscount = 0;
         let discountedPriceWithoutGstWithoutJovi = discountTypeCallbacks[1](totalAmountWithoutGst, discountAmount);
         let discountedPriceWithoutGst = discountedPriceWithoutGstWithoutJovi;
@@ -192,7 +192,7 @@ export default (props) => {
             discountedPriceWithoutGst = totalJoviDiscount > discountedPriceWithoutGst ? discountedPriceWithoutGst : discountedPriceWithoutGst - totalJoviDiscount;
         }
         const totalGst = Math.round(((generalProductOrDealDetail.gstPercentage / 100) * totalAmountWithoutGst));
-        let discountedPriceWithGst = discountedPriceWithoutGst + totalGst;
+        let discountedPriceWithGst = Math.round(discountedPriceWithoutGst + totalGst);
         const totalPriceWithoutDiscount = discountedPriceWithGst + totalDiscount;
         // console.log('discountedPrice', totalAmountWithoutGst, discountedPriceWithoutGst, (totalAddOnPrice + generalProductOrDealDetail.itemPrice) * 0.2, (totalAddOnPrice + generalProductOrDealDetail.itemPrice) - ((20 / 100) * (totalAddOnPrice + generalProductOrDealDetail.itemPrice)));
         setState(pre => ({
@@ -211,7 +211,6 @@ export default (props) => {
             }
         }));
     }
-
     const addToCartHandler = () => {
         let dataToSend = {
             pitstopType,
@@ -226,11 +225,14 @@ export default (props) => {
                 _itemPrice: state.discountedPriceWithGst,
                 _totalGst: state.totalGst,
                 _totalDiscount: state.totalDiscount,
+                _totalJoviDiscount: state.totalJoviDiscount,
+                // _priceForSubtotals: generalProductOrDealDetail.discountType > 0 ? state.discountedPriceWithGst : state.totalPriceWithoutDiscount,
+                _priceForSubtotals: state.totalPriceWithoutDiscount,
                 totalAddOnPrice,
                 actionKey: propItem.pitStopItemID ? "pitStopItemID" : "pitStopDealID",
                 estimatePrepTime: pitstopType === PITSTOP_TYPES.RESTAURANT ? generalProductOrDealDetail.estimateTime : "",
                 totalJoviDiscount: state.totalJoviDiscount,
-                ...!optionsListArr.length ? { ...sharedAddToCartKeys(null, state.generalProductOrDealDetail).item } : {},
+                ...!selectedOptions.length ? { ...sharedAddToCartKeys(null, { ...state.generalProductOrDealDetail, pitstopType }).item } : {},
 
             },
             vendorDetails: {
@@ -239,16 +241,16 @@ export default (props) => {
         }
         setState((pre) => ({
             ...pre,
-            selectedOptions: [],
-            totalAddOnPrice: 0,
-            itemCount: 1,
             addToCardAnimation: true,
-            notes: "",
-            discountedPriceWithGst: 0,
-            totalPriceWithoutDiscount: 0,
-            totalAddOnPrice: 0,
-            totalDiscount: 0,
-            totalGst: 0,
+            // selectedOptions: [],
+            // totalAddOnPrice: 0,
+            // itemCount: 1,
+            // notes: "",
+            // discountedPriceWithGst: 0,
+            // totalPriceWithoutDiscount: 0,
+            // totalAddOnPrice: 0,
+            // totalDiscount: 0,
+            // totalGst: 0,
         }));
         // sharedAddUpdatePitstop(dataToSend, false, [], true, false, () => { }, true)
 

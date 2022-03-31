@@ -115,7 +115,7 @@ export default (props) => {
     }
     locationHandler();
     getCurrentPosition()
-  }, [ready]);
+  }, []);
 
 
 
