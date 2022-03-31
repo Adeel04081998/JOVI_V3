@@ -15,6 +15,7 @@ import ImageCarousel from '../../components/molecules/ImageCarousel';
 import { sharedExceptionHandler, sharedOrderNavigation, uniqueKeyExtractor } from "../../helpers/SharedActions";
 import { getRequest } from "../../manager/ApiManager";
 import Endpoints from "../../manager/Endpoints";
+import ROUTES from "../../navigations/ROUTES";
 import ReduxActions from '../../redux/actions';
 import theme from "../../res/theme";
 import GV from "../../utils/GV";
@@ -190,7 +191,11 @@ export default () => {
                     </KeyboardAwareScrollView>
                 </Animated.View>}
             </SafeAreaView>
-            <RenderBottomBarComponent showCategories />
+            <RenderBottomBarComponent showCategories bottomBarComponentProps={
+                {
+                    screenName: ROUTES.APP_DRAWER_ROUTES.Home.screen_name,
+                }
+            } />
         </View>
     );
 };

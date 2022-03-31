@@ -32,6 +32,7 @@ interface BottomBarItem {
     customComponent?: () => void;
     notification?: boolean;
     notificationCount?: number;
+    screen_name?: string;
 }
 
 type Props = React.ComponentProps<typeof View> & {
@@ -278,7 +279,7 @@ const BottomBarComponent = (props: Props) => {
         const iconType = VALIDATION_CHECK(item?.iconType ?? '') ? item.iconType : 'Ionicons';
         const iconSize = VALIDATION_CHECK(item?.iconSize ?? '') ? item.iconSize : 22;
         // const isActive = (item?.key ?? '') === activeRoute;
-        const isActive = item.id === 1 ? true : false;
+        const isActive = item.screen_name === props.screenName ? true : false;
         const iconColor = isActive ? colors.primary : VALIDATION_CHECK(item?.iconColor ?? '') ? item.iconType : '#A3ABB4';
         const notificationSize = 18;
         return (

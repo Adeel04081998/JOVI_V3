@@ -13,13 +13,17 @@ import ROUTES from '../../../navigations/ROUTES';
 import preference_manager from '../../../preference_manager';
 import { useSelector } from 'react-redux';
 
-export default React.memo(({ homeStyles, showCategories = false }) => {
+export default React.memo(({ homeStyles, showCategories = false, bottomBarComponentProps = {} }) => {
     const userReducer = useSelector(state => state.userReducer);
     const ordersCount = (userReducer?.openOrders ?? []).length;
     return (
         <BottomBarComponent
             showCategories={showCategories}
-            leftData={[{ id: 1, iconName: "home", title: "Home" }, {
+            leftData={[{
+                id: 1, iconName: "home", title: "Home", screen_name: ROUTES.APP_DRAWER_ROUTES.Home.screen_name, onPress: () => {
+                    NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
+                }
+            }, {
                 id: 2, iconType: 'MaterialCommunityIcons', iconName: "ticket-percent-outline", title: "Promo", onPress: () => {
                     NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.GoodyBag.screen_name);
                 }
@@ -40,7 +44,7 @@ export default React.memo(({ homeStyles, showCategories = false }) => {
                     id: 4, iconType: "Ionicons", iconName: "wallet", title: "Wallet", onPress: () => {
                         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Wallet.screen_name);
                     }
-                }]} />
+                }]} {...bottomBarComponentProps} />
     )
 }, (prevProps, nextProps) => prevProps !== nextProps)
 // }, (prevProps, nextProps) => prevProps !== nextProps)
