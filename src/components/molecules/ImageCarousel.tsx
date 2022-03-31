@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import {
   Animated, Dimensions,
-  FlatList, ImageStyle, StyleProp,
+  FlatList, ImageStyle, ListRenderItem, StyleProp,
   StyleSheet, TouchableOpacity, TouchableWithoutFeedback,
   View,
   ViewStyle
@@ -40,6 +40,13 @@ interface ImageCarouselProps {
   theme: Object;
   onPress?: (item: any, index: any) => void;
   onLoadEnd?: (item: any, index: any) => void;
+  renderItem: ListRenderItem<any> | null | undefined;
+  contentContainerStyle?: StyleProp<ViewStyle>;
+  style?: StyleProp<ViewStyle>;
+  columnWrapperStyle?: StyleProp<ViewStyle>;
+
+
+
 }
 const defaultProps = {
   autoPlay: false,
@@ -60,7 +67,11 @@ const defaultProps = {
   uriKey: "",
   theme: {},
   onPress: undefined,
-  onLoadEnd: undefined
+  onLoadEnd: undefined,
+  renderItem: undefined,
+  contentContainerStyle: undefined,
+  style: undefined,
+  columnWrapperStyle: undefined,
 };
 
 let timer: any = null;
@@ -210,9 +221,13 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
         ref={flatListRef}
         data={[...dataWithPlaceholders,]}
         // extraData={metaData}
-
-        renderItem={({ item, index }) => {
-
+        contentContainerStyle={props.contentContainerStyle}
+        style={props.style}
+        columnWrapperStyle={props.columnWrapperStyle}
+        renderItem={({ item, index, separators }) => {
+          if (props.renderItem) {
+            return props.renderItem({ item, index, separators })
+          }
           if (VALIDATION_CHECK(item?.uri ?? props?.uriKey ?? '') === false) {
             return <View />;
           }

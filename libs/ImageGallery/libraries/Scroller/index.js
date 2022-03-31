@@ -5,7 +5,7 @@
  */
 
 import ViscousFluidInterpolator from './ViscousFluidInterpolator';
-import {currentAnimationTimeMillis} from './AnimationUtils';
+import { currentAnimationTimeMillis } from './AnimationUtils';
 
 /**
  * The coefficient of friction applied to flings/scrolls.
@@ -64,7 +64,7 @@ const GRAVITY_EARTH = 9.80665;
     SPLINE_POSITION[NB_SAMPLES] = SPLINE_TIME[NB_SAMPLES] = 1.0;
 })();
 
-function signum (number) {
+function signum(number) {
     if (isNaN(number)) {
         return NaN;
     }
@@ -78,16 +78,16 @@ function signum (number) {
 }
 
 export default class Scroller {
-  /**
-   *
-   * @param flywheel specify whether or not to support progressive "flywheel" behavior in flinging.
-   */
-    constructor (flywheel, onScrollCallback) {
+    /**
+     *
+     * @param flywheel specify whether or not to support progressive "flywheel" behavior in flinging.
+     */
+    constructor(flywheel, onScrollCallback) {
         this.mCurrX = 0;
         this.mCurrY = 0;
         this.mFinished = true;
         this.mInterpolator = ViscousFluidInterpolator;
-    // this.mPpi = PixelRatio.get() * 160;
+        // this.mPpi = PixelRatio.get() * 160;
         this.mPpi = 160;
         this.mDeceleration = this.computeDeceleration(SCROLL_FRICTION);
         this.mFlywheel = flywheel;
@@ -98,48 +98,48 @@ export default class Scroller {
         this.onScrollCallback = onScrollCallback;
     }
 
-    computeDeceleration (friction) {
+    computeDeceleration(friction) {
         return GRAVITY_EARTH * 39.37 * this.mPpi * friction;
     }
 
-  /**
-   * Returns whether the scroller has finished scrolling.
-   * @returns {Boolean} True if the scroller has finished scrolling, false otherwise.
-   */
-    isFinished () {
+    /**
+     * Returns whether the scroller has finished scrolling.
+     * @returns {Boolean} True if the scroller has finished scrolling, false otherwise.
+     */
+    isFinished() {
         return this.mFinished;
     }
 
-  /**
-   * Force the finished field to a particular value.
-   * @param finished The new finished value.
-   */
-    forceFinished (finished) {
+    /**
+     * Force the finished field to a particular value.
+     * @param finished The new finished value.
+     */
+    forceFinished(finished) {
         this.mFinished = finished;
     }
 
-  /**
-   * Returns the current X offset in the scroll.
-   * @returns {*} The new X offset as an absolute distance from the origin.
-   */
-    getCurrX () {
+    /**
+     * Returns the current X offset in the scroll.
+     * @returns {*} The new X offset as an absolute distance from the origin.
+     */
+    getCurrX() {
         return this.mCurrX;
     }
 
-  /**
-   * Returns the current Y offset in the scroll.
-   * @returns {*} The new Y offset as an absolute distance from the origin.
-   */
-    getCurrY () {
+    /**
+     * Returns the current Y offset in the scroll.
+     * @returns {*} The new Y offset as an absolute distance from the origin.
+     */
+    getCurrY() {
         return this.mCurrY;
     }
 
-    getCurrVelocity () {
+    getCurrVelocity() {
         return this.mMode === FLING_MODE ?
-      this.mCurrVelocity : this.mVelocity - this.mDeceleration * this.timePassed() / 2000.0;
+            this.mCurrVelocity : this.mVelocity - this.mDeceleration * this.timePassed() / 2000.0;
     }
 
-    computeScrollOffset () {
+    computeScrollOffset() {
         if (this.mFinished) {
             this.onScrollCallback && this.onScrollCallback(0, 0, this);
             return false;
@@ -149,42 +149,42 @@ export default class Scroller {
 
         if (timePassed < this.mDuration) {
             switch (this.mMode) {
-            case SCROLL_MODE:
-                let x = this.mInterpolator.getInterpolation(timePassed * this.mDurationReciprocal);
-                this.mCurrX = this.mStartX + Math.round(x * this.mDeltaX);
-                this.mCurrY = this.mStartY + Math.round(x * this.mDeltaY);
-                break;
-            case FLING_MODE:
-                let t = timePassed / this.mDuration;
-                let index = parseInt(NB_SAMPLES * t);
-                let distanceCoef = 1;
-                let velocityCoef = 0;
-                if (index < NB_SAMPLES) {
-                    let t_inf = index / NB_SAMPLES;
-                    let t_sup = (index + 1) / NB_SAMPLES;
-                    let d_inf = SPLINE_POSITION[index];
-                    let d_sup = SPLINE_POSITION[index + 1];
-                    velocityCoef = (d_sup - d_inf) / (t_sup - t_inf);
-                    distanceCoef = d_inf + (t - t_inf) * velocityCoef;
-                }
+                case SCROLL_MODE:
+                    let x = this.mInterpolator.getInterpolation(timePassed * this.mDurationReciprocal);
+                    this.mCurrX = this.mStartX + Math.round(x * this.mDeltaX);
+                    this.mCurrY = this.mStartY + Math.round(x * this.mDeltaY);
+                    break;
+                case FLING_MODE:
+                    let t = timePassed / this.mDuration;
+                    let index = parseInt(NB_SAMPLES * t);
+                    let distanceCoef = 1;
+                    let velocityCoef = 0;
+                    if (index < NB_SAMPLES) {
+                        let t_inf = index / NB_SAMPLES;
+                        let t_sup = (index + 1) / NB_SAMPLES;
+                        let d_inf = SPLINE_POSITION[index];
+                        let d_sup = SPLINE_POSITION[index + 1];
+                        velocityCoef = (d_sup - d_inf) / (t_sup - t_inf);
+                        distanceCoef = d_inf + (t - t_inf) * velocityCoef;
+                    }
 
-                this.mCurrVelocity = velocityCoef * this.mDistance / this.mDuration * 1000;
+                    this.mCurrVelocity = velocityCoef * this.mDistance / this.mDuration * 1000;
 
-                this.mCurrX = this.mStartX + Math.round(distanceCoef * (this.mFinalX - this.mStartX));
-          // Pin to mMinX <= mCurrX <= mMaxX
-          // this.mCurrX = Math.min(this.mCurrX, this.mMaxX);
-          // this.mCurrX = Math.max(this.mCurrX, this.mMinX);
+                    this.mCurrX = this.mStartX + Math.round(distanceCoef * (this.mFinalX - this.mStartX));
+                    // Pin to mMinX <= mCurrX <= mMaxX
+                    // this.mCurrX = Math.min(this.mCurrX, this.mMaxX);
+                    // this.mCurrX = Math.max(this.mCurrX, this.mMinX);
 
-                this.mCurrY = this.mStartY + Math.round(distanceCoef * (this.mFinalY - this.mStartY));
-          // Pin to mMinY <= mCurrY <= mMaxY
-                this.mCurrY = Math.min(this.mCurrY, this.mMaxY);
-                this.mCurrY = Math.max(this.mCurrY, this.mMinY);
+                    this.mCurrY = this.mStartY + Math.round(distanceCoef * (this.mFinalY - this.mStartY));
+                    // Pin to mMinY <= mCurrY <= mMaxY
+                    this.mCurrY = Math.min(this.mCurrY, this.mMaxY);
+                    this.mCurrY = Math.max(this.mCurrY, this.mMinY);
 
-                if (this.mCurrX == this.mFinalX && this.mCurrY == this.mFinalY) {
-                    this.mFinished = true;
-                }
+                    if (this.mCurrX == this.mFinalX && this.mCurrY == this.mFinalY) {
+                        this.mFinished = true;
+                    }
 
-                break;
+                    break;
             }
         } else {
             this.mCurrX = this.mFinalX;
@@ -206,7 +206,7 @@ export default class Scroller {
         return true;
     }
 
-    startScroll (startX, startY, dx, dy, duration = DEFAULT_DURATION) {
+    startScroll(startX, startY, dx, dy, duration = DEFAULT_DURATION) {
         this.mMode = SCROLL_MODE;
         this.mFinished = false;
         this.mDuration = duration;
@@ -225,21 +225,21 @@ export default class Scroller {
         this.performAnimation();
     }
 
-  /**
-   * Start scrolling based on a fling gesture. The distance travelled will
-   * depend on the initial velocity of the fling.
-   * @param startX
-   * @param startY
-   * @param velocityX Initial velocity of the fling (X) measured in dp or pt per second
-   * @param velocityY Initial velocity of the fling (Y) measured in dp or pt per second
-   * @param minX
-   * @param maxX
-   * @param minY
-   * @param maxY
-   */
-    fling (startX, startY, velocityX, velocityY,
+    /**
+     * Start scrolling based on a fling gesture. The distance travelled will
+     * depend on the initial velocity of the fling.
+     * @param startX
+     * @param startY
+     * @param velocityX Initial velocity of the fling (X) measured in dp or pt per second
+     * @param velocityY Initial velocity of the fling (Y) measured in dp or pt per second
+     * @param minX
+     * @param maxX
+     * @param minY
+     * @param maxY
+     */
+    fling(startX, startY, velocityX, velocityY,
         minX, maxX, minY, maxY) {
-    // Continue a scroll or fling in progress
+        // Continue a scroll or fling in progress
         if (this.mFlywheel && !this.mFinished) {
             let oldVel = this.getCurrVelocity();
 
@@ -253,7 +253,7 @@ export default class Scroller {
             let oldVelocityX = ndx * oldVel;
             let oldVelocityY = ndy * oldVel;
             if (signum(velocityX) === signum(oldVelocityX) &&
-        signum(velocityY) === signum(oldVelocityY)) {
+                signum(velocityY) === signum(oldVelocityY)) {
                 velocityX += oldVelocityX;
                 velocityY += oldVelocityY;
             }
@@ -282,12 +282,12 @@ export default class Scroller {
         this.mMaxY = maxY;
 
         this.mFinalX = startX + Math.round(totalDistance * coeffX);
-    // Pin to mMinX <= mFinalX <= mMaxX
+        // Pin to mMinX <= mFinalX <= mMaxX
         this.mFinalX = Math.min(this.mFinalX, this.mMaxX);
         this.mFinalX = Math.max(this.mFinalX, this.mMinX);
 
         this.mFinalY = startY + Math.round(totalDistance * coeffY);
-    // Pin to mMinY <= mFinalY <= mMaxY
+        // Pin to mMinY <= mFinalY <= mMaxY
         this.mFinalY = Math.min(this.mFinalY, this.mMaxY);
         this.mFinalY = Math.max(this.mFinalY, this.mMinY);
 
@@ -297,59 +297,59 @@ export default class Scroller {
         this.performAnimation();
     }
 
-    getSplineDeceleration (velocity) {
+    getSplineDeceleration(velocity) {
         return Math.log(INFLEXION * Math.abs(velocity) / (this.mFlingFriction * this.mPhysicalCoeff));
     }
 
-    getSplineFlingDuration (velocity) {
+    getSplineFlingDuration(velocity) {
         var l = this.getSplineDeceleration(velocity);
         var decelMinusOne = DECELERATION_RATE - 1.0;
         return 1000.0 * Math.exp(l / decelMinusOne);
     }
 
-    getSplineFlingDistance (velocity) {
+    getSplineFlingDistance(velocity) {
         var l = this.getSplineDeceleration(velocity);
         var decelMinusOne = DECELERATION_RATE - 1.0;
         return this.mFlingFriction * this.mPhysicalCoeff * Math.exp(DECELERATION_RATE / decelMinusOne * l);
     }
 
-    performAnimation () {
+    performAnimation() {
         if (this.computeScrollOffset()) {
             requestAnimationFrame(this.performAnimation.bind(this));
         } else {
         }
     }
 
-    abortAnimation () {
+    abortAnimation() {
         this.mCurrX = this.mFinalX;
         this.mCurrY = this.mFinalY;
         this.mFinished = true;
     }
 
-    extendDuration (extend) {
-        var passed = timePassed();
+    extendDuration(extend) {
+        const passed = this.timePassed();
         this.mDuration = passed + extend;
         this.mDurationReciprocal = 1.0 / this.mDuration;
         this.mFinished = false;
     }
 
-    timePassed () {
+    timePassed() {
         return currentAnimationTimeMillis() - this.mStartTime;
     }
 
-    setFinalX (newX) {
+    setFinalX(newX) {
         this.mFinalX = newX;
         this.mDeltaX = this.mFinalX - this.mStartX;
         this.mFinished = false;
     }
 
-    setFinalY (newY) {
+    setFinalY(newY) {
         this.mFinalY = newY;
         this.mDeltaY = this.mFinalY - this.mStartY;
         this.mFinished = false;
     }
 
-    debugInfo () {
+    debugInfo() {
         return 'cur=' + this.mCurrX + ' ' + this.mCurrY + ', final=' + this.mFinalX + ' ' + this.mFinalY;
     }
 }
