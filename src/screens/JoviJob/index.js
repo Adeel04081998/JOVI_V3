@@ -331,6 +331,7 @@ export default ({ navigation, route }) => {
         cardData[index].isOpened = headerBool
         setCardData(cardData);
         forceUpdate()
+        ref.current.animateNextTransition();
         imagesArr = []
         descriptionStr = ''
         voiceNoteObj = {}
