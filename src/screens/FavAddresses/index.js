@@ -34,13 +34,7 @@ export default () => {
         4: svgs.addOtherLocation(colors.primary),
     }
     const _renderHeader = () => (<CustomHeader
-        leftCustom={(
-            <TouchableScale wait={0} onPress={() => {
-                NavigationService.NavigationActions.common_actions.goBack();
-            }} style={customheaderStyles.iconContainer}>
-                <SvgXml xml={svgs.hamburgerMenu(colors.primary)} height={HEADER_ICON_SIZE} width={HEADER_ICON_SIZE} />
-            </TouchableScale>
-        )}
+        renderLeftIconAsDrawer
         rightIconName={null}
         title={`Delivery Address`}
         titleStyle={{

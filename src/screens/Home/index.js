@@ -61,8 +61,8 @@ export default () => {
                 if (statusCode === 200) {
                     const openOrders = res.data?.onGoingOrders?.onGoingOrdersList ?? [];
                     dispatch(ReduxActions.setUserAction({ openOrders, noOfOpenOrders: openOrders.length }));
-                }else{
-                    dispatch(ReduxActions.setUserAction({ openOrders:[], noOfOpenOrders: 0 }));
+                } else {
+                    dispatch(ReduxActions.setUserAction({ openOrders: [], noOfOpenOrders: 0 }));
                 }
             }, (err) => {
                 sharedExceptionHandler(err);
@@ -113,13 +113,12 @@ export default () => {
         </View>
     }
     const inputRef = React.useRef(null);
-
     return (
         <View style={homeStyles.container}>
             <SafeAreaView style={{ flex: 1 }}>
                 <CustomHeader
                     finalDest={userReducer?.finalDestObj?.title || null}
-                    leftIconName={"ios-menu"}
+                    renderLeftIconAsDrawer
                     rightIconColor={"#6D51BB"}
                     onTitlePress={() => {
                         dispatch(ReduxActions.setModalAction({
