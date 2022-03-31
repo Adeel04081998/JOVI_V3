@@ -164,13 +164,14 @@ const SearchProductVendors = (props: Props) => {
                                     <Text fontFamily="PoppinsMedium" style={{
                                         color: "#212121",
                                         fontSize: 14,
-                                    }} numberOfLines={2}>{`${item.name}`}</Text>
+                                        paddingTop: 8,
+                                    }} numberOfLines={1}>{`${item.name}`}</Text>
 
                                     <View style={{ flexDirection: "row", alignItems: "center", }}>
                                         <Text fontFamily="PoppinsBold" style={{
                                             color: "#272727",
                                             fontSize: 14,
-                                        }}>{`${renderPrice(getPricesForProductMenuItemCard(item).price)}`}</Text>
+                                        }}>{`${renderPrice({ showZero: true, price: getPricesForProductMenuItemCard(item).price })}`}</Text>
                                         {/*                                     <Text style={{
                                             paddingLeft: 4,
                                             color: "#C1C1C1",
