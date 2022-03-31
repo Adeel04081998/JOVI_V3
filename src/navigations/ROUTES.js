@@ -139,6 +139,10 @@ const APP_DRAWER_ROUTES = {
         screen_name: "GOODY_BAG",
         options: null,
     },
+    "FavAddresses": {
+        screen_name: "FAV_ADDRESSES",
+        options: null,
+    },
 
 
 }
