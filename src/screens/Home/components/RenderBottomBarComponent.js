@@ -12,12 +12,17 @@ import NavigationService from '../../../navigations/NavigationService';
 import ROUTES from '../../../navigations/ROUTES';
 import preference_manager from '../../../preference_manager';
 import { useSelector } from 'react-redux';
+import { PITSTOP_TYPES } from '../../../utils/GV';
 
-export default React.memo(({ homeStyles, showCategories = false }) => {
+export default React.memo(({ homeStyles, showCategories = false, pitstopType = PITSTOP_TYPES.JOVI, colors = null }) => {
     const userReducer = useSelector(state => state.userReducer);
     const ordersCount = (userReducer?.openOrders ?? []).length;
     return (
         <BottomBarComponent
+            {...colors && {
+                colors: colors,
+            }}
+            pitstopType={pitstopType}
             showCategories={showCategories}
             leftData={[{ id: 1, iconName: "home", title: "Home" }, { id: 2, iconName: "person", title: "Profile" }]}
             rightData={[

@@ -352,7 +352,8 @@ const PistopListingChild = React.memo(({ route, }) => {
                 {renderCarouselNdListing()}
                 {renderAllRestaurantsListing()}
             </ScrollView>
-            <BottomBarComponent pitstopType={pitstopType} screenName={ROUTES.APP_DRAWER_ROUTES.PitstopListing.screen_name} colors={colors} leftData={[{ id: 1, iconName: "home", title: "Home" }, { id: 2, iconName: "person", title: "Profile" }]} rightData={[{ id: 3, iconName: "wallet", title: "Wallet" }, { id: 4, iconName: "pin", title: "Location" }]} />
+            <BottomBarComponent pitstopType={pitstopType}
+                screenName={ROUTES.APP_DRAWER_ROUTES.PitstopListing.screen_name} colors={colors} leftData={[{ id: 1, iconName: "home", title: "Home" }, { id: 2, iconName: "person", title: "Profile" }]} rightData={[{ id: 3, iconName: "wallet", title: "Wallet" }, { id: 4, iconName: "pin", title: "Location" }]} />
             {/* </SafeAreaView>
         </View> */}
         </>
