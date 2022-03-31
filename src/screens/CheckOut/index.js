@@ -411,7 +411,7 @@ export default () => {
             </View>
             <AnimatedView style={{ backgroundColor: colors.white, opacity: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 10, paddingVertical: 3, width: '100%', ...AppStyles.shadow, marginBottom: Platform.OS === 'ios' ? 0 : 0.5 }}>
                 <Button
-                    onPress={() => onPlaceOrder()}
+                    onPress={onPlaceOrder}
                     text='Place Order'
                     style={{ height: 60 }}
                     isLoading={state.isLoading}
