@@ -103,7 +103,7 @@ export default () => {
             <ScrollView style={{ flex: 1 }}>
                 {
                     drawerRoutes.map((item, i) => {
-                        return renderNavigationItem(item, i, i === 0 ? { borderTopColor: colors.black, borderTopWidth: 0.5 } : {})
+                        return renderNavigationItem(item, i, i === 0 ? { borderTopColor: colors.grey, borderTopWidth: 0.4 } : {})
                     })
                 }
                 <Text style={{ fontSize: 20, margin: SPACING, color: colors.black }} fontFamily={'PoppinsRegular'}>Information</Text>
@@ -145,7 +145,7 @@ const drawerStyles = (colors) => StyleSheet.create({
     profilePicContainer: { height: PROFILE_PICTURE_SECTION, width: PROFILE_PICTURE_SECTION, borderRadius: PROFILE_PICTURE_SECTION / 2, borderWidth: 3, borderColor: colors.black, backgroundColor: colors.white, justifyContent: 'center', alignItems: 'center' },
     profilePicInnerContainer: { height: PROFILE_PICTURE_INNER_SECTION, width: PROFILE_PICTURE_INNER_SECTION, borderRadius: PROFILE_PICTURE_INNER_SECTION / 2, backgroundColor: colors.primary },
     navigationContainer: { height: '68 %', marginBottom: 60 },
-    navigationItem: { height: 60, flexDirection: 'row', borderBottomWidth: 0.5, borderBottomColor: colors.black, backgroundColor: colors.white, justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: SPACING, width: '100%' },
+    navigationItem: { height: 60, flexDirection: 'row', borderBottomWidth: 0.4, borderBottomColor:colors.grey, backgroundColor: colors.white, justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: SPACING, width: '100%' },
     informationNavigationItem: { height: 60, flexDirection: 'row', backgroundColor: colors.white, justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: SPACING, width: '100%', },
     logoutContainer: { height: 60, width: '100%', position: "absolute", bottom: 0, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: SPACING, backgroundColor: colors.white },
 });
