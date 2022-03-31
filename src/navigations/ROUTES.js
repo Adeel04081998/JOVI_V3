@@ -137,7 +137,19 @@ const APP_DRAWER_ROUTES = {
     },
     "TopUp": {
         screen_name: "TOPUP",
-        options: { animation: 'slide_from_bottom' },
+        options: { animation: 'slide_from_bottom' }
+    },
+    "ContactUs": {
+        screen_name: "CONTACT_US",
+        options: null,
+    },
+    "GoodyBag": {
+        screen_name: "GOODY_BAG",
+        options: null,
+    },
+    "FavAddresses": {
+        screen_name: "FAV_ADDRESSES",
+        options: null,
     },
 
 

@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { SvgXml } from "react-native-svg";
 import { useDispatch, useSelector } from "react-redux";
+import { sharedGetServiceCharges } from "../../helpers/SharedActions";
 import ReduxActions from "../../redux/actions";
 import AppStyles from "../../res/AppStyles";
 import { initColors } from "../../res/colors";
@@ -43,10 +44,16 @@ export default ({ instructions = "", contianerStyle = {}, addressTxtStyle = {}, 
     const editAdress_icon_Height = edit_icon_Height || 20
     const styles = _styles(colors);
     const colors = initColors;
-    const userReducer = useSelector(store => store.userReducer);
+    const { userReducer, cartReducer } = useSelector(store => ({ userReducer: store.userReducer, cartReducer: store.cartReducer }));
     const dispatch = useDispatch();
     const finalDestination = userReducer.finalDestObj;
-    
+    const isMounted = React.useRef(false);
+    React.useEffect(() => {
+        if (isMounted.current) {
+            console.log("[Delivery Address] Ran...");
+            sharedGetServiceCharges()
+        } else isMounted.current = true;
+    }, [finalDestination, cartReducer.pitstops.length])
     return (
         <View
             style={[{

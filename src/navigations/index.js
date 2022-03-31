@@ -42,6 +42,9 @@ import WebView from '../components/organisms/WebView';
 import FAQ from '../screens/FAQ';
 import Wallet from '../screens/Wallet';
 import TopUp from '../screens/TopUp';
+import ContactUs from '../screens/ContactUs';
+import GoodyBag from '../screens/GoodyBag';
+import FavAddresses from '../screens/FavAddresses';
 const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES, APP_DRAWER_ROUTES, APP_DRAWER_STACK } = ROUTES;
 const AppDrawerStack = (props) => {
     return <Stack.Navigator screenOptions={stackOpts} initialRouteName={APP_DRAWER_ROUTES.Wallet.screen_name} >
@@ -96,7 +99,10 @@ const AppDrawerComponents = {
     WebView,
     FAQ,
     Wallet,
-    TopUp
+    TopUp,
+    ContactUs,
+    GoodyBag,
+    FavAddresses,
 }//will open with Slide Animation
 const ContainerStack = createStackNavigator();
 const Stack = createNativeStackNavigator();
@@ -176,7 +182,7 @@ const AppDrawers = (props) => {
     // console.log("[AppDrawers].props", props)
     return <Drawer.Navigator screenOptions={stackOpts} initialRouteName={APP_ROUTES.AppDrawerStack.screen_name}>
         {(APP_STACKS || []).map((routeInfo, index) => {
-            console.log('routeInfo', AppComponents);
+            // console.log('routeInfo', AppComponents);
             return <Drawer.Screen
                 key={`AppDrawers-Screen-key-${index}-${routeInfo.id}`}
                 name={routeInfo.screen_name}
