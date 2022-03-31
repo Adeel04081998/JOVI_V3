@@ -130,8 +130,8 @@ export default (props) => {
             if (props.route.params !== null && props.route.params !== undefined) {
                 if (fromScreenIndex === 4) {
                     if (finalDestinationObj?.note) inputs[2].val = finalDestinationObj?.note
-                    if (finalDestinationObj?.house) inputs[2].val = finalDestinationObj?.house
-                    if (finalDestinationObj?.street) inputs[2].val = finalDestinationObj?.street
+                    if (finalDestinationObj?.house) inputs[1].val = finalDestinationObj?.house
+                    if (finalDestinationObj?.street) inputs[0].val = finalDestinationObj?.street
                     if (finalDestinationObj?.addressType === parseInt(AddressTypeEnum[5].value)) {
                         inputs[3].val = finalDestinationObj?.addressTypeStr
                         inputs[3].shown = true
