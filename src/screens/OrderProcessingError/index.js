@@ -199,19 +199,19 @@ export default ({ navigation, route }) => {
         return (
             <>
                 <OrderProcessingChargesUI
-                    title='GST'
-                    value={renderPrice(state.chargeBreakdown.totalProductGST, '')} />
+                    title='Total GST'
+                    value={renderPrice(state.orderReceiptVM.chargeBreakdown.totalProductGST, '')} />
 
                 <OrderProcessingChargesUI
-                    title={`Service Charges(Incl S.T ${renderPrice(state.chargeBreakdown.estimateServiceTax, '')})`}
-                    value={renderPrice(state.chargeBreakdown.estimateServiceTax + state.chargeBreakdown.totalEstimateCharge, '')} />
+                    title={`Service Charges(Incl S.T ${renderPrice(state.orderReceiptVM.chargeBreakdown.estimateServiceTax, '')})`}
+                    value={renderPrice(state.orderReceiptVM.chargeBreakdown.estimateServiceTax + state.orderReceiptVM.chargeBreakdown.totalEstimateCharge, '')} />
                 <DashedLine />
                 <OrderProcessingChargesUI
-                    title='Discount'
-                    value={parseInt(renderPrice(state.chargeBreakdown.discount, '')) > 0 ? renderPrice(state.chargeBreakdown.discount, '-') : renderPrice(state.chargeBreakdown.discount, '')} />
+                    title='Total Discount'
+                    value={parseInt(renderPrice(state.orderReceiptVM.chargeBreakdown.discount, '')) > 0 ? renderPrice(state.chargeBreakdown.discount, '-') : renderPrice(state.chargeBreakdown.discount, '')} />
                 <DashedLine />
 
-                <OrderProcessingEstimatedTotalUI estimatedPrice={renderPrice(state.chargeBreakdown.estimateTotalAmount, '')} />
+                <OrderProcessingEstimatedTotalUI estimatedPrice={renderPrice(state.orderReceiptVM.chargeBreakdown.estTotalPlusPitstopAmount, '')} />
             </>
         )
     }

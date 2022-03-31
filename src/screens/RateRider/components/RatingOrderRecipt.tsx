@@ -16,25 +16,27 @@ interface Props {
     checkOutStyles: any;
     colors?: typeof initColors;
     totalGST?: string | number;
-    serviceCharges?: string | number;
+    serviceCharges: number;
     discount?: string | number;
     total?: string | number;
     rightText?: any;
     onRightTextPress?: () => void;
     useScrollView?: boolean;
     containerStyle?: StyleProp<ViewStyle>;
+    estimateServiceTax: number;
 };
 
 const defaultProps = {
     colors: initColors,
     totalGST: '',
-    serviceCharges: '',
+    serviceCharges: 0,
     discount: '',
     total: '',
 
     rightText: 'Close',
     onRightTextPress: undefined,
     useScrollView: true,
+    estimateServiceTax: 0
 };
 
 // const RatingOrderRecipt= ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData = [] }) => {
@@ -50,10 +52,19 @@ const RatingOrderRecipt = (props: Props) => {
                 <View style={checkOutStyles.gstMainContainer}>
                     <RenderGSTPrice1
                         checkOutStyles={checkOutStyles}
-                        text={"Service Charge"}
-                        value={props.serviceCharges}
+                        text={"Total Gst"}
+                        value={props.totalGST}
                     />
                 </View>
+                <View style={checkOutStyles.gstMainContainer}>
+                    <RenderGSTPrice1
+                        checkOutStyles={checkOutStyles}
+                        text={`Service Charge (Incl S.T ${props.estimateServiceTax})`}
+                        value={(props.serviceCharges + props.estimateServiceTax)}
+                    />
+                </View>
+
+
 
                 <View style={{ marginHorizontal: 1 }}>
                     <DashedLine dashLineStyles={{ color: "#707070" }} />
@@ -97,10 +108,12 @@ const RatingOrderRecipt = (props: Props) => {
             <Wrapper>
                 <AnimatedView style={{ margin: 12, marginTop: 0, }} >
                     {pitStops.map((x, i) => {
+                        console.log("x...", x);
+
                         if (i === pitStops.length - 1) return;//final destination is not in receipt
                         const isJoviJob = x.pitstopType === PITSTOP_TYPES.JOVI;
                         const pitstopName = isJoviJob ? 'Jovi Job' : x.title
-                        const individualPitstopTotal = x.jobAmount;
+                        const individualPitstopTotal = isJoviJob ? x.paidAmount : x.jobAmount;
                         let checkOutItemsListVM = x?.jobItemsListViewModel ?? [];
                         if (isJoviJob) {
                             checkOutItemsListVM = [{

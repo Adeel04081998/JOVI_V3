@@ -17,7 +17,7 @@ import Switch from '../../components/atoms/Switch'
 import TouchableOpacity from '../../components/atoms/TouchableOpacity'
 import { getRequest, postRequest } from '../../manager/ApiManager'
 import Endpoints from '../../manager/Endpoints'
-import { sharedExceptionHandler, sharedGetDeviceInfo, sharedGetServiceCharges, sharedOrderNavigation } from '../../helpers/SharedActions'
+import { sharedCalculatedTotals, sharedExceptionHandler, sharedGetDeviceInfo, sharedGetServiceCharges, sharedOrderNavigation } from '../../helpers/SharedActions'
 import Button from '../../components/molecules/Button'
 import OrderRecipt from './components/OrderRecipt'
 import { useDispatch, useSelector } from 'react-redux'
@@ -156,7 +156,8 @@ export default () => {
                                 "checkoutItemID": obj.checkOutItemID,
                                 "amount": obj.itemPrice,
                                 //new Keys added for new create update order
-                                "actualPrice": obj.itemPrice,
+                                "actualPrice": (obj._priceForSubtotals - obj.gstAmount),
+                                // "actualPrice": obj.itemPrice,
                                 "Price": obj._itemPrice || obj.itemPrice,
                                 "DiscountType": obj.discountType,
                                 "DiscountRate": obj.discountAmount,
@@ -170,7 +171,7 @@ export default () => {
                                 //End New Keys
                                 "estimateTime": obj.estimatePrepTime ?? 0,
                                 "gstPercentage": obj.gstPercentage,
-                                "gstAddedPrice": obj.gstAddedPrice + obj.totalJoviDiscount + obj._totalDiscount,//backend is expecting gst added price without discounts, due to deadline, it couldn't be calculated from backend,
+                                "gstAddedPrice": obj.gstAddedPrice + (obj.totalJoviDiscount || 0) + (obj._totalDiscount || 0),//backend is expecting gst added price without discounts, due to deadline, it couldn't be calculated from backend,
                                 "restaurantProductNotFound": (obj.isRestaurant && obj.restaurantProductNotFound) ? obj.restaurantProductNotFound : 0,
                                 "pitstopItemsOptionList": (obj.isRestaurant || item.pitstopType === 4 ?
                                     // A non-deal type restaurant item

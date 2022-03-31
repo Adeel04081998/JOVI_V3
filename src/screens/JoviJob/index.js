@@ -273,7 +273,9 @@ export default ({ navigation, route }) => {
     /*****************************     Start of  useEffect            ***********************************/
 
     const setData = (data = route.params.pitstopItemObj) => {
-        const { title, nameval, imageData, voiceNote, estTime, description, estimatePrice, buyForMe } = data;
+        const { title, nameval, imageData, voiceNote, estTime, description, estimatePrice, buyForMe, latitude, longitude } = data;
+        latitudeRef.current = latitude;
+        longitudeRef.current = longitude;
         setLocationVal(title)
         setNameVal(nameval)
         updateImagesData(imageData ?? [])

@@ -292,17 +292,21 @@ export default ({ navigation, route }) => {
                     {/* ****************** Start of SEPERATOR ****************** */}
                     <View style={{
                         marginBottom: constants.spacing_vertical,
+                        backgroundColor: "#707070",
+                        height: 1,
+                        marginHorizontal: DOUBLE_SPACING * 1.5,
+                        marginTop: 8,
+                        marginBottom: 12,
                     }} />
 
                     {/* ****************** End of SEPERATOR ****************** */}
-
-
                     {/* ****************** Start of GST ****************** */}
                     <OrderProcessingChargesUI
                         title='Total GST'
                         value={renderPrice(state.orderReceiptVM.chargeBreakdown.totalProductGST)} />
 
                     {/* ****************** End of GST ****************** */}
+                    <DashedLine />
 
 
                     {/* ****************** Start of SERVICE CHARGES ****************** */}
@@ -326,7 +330,7 @@ export default ({ navigation, route }) => {
 
 
                     {/* ****************** Start of ESTIMATED PRICE ****************** */}
-                    <OrderProcessingEstimatedTotalUI estimatedPrice={renderPrice(state.orderReceiptVM.chargeBreakdown.estimateTotalAmount)} />
+                    <OrderProcessingEstimatedTotalUI estimatedPrice={renderPrice(state.orderReceiptVM.chargeBreakdown.estTotalPlusPitstopAmount)} />
 
                     {/* ****************** End of ESTIMATED PRICE ****************** */}
 
@@ -345,7 +349,7 @@ export default ({ navigation, route }) => {
 
 
                     {/* ****************** Start of PAID WITH TOTAL PRICE ****************** */}
-                    <PaidWithUI price={renderPrice(state.orderReceiptVM.chargeBreakdown.estimateTotalAmount)} />
+                    <PaidWithUI price={renderPrice(state.orderReceiptVM.chargeBreakdown.estTotalPlusPitstopAmount)} />
 
                     {/* ****************** End of PAID WITH TOTAL PRICE ****************** */}
 

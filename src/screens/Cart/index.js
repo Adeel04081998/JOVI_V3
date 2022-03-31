@@ -83,7 +83,6 @@ export default () => {
     // })
   }
   const PitstopsCard = ({ pitstop }) => {
-    console.log("[PitstopsCard].pitstop", pitstop);
     const {
       pitstopIndex, // from cart pitstops
       pitstopID, // from cart pitstops
@@ -411,7 +410,6 @@ export default () => {
     return (
       <View style={{ paddingHorizontal: 10 }}>
         {row(`Subtotal (Inc GST ${sharedCalculatedTotals().gst})`, sharedCalculatedTotals().subTotal, false)}
-        {/* {row('GST', sharedCalculatedTotals().gst)} */}
         {sharedCalculatedTotals().discount ? row('Total Discount', `- ${sharedCalculatedTotals().discount}`) : null}
         {row(`Service Charges (Incl S.T ${sharedCalculatedTotals().serviceTax})`, sharedCalculatedTotals().serviceCharges)}
         <BottomLine />
