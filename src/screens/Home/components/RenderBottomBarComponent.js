@@ -19,7 +19,11 @@ export default React.memo(({ homeStyles, showCategories = false }) => {
     return (
         <BottomBarComponent
             showCategories={showCategories}
-            leftData={[{ id: 1, iconName: "home", title: "Home" }, { id: 2, iconName: "person", title: "Profile" }]}
+            leftData={[{ id: 1, iconName: "home", title: "Home" }, {
+                id: 2, iconType: 'MaterialCommunityIcons', iconName: "ticket-percent-outline", title: "Promo", onPress: () => {
+                    NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.GoodyBag.screen_name);
+                }
+            }]}
             rightData={[
                 {
                     id: 3, iconName: "wallet", title: "Orders",
@@ -33,15 +37,8 @@ export default React.memo(({ homeStyles, showCategories = false }) => {
                     }
                 },
                 {
-                    id: 4, iconType: "AntDesign", iconName: "logout", title: "Logout", onPress: () => {
-                        sharedConfirmationAlert("Alert", "Log me out and remove all the cache?",
-                            [
-                                { text: "No", onPress: () => { } },
-                                {
-                                    text: "Yes", onPress: () => preference_manager.clearAllCacheAsync().then(() => sharedLogoutUser())
-                                },
-                            ]
-                        )
+                    id: 4, iconType: "Ionicons", iconName: "wallet", title: "Wallet", onPress: () => {
+                        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Wallet.screen_name);
                     }
                 }]} />
     )

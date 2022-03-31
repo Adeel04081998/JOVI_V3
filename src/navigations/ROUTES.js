@@ -113,7 +113,7 @@ const APP_DRAWER_ROUTES = {
     },
     "OrderHistory": {
         screen_name: "ORDER_HISTORY",
-        options: null,
+        options: { animation: 'slide_from_bottom' }
     },
     "OrderHistoryDetail": {
         screen_name: "ORDER_HISTORY_DETAIL",
@@ -151,7 +151,7 @@ const APP_DRAWER_ROUTES = {
     },
     "GoodyBag": {
         screen_name: "GOODY_BAG",
-        options: null,
+        options: { animation: 'slide_from_bottom' }
     },
     "FavAddresses": {
         screen_name: "FAV_ADDRESSES",
