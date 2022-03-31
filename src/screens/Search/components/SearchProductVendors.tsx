@@ -1,12 +1,16 @@
+import AnimatedLottieView from "lottie-react-native";
 import * as React from "react";
 import { FlatList, ScrollView, StyleSheet } from "react-native";
 import Image from "../../../components/atoms/Image";
 import Text from "../../../components/atoms/Text";
 import TouchableScale from "../../../components/atoms/TouchableScale";
 import View from "../../../components/atoms/View";
-import { renderFile, renderPrice, sharedExceptionHandler, uniqueKeyExtractor } from "../../../helpers/SharedActions";
+import NoRecord from "../../../components/organisms/NoRecord";
+import { renderFile, renderPrice, sharedExceptionHandler, sharedOnVendorPress, uniqueKeyExtractor } from "../../../helpers/SharedActions";
 import { postRequest } from "../../../manager/ApiManager";
 import Endpoints from "../../../manager/Endpoints";
+import NavigationService from "../../../navigations/NavigationService";
+import ROUTES from "../../../navigations/ROUTES";
 import AppStyles from "../../../res/AppStyles";
 import { initColors } from '../../../res/colors';
 import constants from "../../../res/constants";
@@ -36,8 +40,12 @@ const SearchProductVendors = (props: Props) => {
 
     const styles = stylesFunc(colors);
 
-    const [loading, toggleLoading] = React.useState(false);
     const [data, setData] = React.useState([]);
+    const [query, updateQuery] = React.useState({
+        loading: false,
+        error: false,
+        errorText: '',
+    });
 
     React.useEffect(() => {
         loadData();
@@ -50,20 +58,37 @@ const SearchProductVendors = (props: Props) => {
             "searchTxt": props.searchText,
             "pitstopType": pitstopType,
         }
-        toggleLoading(true);
+        updateQuery({
+            loading: true,
+            error: false,
+            errorText: '',
+        });
         //@ts-ignore
         postRequest(Endpoints.VENDOR_SEARCH, params, (res: any) => {
             const statusCode = res.data?.statusCode ?? 404;
             if (statusCode === 200) {
                 const resData = res.data?.pitstopData ?? [];
                 setData(resData);
+                updateQuery({
+                    loading: false,
+                    error: false,
+                    errorText: '',
+                })
             } else {
                 setData([]);
+                updateQuery({
+                    loading: false,
+                    error: true,
+                    errorText: sharedExceptionHandler(res),
+                })
             }
-            toggleLoading(false);
         }, (err: any) => {
             sharedExceptionHandler(err);
-            toggleLoading(false);
+            updateQuery({
+                loading: false,
+                error: true,
+                errorText: sharedExceptionHandler(err),
+            })
         }, {}, false)
     };//end of searching -- getting record from server using text user enter
 
@@ -79,13 +104,23 @@ const SearchProductVendors = (props: Props) => {
 
     const _renderParentItem = ({ item: parentItem, index: parentIndex }: any) => {
         const vendorName = parentItem?.pitstopName ?? '';
+
         return (
             <React.Fragment>
-                <Text style={{
-                    color: "#212121",
-                    fontSize: 16,
-                    padding: constants.spacing_horizontal,
-                }}>{`${vendorName}`}</Text>
+                <TouchableScale wait={0}
+                    onPress={() => {
+                        sharedOnVendorPress({
+                            ...parentItem,
+                            title: vendorName,
+                            pitstopType,
+                        }, parentIndex);
+                    }}>
+                    <Text style={{
+                        color: "#212121",
+                        fontSize: 16,
+                        padding: constants.spacing_horizontal,
+                    }}>{`${vendorName}`}</Text>
+                </TouchableScale>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} >
                     {(parentItem?.itemList ?? []).map((item: any, index: number) => {
                         return (
@@ -95,14 +130,31 @@ const SearchProductVendors = (props: Props) => {
                                 marginTop: 2,
                                 marginBottom: 2,
                             }} key={uniqueKeyExtractor()}>
-                                <TouchableScale style={{
-                                    backgroundColor: colors.white,
-                                    padding: constants.spacing_horizontal,
-                                    ...AppStyles.shadow,
-                                    borderRadius: 8,
-                                    width: ITEM_IMAGE_SIZE,
-                                    height: ITEM_IMAGE_SIZE + (10 * 2),
-                                }} key={uniqueKeyExtractor()}>
+                                <TouchableScale wait={0}
+                                    onPress={() => {
+                                        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, {
+                                            propItem: {
+                                                ...item,
+                                                pitStopItemID: item.pitstopItemID,
+                                                pitStopDealID: item.pitstopDealID,
+                                                vendorDetails: {
+                                                    marketID: parentItem.pitstopID,
+                                                    ...item,
+                                                    pitstopType: PITSTOP_TYPES.RESTAURANT,
+                                                    ...parentItem,
+                                                }
+                                            },
+                                            pitstopType,
+                                        });
+                                    }}
+                                    style={{
+                                        backgroundColor: colors.white,
+                                        padding: constants.spacing_horizontal,
+                                        ...AppStyles.shadow,
+                                        borderRadius: 8,
+                                        width: ITEM_IMAGE_SIZE,
+                                        height: ITEM_IMAGE_SIZE + (10 * 2),
+                                    }} key={uniqueKeyExtractor()}>
                                     <Image source={{ uri: `${renderFile(item.itemImage)}` }} style={{
                                         width: ITEM_IMAGE_SIZE * 0.8,
                                         height: ITEM_IMAGE_SIZE * 0.7,
@@ -135,6 +187,35 @@ const SearchProductVendors = (props: Props) => {
             </React.Fragment>
         )
     }
+
+    // #region :: LOADING AND ERROR RENDERING START's FROM HERE 
+    if (query.error) {
+        return (
+            <View style={{ flex: 1, }}>
+                <NoRecord
+                    color={colors}
+                    title={query.errorText}
+                    buttonText={`Retry`}
+                    onButtonPress={loadData} />
+            </View>
+        )
+    }
+    if (query.loading) {
+        return (
+            <View style={{ flex: 1, margin: 10, }}>
+                <AnimatedLottieView
+                    autoSize={true}
+                    resizeMode={'contain'}
+                    style={{ width: '100%' }}
+                    source={require('../../../assets/gifs/Homeloading.json')}
+                    autoPlay
+                    loop
+                />
+            </View>
+        )
+    }
+
+    // #endregion :: LOADING AND ERROR RENDERING END's FROM HERE 
 
     return (
         <View style={{ flex: 1, }}>

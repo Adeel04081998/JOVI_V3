@@ -11,7 +11,7 @@ import TouchableScale from '../../components/atoms/TouchableScale';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
-import { sharedExceptionHandler } from '../../helpers/SharedActions';
+import { sharedExceptionHandler, sharedOnVendorPress } from '../../helpers/SharedActions';
 import { getRequest, postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import constants from '../../res/constants';
@@ -155,7 +155,7 @@ export default ({ navigation, route }) => {
 
     // #region :: GETTING & CLEARING RECENT SERACHES START's FROM HERE 
     React.useEffect(() => {
-        // loadRecentSearches();
+        loadRecentSearches();
         return () => { };
     }, []);
 
@@ -345,9 +345,11 @@ export default ({ navigation, route }) => {
                     const pitstopID = item?.pitstopID ?? '0';
                     const isVendor = pitstopID && `${pitstopID}` !== '0' ? true : false;
                     const name = item?.name ?? '';
+                    const pitstopType = isRestaurantSelected ? PITSTOP_TYPES.RESTAURANT : PITSTOP_TYPES.SUPER_MARKET;
                     return (
                         <TouchableScale wait={0} onPress={() => {
                             if (isVendor) {
+                                sharedOnVendorPress({ ...item, pitstopType }, index)
                             } else {
                                 visibleShowProductVendor(name);
                             }
@@ -396,20 +398,23 @@ export default ({ navigation, route }) => {
         <View style={{ ...styles.primaryContainer, }}>
             {_renderHeader()}
 
-            <EmptyUI />
-            {/* {showProductVendor ?
-                <SearchProductVendors
-                    colors={isRestaurantSelected ? restaurantColors : smColors}
-                    pitstopType={isRestaurantSelected ? PITSTOP_TYPES.RESTAURANT : PITSTOP_TYPES.SUPER_MARKET}
-                    searchText={searchText}
-                />
-                : <>
+            {recentSearchesData.length < 1 && searchData[isRestaurantSelected ? "restaurant" : "grocery"].data.length < 1 ? <EmptyUI /> :
+                <>
+                    {showProductVendor ?
+                        <SearchProductVendors
+                            colors={isRestaurantSelected ? restaurantColors : smColors}
+                            pitstopType={isRestaurantSelected ? PITSTOP_TYPES.RESTAURANT : PITSTOP_TYPES.SUPER_MARKET}
+                            searchText={searchText}
+                        />
+                        : <>
 
-                    {isRestaurantSelected ?
-                        showJoviJob && searchData.restaurant.data.length < 1 ? <JoviJobUI /> : searchData.restaurant.data.length < 1 && !loading ? renderRecentlyItem() : loading ? <LoadingUI /> : renderSearchedItem() :
-                        showJoviJob && searchData.restaurant.data.length < 1 ? <JoviJobUI /> : searchData.grocery.data.length < 1 && !loading ? renderRecentlyItem() : loading ? <LoadingUI /> : renderSearchedItem()}
-                </>
-            } */}
+                            {isRestaurantSelected ?
+                                showJoviJob && searchData.restaurant.data.length < 1 ? <JoviJobUI /> : searchData.restaurant.data.length < 1 && !loading ? renderRecentlyItem() : loading ? <LoadingUI /> : renderSearchedItem() :
+                                showJoviJob && searchData.restaurant.data.length < 1 ? <JoviJobUI /> : searchData.grocery.data.length < 1 && !loading ? renderRecentlyItem() : loading ? <LoadingUI /> : renderSearchedItem()}
+                        </>
+                    }
+                </>}
+
 
         </View>
     )
