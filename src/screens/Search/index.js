@@ -7,6 +7,7 @@ import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-awa
 import svgs from '../../assets/svgs';
 import Image from '../../components/atoms/Image';
 import Text from '../../components/atoms/Text';
+import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import TouchableScale from '../../components/atoms/TouchableScale';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
@@ -462,7 +463,7 @@ const LoadingUI = () => {
 }
 
 
-const JoviJobUI = () => {
+const JoviJobUI = ({ }) => {
     const animate = React.useRef(new Animated.Value(100)).current;
     React.useEffect(() => {
         Animated.spring(
@@ -496,16 +497,20 @@ const JoviJobUI = () => {
                 justifyContent: "flex-end",
                 transform: [{ translateY: animate }]
             }}>
-                <View style={{
-                    minHeight: 250,
-                    width: "90%",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    alignSelf: "center",
-                    backgroundColor: '#6D51BB',
-                    borderRadius: 32,
+                <TouchableOpacity activeOpacity={1} wait={0}
+                    onPress={() => {
+                        sharedOnVendorPress({ pitstopType: PITSTOP_TYPES.JOVI }, 0)
+                    }}
+                    style={{
+                        minHeight: 250,
+                        width: "90%",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        alignSelf: "center",
+                        backgroundColor: '#6D51BB',
+                        borderRadius: 32,
 
-                }}>
+                    }}>
 
                     <Text fontFamily='PoppinsMedium' style={{
                         fontSize: 20,
@@ -535,7 +540,7 @@ const JoviJobUI = () => {
                             opacity: 0.3,
                         }}
                     />
-                </View>
+                </TouchableOpacity>
             </Animated.View>
         </SafeAreaView>
     )
