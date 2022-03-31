@@ -57,7 +57,12 @@ export default {
     "GET_LEGAL_CERTIFICATES":"api/Menu/Legal/ListByType/1",
     "GET_LEGAL_HTML":"api/Menu/Legal/List",
     "GET_FAQs":"api/Menu/FAQ/List",
+    "GET_TRANSACTIONLIST":"api/Payment/Wallet/Transactions/List",
     "GET_PROMOS":"api/Menu/Promotion/List",
+    "HBL_PAY": "api/Payment/HBLPay",
+    "JAZZCASH_PAY": "api/Payment/JazzCashPay",
+    "EASYPAISA_PAY": "api/Payment/EasyPaisaPay",
+    "DELETE_ADDRESS": "api/Menu/Address/Delete"
 }
 
 

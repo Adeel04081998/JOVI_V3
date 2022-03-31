@@ -135,6 +135,14 @@ const APP_DRAWER_ROUTES = {
             animation:'fade'
         },
     },
+    "Wallet": {
+        screen_name: "WALLET",
+        options: { animation: 'slide_from_bottom' },
+    },
+    "TopUp": {
+        screen_name: "TOPUP",
+        options: { animation: 'slide_from_bottom' }
+    },
     "ContactUs": {
         screen_name: "CONTACT_US",
         options: {

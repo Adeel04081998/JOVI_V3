@@ -38,10 +38,11 @@ export default (props) => {
       NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.AddAddress.screen_name, {
         finalDestObj,
         updateFinalDestination,
-        isFromEdit
+        isFromEdit,
+        index : 0
       })
-    } else {
-
+    } 
+    else {
       dispatch(ReduxActions.setUserFinalDestAction({ finalDestObj }))
       NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.AddAddress.screen_name, {
         finalDestObj

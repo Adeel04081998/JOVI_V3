@@ -43,6 +43,7 @@ let closeSecondCard = false;
 let recordingItem = null;
 
 export default ({ navigation, route }) => {
+
     const transition = (
         <Transition.Together>
             <Transition.Out
@@ -55,7 +56,9 @@ export default ({ navigation, route }) => {
                 durationMs={200}
             />
         </Transition.Together>
-    );
+    );//card open/close animation
+
+
     /******** Start of Main variables *******/
 
     const WIDTH = constants.window_dimensions.width
@@ -331,6 +334,7 @@ export default ({ navigation, route }) => {
         cardData[index].isOpened = headerBool
         setCardData(cardData);
         forceUpdate()
+        ref.current.animateNextTransition();
         imagesArr = []
         descriptionStr = ''
         voiceNoteObj = {}
@@ -867,90 +871,3 @@ export default ({ navigation, route }) => {
         </SafeAreaView >
     );
 }
-
-
-const descriptionStyles = StyleSheet.create({
-    primaryContainer: {
-        marginHorizontal: 12,
-        justifyContent: "center",
-        marginBottom: 17,
-    },
-    headingContainer: {
-        marginTop: 0,
-        marginBottom: 6,
-        marginLeft: 0,
-        marginRight: 12,
-    },
-    inputHeading: {
-        fontWeight: "600",
-        textAlign: "left",
-    },
-    uploadAttachmentContainer: {
-        marginTop: 12,
-        borderTopWidth: 1,
-        borderBottomWidth: 1,
-        borderLeftWidth: 1,
-
-        borderColor: "#707070",
-        flexDirection: "row",
-        alignItems: "center",
-        height: 40,
-        paddingVertical: 5,
-        paddingLeft: 12,
-        borderRadius: 10,
-    },
-    uploadAttachmentText: {
-        color: "#A6A6A6",
-        flex: 1,
-    },
-    attachmentIconContainer: {
-        height: 40,
-        width: 40,
-        alignItems: "center",
-        justifyContent: "center",
-        borderTopRightRadius: 10,
-        borderBottomRightRadius: 10,
-
-    },
-    recordAudioContainer: {
-        // marginTop: 16,
-        marginLeft: 10
-    },
-    micIconContainer: {
-        height: 40,
-        width: 40,
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: 40,
-    },
-    recordVoiceText: {
-        color: "#272727",
-        marginLeft: 8,
-        fontFamily: FontFamily.Poppins.Regular
-    },
-
-    imageFileContainer: {
-        justifyContent: "space-between",
-        marginTop: 8,
-    },
-    fileNameText: {
-        marginLeft: 6,
-
-    },
-    deleteIconContainer: {
-        marginLeft: 8,
-    },
-    progress: {
-        backgroundColor: "#C1C1C1",
-        flex: 1,
-        height: 10,
-        borderRadius: 10,
-        marginLeft: 6,
-        marginRight: 12,
-    },
-    progressActive: {
-        borderRadius: 10,
-        flex: 1,
-    },
-
-});

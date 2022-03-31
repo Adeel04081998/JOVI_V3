@@ -14,7 +14,15 @@ export const PITSTOP_TYPES = {
 };
 
 export const ToastRef = React.createRef(null);
+export const hblRequestRef = React.createRef(null);
 
+export const TOPUP_ENUMS = Object.freeze({
+    "MODE_TYPES_ENUM": { "ENTER_AMOUNT": 1, "PAYMENT_GATEWAY": 2 },
+    "PAYMENT_TYPES_ENUM": { "EASYPAISA": 1, "JAZZCASH": 2, "CREDIT_DEBIT_CARD": 3, "OVER_THE_COUNTER": 4 },
+    "EASY_PAISA_PAYMENT_OPTS": { "CC": 1, "OTC": 2, "MA": 3 },
+    "JAZZ_CASH_PAYMENT_OPTS": { "ALL": 0, "MA": 1, "CC": 2 },
+    "TNX_TYPES_ENUMS": { "DISABLED": 0, "ALL": 1, "CARD_SUCCESS": 2, "CARD_FAILUR": 3, "MA_SUCCESS": 4, "MA_FAILURE": 5, },
+})
 export const PITSTOP_TYPES_INVERTED = {
     0: 'DEFAULT',
     1: 'SUPER_MARKET',

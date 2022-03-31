@@ -40,13 +40,15 @@ import OrderPitstops from '../screens/OrderTracking/OrderScreens/OrderPitstops';
 import Legal from '../screens/Legal';
 import WebView from '../components/organisms/WebView';
 import FAQ from '../screens/FAQ';
+import Wallet from '../screens/Wallet';
+import TopUp from '../screens/TopUp';
 import ContactUs from '../screens/ContactUs';
 import GoodyBag from '../screens/GoodyBag';
 import FavAddresses from '../screens/FavAddresses';
 import DrawerComponent from '../components/organisms/DrawerComponent';
 const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES, APP_DRAWER_ROUTES, APP_DRAWER_STACK } = ROUTES;
 const AppDrawerStack = (props) => {
-    return <Stack.Navigator screenOptions={stackOpts} initialRouteName={APP_DRAWER_ROUTES.Home.screen_name} >
+    return <Stack.Navigator screenOptions={stackOpts} initialRouteName={APP_DRAWER_ROUTES.FavAddresses.screen_name} >
         {(APP_DRAWER_STACK || []).map((routeInfo, index) => (
             <Stack.Screen
                 key={`AppDrawerss-Screen-key-${index}-${routeInfo.id}`}
@@ -97,6 +99,8 @@ const AppDrawerComponents = {
     Legal,
     WebView,
     FAQ,
+    Wallet,
+    TopUp,
     ContactUs,
     GoodyBag,
     FavAddresses,
