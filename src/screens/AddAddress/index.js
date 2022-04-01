@@ -47,8 +47,7 @@ export default (props) => {
     const dispatch = useDispatch()
     const finalDestinationObj = props?.route?.params?.finalDestObj ?? {};
     const fromScreenIndex = props?.route?.params?.index ?? null
-    console.log('fromScreenIndex', fromScreenIndex);
-    console.log('props?.route?.params', props?.route?.params);
+
 
     let initState = {
         "inputs": [
@@ -137,7 +136,7 @@ export default (props) => {
                         inputs[3].shown = true
                     }
                     let modifiedArray = addressTypeList.map((item, index) => {
-                        if (item.key === finalDestinationObj.addressType.toString()) {
+                        if (item.key === finalDestinationObj?.addressType?.toString()) {
                             return { ...item, selected: true }
                         } else {
                             return { ...item }
@@ -197,7 +196,7 @@ export default (props) => {
                                     "addressTypeStr": inputs[3].val || ''
                                 },
                             }))
-                            onBackPress(true);
+                            onBackPress(fromScreenIndex === 4 ? false : true);
                         }
                     },
                     err => {
@@ -247,6 +246,15 @@ export default (props) => {
         }
     };
 
+
+    const onPressToGoMap = () => {
+        props.route.params.updateFinalDestination(props.route.params.finalDestObj);
+        if (fromScreenIndex === 4) NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { latitude: finalDestinationObj.latitude, longitude: finalDestinationObj.longitude, index: fromScreenIndex });
+        else NavigationService.NavigationActions.stack_actions.pop(1);
+    }
+
+
+
     return (
         <SafeAreaView style={styles.safeArea}>
             <View style={styles.container} >
@@ -273,19 +281,13 @@ export default (props) => {
                     scrollEnabled={false}
                     selectFinalDestination={true}
                     newFinalDestination={finalDestinationObj}
-                    onMapPress={() => {
-                        props.route.params.updateFinalDestination(props.route.params.finalDestObj);
-                        NavigationService.NavigationActions.stack_actions.pop(1);
-                    }} />
+                    onMapPress={onPressToGoMap} />
                 <View style={styles.modalView} >
                     <KeyboardAwareScrollView ref={scrollRef} contentContainerStyle={{ flexGrow: 1 }} >
 
                         <Text style={styles.mainText} fontFamily="PoppinsMedium" >Your current location</Text>
                         <View style={styles.inputContainer}>
-                            <TouchableOpacity style={styles.touchableField} onPress={() => {
-                                props.route.params.updateFinalDestination(props.route.params.finalDestObj);
-                                NavigationService.NavigationActions.stack_actions.pop(1);
-                            }} >
+                            <TouchableOpacity style={styles.touchableField} onPress={onPressToGoMap} >
                                 <SvgXml xml={svgs.pinField()} />
                                 <View style={styles.touchableFieldTextContainer} >
                                     <Text numberOfLines={1} style={styles.addressText} fontFamily="PoppinsMedium" >{props.route.params.finalDestObj.title}</Text>
