@@ -1,5 +1,5 @@
 import React from 'react';
-import { Appearance, ScrollView, StyleSheet } from 'react-native';
+import { Appearance, Platform, ScrollView, StyleSheet } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { useSelector } from 'react-redux';
 import svgs from '../../../assets/svgs';
@@ -10,11 +10,12 @@ import preference_manager from '../../../preference_manager';
 import constants from '../../../res/constants';
 import sharedStyles from '../../../res/sharedStyles';
 import theme from '../../../res/theme';
-import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../../utils/GV';
+import GV, { isIOS, PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../../utils/GV';
 import Image from '../../atoms/Image';
 import Text from '../../atoms/Text';
 import TouchableOpacity from '../../atoms/TouchableOpacity';
 import VectorIcon from '../../atoms/VectorIcon';
+import deviceInfoModule from 'react-native-device-info';
 import View from '../../atoms/View';
 const SPACING = 10;
 const PROFILE_PICTURE_SECTION = 100;
@@ -62,7 +63,7 @@ export default () => {
         NavigationService.NavigationActions.common_actions.navigate(item.route)
     }
     const renderNavigationItem = (item, i, containerStyles = {}, customStyles = null) => {
-        return <TouchableOpacity style={{ ...customStyles ? customStyles : styles.navigationItem, ...containerStyles }} onPress={()=>onNavigationItemPress(item)}>
+        return <TouchableOpacity style={{ ...customStyles ? customStyles : styles.navigationItem, ...containerStyles }} onPress={() => onNavigationItemPress(item)}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <SvgXml xml={item.icon} height={20} width={20} style={{ marginBottom: 4 }} />
                 <Text style={{ marginLeft: 10, fontSize: 16 }}>{item.screenName}</Text>
@@ -137,7 +138,7 @@ export default () => {
 }
 
 const drawerStyles = (colors) => StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#F8F8F8' },
+    container: { flex: 1, backgroundColor: '#F8F8F8', paddingTop: isIOS ? (deviceInfoModule.hasNotch ? 40 : 0) : 0 },
     profileContainer: { height: '25%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: SPACING },
     crossIcon: { height: 30, width: 30, position: 'absolute', top: 5, right: -5 },
     greetingText: { fontSize: 25, color: colors.black },
@@ -145,7 +146,7 @@ const drawerStyles = (colors) => StyleSheet.create({
     profilePicContainer: { height: PROFILE_PICTURE_SECTION, width: PROFILE_PICTURE_SECTION, borderRadius: PROFILE_PICTURE_SECTION / 2, borderWidth: 3, borderColor: colors.black, backgroundColor: colors.white, justifyContent: 'center', alignItems: 'center' },
     profilePicInnerContainer: { height: PROFILE_PICTURE_INNER_SECTION, width: PROFILE_PICTURE_INNER_SECTION, borderRadius: PROFILE_PICTURE_INNER_SECTION / 2, backgroundColor: colors.primary },
     navigationContainer: { height: '68 %', marginBottom: 60 },
-    navigationItem: { height: 60, flexDirection: 'row', borderBottomWidth: 0.4, borderBottomColor:colors.grey, backgroundColor: colors.white, justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: SPACING, width: '100%' },
+    navigationItem: { height: 60, flexDirection: 'row', borderBottomWidth: 0.4, borderBottomColor: colors.grey, backgroundColor: colors.white, justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: SPACING, width: '100%' },
     informationNavigationItem: { height: 60, flexDirection: 'row', backgroundColor: colors.white, justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: SPACING, width: '100%', },
     logoutContainer: { height: 60, width: '100%', position: "absolute", bottom: 0, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: SPACING, backgroundColor: colors.white },
 });
