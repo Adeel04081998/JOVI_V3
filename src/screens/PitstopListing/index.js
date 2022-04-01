@@ -16,6 +16,7 @@ import constants from '../../res/constants';
 import theme from '../../res/theme';
 import ENUMS from '../../utils/ENUMS';
 import GV, { FILTER_TAGS_PITSTOP_LISTING, PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
+import RenderBottomBarComponent from '../Home/components/RenderBottomBarComponent';
 // const Search = React.lazy(()=>import('../Home/components/Search'));
 // const AllPitstopsListing = React.lazy(()=>import('./components/AllPitstopsListing'));
 // const CardLoader = React.lazy(()=>import('./components/CardLoader'));
@@ -352,8 +353,14 @@ const PistopListingChild = React.memo(({ route, }) => {
                 {renderCarouselNdListing()}
                 {renderAllRestaurantsListing()}
             </ScrollView>
-            <BottomBarComponent pitstopType={pitstopType}
-                screenName={ROUTES.APP_DRAWER_ROUTES.PitstopListing.screen_name} colors={colors} leftData={[{ id: 1, iconName: "home", title: "Home" }, { id: 2, iconName: "person", title: "Profile" }]} rightData={[{ id: 3, iconName: "wallet", title: "Wallet" }, { id: 4, iconName: "pin", title: "Location" }]} />
+            <RenderBottomBarComponent showCategories={false} bottomBarComponentProps={
+                {
+                    colors: { ...colors },
+                    pitstopType: pitstopType,
+                    screenName: ROUTES.APP_DRAWER_ROUTES.PitstopListing.screen_name,
+                }
+            } />
+            {/* <BottomBarComponent pitstopType={pitstopType} screenName={ROUTES.APP_DRAWER_ROUTES.PitstopListing.screen_name} colors={colors} leftData={[{ id: 1, iconName: "home", title: "Home" }, { id: 2, iconName: "person", title: "Profile" }]} rightData={[{ id: 3, iconName: "wallet", title: "Wallet" }, { id: 4, iconName: "pin", title: "Location" }]} /> */}
             {/* </SafeAreaView>
         </View> */}
         </>

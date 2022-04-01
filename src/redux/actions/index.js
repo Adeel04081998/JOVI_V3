@@ -115,7 +115,7 @@ const fcmAction = (payload = {}) => {
 const setvendorDashboardCategoryIDAction = (payload = []) => {
     return {
         type: TYPES.SET_VENDOR_DASHBOARD_CATEGORY_ID_ACTION,
-        payload: payload 
+        payload: payload
     }
 }
 

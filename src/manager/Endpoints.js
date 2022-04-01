@@ -58,6 +58,16 @@ export default {
     "CLEAR_RECENT_SEARCHES": "api/Intellisense/ClearUserSearchHistory",//USED IN SEARCH SCREEN FOR CLEAR RECENT SEARCHED BY USER
     "SEARCH": "api/Intellisense/MainSearch",//USED IN SEARCH SCREEN FOR SEARCH USER ENTER TEXT
     "VENDOR_SEARCH": "api/Intellisense/PitstopSearch",//USED IN SEARCH SCREEN FOR GETTING SEARCHED ITEM 
+    "ADD_ORDER_FEEDBACK":"api/Order/Feedback/Add",//USED IN ORDER HISTORY DETAIL SCREEN for adding feedback for the order
+    "GET_LEGAL_CERTIFICATES":"api/Menu/Legal/ListByType/1",
+    "GET_LEGAL_HTML":"api/Menu/Legal/List",
+    "GET_FAQs":"api/Menu/FAQ/List",
+    "GET_TRANSACTIONLIST":"api/Payment/Wallet/Transactions/List",
+    "GET_PROMOS":"api/Menu/Promotion/List",
+    "HBL_PAY": "api/Payment/HBLPay",
+    "JAZZCASH_PAY": "api/Payment/JazzCashPay",
+    "EASYPAISA_PAY": "api/Payment/EasyPaisaPay",
+    "DELETE_ADDRESS": "api/Menu/Address/Delete"
 }
 
 

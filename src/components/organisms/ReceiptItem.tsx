@@ -33,6 +33,7 @@ interface Props {
     itemActualPriceStyle?: StyleProp<TextStyle>;
 
     useInHistory?: boolean;
+    individualPitstopGst?: number | string;
 }
 
 const defaultProps = {
@@ -45,6 +46,7 @@ const defaultProps = {
     showLeftBorder: false,
     showDetail: true,
     useInHistory: false,
+    individualPitstopGst: 0
 };
 
 const ReceiptItem = (props: Props) => {
@@ -84,8 +86,10 @@ const ReceiptItem = (props: Props) => {
 
     // #region :: sub item item getting START's FROM HERE 
     const getItemDetail = (item: any) => {
-        const dp = item.price || item.discountedPrice || item.actualPrice;
-        const p = item.price || item.actualPrice;
+        // const dp = item.price || item.discountedPrice || item.actualPrice;
+        // const p = item.price || item.actualPrice;
+        const dp = item.discountType > 0 ? (item._itemPrice || item.discountedPrice) : 0;
+        const p = item._itemPriceWithoutDiscount;
         let name = item.productItemName || item.pitStopItemName;
         let quantity = item.quantity;
         let actualPrice = dp ? p : '';
@@ -115,17 +119,18 @@ const ReceiptItem = (props: Props) => {
             <View style={[{ marginTop: 0, }, props.itemPrimaryContainerStyle]}>
                 {(props?.itemData ?? []).map((item, index) => {
 
+
                     const { name, quantity, discountedPrice, actualPrice, } = getItemDetail(item);
 
                     return (
                         <View key={index} style={[{ ...itemStyles.primaryContainer, paddingTop: index === 0 ? 0 : 4, }, props.itemContainerStyle]}>
                             <Text style={[itemStyles.name, props.itemTitleStyle]}>{sharedGenerateProductItem(name, quantity)}</Text>
-                            <Text style={[itemStyles.discountedPrice, props.itemDiscountedPriceStyle]}>{renderPrice({ price: discountedPrice, showZero: true })}</Text>
+                            <Text style={[itemStyles.discountedPrice, props.itemDiscountedPriceStyle]}>{renderPrice({ price: isJoviJob ? props.totalPrice : discountedPrice * quantity, showZero: true })}</Text>
 
                             {/* ****************** Start of WHEN DISCOUNT IS ADDED ****************** */}
                             <>
                                 {VALIDATION_CHECK(actualPrice) &&
-                                    <Text numberOfLines={3} style={[itemStyles.actualPrice, props.itemActualPriceStyle]}>{renderPrice(`${actualPrice}`.trim(), '', '.00')}</Text>
+                                    <Text numberOfLines={3} style={[itemStyles.actualPrice, props.itemActualPriceStyle]}>{renderPrice(`${isJoviJob ? props.totalPrice : actualPrice * quantity}`.trim(), '', '.00')}</Text>
                                 }
                             </>
 
@@ -151,7 +156,11 @@ const ReceiptItem = (props: Props) => {
                 {/* ****************** Start of TITLE ****************** */}
                 <View style={[styles.titlePrimaryContainer, props.titleContainerStyle]}>
                     <View style={styles.titleDot} />
-                    <Text fontFamily="PoppinsMedium" style={[styles.title, props.titleStyle]} numberOfLines={1}>{`Pitstop ${`${props.pitstopNumber}`.padStart(2, '0')} - ${props.title}`}</Text>
+                    <Text fontFamily="PoppinsMedium" style={[styles.title, props.titleStyle]} numberOfLines={1}>{`Pitstop ${`${props.pitstopNumber}`.padStart(2, '0')} - ${props.title}`}
+                    {
+                        props.individualPitstopGst ? <Text style={{ ...itemStyles.name, fontSize: 11, }} fontFamily="PoppinsMedium">{`- (Incl GST ${props.individualPitstopGst})`}</Text> : ""
+                    }
+                    </Text>
                     {((!showDetail || props.showItemTotalPrice) && VALIDATION_CHECK(props.totalPrice)) && <>
                         <Text style={{ color: props.showItemTotalPrice ? dotColor() : "#272727", fontSize: 12, }} fontFamily="PoppinsMedium">{renderPrice({ price: props.totalPrice, showZero: true })}</Text>
                     </>}

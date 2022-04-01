@@ -115,13 +115,12 @@ export default () => {
         </View>
     }
     const inputRef = React.useRef(null);
-
     return (
         <View style={homeStyles.container}>
             <SafeAreaView style={{ flex: 1 }}>
                 <CustomHeader
                     finalDest={userReducer?.finalDestObj?.title || null}
-                    leftIconName={"ios-menu"}
+                    renderLeftIconAsDrawer
                     rightIconColor={"#6D51BB"}
                     onTitlePress={() => {
                         dispatch(ReduxActions.setModalAction({
@@ -197,7 +196,11 @@ export default () => {
                     </KeyboardAwareScrollView>
                 </Animated.View>}
             </SafeAreaView>
-            <RenderBottomBarComponent showCategories />
+            <RenderBottomBarComponent showCategories bottomBarComponentProps={
+                {
+                    screenName: ROUTES.APP_DRAWER_ROUTES.Home.screen_name,
+                }
+            } />
         </View>
     );
 };

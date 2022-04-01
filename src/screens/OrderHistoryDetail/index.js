@@ -22,7 +22,7 @@ import NavigationService from '../../navigations/NavigationService';
 import constants from '../../res/constants';
 import FontFamily from '../../res/FontFamily';
 import theme from '../../res/theme';
-import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
+import GV, { isIOS, PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import HistoryItemCardUI from '../OrderHistory/components/HistoryItemCardUI';
 import { headerFuncStyles, stylesFunc } from './styles';
 
@@ -31,7 +31,6 @@ const HEADER_ICON_SIZE = CustomHeaderIconBorder.size * 0.6;
 const NUMBER_OF_INPUT_LINE = 4
 const INPUT_ACCESSORY_VIEW_ID = 'feedbackDoneButton';
 const FEEDBACK_INPUT_MINIMUM_LENGTH = 4;
-
 // #endregion :: CONSTANT's END's FROM HERE 
 
 export default ({ navigation, route }) => {
@@ -442,7 +441,7 @@ export default ({ navigation, route }) => {
                 </AnimatedModal>
             }
 
-            <InputAccessoryView nativeID={INPUT_ACCESSORY_VIEW_ID}>
+            {isIOS&&<InputAccessoryView nativeID={INPUT_ACCESSORY_VIEW_ID}>
                 <View style={{ backgroundColor: '#fff', alignItems: "flex-end", }}>
                     <RNButton
                         onPress={() => {
@@ -452,7 +451,7 @@ export default ({ navigation, route }) => {
                         title="Done"
                     />
                 </View>
-            </InputAccessoryView>
+            </InputAccessoryView>}
         </View>
     )
 

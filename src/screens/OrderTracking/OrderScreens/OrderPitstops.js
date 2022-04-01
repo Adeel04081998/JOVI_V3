@@ -12,7 +12,7 @@ import VectorIcon from '../../../components/atoms/VectorIcon';
 import View from '../../../components/atoms/View';
 import CustomHeader, { CustomHeaderIconBorder } from '../../../components/molecules/CustomHeader';
 import OrderEstTimeCard from '../../../components/organisms/Card/OrderEstTimeCard';
-import { renderPrice, sharedFetchOrder, sharedGenerateProductItem, sharedNotificationHandlerForOrderScreens, sharedRiderRating } from '../../../helpers/SharedActions';
+import { renderPrice, sharedConfirmationAlert, sharedFetchOrder, sharedGenerateProductItem, sharedNotificationHandlerForOrderScreens, sharedRiderRating } from '../../../helpers/SharedActions';
 import { getRequest } from '../../../manager/ApiManager';
 import Endpoints from '../../../manager/Endpoints';
 import NavigationService from '../../../navigations/NavigationService';
@@ -145,6 +145,7 @@ export default ({ route }) => {
             )}
         />
     }
+
     const renderFooter = () => {
         const renderCallIcon = () => {
             return <View style={{ height: 35, width: 35, borderRadius: 17.5, backgroundColor: colors.black, display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
@@ -152,11 +153,14 @@ export default ({ route }) => {
             </View>
         }
         return <View style={styles.footerContainer}>
-            {isRiderFound && <><TouchableOpacity onPress={() => openDialer(state?.riderContactNo)} style={styles.footerItemContainer}>
-                {renderCallIcon()}
-                <Text style={{ marginLeft: 10, color: colors.black }}>Jovi Rider</Text>
-            </TouchableOpacity>
-                <View style={{ width: 1, height: 30, borderWidth: 1, borderColor: colors.black }}></View></>}
+            {!isRiderFound && <>
+                <TouchableOpacity onPress={() => onRiderCallPress()} style={styles.footerItemContainer}>
+                    {renderCallIcon()}
+                    <Text style={{ marginLeft: 10, color: colors.black }}>Jovi Rider</Text>
+                </TouchableOpacity>
+                <View style={{ width: 1, height: 30, borderWidth: 1, borderColor: colors.black }}></View>
+            </>
+            }
             <TouchableOpacity onPress={() => openDialer(userReducer?.customerHelpNumber)} style={styles.footerItemContainer}>
                 {renderCallIcon()}
                 <Text style={{ marginLeft: 10, color: colors.black }}>Jovi Support</Text>
@@ -214,6 +218,26 @@ export default ({ route }) => {
     }
     const openDialer = (number) => {
         Linking.openURL(`tel:${number}`)
+    }
+    const onRiderCallPress = () => {
+        if(userReducer.anonymousHelpNumber){
+            sharedConfirmationAlert('Call Rider','Please choose one of the options',[
+                {
+                    text: "Call Rider",
+                    onPress: () => {
+                        openDialer(state?.riderContactNo);
+                    }
+                },
+                {
+                    text: "Call Rider Anonymously",
+                    onPress: () => {
+                        openDialer(userReducer?.anonymousHelpNumber);
+                    }
+                },
+            ])
+        }else{
+            openDialer(state?.riderContactNo);
+        }
     }
     React.useEffect(() => {
         fetchOrderDetails();

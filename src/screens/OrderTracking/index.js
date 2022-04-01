@@ -112,7 +112,7 @@ export default ({ route }) => {
                     const pitstopType = item.catID === '0' ? 2 : parseInt(item.catID);
                     const focusedPitstop = ENUMS.PITSTOP_TYPES.filter(pt => pt.value === pitstopType)[0];
                     if (!currentPitstop && item.joviJobStatus !== 2 && item.joviJobStatus !== 7) {
-                        currentPitstop = { ...item, index: i };
+                        currentPitstop = { ...item, index: i, isFinalDestination: i === (totalActivePitstops.length - 1), };
                     }
 
                     circularPitstops.push(focusedPitstop);
@@ -121,7 +121,7 @@ export default ({ route }) => {
                     fetchRiderLocation();
                 }
                 if (!currentPitstop) {
-                    currentPitstop = { ...res.data.order.pitStopsList[res.data.order.pitStopsList.length - 1], index: totalActivePitstops.length - 1 };
+                    currentPitstop = { ...res.data.order.pitStopsList[res.data.order.pitStopsList.length - 1], index: totalActivePitstops.length - 1, isFinalDestination: true, };
                 }
                 fetchOrderEstimateInterval();
                 setState(pre => ({ ...pre, ...res.data.order, pitStopsList: updatedPitstops, totalActivePitstops, currentPitstop, progress: progress, isLoading: false, circularPitstops }))
@@ -396,7 +396,7 @@ export default ({ route }) => {
                     {
                         isRiderFound && state.currentPitstop ?
                             <Text style={styles.currentPitstopTime}>
-                                {`Estimated arrival at ${state.totalActivePitstops.length === state.currentPitstop.index + 1 ? 'Final Destination' : `Pitstop ${state.currentPitstop?.index + 1}`}\n${state.currentPitstop?.pitstopEstimateTime ?? ' - '} minutes`}
+                                {state.currentPitstop.isFinalDestination?`Jovi is at your door step!`: `Estimated arrival at ${state.totalActivePitstops.length === state.currentPitstop.index + 1 ? 'Final Destination' : `Pitstop ${state.currentPitstop?.index + 1}`}\n${state.currentPitstop?.pitstopEstimateTime ?? ' - '} minutes`}
                             </Text>
                             :
                             null

@@ -78,11 +78,11 @@ export default ({ navigation, route }) => {
         sharedOrderNavigation(orderIDParam, status, ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name, null, false, pitstopsList = [] ?? []);
         return;
     }
-    const sitBackAnimation = (orderStatus='',pitstopsList = []) => {
-        setState(pre=>({
+    const sitBackAnimation = (orderStatus = '', pitstopsList = []) => {
+        setState(pre => ({
             ...pre,
-            sitBackAnimation:true,
-            postSitBackAnimationData:{
+            sitBackAnimation: true,
+            postSitBackAnimationData: {
                 orderStatus,
                 pitstopsList,
             }
@@ -166,8 +166,8 @@ export default ({ navigation, route }) => {
     return (
         <View style={styles.primaryContainer}>
             {_renderHeader()}
-            {state.sitBackAnimation&&<SitBackAnimation onComplete={()=>{
-                goToOrderTracking(state?.postSitBackAnimationData?.orderStatus,state?.postSitBackAnimationData?.pitstopsList)
+            {state.sitBackAnimation && <SitBackAnimation onComplete={() => {
+                goToOrderTracking(state?.postSitBackAnimationData?.orderStatus, state?.postSitBackAnimationData?.pitstopsList)
             }} />}
             <OrderEstTimeCard
                 imageHeight={IMAGE_SIZE * 0.6}
@@ -281,6 +281,7 @@ export default ({ navigation, route }) => {
                                 dataLeftKey={'productItemName'}
                                 dataRightKey={'price'}
                                 estimatePrice={item.estimatePrice}
+                                totalJobGST={item.totalJobGST}
                             />
                         )
                     })}
@@ -298,24 +299,25 @@ export default ({ navigation, route }) => {
 
                     {/* ****************** Start of GST ****************** */}
                     <OrderProcessingChargesUI
-                        title='GST'
-                        value={renderPrice(state.chargeBreakdown.totalProductGST)} />
+                        title='Total GST'
+                        value={renderPrice(state.orderReceiptVM.chargeBreakdown.totalProductGST)} />
 
                     {/* ****************** End of GST ****************** */}
 
 
                     {/* ****************** Start of SERVICE CHARGES ****************** */}
                     <OrderProcessingChargesUI
-                        title={`Service Charges(Incl S.T ${renderPrice(state.chargeBreakdown.estimateServiceTax, '')})`}
-                        value={renderPrice(state.chargeBreakdown.estimateServiceTax + state.chargeBreakdown.totalEstimateCharge)} />
+                        title={`Service Charges(Incl S.T ${renderPrice(state.orderReceiptVM.chargeBreakdown.estimateServiceTax, '')})`}
+                        value={renderPrice(Math.round(state.orderReceiptVM.chargeBreakdown.estimateServiceTax + state.orderReceiptVM.chargeBreakdown.totalEstimateCharge))} />
                     <DashedLine />
 
                     {/* ****************** End of SERVICE CHARGES ****************** */}
 
 
                     {/* ****************** Start of DISCOUNT ****************** */}
-                    <OrderProcessingChargesUI title='Discount'
-                        value={renderPrice(state.chargeBreakdown.discount)} />
+                    <OrderProcessingChargesUI title='Total Discount'
+
+                        value={`${renderPrice({ showZero: true, price: state.orderReceiptVM.chargeBreakdown.discount }, 'Rs. -')}`} />
                     {/* value={parseInt(renderPrice(state.chargeBreakdown.discount)) > 0 ? renderPrice(state.chargeBreakdown?.discount) : renderPrice(state.chargeBreakdown.discount)} /> */}
                     <DashedLine />
 
@@ -324,7 +326,7 @@ export default ({ navigation, route }) => {
 
 
                     {/* ****************** Start of ESTIMATED PRICE ****************** */}
-                    <OrderProcessingEstimatedTotalUI estimatedPrice={renderPrice(state.chargeBreakdown.estimateTotalAmount)} />
+                    <OrderProcessingEstimatedTotalUI estimatedPrice={renderPrice(state.orderReceiptVM.chargeBreakdown.estimateTotalAmount)} />
 
                     {/* ****************** End of ESTIMATED PRICE ****************** */}
 
@@ -343,7 +345,7 @@ export default ({ navigation, route }) => {
 
 
                     {/* ****************** Start of PAID WITH TOTAL PRICE ****************** */}
-                    <PaidWithUI price={renderPrice(state.chargeBreakdown.estimateTotalAmount)} />
+                    <PaidWithUI price={renderPrice(state.orderReceiptVM.chargeBreakdown.estimateTotalAmount)} />
 
                     {/* ****************** End of PAID WITH TOTAL PRICE ****************** */}
 
@@ -436,7 +438,7 @@ export const OrderProcessingChargesUI = ({ title = '', value = '', }) => {
 // #endregion :: CHARGES, GST, DISCOUNT UI END's FROM HERE 
 
 // #region :: PITSTOP ITEM UI  START's FROM HERE 
-const PitStopItemUI = ({ pitstopTitle = '', isJoviJob = false, pitstopNumber = 1, data = [], dataLeftKey = "title", dataRightKey = "value", estimatePrice = 0 }) => {
+const PitStopItemUI = ({ pitstopTitle = '', isJoviJob = false, pitstopNumber = 1, data = [], dataLeftKey = "title", dataRightKey = "value", estimatePrice = 0, actualPrice = 0, totalJobGST = 0 }) => {
     return (
 
         <View style={{ marginVertical: 8, }}>
@@ -444,7 +446,16 @@ const PitStopItemUI = ({ pitstopTitle = '', isJoviJob = false, pitstopNumber = 1
                 color: "#272727",
                 fontSize: 13,
                 paddingHorizontal: DOUBLE_SPACING,
-            }} numberOfLines={2}>{`Pit Stop ${pitstopNumber} - ${isJoviJob ? 'Jovi Job' : pitstopTitle}`}</Text>
+            }} numberOfLines={2}>{`Pit Stop ${pitstopNumber} - ${isJoviJob ? 'Jovi Job' : pitstopTitle}`}
+                <Text style={{
+                    color: "#272727",
+                    fontSize: 12,
+                    // left: 10
+                    // paddingHorizontal: DOUBLE_SPACING,
+                    // width: "25%",
+                    // textAlign: "right",
+                }} numberOfLines={1}>{totalJobGST ? ` (Incl GST - ${totalJobGST})` : ""}</Text>
+            </Text>
             {
                 isJoviJob ?
                     <View style={{ flexDirection: "row", alignItems: "center", }} >
@@ -467,21 +478,37 @@ const PitStopItemUI = ({ pitstopTitle = '', isJoviJob = false, pitstopNumber = 1
             }
             {data.map((item, index) => {
                 return (
-                    <View style={{ flexDirection: "row", alignItems: "center", }} key={index}>
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }} key={index}>
                         <Text style={{
                             color: "#6B6B6B",
                             fontSize: 12,
                             paddingHorizontal: DOUBLE_SPACING * 1.5,
-                            width: "75%",
+                            width: "60%"
                         }} numberOfLines={3}>{`${sharedGenerateProductItem(item[dataLeftKey], item.quantity, item.jobItemOptions)}`}</Text>
+                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                            <Text style={{
+                                color: "#272727",
+                                fontSize: 12,
+                                paddingHorizontal: item.actualPrice ? 0 : DOUBLE_SPACING,
+                                textAlign: "right",
+                            }} numberOfLines={1}>{renderPrice(`${item[dataRightKey]}`)}
+                            </Text>
+                            {
+                                item.actualPrice > item[dataRightKey] ?
+                                    <Text style={{
+                                        color: "#6B6B6B",
+                                        fontSize: 12,
+                                        // paddingHorizontal: DOUBLE_SPACING,
+                                        paddingHorizontal: 10,
+                                        textAlign: "right",
+                                        textDecorationLine: "line-through"
+                                    }} numberOfLines={1}>{renderPrice(`${item.actualPrice}`)}
 
-                        <Text style={{
-                            color: "#272727",
-                            fontSize: 12,
-                            paddingHorizontal: DOUBLE_SPACING,
-                            width: "25%",
-                            textAlign: "right",
-                        }} numberOfLines={1}>{renderPrice(`${item[dataRightKey]}`)}</Text>
+                                    </Text>
+                                    : null
+                            }
+                        </View>
+
                     </View>
                 )
             })}

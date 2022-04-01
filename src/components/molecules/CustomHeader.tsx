@@ -1,6 +1,8 @@
 import * as React from "react";
 import { GestureResponderEvent, Platform, StyleProp, StyleSheet, TextStyle, View as RNView, ViewStyle } from "react-native";
+import { SvgXml } from "react-native-svg";
 import { useDispatch, useSelector } from "react-redux";
+import svgs from "../../assets/svgs";
 import { VALIDATION_CHECK } from "../../helpers/SharedActions";
 import NavigationService from "../../navigations/NavigationService";
 import ROUTES from "../../navigations/ROUTES";
@@ -56,8 +58,9 @@ type Props = React.ComponentProps<typeof RNView> & {
     finalDest?: string,
     onTitlePress?: (event: GestureResponderEvent) => void;
     titleStyle?: StyleProp<TextStyle>;
-    hideFinalDestination?: boolean;
     defaultColor: string;
+    hideFinalDestination?: boolean;
+    renderLeftIconAsDrawer?: boolean;
     //CENTER PROP's ENDING
 
     centerRightCustom?: () => React.ReactNode;
@@ -70,6 +73,7 @@ const defaultProps = {
     //LEFT SIDE PROP's
     leftCustom: undefined,
     leftDot: false,
+    renderLeftIconAsDrawer: false,
     leftDotStyle: {},
     leftDotTextStyle: {},
     leftContainerStyle: {},
@@ -167,6 +171,13 @@ const CustomHeader = (props: Props) => {
         )
 
     };//end of _renderDot
+    const _renderLeftIconForDrawer = () => {
+        return <TouchableScale wait={0} onPress={() => {
+            NavigationService.NavigationActions.drawer_actions.toggleDrawer();
+        }} style={[styles.iconContainer, props.leftContainerStyle]}>
+            <SvgXml xml={svgs.hamburgerMenu()} height={props.leftIconSize} width={props.leftIconSize} />
+        </TouchableScale>
+    }
     return (
         <View style={[styles.primaryContainer, props.containerStyle]}>
 
@@ -174,7 +185,7 @@ const CustomHeader = (props: Props) => {
             {/* ****************** Start of LEFT SIDE ICON ****************** */}
             <View style={[styles.sideContainer, props.leftSideContainer]}>
 
-                {VALIDATION_CHECK(props.leftCustom) ?
+                {props.renderLeftIconAsDrawer ? _renderLeftIconForDrawer() : VALIDATION_CHECK(props.leftCustom) ?
                     props.leftCustom
                     : (VALIDATION_CHECK(props.leftIconName) || props.leftDot) &&
                     <TouchableScale wait={0} style={[styles.iconContainer, props.leftContainerStyle]}
@@ -245,10 +256,8 @@ const CustomHeader = (props: Props) => {
 
 
                 {/* ****************** End of RIGHT SIDE ICON ****************** */}
-
-            </>
-            }
-        </View>
+            </>}
+        </View >
     );
 };//end of CUSTOM HEADER
 

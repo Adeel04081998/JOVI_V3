@@ -113,7 +113,7 @@ const APP_DRAWER_ROUTES = {
     },
     "OrderHistory": {
         screen_name: "ORDER_HISTORY",
-        options: null,
+        options: { animation: 'slide_from_bottom' }
     },
     "OrderHistoryDetail": {
         screen_name: "ORDER_HISTORY_DETAIL",
@@ -122,6 +122,46 @@ const APP_DRAWER_ROUTES = {
     "Search": {
         screen_name: "SEARCH",//SEARCH VENDOR OR PRODUCT
         options: { animation: 'slide_from_bottom' },
+    },
+    "Legal": {
+        screen_name: "LEGAL",
+        options: {
+            animation:'fade'
+        },
+    },
+    "WebView": {
+        screen_name: "WEBVIEW",
+        options: { animation: 'slide_from_bottom' },
+    },
+    "FAQ": {
+        screen_name: "FAQ",
+        options: {
+            animation:'fade'
+        },
+    },
+    "Wallet": {
+        screen_name: "WALLET",
+        options: { animation: 'slide_from_bottom' },
+    },
+    "TopUp": {
+        screen_name: "TOPUP",
+        options: { animation: 'slide_from_bottom' }
+    },
+    "ContactUs": {
+        screen_name: "CONTACT_US",
+        options: {
+            animation:'fade'
+        },
+    },
+    "GoodyBag": {
+        screen_name: "GOODY_BAG",
+        options: { animation: 'slide_from_bottom' }
+    },
+    "FavAddresses": {
+        screen_name: "FAV_ADDRESSES",
+        options: {
+            animation:'fade'
+        },
     },
 
 
