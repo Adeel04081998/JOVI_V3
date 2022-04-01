@@ -9,7 +9,7 @@ import FontFamily from '../../../res/FontFamily';
 let numberOfLines = 2
 let minHeight = (Platform.OS === 'ios' && numberOfLines) ? (40 * numberOfLines) : null;
 const HEIGHT = 50
-export default ({ colors, homeStyles, onSearch = () => { }, placeholder = null, searchProps = {}, fontSize = 12, containerStyle = {}, textInputStyle = {}, onChangeText = (text) => { }, text = '', editable = true, onPress = undefined }) => {
+export default ({ colors, homeStyles, onSearch = () => { }, placeholder = null, searchProps = {}, fontSize = 12, containerStyle = {}, textInputStyle = {}, onChangeText = (text) => { }, text = '', editable = true, onPress = undefined,autoFocus=false }) => {
     const [state, setState] = React.useState({
         value: '',
     });
@@ -52,6 +52,7 @@ export default ({ colors, homeStyles, onSearch = () => { }, placeholder = null, 
                 }, containerStyle]}>
                 <TextInput
                     {...searchProps}
+                    autoFocus={autoFocus}
                     editable={editable}
                     value={state.value}
                     textAlign="left"

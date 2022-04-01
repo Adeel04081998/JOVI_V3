@@ -125,6 +125,7 @@ export default ({ navigation, route }) => {
                                         },
                                     } : {
                                         editable: true,
+                                        autoFocus: true,
                                     }}
                                     text={searchText}
                                     containerStyle={{ height: 40, }}
