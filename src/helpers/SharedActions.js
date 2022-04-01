@@ -29,9 +29,9 @@ export const sharedGetDeviceInfo = async () => {
     let systemVersion = DeviceInfo.getSystemVersion();
     return { deviceID, model, systemVersion };
 };
-export const sharedExceptionHandler = err => {
+export const sharedExceptionHandler = (err, skipToast = false) => {
     console.log("[sharedExceptionHandler].err", err);
-    const TOAST_SHOW = 3000;
+    const TOAST_SHOW = skipToast ? 0 : 3000;
     if (err) {
         if (err.data) {
             if (err?.data?.StatusCode === 401) return;
@@ -1123,4 +1123,8 @@ export const splitArray = (array, n) => {
         res.push(arr.splice(0, n));
     }
     return res;
+};
+
+export const randomDate = (start = new Date(2019, 2, 1), end = new Date()) => {
+    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 };
