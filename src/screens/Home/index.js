@@ -15,6 +15,7 @@ import ImageCarousel from '../../components/molecules/ImageCarousel';
 import { sharedExceptionHandler, sharedOrderNavigation, uniqueKeyExtractor } from "../../helpers/SharedActions";
 import { getRequest } from "../../manager/ApiManager";
 import Endpoints from "../../manager/Endpoints";
+import NavigationService from "../../navigations/NavigationService";
 import ROUTES from "../../navigations/ROUTES";
 import ReduxActions from '../../redux/actions';
 import theme from "../../res/theme";
@@ -171,7 +172,11 @@ export default () => {
                             autoPlayInterval={3}
                         />
                         <View style={homeStyles.wrapper}>
-                            <Search colors={colors} homeStyles={homeStyles} fontSize={12} />
+                            <Search colors={colors} homeStyles={homeStyles} fontSize={12} editable={false}
+                                onPress={() => {
+                                    NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Search.screen_name);
+                                }}
+                            />
                             <Categories homeStyles={homeStyles} />
                             <AvatarAlert messagesReducer={messagesReducer} homeStyles={homeStyles} />
                             {/* <RecentOrders /> AS PER PM WE HAVE TO REMOVE RECENT ORDER FOR NOW*/}

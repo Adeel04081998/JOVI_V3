@@ -45,7 +45,7 @@ export default ({ navigation, route }) => {
     const pitstopType = route?.params?.pitstopType ?? 4;
     const colors = theme.getTheme(GV.THEME_VALUES[lodash.invert(PITSTOPS)[pitstopType]], Appearance.getColorScheme() === "dark");
     const styles = stylesFunc(colors);
-    const pitstopID = route?.params?.pitstopID ?? 3979;
+    const pitstopID = route?.params?.pitstopID ?? 0;
     const sectionHeaderStyles = sectionHeaderStylesFunc(colors);
     const itemStyles = itemStylesFunc(colors);
 

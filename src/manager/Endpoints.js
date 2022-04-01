@@ -53,6 +53,11 @@ export default {
     "GET_CUSTOMER_ONGOING_ORDER": "api/Order/OnGoingOrdersListV2",//USED IN ORDER HISTORY SCREEN for getting ongoing order of customer
     "OrderEstimateTime": "api/Order/OrderEstimateTimeV2", //Order Estimate Time
 
+    "ADD_ORDER_FEEDBACK": "api/Order/Feedback/Add",//USED IN ORDER HISTORY DETAIL SCREEN for adding feedback for the order
+    "GET_RECENT_SEARCHES": "api/Intellisense/GetRecentSearches",//USED IN SEARCH SCREEN FOR GETTING RECENT SEARCHED BY USER
+    "CLEAR_RECENT_SEARCHES": "api/Intellisense/ClearUserSearchHistory",//USED IN SEARCH SCREEN FOR CLEAR RECENT SEARCHED BY USER
+    "SEARCH": "api/Intellisense/MainSearch",//USED IN SEARCH SCREEN FOR SEARCH USER ENTER TEXT
+    "VENDOR_SEARCH": "api/Intellisense/PitstopSearch",//USED IN SEARCH SCREEN FOR GETTING SEARCHED ITEM 
     "ADD_ORDER_FEEDBACK":"api/Order/Feedback/Add",//USED IN ORDER HISTORY DETAIL SCREEN for adding feedback for the order
     "GET_LEGAL_CERTIFICATES":"api/Menu/Legal/ListByType/1",
     "GET_LEGAL_HTML":"api/Menu/Legal/List",

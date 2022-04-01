@@ -36,6 +36,7 @@ import OrderChat from '../screens/OrderChat';
 import RateRider from '../screens/RateRider';
 import OrderHistory from '../screens/OrderHistory';
 import OrderHistoryDetail from '../screens/OrderHistoryDetail';
+import Search from '../screens/Search';
 import OrderPitstops from '../screens/OrderTracking/OrderScreens/OrderPitstops';
 import Legal from '../screens/Legal';
 import WebView from '../components/organisms/WebView';
@@ -96,6 +97,7 @@ const AppDrawerComponents = {
     RateRider,
     OrderHistory,
     OrderHistoryDetail,
+    Search,
     Legal,
     WebView,
     FAQ,

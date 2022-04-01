@@ -26,7 +26,7 @@ type Props = React.ComponentProps<typeof RNView> & {
     leftDotStyle?: StyleProp<ViewStyle>;
     leftDotTextStyle?: StyleProp<TextStyle>;
     leftContainerStyle?: StyleProp<ViewStyle>;
-
+    leftSideContainer?: StyleProp<ViewStyle>;
     leftIconName?: string;
     leftIconType?: 'Ionicons' | 'AntDesign' | 'Entypo' | 'EvilIcons' | 'Feather' | 'FontAwesome' | 'FontAwesome5' | 'Fontisto' | 'MaterialCommunityIcons' | 'MaterialIcons' | "Foundation" | "SimpleLineIcons" | 'Zocial' | 'Octicons';
     leftIconStyle?: StyleProp<ViewStyle>;
@@ -46,6 +46,7 @@ type Props = React.ComponentProps<typeof RNView> & {
     rightIconName?: string;
     rightIconType?: 'Ionicons' | 'AntDesign' | 'Entypo' | 'EvilIcons' | 'Feather' | 'FontAwesome' | 'FontAwesome5' | 'Fontisto' | 'MaterialCommunityIcons' | 'MaterialIcons' | "Foundation" | "SimpleLineIcons" | 'Zocial' | 'Octicons';
     rightIconStyle?: StyleProp<ViewStyle>;
+    rightSideContainer?: StyleProp<ViewStyle>;
     rightIconSize?: number;
     rightIconColor?: any;
     onRightIconPress?: (event: GestureResponderEvent) => void;
@@ -61,6 +62,8 @@ type Props = React.ComponentProps<typeof RNView> & {
     hideFinalDestination?: boolean;
     renderLeftIconAsDrawer?: boolean;
     //CENTER PROP's ENDING
+
+    centerRightCustom?: () => React.ReactNode;
 };
 
 const defaultProps = {
@@ -108,10 +111,10 @@ const defaultProps = {
     titleStyle: {},
     hideFinalDestination: false,
     defaultColor: "#6D51BB",
-    finalDest: ''
+    finalDest: '',
     //CENTER PROP's ENDING
 
-
+    centerRightCustom: undefined,
 };//end of defaultProps
 
 const CustomHeader = (props: Props) => {
@@ -180,7 +183,7 @@ const CustomHeader = (props: Props) => {
 
 
             {/* ****************** Start of LEFT SIDE ICON ****************** */}
-            <View style={styles.sideContainer}>
+            <View style={[styles.sideContainer, props.leftSideContainer]}>
 
                 {props.renderLeftIconAsDrawer ? _renderLeftIconForDrawer() : VALIDATION_CHECK(props.leftCustom) ?
                     props.leftCustom
@@ -204,55 +207,56 @@ const CustomHeader = (props: Props) => {
             </View>
 
             {/* ****************** End of LEFT SIDE ICON ****************** */}
+            {props.centerRightCustom ? <View style={{ flex: 1, }}>
+                {props.centerRightCustom()}
+            </View> : <>
 
-
-            {/* ****************** Start of CENTER ****************** */}
-            <View style={styles.middleContainer}>
-                {props.centerCustom ? props.centerCustom() : <>
-                    {VALIDATION_CHECK(props.title) ?
-                        <Text numberOfLines={1} style={[styles.title, props.titleStyle]} fontFamily={"PoppinsBold"}>{props.title}</Text> :
-                        _renderFinalDestination()
-                    }
-                </>
-                }
-            </View>
-
-            {/* ****************** End of CENTER ****************** */}
-
-            {/* ****************** Start of RIGHT SIDE ICON ****************** */}
-            <View style={[styles.sideContainer, {
-                alignItems: "flex-end",
-            }]}>
-                {VALIDATION_CHECK(props.rightCustom) ? props.rightCustom : (VALIDATION_CHECK(props.rightIconName) || props.rightDot) &&
-                    <TouchableScale wait={0} style={[styles.iconContainer, props.rightContainerStyle]}
-                        {...props.onRightIconPress ? {
-                            onPress: (event) => props.onRightIconPress && props.onRightIconPress(event)
-                        } : {
-                            onPress: () => {
-                                if (IS_CART_ICON && cartReducer.itemsCount > 0) {
-                                    // NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name)
-                                    NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name)
-                                }
-                            },
-                            disabled: (cartReducer.itemsCount > 0 && IS_CART_ICON) ? false : true
-                        }}>
-                        {VALIDATION_CHECK(props.rightIconName) &&
-                            <VectorIcon
-                                name={props.rightIconName}
-                                type={props.rightIconType}
-                                color={props.rightIconColor || props.defaultColor}
-                                size={props.rightIconSize} />
+                {/* ****************** Start of CENTER ****************** */}
+                <View style={styles.middleContainer}>
+                    {props.centerCustom ? props.centerCustom() : <>
+                        {VALIDATION_CHECK(props.title) ?
+                            <Text numberOfLines={1} style={[styles.title, props.titleStyle]} fontFamily={"PoppinsBold"}>{props.title}</Text> :
+                            _renderFinalDestination()
                         }
-                        {cartReducer.itemsCount > 0 && IS_CART_ICON && _renderDot(cartReducer.itemsCount, props.rightDotStyle, props.rightDotTextStyle)}
-                        {/* {props.rightDot && _renderDot(props.rightDot, props.rightDotStyle, props.rightDotTextStyle)} */}
-                    </TouchableScale>
-                }
-            </View>
+                    </>
+                    }
+                </View>
+
+                {/* ****************** End of CENTER ****************** */}
+
+                {/* ****************** Start of RIGHT SIDE ICON ****************** */}
+                <View style={[styles.sideContainer, {
+                    alignItems: "flex-end",
+                }, props.rightSideContainer]}>
+                    {VALIDATION_CHECK(props.rightCustom) ? props.rightCustom : (VALIDATION_CHECK(props.rightIconName) || props.rightDot) &&
+                        <TouchableScale wait={0} style={[styles.iconContainer, props.rightContainerStyle]}
+                            {...props.onRightIconPress ? {
+                                onPress: (event) => props.onRightIconPress && props.onRightIconPress(event)
+                            } : {
+                                onPress: () => {
+                                    if (IS_CART_ICON && cartReducer.itemsCount > 0) {
+                                        // NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name)
+                                        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name)
+                                    }
+                                },
+                                disabled: (cartReducer.itemsCount > 0 && IS_CART_ICON) ? false : true
+                            }}>
+                            {VALIDATION_CHECK(props.rightIconName) &&
+                                <VectorIcon
+                                    name={props.rightIconName}
+                                    type={props.rightIconType}
+                                    color={props.rightIconColor || props.defaultColor}
+                                    size={props.rightIconSize} />
+                            }
+                            {cartReducer.itemsCount > 0 && IS_CART_ICON && _renderDot(cartReducer.itemsCount, props.rightDotStyle, props.rightDotTextStyle)}
+                            {/* {props.rightDot && _renderDot(props.rightDot, props.rightDotStyle, props.rightDotTextStyle)} */}
+                        </TouchableScale>
+                    }
+                </View>
 
 
-            {/* ****************** End of RIGHT SIDE ICON ****************** */}
-
-
+                {/* ****************** End of RIGHT SIDE ICON ****************** */}
+            </>}
         </View >
     );
 };//end of CUSTOM HEADER
