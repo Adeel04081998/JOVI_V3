@@ -7,26 +7,16 @@ import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import JoviTab from '../../components/organisms/JoviTab';
 import NoRecord from '../../components/organisms/NoRecord';
-import { getRandomInt, randomDate, sharedExceptionHandler, uuidGenerator } from '../../helpers/SharedActions';
+import { sharedExceptionHandler } from '../../helpers/SharedActions';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
+import NavigationService from '../../navigations/NavigationService';
+import ROUTES from '../../navigations/ROUTES';
 import AppStyles from '../../res/AppStyles';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
-import { randomQuote } from '../OrderChat/loremipsum';
 import { stylesFunc } from './styles';
-
-const WINDOW_WIDTH = constants.window_dimensions.width;
-
-const ComplaintData = new Array(10).fill({
-
-}).map(() => ({
-    id: uuidGenerator(),
-    detail: randomQuote().quote,
-    complaintNo: getRandomInt(),
-    dateTime: randomDate(),
-}))
 
 export default ({ navigation, route }) => {
 
@@ -194,7 +184,7 @@ export default ({ navigation, route }) => {
                                         time: `${item.complaintDateTime.split(' ').pop()}`,
                                     }}
                                     onPress={() => {
-                                        console.log('pressingg');
+                                        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.SupportDetail.screen_name);
                                     }}
                                 />
                             )

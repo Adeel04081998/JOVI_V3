@@ -48,6 +48,7 @@ import GoodyBag from '../screens/GoodyBag';
 import FavAddresses from '../screens/FavAddresses';
 import DrawerComponent from '../components/organisms/DrawerComponent';
 import Support from '../screens/Support';
+import SupportDetail from '../screens/SupportDetail';
 
 const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES, APP_DRAWER_ROUTES, APP_DRAWER_STACK } = ROUTES;
 const AppDrawerStack = (props) => {
@@ -109,6 +110,7 @@ const AppDrawerComponents = {
     GoodyBag,
     FavAddresses,
     Support,
+    SupportDetail,
 }//will open with Slide Animation
 const ContainerStack = createStackNavigator();
 const Stack = createNativeStackNavigator();

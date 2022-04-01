@@ -167,6 +167,10 @@ const APP_DRAWER_ROUTES = {
         screen_name: "SUPPORT",
         options: null,
     },
+    "SupportDetail": {
+        screen_name: "SUPPORT_DETAIL",
+        options: { animation: 'slide_from_right' }
+    },
 
 
 }
