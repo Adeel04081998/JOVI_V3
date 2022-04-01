@@ -400,7 +400,7 @@ export default ({ navigation, route }) => {
         <View style={{ ...styles.primaryContainer, }}>
             {_renderHeader()}
 
-            {recentSearchesData.length < 1 && searchData[isRestaurantSelected ? "restaurant" : "grocery"].data.length < 1 ? <EmptyUI /> :
+            {!showJoviJob && recentSearchesData.length < 1 && searchData[isRestaurantSelected ? "restaurant" : "grocery"].data.length < 1 ? <EmptyUI /> :
                 <>
                     {showProductVendor ?
                         <SearchProductVendors
