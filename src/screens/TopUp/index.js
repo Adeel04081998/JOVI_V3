@@ -292,7 +292,7 @@ export default () => {
       else if (topUpAmount.toString()[0] == "0") return Toast.error(`Amount cannot be less than 1`);
       else if (item.paymentType > 0) return getPayloadForWebViewHandler(item.paymentType);
     } else {
-      Toast.error(`Entered text is not a number! Please enter numeric number like (123)`, null, "long");
+      Toast.error(`Please enter amount`);
     }
 
   }

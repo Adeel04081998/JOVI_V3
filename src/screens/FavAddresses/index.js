@@ -24,6 +24,8 @@ import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 const HEADER_ICON_SIZE = CustomHeaderIconBorder.size * 0.6;
 const SPACING = 10;
 const ICON_CONTAINER_SIZE = 40;
+let isFromEdit = false;
+let lastLoc = {};
 export default () => {
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[PITSTOP_TYPES.JOVI]], Appearance.getColorScheme() === "dark");
     const customheaderStyles = { ...CustomHeaderStyles(colors.primary) };
@@ -31,6 +33,7 @@ export default () => {
     const dispatch = useDispatch()
     // const addresses = userReducer?.addresses ?? [];
     const [addresses, setAddresses] = useState(userReducer?.addresses ?? [])
+    console.log('addresses ==>>',addresses);
     const _styles = styles(colors);
     React.useEffect(() => {
         setAddresses(userReducer?.addresses)
@@ -82,7 +85,10 @@ export default () => {
             }
         },
     ])
-
+    const updateFinalDestination = (fd) => {
+        isFromEdit = true;
+        lastLoc = fd;
+      };
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }}>
             {_renderHeader()}
@@ -100,7 +106,7 @@ export default () => {
                                         <Text style={{ fontSize: 14, color: colors.primary }} fontFamily="PoppinsBold">{VALIDATION_CHECK(item.addressTypeStr) ? item.addressTypeStr : 'Other'}</Text>
                                     </View>
                                     <View style={{ flexDirection: 'row' }}>
-                                        <TouchableOpacity onPress={() => NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.AddAddress.screen_name, { finalDestObj: item, index: 4 })} >
+                                        <TouchableOpacity onPress={() => NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.AddAddress.screen_name, { finalDestObj: item, index: 4, updateFinalDestination })} >
                                             <VectorIcon size={17} color={colors.primary} name={'edit'} type={'MaterialIcons'} style={{ marginRight: 5 }} />
                                         </TouchableOpacity>
                                         <TouchableOpacity onPress={() => deleteAddressWarn(item, index)} >
