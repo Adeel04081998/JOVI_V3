@@ -163,6 +163,12 @@ const APP_DRAWER_ROUTES = {
             animation:'fade'
         },
     },
+    "Profile": {
+        screen_name: "PROFILE",
+        options: {
+            animation:'fade'
+        },
+    },
 
 
 }

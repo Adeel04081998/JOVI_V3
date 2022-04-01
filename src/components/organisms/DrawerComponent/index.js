@@ -3,7 +3,7 @@ import { Appearance, Platform, ScrollView, StyleSheet } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { useSelector } from 'react-redux';
 import svgs from '../../../assets/svgs';
-import { renderFile, sharedConfirmationAlert, sharedLogoutUser } from '../../../helpers/SharedActions';
+import { renderFile, sharedConfirmationAlert, sharedLogoutUser, VALIDATION_CHECK } from '../../../helpers/SharedActions';
 import NavigationService from '../../../navigations/NavigationService';
 import ROUTES from '../../../navigations/ROUTES';
 import preference_manager from '../../../preference_manager';
@@ -90,9 +90,9 @@ export default () => {
                 </TouchableOpacity> */}
             </View>
             <View style={{ width: '50%', alignItems: 'flex-end' }}>
-                <TouchableOpacity style={styles.profilePicContainer}>
+                <TouchableOpacity style={styles.profilePicContainer} onPress={()=>onNavigationItemPress({route:ROUTES.APP_DRAWER_ROUTES.Profile.screen_name})}>
                     <View style={styles.profilePicInnerContainer}>
-                        <Image tapToOpen={false} source={userReducer.picture ? { uri: renderFile(userReducer.picture) } : require('../../../assets/images/user.png')}
+                        <Image tapToOpen={false} source={VALIDATION_CHECK(userReducer.picture) ? { uri: renderFile(userReducer.picture) } : require('../../../assets/images/user.png')}
                             style={{ height: PROFILE_PICTURE_INNER_SECTION, width: PROFILE_PICTURE_INNER_SECTION, borderRadius: PROFILE_PICTURE_INNER_SECTION / 2 }}
                             height={PROFILE_PICTURE_INNER_SECTION} width={PROFILE_PICTURE_INNER_SECTION}
                         />
