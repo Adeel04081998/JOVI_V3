@@ -246,17 +246,19 @@ export const sharedGetUserAddressesApi = () => {
     );
 };
 export const sharedGetPromotions = () => {
+    const userReducer = store.getState().userReducer;
+    const finalDestination = userReducer.finalDestObj ?? {};
     postRequest(
         `${Endpoints.GET_PROMOTIONS}`,
         {
             isDashboard: true,
             isUserSpecific: false, // Need to discuss with Shakir
-            latitude: 33.668531, // should be replace with user's final destination
-            longitude: 73.075001, // should be replace with user's final destination
+            "latitude": finalDestination.latitude ?? 0,
+            "longitude": finalDestination.longitude ?? 0,
             isCitySpecific: true,
         },
         res => {
-            // console.log("[sharedGetPromotions].res", res);
+            console.log("[sharedGetPromotions].res", res);
             dispatch(ReduxActions.setPromotionsAction({ ...res.data }));
         },
         err => {

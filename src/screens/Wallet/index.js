@@ -201,7 +201,7 @@ export default () => {
         return (
             <ScrollView
                 horizontal
-                style={{ height: 60, flexGrow: 0, paddingHorizontal: 15 }}>
+                style={{ height: 75, flexGrow: 0, paddingHorizontal: 15 }}>
                 {
                     (CustomerTransactionTypeEnum ?? []).map((item, index) => _renderItem(item, index))
                 }

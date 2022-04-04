@@ -169,8 +169,10 @@ const APP_DRAWER_ROUTES = {
             animation:'fade'
         },
     },
-
-
+    "Referral": {
+        screen_name: "REFERRAL",
+        options: { animation: 'slide_from_bottom' }
+    },
 }
 const APP_ROUTES = {
     "AppDrawerStack": {
