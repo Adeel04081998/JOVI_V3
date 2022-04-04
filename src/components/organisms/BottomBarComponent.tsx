@@ -171,7 +171,7 @@ const BottomBarComponent = (props: Props) => {
         }
     }, [orientation]);//end of dimension Effect
     React.useEffect(()=>{
-        if(!isFocused){
+        if(!isFocused&&isCloseIcon){
             animateCenterButtonPress();
         }
     },[isFocused]);
