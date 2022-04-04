@@ -302,21 +302,18 @@ export default ({ navigation, route }) => {
                     {/* ****************** End of SEPERATOR ****************** */}
                     {/* ****************** Start of GST ****************** */}
                     <OrderProcessingChargesUI
-                        title='Total GST'
-                        value={renderPrice(state.orderReceiptVM.chargeBreakdown.totalProductGST)} />
+                        title={`Subtotal (Incl GST ${state.orderReceiptVM.chargeBreakdown.totalProductGST})`}
+                        value={renderPrice(state.orderReceiptVM.subTotal)} />
 
                     {/* ****************** End of GST ****************** */}
                     <DashedLine />
+                    {/* ****************** Start of GST ****************** */}
+                    {/* <OrderProcessingChargesUI
+                        title='Total GST'
+                        value={renderPrice(state.orderReceiptVM.chargeBreakdown.totalProductGST)} /> */}
 
-
-                    {/* ****************** Start of SERVICE CHARGES ****************** */}
-                    <OrderProcessingChargesUI
-                        title={`Service Charges(Incl S.T ${renderPrice(state.orderReceiptVM.chargeBreakdown.estimateServiceTax, '')})`}
-                        value={renderPrice(Math.round(state.orderReceiptVM.chargeBreakdown.estimateServiceTax + state.orderReceiptVM.chargeBreakdown.totalEstimateCharge))} />
-                    <DashedLine />
-
-                    {/* ****************** End of SERVICE CHARGES ****************** */}
-
+                    {/* ****************** End of GST ****************** */}
+                    {/* <DashedLine /> */}
 
                     {/* ****************** Start of DISCOUNT ****************** */}
                     <OrderProcessingChargesUI title='Total Discount'
@@ -327,10 +324,20 @@ export default ({ navigation, route }) => {
 
                     {/* ****************** End of DISCOUNT ****************** */}
 
+                    {/* ****************** Start of SERVICE CHARGES ****************** */}
+                    <OrderProcessingChargesUI
+                        title={`Service Charges(Incl S.T ${renderPrice(state.orderReceiptVM.chargeBreakdown.estimateServiceTax, '')})`}
+                        value={renderPrice(Math.round(state.orderReceiptVM.chargeBreakdown.estimateServiceTax + state.orderReceiptVM.chargeBreakdown.totalEstimateCharge))} />
+                    <DashedLine />
+
+                    {/* ****************** End of SERVICE CHARGES ****************** */}
+
+
+
 
 
                     {/* ****************** Start of ESTIMATED PRICE ****************** */}
-                    <OrderProcessingEstimatedTotalUI estimatedPrice={renderPrice(state.orderReceiptVM.chargeBreakdown.estTotalPlusPitstopAmount)} />
+                    <OrderProcessingEstimatedTotalUI estimatedPrice={renderPrice(state.orderReceiptVM.estTotalPlusPitstopAmount)} />
 
                     {/* ****************** End of ESTIMATED PRICE ****************** */}
 
@@ -349,7 +356,7 @@ export default ({ navigation, route }) => {
 
 
                     {/* ****************** Start of PAID WITH TOTAL PRICE ****************** */}
-                    <PaidWithUI price={renderPrice(state.orderReceiptVM.chargeBreakdown.estTotalPlusPitstopAmount)} />
+                    <PaidWithUI price={renderPrice(state.orderReceiptVM.estTotalPlusPitstopAmount)} />
 
                     {/* ****************** End of PAID WITH TOTAL PRICE ****************** */}
 
@@ -493,7 +500,7 @@ const PitStopItemUI = ({ pitstopTitle = '', isJoviJob = false, pitstopNumber = 1
                             <Text style={{
                                 color: "#272727",
                                 fontSize: 12,
-                                paddingHorizontal: item.actualPrice ? 0 : DOUBLE_SPACING,
+                                paddingHorizontal: item.actualPrice > item[dataRightKey] ? 0 : DOUBLE_SPACING,
                                 textAlign: "right",
                             }} numberOfLines={1}>{renderPrice(`${item[dataRightKey]}`)}
                             </Text>

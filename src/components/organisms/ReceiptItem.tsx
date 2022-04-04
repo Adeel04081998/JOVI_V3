@@ -36,7 +36,6 @@ interface Props {
     individualPitstopGst?: number | string;
     showFrontValues?: boolean;
 }
-
 const defaultProps = {
     title: '',
     totalPrice: '',
@@ -120,7 +119,7 @@ const ReceiptItem = (props: Props) => {
 
         return (
             <View style={[{ marginTop: 0, }, props.itemPrimaryContainerStyle]}>
-                {(props?.itemData ?? []).map((item, index) => {
+                {(props?.itemData ?? []).map((item: any, index) => {
 
 
                     const { name, quantity, actualPrice, } = getItemDetail(item);
@@ -135,7 +134,7 @@ const ReceiptItem = (props: Props) => {
 
                             {/* ****************** Start of WHEN DISCOUNT IS ADDED ****************** */}
                             <>
-                                {VALIDATION_CHECK(actualPrice) &&
+                                {VALIDATION_CHECK(ACTUAL_PRICE) &&
                                     <Text numberOfLines={3} style={[itemStyles.actualPrice, props.itemActualPriceStyle]}>{renderPrice(`${isJoviJob ? props.totalPrice : ACTUAL_PRICE}`.trim(), '', '.00')}</Text>
                                 }
                             </>

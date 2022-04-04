@@ -199,19 +199,28 @@ export default ({ navigation, route }) => {
         return (
             <>
                 <OrderProcessingChargesUI
+                    title={`Subtotal (Incl GST ${state.orderReceiptVM.chargeBreakdown.totalProductGST})`}
+                    value={renderPrice(state.orderReceiptVM.subTotal)} />
+                <DashedLine />
+
+                <OrderProcessingChargesUI
+                    title='Total Discount'
+                    value={`${renderPrice({ showZero: true, price: state.orderReceiptVM.chargeBreakdown.discount }, 'Rs. -')}`}
+                // value={parseInt(renderPrice(state.orderReceiptVM.chargeBreakdown.discount, '')) > 0 ? renderPrice(state.chargeBreakdown.discount, '-') : renderPrice(state.chargeBreakdown.discount, '')}
+                />
+                <DashedLine />
+
+                {/* <OrderProcessingChargesUI
                     title='Total GST'
-                    value={renderPrice(state.orderReceiptVM.chargeBreakdown.totalProductGST, '')} />
+                    value={renderPrice(state.orderReceiptVM.chargeBreakdown.totalProductGST, '')} /> */}
 
                 <OrderProcessingChargesUI
                     title={`Service Charges(Incl S.T ${renderPrice(state.orderReceiptVM.chargeBreakdown.estimateServiceTax, '')})`}
                     value={renderPrice(state.orderReceiptVM.chargeBreakdown.estimateServiceTax + state.orderReceiptVM.chargeBreakdown.totalEstimateCharge, '')} />
                 <DashedLine />
-                <OrderProcessingChargesUI
-                    title='Total Discount'
-                    value={parseInt(renderPrice(state.orderReceiptVM.chargeBreakdown.discount, '')) > 0 ? renderPrice(state.chargeBreakdown.discount, '-') : renderPrice(state.chargeBreakdown.discount, '')} />
-                <DashedLine />
 
-                <OrderProcessingEstimatedTotalUI estimatedPrice={renderPrice(state.orderReceiptVM.chargeBreakdown.estTotalPlusPitstopAmount, '')} />
+
+                <OrderProcessingEstimatedTotalUI estimatedPrice={renderPrice(state.orderReceiptVM.estTotalPlusPitstopAmount, '')} />
             </>
         )
     }
@@ -280,6 +289,7 @@ export default ({ navigation, route }) => {
                                                     key={childIndex}
                                                     title={childItem.productItemName}
                                                     price={childItem.price}
+                                                    actualPrice={childItem.actualPrice}
                                                     type={CARD_SUB_TITLE_TYPES.cancelled}
                                                     quantity={childItem.quantity}
                                                     options={childItem.jobItemOptions?.length > 0 ? childItem.jobItemOptions : (childItem.jobDealOptions ?? [])}
@@ -298,6 +308,7 @@ export default ({ navigation, route }) => {
                                                         key={childIndex}
                                                         title={childItem.productItemName}
                                                         price={childItem.price}
+                                                        actualPrice={childItem.actualPrice}
                                                         type={CARD_SUB_TITLE_TYPES.available}
                                                         quantity={childItem.quantity}
                                                         options={childItem.jobItemOptions?.length > 0 ? childItem.jobItemOptions : (childItem.jobDealOptions ?? [])}
@@ -432,7 +443,7 @@ export default ({ navigation, route }) => {
 };//end of EXPORT DEFAULT
 
 // #region :: CARD TEXT UI START's FROM HERE 
-const CardText = ({ title = '', price = '', type, quantity = null, options = null }) => {
+const CardText = ({ title = '', price = '', type, quantity = null, options = null, actualPrice = 0 }) => {
     const productTitle = sharedGenerateProductItem(title, quantity, options);
     if (type === CARD_SUB_TITLE_TYPES.cancelled || type === CARD_SUB_TITLE_TYPES.outOfStock) {
         return (
@@ -464,11 +475,24 @@ const CardText = ({ title = '', price = '', type, quantity = null, options = nul
                     color: "#272727",
 
                 }} numberOfLines={3}>{`${productTitle}`}</Text>
-                <Text fontFamily='PoppinsMedium' style={{
-                    maxWidth: "30%",
-                    fontSize: 12,
-                    color: "#272727",
-                }} numberOfLines={1}>{`${renderPrice(`${price}`)}`}</Text>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Text fontFamily='PoppinsMedium' style={{
+                        fontSize: 12,
+                        color: "#272727",
+                    }} numberOfLines={1}>{`${renderPrice(`${price}`)}  `}</Text>
+                    {
+                        actualPrice > price ?
+                            <Text style={{
+                                fontSize: 12,
+                                color: "#B1B1B1",
+                                textDecorationLine: "line-through",
+                                textDecorationColor: "#B1B1B1",
+                            }} numberOfLines={1}>{renderPrice(`${actualPrice}`)}
+
+                            </Text>
+                            : null
+                    }
+                </View>
             </View>
         </>
     )

@@ -24,6 +24,7 @@ interface Props {
     useScrollView?: boolean;
     containerStyle?: StyleProp<ViewStyle>;
     estimateServiceTax: number;
+    subTotal: number;
 };
 
 const defaultProps = {
@@ -36,7 +37,8 @@ const defaultProps = {
     rightText: 'Close',
     onRightTextPress: undefined,
     useScrollView: true,
-    estimateServiceTax: 0
+    estimateServiceTax: 0,
+    subTotal: 0,
 };
 
 // const RatingOrderRecipt= ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData = [] }) => {
@@ -52,9 +54,27 @@ const RatingOrderRecipt = (props: Props) => {
                 <View style={checkOutStyles.gstMainContainer}>
                     <RenderGSTPrice1
                         checkOutStyles={checkOutStyles}
+                        text={`Subtotal (Incl GST ${props.totalGST})`}
+                        value={props.subTotal}
+                    />
+                </View>
+                {/* <View style={checkOutStyles.gstMainContainer}>
+                    <RenderGSTPrice1
+                        checkOutStyles={checkOutStyles}
                         text={"Total Gst"}
                         value={props.totalGST}
                     />
+                </View> */}
+                <View style={{ marginHorizontal: 1 }}>
+                    <DashedLine dashLineStyles={{ color: "#707070" }} />
+                </View>
+                <RenderGSTPrice2
+                    checkOutStyles={checkOutStyles}
+                    text={"Total Discount"}
+                    value={props.discount}
+                />
+                <View style={{ marginHorizontal: 1 }}>
+                    <DashedLine dashLineStyles={{ color: "#707070" }} />
                 </View>
                 <View style={checkOutStyles.gstMainContainer}>
                     <RenderGSTPrice1
@@ -63,17 +83,6 @@ const RatingOrderRecipt = (props: Props) => {
                         value={(props.serviceCharges + props.estimateServiceTax)}
                     />
                 </View>
-
-
-
-                <View style={{ marginHorizontal: 1 }}>
-                    <DashedLine dashLineStyles={{ color: "#707070" }} />
-                </View>
-                <RenderGSTPrice2
-                    checkOutStyles={checkOutStyles}
-                    text={"Discount"}
-                    value={props.discount}
-                />
 
                 <View style={{ marginHorizontal: 1 }}>
                     <DashedLine dashLineStyles={{ color: "#707070" }} />
@@ -107,33 +116,33 @@ const RatingOrderRecipt = (props: Props) => {
             </View>
             <Wrapper>
                 <AnimatedView style={{ margin: 12, marginTop: 0, }} >
-                    {pitStops.map((x, i) => {
-                        console.log("x...", x);
+                    {
+                        pitStops.filter(item => ![3, 4, 5, 9].includes(item.joviJobStatus))
+                            .map((x, i) => {
+                                if (i === pitStops.length - 1) return;//final destination is not in receipt
+                                const isJoviJob = x.pitstopType === PITSTOP_TYPES.JOVI;
+                                const pitstopName = isJoviJob ? 'Jovi Job' : x.title
+                                const individualPitstopTotal = isJoviJob ? x.paidAmount : x.jobAmount;
+                                let checkOutItemsListVM = x?.jobItemsListViewModel ?? [];
+                                if (isJoviJob) {
+                                    checkOutItemsListVM = [{
+                                        ...x,
+                                    }]
+                                }
 
-                        if (i === pitStops.length - 1) return;//final destination is not in receipt
-                        const isJoviJob = x.pitstopType === PITSTOP_TYPES.JOVI;
-                        const pitstopName = isJoviJob ? 'Jovi Job' : x.title
-                        const individualPitstopTotal = isJoviJob ? x.paidAmount : x.jobAmount;
-                        let checkOutItemsListVM = x?.jobItemsListViewModel ?? [];
-                        if (isJoviJob) {
-                            checkOutItemsListVM = [{
-                                ...x,
-                            }]
-                        }
-
-                        return <View style={{ flex: 0 }} key={i}>
-                            <ReceiptItem
-                                colors={colors}
-                                title={pitstopName}
-                                type={x.pitstopType}
-                                pitstopNumber={i + 1}
-                                isJoviJob={isJoviJob}
-                                itemData={checkOutItemsListVM}
-                                showDetail={true}
-                                totalPrice={individualPitstopTotal}
-                            />
-                        </View>
-                    })}
+                                return <View style={{ flex: 0 }} key={i}>
+                                    <ReceiptItem
+                                        colors={colors}
+                                        title={pitstopName}
+                                        type={x.pitstopType}
+                                        pitstopNumber={i + 1}
+                                        isJoviJob={isJoviJob}
+                                        itemData={checkOutItemsListVM}
+                                        showDetail={true}
+                                        totalPrice={individualPitstopTotal}
+                                    />
+                                </View>
+                            })}
 
                 </AnimatedView>
                 <RenderGSTServiceChargeUi />
