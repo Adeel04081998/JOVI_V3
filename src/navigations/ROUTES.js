@@ -100,12 +100,12 @@ const APP_DRAWER_ROUTES = {
     },
     "OrderChat": {
         screen_name: "ORDER_CHAT",
-        options: null,
+        options: { animation: 'slide_from_bottom' }
     },
 
     "OrderPitstops": {
         screen_name: "ORDER_PITSTOPS",
-        options: null
+        options: { animation: 'slide_from_bottom' }
     },
     "RateRider": {
         screen_name: "RATE_RIDER", // || Rate your jovi
