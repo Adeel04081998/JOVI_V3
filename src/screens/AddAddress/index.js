@@ -69,7 +69,7 @@ export default (props) => {
             {
                 key: 4,
                 val: '',
-                placeHolder: 'e.g Jovi Office',
+                placeHolder: 'Add your label',
                 shown: false
             }
         ],
@@ -305,7 +305,7 @@ export default (props) => {
                                 }
                             </View>
                         </View>
-                        <Text style={styles.labelTitle} fontFamily="PoppinsMedium" >ADD A LABEL</Text>
+                        <Text style={styles.labelTitle} fontFamily="PoppinsMedium" >SELECT A LABEL</Text>
                         <ScrollView horizontal contentContainerStyle={{ flex: 1, flexGrow: 1, justifyContent: 'center', alignItems: 'center', marginVertical: 10 }}>
                             {addressTypeList.map((item, index) => {
                                 return (

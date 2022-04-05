@@ -120,7 +120,9 @@ export default (colors = initColors, width, height) => StyleSheet.create({
         width: width - 50,
         height: 35,
         borderRadius: 8,
-        alignSelf: 'center'
+        alignSelf: 'center',
+        justifyContent:'center',
+        alignItems:'center',
     },
     btnText: {
         fontSize: 12,

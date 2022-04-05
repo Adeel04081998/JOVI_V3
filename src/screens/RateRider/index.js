@@ -48,7 +48,7 @@ const NUMBER_OF_COLUMN = 2;
 
 export default ({ navigation, route }) => {
 
-    const orderID = route?.params?.orderID ?? 67649554;//67649554;
+    const orderID = route?.params?.orderID ?? 80914393;//67649554;
 
     // #region :: REDUCER START's FROM HERE 
     const messagesReducer = useSelector(s => s?.messagesReducer);
@@ -131,15 +131,14 @@ export default ({ navigation, route }) => {
 
     const getOrderDetailFromServer = () => {
         sharedFetchOrder(orderID, (res) => {
-            console.log('res from sjared fetch order ', res);
-            console.log('res from sjared fetch order cartReducer ', cartReducer);
+            // console.log('res from sjared fetch order ', res);
             if (res.data.statusCode === 200) {
                 const apiRes = res.data.order;
                 const obj = {
                     discount: apiRes.chargeBreakdown.discount,
                     serviceCharges: apiRes.serviceCharges,
                 }
-                console.log('res.data.order  ===>>>>',res.data.order);
+                // console.log('res.data.order  ===>>>>', res.data.order);
                 setReceiptData(res.data.order);
             } else {
                 setReceiptData({});
@@ -442,10 +441,12 @@ export default ({ navigation, route }) => {
                         checkOutStyles={checkOutStyles}
                         colors={colors}
                         data={receiptData?.pitStopsList ?? []}
-                        totalGST={receiptData?.chargeBreakdown?.totalProductGST ?? ''}
-                        serviceCharges={receiptData?.serviceCharges ?? ''}
-                        discount={receiptData?.chargeBreakdown?.discount ?? ''}
-                        total={receiptData?.chargeBreakdown?.estimateTotalAmount ?? ''}
+                        subTotal={receiptData?.orderReceiptVM?.subTotal ?? ''}
+                        totalGST={receiptData?.orderReceiptVM?.chargeBreakdown?.totalProductGST ?? ''}
+                        serviceCharges={receiptData?.orderReceiptVM?.chargeBreakdown?.totalEstimateCharge ?? 0}
+                        estimateServiceTax={receiptData?.orderReceiptVM?.chargeBreakdown?.estimateServiceTax ?? 0}
+                        discount={receiptData?.orderReceiptVM?.chargeBreakdown?.discount ?? ''}
+                        total={receiptData?.orderReceiptVM?.estTotalPlusPitstopAmount ?? ''}
                         onRightTextPress={() => {
                             setReceiptVisible(false);
                         }}
