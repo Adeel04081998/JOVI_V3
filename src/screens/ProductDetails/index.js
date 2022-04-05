@@ -32,21 +32,22 @@ import ROUTES from '../../navigations/ROUTES';
 
 
 export default (props) => {
-    // console.log("props product Details=>>", props);
+    console.log("props product Details=>>", props);
+    const propItem = props.route.params?.propItem ?? {};
+    const isEditCase = props.route.params.isEditCase ?? false
     let initialState = {
 
-        'generalProductOrDealDetail': {},
-        'notes': '',
-        'itemCount': 1,
-        discountedPriceWithGst: 0,
+        'generalProductOrDealDetail': propItem ?? {},
+        'notes': propItem.notes ?? '',
+        'itemCount': propItem.quantity ?? 1,
+        discountedPriceWithGst: propItem._itemPrice ?? 0,
         totalPriceWithoutDiscount: 0,
         discountedPriceWithoutGstWithoutJovi: 0,
         totalJoviDiscount: 0,
-
         totalAddOnPrice: 0,
         totalDiscount: 0,
         totalGst: 0,
-        selectedOptions: [],
+        selectedOptions: propItem.selectedOptions ?? [],
         loading: true,
         addToCardAnimation: false
     }
@@ -58,7 +59,6 @@ export default (props) => {
     const { itemCount, generalProductOrDealDetail, discountedPriceWithGst, selectedOptions, notes, totalAddOnPrice, loading, addToCardAnimation } = state;
     const { data } = props;
     const pitstopType = props.route.params?.pitstopType ?? 4;
-    const propItem = props.route.params?.propItem ?? {};
     const colors = theme.getTheme(GV.THEME_VALUES[lodash.invert(PITSTOP_TYPES)[pitstopType]], Appearance.getColorScheme() === "dark");
     const productDetailsStyles = styleSheet.styles(colors)
     let productName = generalProductOrDealDetail.pitStopItemName || ""
@@ -77,7 +77,7 @@ export default (props) => {
     };
 
 
-
+    console.log("state=>", state);
     const loadProductDetails = () => {
 
         postRequest(Endpoints.PRODUCT_DETAILS, {
@@ -133,6 +133,7 @@ export default (props) => {
         return count;
     }
     const enableDisable = (updatedArr = [], parentIndex) => {
+        console.log("hy");
         {/* ****************** CALCULATING TOTAL REQUIRED COUNT ****************** */ }
         const requiredCount = optionsListArr.filter(x => x.isRequired).length;
 
@@ -148,7 +149,7 @@ export default (props) => {
 
         {/* ****************** GETTING CURRENT REQUIRED SELECTED --  isRequired is added with every item which lies in the required array  ****************** */ }
         const alreadySelectedCount = updatedArr.filter(x => x.isRequired).length;
-
+        console.log(" alreadySelectedCount", alreadySelectedCount);
         setEnable(pre => ({ ...pre, enableBtn: alreadySelectedCount >= mustSelectedCount }));
         return
 
@@ -423,7 +424,17 @@ export default (props) => {
 
 
     useEffect(() => {
-        loadProductDetails()
+        if (isEditCase) {
+            setState((pre) => ({
+                ...pre,
+                loading: false
+            }))
+            enableDisable(selectedOptions)
+
+        } else {
+            loadProductDetails()
+        }
+        // loadProductDetails()
 
 
     }, [])
@@ -515,6 +526,7 @@ export default (props) => {
                                             multiline={true} // ios fix for centering it at the top-left corner 
                                             numberOfLines={Platform.OS === "ios" ? null : numberOfLines}
                                             returnKeyType='done'
+                                            value={notes}
                                         />
                                     </View>
                                     : null}
