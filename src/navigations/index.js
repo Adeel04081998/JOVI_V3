@@ -49,6 +49,7 @@ import FavAddresses from '../screens/FavAddresses';
 import DrawerComponent from '../components/organisms/DrawerComponent';
 import Profile from '../screens/Profile';
 import Referral from '../screens/Referral';
+import Pharmacy from '../screens/Pharmacy';
 const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES, APP_DRAWER_ROUTES, APP_DRAWER_STACK } = ROUTES;
 const AppDrawerStack = (props) => {
     return <Stack.Navigator screenOptions={stackOpts} initialRouteName={APP_DRAWER_ROUTES.Home.screen_name} >
@@ -110,6 +111,7 @@ const AppDrawerComponents = {
     FavAddresses,
     Profile,
     Referral,
+    Pharmacy,
 }//will open with Slide Animation
 const ContainerStack = createStackNavigator();
 const Stack = createNativeStackNavigator();

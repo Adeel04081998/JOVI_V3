@@ -1003,6 +1003,7 @@ export const sharedOnCategoryPress = (item, index, useReplace = false) => {
         4: ROUTES.APP_DRAWER_ROUTES.PitstopListing.screen_name,
         1: ROUTES.APP_DRAWER_ROUTES.PitstopListing.screen_name,
         2: ROUTES.APP_DRAWER_ROUTES.JoviJob.screen_name,
+        3: ROUTES.APP_DRAWER_ROUTES.Pharmacy.screen_name,
     }
     if (useReplace) {
         NavigationService.NavigationActions.stack_actions.replace(routes[pitstopType], { pitstopType });

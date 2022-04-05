@@ -173,6 +173,9 @@ const APP_DRAWER_ROUTES = {
         screen_name: "REFERRAL",
         options: { animation: 'slide_from_bottom' }
     },
+    "Pharmacy": {
+        screen_name: "PHARMACY",
+    },
 }
 const APP_ROUTES = {
     "AppDrawerStack": {

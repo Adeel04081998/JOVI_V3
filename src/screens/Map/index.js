@@ -12,8 +12,7 @@ import GV from '../../utils/GV';
 let isFromEdit = false;
 let lastLoc = {};
 export default (props) => {
-  const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
-
+  const colors = props.route?.params?.colors?? theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
   const dispatch = useDispatch();
 
   const updateFinalDestination = (fd) => {
@@ -79,7 +78,7 @@ export default (props) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }} >
       <View style={{ flex: 1 }} >
-        <Maps route={props.route} onConfirmLoc={onConfirmLoc} onBackPress={() => {
+        <Maps route={props.route} colors={colors} onConfirmLoc={onConfirmLoc} onBackPress={() => {
           onBackPress()
         }} />
       </View>

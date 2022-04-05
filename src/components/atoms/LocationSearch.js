@@ -10,11 +10,11 @@ import configs, { env } from "../../utils/configs";
 import GV from "../../utils/GV";
 import VectorIcon from "./VectorIcon";
 
-export default LocationSearch = ({ handleOnInputChange, index, clearInputField, textToShow, onLocationSelected, /* handleAddPitstop, */ handleDeletePitstop, isLast, handleInputFocused, totalPitstops, onSetFavClicked, isFavourite, marginBottom = 5, listViewStyles, inputStyles}) => {
+export default LocationSearch = ({ handleOnInputChange, parentColors = null, index, clearInputField, textToShow, onLocationSelected, /* handleAddPitstop, */ handleDeletePitstop, isLast, handleInputFocused, totalPitstops, onSetFavClicked, isFavourite, marginBottom = 5, listViewStyles, inputStyles }) => {
 
     const HEIGHT = constants.window_dimensions.height;
     const WIDTH = constants.window_dimensions.width;
-    const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
+    const colors = parentColors ?? theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
     const styles = locationSearchStyles(colors, WIDTH, HEIGHT)
     const locTextRef = React.useRef(null);
     const textValRef = React.useRef(null);
@@ -220,7 +220,7 @@ const locationSearchStyles = (color, width, height) => StyleSheet.create({
     iconStyleRight: {
         position: "absolute",
         right: 4,
-        top: 20/2,
+        top: 20 / 2,
         width: 32,
         height: 50,
     },
