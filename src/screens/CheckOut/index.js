@@ -30,6 +30,7 @@ import StepProgress from '../../components/atoms/StepProgress'
 import ROUTES from '../../navigations/ROUTES'
 import Toast from '../../components/atoms/Toast';
 import actions from '../../redux/actions'
+import ENUMS from '../../utils/ENUMS'
 
 const WINDOW_WIDTH = constants.screen_dimensions.width;
 const CARD_WIDTH = WINDOW_WIDTH * 0.3;
@@ -203,6 +204,7 @@ export default () => {
                 }),
                 // "promotionCode": state.promoCodeApplied,
                 "orderTypeID": 2,
+                "OrderPaymentType": switchVal ? ENUMS.OrderPaymentType.JoviWallet : ENUMS.OrderPaymentType.CashOnDelivery,
                 // "pitStopsImage": state?.mapImageBase64 ?? null,
                 "joviType": 1,
                 "hardwareID": await sharedGetDeviceInfo().deviceID,

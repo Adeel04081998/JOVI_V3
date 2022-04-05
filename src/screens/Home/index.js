@@ -15,6 +15,8 @@ import ImageCarousel from '../../components/molecules/ImageCarousel';
 import { sharedExceptionHandler, sharedOrderNavigation, uniqueKeyExtractor } from "../../helpers/SharedActions";
 import { getRequest } from "../../manager/ApiManager";
 import Endpoints from "../../manager/Endpoints";
+import NavigationService from "../../navigations/NavigationService";
+import ROUTES from "../../navigations/ROUTES";
 import ReduxActions from '../../redux/actions';
 import theme from "../../res/theme";
 import GV from "../../utils/GV";
@@ -53,6 +55,16 @@ export default () => {
     const onOrderPress = (order) => {
         sharedOrderNavigation(order.orderID, order.subStatusName, null, null, false, order?.pitstopList ?? []);
     }
+    const onPromoPressed = (pressedPromo) => {
+        if (pressedPromo.promoType === 3) {
+            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Referral.screen_name);
+        }
+        else if (pressedPromo.promoType === 6) {
+            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Wallet.screen_name);
+        }
+        else {
+        }
+    };
     useFocusEffect(
         React.useCallback(() => {
             getRequest(Endpoints.GET_CUSTOMER_ONGOING_ORDER, (res) => {
@@ -61,8 +73,8 @@ export default () => {
                 if (statusCode === 200) {
                     const openOrders = res.data?.onGoingOrders?.onGoingOrdersList ?? [];
                     dispatch(ReduxActions.setUserAction({ openOrders, noOfOpenOrders: openOrders.length }));
-                }else{
-                    dispatch(ReduxActions.setUserAction({ openOrders:[], noOfOpenOrders: 0 }));
+                } else {
+                    dispatch(ReduxActions.setUserAction({ openOrders: [], noOfOpenOrders: 0 }));
                 }
             }, (err) => {
                 sharedExceptionHandler(err);
@@ -113,13 +125,12 @@ export default () => {
         </View>
     }
     const inputRef = React.useRef(null);
-
     return (
         <View style={homeStyles.container}>
             <SafeAreaView style={{ flex: 1 }}>
                 <CustomHeader
                     finalDest={userReducer?.finalDestObj?.title || null}
-                    leftIconName={"ios-menu"}
+                    renderLeftIconAsDrawer
                     rightIconColor={"#6D51BB"}
                     onTitlePress={() => {
                         dispatch(ReduxActions.setModalAction({
@@ -169,9 +180,14 @@ export default () => {
                             height={170}
                             autoPlay
                             autoPlayInterval={3}
+                            onPress={(item) => onPromoPressed(item)}
                         />
                         <View style={homeStyles.wrapper}>
-                            <Search colors={colors} homeStyles={homeStyles} fontSize={12} />
+                            <Search colors={colors} homeStyles={homeStyles} fontSize={12} editable={false}
+                                onPress={() => {
+                                    NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Search.screen_name);
+                                }}
+                            />
                             <Categories homeStyles={homeStyles} />
                             <AvatarAlert messagesReducer={messagesReducer} homeStyles={homeStyles} />
                             {/* <RecentOrders /> AS PER PM WE HAVE TO REMOVE RECENT ORDER FOR NOW*/}
@@ -191,7 +207,11 @@ export default () => {
                     </KeyboardAwareScrollView>
                 </Animated.View>}
             </SafeAreaView>
-            <RenderBottomBarComponent showCategories />
+            <RenderBottomBarComponent showCategories bottomBarComponentProps={
+                {
+                    screenName: ROUTES.APP_DRAWER_ROUTES.Home.screen_name,
+                }
+            } />
         </View>
     );
 };

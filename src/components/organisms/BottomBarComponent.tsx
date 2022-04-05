@@ -1,3 +1,4 @@
+import { useIsFocused } from "@react-navigation/native";
 import * as React from "react";
 import { Animated, Appearance, ColorValue, Dimensions, Easing, StyleSheet, TouchableOpacity as TC, View } from "react-native";
 import Svg, { Color, Path } from 'react-native-svg';
@@ -32,6 +33,7 @@ interface BottomBarItem {
     customComponent?: () => void;
     notification?: boolean;
     notificationCount?: number;
+    screen_name?: string;
 }
 
 type Props = React.ComponentProps<typeof View> & {
@@ -99,7 +101,7 @@ const BottomBarComponent = (props: Props) => {
     const fullScreenAnimation = React.useRef(new Animated.Value(0)).current;
     const [maxWidth, setMaxWidth] = React.useState<any>(width);
     const [isCloseIcon, toggleCloseIcon] = React.useState(false);
-
+    const isFocused = useIsFocused();
     // #endregion :: STATE & REF's END's FROM HERE 
 
     const startFullScreenAnimation = () => {
@@ -168,7 +170,11 @@ const BottomBarComponent = (props: Props) => {
             setMaxWidth(w);
         }
     }, [orientation]);//end of dimension Effect
-
+    React.useEffect(()=>{
+        if(!isFocused&&isCloseIcon){
+            animateCenterButtonPress();
+        }
+    },[isFocused]);
 
     // #endregion :: EFFECT's END's FROM HERE 
 
@@ -278,7 +284,7 @@ const BottomBarComponent = (props: Props) => {
         const iconType = VALIDATION_CHECK(item?.iconType ?? '') ? item.iconType : 'Ionicons';
         const iconSize = VALIDATION_CHECK(item?.iconSize ?? '') ? item.iconSize : 22;
         // const isActive = (item?.key ?? '') === activeRoute;
-        const isActive = item.id === 1 ? true : false;
+        const isActive = item.screen_name === props.screenName ? true : false;
         const iconColor = isActive ? colors.primary : VALIDATION_CHECK(item?.iconColor ?? '') ? item.iconType : '#A3ABB4';
         const notificationSize = 18;
         return (

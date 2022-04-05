@@ -337,7 +337,7 @@ export default (props) => {
             locationHandler();
             getCurrentPosition()
         }
-    }, [ready, props.latitude]);
+    }, [props.latitude]);
     useEffect(() => {
         if (customCenter && customCenter?.latitude && ready && !mapCentered.current) {
             mapCentered.current = true;
@@ -346,7 +346,7 @@ export default (props) => {
                 mapView.current && mapView.current.animateToRegion({longitude:customCenter.longitude,latitude:customCenter.latitude});
             }, 10);
         }
-    }, [customCenter, ready]);
+    }, [customCenter]);
     /******************************************* END OF FUNCTIONS **********************************/
 
 
