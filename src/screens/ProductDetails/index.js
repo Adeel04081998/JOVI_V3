@@ -70,7 +70,7 @@ export default (props) => {
     let images = generalProductOrDealDetail.images ?? []
     let numberOfLines = 4
     let minHeight = (Platform.OS === 'ios' && numberOfLines) ? (20 * numberOfLines) : null
-    // console.log("propItem", propItem);
+    console.log("propItem ==>>>", propItem);
     const discountTypeCallbacks = {
         1: (amount, discount) => discount > 0 ? (amount - ((discount / 100) * amount)) : amount,
         2: (amount, discount) => discount > 0 ? (amount - discount) : amount,
@@ -160,7 +160,7 @@ export default (props) => {
         });
         setEnable(pre => ({ ...pre, enableBtn: enableBtn }));
     }
-
+    console.log('state ==>>>',state);
     const onPressHandler = (item, isMany, parentIndex, quantity = null, isRequired) => {
         // console.log([1,2,3].)
         const alreadyExist = state.selectedOptions.filter(op => op.itemOptionID === item.itemOptionID)[0];
@@ -194,6 +194,7 @@ export default (props) => {
         const totalGst = Math.round(((generalProductOrDealDetail.gstPercentage / 100) * totalAmountWithoutGst));
         let discountedPriceWithGst = Math.round(discountedPriceWithoutGst + totalGst);
         const totalPriceWithoutDiscount = discountedPriceWithGst + totalDiscount;
+        console.log('updatedArr ==>>>',updatedArr);
         // console.log('discountedPrice', totalAmountWithoutGst, discountedPriceWithoutGst, (totalAddOnPrice + generalProductOrDealDetail.itemPrice) * 0.2, (totalAddOnPrice + generalProductOrDealDetail.itemPrice) - ((20 / 100) * (totalAddOnPrice + generalProductOrDealDetail.itemPrice)));
         setState(pre => ({
             ...pre, selectedOptions: updatedArr, totalAddOnPrice: totalAddOnPrice,
@@ -270,6 +271,11 @@ export default (props) => {
             sharedAddUpdatePitstop(enable.dataToSend, false, [], true, false, () => { }, true)
         }
     }, [enable.dataToSend]);
+    // React.useEffect(() => {
+    //  if(props.route.params !== null && props.route.params !== undefined ){
+
+    //  }
+    // }, [props.route]);
     const itemCountOnPress = (key) => {
         let updatedItemCount
         if (key === 'minus') {
