@@ -255,7 +255,7 @@ export default () => {
     product,
     incDecDelHandler,
   }) => {
-    const { title, estimatePrice, description, discountedPrice, notes, images, _itemPriceWithoutDiscount, _totalDiscount, _itemPrice, quantity, pitstopType, pitStopItemID, pitStopID } = product;
+    const { title, estimatePrice, description, discountedPrice, notes, images, _itemPriceWithoutDiscount, _totalDiscount, _itemPrice, quantity, pitstopType, pitStopItemID, pitStopID, marketID } = product;
     if (isJOVI) {
       return <View style={{ flexDirection: 'row' }}>
         <View style={{ height: 70, width: 70, borderRadius: 10, margin: 5 }}>
@@ -379,7 +379,7 @@ export default () => {
                   incDecDelHandler(quantity)
                 }}
                 fromCart={true}
-                marketID={pitStopID}
+                marketID={pitStopID || marketID}
                 pitstopItemID={pitStopItemID}
               />
             </View>

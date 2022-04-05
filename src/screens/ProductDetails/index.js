@@ -39,7 +39,7 @@ export default (props) => {
 
         'generalProductOrDealDetail': propItem ?? {},
         'notes': propItem.notes ?? '',
-        'itemCount': propItem.quantity ?? 1,
+        'itemCount': isEditCase ? propItem.quantity : 1,
         discountedPriceWithGst: propItem._itemPrice ?? 0,
         totalPriceWithoutDiscount: 0,
         discountedPriceWithoutGstWithoutJovi: 0,
@@ -190,7 +190,7 @@ export default (props) => {
         const totalGst = Math.round(((generalProductOrDealDetail.gstPercentage / 100) * totalAmountWithoutGst));
         let discountedPriceWithGst = Math.round(discountedPriceWithoutGst + totalGst);
         const totalPriceWithoutDiscount = discountedPriceWithGst + totalDiscount;
-        console.log('updatedArr ==>>>',updatedArr);
+        console.log('updatedArr ==>>>', updatedArr);
         // console.log('discountedPrice', totalAmountWithoutGst, discountedPriceWithoutGst, (totalAddOnPrice + generalProductOrDealDetail.itemPrice) * 0.2, (totalAddOnPrice + generalProductOrDealDetail.itemPrice) - ((20 / 100) * (totalAddOnPrice + generalProductOrDealDetail.itemPrice)));
         setState(pre => ({
             ...pre, selectedOptions: updatedArr, totalAddOnPrice: totalAddOnPrice,
