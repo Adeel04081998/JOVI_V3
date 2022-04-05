@@ -187,5 +187,9 @@ export default {
         "STAGING": "STAGING",
         "DEBUG": "DEBUG",
         "RELEASE": "RELEASE"
-    }
+    },
+    "OrderPaymentType": {
+        JoviWallet: 1,
+        CashOnDelivery: 2,
+    },
 }

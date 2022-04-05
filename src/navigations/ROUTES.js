@@ -100,12 +100,12 @@ const APP_DRAWER_ROUTES = {
     },
     "OrderChat": {
         screen_name: "ORDER_CHAT",
-        options: null,
+        options: { animation: 'slide_from_bottom' }
     },
 
     "OrderPitstops": {
         screen_name: "ORDER_PITSTOPS",
-        options: null
+        options: { animation: 'slide_from_bottom' }
     },
     "RateRider": {
         screen_name: "RATE_RIDER", // || Rate your jovi
@@ -113,15 +113,21 @@ const APP_DRAWER_ROUTES = {
     },
     "OrderHistory": {
         screen_name: "ORDER_HISTORY",
-        options: null,
+        options: { animation: 'slide_from_bottom' }
     },
     "OrderHistoryDetail": {
         screen_name: "ORDER_HISTORY_DETAIL",
         options: { animation: 'slide_from_bottom' },
     },
+    "Search": {
+        screen_name: "SEARCH",//SEARCH VENDOR OR PRODUCT
+        options: { animation: 'slide_from_bottom' },
+    },
     "Legal": {
         screen_name: "LEGAL",
-        options: null,
+        options: {
+            animation:'fade'
+        },
     },
     "WebView": {
         screen_name: "WEBVIEW",
@@ -129,7 +135,9 @@ const APP_DRAWER_ROUTES = {
     },
     "FAQ": {
         screen_name: "FAQ",
-        options: { animation: 'slide_from_bottom' },
+        options: {
+            animation:'fade'
+        },
     },
     "Wallet": {
         screen_name: "WALLET",
@@ -141,18 +149,30 @@ const APP_DRAWER_ROUTES = {
     },
     "ContactUs": {
         screen_name: "CONTACT_US",
-        options: null,
+        options: {
+            animation:'fade'
+        },
     },
     "GoodyBag": {
         screen_name: "GOODY_BAG",
-        options: null,
+        options: { animation: 'slide_from_bottom' }
     },
     "FavAddresses": {
         screen_name: "FAV_ADDRESSES",
-        options: null,
+        options: {
+            animation:'fade'
+        },
     },
-
-
+    "Profile": {
+        screen_name: "PROFILE",
+        options: {
+            animation:'fade'
+        },
+    },
+    "Referral": {
+        screen_name: "REFERRAL",
+        options: { animation: 'slide_from_bottom' }
+    },
 }
 const APP_ROUTES = {
     "AppDrawerStack": {

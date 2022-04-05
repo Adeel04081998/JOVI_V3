@@ -20,6 +20,7 @@ import Toast from '../../components/atoms/Toast';
 import { postRequest } from '../../manager/ApiManager';
 import { sharedExceptionHandler } from '../../helpers/SharedActions';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
+import Endpoints from '../../manager/Endpoints';
 
 
 export default () => {
@@ -93,7 +94,7 @@ export default () => {
   
   const JazzCashHandler = (txnType) => {
     postRequest(
-      `/api/Payment/JazzCashPay`,
+      Endpoints.JAZZCASH_PAY,
       {
         "amount": parseInt(topUpAmount),
         "txnType": txnType,
@@ -132,7 +133,7 @@ export default () => {
     }
 
     postRequest(
-      `/api/Payment/EasyPaisaPay`,
+      Endpoints.EASYPAISA_PAY,
       {
         "amount": parseInt(topUpAmount),
         "orderRefNo": id,
@@ -165,7 +166,7 @@ export default () => {
 
   const HBLHandler = () => {
     postRequest(
-      `/api/Payment/HBLPay`,
+     Endpoints.HBL_PAY,
       {
         "amount": parseInt(topUpAmount),
         "userID": id,
@@ -291,7 +292,7 @@ export default () => {
       else if (topUpAmount.toString()[0] == "0") return Toast.error(`Amount cannot be less than 1`);
       else if (item.paymentType > 0) return getPayloadForWebViewHandler(item.paymentType);
     } else {
-      Toast.error(`Entered text is not a number! Please enter numeric number like (123)`, null, "long");
+      Toast.error(`Please enter amount`);
     }
 
   }

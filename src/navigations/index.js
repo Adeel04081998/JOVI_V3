@@ -36,6 +36,7 @@ import OrderChat from '../screens/OrderChat';
 import RateRider from '../screens/RateRider';
 import OrderHistory from '../screens/OrderHistory';
 import OrderHistoryDetail from '../screens/OrderHistoryDetail';
+import Search from '../screens/Search';
 import OrderPitstops from '../screens/OrderTracking/OrderScreens/OrderPitstops';
 import Legal from '../screens/Legal';
 import WebView from '../components/organisms/WebView';
@@ -45,6 +46,9 @@ import TopUp from '../screens/TopUp';
 import ContactUs from '../screens/ContactUs';
 import GoodyBag from '../screens/GoodyBag';
 import FavAddresses from '../screens/FavAddresses';
+import DrawerComponent from '../components/organisms/DrawerComponent';
+import Profile from '../screens/Profile';
+import Referral from '../screens/Referral';
 const { AUTH_STACKS, INIT_ROUTES, AUTH_ROUTES, APP_STACKS, APP_ROUTES, APP_DRAWER_ROUTES, APP_DRAWER_STACK } = ROUTES;
 const AppDrawerStack = (props) => {
     return <Stack.Navigator screenOptions={stackOpts} initialRouteName={APP_DRAWER_ROUTES.Home.screen_name} >
@@ -95,6 +99,7 @@ const AppDrawerComponents = {
     RateRider,
     OrderHistory,
     OrderHistoryDetail,
+    Search,
     Legal,
     WebView,
     FAQ,
@@ -103,6 +108,8 @@ const AppDrawerComponents = {
     ContactUs,
     GoodyBag,
     FavAddresses,
+    Profile,
+    Referral,
 }//will open with Slide Animation
 const ContainerStack = createStackNavigator();
 const Stack = createNativeStackNavigator();
@@ -158,7 +165,10 @@ const forSlide = ({ current, next, inverted, layouts: { screen } }) => {
 const stackOpts = () => ({
     headerShown: false,
     unmountOnBlur: true,
-    swipeEnabled: false
+    swipeEnabled: false,
+    drawerStyle:{
+        width:'85%',
+    }
 });
 const AuthStacks = (props) => {
     // const { setIsLoggedIn } = props;
@@ -180,7 +190,7 @@ const AuthStacks = (props) => {
 }
 const AppDrawers = (props) => {
     // console.log("[AppDrawers].props", props)
-    return <Drawer.Navigator screenOptions={stackOpts} initialRouteName={APP_ROUTES.AppDrawerStack.screen_name}>
+    return <Drawer.Navigator drawerContent={prevState=><DrawerComponent {...prevState} />} screenOptions={stackOpts} initialRouteName={APP_ROUTES.AppDrawerStack.screen_name}>
         {(APP_STACKS || []).map((routeInfo, index) => {
             // console.log('routeInfo', AppComponents);
             return <Drawer.Screen

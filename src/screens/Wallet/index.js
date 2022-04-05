@@ -59,12 +59,14 @@ export default () => {
             "isAscending": false,
             "userID": null
         };
-
         postRequest(Endpoints.GET_TRANSACTIONLIST, params, (res) => {
             const statusCode = res.data?.statusCode ?? 404;
             if (statusCode === 200) {
                 const resData = res.data?.customerWalletTransactionsList?.data ?? [];
-                setFilters(resData);
+                let newData = []
+                if (transactionType === pressedValue) newData = [...filters, ...resData]
+                else newData = resData
+                setFilters(newData);
                 toggleMetaData(!metaData);
 
 
@@ -116,7 +118,7 @@ export default () => {
                 ...pre,
                 currentRequestNumber: pre.currentRequestNumber + 1,
             }))
-            loadTransactionList(1, paginationInfo.currentRequestNumber + 1, true);
+            loadTransactionList(pressedValue, paginationInfo.currentRequestNumber + 1, true);
             return
         }
     };//end of onEndReached
@@ -176,7 +178,8 @@ export default () => {
     }
     const onFilterPress = (item, index) => {
         setPressedValue(parseInt(item.value))
-        loadTransactionList(item.value)
+
+        loadTransactionList(parseInt(item.value))
     }
     const _renderItem = (item, index) => {
         const isSelected = pressedValue === parseInt(item.value);
@@ -198,7 +201,7 @@ export default () => {
         return (
             <ScrollView
                 horizontal
-                style={{  height: 55, flexGrow: 0, paddingHorizontal: 15 }}>
+                style={{ height: 75, flexGrow: 0, paddingHorizontal: 15 }}>
                 {
                     (CustomerTransactionTypeEnum ?? []).map((item, index) => _renderItem(item, index))
                 }
@@ -224,7 +227,7 @@ export default () => {
 
 
     const _renderFlatListItem = ({ item, index }) => {
-        const isOrder = item.type === "Order" 
+        const isOrder = item.type === "Order"
         return (
             <View style={styles.dataContainerStyle} >
                 <View style={{ flexDirection: 'column', width: '10%' }} >
@@ -232,7 +235,7 @@ export default () => {
                         <SvgXml xml={getSvgXML(item)} />
                     </View>
                 </View>
-                <View style={{ flexDirection: 'column', width: '75%' }} >
+                <View style={{ flexDirection: 'column', width: '70%' }} >
                     <View style={{ flexDirection: 'row', alignItems: 'center' }} >
                         <Text fontFamily="PoppinsMedium" style={styles.filterTypeStyle} >{item.type}</Text>
                         <Text fontFamily="PoppinsLight" style={[styles.filterDateStyle, { paddingLeft: 5 }]} >{item.date}</Text>
@@ -242,8 +245,8 @@ export default () => {
                     </View>
                 </View>
                 <View style={{ width: '20%' }} >
-                    <SvgXml xml={isOrder ? svgs.redArrow() : svgs.greenArrow()} style={{alignSelf:'center'}} />
-                    <Text numberOfLines={1} fontFamily="PoppinsMedium" style={styles.filterTypeStyle} >Rs. {isOrder && '-'}{item.amount}</Text>
+                    <SvgXml xml={isOrder ? svgs.redArrow() : svgs.greenArrow()} style={{ alignSelf: 'center' }} />
+                    <Text numberOfLines={1} fontFamily="PoppinsMedium" style={styles.filterTypeStyle} >Rs. {item.amount}</Text>
                 </View>
             </View>
         )

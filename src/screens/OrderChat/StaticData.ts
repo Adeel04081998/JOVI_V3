@@ -8,7 +8,7 @@ const name = () => {
     const no = Math.floor(Math.random() * (max - min + 1)) + min;
     return nameArr[no];
 };//end of name
-
+export const randomName = ()=>name();
 const randomDate = (start = new Date(2019, 2, 1), end = new Date()) => {
     return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 };
