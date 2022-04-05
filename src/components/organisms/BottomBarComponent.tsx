@@ -382,7 +382,6 @@ const BottomBarComponent = (props: Props) => {
                         {/* ****************** Start of RIGHT SIDE ****************** */}
                         <View style={[styles.rowRight, { height: height }]}>
                             {(props.rightData ?? []).map((item: BottomBarItem, index) => _renderSideItem(item, index))}
-                            <Text style={{ position: 'absolute', bottom: 0, right: 40, fontSize: 14, fontWeight: '600', color: 'rgba(0,0,0,0.6)' }}>{constants.app_version}</Text>
                         </View>
 
                         {/* ****************** End of RIGHT SIDE ****************** */}
