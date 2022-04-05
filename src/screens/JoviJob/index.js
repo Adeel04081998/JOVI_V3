@@ -5,9 +5,6 @@ import svgs from '../../assets/svgs';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
-import RNMediaMeta from "../../../RNMediaMeta";
-import StopWatch from "react-native-stopwatch-timer/lib/stopwatch";
-import { Recorder, Player } from '@react-native-community/audio-toolkit';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import CardHeader from './components/CardHeader';
 import PitStopBuy from './components/PitStopBuy';
@@ -25,14 +22,10 @@ import ROUTES from '../../navigations/ROUTES';
 import { askForAudioRecordPermission, sharedLaunchCameraorGallery } from '../../helpers/Camera';
 import { hybridLocationPermission } from '../../helpers/Location';
 import { multipartPostRequest, postRequest } from '../../manager/ApiManager';
-import Endpoints from '../../manager/Endpoints';
-import AudioplayerMultiple from '../../components/atoms/AudioplayerMultiple';
 import Image from '../../components/atoms/Image';
 import { confirmServiceAvailabilityForLocation, sharedAddUpdatePitstop, sharedConfirmationAlert, sharedExceptionHandler, uniqueKeyExtractor } from '../../helpers/SharedActions';
-import Toast from '../../components/atoms/Toast';
 import Regex from '../../utils/Regex';
 import { useDispatch, useSelector } from 'react-redux';
-import actions from '../../redux/actions';
 import FontFamily from '../../res/FontFamily';
 import Recording from '../../components/organisms/Recording';
 import TextRN from '../../components/atoms/Text';
@@ -43,6 +36,7 @@ let closeSecondCard = false;
 let recordingItem = null;
 
 export default ({ navigation, route }) => {
+
     const transition = (
         <Transition.Together>
             <Transition.Out
@@ -55,7 +49,9 @@ export default ({ navigation, route }) => {
                 durationMs={200}
             />
         </Transition.Together>
-    );
+    );//card open/close animation
+
+
     /******** Start of Main variables *******/
 
     const WIDTH = constants.window_dimensions.width
@@ -63,11 +59,8 @@ export default ({ navigation, route }) => {
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
     // colors.primary will recieve value from colors.js file's colors
     const styles = joviJobStyles(colors, WIDTH, HEIGHT);
-    const dispatch = useDispatch()
-    const { prevOrders } = useSelector(state => state.userReducer)
     const { stack_actions, common_actions, drawer_actions } = NavigationService.NavigationActions
-    const { APP_STACKS } = ROUTES;
-    const homeFadeIn = React.useRef(new Animated.Value(0)).current;
+
 
     const initCartData = [
         {
@@ -245,43 +238,46 @@ export default ({ navigation, route }) => {
         setCardData(initCartData);
         setNameVal("");
         setCityVal("");
-
         setLocationVal("");
-
         setScrollEnabled(true);
-
         setDescription("");
-
         updateImagesData([]);
-
-
-
-
         setMicPress(false);
         setIsDeleted(false);
         setVoiceNote({});
-
         setEstVal("");
-
         setSwitch(true);
-
         setEstTime({ text: "Estimated Time", value: 0 })
         setCollapsed(true);
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name);
-
     }
     /*****************************     Start of  useEffect            ***********************************/
 
     const setData = (data = route.params.pitstopItemObj) => {
-        const { title, nameval, imageData, voiceNote, estTime, description, estimatePrice, buyForMe } = data;
+        const { title, nameval, imageData, voiceNote, estTime, description, estimatePrice, buyForMe, latitude, longitude } = data;
+        latitudeRef.current = latitude;
+        longitudeRef.current = longitude;
+        let _estPrice = isNaN(parseInt(`${estimatePrice}`)) ? '' : parseInt(`${estimatePrice}`)
+        const typeForTogglingDescriptionCard = () => {
+            if (description) return 0
+            else if (imageData) return 1
+            else return 2
+        }
         setLocationVal(title)
         setNameVal(nameval)
         updateImagesData(imageData ?? [])
         setVoiceNote(voiceNote ?? {})
         setEstTime(estTime)
         setDescription(description)
-        setEstVal(estimatePrice)
+        setEstVal(_estPrice)
+
         setSwitch(buyForMe)
+        recordingItem = voiceNote ?? null
+
+        //for toggling Card
+        toggleCardData(PITSTOP_CARD_TYPES["description"], colors.primary)
+        toggleCardData(PITSTOP_CARD_TYPES["estimated-time"], colors.primary, description ?? imageData ?? voiceNote, typeForTogglingDescriptionCard())
+        toggleCardData(PITSTOP_CARD_TYPES["buy-for-me"], colors.primary)
     }
     // to be used for editing purposes
     useEffect(() => {
@@ -316,8 +312,8 @@ export default ({ navigation, route }) => {
 
     const toggleCardData = (key = PITSTOP_CARD_TYPES["location"], color = colors.primary, val, typeNum) => {
         let headerBool = true
-        let imagesArr = typeNum === 1 ? val : []
         let descriptionStr = typeNum === 0 ? val : ''
+        let imagesArr = typeNum === 1 ? val : []
         let voiceNoteObj = typeNum === 2 ? val : {}
         const index = cardData.findIndex(i => i.key === key);
         if (key === PITSTOP_CARD_TYPES["buy-for-me"] && switchVal) {
@@ -331,6 +327,7 @@ export default ({ navigation, route }) => {
         cardData[index].isOpened = headerBool
         setCardData(cardData);
         forceUpdate()
+        ref.current.animateNextTransition();
         imagesArr = []
         descriptionStr = ''
         voiceNoteObj = {}
@@ -785,12 +782,13 @@ export default ({ navigation, route }) => {
 
     const onSaveAndContinue = () => {
         setLoader(true)
+
         let pitstopData = {
-            pitstopIndex: route?.params?.pitstopIndex ?? null, // on update will get from params, 
+            pitstopIndex: route?.params?.pitstopItemObj?.pitstopIndex ?? null, // on update will get from params, 
             title: locationVal,
             description: description.trim(),
             pitstopName: 'Jovi Job',
-            pitstopType: route.params.pitstopType,
+            pitstopType: route.params?.pitstopItemObj?.pitstopType ?? route.params?.pitstopType,
             nameval: nameval.trim(),
             imageData,
             voiceNote,
@@ -802,6 +800,7 @@ export default ({ navigation, route }) => {
         }
         sharedAddUpdatePitstop(pitstopData, false, [], false, false, clearData);
         setLoader(false)
+        recordingItem = null
 
     }//end of save and continue function
     const userReducer = useSelector(state => state.userReducer);
@@ -853,7 +852,7 @@ export default ({ navigation, route }) => {
                         }
                     </View>
                 </KeyboardAwareScrollView>
-                <Button
+                {/* <Button
                     text="Save and Continue"
                     onPress={onSaveAndContinue}
                     disabled={validationCheck()}
@@ -862,95 +861,18 @@ export default ({ navigation, route }) => {
                     textStyle={[styles.btnText, { fontSize: 16 }]}
                     fontFamily="PoppinsRegular"
                     wait={0.4}
-                />
+                /> */}
+                <TouchableOpacity
+                    onPress={onSaveAndContinue}
+                    disabled={validationCheck()}
+                    activeOpacity={1}
+                    style={[styles.locButton, { height: 60, marginVertical: 10, backgroundColor: loader || validationCheck() ? 'grey' : colors.primary }]}>
+                    {
+                        loader ? <ActivityIndicator size="small" color={colors.primary} /> :
+                            <Text style={[styles.btnText, { fontSize: 16, fontFamily: FontFamily.Poppins.Regular, color: colors.white }]} >Save and Continue</Text>
+                    }
+                </TouchableOpacity>
             </Transitioning.View>
         </SafeAreaView >
     );
 }
-
-
-const descriptionStyles = StyleSheet.create({
-    primaryContainer: {
-        marginHorizontal: 12,
-        justifyContent: "center",
-        marginBottom: 17,
-    },
-    headingContainer: {
-        marginTop: 0,
-        marginBottom: 6,
-        marginLeft: 0,
-        marginRight: 12,
-    },
-    inputHeading: {
-        fontWeight: "600",
-        textAlign: "left",
-    },
-    uploadAttachmentContainer: {
-        marginTop: 12,
-        borderTopWidth: 1,
-        borderBottomWidth: 1,
-        borderLeftWidth: 1,
-
-        borderColor: "#707070",
-        flexDirection: "row",
-        alignItems: "center",
-        height: 40,
-        paddingVertical: 5,
-        paddingLeft: 12,
-        borderRadius: 10,
-    },
-    uploadAttachmentText: {
-        color: "#A6A6A6",
-        flex: 1,
-    },
-    attachmentIconContainer: {
-        height: 40,
-        width: 40,
-        alignItems: "center",
-        justifyContent: "center",
-        borderTopRightRadius: 10,
-        borderBottomRightRadius: 10,
-
-    },
-    recordAudioContainer: {
-        // marginTop: 16,
-        marginLeft: 10
-    },
-    micIconContainer: {
-        height: 40,
-        width: 40,
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: 40,
-    },
-    recordVoiceText: {
-        color: "#272727",
-        marginLeft: 8,
-        fontFamily: FontFamily.Poppins.Regular
-    },
-
-    imageFileContainer: {
-        justifyContent: "space-between",
-        marginTop: 8,
-    },
-    fileNameText: {
-        marginLeft: 6,
-
-    },
-    deleteIconContainer: {
-        marginLeft: 8,
-    },
-    progress: {
-        backgroundColor: "#C1C1C1",
-        flex: 1,
-        height: 10,
-        borderRadius: 10,
-        marginLeft: 6,
-        marginRight: 12,
-    },
-    progressActive: {
-        borderRadius: 10,
-        flex: 1,
-    },
-
-});

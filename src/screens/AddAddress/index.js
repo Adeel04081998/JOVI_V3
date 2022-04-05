@@ -46,6 +46,9 @@ export default (props) => {
     const scrollRef = useRef(null)
     const dispatch = useDispatch()
     const finalDestinationObj = props?.route?.params?.finalDestObj ?? {};
+    const fromScreenIndex = props?.route?.params?.index ?? null
+
+
     let initState = {
         "inputs": [
             {
@@ -66,7 +69,7 @@ export default (props) => {
             {
                 key: 4,
                 val: '',
-                placeHolder: 'e.g Jovi Office',
+                placeHolder: 'Add your label',
                 shown: false
             }
         ],
@@ -121,11 +124,35 @@ export default (props) => {
             BackHandler.removeEventListener("hardwareBackPress", backAction);
     }, []);
 
-    // React.useEffect(() => {
-    //     setTimeout(() => {
-    //         scrollRef.current.scrollTo({y:90})
-    //     }, 200);
-    // }, [state.isOtherPressed])
+    React.useEffect(() => {
+        if (props.route) {
+            if (props.route.params !== null && props.route.params !== undefined) {
+                if (fromScreenIndex === 4) {
+                    if (finalDestinationObj?.note) inputs[2].val = finalDestinationObj?.note
+                    if (finalDestinationObj?.house) inputs[1].val = finalDestinationObj?.house
+                    if (finalDestinationObj?.street) inputs[0].val = finalDestinationObj?.street
+                    if (finalDestinationObj?.addressType === parseInt(AddressTypeEnum[5].value)) {
+                        inputs[3].val = finalDestinationObj?.addressTypeStr
+                        inputs[3].shown = true
+                    }
+                    let modifiedArray = addressTypeList.map((item, index) => {
+                        if (item.key === finalDestinationObj?.addressType?.toString()) {
+                            return { ...item, selected: true }
+                        } else {
+                            return { ...item }
+                        }
+                    })
+                    setState(pre => ({
+                        ...pre,
+                        addressTypeList: modifiedArray,
+
+                    }))
+                }
+
+            }
+        }
+    }, [props.route]);
+
 
     const IS_DISABLED = () => {
         let addressType = addressTypeList.find(x => x.selected === true);
@@ -151,10 +178,12 @@ export default (props) => {
                         "longitude": props.route?.params?.finalDestObj.longitude,
                         "latitudeDelta": LATITUDE_DELTA,
                         "longitudeDelta": LONGITUDE_DELTA,
-                        "note": inputs[2].val.trim(),
+                        "note": inputs[2].val.trim() ?? '',
                         "city": props.route?.params?.finalDestObj.city,
-                        "addressType": addressType[0]?.key || '',
-                        "addressTypeStr": inputs[3].val.trim() || ''
+                        "addressType": addressType[0]?.key ?? '',
+                        "addressTypeStr": inputs[3].val.trim() ?? '',
+                        "house": inputs[1].val.trim() ?? '',
+                        "street": inputs[0].val.trim() ?? '',
                     },
                     res => {
                         console.log("ADDorUPDATE ADDRESS.RESPONSE", res);
@@ -167,7 +196,7 @@ export default (props) => {
                                     "addressTypeStr": inputs[3].val || ''
                                 },
                             }))
-                            onBackPress(true);
+                            onBackPress(fromScreenIndex === 4 ? false : true);
                         }
                     },
                     err => {
@@ -178,15 +207,7 @@ export default (props) => {
                 );
 
             }, (error) => {
-                console.log(((error?.response) ? error.response : {}), error);
-                if (error?.data?.statusCode === 417) {
-                    if (error.areaLock) { } else {
-                        error?.data?.message && Toast.error(error?.data?.message);
-                    }
-                }
-                else {
-                    Toast.error('An Error Occurred!');
-                }
+                sharedExceptionHandler(error)
             })
 
     }
@@ -225,6 +246,15 @@ export default (props) => {
         }
     };
 
+
+    const onPressToGoMap = () => {
+        props.route.params.updateFinalDestination(props.route.params.finalDestObj);
+        if (fromScreenIndex === 4) NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { latitude: finalDestinationObj.latitude, longitude: finalDestinationObj.longitude, index: fromScreenIndex });
+        else NavigationService.NavigationActions.stack_actions.pop(1);
+    }
+
+
+
     return (
         <SafeAreaView style={styles.safeArea}>
             <View style={styles.container} >
@@ -251,19 +281,13 @@ export default (props) => {
                     scrollEnabled={false}
                     selectFinalDestination={true}
                     newFinalDestination={finalDestinationObj}
-                    onMapPress={() => {
-                        props.route.params.updateFinalDestination(props.route.params.finalDestObj);
-                        NavigationService.NavigationActions.stack_actions.pop(1);
-                    }} />
+                    onMapPress={onPressToGoMap} />
                 <View style={styles.modalView} >
-                    <KeyboardAwareScrollView ref={scrollRef} contentContainerStyle={{ flexGrow: 1}} >
+                    <KeyboardAwareScrollView ref={scrollRef} contentContainerStyle={{ flexGrow: 1 }} >
 
                         <Text style={styles.mainText} fontFamily="PoppinsMedium" >Your current location</Text>
                         <View style={styles.inputContainer}>
-                            <TouchableOpacity style={styles.touchableField} onPress={() => {
-                                props.route.params.updateFinalDestination(props.route.params.finalDestObj);
-                                NavigationService.NavigationActions.stack_actions.pop(1);
-                            }} >
+                            <TouchableOpacity style={styles.touchableField} onPress={onPressToGoMap} >
                                 <SvgXml xml={svgs.pinField()} />
                                 <View style={styles.touchableFieldTextContainer} >
                                     <Text numberOfLines={1} style={styles.addressText} fontFamily="PoppinsMedium" >{props.route.params.finalDestObj.title}</Text>
@@ -281,7 +305,7 @@ export default (props) => {
                                 }
                             </View>
                         </View>
-                        <Text style={styles.labelTitle} fontFamily="PoppinsMedium" >ADD A LABEL</Text>
+                        <Text style={styles.labelTitle} fontFamily="PoppinsMedium" >SELECT A LABEL</Text>
                         <ScrollView horizontal contentContainerStyle={{ flex: 1, flexGrow: 1, justifyContent: 'center', alignItems: 'center', marginVertical: 10 }}>
                             {addressTypeList.map((item, index) => {
                                 return (
@@ -317,7 +341,7 @@ export default (props) => {
                             fontSize: 16,
                             fontFamily: FontFamily.Poppins.Regular
                         }}
-                        style={{ width: WIDTH * 0.9, alignSelf: 'center',marginVertical:5 }}
+                        style={{ width: WIDTH * 0.9, alignSelf: 'center', marginVertical: 5 }}
                     />
                 </View>
             </View>

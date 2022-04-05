@@ -29,13 +29,7 @@ export default () => {
         Linking.openURL(`mailto:${userReducer?.customerHelpEmail}`)
     }
     const _renderHeader = () => (<CustomHeader
-        leftCustom={(
-            <TouchableScale wait={0} onPress={() => {
-                NavigationService.NavigationActions.common_actions.goBack();
-            }} style={customheaderStyles.iconContainer}>
-                <SvgXml xml={svgs.hamburgerMenu(colors.primary)} height={HEADER_ICON_SIZE} width={HEADER_ICON_SIZE} />
-            </TouchableScale>
-        )}
+        renderLeftIconAsDrawer
         rightIconName={null}
         title={`Contact Us`}
         titleStyle={{

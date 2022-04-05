@@ -64,14 +64,14 @@ const BottomMainCircularCategory = (props: Props) => {
             setState(pre => ({ ...pre, circleShown: true }));
             Animated.timing(animate, {
                 toValue: 1,
-                duration: 300,
+                duration: 200,
                 useNativeDriver: true,
                 easing: Easing.ease
             }).start();
         } else {
             Animated.timing(animate, {
                 toValue: 0,
-                duration: 300,
+                duration: 200,
                 useNativeDriver: true,
                 easing: Easing.ease
             }).start(finished => {

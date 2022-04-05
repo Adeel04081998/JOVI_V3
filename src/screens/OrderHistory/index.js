@@ -68,16 +68,10 @@ export default ({ navigation, route }) => {
             <SafeAreaView style={customheaderStyles.primaryContainer}>
                 <CustomHeader
                     containerStyle={customheaderStyles.containerStyle}
-                    leftCustom={(
-                        <TouchableScale wait={0} onPress={() => {
-                            NavigationService.NavigationActions.common_actions.goBack();
-                        }} style={customheaderStyles.iconContainer}>
-                            <SvgXml xml={svgs.hamburgerMenu(colors.primary)} height={HEADER_ICON_SIZE} width={HEADER_ICON_SIZE} />
-                        </TouchableScale>
-                    )}
+                    renderLeftIconAsDrawer
                     rightCustom={(
                         <TouchableScale wait={0} onPress={() => {
-                            NavigationService.NavigationActions.common_actions.goBack();
+                            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
                         }} style={customheaderStyles.iconContainer}>
                             <SvgXml xml={svgs.hamburgerHome(colors.primary)} height={HEADER_ICON_SIZE} width={HEADER_ICON_SIZE} />
                         </TouchableScale>

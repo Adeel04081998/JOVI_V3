@@ -32,33 +32,34 @@ const SitBackAnimation = (props: Props) => {
             if(props.onComplete){
                 props.onComplete();
             }
-        },2500);
+        },3200);
     }, []);
     return (
         <View style={{ height, width, position: 'absolute', top: 0, zIndex: 9999 }}>
             <Animated.View style={{
-                height: '50%',
+                height: '60%',
                 width: '100%',
                 backgroundColor: colors.light_mode.default.primary,
                 opacity: bottomAnimation,
             }}>
-                <Image source={require('../../assets/gifs/RiderAllocation-Day(New).gif')} resizeMode={'cover'} style={{ width: '100%', height: '100%' }} />
+                <Image source={require('../../assets/gifs/RiderAllocation-Day(New).gif')} resizeMode={'contain'} style={{ width: '100%', height: '100%' }} />
             </Animated.View>
             <Animated.View
                 style={{
                     position: 'absolute',
-                    top: -20,
+                    top:100,
+                    width:'100%',
                     transform: [{
                         translateY: bottomAnimation.interpolate({
                             inputRange: [0, 1],
-                            outputRange: [300, 0],
+                            outputRange: [200, 0],
                         })
                     }],
                 }}>
-                <Image source={require('../../assets/images/sitBackSlide.png')} height={200} width={'100%'} />
+                <Image source={require('../../assets/images/sitBackSlide.png')} style={{ width: '100%'}} resizeMode={'cover'} />
             </Animated.View>
             <Animated.View style={{
-                height: '50%',
+                height: '30%',
                 width: '100%',
                 backgroundColor: 'white',
                 display: 'flex',
@@ -71,10 +72,10 @@ const SitBackAnimation = (props: Props) => {
                     })
                 }],
             }}>
-
                 <Text fontFamily={'PoppinsBold'} style={{ fontSize: 20, color: 'black' }}>Sit Back & Relax</Text>
             </Animated.View>
         </View>
     );
 }
+SitBackAnimation.defaultProps = defaultProps;
 export default SitBackAnimation;

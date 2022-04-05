@@ -10,7 +10,6 @@ import ImageCarousel from '../../molecules/ImageCarousel';
 import lodash from 'lodash'; // 4.0.8
 export default ({ adTypes = [], colors = {}, onAdPressCb = null }) => {
     const [data, setData] = useState([])
-    // console.log("data", data);
     const [isFirestoreHit, setisFirestoreHit] = useState(true)
     const onPressHandler = (item, index) => {
         sharedOnVendorPress(item, index)
@@ -19,14 +18,21 @@ export default ({ adTypes = [], colors = {}, onAdPressCb = null }) => {
         postRequest(Endpoints.GET_ADVERTISEMENTS, {
             "adTypes": adTypes
         }, res => {
-            const { bannerAds } = res.data.adListViewModel;
             console.log('res --- GET_ADVERTISEMENTS', res);
-            setData(bannerAds)
-        }, err => { sharedExceptionHandler(err); });
+            const { statusCode = 200 } = res.data;
+            if (statusCode === 200) {
+                const { bannerAds } = res.data.adListViewModel;
+                setData(bannerAds)
+            }
+        }, err => {
+            sharedExceptionHandler(err);
+        });
     }
     React.useEffect(() => {
         getAdvertisements();
     }, [])
+// console.log("DATA=>>>", data);
+console.log("isFirestoreHit=>>>", isFirestoreHit);
 
     return (
         <ImageCarousel
@@ -42,13 +48,13 @@ export default ({ adTypes = [], colors = {}, onAdPressCb = null }) => {
             }}
             onLoadEnd={(item, index) => {
                 if (index === 0 && isFirestoreHit) {
-                    // console.log("if here isFirestoreHit", isFirestoreHit);
                     sharedAddUpdateFirestoreRecord(item)
                     setisFirestoreHit(false)
 
                 }
             }}
-
+        autoPlay
+        autoPlayInterval={3}
 
 
         />
