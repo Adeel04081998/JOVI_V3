@@ -121,6 +121,7 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                                     showDetail={showDetails}
                                     totalPrice={individualPitstopTotal}
                                     individualPitstopGst={x.individualPitstopGst}
+                                    showFrontValues={true}
                                 />
                                 {/* <View style={{
                                     flexDirection: 'row', alignItems: 'center', flex: 1, paddingVertical: i === 0 ? 0 : 0,

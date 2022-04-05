@@ -42,10 +42,10 @@ const RatingSliderUI = (props: Props) => {
         }
         return () => { };
     }, [selectedIndex])
-    console.log('selectedIndex ', selectedIndex);
-    console.log('DOT_LENGTH ', DOT_LENGTH - 1);
+    // console.log('selectedIndex ', selectedIndex);
+    // console.log('DOT_LENGTH ', DOT_LENGTH - 1);
 
-    console.log('selectedIndex<DOT_LENGTH ', selectedIndex < DOT_LENGTH);
+    // console.log('selectedIndex<DOT_LENGTH ', selectedIndex < DOT_LENGTH);
 
     return (
         <View style={[{

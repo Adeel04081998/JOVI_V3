@@ -465,7 +465,6 @@ export const sharedAddUpdatePitstop = (
     forceUpdate = false,
     incDec = false,
 ) => {
-    console.log("arguments", arguments);
     const cartReducer = store.getState().cartReducer;
     if (swappedPitstops.length) {
         dispatch(ReduxActions.setCartAction({ pitstops: swappedPitstops }));
@@ -559,9 +558,12 @@ export const sharedAddUpdatePitstop = (
             console.log('[PITSTOP NOT FOUND AND ADD NEW PITSTOP]');
             pitstops.push({
                 ...pitstopDetails.vendorDetails,
+                latitude: upcomingItemDetails?.latitude ?? upcomingVendorDetails.latitude,
+                longitude: upcomingItemDetails?.longitude ?? upcomingVendorDetails.longitude,
+                pitstopType: pitstopDetails.pitstopType,
                 isRestaurant: pitstopDetails.pitstopType === PITSTOP_TYPES.RESTAURANT,
                 pitstopID: pitstopDetails.vendorDetails.marketID ?? pitstopDetails.vendorDetails.pitstopID,
-                checkOutItemsListVM: [{ ...upcomingItemDetails, checkOutItemID: sharedUniqueIdGenerator() }],
+                checkOutItemsListVM: [{ pitstopType: pitstopDetails.pitstopType, ...upcomingItemDetails, checkOutItemID: sharedUniqueIdGenerator() }],
             });
         }
     }
@@ -636,21 +638,22 @@ export const sharedGetServiceCharges = (payload = null, successCb = () => { }) =
     const userReducer = store.getState().userReducer;
     // const estimateTime = cartReducer?.estimateTime?.includes('AM') || cartReducer?.estimateTime?.includes('PM') ? convertTime12to24(cartReducer.estimateTime) : cartReducer.estimateTime;
     const estimateTime = cartReducer.estimateTime;
-    console.log('userReducer', userReducer);
     const pitstopItems = [];
     [...cartReducer.pitstops].map((item, i) => {
         if (item.checkOutItemsListVM) {
             item.checkOutItemsListVM.map((product, j) => {
-                console.log("product here...", product);
+                // console.log("product here...", product);
                 pitstopItems.push({
                     "itemPrice": product._itemPrice,
-                    "gstAddedPrice": item.pitstopType === PITSTOP_TYPES.SUPER_MARKET ? product.gstAddedPrice : product.gstAddedPrice + product.totalJoviDiscount + product._totalDiscount,
+                    "gstAddedPrice": product._priceForSubtotals,
                     "gstPercentage": product.gstPercentage,
                     "itemDiscount": (product._totalDiscount - product._totalJoviDiscount),
                     "joviDiscount": product._totalJoviDiscount,
+                    "actualPrice": product._priceForSubtotals - product.gstAmount,
+                    // "gstAddedPrice": item.pitstopType === PITSTOP_TYPES.SUPER_MARKET ? product.gstAddedPrice : product.gstAddedPrice + product.totalJoviDiscount + product._totalDiscount,
                     // "itemDiscount": product.itemDiscount,
                     // "joviDiscount": product.joviDiscount,
-                    "actualPrice": item.pitstopType === 1 ? product.actualPrice : product.gstAddedPrice + product.totalJoviDiscount + product._totalDiscount,
+                    // "actualPrice": item.pitstopType === 1 ? product.actualPrice : product.gstAddedPrice + product.totalJoviDiscount + product._totalDiscount,
                     "gstAmount": product._totalGst,
                     "quantity": product.quantity,
                     "pitStopType": item.pitstopType,
@@ -664,9 +667,9 @@ export const sharedGetServiceCharges = (payload = null, successCb = () => { }) =
         "joviJobAmount": cartReducer.joviPitstopsTotal,
         "estimateTime": estimateTime || null,
         "pitstops": [...cartReducer.pitstops, { ...(userReducer?.finalDestObj ?? {}) }].map((_pitstop, pitIndex) => ({
-            "isRestaurant": _pitstop.isRestaurant,
+            "isRestaurant": _pitstop.isRestaurant || false,
             "latLng": `${_pitstop.latitude},${_pitstop.longitude}`,
-            "pitStopType": _pitstop.pitstopType,
+            "pitStopType": _pitstop.pitstopType || 0,
         })),
         "skipEstAmountAndGst": cartReducer.pitstops.every(pt => pt.pitstopType === 2 || pt.pitstopType === undefined) ? true : false,
         // "hardwareID": "string",
@@ -681,20 +684,20 @@ export const sharedGetServiceCharges = (payload = null, successCb = () => { }) =
             pitstopItems
         }
     }
-    console.log('payload--sharedGetServiceCharges', payload);
+    console.log('[sharedGetServiceCharges].payload', payload);
     postRequest(
         Endpoints.SERVICE_CHARGES,
         payload,
         (response) => {
             const { statusCode, serviceCharge, serviceTax, chargeBreakdown, genericDiscount, orderEstimateTime } = response.data;
-            console.log('service charges response -----', response);
+            console.log('[sharedGetServiceCharges].response', response);
             if (statusCode === 200)
                 // NEED TO MODIFY THESE LOGIC FOR FUTURE CASES LIKE CHECKOUT SCREEN...
                 dispatch(ReduxActions.setCartAction({ orderEstimateTime, serviceCharges: serviceCharge, serviceTax, genericDiscount, chargeBreakdown: chargeBreakdown ?? {} }))
             successCb(response);
         },
         (error) => {
-            console.log('service charges error -----', error);
+            console.log('[sharedGetServiceCharges].error', error);
             sharedExceptionHandler(error);
         },
         true

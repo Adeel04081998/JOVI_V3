@@ -251,7 +251,9 @@ export default ({ navigation, route }) => {
     /*****************************     Start of  useEffect            ***********************************/
 
     const setData = (data = route.params.pitstopItemObj) => {
-        const { title, nameval, imageData, voiceNote, estTime, description, estimatePrice, buyForMe } = data;
+        const { title, nameval, imageData, voiceNote, estTime, description, estimatePrice, buyForMe, latitude, longitude } = data;
+        latitudeRef.current = latitude;
+        longitudeRef.current = longitude;
         let _estPrice = isNaN(parseInt(`${estimatePrice}`)) ? '' : parseInt(`${estimatePrice}`)
         const typeForTogglingDescriptionCard = () => {
             if (description) return 0
@@ -265,7 +267,7 @@ export default ({ navigation, route }) => {
         setEstTime(estTime)
         setDescription(description)
         setEstVal(_estPrice)
-        
+
         setSwitch(buyForMe)
         recordingItem = voiceNote ?? null
 

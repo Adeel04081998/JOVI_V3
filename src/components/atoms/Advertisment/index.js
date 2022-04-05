@@ -19,10 +19,15 @@ export default ({ adTypes = [], colors = {}, onAdPressCb = null }) => {
         postRequest(Endpoints.GET_ADVERTISEMENTS, {
             "adTypes": adTypes
         }, res => {
-            const { bannerAds } = res.data.adListViewModel;
             console.log('res --- GET_ADVERTISEMENTS', res);
-            setData(bannerAds)
-        }, err => { sharedExceptionHandler(err); });
+            const { statusCode = 200 } = res.data;
+            if (statusCode === 200) {
+                const { bannerAds } = res.data.adListViewModel;
+                setData(bannerAds)
+            }
+        }, err => {
+            sharedExceptionHandler(err);
+        });
     }
     React.useEffect(() => {
         getAdvertisements();
