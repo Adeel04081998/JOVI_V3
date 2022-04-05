@@ -55,7 +55,7 @@ export default () => {
     const onOrderPress = (order) => {
         sharedOrderNavigation(order.orderID, order.subStatusName, null, null, false, order?.pitstopList ?? []);
     }
-    const onPromoPressed = async (pressedPromo) => {
+    const onPromoPressed = (pressedPromo) => {
         if (pressedPromo.promoType === 3) {
             NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Referral.screen_name);
         }
@@ -63,11 +63,7 @@ export default () => {
             NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Wallet.screen_name);
         }
         else {
-            // if (pressedPromo.promoCode) await AsyncStorage.setItem("customerOrder_prefilledPromo", pressedPromo.promoCode.toString());
-            // enableDisableConsectivePress(true);
-            // fillPredefinedPlacesAndProceedToOrderBooking(false, false, null);
         }
-
     };
     useFocusEffect(
         React.useCallback(() => {
