@@ -32,7 +32,7 @@ import ROUTES from '../../navigations/ROUTES';
 
 
 export default (props) => {
-    console.log("props product Details=>>", props);
+    // console.log("props product Details=>>", props);
     const propItem = props.route.params?.propItem ?? {};
     const isEditCase = props.route.params.isEditCase ?? false
     let initialState = {
@@ -70,14 +70,12 @@ export default (props) => {
     let images = generalProductOrDealDetail.images ?? []
     let numberOfLines = 4
     let minHeight = (Platform.OS === 'ios' && numberOfLines) ? (20 * numberOfLines) : null
-    console.log("propItem ==>>>", propItem);
     const discountTypeCallbacks = {
         1: (amount, discount) => discount > 0 ? (amount - ((discount / 100) * amount)) : amount,
         2: (amount, discount) => discount > 0 ? (amount - discount) : amount,
     };
 
 
-    console.log("state=>", state);
     const loadProductDetails = () => {
 
         postRequest(Endpoints.PRODUCT_DETAILS, {
@@ -133,7 +131,6 @@ export default (props) => {
         return count;
     }
     const enableDisable = (updatedArr = [], parentIndex) => {
-        console.log("hy");
         {/* ****************** CALCULATING TOTAL REQUIRED COUNT ****************** */ }
         const requiredCount = optionsListArr.filter(x => x.isRequired).length;
 
@@ -149,7 +146,6 @@ export default (props) => {
 
         {/* ****************** GETTING CURRENT REQUIRED SELECTED --  isRequired is added with every item which lies in the required array  ****************** */ }
         const alreadySelectedCount = updatedArr.filter(x => x.isRequired).length;
-        console.log(" alreadySelectedCount", alreadySelectedCount);
         setEnable(pre => ({ ...pre, enableBtn: alreadySelectedCount >= mustSelectedCount }));
         return
 
@@ -161,7 +157,6 @@ export default (props) => {
         });
         setEnable(pre => ({ ...pre, enableBtn: enableBtn }));
     }
-    console.log('state ==>>>',state);
     const onPressHandler = (item, isMany, parentIndex, quantity = null, isRequired) => {
         // console.log([1,2,3].)
         const alreadyExist = state.selectedOptions.filter(op => op.itemOptionID === item.itemOptionID)[0];
@@ -440,9 +435,6 @@ export default (props) => {
         } else {
             loadProductDetails()
         }
-        // loadProductDetails()
-
-
     }, [])
     const inputRef = React.useRef(null);
     return (

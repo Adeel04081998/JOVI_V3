@@ -69,8 +69,6 @@ export default () => {
     setExpanded(_list)
   }
   const onEditPress = (product) => {
-    console.log("[onEditPress].pitstop", product);
-    // return Alert.alert("Dear lakaas! Bug ni bnana, \n Abi sirf JOVI job ko edit kr skty hain ap log! Bug ni bnana!")
     if (product.pitstopType === PITSTOP_TYPES.JOVI) NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.JoviJob.screen_name, { pitstopItemObj: product });
     else NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, {
       propItem: {
@@ -78,7 +76,8 @@ export default () => {
         ...product,
         vendorDetails: { ...product },
       },
-      pitstopType: product.pitstopType
+      pitstopType: product.pitstopType,
+      isEditCase: true
     })
   }
   const PitstopsCard = ({ pitstop }) => {
@@ -256,7 +255,7 @@ export default () => {
     product,
     incDecDelHandler,
   }) => {
-    const { title, estimatePrice, description, discountedPrice, notes, images, _itemPriceWithoutDiscount, _totalDiscount, _itemPrice, quantity, pitstopType } = product;
+    const { title, estimatePrice, description, discountedPrice, notes, images, _itemPriceWithoutDiscount, _totalDiscount, _itemPrice, quantity, pitstopType, pitStopItemID, pitStopID } = product;
     if (isJOVI) {
       return <View style={{ flexDirection: 'row' }}>
         <View style={{ height: 70, width: 70, borderRadius: 10, margin: 5 }}>
@@ -380,6 +379,8 @@ export default () => {
                   incDecDelHandler(quantity)
                 }}
                 fromCart={true}
+                marketID={pitStopID}
+                pitstopItemID={pitStopItemID}
               />
             </View>
           </View>
