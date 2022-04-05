@@ -70,17 +70,16 @@ export default () => {
   }
   const onEditPress = (product) => {
     console.log("[onEditPress].pitstop", product);
-    return Alert.alert("Dear lakaas! Bug ni bnana, \n Abi sirf JOVI job ko edit kr skty hain ap log! Bug ni bnana!")
-    // if (product.pitstopType === PITSTOP_TYPES.JOVI) NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.JoviJob.screen_name, { pitstopItemObj: product });
-    // else Alert.alert("Dear lakaas! Bug ni bnana, \n Abi sirf JOVI job ko edit kr skty hain ap log! Bug ni bnana!")
-    // else NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, {
-    //   propItem: {
-    //     itemDetails: { ...product },
-    //     ...product,
-    //     vendorDetails: { ...product },
-    //   },
-    //   pitstopType: product.pitstopType
-    // })
+    // return Alert.alert("Dear lakaas! Bug ni bnana, \n Abi sirf JOVI job ko edit kr skty hain ap log! Bug ni bnana!")
+    if (product.pitstopType === PITSTOP_TYPES.JOVI) NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.JoviJob.screen_name, { pitstopItemObj: product });
+    else NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, {
+      propItem: {
+        itemDetails: { ...product },
+        ...product,
+        vendorDetails: { ...product },
+      },
+      pitstopType: product.pitstopType
+    })
   }
   const PitstopsCard = ({ pitstop }) => {
     console.log("[PitstopsCard].pitstop", pitstop);
