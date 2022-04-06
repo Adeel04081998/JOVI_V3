@@ -259,10 +259,10 @@ const App = () => {
                 <Robot />
                 <Toast
                     config={toastConfig}
-                    ref={ref => {
-                        _toastRef.current = ref;
-                        Toast.setRef(ref);
-                    }}
+                    // ref={ref => {
+                    //     _toastRef.current = ref;
+                    //     Toast.setRef(ref);
+                    // }}
                 />
                 <NoInternetModal />
             </SafeAreaView>

@@ -30,6 +30,7 @@ export default ({ navigation, route }) => {
     const [query, updateQuery] = React.useState({ isLoading: false, error: false, errorText: '', });
     const [data, setData] = React.useState({ active: [], solved: [], });
     const [metaData, toggleMetaData] = React.useState(false);
+    const test = React.useRef(null);
     // #endregion :: STATE & REF's END's FROM HERE 
 
     // #region :: RENDER HEADER START's FROM HERE 
@@ -74,18 +75,21 @@ export default ({ navigation, route }) => {
                 error: false,
                 errorText: '',
             });
-        }, 300);
+        }, 200);
     };
 
-    const loadData = () => {
-        if ((activeIndex === 0 && data.active.length > 0)) {
-            waitingToChange();
-            return
-        };
-        if ((activeIndex === 1 && data.solved.length > 0)) {
-            waitingToChange();
-            return;
-        };
+    const loadData = (forceUpdate = false) => {
+        if (forceUpdate === false) {
+            if ((activeIndex === 0 && data.active.length > 0)) {
+                waitingToChange();
+                return
+            };
+            if ((activeIndex === 1 && data.solved.length > 0)) {
+                waitingToChange();
+                return;
+            };
+        }
+
 
         const activeKey = activeIndex === 0 ? "active" : "solved";
         updateQuery({
@@ -184,7 +188,11 @@ export default ({ navigation, route }) => {
                                         time: `${item.complaintDateTime.split(' ').pop()}`,
                                     }}
                                     onPress={() => {
-                                        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.SupportDetail.screen_name);
+                                        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.SupportDetail.screen_name, {
+                                            complaintID: item.complaintID,
+                                            loadData,
+                                            isPending
+                                        });
                                     }}
                                 />
                             )
@@ -213,7 +221,9 @@ const ItemUI = ({ colors, isPending = true, item = { complaintNo: '', detail: ''
                 minHeight: 50,
                 ...AppStyles.shadow,
                 padding: 10,
-            }}>
+            }}
+        // disabled={!isPending}
+        >
             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                 <Text style={{
                     fontSize: 12,
