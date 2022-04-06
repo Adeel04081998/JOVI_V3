@@ -1,5 +1,6 @@
 import { Platform, StyleSheet } from "react-native"
 import { initColors } from "./colors"
+import constants from "./constants"
 
 export default {
     _styles(colors = initColors) {
@@ -51,6 +52,18 @@ export default {
                 })
 
             },
+            toastContainer: (backgroundcolor = 'white', borderColor = 'white') => ({
+                borderLeftColor: borderColor,
+                maxHeight: 45,
+                width: constants.window_dimensions.width - 15,
+                backgroundColor: backgroundcolor,
+                borderColor: borderColor,
+                borderWidth: 1,
+                top: constants.screen_dimensions.height / (Platform.OS === 'android' ? "-20" : "90"),
+                borderLeftWidth:1,
+
+            }),
+
         })
     }
 }
