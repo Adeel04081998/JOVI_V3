@@ -10,6 +10,7 @@ export default ({ screenStyles = {}, route }) => {
     const html = route?.params?.html;
     const title = route?.params?.title;
     const uri = route?.params?.uri;
+    console.log('uri',uri);
     return (
         <SafeAreaView style={{ flex: 1, }}>
             <View style={{ flex: 1, flexDirection: 'column' }}>
@@ -29,11 +30,22 @@ export default ({ screenStyles = {}, route }) => {
                             ...uri,
                         }
                     })}
+                    {...Platform.OS === "ios" && {
+                        onShouldStartLoadWithRequest: (event) => {
+                            return event.loading
+                        }
+                    }}
                     style={[{ flex: 1, minHeight: 200, width: constants.screen_dimensions.width, backgroundColor: 'transparent' }, { ...screenStyles }]}
                     javaScriptEnabled={true}
                     domStorageEnabled={true}
                     startInLoadingState={true}
                     scalesPageToFit={true}
+                    onError={(err) => console.log('err ==>>>', err)}
+                    onHttpError={err => {
+                        console.log("onHttpError ===>>> ", err);
+
+                    }}
+                    onNavigationStateChange={(event)=>{console.log('event ==>>>',event)}}
                 />
             </View>
         </SafeAreaView>

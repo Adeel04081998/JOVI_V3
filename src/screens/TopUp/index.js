@@ -38,21 +38,8 @@ export default () => {
   const IS_JAZZCASH_ALLOWED = transactionMethods.find(x => (x.name.toLowerCase() === "jazzcash" && x.txnType == 1) || (x.name.toLowerCase() === "jazzcash" && x.txnType == 4) ? x : false);
 
   const [topUpAmount, setTopUpAmount] = useState('')
-  const [accountsArr, setAccountsArr] = useState([
-    { name: "Easypaisa mobile account", desc: "Use your easypaisa account", paymentType: PAYMENT_TYPES_ENUM.EASYPAISA, disabled: IS_EASYPAISA_ALLOWED ? false : true, icon: svgs.easypaisa() },
-    { name: "Jazzcash mobile account", desc: "Use your jazzcash account", paymentType: PAYMENT_TYPES_ENUM.JAZZCASH, disabled: IS_JAZZCASH_ALLOWED ? false : true, icon: svgs.jazzcash() },
-    { name: "Credit/Debit card", desc: "Use your credit/debit card", paymentType: PAYMENT_TYPES_ENUM.CREDIT_DEBIT_CARD, disabled: true, icon: svgs.creditCard() }, //added disabled checked. 
-  ])
-
-
-  /////////////// ******************** END of variable initialization ***********************\\\\\\\\\\\\\\\\\\\\\\\\
-
-
-
-
-
-  /////////////// ******************** Start of Card Payment Check Function ***********************\\\\\\\\\\\\\\\\\\\\\\\\
-
+  
+  //This function is here for a reason, if you want to change its position, please dont.
   const cardPaymentAllowed = () => {
     let isHblAllowed = false,
       isJazzcashCCAllowed = false,
@@ -78,6 +65,22 @@ export default () => {
     }
 
   }
+  const [accountsArr, setAccountsArr] = useState([
+    { name: "Easypaisa mobile account", desc: "Use your easypaisa account", paymentType: PAYMENT_TYPES_ENUM.EASYPAISA, disabled: IS_EASYPAISA_ALLOWED ? false : true, icon: svgs.easypaisa() },
+    { name: "Jazzcash mobile account", desc: "Use your jazzcash account", paymentType: PAYMENT_TYPES_ENUM.JAZZCASH, disabled: IS_JAZZCASH_ALLOWED ? false : true, icon: svgs.jazzcash() },
+    { name: "Credit/Debit card", desc: "Use your credit/debit card", paymentType: PAYMENT_TYPES_ENUM.CREDIT_DEBIT_CARD, disabled: cardPaymentAllowed().disabled, icon: svgs.creditCard() }, //added disabled checked. 
+  ])
+
+
+  /////////////// ******************** END of variable initialization ***********************\\\\\\\\\\\\\\\\\\\\\\\\
+
+
+
+
+
+  /////////////// ******************** Start of Card Payment Check Function ***********************\\\\\\\\\\\\\\\\\\\\\\\\
+
+
 
 
   /////////////// ******************** END of Card Payment Check Function ***********************\\\\\\\\\\\\\\\\\\\\\\\\
@@ -91,7 +94,7 @@ export default () => {
   /////////////// ******************** START of JAZZ Cash Payment Function ***********************\\\\\\\\\\\\\\\\\\\\\\\\
 
 
-  
+
   const JazzCashHandler = (txnType) => {
     postRequest(
       Endpoints.JAZZCASH_PAY,
@@ -100,15 +103,22 @@ export default () => {
         "txnType": txnType,
       },
       success => {
-        const { statusCode, jazzCashHtml } = success.data;
+        console.log('success1', success);
+        const { statusCode, jazzCashAuthViewModel } = success.data;
         if (statusCode === 200) {
           NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.WebView.screen_name, {
-            uri: null,
-            html: `${jazzCashHtml}`, title: "Top Up"
+            uri: {
+              uri: jazzCashAuthViewModel.url,
+              method: 'POST',
+              body: `pp_Amount=${jazzCashAuthViewModel.pp_Amount}&pp_BillReference=${jazzCashAuthViewModel.pp_BillReference}&pp_CNIC=${jazzCashAuthViewModel.pp_CNIC}&pp_Description=${jazzCashAuthViewModel.pp_Description}&pp_Language=${jazzCashAuthViewModel.pp_Language}&pp_MerchantID=${jazzCashAuthViewModel.pp_MerchantID}&pp_MobileNumber=${jazzCashAuthViewModel.pp_MobileNumber}&pp_Password=${jazzCashAuthViewModel.pp_Password}&pp_ReturnURL=${jazzCashAuthViewModel.pp_ReturnURL}&pp_SecureHash=${jazzCashAuthViewModel.pp_SecureHash}&pp_TxnCurrency=${jazzCashAuthViewModel.pp_TxnCurrency}&pp_TxnDateTime=${jazzCashAuthViewModel.pp_TxnDateTime}&pp_TxnExpiryDateTime=${jazzCashAuthViewModel.pp_TxnExpiryDateTime}&pp_TxnRefNo=${jazzCashAuthViewModel.pp_TxnRefNo}`
+            },
+            html: null,
+            title: "Top Up"
           })
         } else sharedExceptionHandler(success)
       },
       fail => {
+        console.log('fail', fail);
         sharedExceptionHandler(fail)
       })
   }
@@ -166,7 +176,7 @@ export default () => {
 
   const HBLHandler = () => {
     postRequest(
-     Endpoints.HBL_PAY,
+      Endpoints.HBL_PAY,
       {
         "amount": parseInt(topUpAmount),
         "userID": id,
@@ -304,7 +314,7 @@ export default () => {
           accountsArr.map((item, index) => {
             return (
               <>
-                <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 5  }} disabled={item.disabled} onPress={() => onAccountPress(item, index)} >
+                <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 5 }} disabled={item.disabled} onPress={() => onAccountPress(item, index)} >
                   <SvgXml xml={item.icon} height={35} width={35} style={{ marginHorizontal: 20 }} />
                   <View style={{ flexDirection: 'column' }} >
                     <Text style={styles.accountTitle} fontFamily="PoppinsSemiBold" >{item.name}</Text>

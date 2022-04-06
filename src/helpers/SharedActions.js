@@ -374,7 +374,7 @@ export const sharedCalculateMaxTime = (dataArr = [], key = "estimatePrepTime") =
 }
 export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
     console.log("[sharedCalculateCartTotals]", pitstops);
-    let joviRemainingAmount = constants.max_jovi_order_amount,
+    let joviRemainingAmount = cartReducer.joviRemainingAmount,
         subTotal = 0,
         discount = 0,
         itemsCount = 0,

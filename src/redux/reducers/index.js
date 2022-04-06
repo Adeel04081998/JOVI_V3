@@ -45,6 +45,7 @@ const cartReducer = (state = INIT_CART_DATA, action) => {
         ...INIT_CART_DATA,
         ...action.payload,
         pitstops: [],
+        joviRemainingAmount: state.joviRemainingAmount
       }
     default:
       return { ...state };
