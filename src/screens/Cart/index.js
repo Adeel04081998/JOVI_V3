@@ -18,7 +18,7 @@ import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import DraggableFlatList from '../../components/molecules/DraggableFlatList';
 import DashedLine from '../../components/organisms/DashedLine';
-import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedCalculatedTotals, sharedConfirmationAlert, sharedGetServiceCharges, sharedOnVendorPress } from '../../helpers/SharedActions';
+import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedCalculatedTotals, sharedConfirmationAlert, sharedGetServiceCharges, sharedOnVendorPress, sharedVerifyCartItems } from '../../helpers/SharedActions';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import ReduxActions from '../../redux/actions';
@@ -45,18 +45,17 @@ const BottomLine = () => (
 // }
 export default () => {
   const { cartReducer } = useSelector(store => ({ cartReducer: store.cartReducer }));
+  // console.log('[CART_SCREEN] cartReducer', cartReducer);
   const dispatch = useDispatch();
-  console.log('[CART_SCREEN] cartReducer', cartReducer);
   const [expanded, setExpanded] = React.useState([0]);
-  const [data, setData] = React.useState([...cartReducer.pitstops])
   const colors = theme.getTheme(
     GV.THEME_VALUES.DEFAULT,
     Appearance.getColorScheme() === 'dark',
   );
-  const cartStyles = stylesheet.styles(colors);
 
   React.useEffect(() => {
-    sharedGetServiceCharges()
+    // sharedGetServiceCharges();
+    sharedVerifyCartItems();
   }, [])
   const incDecDelHandler = (pitstopDetails, pitstopIndex = null, isDeletePitstop = false) => {
     sharedAddUpdatePitstop({ ...pitstopDetails }, isDeletePitstop, [], false, true, null, false, true);
@@ -69,7 +68,7 @@ export default () => {
     setExpanded(_list)
   }
   const onEditPress = (product) => {
-    console.log("[onEditPress].pitstop", product);
+    // console.log("[onEditPress].pitstop", product);
     // return Alert.alert("Dear lakaas! Bug ni bnana, \n Abi sirf JOVI job ko edit kr skty hain ap log! Bug ni bnana!")
     if (product.pitstopType === PITSTOP_TYPES.JOVI) NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.JoviJob.screen_name, { pitstopItemObj: product });
     else NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, {

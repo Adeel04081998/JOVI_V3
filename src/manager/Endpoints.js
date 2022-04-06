@@ -67,7 +67,8 @@ export default {
     "HBL_PAY": "api/Payment/HBLPay",
     "JAZZCASH_PAY": "api/Payment/JazzCashPay",
     "EASYPAISA_PAY": "api/Payment/EasyPaisaPay",
-    "DELETE_ADDRESS": "api/Menu/Address/Delete"
+    "DELETE_ADDRESS": "api/Menu/Address/Delete",
+    "VERIFY_CART_ITEMS": "api/Product/Cart/VerifyItems",
 }
 
 

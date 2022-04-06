@@ -17,7 +17,7 @@ import Switch from '../../components/atoms/Switch'
 import TouchableOpacity from '../../components/atoms/TouchableOpacity'
 import { getRequest, postRequest } from '../../manager/ApiManager'
 import Endpoints from '../../manager/Endpoints'
-import { sharedCalculatedTotals, sharedExceptionHandler, sharedGetDeviceInfo, sharedGetServiceCharges, sharedOrderNavigation } from '../../helpers/SharedActions'
+import { sharedCalculatedTotals, sharedExceptionHandler, sharedGetDeviceInfo, sharedGetServiceCharges, sharedOrderNavigation, sharedVerifyCartItems } from '../../helpers/SharedActions'
 import Button from '../../components/molecules/Button'
 import OrderRecipt from './components/OrderRecipt'
 import { useDispatch, useSelector } from 'react-redux'
@@ -355,14 +355,16 @@ export default () => {
         )
     }
 
-    // React.useEffect(() => {
-    //     sharedGetServiceCharges(null, (res) => {
-    //         setState(pre => ({
-    //             ...pre,
-    //             chargeBreakdown: res.data.chargeBreakdown,
-    //         }));
-    //     });
-    // }, []);
+    React.useEffect(() => {
+        sharedVerifyCartItems();
+        // sharedGetServiceCharges(null, (res) => {
+        //     setState(pre => ({
+        //         ...pre,
+        //         chargeBreakdown: res.data.chargeBreakdown,
+        //     }));
+        // });
+
+    }, []);
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }} >
             <CustomHeader
@@ -391,10 +393,10 @@ export default () => {
                         color={colors}
                         right={{ value: totalPitstop }}
                         middle={{ value: estimatedDeliveryTime }}
-                        contentContainerStyle={{ marginBottom: 0, marginVertical: 0, marginTop: 5, borderRadius: 8,paddingVertical:9}}
+                        contentContainerStyle={{ marginBottom: 0, marginVertical: 0, marginTop: 5, borderRadius: 8, paddingVertical: 9 }}
                         rightContainerStyle={{ flex: 0 }}
                         middleContainerStyle={{ flex: 3, }}
-                        leftContainerStyle={{paddingLeft:2, paddingRight:15}}
+                        leftContainerStyle={{ paddingLeft: 2, paddingRight: 15 }}
 
                     />
                     <DeliveryAddress
