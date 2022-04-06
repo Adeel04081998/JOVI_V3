@@ -127,7 +127,8 @@ export default () => {
     const renderHeader = () => {
         return (
             <CustomHeader
-                rightIconName={'home'}
+                renderRightIconForHome
+                renderLeftIconAsDrawer
                 rightContainerStyle={{
                     backgroundColor: colors.white,
                 }}

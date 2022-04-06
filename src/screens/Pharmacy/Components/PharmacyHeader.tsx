@@ -31,6 +31,7 @@ type Props = React.ComponentProps<typeof Animated.View> & {
     onLayout?: (event: LayoutChangeEvent) => void;
     item?: ProductMenuHeaderItem;
 
+    pharmacyPitstopType?: any;
     hideHeader?: boolean;
     onPressParent:any;
 
@@ -40,9 +41,11 @@ type ContainerProps = React.ComponentProps<typeof Animated.View> & {
     colors: typeof initColors;
 
     animScroll?: any;
+    onPressParent:any;
     headerHeight?: any;
     setHeaderHeight?: any;
     headerTop?: any;
+    pharmacyPitstopType?: any;
 };
 
 const defaultProps = {
@@ -62,9 +65,6 @@ const PharmacyHeader = (props: Props) => {
 
     const colors = props.colors;
     const styles = stylesFunc(colors);
-    const [state,setState] = React.useState({
-        selectedType:ENUMS.PharmacyPitstopType[0]
-    });
     // #region :: RENDER BOTTOM DETAIL START's FROM HERE 
 
     // #endregion :: RENDER BOTTOM DETAIL END's FROM HERE 
@@ -110,12 +110,11 @@ const PharmacyHeader = (props: Props) => {
                     {
                         ENUMS.PharmacyPitstopType.map((item,i)=>{
                             return <TouchableOpacity key={i} onPress={()=>{
-                                setState(pre=>({...pre,selectedType:item}))
                                 if(props.onPressParent){
                                     props.onPressParent(item)
                                 }
-                            }} style={{ height: 50, width: '45%', backgroundColor:item.value === state.selectedType.value? colors.primary:colors.white, borderRadius: 12, ...sharedStyles._styles(colors).placefor_specific_shadow, justifyContent: 'center', alignItems: 'center' }}>
-                            <Text style={{ fontSize: 16, color:item.value === state.selectedType.value? colors.white:colors.primary }} fontFamily={'PoppinsLight'}>{item.text}</Text>
+                            }} style={{ height: 50, width: '45%', backgroundColor:item.value === props.pharmacyPitstopType? colors.primary:colors.white, borderRadius: 12, ...sharedStyles._styles(colors).placefor_specific_shadow, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 16, color:item.value === props.pharmacyPitstopType? colors.white:colors.primary }} fontFamily={'PoppinsLight'}>{item.text}</Text>
                         </TouchableOpacity>
                         })
                     }
@@ -138,7 +137,7 @@ PharmacyHeader.defaultProps = defaultProps;
 
 export const PharmacyHeaderContainer = (props: ContainerProps) => {
     return (
-        <SafeAreaView>
+        <SafeAreaView style={{zIndex:999}}>
             <Animated.View style={{
                 // ...StyleSheet.absoluteFill,
                 zIndex: 999,
@@ -158,9 +157,11 @@ export const PharmacyHeaderContainer = (props: ContainerProps) => {
                         image: require('../../../assets/images/pharmacyHeaderImage.jpg'),
                         title: 'Pharmacy',
                     }}
+                    pharmacyPitstopType={props.pharmacyPitstopType}
+                    onPressParent={props.onPressParent}
                 />
             </Animated.View>
-            <Animated.View style={{ position: 'absolute', top: 0, zIndex: 9999, }}>
+            <Animated.View style={{ position: 'absolute', top: 0, zIndex: 999999, }}>
                 <CustomHeader
                     hideFinalDestination
                     title={'Pharmacy'}

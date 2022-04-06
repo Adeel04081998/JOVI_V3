@@ -40,7 +40,8 @@ export default () => {
     }, []);
     const _renderHeader = () => (<CustomHeader
         renderLeftIconAsDrawer
-        rightIconName={null}
+        renderRightIconForHome
+        rightIconColor={colors.primary}
         title={`Goody Bag`}
         titleStyle={{
             fontFamily: FontFamily.Poppins.SemiBold,
