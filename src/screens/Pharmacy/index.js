@@ -1,33 +1,30 @@
 import React from 'react';
-import { Appearance, Animated, StyleSheet, TouchableOpacity, StatusBar, ScrollView } from 'react-native';
+import { Animated, Appearance, StatusBar, TouchableOpacity } from 'react-native';
 import { useSelector } from 'react-redux';
+import Image from '../../components/atoms/Image';
 import SafeAreaView from '../../components/atoms/SafeAreaView';
 import Text from '../../components/atoms/Text';
 import TextInput from '../../components/atoms/TextInput';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import Button from '../../components/molecules/Button';
-import CustomHeader, { CustomHeaderIconBorder, CustomHeaderStyles } from '../../components/molecules/CustomHeader';
+import { CustomHeaderIconBorder, CustomHeaderStyles } from '../../components/molecules/CustomHeader';
 import Recording from '../../components/organisms/Recording';
+import { sharedLaunchCameraorGallery } from '../../helpers/Camera';
+import { sharedConfirmationAlert, uniqueKeyExtractor } from '../../helpers/SharedActions';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import constants from '../../res/constants';
 import FontFamily from '../../res/FontFamily';
-import sharedStyles from '../../res/sharedStyles';
 import theme from '../../res/theme';
+import ENUMS from '../../utils/ENUMS';
 import GV, { isIOS, PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import Regex from '../../utils/Regex';
 import PitStopEstPrice from '../JoviJob/components/PitStopEstPrice';
 import PitStopEstTime from '../JoviJob/components/PitStopEstTime';
-import RestaurantProductMenuHeader from '../RestaurantProductMenu/components/RestaurantProductMenuHeader';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
-import PharmacyHeader, { PharmacyHeaderContainer } from './Components/PharmacyHeader';
-import ENUMS from '../../utils/ENUMS';
-import { sharedConfirmationAlert, uniqueKeyExtractor } from '../../helpers/SharedActions';
-import Image from '../../components/atoms/Image';
-import { sharedLaunchCameraorGallery } from '../../helpers/Camera';
-const AnimatedKeyboardAwareScroll = Animated.createAnimatedComponent(KeyboardAwareScrollView);
+import { PharmacyHeaderContainer } from './Components/PharmacyHeader';
+import styles from './styles';
 const HEADER_ICON_SIZE = CustomHeaderIconBorder.size * 0.6;
 const WINDOW_HEIGHT = constants.window_dimensions.height;
 const ICON_CONTAINER_SIZE = 40;
@@ -41,10 +38,7 @@ export default () => {
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[PITSTOP_TYPES.PHARMACY]], Appearance.getColorScheme() === "dark");
     const customheaderStyles = { ...CustomHeaderStyles(colors.primary) };
     const userReducer = useSelector(state => state.userReducer);
-    const _styles = styles(colors);
-    const data = {
-        title: 'Pharmacy',
-    };
+    const _styles = styles(colors,BORDER_RADIUS,SPACING);
     const [headerHeight, setHeaderHeight] = React.useState(WINDOW_HEIGHT * 0.4);
     const [estimateTimeCollapsed, setEstimateTimeCollapsed] = React.useState(true);
     const initState = {
@@ -143,7 +137,6 @@ export default () => {
 
     };
     const toggleAttachment = (isAttachmentBool = false) => {
-        console.log('toggleAttachment', isAttachmentBool);
         if (isAttachmentBool && state.pickUpPitstop.latitude) {
             sharedConfirmationAlert('Selected Pickup Location', 'Your selected pickup location will be lost if you choose this option. Are you sure?', [{
                 text: 'Yes',
@@ -211,14 +204,10 @@ export default () => {
                 <VectorIcon name="pin-outline" type="MaterialCommunityIcons" size={20} color={colors.white} />
             )
         }}
-        style={[_styles.locButton, { width: '100%', marginVertical: SPACING, backgroundColor: colors.black, height: 35, zIndex: -1 }]} />)
+        style={[_styles.locButton, _styles.selectLocationButton]} />)
     const renderInput = (inputProps = {}, extraStyles = {},) => (<TextInput
         style={{
-            width: '100%',
-            height: 50,
-            backgroundColor: colors.light_grey,
-            margin: -13,
-            marginVertical: -15,
+            ..._styles.inputStyle,
             ...extraStyles,
         }}
         {...inputProps}
@@ -239,10 +228,6 @@ export default () => {
                 setState(pre => ({ ...pre, voiceRecording: recordingItem }));
             }}
             onPlayerStopComplete={() => {
-                // if (closeSecondCard) {
-                //     updateCardOnHeaderPress(updateCardOnHeaderPressItem);
-                //     closeSecondCard = false;
-                // }
             }}
             caption="Record your voice note."
         />;
@@ -346,10 +331,10 @@ export default () => {
                                     text: 'Pick it',
                                     selected: !isAttachment,
                                     value: false,
-                                }].map((item,i)=>{
-                                    return <TouchableOpacity key={i} onPress={() => toggleAttachment(item.value)} style={{ height: 40, width: '47%', backgroundColor: item.selected ? colors.black : colors.white, borderRadius: 12, ...sharedStyles._styles(colors).placefor_specific_shadow, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ fontSize: 14, color: item.selected ? colors.white : colors.black }} fontFamily={'PoppinsLight'}>{item.text}</Text>
-                                </TouchableOpacity>
+                                }].map((item, i) => {
+                                    return <TouchableOpacity key={i} onPress={() => toggleAttachment(item.value)} style={{ backgroundColor: item.selected ? colors.black : colors.white, ..._styles.prescriptionButton }}>
+                                        <Text style={{ fontSize: 14, color: item.selected ? colors.white : colors.black }} fontFamily={'PoppinsLight'}>{item.text}</Text>
+                                    </TouchableOpacity>
                                 })
                             }
                         </View>
@@ -377,7 +362,7 @@ export default () => {
                                         )
                                     })}
                                 {
-                                    (state.images ? state.images?.length < 3 : true) && <TouchableOpacity onPress={handlePickImage} style={{ height: 50, width: 60, marginLeft: 10, borderWidth: 1, borderStyle: 'dotted', borderRadius: 5, justifyContent: 'center', alignItems: 'center' }}>
+                                    (state.images ? state.images?.length < 3 : true) && <TouchableOpacity onPress={handlePickImage} style={_styles.addImageButton}>
                                         <VectorIcon type={'Ionicons'} name={'add'} size={30} />
                                     </TouchableOpacity>
                                 }
@@ -450,35 +435,7 @@ export default () => {
                     fontFamily: FontFamily.Poppins.Regular
                 }}
                 fontFamily="PoppinsRegular"
-                style={[_styles.locButton, { width: '95%', marginVertical: SPACING, backgroundColor: colors.primary, marginHorizontal: SPACING, height: 60, zIndex: 999 }]} />
+                style={[_styles.locButton, _styles.saveButton]} />
         </SafeAreaView>
     );
 };
-
-const styles = (colors) => StyleSheet.create({
-    primaryContainer: {
-        flex: 1,
-        backgroundColor: colors.white,
-    },
-    subSection: {
-        padding: SPACING, backgroundColor: colors.light_grey, marginBottom: 3, zIndex: 0
-    },
-    borderTopRadius: { borderTopLeftRadius: BORDER_RADIUS, borderTopRightRadius: BORDER_RADIUS },
-    borderBottomRadius: { borderBottomLeftRadius: BORDER_RADIUS, borderBottomRightRadius: BORDER_RADIUS },
-    btnText: {
-        fontSize: 12,
-        fontWeight: '600'
-    },
-    locButton: {
-        // width: WIDTH - 50,
-        height: 35,
-        borderRadius: 8,
-        alignSelf: 'center'
-    },
-    galleryIcon: {
-        flexDirection: 'row',
-        marginLeft: 10,
-        paddingVertical: 5,
-
-    },
-});
