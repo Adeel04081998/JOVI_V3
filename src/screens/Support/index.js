@@ -175,9 +175,7 @@ export default ({ navigation, route }) => {
                         extraData={metaData}
                         contentContainerStyle={{ paddingBottom: 40, }}
                         renderItem={({ item, index }) => {
-                            console.log('item ', item);
                             const isPending = activeIndex === 0;
-
 
                             return (
                                 <ItemUI

@@ -385,7 +385,6 @@ export default ({ navigation, route }) => {
             });
         }
 
-        console.log('itemammamaam on sending ', item);
         if (type === CHAT_TYPE_ENUM.audio) {
             const dm = item.duration.split(':')[0].trim();
             const sm = item.duration.split(':')[1].trim();
@@ -397,7 +396,6 @@ export default ({ navigation, route }) => {
         } else {
             formData.append("Message", item?.text?.trim() ?? '');
         }
-        console.log('resssss 2222 PARAM ', formData);
         multipartPostRequest(Endpoints.SEND_ORDER_MESSAGE_TO_RIDER, formData, (res) => {
             console.log('resssss 22222 ', res);
             if ((res.data?.statusCode ?? 400) === 200) {

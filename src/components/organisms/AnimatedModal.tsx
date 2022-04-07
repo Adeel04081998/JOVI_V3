@@ -1,5 +1,5 @@
 import React from 'react';
-import { Animated, Easing, Platform, StyleProp, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { Animated, BackHandler, Easing, Platform, StyleProp, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-aware-scroll-view';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
@@ -50,6 +50,13 @@ const AnimatedModal = (props: Props) => {
     const openAnimation = React.useRef(new Animated.Value(0)).current;
     const insets = useSafeAreaInsets();
 
+    React.useEffect(() => {
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+            props.onRequestClose && props.onRequestClose();
+            return true;
+        })
+        return () => backHandler.remove();
+    }, [])
     const modalAnimation = (toValue = 1) => {
         Animated.timing(openAnimation, {
             toValue: toValue,
