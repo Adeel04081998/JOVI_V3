@@ -827,8 +827,8 @@ export const checkIfFirstPitstopRestaurant = (pitstopsList = [], extraIgnoredSta
     let isFirstPitstopRestaurant = null;
     const ignoredStatuses = [3, 4, 5, ...extraIgnoredStatuses];
     pitstopsList?.map((item) => {
-        if (isFirstPitstopRestaurant === null && item?.pitstopType === 4 && !ignoredStatuses.includes(item?.joviJobStatus)) {
-            isFirstPitstopRestaurant = true;
+        if (isFirstPitstopRestaurant === null && !ignoredStatuses.includes(item?.joviJobStatus)) {
+            isFirstPitstopRestaurant = item?.pitstopType === 4;
         }
     });
     return isFirstPitstopRestaurant;
