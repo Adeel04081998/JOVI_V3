@@ -126,7 +126,7 @@ const APP_DRAWER_ROUTES = {
     "Legal": {
         screen_name: "LEGAL",
         options: {
-            animation:'fade'
+            animation: 'fade'
         },
     },
     "WebView": {
@@ -136,7 +136,7 @@ const APP_DRAWER_ROUTES = {
     "FAQ": {
         screen_name: "FAQ",
         options: {
-            animation:'fade'
+            animation: 'fade'
         },
     },
     "Wallet": {
@@ -150,7 +150,7 @@ const APP_DRAWER_ROUTES = {
     "ContactUs": {
         screen_name: "CONTACT_US",
         options: {
-            animation:'fade'
+            animation: 'fade'
         },
     },
     "GoodyBag": {
@@ -160,8 +160,16 @@ const APP_DRAWER_ROUTES = {
     "FavAddresses": {
         screen_name: "FAV_ADDRESSES",
         options: {
-            animation:'fade'
+            animation: 'fade'
         },
+    },
+    "Support": {
+        screen_name: "SUPPORT",
+        options: null,
+    },
+    "SupportDetail": {
+        screen_name: "SUPPORT_DETAIL",
+        options: { animation: 'slide_from_right' }
     },
     "Profile": {
         screen_name: "PROFILE",

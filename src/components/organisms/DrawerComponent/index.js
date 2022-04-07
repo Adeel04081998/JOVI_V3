@@ -35,7 +35,7 @@ const drawerRoutes = [
     {
         screenName: 'Support',
         icon: svgs.drawerSupport(),
-        route: ROUTES.APP_DRAWER_ROUTES.ContactUs.screen_name
+        route: ROUTES.APP_DRAWER_ROUTES.Support.screen_name
     },
     {
         screenName: 'Contact Us',
