@@ -90,8 +90,8 @@ export default ({ navigation, route }) => {
             };
         }
 
-
         const activeKey = activeIndex === 0 ? "active" : "solved";
+        const inActiveKey = activeIndex === 0 ? "solved" : "active";
         updateQuery({
             isLoading: true,
             error: false,
@@ -115,6 +115,9 @@ export default ({ navigation, route }) => {
                 setData(pre => ({
                     ...pre,
                     [activeKey]: resData,
+                    ...forceUpdate && {
+                        [inActiveKey]: [],
+                    }
                 }));
                 toggleMetaData(!metaData);
                 updateQuery({
@@ -148,7 +151,7 @@ export default ({ navigation, route }) => {
                 color={colors}
                 title={query.errorText}
                 buttonText={`Retry`}
-                onButtonPress={() => { loadData() }} /> :
+                onButtonPress={() => { loadData(true) }} /> :
                 query.isLoading ? <View style={{
                     flex: 1,
                     marginTop: -80,
