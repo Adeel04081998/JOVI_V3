@@ -1,9 +1,8 @@
-import { useIsFocused } from "@react-navigation/native";
 import * as React from "react";
 import { Animated, Easing, StyleSheet } from "react-native";
 import Svg, { Circle, SvgXml } from "react-native-svg";
 import { useSelector } from "react-redux";
-import { makeArrayRepeated, splitArray, VALIDATION_CHECK } from "../../helpers/SharedActions";
+import { splitArray, VALIDATION_CHECK } from "../../helpers/SharedActions";
 import NavigationService from "../../navigations/NavigationService";
 import ROUTES from "../../navigations/ROUTES";
 import { initColors } from "../../res/colors";
@@ -12,10 +11,8 @@ import { PITSTOP_TYPES } from "../../utils/GV";
 import Text from "../atoms/Text";
 import TouchableScale from "../atoms/TouchableScale";
 import View from "../atoms/View";
-import BottomCategoryListStaticData from "./BottomCategoryListStaticData";
 import FlatListCarousel from "./FlatListCarousel";
 
-// const data = makeArrayRepeated(BottomCategoryListStaticData, 1);
 
 const WINDOW_WIDTH = constants.window_dimensions.width;
 const WINDOW_HEIGHT = constants.window_dimensions.height;
@@ -185,7 +182,7 @@ const CardItemUI = ({ svgXml = '', text = '', isLastIndex = false, onPress = () 
             onPress && onPress();
         }}>
             {VALIDATION_CHECK(svgXml) &&
-                <SvgXml height={CARD_ITEM_SIZE * 0.45} width={CARD_ITEM_SIZE * 0.45} xml={svgXml} fill={initColors.primary} />
+                <SvgXml height={CARD_ITEM_SIZE * 0.45} width={CARD_ITEM_SIZE * 0.45} xml={svgXml} />
             }
 
             {VALIDATION_CHECK(text) &&

@@ -606,6 +606,7 @@ export default ({ navigation, route }) => {
                                 style={{ width: "48%", height: 40, borderRadius: 5, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.primary, }}
                                 textStyle={{ color: colors.primary, fontFamily: FontFamily.Poppins.Medium, fontSize: 16 }}
                                 text={`Cancel`}
+                                wait={0}
                             />
                             <Button
                                 onPress={() => { onComplaintSubmitPress(); }}
@@ -668,6 +669,7 @@ export default ({ navigation, route }) => {
                                 style={{ width: "48%", height: 40, borderRadius: 5, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.primary, }}
                                 textStyle={{ color: colors.primary, fontFamily: FontFamily.Poppins.Medium, fontSize: 16 }}
                                 text={`Cancel`}
+                                wait={0}
                             />
                             <Button
                                 onPress={() => { onFeedbackSubmitPress(); }}
