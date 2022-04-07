@@ -576,7 +576,7 @@ export default ({ navigation, route }) => {
                                                 borderColor: "#272727",
                                                 borderRadius: 999,
                                             }}
-                                                hitSlop={{ top: 20, bottom: 20, left: 50, right: 50 }}
+                                                hitSlop={{ top: 20, bottom: 20, left: 20, right: 20, }}
                                                 onPress={() => {
                                                     const newImages = complaintModal.image;
                                                     newImages.splice(index, 1);
