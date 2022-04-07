@@ -155,7 +155,6 @@ export default (props) => {
                 const lastThreeInputs = inputs.slice(1, inputs.length).find(x => x ? true : false)
                 arrRef.current = arrRef.current.concat(value)
                 if (arrRef.current.length === 4 && index === 0 && !lastThreeInputs) {
-                    console.log('here in else backspace');
                     let _tempArr = arrRef.current.toString()
                     let tempStr = _tempArr.replace(/,/g, '')
                     setInputs(arrRef.current)

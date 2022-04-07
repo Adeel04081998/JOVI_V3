@@ -1,3 +1,4 @@
+import { useIsFocused } from "@react-navigation/native";
 import * as React from "react";
 import { Animated, Appearance, ColorValue, Dimensions, Easing, StyleSheet, TouchableOpacity as TC, View } from "react-native";
 import Svg, { Color, Path } from 'react-native-svg';
@@ -100,7 +101,7 @@ const BottomBarComponent = (props: Props) => {
     const fullScreenAnimation = React.useRef(new Animated.Value(0)).current;
     const [maxWidth, setMaxWidth] = React.useState<any>(width);
     const [isCloseIcon, toggleCloseIcon] = React.useState(false);
-
+    const isFocused = useIsFocused();
     // #endregion :: STATE & REF's END's FROM HERE 
 
     const startFullScreenAnimation = () => {
@@ -169,7 +170,11 @@ const BottomBarComponent = (props: Props) => {
             setMaxWidth(w);
         }
     }, [orientation]);//end of dimension Effect
-
+    React.useEffect(()=>{
+        if(!isFocused&&isCloseIcon){
+            animateCenterButtonPress();
+        }
+    },[isFocused]);
 
     // #endregion :: EFFECT's END's FROM HERE 
 
@@ -377,7 +382,6 @@ const BottomBarComponent = (props: Props) => {
                         {/* ****************** Start of RIGHT SIDE ****************** */}
                         <View style={[styles.rowRight, { height: height }]}>
                             {(props.rightData ?? []).map((item: BottomBarItem, index) => _renderSideItem(item, index))}
-                            <Text style={{ position: 'absolute', bottom: 0, right: 40, fontSize: 14, fontWeight: '600', color: 'rgba(0,0,0,0.6)' }}>{constants.app_version}</Text>
                         </View>
 
                         {/* ****************** End of RIGHT SIDE ****************** */}

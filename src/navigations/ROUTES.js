@@ -100,12 +100,12 @@ const APP_DRAWER_ROUTES = {
     },
     "OrderChat": {
         screen_name: "ORDER_CHAT",
-        options: null,
+        options: { animation: 'slide_from_bottom' }
     },
 
     "OrderPitstops": {
         screen_name: "ORDER_PITSTOPS",
-        options: null
+        options: { animation: 'slide_from_bottom' }
     },
     "RateRider": {
         screen_name: "RATE_RIDER", // || Rate your jovi
@@ -171,8 +171,19 @@ const APP_DRAWER_ROUTES = {
         screen_name: "SUPPORT_DETAIL",
         options: { animation: 'slide_from_right' }
     },
-
-
+    "Profile": {
+        screen_name: "PROFILE",
+        options: {
+            animation:'fade'
+        },
+    },
+    "Referral": {
+        screen_name: "REFERRAL",
+        options: { animation: 'slide_from_bottom' }
+    },
+    "Pharmacy": {
+        screen_name: "PHARMACY",
+    },
 }
 const APP_ROUTES = {
     "AppDrawerStack": {

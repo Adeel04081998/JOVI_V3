@@ -206,13 +206,6 @@ const PistopListingChild = React.memo(({ route, }) => {
         if (Math.ceil(mHeight + Y) >= cSize) return true;
         return false;
     }
-    const getAdvertisements = () => {
-        postRequest(Endpoints.GET_ADVERTISEMENTS, {
-            "adTypes": [1]
-        }, res => {
-            console.log('res --- GET_ADVERTISEMENTS', res);
-        }, err => { sharedExceptionHandler(err); });
-    }
     React.useEffect(() => {
         scrollEvent = null;
         // getAdvertisements();
@@ -273,12 +266,7 @@ const PistopListingChild = React.memo(({ route, }) => {
         }]
     }}>
         <Advertisment adTypes={[ENUMS.ADVERTISMENT_TYPE.VENDOR_LISTING]}
-            // pitstopType={PITSTOP_TYPES.RESTAURANT}
             colors={colors}
-            onAdPressCb={() => {
-                Alert.alert("Ahmed Chutya")
-
-            }}
         />
 
 

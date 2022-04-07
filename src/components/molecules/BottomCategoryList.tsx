@@ -1,3 +1,4 @@
+import { useIsFocused } from "@react-navigation/native";
 import * as React from "react";
 import { Animated, Easing, StyleSheet } from "react-native";
 import Svg, { Circle, SvgXml } from "react-native-svg";
@@ -46,29 +47,25 @@ const BottomCategoryList = (props: Props) => {
     const [state, setState] = React.useState({
         circleShown: false
     })
-
     // #endregion :: STATE & REF's END's FROM HERE 
-
+    const openAnimation = (toValue = 1) => {
+        Animated.timing(animate, {
+            toValue: toValue,
+            duration: 300,
+            useNativeDriver: true,
+            easing: Easing.ease
+        }).start(finished => {
+            if (finished && toValue === 0) {
+                setState(pre => ({ ...pre, circleShown: false }));
+            }
+        });
+    }
     React.useEffect(() => {
         if (props.isShown) {
             setState(pre => ({ ...pre, circleShown: true }));
-            Animated.timing(animate, {
-                toValue: 1,
-                duration: 100,
-                useNativeDriver: true,
-                easing: Easing.ease
-            }).start();
+            openAnimation();
         } else {
-            Animated.timing(animate, {
-                toValue: 0,
-                duration: 300,
-                useNativeDriver: true,
-                easing: Easing.ease
-            }).start(finished => {
-                if (finished) {
-                    setState(pre => ({ ...pre, circleShown: false }));
-                }
-            });
+            openAnimation(0);
         }
 
     }, [props.isShown])

@@ -55,6 +55,16 @@ export default () => {
     const onOrderPress = (order) => {
         sharedOrderNavigation(order.orderID, order.subStatusName, null, null, false, order?.pitstopList ?? []);
     }
+    const onPromoPressed = (pressedPromo) => {
+        if (pressedPromo.promoType === 3) {
+            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Referral.screen_name);
+        }
+        else if (pressedPromo.promoType === 6) {
+            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Wallet.screen_name);
+        }
+        else {
+        }
+    };
     useFocusEffect(
         React.useCallback(() => {
             getRequest(Endpoints.GET_CUSTOMER_ONGOING_ORDER, (res) => {
@@ -170,6 +180,7 @@ export default () => {
                             height={170}
                             autoPlay
                             autoPlayInterval={3}
+                            onPress={(item) => onPromoPressed(item)}
                         />
                         <View style={homeStyles.wrapper}>
                             <Search colors={colors} homeStyles={homeStyles} fontSize={12} editable={false}

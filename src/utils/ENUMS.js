@@ -187,5 +187,16 @@ export default {
         "STAGING": "STAGING",
         "DEBUG": "DEBUG",
         "RELEASE": "RELEASE"
-    }
+    },
+    "OrderPaymentType": {
+        JoviWallet: 1,
+        CashOnDelivery: 2,
+    },
+    "PharmacyPitstopType": [{
+        text:'Prescribed',
+        value:1
+    },{
+        text:'OTC',
+        value:2
+    }],
 }

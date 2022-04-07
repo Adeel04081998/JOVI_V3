@@ -30,6 +30,7 @@ export default () => {
     }
     const _renderHeader = () => (<CustomHeader
         renderLeftIconAsDrawer
+        renderRightIconForHome
         rightIconName={null}
         title={`Contact Us`}
         titleStyle={{

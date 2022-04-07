@@ -1,20 +1,21 @@
 import React from 'react';
-import { Appearance, ScrollView, StyleSheet } from 'react-native';
+import { Appearance, Platform, ScrollView, StyleSheet } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { useSelector } from 'react-redux';
 import svgs from '../../../assets/svgs';
-import { renderFile, sharedConfirmationAlert, sharedLogoutUser } from '../../../helpers/SharedActions';
+import { renderFile, sharedConfirmationAlert, sharedLogoutUser, VALIDATION_CHECK } from '../../../helpers/SharedActions';
 import NavigationService from '../../../navigations/NavigationService';
 import ROUTES from '../../../navigations/ROUTES';
 import preference_manager from '../../../preference_manager';
 import constants from '../../../res/constants';
 import sharedStyles from '../../../res/sharedStyles';
 import theme from '../../../res/theme';
-import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../../utils/GV';
+import GV, { isIOS, PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../../utils/GV';
 import Image from '../../atoms/Image';
 import Text from '../../atoms/Text';
 import TouchableOpacity from '../../atoms/TouchableOpacity';
 import VectorIcon from '../../atoms/VectorIcon';
+import deviceInfoModule from 'react-native-device-info';
 import View from '../../atoms/View';
 const SPACING = 10;
 const PROFILE_PICTURE_SECTION = 100;
@@ -89,9 +90,9 @@ export default () => {
                 </TouchableOpacity> */}
             </View>
             <View style={{ width: '50%', alignItems: 'flex-end' }}>
-                <TouchableOpacity style={styles.profilePicContainer}>
+                <TouchableOpacity style={styles.profilePicContainer} onPress={()=>onNavigationItemPress({route:ROUTES.APP_DRAWER_ROUTES.Profile.screen_name})}>
                     <View style={styles.profilePicInnerContainer}>
-                        <Image tapToOpen={false} source={userReducer.picture ? { uri: renderFile(userReducer.picture) } : require('../../../assets/images/user.png')}
+                        <Image tapToOpen={false} source={VALIDATION_CHECK(userReducer.picture) ? { uri: renderFile(userReducer.picture) } : require('../../../assets/images/user.png')}
                             style={{ height: PROFILE_PICTURE_INNER_SECTION, width: PROFILE_PICTURE_INNER_SECTION, borderRadius: PROFILE_PICTURE_INNER_SECTION / 2 }}
                             height={PROFILE_PICTURE_INNER_SECTION} width={PROFILE_PICTURE_INNER_SECTION}
                         />
@@ -130,14 +131,14 @@ export default () => {
                 <Text style={{ marginLeft: 5, fontSize: 16 }}>Log Out</Text>
             </View>
             <View>
-                <Text style={{ fontSize: 16, }} fontFamily={'PoppinsLight'}>Jovi, v.{constants.app_version}</Text>
+                <Text style={{ fontSize: 16, }} fontFamily={'PoppinsLight'}>Jovi.{constants.app_version}</Text>
             </View>
         </TouchableOpacity>
     </View>
 }
 
 const drawerStyles = (colors) => StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#F8F8F8' },
+    container: { flex: 1, backgroundColor: '#F8F8F8', paddingTop: isIOS ? (deviceInfoModule.hasNotch ? 40 : 0) : 0 },
     profileContainer: { height: '25%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: SPACING },
     crossIcon: { height: 30, width: 30, position: 'absolute', top: 5, right: -5 },
     greetingText: { fontSize: 25, color: colors.black },

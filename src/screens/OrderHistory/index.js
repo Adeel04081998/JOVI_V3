@@ -71,7 +71,7 @@ export default ({ navigation, route }) => {
                     renderLeftIconAsDrawer
                     rightCustom={(
                         <TouchableScale wait={0} onPress={() => {
-                            NavigationService.NavigationActions.common_actions.goBack();
+                            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
                         }} style={customheaderStyles.iconContainer}>
                             <SvgXml xml={svgs.hamburgerHome(colors.primary)} height={HEADER_ICON_SIZE} width={HEADER_ICON_SIZE} />
                         </TouchableScale>

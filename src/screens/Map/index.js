@@ -12,8 +12,7 @@ import GV from '../../utils/GV';
 let isFromEdit = false;
 let lastLoc = {};
 export default (props) => {
-  const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
-
+  const colors = props.route?.params?.colors?? theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
   const dispatch = useDispatch();
 
   const updateFinalDestination = (fd) => {
@@ -33,15 +32,14 @@ export default (props) => {
       props.route.params.onNavigateBack && props.route.params.onNavigateBack(finalDestObj);
       NavigationService.NavigationActions.common_actions.goBack();
     }
-    else if (props.route.params.index === 3) {
-
+    else if (props.route.params.index === 3 || props.route.params.index === 4 ) {
       NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.AddAddress.screen_name, {
         finalDestObj,
         updateFinalDestination,
         isFromEdit,
-        index : 0
+        index: props.route.params.index
       })
-    } 
+    }
     else {
       dispatch(ReduxActions.setUserFinalDestAction({ finalDestObj }))
       NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.AddAddress.screen_name, {
@@ -52,17 +50,17 @@ export default (props) => {
 
   React.useEffect(() => {
     const backAction = () => {
-        onBackPress()
-        return true
+      onBackPress()
+      return true
     };
 
     const backHandler = BackHandler.addEventListener(
-        "hardwareBackPress",
-        backAction
+      "hardwareBackPress",
+      backAction
     );
 
     return () => backHandler.remove();
-}, []);
+  }, []);
 
   const onBackPress = () => {
     if (isFromEdit) {
@@ -77,11 +75,10 @@ export default (props) => {
     isFromEdit = false;
   }
 
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }} >
       <View style={{ flex: 1 }} >
-        <Maps route={props.route} onConfirmLoc={onConfirmLoc} onBackPress={() => {
+        <Maps route={props.route} colors={colors} onConfirmLoc={onConfirmLoc} onBackPress={() => {
           onBackPress()
         }} />
       </View>
