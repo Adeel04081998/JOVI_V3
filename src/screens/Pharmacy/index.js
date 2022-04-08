@@ -38,7 +38,7 @@ export default () => {
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[PITSTOP_TYPES.PHARMACY]], Appearance.getColorScheme() === "dark");
     const customheaderStyles = { ...CustomHeaderStyles(colors.primary) };
     const userReducer = useSelector(state => state.userReducer);
-    const _styles = styles(colors,BORDER_RADIUS,SPACING);
+    const _styles = styles(colors, BORDER_RADIUS, SPACING);
     const [headerHeight, setHeaderHeight] = React.useState(WINDOW_HEIGHT * 0.4);
     const [estimateTimeCollapsed, setEstimateTimeCollapsed] = React.useState(true);
     const initState = {
@@ -196,7 +196,7 @@ export default () => {
     const renderSubHeading = (text = '', extraStyles = {}) => (<Text style={{ fontSize: 14, color: colors.black, ...extraStyles }} fontFamily={'PoppinsMedium'}>{text}</Text>);
     const renderLocationButton = (onPress = () => onLocationPress()) => (<Button
         onPress={onPress}
-        text="Select location from map"
+        text="Select Location From Map"
         textStyle={_styles.btnText}
         fontFamily="PoppinsRegular"
         leftComponent={() => {

@@ -65,8 +65,8 @@ export default ({ navigation, route }) => {
     const initCartData = [
         {
             "idx": 1,
-            "title": "Pitstop",
-            "desc": "Please Add Your Pitstop Location",
+            "title": "PitStop",
+            "desc": "Add PitStop location",
             "svg": svgs.pitstopPin(),
             "isOpened": true,
             "headerColor": colors.primary,
@@ -75,8 +75,8 @@ export default ({ navigation, route }) => {
         },
         {
             "idx": 2,
-            "title": "Pitstop Details",
-            "desc": "What Would You Like Your Jovi To Do ?",
+            "title": "PitStop Details",
+            "desc": "What job should JOVI do for you?",
             "svg": svgs.pitstopPin(),
             "isOpened": false,
             // "isOpened": __DEV__ ? true : false,
@@ -88,7 +88,7 @@ export default ({ navigation, route }) => {
         {
             "idx": 3,
             "title": "Estimated Waiting Time",
-            "desc": "What Is The Estimated Time Of The Job ?",
+            "desc": "Estimated waiting time for the job?",
             "svg": svgs.pitStopEstTime(),
             "isOpened": false,
             // "isOpened": __DEV__ ? true : false,
@@ -100,7 +100,7 @@ export default ({ navigation, route }) => {
         {
             "idx": 4,
             "title": "Buy For Me ?",
-            "desc": "Do You Want Us To Buy For You ?",
+            "desc": "What do you want us to buy for you?",
             "svg": svgs.pitStopBuy(),
             // "isOpened": __DEV__ ? true : false,
             "isOpened": false,
@@ -113,7 +113,7 @@ export default ({ navigation, route }) => {
         {
             "idx": 5,
             "title": "Estimated Price",
-            "desc": "What is the Estimated Price?",
+            "desc": "What is the estimated price?",
             "svg": svgs.pitStopEstPrice(),
             "isOpened": false,
             // "isOpened": __DEV__ ? true : false,
@@ -176,7 +176,7 @@ export default ({ navigation, route }) => {
 
 
 
-    /******** Start of Pitstop Details variables *******/
+    /******** Start of PitStop Details variables *******/
 
     // const [description, setDescription] = useState(__DEV__ ? 'HELLOO' : '')
     const [description, setDescription] = useState('')
@@ -201,12 +201,12 @@ export default ({ navigation, route }) => {
     const voiceNoteRef = React.useRef(null)
 
 
-    /******** End of Pitstop Details variables *******/
+    /******** End of PitStop Details variables *******/
 
 
 
 
-    /******** Start of other Pitstop variables *******/
+    /******** Start of other PitStop variables *******/
     const cartReducer = useSelector((store) => {
         return store.cartReducer;
     });
@@ -227,7 +227,7 @@ export default ({ navigation, route }) => {
     const [collapsed, setCollapsed] = React.useState(true);
 
 
-    /******** End of other Pitstop variables *******/
+    /******** End of other PitStop variables *******/
 
 
 
@@ -334,7 +334,7 @@ export default ({ navigation, route }) => {
     };//end of toggleCardData
 
 
-    /************   Start of functions of Pitstop location Component Funcs    **************/
+    /************   Start of functions of PitStop location Component Funcs    **************/
 
 
     const handleLocationSelected = (locData, geometry, index, pinData, modifyPitstops = true, forceMode) => {
@@ -368,7 +368,7 @@ export default ({ navigation, route }) => {
         setLocationVal(resp.title)
         toggleCardData(PITSTOP_CARD_TYPES["description"], colors.primary)
     }
-    /************   End of functions of Pitstop location Component Funcs    **************/
+    /************   End of functions of PitStop location Component Funcs    **************/
 
 
 
@@ -379,7 +379,7 @@ export default ({ navigation, route }) => {
 
 
 
-    /************   Start of functions of Pitstop Details Component  Funcs   **************/
+    /************   Start of functions of PitStop Details Component  Funcs   **************/
 
 
     const getPicture = picData => {
@@ -415,7 +415,7 @@ export default ({ navigation, route }) => {
     React.useEffect(() => {
     }, [micPress])
 
-    /************   End of functions of Pitstop Details Component  Funcs   **************/
+    /************   End of functions of PitStop Details Component  Funcs   **************/
 
 
     // /************   Start of MAIN UI function     **************/
@@ -768,7 +768,7 @@ export default ({ navigation, route }) => {
                     setEstVal(newsliderValue);
                 }} />
         )
-    } //End of Pitstop est Price
+    } //End of PitStop est Price
 
     const toggleEstPriceCard = () => {
         if (switchVal) return true

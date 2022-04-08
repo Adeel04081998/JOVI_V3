@@ -439,7 +439,7 @@ export default () => {
           onDragBegin={(index) => expandCollapeHanlder(index)}
           ListHeaderComponent={<View>
             <DeliveryAddress />
-            <Text style={{ padding: 10, fontSize: 12 }} fontFamily="PoppinsLight">{'Hold and drag to rearrange your pitstops to get the better route and less service charges.'}</Text>
+            <Text style={{ padding: 10, fontSize: 12 }} fontFamily="PoppinsLight">{'Hold & drag to rearrange your pitstops for better route and less charges'}</Text>
           </View>
           }
           data={cartReducer.pitstops}
@@ -471,7 +471,7 @@ export default () => {
             >
               <SvgXml xml={routes_icon()} height={20} width={20} color="#fff" />
               <Text style={{ color: '#fff', paddingHorizontal: 5 }}>
-                Check route on map
+                Check Route on Map
               </Text>
             </TouchableScale>
 
@@ -509,11 +509,11 @@ export default () => {
               }}
             >
               <Text style={{ color: colors.primary, paddingHorizontal: 5 }}>
-                Empty entire jovi cart
+                Empty JOVI Cart
               </Text>
             </TouchableScale>
             <TextInput
-              placeholder="Want to add instructions for your rider?"
+              placeholder="Add instructions for rider here"
               placeholderTextColor={colors.grey}
               style={{
                 backgroundColor: '#FFFFFF',
