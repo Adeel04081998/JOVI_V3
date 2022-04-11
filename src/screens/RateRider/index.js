@@ -1,6 +1,6 @@
 import AnimatedLottieView from 'lottie-react-native';
 import * as React from 'react';
-import { Animated, Appearance, Easing, Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet } from 'react-native';
+import { Animated, Appearance, BackHandler, Easing, Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useSelector } from 'react-redux';
 import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-aware-scroll-view';
@@ -22,16 +22,17 @@ import constants from '../../res/constants';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import Regex from '../../utils/Regex';
-import OrderRecipt from '../CheckOut/components/OrderRecipt';
 import { headerStyles, sliderStylesFunc, stylesFunc } from './styles';
 import CheckoutStyles from "../CheckOut/styles";
 import RatingOrderRecipt from './components/RatingOrderRecipt';
 import RatingSliderUI from './components/RatingSliderUI';
+import Toast from '../../components/atoms/Toast';
 
 // #region :: CONSTANT's START's FROM HERE 
 const HEADER_ICON_SIZE_RIGHT = CustomHeaderIconBorder.size * 0.7;
 const RATING_SIZE = constants.window_dimensions.height * 0.3;
 let selectedItem = null;
+const DEFAULT_RATING_NUMBER = 2;
 
 
 const RATING_JSON = {
@@ -46,9 +47,46 @@ const NUMBER_OF_COLUMN = 2;
 
 // #endregion :: CONSTANT's END's FROM HERE 
 
+
 export default ({ navigation, route }) => {
 
-    const orderID = route?.params?.orderID ?? 80914393;//67649554;
+    // #region :: ORDER ID HANDLING START's FROM HERE 
+
+    const orderArray = route?.params?.orderArray ?? [];
+    const [orderID, setorderID] = React.useState(route?.params?.orderID ?? 0);
+    const orderIDArrayIndex = React.useRef(0);
+
+    const updateOrderID = () => {
+        if (orderIDArrayIndex.current < orderArray.length - 1) {
+            orderIDArrayIndex.current++;
+            setorderID(orderArray[orderIDArrayIndex.current].customOrderID);
+            resetState();
+        } else {
+            onBackPress(false);
+        }
+        return;
+    }
+
+    // #endregion :: ORDER ID HANDLING END's FROM HERE 
+
+    // #region :: BACK HANDLER HANDLING START's FROM HERE 
+    const onBackPress = (useIgnoreOrder = true) => {
+        if (useIgnoreOrder) {
+            ignoreOrder();
+        }
+        NavigationService.NavigationActions.common_actions.goBack();
+        return true;
+    }
+
+    React.useEffect(() => {
+        const backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            onBackPress
+        );
+        return () => backHandler.remove();
+    }, []);
+
+    // #endregion :: BACK HANDLER HANDLING END's FROM HERE 
 
     // #region :: REDUCER START's FROM HERE 
     const messagesReducer = useSelector(s => s?.messagesReducer);
@@ -69,7 +107,6 @@ export default ({ navigation, route }) => {
     const sliderStyles = sliderStylesFunc(colors);
     const customheaderStyles = { ...CustomHeaderStyles(colors.primary), ...headerStyles(colors) };
     const checkOutStyles = CheckoutStyles.styles(colors);
-    const cartReducer = useSelector(store => store.cartReducer);
 
     // #endregion :: STYLES & THEME END's FROM HERE     
 
@@ -78,9 +115,20 @@ export default ({ navigation, route }) => {
         return (
             <>
                 <StatusBar backgroundColor={colors.primary} animated barStyle={"light-content"} />
+                {orderArray.length > 0 &&
+                    <View style={{
+                        ...customheaderStyles.pendingOrderNumberContainer,
+                        zIndex: receiptVisible ? -9 : 9999,
+                    }}>
+                        <Text style={{
+                            ...customheaderStyles.pendingOrderNumber,
+                        }}>{`${orderIDArrayIndex.current + 1} / ${orderArray.length}`}</Text>
+                    </View>
+                }
+
                 <TouchableOpacity
                     wait={0}
-                    onPress={() => { NavigationService.NavigationActions.common_actions.goBack() }}
+                    onPress={() => { onBackPress(); }}
                     style={{
                         ...customheaderStyles.iconContainer,
                         zIndex: receiptVisible ? -9 : 9999,
@@ -116,7 +164,7 @@ export default ({ navigation, route }) => {
 
     // #region :: STATE's & REF's START's FROM HERE 
     const skipEffect = React.useRef(false);
-    const [rating, setRating] = React.useState(2);//1 TO 5
+    const [rating, setRating] = React.useState(DEFAULT_RATING_NUMBER);//1 TO 5
     const [switchVal, setSwitchVal] = React.useState(true);
     const [receiptVisible, setReceiptVisible] = React.useState(false);
     const [receiptData, setReceiptData] = React.useState({});
@@ -128,27 +176,18 @@ export default ({ navigation, route }) => {
         headingDescription: joviRatingTitle?.body ?? 'Your rating helps us improve',
         commentData: [],
     })
-
-    const getOrderDetailFromServer = () => {
-        sharedFetchOrder(orderID, (res) => {
-            // console.log('res from sjared fetch order ', res);
-            if (res.data.statusCode === 200) {
-                const apiRes = res.data.order;
-                const obj = {
-                    discount: apiRes.chargeBreakdown.discount,
-                    serviceCharges: apiRes.serviceCharges,
-                }
-                // console.log('res.data.order  ===>>>>', res.data.order);
-                setReceiptData(res.data.order);
-            } else {
-                setReceiptData({});
-            }
-        });
-    };
-    React.useEffect(() => {
-        getOrderDetailFromServer();
-        return () => { };
-    }, [])
+    const resetState = () => {
+        if (parseInt(`${rating}`) === parseInt(`${DEFAULT_RATING_NUMBER}`)) {
+            setDataAccToRating(DEFAULT_RATING_NUMBER - 1);
+        } else {
+            skipEffect.current = false;
+            setRating(DEFAULT_RATING_NUMBER);
+        }
+        setSwitchVal(true);
+        setReceiptVisible(false);
+        setDisableSubmit(true);
+        setAmount('');
+    };//end of resetState
 
     // #endregion :: STATE's & REF's END's FROM HERE 
 
@@ -157,6 +196,21 @@ export default ({ navigation, route }) => {
         loadData();
         return () => { };
     }, []);
+
+    React.useEffect(() => {
+        getOrderDetailFromServer();
+        return () => { };
+    }, [orderID]);
+
+    const getOrderDetailFromServer = () => {
+        sharedFetchOrder(orderID, (res) => {
+            if (res.data.statusCode === 200) {
+                setReceiptData(res.data.order);
+            } else {
+                setReceiptData({});
+            }
+        });
+    };
 
     const loadData = () => {
         const params = {
@@ -172,15 +226,23 @@ export default ({ navigation, route }) => {
             }
         }, (err) => {
             sharedExceptionHandler(err);
-
         })
     };//end of loadData
+
+    const ignoreOrder = () => {
+        const params = { customOrderID: orderID }
+        postRequest(Endpoints.IGNORE_ORDER_FOR_ORDER_RATING, params, (res) => {
+
+        }, (err) => {
+            sharedExceptionHandler(err);
+        })
+    };//end of ignoreOrder
 
     // #endregion :: API IMPLEMENTATION END's FROM HERE 
 
     // #region :: CHANGE COMMENT DATA ON RATING OR RATING DATA CHANGED START's FROM HERE 
-    const setDataAccToRating = () => {
-        const isRatingExist = ratingData.findIndex(x => x.ratingLevel === rating);
+    const setDataAccToRating = (ratingVal = -1) => {
+        const isRatingExist = ratingVal !== -1 ? ratingVal : ratingData.findIndex(x => x.ratingLevel === rating);
         if (isRatingExist !== -1) {
             const newData = ratingData[isRatingExist].reasonsList.map(i => ({ ...i, isSelected: false, }));
             updateData(pre => ({
@@ -218,7 +280,8 @@ export default ({ navigation, route }) => {
 
         postRequest(Endpoints.SUBMIT_RATING_FOR_RIDER_ORDER, params, (res) => {
             if (res.data.statusCode === 200) {
-                NavigationService.NavigationActions.common_actions.goBack()
+                Toast.success(sharedExceptionHandler(res, true));
+                updateOrderID();
             } else {
                 sharedExceptionHandler(res);
                 return
@@ -388,6 +451,7 @@ export default ({ navigation, route }) => {
 
                     {/* ****************** Start of RATING SLIDER ****************** */}
                     <RatingSliderUI
+                        initialIndex={rating - 1}
                         onIndexChange={(value) => {
                             skipEffect.current = false;
                             robotAnimation(0, true, () => {

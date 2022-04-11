@@ -27,7 +27,7 @@ import { _toastRef } from "./src/components/atoms/Toast";
 import View from './src/components/atoms/View';
 import BaseUrlPrompt from "./src/components/molecules/BaseUrlPrompt";
 import Robot from './src/components/organisms/Robot';
-import { sharedClearReducers, sharedGetDashboardCategoryIApi, sharedGetEnumsApi, sharedGetFilters, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedSendFCMTokenToServer } from './src/helpers/SharedActions';
+import { sharedClearReducers, sharedGetDashboardCategoryIApi, sharedGetEnumsApi, sharedGetFilters, sharedGetHomeMsgsApi, sharedGetPendingOrderRating, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedSendFCMTokenToServer } from './src/helpers/SharedActions';
 import { postRequest } from './src/manager/ApiManager';
 import RootStack from "./src/navigations";
 import { _NavgationRef } from './src/navigations/NavigationService';
@@ -181,8 +181,8 @@ const App = () => {
                 {...rest}
                 style={{ borderLeftColor: '#42C757', minHeight: Platform.OS === 'android' ? 70 : 50, width: constants.window_dimensions.width - 15, top: constants.screen_dimensions.height / (Platform.OS === 'android' ? "95" : "20"), backgroundColor: '#42C757', borderRadius: 20, }}
                 contentContainerStyle={{ paddingHorizontal: 65 }}
-                text1Style={{ fontWeight: "500", fontSize: 14,fontFamily:FontFamily.Poppins.Regular }}
-                text2Style={{ color: 'white', fontSize: 14 ,fontFamily:FontFamily.Poppins.Regular }}
+                text1Style={{ fontWeight: "500", fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
+                text2Style={{ color: 'white', fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
                 text1={text1}
                 text2={rest.text2}
                 onTrailingIconPress={() => Toast.hide()}
@@ -198,8 +198,8 @@ const App = () => {
                 {...rest}
                 style={{ borderLeftColor: '#D80D0D', top: constants.screen_dimensions.height / (Platform.OS === 'android' ? "95" : "20"), minHeight: Platform.OS === 'android' ? 70 : 50, width: constants.window_dimensions.width - 15, backgroundColor: '#D80D0D', borderRadius: 20 }}
                 contentContainerStyle={{ paddingHorizontal: 65 }}
-                text1Style={{ fontWeight: '500', fontSize: 14,fontFamily:FontFamily.Poppins.Regular }}
-                text2Style={{ color: 'white', fontSize: 14,fontFamily:FontFamily.Poppins.Regular  }}
+                text1Style={{ fontWeight: '500', fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
+                text2Style={{ color: 'white', fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
 
                 text1={text1}
                 text2={rest.text2}
@@ -217,8 +217,8 @@ const App = () => {
                 {...rest}
                 style={{ borderLeftColor: '#0070E0', top: constants.screen_dimensions.height / (Platform.OS === 'android' ? "95" : "20"), minHeight: Platform.OS === 'android' ? 70 : 50, width: constants.window_dimensions.width - 15, backgroundColor: '#0070E0', borderRadius: 20 }}
                 contentContainerStyle={{ paddingHorizontal: 65, }}
-                text1Style={{ fontWeight: '500', fontSize: 14,fontFamily:FontFamily.Poppins.Regular }}
-                text2Style={{ color: 'white', fontSize: 14,fontFamily:FontFamily.Poppins.Regular  }}
+                text1Style={{ fontWeight: '500', fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
+                text2Style={{ color: 'white', fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
                 text1={text1}
                 text2={rest.text2}
                 onTrailingIconPress={() => Toast.hide()}
@@ -234,8 +234,8 @@ const App = () => {
                 {...rest}
                 style={{ borderLeftColor: '#F79C0B', top: constants.screen_dimensions.height / (Platform.OS === 'android' ? "95" : "20"), minHeight: Platform.OS === 'android' ? 70 : 50, width: constants.window_dimensions.width - 15, backgroundColor: '#F79C0B', borderRadius: 20 }}
                 contentContainerStyle={{ paddingHorizontal: 65, }}
-                text1Style={{ fontWeight: '500', fontSize: 14,fontFamily:FontFamily.Poppins.Regular }}
-                text2Style={{ color: 'white', fontSize: 14,fontFamily:FontFamily.Poppins.Regular  }}
+                text1Style={{ fontWeight: '500', fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
+                text2Style={{ color: 'white', fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
                 text1={text1}
                 text2={rest.text2}
                 onTrailingIconPress={() => Toast.hide()}
@@ -260,10 +260,10 @@ const App = () => {
                 <Robot />
                 <Toast
                     config={toastConfig}
-                    // ref={ref => {
-                    //     _toastRef.current = ref;
-                    //     Toast.setRef(ref);
-                    // }}
+                // ref={ref => {
+                //     _toastRef.current = ref;
+                //     Toast.setRef(ref);
+                // }}
                 />
                 <NoInternetModal />
             </SafeAreaView>
@@ -296,6 +296,7 @@ const SharedGetApis = ({ }) => {
             sharedGetUserAddressesApi();
             sharedGetPromotions();
             sharedGetFilters();
+            sharedGetPendingOrderRating();
             const pushNotification = (notify = {}) => {
                 if (notify.data) {
                     localNotificationService.showNotification(0, notify.notification.title, notify.notification.body, notify, {

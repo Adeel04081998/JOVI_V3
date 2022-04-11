@@ -1139,3 +1139,20 @@ export const splitArray = (array, n) => {
 export const randomDate = (start = new Date(2019, 2, 1), end = new Date()) => {
     return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 };
+
+export const sharedGetPendingOrderRating = () => {
+    getRequest(Endpoints.GET_PENDING_ORDER_RATING,
+        res => {
+            const statusCode = res?.data?.statusCode ?? 404;
+            if (statusCode === 200) {
+                let data = res?.data?.pendingRatings ?? [];
+                data = data.filter(i => `${i.orderStatus}`.toLowerCase().trim() === `closed`.toLowerCase().trim());
+                if (data.length > 0) {
+                    NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.RateRider.screen_name, { orderID: data[0].customOrderID, orderArray: data, });
+                } 
+            }
+        },
+        err => {
+            sharedExceptionHandler(err);
+        }, {}, false);
+};//end of sharedGetPendingOrderRating

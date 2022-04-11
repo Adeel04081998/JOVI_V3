@@ -28,15 +28,30 @@ const SLIDER_WIDTH = constants.window_dimensions.width * 0.7;
 const RatingSliderUI = (props: Props) => {
     const [selectedIndex, setSelectedIndex] = React.useState<number>(props?.initialIndex ?? defaultProps.initialIndex) //0 TO 4
     const [DOT_LENGTH, updateDOT_LENGTH] = React.useState<number>(props?.dotLength ?? defaultProps.dotLength);
+    const skipEffect = React.useRef(false);
+
     React.useEffect(() => {
+        if (skipEffect.current) {
+            skipEffect.current = false;
+            return;
+        }
         updateDOT_LENGTH(props?.dotLength ?? defaultProps.dotLength);
-    }, [props.dotLength])
+    }, [props.dotLength]);
+
     React.useEffect(() => {
-        setSelectedIndex(props?.initialIndex ?? defaultProps.initialIndex);
+        const ii = props?.initialIndex ?? defaultProps.initialIndex;
+        if (ii !== selectedIndex) {
+            skipEffect.current = true;
+            setSelectedIndex(ii);
+        }
     }, [props.initialIndex])
 
 
     React.useEffect(() => {
+        if (skipEffect.current) {
+            skipEffect.current = false;
+            return;
+        }
         if (props.onIndexChange) {
             props.onIndexChange(selectedIndex + 1);
         }
@@ -60,43 +75,45 @@ const RatingSliderUI = (props: Props) => {
 
         }, props.containerStyle,
         ]}>
-            {new Array(DOT_LENGTH).fill({}).map((_, index) => {
-                const isFirstOrLast = index === 0 ? "first" : index === DOT_LENGTH - 1 ? "last" : null;
-                if (props.customCircle) {
-                    return props.customCircle()
-                }
-                return (
-                    <TouchableOpacity
-                        key={index}
-                        onPress={() => {
-                            setSelectedIndex(index);
-                        }}
-                        wait={0}
-                        disabled={index === selectedIndex || props.disabled}
-                        activeOpacity={0.9}
-                        style={[{
-                            borderColor: '#fff',
-                            borderWidth: selectedIndex === index ? 2 : 0,
-                            borderRadius: 10,
-                            padding: 10,
-                            ...isFirstOrLast === "first" && {
-                                marginLeft: -15,
-                            },
-                            ...isFirstOrLast === "last" && {
-                                marginRight: -15,
-                            },
-                        }, props.secondaryContainerStyle]}>
-                        {selectedIndex === index ? <>
-                            {props.selectedCustomCircle ? props.selectedCustomCircle() :
+            <>
+                {new Array(DOT_LENGTH).fill({}).map((_, index) => {
+                    const isFirstOrLast = index === 0 ? "first" : index === DOT_LENGTH - 1 ? "last" : null;
+                    if (props.customCircle) {
+                        return props.customCircle()
+                    }
+                    return (
+                        <TouchableOpacity
+                            key={index}
+                            onPress={() => {
+                                setSelectedIndex(index);
+                            }}
+                            wait={0}
+                            disabled={index === selectedIndex || props.disabled}
+                            activeOpacity={0.9}
+                            style={[{
+                                borderColor: '#fff',
+                                borderWidth: selectedIndex === index ? 2 : 0,
+                                borderRadius: 10,
+                                padding: 10,
+                                ...isFirstOrLast === "first" && {
+                                    marginLeft: -15,
+                                },
+                                ...isFirstOrLast === "last" && {
+                                    marginRight: -15,
+                                },
+                            }, props.secondaryContainerStyle]}>
+                            {selectedIndex === index ? <>
+                                {props.selectedCustomCircle ? props.selectedCustomCircle() :
+                                    <View style={[{ backgroundColor: '#fff', width: 10, height: 10, borderRadius: 99, }, props.circleContainer]} />
+                                }
+                            </> :
                                 <View style={[{ backgroundColor: '#fff', width: 10, height: 10, borderRadius: 99, }, props.circleContainer]} />
                             }
-                        </> :
-                            <View style={[{ backgroundColor: '#fff', width: 10, height: 10, borderRadius: 99, }, props.circleContainer]} />
-                        }
 
-                    </TouchableOpacity>
-                )
-            })}
+                        </TouchableOpacity>
+                    )
+                })}
+            </>
         </View>
     )
 
