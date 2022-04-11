@@ -1,5 +1,5 @@
 import React from 'react';
-import { Animated, Appearance, StatusBar, TouchableOpacity } from 'react-native';
+import { Animated, Appearance, KeyboardAvoidingView, StatusBar, TouchableOpacity } from 'react-native';
 import { useSelector } from 'react-redux';
 import Image from '../../components/atoms/Image';
 import SafeAreaView from '../../components/atoms/SafeAreaView';
@@ -11,7 +11,7 @@ import Button from '../../components/molecules/Button';
 import { CustomHeaderIconBorder, CustomHeaderStyles } from '../../components/molecules/CustomHeader';
 import Recording from '../../components/organisms/Recording';
 import { sharedLaunchCameraorGallery } from '../../helpers/Camera';
-import { sharedConfirmationAlert, uniqueKeyExtractor } from '../../helpers/SharedActions';
+import { sharedAddUpdatePitstop, sharedConfirmationAlert, uniqueKeyExtractor } from '../../helpers/SharedActions';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
@@ -34,14 +34,40 @@ const BOTTOM_MARGIN = 370;
 const SPACING = 10;
 const WIDTH = constants.window_dimensions.width
 let recordingItem = null;
-export default () => {
+export default ({ route }) => {
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[PITSTOP_TYPES.PHARMACY]], Appearance.getColorScheme() === "dark");
     const customheaderStyles = { ...CustomHeaderStyles(colors.primary) };
     const userReducer = useSelector(state => state.userReducer);
-    const _styles = styles(colors,BORDER_RADIUS,SPACING);
+    const _styles = styles(colors, BORDER_RADIUS, SPACING);
     const [headerHeight, setHeaderHeight] = React.useState(WINDOW_HEIGHT * 0.4);
     const [estimateTimeCollapsed, setEstimateTimeCollapsed] = React.useState(true);
-    const initState = {
+    const initState = __DEV__ ? {
+        "pharmacyPitstopType": 1,
+        "medicineName": "Ggg",
+        "detail": "Tyy",
+        "images": null,
+        "voiceRecording": null,
+        "latitude": 33.668588228350195,
+        "longitude": 73.0749367363751,
+        "title": "Vapes Direct",
+        "estTime": {
+            "text": "15-30 mins",
+            "value": 2
+        },
+        "estimatePrice": 2500,
+        "pickUpPitstop": {
+            "instructions": "Gggh",
+            "latitude": 33.66858767025255,
+            "longitude": 73.07493606582284,
+            "title": "Vapes Direct",
+            "latitudeDelta": 0.01,
+            "longitudeDelta": 0.01,
+            "city": "Islamabad"
+        },
+        "latitudeDelta": 0.01,
+        "longitudeDelta": 0.01,
+        "city": "Islamabad"
+    } : {
         pharmacyPitstopType: ENUMS.PharmacyPitstopType[0].value,
         medicineName: '',
         detail: '',
@@ -63,6 +89,7 @@ export default () => {
         },
     };
     const [state, setState] = React.useState(initState);
+    const [loader, setLoader] = React.useState(false);
     const [isAttachment, setIsAttachment] = React.useState(false);
     const cartReducer = useSelector((store) => {
         return store.cartReducer;
@@ -212,11 +239,41 @@ export default () => {
         }}
         {...inputProps}
     />);
+    const clearData = () => {
+        setState({ ...initState });
+        recordingItem = null;
+        imageRef.current = null;
+    }
+    const onSave = () => {
+        setLoader(true)
+        let pitstopData = {
+            pitstopIndex: route?.params?.pitstopItemObj?.pitstopIndex ?? null, // on update will get from params, 
+            title: state.title,
+            description: state.detail,
+            pitstopName: 'Pharmacy',
+            pitstopType: route.params?.pitstopItemObj?.pitstopType ?? route.params?.pitstopType ?? PITSTOP_TYPES.PHARMACY,
+            // nameval: nameval.trim(),
+            imageData: state.images,
+            voiceNote: state.voiceRecording,
+            estTime: state.estTime,
+            estimatePrice: parseInt(state.estimatePrice),
+            latitude: state.latitude,
+            longitude: state.longitude,
+            buyForMe: true,
+            pickUpPitstop: state.pickUpPitstop.latitude ? {
+                ...state.pickUpPitstop,
+                description:state.pickUpPitstop.instructions,
+            } : null,
+        }
+        sharedAddUpdatePitstop(pitstopData, false, [], false, false, clearData);
+        setLoader(false)
+        recordingItem = null
+    }
     const renderRecorder = () => {
         return <Recording
             ref={customRecordingRef}
             colors={colors}
-            recordingItem={recordingItem}
+            recordingItem={state.voiceRecording}
             onDeleteComplete={() => {
                 recordingItem = null;
                 voiceNoteRef.current = {}
@@ -283,6 +340,7 @@ export default () => {
                 }} />
         )
     }
+    console.log('state', state);
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }}>
             <StatusBar backgroundColor={colors.white} />
@@ -297,144 +355,148 @@ export default () => {
                     setState(pre => ({ ...pre, pharmacyPitstopType: item.value, ...item.value === 2 ? { images: null, pickUpPitstop: initState.pickUpPitstop } : {} }));
                 }}
             />
-            <Animated.View style={{
-                flex: 1,
-                zIndex: 99,
-                ...isIOS ? {
-                    marginTop: 20
-                } : {},
-                backgroundColor: colors.light_grey,
-                transform: [{
-                    translateY: animScroll.interpolate({
-                        inputRange: [0, 10],
-                        outputRange: outputRangeParent
-                    })
-                }]
-            }}>
-                <Animated.ScrollView
-                    bounces={0}
-                    onScroll={Animated.event(
-                        [{ nativeEvent: { contentOffset: { y: animScroll } } }],
-                    )}
-                    keyboardShouldPersistTaps="handled"
-                    contentContainerStyle={{ flexGrow: 1, backgroundColor: colors.white, paddingHorizontal: 20, paddingVertical: 10, marginTop: HEADER_MARGIN, paddingBottom: BOTTOM_MARGIN, ..._styles.borderTopRadius }} >
-                    {state.pharmacyPitstopType === 1 && <><View style={{ ..._styles.subSection, ..._styles.borderTopRadius, }}>
-                        {renderSubHeading('Prescription')}
-                        <Text style={{ fontSize: 12, color: colors.grey, }} fontFamily={'PoppinsLight'}>Attach Prescription OR Add Pit-Stop & Pick Up Prescription</Text>
-                        <View style={{ width: '100%', marginVertical: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
+            <KeyboardAvoidingView style={{ flex: 1 }} behavior={isIOS ? "padding" : "height"}>
+                <Animated.View style={{
+                    flex: 1,
+                    zIndex: 99,
+                    ...isIOS ? {
+                        marginTop: 20
+                    } : {},
+                    backgroundColor: colors.light_grey,
+                    transform: [{
+                        translateY: animScroll.interpolate({
+                            inputRange: [0, 10],
+                            outputRange: outputRangeParent
+                        })
+                    }]
+                }}>
+                    <Animated.ScrollView
+                        bounces={0}
+                        onScroll={Animated.event(
+                            [{ nativeEvent: { contentOffset: { y: animScroll } } }],
+                            {}
+                        )}
+                        keyboardShouldPersistTaps="handled"
+                        contentContainerStyle={{ flexGrow: 1, backgroundColor: colors.white, paddingHorizontal: 20, paddingVertical: 10, marginTop: HEADER_MARGIN, paddingBottom: BOTTOM_MARGIN, ..._styles.borderTopRadius }} >
+                        {state.pharmacyPitstopType === 1 && <><View style={{ ..._styles.subSection, ..._styles.borderTopRadius, }}>
+                            {renderSubHeading('Prescription')}
+                            <Text style={{ fontSize: 12, color: colors.grey, }} fontFamily={'PoppinsLight'}>Attach prescription OR add PitStop & pick-up prescription</Text>
+                            <View style={{ width: '100%', marginVertical: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
+                                {
+                                    [{
+                                        text: 'Attach File',
+                                        selected: isAttachment,
+                                        value: true,
+                                    }, {
+                                        text: 'Pick Up',
+                                        selected: !isAttachment,
+                                        value: false,
+                                    }].map((item, i) => {
+                                        return <TouchableOpacity key={i} onPress={() => toggleAttachment(item.value)} style={{ backgroundColor: item.selected ? colors.black : colors.white, ..._styles.prescriptionButton }}>
+                                            <Text style={{ fontSize: 14, color: item.selected ? colors.white : colors.black }} fontFamily={'PoppinsLight'}>{item.text}</Text>
+                                        </TouchableOpacity>
+                                    })
+                                }
+                            </View>
                             {
-                                [{
-                                    text: 'Attach File',
-                                    selected: isAttachment,
-                                    value: true,
-                                }, {
-                                    text: 'Pick it',
-                                    selected: !isAttachment,
-                                    value: false,
-                                }].map((item, i) => {
-                                    return <TouchableOpacity key={i} onPress={() => toggleAttachment(item.value)} style={{ backgroundColor: item.selected ? colors.black : colors.white, ..._styles.prescriptionButton }}>
-                                        <Text style={{ fontSize: 14, color: item.selected ? colors.white : colors.black }} fontFamily={'PoppinsLight'}>{item.text}</Text>
-                                    </TouchableOpacity>
+                                isAttachment ? <View style={{ flexDirection: 'row' }}>
+                                    {
+                                        state.images && state.images.map((item, index) => {
+                                            return (
+                                                <View key={uniqueKeyExtractor()} style={[_styles.galleryIcon, {
+                                                    borderRadius: 5,
+                                                    padding: 5,
+                                                    height: 50,
+                                                    width: 60,
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+
+                                                }]}>
+                                                    <VectorIcon name="closecircleo" type="AntDesign" size={15} style={{ position: 'absolute', top: 0, right: 0 }} onPress={() => {
+                                                        let tempArr = state.images.filter((item, _indx) => _indx !== index)
+                                                        imageRef.current = tempArr;
+                                                        setState(pre => ({ ...pre, images: tempArr }));
+                                                    }} />
+                                                    <Image source={{ uri: item.path }} style={{ height: 30, width: 30, resizeMode: "cover", borderRadius: 6 }} />
+                                                </View>
+                                            )
+                                        })}
+                                    {
+                                        (state.images ? state.images?.length < 3 : true) && <TouchableOpacity onPress={handlePickImage} style={_styles.addImageButton}>
+                                            <VectorIcon type={'Ionicons'} name={'add'} size={30} />
+                                        </TouchableOpacity>
+                                    }
+                                </View> : null
+                            }
+                        </View>
+                            {!isAttachment ? <View style={{ ..._styles.subSection, }}>
+                                {renderSubHeading('Location')}
+                                {renderLocationButton(() => onLocationPress('2'))}
+                                {state.pickUpPitstop.latitude && renderSubHeading(state.pickUpPitstop.title ?? '')}
+                                {renderSubHeading('Instructions', { marginTop: SPACING * 2, marginBottom: SPACING })}
+                                {
+                                    renderInput({
+                                        placeholder: 'Add instructions for rider here',
+                                        value: state.pickUpPitstop.instructions,
+                                        onChangeText: (value) => {
+                                            setState(pre => ({ ...pre, pickUpPitstop: { ...pre.pickUpPitstop, instructions: value } }));
+                                        }
+                                    })
+                                }
+                            </View> : null}
+                        </>}
+                        <View style={{ ..._styles.subSection, }}>
+                            {renderSubHeading('Medicine Name')}
+                            {
+                                renderInput({
+                                    placeholder: 'Enter medicine name',
+                                    value: state.medicineName,
+                                    onChangeText: (value) => onChangeText(value, 'medicineName')
                                 })
                             }
                         </View>
-                        {
-                            isAttachment ? <View style={{ flexDirection: 'row' }}>
-                                {
-                                    state.images && state.images.map((item, index) => {
-                                        return (
-                                            <View key={uniqueKeyExtractor()} style={[_styles.galleryIcon, {
-                                                borderRadius: 5,
-                                                padding: 5,
-                                                height: 50,
-                                                width: 60,
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-
-                                            }]}>
-                                                <VectorIcon name="closecircleo" type="AntDesign" size={15} style={{ position: 'absolute', top: 0, right: 0 }} onPress={() => {
-                                                    let tempArr = state.images.filter((item, _indx) => _indx !== index)
-                                                    imageRef.current = tempArr;
-                                                    setState(pre => ({ ...pre, images: tempArr }));
-                                                }} />
-                                                <Image source={{ uri: item.path }} style={{ height: 30, width: 30, resizeMode: "cover", borderRadius: 6 }} />
-                                            </View>
-                                        )
-                                    })}
-                                {
-                                    (state.images ? state.images?.length < 3 : true) && <TouchableOpacity onPress={handlePickImage} style={_styles.addImageButton}>
-                                        <VectorIcon type={'Ionicons'} name={'add'} size={30} />
-                                    </TouchableOpacity>
-                                }
-                            </View> : null
-                        }
-                    </View>
-                        {!isAttachment ? <View style={{ ..._styles.subSection, }}>
-                            {renderSubHeading('Location')}
-                            {renderLocationButton(() => onLocationPress('2'))}
-                            {state.pickUpPitstop.latitude && renderSubHeading(state.pickUpPitstop.title ?? '')}
-                            {renderSubHeading('Instructions', { marginTop: SPACING * 2, marginBottom: SPACING })}
+                        <View style={{ ..._styles.subSection, }}>
+                            {renderSubHeading('Pharmacy Location')}
+                            {renderLocationButton(() => onLocationPress('1'))}
+                            {state.latitude && renderSubHeading(state.title ?? '')}
+                        </View>
+                        <View style={{ ..._styles.subSection, }}>
+                            {renderSubHeading('Detail', { marginBottom: SPACING })}
                             {
                                 renderInput({
-                                    placeholder: 'Enter any instructions for the rider',
-                                    value: state.pickUpPitstop.instructions,
-                                    onChangeText: (value) => {
-                                        setState(pre => ({ ...pre, pickUpPitstop: { ...pre.pickUpPitstop, instructions: value } }));
-                                    }
+                                    placeholder: 'Enter details here',
+                                    value: state.detail,
+                                    multiline: true,
+                                    onChangeText: (value) => onChangeText(value, 'detail')
+                                }, {
+                                    height: 150
                                 })
                             }
-                        </View> : null}
-                    </>}
-                    <View style={{ ..._styles.subSection, }}>
-                        {renderSubHeading('Medicine Name')}
-                        {
-                            renderInput({
-                                placeholder: 'Please Enter Medicine Name',
-                                value: state.medicineName,
-                                onChangeText: (value) => onChangeText(value, 'medicineName')
-                            })
-                        }
-                    </View>
-                    <View style={{ ..._styles.subSection, }}>
-                        {renderSubHeading('Pharmacy Location')}
-                        {renderLocationButton(() => onLocationPress('1'))}
-                        {state.latitude && renderSubHeading(state.title ?? '')}
-                    </View>
-                    <View style={{ ..._styles.subSection, }}>
-                        {renderSubHeading('Detail', { marginBottom: SPACING })}
-                        {
-                            renderInput({
-                                placeholder: 'Please Type Your Detail',
-                                value: state.detail,
-                                multiline: true,
-                                onChangeText: (value) => onChangeText(value, 'detail')
-                            }, {
-                                height: 150
-                            })
-                        }
-                    </View>
-                    <View style={{ ..._styles.subSection, zIndex: 999 }}>
-                        {renderSubHeading('Voice Note', { marginBottom: SPACING })}
-                        {renderRecorder()}
-                    </View>
-                    <View style={{ ..._styles.subSection, zIndex: 999 }}>
-                        {renderSubHeading('Estimated Time', { marginBottom: SPACING })}
-                        {renderPitStopEstTime()}
-                    </View>
-                    <View style={{ ..._styles.subSection, ..._styles.borderBottomRadius }}>
-                        {renderSubHeading('Estimated Price', { marginBottom: SPACING })}
-                        {renderPitstopEstPrice()}
-                    </View>
-                </Animated.ScrollView>
-            </Animated.View>
+                        </View>
+                        <View style={{ ..._styles.subSection, zIndex: 999 }}>
+                            {renderSubHeading('Voice Note', { marginBottom: SPACING })}
+                            {renderRecorder()}
+                        </View>
+                        <View style={{ ..._styles.subSection, zIndex: 999 }}>
+                            {renderSubHeading('Estimated Time', { marginBottom: SPACING })}
+                            {renderPitStopEstTime()}
+                        </View>
+                        <View style={{ ..._styles.subSection, ..._styles.borderBottomRadius }}>
+                            {renderSubHeading('Estimated Price', { marginBottom: SPACING })}
+                            {renderPitstopEstPrice()}
+                        </View>
+                    </Animated.ScrollView>
+                </Animated.View>
+            </KeyboardAvoidingView>
             <Button
-                onPress={() => { }}
+                onPress={onSave}
                 text="Save and Continue"
                 textStyle={{
                     fontSize: 16,
                     fontFamily: FontFamily.Poppins.Regular
                 }}
                 fontFamily="PoppinsRegular"
+                isLoading={loader}
                 style={[_styles.locButton, _styles.saveButton]} />
         </SafeAreaView>
     );

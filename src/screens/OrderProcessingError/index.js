@@ -11,7 +11,7 @@ import CustomHeader from '../../components/molecules/CustomHeader';
 import OrderEstTimeCard from '../../components/organisms/Card/OrderEstTimeCard';
 import DashedLine from '../../components/organisms/DashedLine';
 import SitBackAnimation from '../../components/organisms/SitBackAnimation';
-import { checkIfFirstPitstopRestaurant, renderPrice, sharedConfirmationAlert, sharedExceptionHandler, sharedFetchOrder, sharedGenerateProductItem, sharedNotificationHandlerForOrderScreens, sharedOrderNavigation } from '../../helpers/SharedActions';
+import { checkIfFirstPitstopRestaurant, renderPrice, sharedConfirmationAlert, sharedExceptionHandler, sharedFetchOrder, sharedGenerateProductItem, sharedNotificationHandlerForOrderScreens, sharedOrderNavigation, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { getRequest, postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
@@ -273,9 +273,9 @@ export default ({ navigation, route }) => {
                     return (
                         <View style={styles.cardContainer} key={index}>
                             <CardTitle
-                                pitstopType={isJoviJob ? 2 : item.catID}
+                                pitstopType={VALIDATION_CHECK(item.pharmacyPitstopType===0?null:item.pharmacyPitstopType)?PITSTOP_TYPES.PHARMACY:isJoviJob ? 2 : item.catID}
                                 pitstopNumber={`${index + 1}`}
-                                title={isJoviJob ? 'Jovi Job' : item.title}
+                                title={isJoviJob ? (VALIDATION_CHECK(item.pharmacyPitstopType===0?null:item.pharmacyPitstopType)?ENUMS.PharmacyPitstopTypeServer[item.pharmacyPitstopType].text : 'Jovi Job') : item.title}
                                 strikethrough={item.joviJobStatus === ENUMS.JOVI_JOB_STATUS.Cancel || (item?.forceStrikethrough ?? false)}
                             />
                             <DashedLine />

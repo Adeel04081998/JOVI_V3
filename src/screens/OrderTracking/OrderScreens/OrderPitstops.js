@@ -12,13 +12,14 @@ import VectorIcon from '../../../components/atoms/VectorIcon';
 import View from '../../../components/atoms/View';
 import CustomHeader, { CustomHeaderIconBorder } from '../../../components/molecules/CustomHeader';
 import OrderEstTimeCard from '../../../components/organisms/Card/OrderEstTimeCard';
-import { renderPrice, sharedConfirmationAlert, sharedFetchOrder, sharedGenerateProductItem, sharedNotificationHandlerForOrderScreens, sharedRiderRating } from '../../../helpers/SharedActions';
+import { renderPrice, sharedConfirmationAlert, sharedFetchOrder, sharedGenerateProductItem, sharedNotificationHandlerForOrderScreens, sharedRiderRating, VALIDATION_CHECK } from '../../../helpers/SharedActions';
 import { getRequest } from '../../../manager/ApiManager';
 import Endpoints from '../../../manager/Endpoints';
 import NavigationService from '../../../navigations/NavigationService';
 import ROUTES from '../../../navigations/ROUTES';
 import constants from '../../../res/constants';
 import theme from '../../../res/theme';
+import ENUMS from '../../../utils/ENUMS';
 import GV, { ORDER_STATUSES, PITSTOP_TYPES_INVERTED } from '../../../utils/GV';
 import { orderPitstopStyles as _styles } from '../styles';
 const HEADER_ICON_SIZE_LEFT = CustomHeaderIconBorder.size * 0.7;
@@ -71,8 +72,12 @@ export default ({ route }) => {
         const isFinalDestination = index === state.pitStopsList.length - 1;
         const isJoviJob = pitstop.catID === '0';
         const pitstopType = isJoviJob ? 2 : pitstop.catID;
-        const pitstopTypeTitle = pitstopTitles[pitstop.catID];
+        let pitstopTypeTitle = pitstopTitles[pitstop.catID];
         let pitstopColor = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]]);
+        if(isJoviJob&&VALIDATION_CHECK(pitstop.pharmacyPitstopType===0?null:pitstop.pharmacyPitstopType)){
+            pitstopTypeTitle = ENUMS.PharmacyPitstopTypeServer[pitstop.pharmacyPitstopType].text;
+            pitstopColor = theme.getTheme(GV.THEME_VALUES.PHARMACY);
+        }
         let iconName = 'map-marker';
         let iconType = 'FontAwesome';
         if (isFinalDestination) {

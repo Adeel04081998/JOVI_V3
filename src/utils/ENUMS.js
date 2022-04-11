@@ -193,10 +193,14 @@ export default {
         CashOnDelivery: 2,
     },
     "PharmacyPitstopType": [{
-        text:'Prescribed',
-        value:1
-    },{
-        text:'OTC',
-        value:2
+        text: 'OTC',
+        value: 2
+    }, {
+        text: 'Prescribed',
+        value: 1
     }],
+    "PharmacyPitstopTypeServer": {
+        1: { text: 'Pharmacy - Pickup', icon: svgs.pharmacy() },
+        2: { text: 'Pharmacy', icon: svgs.pharmacy() },
+    }
 }

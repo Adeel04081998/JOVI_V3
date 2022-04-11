@@ -396,7 +396,15 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
             if (openOrdersList.length) {
                 joviPrevOrdersPitstopsAmount += openOrdersList.map((orderInfo, index) => orderInfo?.estimatePrice ?? 0).reduce((a, b) => a + b);
             }
-        } else {
+        } else if (_pitstop.pitstopType === PITSTOP_TYPES.PHARMACY) {
+            itemsCount += 1;
+            _pitstop.individualPitstopTotal = _pitstop.estimatePrice || 0;
+            joviPitstopsTotal += _pitstop.individualPitstopTotal;
+            let openOrdersList = cartReducer.openOrdersList;
+            if (openOrdersList.length) {
+                joviPrevOrdersPitstopsAmount += openOrdersList.map((orderInfo, index) => orderInfo?.estimatePrice ?? 0).reduce((a, b) => a + b);
+            }
+        } else if(!_pitstop.isPickupPitstop) {
             let _pitTotal = 0;
             let individualPitstopGst = 0;
             vendorMaxEstTime = sharedCalculateMaxTime(_pitstop.pitstopType === PITSTOP_TYPES.RESTAURANT ? _pitstop.checkOutItemsListVM : [], "estimatePrepTime");
@@ -484,6 +492,24 @@ export const sharedAddUpdatePitstop = (
     if (pitstopIndex !== null && isDeletePitstop) {
         console.log('[DELETE PITSTOP FROM CART]');
         pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIndex);
+    } else if (pitstopDetails.pitstopType === PITSTOP_TYPES.PHARMACY) {
+        console.log('[Pharmacy PITSTOP]');
+        if (pitstopIndex !== null) {
+            console.log('[INDEX] EXIST');
+            console.log('[UPDATE Pharmacy PITSTOP]');
+            pitstops[pitstopIndex] = { ...pitstopDetails, isPharmacy: true, isJoviJob: false, }; // TO RETAIN OLD PROPERTIES AS IT IS WITH UPDATED VAUES YOU NEED TO PASS SPREADED (...) OLD ITEM'S FULL DATA WITH UPDATED FIELDS
+            // pitstops[pitstopIndex] = { ...pitstops[index], ...pitstopDetails }; // ...pitstops[index] IF YOU DON'T HAVE ITEM'S PREVIOUS DATA (VERY RARE CASE)
+        } else {
+            // ADD NEW PITSTOP
+            console.log('[NEW CREATE]');
+            const pharmacyId = sharedUniqueIdGenerator();
+            if (pitstopDetails.pickUpPitstop) {
+                pitstops.push({ ...pitstopDetails.pickUpPitstop, parentPitstop: { ...pitstopDetails }, pitstopType:3,pitstopName: "Pharmacy - Pickup", parentPharmacyPitstop: pharmacyId, pitstopID: sharedUniqueIdGenerator(), isPharmacy: true, isPickupPitstop: true, isJoviJob: false, isRestaurant: false });
+
+            }
+            pitstops.push({ ...pitstopDetails, pitstopID: pharmacyId, isPharmacy: true, isJoviJob: false, isRestaurant: false });
+            console.log('[NEW CREATE]',pitstops,pitstopDetails);
+        }
     } else if (pitstopDetails.pitstopType === PITSTOP_TYPES.JOVI) {
         console.log('[JOVI PITSTOP]');
         if (pitstopIndex !== null) {
@@ -959,7 +985,7 @@ export const sharedOnVendorPress = (pitstop, index) => {
     }
     NavigationService.NavigationActions.common_actions.navigate(routes[pitstop.pitstopType], { ...pitstop, pitstopID });
 }
-export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder = () => { }, orderCompletedOrCancelled = () => { }) => {
+export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder = () => { }, orderCompletedOrCancelled = () => { }, orderID = null) => {
     // console.log("[Order Processing].fcmReducer", fcmReducer);
     // '1',  For job related notification
     // '11',  For rider allocated related notification
@@ -977,6 +1003,7 @@ export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder 
     if (jobNotify) {
         console.log(`[jobNotify]`, jobNotify)
         const { data, notifyClientID } = jobNotify;
+        if(orderID && parseInt(orderID) !== parseInt(data.OrderID)){return;}
         // const results = sharedCheckNotificationExpiry(data.ExpiryDate);
         // if (results.isSameOrBefore) {
         if (data.NotificationType == notificationTypes[1] || data.NotificationType == notificationTypes[0]) {

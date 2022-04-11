@@ -102,9 +102,9 @@ export default () => {
                         renderItem={({ item, index }) => (
                             <View style={{ height: 120, marginVertical: SPACING, padding: SPACING * 2, width: '100%', backgroundColor: colors.white, borderRadius: 6, ...sharedStyles._styles(colors).placefor_specific_shadow }}>
                                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
-                                    <View style={{ flexDirection: 'row' }}>
+                                    <View style={{ flexDirection: 'row',maxWidth:'77%' }}>
                                         <SvgXml height={14} width={14} xml={renderFavIcon[item.addressType ?? 4]} style={{ marginRight: SPACING, alignSelf: 'center' }} />
-                                        <Text style={{ fontSize: 14, color: colors.primary }} fontFamily="PoppinsBold">{VALIDATION_CHECK(item.addressTypeStr) ? item.addressTypeStr : 'Other'}</Text>
+                                        <Text style={{ fontSize: 14, color: colors.primary }} fontFamily="PoppinsBold" numberOfLines={1}>{VALIDATION_CHECK(item.addressTypeStr) ? item.addressTypeStr : 'Other'}</Text>
                                     </View>
                                     <View style={{ flexDirection: 'row' }}>
                                         <TouchableOpacity onPress={() => NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.AddAddress.screen_name, { finalDestObj: item, index: 4, updateFinalDestination })} >

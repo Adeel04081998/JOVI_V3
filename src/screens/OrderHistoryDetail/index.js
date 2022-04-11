@@ -27,6 +27,7 @@ import { store } from '../../redux/store';
 import constants from '../../res/constants';
 import FontFamily from '../../res/FontFamily';
 import theme from '../../res/theme';
+import ENUMS from '../../utils/ENUMS';
 import GV, { isIOS, PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import HistoryItemCardUI from '../OrderHistory/components/HistoryItemCardUI';
 import { headerFuncStyles, stylesFunc } from './styles';
@@ -200,7 +201,12 @@ export default ({ navigation, route }) => {
     const renderItem = ({ item, index }) => {
         if (index === (data?.pitStopsList ?? []).length - 1) return;//final destination is not in receipt
         const isJoviJob = item.pitstopType === PITSTOP_TYPES.JOVI;
-        const pitstopName = isJoviJob ? 'Jovi Job' : item.title
+        let pitstopName = isJoviJob ? 'Jovi Job' : item.title
+        let isPharmacy = false;
+        if (isJoviJob && VALIDATION_CHECK(item.pharmacyPitstopType === 0 ? null : item.pharmacyPitstopType)) {
+            pitstopName = ENUMS.PharmacyPitstopTypeServer[item.pharmacyPitstopType].text;
+            isPharmacy = true;
+        }
         const individualPitstopTotal = isJoviJob ? item.paidAmount : item.paidAmount;
         let checkOutItemsListVM = item?.jobItemsListViewModel ?? [];
         if (isJoviJob) {
@@ -250,6 +256,7 @@ export default ({ navigation, route }) => {
                             <View style={styles.itemSeperator} />
                         )
                     }}
+                    isPharmacy={isPharmacy}
                 />
             </View>
         )
@@ -506,14 +513,15 @@ export default ({ navigation, route }) => {
                                 paddingHorizontal: 8,
                                 paddingVertical: 10,
                                 textAlignVertical: "top",
-                                minHeight: (Platform.OS === 'ios' && NUMBER_OF_INPUT_LINE) ? (20 * NUMBER_OF_INPUT_LINE) : null,
+                                minHeight: (isIOS && NUMBER_OF_INPUT_LINE) ? (20 * NUMBER_OF_INPUT_LINE) : null,
                             }}
                             autoCorrect={false}
                             textAlignVertical="top"
                             multiline={true} // ios fix for centering it at the top-left corner 
-                            numberOfLines={Platform.OS === "ios" ? null : NUMBER_OF_INPUT_LINE}
+                            numberOfLines={isIOS ? null : NUMBER_OF_INPUT_LINE}
                             inputAccessoryViewID={INPUT_ACCESSORY_VIEW_ID}
                             value={complaintModal.text}
+                            placeholder={'Enter here'}
                             maxLength={250}
                             onChangeText={(text) => {
                                 updateComplaintModal(p => ({
@@ -650,6 +658,7 @@ export default ({ navigation, route }) => {
                             inputAccessoryViewID={INPUT_ACCESSORY_VIEW_ID}
                             value={feedbackModal.text}
                             maxLength={250}
+                            placeholder={'Enter here'}
                             onChangeText={(text) => {
                                 updateFeedbackModal(p => ({
                                     ...p,
