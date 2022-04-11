@@ -91,7 +91,7 @@ export default () => {
   /////////////// ******************** START of JAZZ Cash Payment Function ***********************\\\\\\\\\\\\\\\\\\\\\\\\
 
 
-  
+
   const JazzCashHandler = (txnType) => {
     postRequest(
       Endpoints.JAZZCASH_PAY,
@@ -166,7 +166,7 @@ export default () => {
 
   const HBLHandler = () => {
     postRequest(
-     Endpoints.HBL_PAY,
+      Endpoints.HBL_PAY,
       {
         "amount": parseInt(topUpAmount),
         "userID": id,
@@ -304,7 +304,7 @@ export default () => {
           accountsArr.map((item, index) => {
             return (
               <>
-                <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 5  }} disabled={item.disabled} onPress={() => onAccountPress(item, index)} >
+                <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 5 }} disabled={item.disabled} onPress={() => onAccountPress(item, index)} >
                   <SvgXml xml={item.icon} height={35} width={35} style={{ marginHorizontal: 20 }} />
                   <View style={{ flexDirection: 'column' }} >
                     <Text style={styles.accountTitle} fontFamily="PoppinsSemiBold" >{item.name}</Text>
