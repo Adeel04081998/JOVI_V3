@@ -47,6 +47,10 @@ import ContactUs from '../screens/ContactUs';
 import GoodyBag from '../screens/GoodyBag';
 import FavAddresses from '../screens/FavAddresses';
 import DrawerComponent from '../components/organisms/DrawerComponent';
+import Support from '../screens/Support';
+import SupportDetail from '../screens/SupportDetail';
+import ContactsList from '../screens/Referral/ContactsList';
+
 import Profile from '../screens/Profile';
 import Referral from '../screens/Referral';
 import Pharmacy from '../screens/Pharmacy';
@@ -109,9 +113,12 @@ const AppDrawerComponents = {
     ContactUs,
     GoodyBag,
     FavAddresses,
+    Support,
+    SupportDetail,
     Profile,
     Referral,
     Pharmacy,
+    ContactsList,
 }//will open with Slide Animation
 const ContainerStack = createStackNavigator();
 const Stack = createNativeStackNavigator();
@@ -168,8 +175,8 @@ const stackOpts = () => ({
     headerShown: false,
     unmountOnBlur: true,
     swipeEnabled: false,
-    drawerStyle:{
-        width:'85%',
+    drawerStyle: {
+        width: '85%',
     }
 });
 const AuthStacks = (props) => {
@@ -192,7 +199,7 @@ const AuthStacks = (props) => {
 }
 const AppDrawers = (props) => {
     // console.log("[AppDrawers].props", props)
-    return <Drawer.Navigator drawerContent={prevState=><DrawerComponent {...prevState} />} screenOptions={stackOpts} initialRouteName={APP_ROUTES.AppDrawerStack.screen_name}>
+    return <Drawer.Navigator drawerContent={prevState => <DrawerComponent {...prevState} />} screenOptions={stackOpts} initialRouteName={APP_ROUTES.AppDrawerStack.screen_name}>
         {(APP_STACKS || []).map((routeInfo, index) => {
             // console.log('routeInfo', AppComponents);
             return <Drawer.Screen

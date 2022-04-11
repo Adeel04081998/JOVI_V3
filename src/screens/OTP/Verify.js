@@ -264,8 +264,8 @@ export default (props) => {
     const renderTopUi = () => {
         return (
             <View style={{ marginVertical: 30 }} >
-                <Text style={{ textAlign: "center", color: '#000', fontWeight: '600', paddingVertical: 10 }} fontFamily={"PoppinsMedium"} >{"Verify Phone Number"}</Text>
-                <Text style={{ textAlign: "center", color: '#7D7D7D' }} fontFamily={"PoppinsMedium"}  >{`Code is sent to ${cellNo}`}</Text>
+                <Text style={{ textAlign: "center", color: '#000', fontWeight: '600', paddingVertical: 10 }} fontFamily={"PoppinsMedium"} >{`Verify Number`}</Text>
+                <Text style={{ textAlign: "center", color: '#7D7D7D' }} fontFamily={"PoppinsMedium"}  >{`Code sent to ${cellNo}`}</Text>
             </View>
         )
     }
@@ -303,7 +303,7 @@ export default (props) => {
                 // disabled={parseInt(seconds) !== 0}
                 disabled={requestAgain}
                 wait={1} >
-                <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 12, color: requestAgain ? 'grey' : "#7359BE", marginTop: 3 }}>{`Request again Get Via SMS`}</Text>
+                <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 12, color: requestAgain ? 'grey' : "#7359BE", marginTop: 3 }}>{`Resend`}</Text>
             </TouchableOpacity>
         )
     }

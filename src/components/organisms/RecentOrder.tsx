@@ -25,7 +25,7 @@ const RecentOrder = (props: Props) => {
         <View style={{
             zIndex: 9999999999999999,
         }}>
-            <Text fontFamily="PoppinsMedium" style={recentOrderStyles.heading}>{`Recent orders`}</Text>
+            <Text fontFamily="PoppinsMedium" style={recentOrderStyles.heading}>{`Recent Orders`}</Text>
 
             <ScrollView
                 horizontal

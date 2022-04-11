@@ -26,7 +26,7 @@ interface Props extends ButtonProps {
 
 
 const defaultProps = {
-    text: "Go to cart",
+    text: "Go to Cart",
     count: null,
     price: null,
     bottom: 0

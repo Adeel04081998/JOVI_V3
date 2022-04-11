@@ -106,7 +106,7 @@ export default (props) => {
     }
     return (
         <View style={{ marginBottom: 10 }} >
-            <Text style={{ color: colors.black, fontSize: 18, paddingLeft: 20, paddingTop: 15 }} fontFamily="PoppinsMedium" >Can you confirm if this is your location?</Text>
+            <Text style={{ color: colors.black, fontSize: 18, paddingLeft: 20, paddingTop: 15 }} fontFamily="PoppinsMedium" >Confirm Your Location</Text>
             <TouchableOpacity style={{ flexDirection: 'row', padding: 10, paddingLeft: 15, alignItems: 'center' }} onPress={() => onTitlePress(0)}>
                 <VectorIcon name="map-marker" type="FontAwesome" size={20} color={colors.primary} />
                 <View style={{ flexDirection: 'column', marginLeft: 10 }}>

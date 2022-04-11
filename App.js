@@ -263,7 +263,7 @@ const App = () => {
                     // ref={ref => {
                     //     _toastRef.current = ref;
                     //     Toast.setRef(ref);
-                    // }}//Function components cannot be given refs. Attempts to access this ref will fail
+                    // }}
                 />
                 <NoInternetModal />
             </SafeAreaView>

@@ -1,8 +1,8 @@
-import { useIsFocused } from "@react-navigation/native";
 import * as React from "react";
 import { Animated, Easing, StyleSheet } from "react-native";
 import Svg, { Circle, SvgXml } from "react-native-svg";
-import { makeArrayRepeated, splitArray, VALIDATION_CHECK } from "../../helpers/SharedActions";
+import { useSelector } from "react-redux";
+import { splitArray, VALIDATION_CHECK } from "../../helpers/SharedActions";
 import NavigationService from "../../navigations/NavigationService";
 import ROUTES from "../../navigations/ROUTES";
 import { initColors } from "../../res/colors";
@@ -11,10 +11,8 @@ import { PITSTOP_TYPES } from "../../utils/GV";
 import Text from "../atoms/Text";
 import TouchableScale from "../atoms/TouchableScale";
 import View from "../atoms/View";
-import BottomCategoryListStaticData from "./BottomCategoryListStaticData";
 import FlatListCarousel from "./FlatListCarousel";
 
-const data = makeArrayRepeated(BottomCategoryListStaticData, 1);
 
 const WINDOW_WIDTH = constants.window_dimensions.width;
 const WINDOW_HEIGHT = constants.window_dimensions.height;
@@ -36,6 +34,8 @@ const BottomCategoryList = (props: Props) => {
     // #region :: COLOR's & STLES's START's FROM HERE 
     const colors = initColors;
     const styles = stylesFunc(colors);
+    const categoriesTagsReducer = useSelector((state: any) => state.categoriesTagsReducer);
+    const data = categoriesTagsReducer?.vendorFilterViewModel?.tagsList ?? [];
 
     // #endregion :: COLOR's & STLES's END's FROM HERE 
 
@@ -97,7 +97,7 @@ const BottomCategoryList = (props: Props) => {
                                 onRequestClose();
                                 NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.PitstopListing.screen_name, {
                                     pitstopType: PITSTOP_TYPES.SUPER_MARKET, categoryItem: {
-                                        item:{...item,tagName:item.tag}, index
+                                        item: { ...item, tagName: item.tag || item.tagName }, index
                                     }
                                 })
                             }} />
@@ -139,7 +139,7 @@ const RenderCardSingleRow = ({ itemData = [], onPress = (item: any, index: numbe
                     }}>
                         {item.map((subItem: any, subIndex: number) => {
                             return (
-                                <CardItemUI text={subItem.tag} svgXml={subItem.tagImage} key={subIndex} isLastIndex={(item.length - 1) === subIndex}
+                                <CardItemUI text={subItem.tag || subItem.tagName} svgXml={subItem.tagImage} key={subIndex} isLastIndex={(item.length - 1) === subIndex}
                                     onPress={() => {
                                         onPress && onPress(subItem, subIndex);
                                     }} />
@@ -182,7 +182,7 @@ const CardItemUI = ({ svgXml = '', text = '', isLastIndex = false, onPress = () 
             onPress && onPress();
         }}>
             {VALIDATION_CHECK(svgXml) &&
-                <SvgXml height={CARD_ITEM_SIZE * 0.45} width={CARD_ITEM_SIZE * 0.45} xml={svgXml} fill={initColors.primary} />
+                <SvgXml height={CARD_ITEM_SIZE * 0.45} width={CARD_ITEM_SIZE * 0.45} xml={svgXml} />
             }
 
             {VALIDATION_CHECK(text) &&

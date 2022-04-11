@@ -22,7 +22,7 @@ const PitStopLocation = (props) => {
     return (
         props.isOpened &&
         <View style={{ marginVertical: 10, flexGrow: 1 }} >
-            <Text fontFamily="PoppinsRegular" style={{ fontSize: 12, color: colors.black, paddingLeft: 10,paddingBottom:5, opacity: 0.8 }}>Location</Text>
+            <Text fontFamily="PoppinsRegular" style={{ fontSize: 12, color: colors.black, paddingLeft: 10, paddingBottom: 5, opacity: 0.8 }}>Location</Text>
             <LocationSearch
                 index={0}
                 onLocationSelected={props.handleLocationSelected}
@@ -31,6 +31,7 @@ const PitStopLocation = (props) => {
                 handleInputFocused={(index, isFocus) => props.handleInputFocused(index, isFocus)}
                 onSetFavClicked={props.handleSetFavClicked}
                 textToShow={props.textToShow}
+                placeholder={`Add PitStop location`}
                 isFavourite={''}
                 marginBottom={0}
                 // locationVal={props.locationVal}
@@ -71,7 +72,7 @@ const PitStopLocation = (props) => {
             />
             <Button
                 onPress={props.onLocationPress}
-                text="Select location from map"
+                text="Select Location From Map"
                 textStyle={styles.btnText}
                 fontFamily="PoppinsRegular"
                 leftComponent={() => {
@@ -82,7 +83,7 @@ const PitStopLocation = (props) => {
                 style={[styles.locButton, { width: WIDTH - 70, height: 35, zIndex: -1 }]} />
             <TextInput
                 title="Name (Optional)"
-                placeholder="Please Add Your Pitstop Location"
+                placeholder="Enter PitStop name"
                 containerStyle={{ marginTop: 30, alignSelf: 'center', zIndex: -1, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.light_input_border, borderRadius: 10 }}
                 titleStyle={{ opacity: 0.8, color: '#000', fontFamily: FontFamily.Poppins.Regular, fontSize: 12 }}
                 value={props.nameVal}
