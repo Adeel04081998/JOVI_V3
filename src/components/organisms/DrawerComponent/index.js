@@ -66,7 +66,7 @@ export default () => {
         return <TouchableOpacity style={{ ...customStyles ? customStyles : styles.navigationItem, ...containerStyles }} onPress={() => onNavigationItemPress(item)}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <SvgXml xml={item.icon} height={20} width={20} style={{ marginBottom: 4 }} />
-                <Text style={{ marginLeft: 10, fontSize: 16 }}>{item.screenName}</Text>
+                <Text style={{ marginLeft: 10, fontSize: 16,color:colors.black }}>{item.screenName}</Text>
             </View>
             <View>
                 <VectorIcon name={'arrow-forward-ios'} type={'MaterialIcons'} size={15} color={colors.primary} />
@@ -131,7 +131,7 @@ export default () => {
                 <Text style={{ marginLeft: 5, fontSize: 16 }}>Log Out</Text>
             </View>
             <View>
-                <Text style={{ fontSize: 16, }} fontFamily={'PoppinsLight'}>Jovi.{constants.app_version}</Text>
+                <Text style={{ fontSize: 16, }} fontFamily={'PoppinsLight'}>Jovi, v.{constants.app_version}</Text>
             </View>
         </TouchableOpacity>
     </View>
