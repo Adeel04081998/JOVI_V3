@@ -184,6 +184,9 @@ const APP_DRAWER_ROUTES = {
     "Pharmacy": {
         screen_name: "PHARMACY",
     },
+    "ContactsList": {
+        screen_name: "CONTACTSLIST",
+    },
 }
 const APP_ROUTES = {
     "AppDrawerStack": {

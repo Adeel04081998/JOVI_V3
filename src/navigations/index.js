@@ -49,6 +49,7 @@ import FavAddresses from '../screens/FavAddresses';
 import DrawerComponent from '../components/organisms/DrawerComponent';
 import Support from '../screens/Support';
 import SupportDetail from '../screens/SupportDetail';
+import ContactsList from '../screens/Referral/ContactsList';
 
 import Profile from '../screens/Profile';
 import Referral from '../screens/Referral';
@@ -117,6 +118,7 @@ const AppDrawerComponents = {
     Profile,
     Referral,
     Pharmacy,
+    ContactsList,
 }//will open with Slide Animation
 const ContainerStack = createStackNavigator();
 const Stack = createNativeStackNavigator();

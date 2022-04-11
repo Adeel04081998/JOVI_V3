@@ -33,7 +33,7 @@ export default () => {
   const styles = topUpStyles(colors);
 
   const { transactionMethods, mobile, id, email, balance } = useSelector(state => state.userReducer)
-
+  console.log('transactionMethods ==>>> ', transactionMethods);
   const IS_EASYPAISA_ALLOWED = transactionMethods.find(x => (x.name.toLowerCase() === "easypaisa" && x.txnType == 1) || (x.name.toLowerCase() === "easypaisa" && x.txnType == 4) ? x : false);
   const IS_JAZZCASH_ALLOWED = transactionMethods.find(x => (x.name.toLowerCase() === "jazzcash" && x.txnType == 1) || (x.name.toLowerCase() === "jazzcash" && x.txnType == 4) ? x : false);
 
