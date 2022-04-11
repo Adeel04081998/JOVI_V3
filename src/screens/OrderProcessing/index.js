@@ -1,27 +1,24 @@
+import AnimatedLottieView from 'lottie-react-native';
 import * as React from 'react';
-import { Appearance, Image, SafeAreaView, ScrollView } from 'react-native';
+import { Appearance, SafeAreaView, ScrollView } from 'react-native';
 import { SvgXml } from 'react-native-svg';
+import { useSelector } from 'react-redux';
 import svgs from '../../assets/svgs';
 import Text from '../../components/atoms/Text';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import OrderEstTimeCard from '../../components/organisms/Card/OrderEstTimeCard';
 import DashedLine from '../../components/organisms/DashedLine';
+import SitBackAnimation from '../../components/organisms/SitBackAnimation';
 import { checkIfFirstPitstopRestaurant, renderPrice, sharedFetchOrder, sharedGenerateProductItem, sharedNotificationHandlerForOrderScreens, sharedOrderNavigation } from '../../helpers/SharedActions';
-import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
+import { getRequest } from '../../manager/ApiManager';
+import Endpoints from '../../manager/Endpoints';
+import NavigationService, { _NavgationRef } from '../../navigations/NavigationService';
+import ROUTES from '../../navigations/ROUTES';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
 import GV, { ORDER_STATUSES, PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import { stylesFunc } from './styles';
-import { orderProcessingDummyData } from './StaticData';
-import AnimatedLottieView from 'lottie-react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import ROUTES from '../../navigations/ROUTES';
-import NavigationService, { _NavgationRef } from '../../navigations/NavigationService';
-import actions from '../../redux/actions';
-import { getRequest } from '../../manager/ApiManager';
-import Endpoints from '../../manager/Endpoints';
-import SitBackAnimation from '../../components/organisms/SitBackAnimation';
 
 const DOUBLE_SPACING = constants.spacing_horizontal + 6;
 const IMAGE_SIZE = constants.window_dimensions.width * 0.3;
@@ -378,7 +375,7 @@ const PaidWithUI = ({ title = 'Cash on delivery', price = '' }) => {
                 color: "#272727",
                 fontSize: 14,
                 paddingHorizontal: constants.spacing_horizontal,
-            }}>{`Paid with`}</Text>
+            }}>{`Payment Method`}</Text>
 
             <View style={{
                 flexDirection: "row",

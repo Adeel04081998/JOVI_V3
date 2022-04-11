@@ -19,7 +19,7 @@ const PitStopDetails = (props, ref) => {
     return (
         props.isOpened &&
         <View style={{ marginVertical: 10 }} >
-            <TextInput title="Pitstop Description"
+            <TextInput title="PitStop description"
                 placeholder="Please Add Your Description"
                 // returnKeyType= ""
                 style={{
