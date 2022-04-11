@@ -1,5 +1,5 @@
 import { PermissionsAndroid, Platform } from 'react-native';
-import { PERMISSIONS, RESULTS } from 'react-native-permissions';
+import { PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import { handleDeniedPermission } from './Camera';
 
 export const askForContactPermissions = async (successCb, errorCb) => {

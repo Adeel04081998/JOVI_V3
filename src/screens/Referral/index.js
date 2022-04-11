@@ -17,6 +17,9 @@ import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import { sharedExceptionHandler } from '../../helpers/SharedActions';
 // import ContactList from './ContactsList';
 import Endpoints from '../../manager/Endpoints';
+import NavigationService from '../../navigations/NavigationService';
+import ROUTES from '../../navigations/ROUTES';
+import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 const HEADER_ICON_SIZE = CustomHeaderIconBorder.size * 0.6;
 const ICON_CONTAINER_SIZE = 40;
 export default () => {
@@ -24,47 +27,29 @@ export default () => {
     const customheaderStyles = { ...CustomHeaderStyles(colors.primary) };
     const userReducer = useSelector(state => state.userReducer);
     const inviteCode = userReducer.referralCode.toUpperCase()
+    const description = userReducer.description
     const _styles = styles(colors);
-    const [contacts, setContacts] = useState([])
-    const [isLoading, setIsLoading] = useState(true)
-    const [searchQry, setSearchQry] = useState("")
 
-    
 
-const getContactsList = () =>{
-    const cbSuccess = () => {
-        Contacts.getAll()
-            .then(contacts => {
-                console.log('contacts',contacts);
-                setIsLoading(false)
-                setContacts(contacts)
-            })
-            .catch(err => {
-                setIsLoading(false)
-                setContacts([])
-                sharedExceptionHandler(err)
-            })
+
+    const getContactsList = () => {
+        const cbSuccess = () => {
+            Contacts.getAll()
+                .then(contacts => {
+                    NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ContactsList.screen_name, { data: contacts })
+                })
+                .catch(err => {
+                    sharedExceptionHandler(err)
+                })
+        }
+        const cbFailure = (err) => {
+            sharedExceptionHandler(err)
+        }
+        askForContactPermissions(cbSuccess, cbFailure)
     }
-    const cbFailure = (err) => {
-        sharedExceptionHandler(err)
-    }
-    askForContactPermissions(cbSuccess, cbFailure)
-}
 
-    const _onPress = async (item, index) => {
-        let cellNo = (item.phoneNumbers?.[0]?.number ?? "").split()[0]
-        cellNo = cellNo ? cellNo.replace(/(\s|\+|\-)/gi, "") : "";
-        setContacts([])
-        setSearchQry("")
-        let message = `${GV.BASE_URL.current}/${Endpoints.REFERRAL}${cellNo}/${inviteCode}`;
-        const separator = Platform.OS === 'ios' ? '&' : '?'
-        const url = `sms:${cellNo}${separator}body=${message}`
-        Linking.openURL(url)
-    };
-    const _onChangeText = searchQry => setSearchQry(searchQry)
-
+  
     const _renderHeader = () => (<CustomHeader
-        // renderLeftIconAsDrawer
         rightIconName={null}
         title={`Invite Friends`}
         titleStyle={{
@@ -82,7 +67,7 @@ const getContactsList = () =>{
         return (
             <View>
                 <Text style={_styles.inviteTextStyle} fontFamily="PoppinsSemiBold" >Invite your friends Reward yourself</Text>
-                <Text style={[_styles.inviteTextStyle, { fontSize: 16 }]} fontFamily="PoppinsRegular" >Invite a friend and get 10% discount</Text>
+                <Text style={[_styles.inviteTextStyle, { fontSize: 16 }]} fontFamily="PoppinsRegular" >{description}</Text>
             </View>
         )
     }
@@ -96,28 +81,26 @@ const getContactsList = () =>{
     }
     const _renderButton = () => {
         return (
-            <Button wait={0} style={_styles.inviteBtnStyle} textStyle={{ color: colors.primary, fontSize: 16 }} text="Invite from contacts" onPress={() => {getContactsList() }} />
+            <Button wait={0} style={_styles.inviteBtnStyle} textStyle={{ color: colors.primary, fontSize: 16 }} text="Invite from contacts" onPress={() => { getContactsList() }} />
         )
     }
     const _renderShareLink = () => {
         return (
-            <Text style={_styles.inviteLinkTextStyle} fontFamily="PoppinsRegular">Share Link</Text>
+            <TouchableOpacity onPress={()=>{}} >
+                <Text style={_styles.inviteLinkTextStyle} fontFamily="PoppinsRegular">Share Link</Text>
+            </TouchableOpacity>
         )
     }
-    // const _renderContacts = () =>{
-    //     return(
-    //         <ContactList data={contacts} isLoading={isLoading} onPress={_onPress} onChangeText={_onChangeText} searchQry={searchQry} />
-    //     )
-    // }
+
     return (
         <SafeAreaView style={_styles.primaryContainer}>
             {_renderHeader()}
             <View style={{ flex: 1 }}>
-                { _renderSvg()}
-                { _renderInviteText()}
+                {_renderSvg()}
+                {_renderInviteText()}
                 {_renderInviteCode()}
                 {_renderButton()}
-                {_renderShareLink()}
+                {/* {_renderShareLink()} */}
             </View>
         </SafeAreaView>
     );
