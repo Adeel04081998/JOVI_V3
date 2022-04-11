@@ -41,7 +41,7 @@ export default (props) => {
                                 data={X.data}
                                 setSelectedValue={v => setDateState({ ...dateState, [X.key]: v })}
                                 selectedValue={X.selectedValue}
-                                style={{ width: i > 1 ? 110 : 110, bottom: Platform.select({ ios: 50, android: 0 }) }}
+                                style={{ width: i > 1 ? 120 : 110, bottom: Platform.select({ ios: 50, android: 0 }) }}
                                 prompt={`Select ${X.prompt}`}
                                 enabled={true}
                             />
