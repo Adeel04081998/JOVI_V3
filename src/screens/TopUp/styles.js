@@ -3,7 +3,7 @@ import AppStyles from "../../res/AppStyles";
 import { initColors } from "../../res/colors";
 import FontFamily from "../../res/FontFamily";
 
-export const topUpStyles = (colors = initColors) => StyleSheet.create({
+export const topUpStyles = (colors = initColors, width, height) => StyleSheet.create({
     container: {
         flex: 1,
     },
@@ -101,6 +101,20 @@ export const topUpStyles = (colors = initColors) => StyleSheet.create({
     accountTitle: {
         fontSize: 16,
         color: colors.black,
+    },
+    locButton: {
+        width: width - 20,
+        height: 35,
+        borderRadius: 8,
+        alignSelf: 'center',
+        justifyContent:'center',
+        alignItems:'center',
+        position:'absolute',
+        bottom: 10
+    },
+    btnText: {
+        fontSize: 12,
+        fontWeight: '600'
     },
 
 })
