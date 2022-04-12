@@ -47,6 +47,7 @@
     "@react-native-firebase/app": "^14.5.0",
     "@react-native-firebase/firestore": "14.5.0",
     "@react-native-firebase/messaging": "^14.5.0",
+    "@react-native-picker/picker": "^2.4.0",
     "@react-navigation/drawer": "^6.1.8",
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/native-stack": "^6.5.0",
