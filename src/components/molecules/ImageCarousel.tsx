@@ -123,7 +123,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
   const [metaData, toggleMetaData] = useState<boolean>(false);
   const flatListRef = useRef<FlatList<any>>(null);
   const isFirstEffect = useRef<boolean>(true);
-  const [SkipOnPress, setSkipOnPress] = useState<boolean>(false);
+
 
 
   useEffect(() => {
@@ -213,10 +213,10 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
   // #endregion :: AUTOPLAY END's FROM HERE 
 
   const onScrollToIndexFailed = () => { };
-  console.log("skip", SkipOnPress);
+  console.log("imageCarousel");
 
   return (
-    <View style={styles.primaryContainer} pointerEvents={SkipOnPress ? 'none' : 'auto'} >
+    <View style={styles.primaryContainer}  >
       <Animated.FlatList
         ref={flatListRef}
         data={[...dataWithPlaceholders,]}
