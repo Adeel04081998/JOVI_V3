@@ -84,48 +84,16 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
   };
   const interval = props?.autoPlayInterval ?? defaultProps.autoPlayInterval;
 
-  // #region :: VIEW ABILITY START's FROM HERE 
-  const handleOnViewableItemsChanged = useCallback(({ viewableItems }) => {
-    if (skipHandleView.current) {
-      setTimeout(() => {
-        skipHandleView.current = false;
-      }, 500);
-      return
-    };
-
-
-    const itemsInView = viewableItems.filter(({ item }: { item: any }) => VALIDATION_CHECK(item?.uri ?? props?.uriKey ?? ''));
-    if (itemsInView.length !== 0) {
-      console.log('itemsInView ', itemsInView[0]);
-
-      if (itemsInView[0].index < dataWithPlaceholders.length - 1)
-        updateCurrentIndex(itemsInView[0].index);
-      else
-        updateCurrentIndex(0);
-      // console.log("hy");
-
-      return;
-    }
-
-  }, []);//end of handleOnViewableItemsChanged
-
-  const viewabilityConfig = {
-    viewAreaCoveragePercentThreshold: 50,
-  };
-  const viewabilityConfigCallbackPairs = useRef([{ viewabilityConfig, onViewableItemsChanged: handleOnViewableItemsChanged }])
-
-
-  // #endregion :: VIEW ABILITY END's FROM HERE 
-
+  // #region :: STATE's & REF's START's FROM HERE 
   const [dataWithPlaceholders, setDataWithPlaceholders] = useState<any[]>([]);
 
   const [currentIndex, updateCurrentIndex] = useState<number>(0);
-  const [metaData, toggleMetaData] = useState<boolean>(false);
   const flatListRef = useRef<FlatList<any>>(null);
   const isFirstEffect = useRef<boolean>(true);
 
+  // #endregion :: STATE's & REF's END's FROM HERE 
 
-
+  // #region :: PROPS DATA SETTING  START's FROM HERE 
   useEffect(() => {
     setDataWithPlaceholders(props.data);
     updateCurrentIndex(0);
@@ -139,6 +107,34 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
       stopAutoPlay();
     }
   }, [dataWithPlaceholders]);
+
+  // #endregion :: PROPS DATA SETTING  END's FROM HERE 
+
+  // #region :: VIEW ABILITY START's FROM HERE 
+  const handleOnViewableItemsChanged = useCallback(({ viewableItems }) => {
+    if (skipHandleView.current) {
+      setTimeout(() => {
+        skipHandleView.current = false;
+      }, 500);
+      return
+    };
+
+
+    const itemsInView = viewableItems.filter(({ item }: { item: any }) => VALIDATION_CHECK(item?.uri ?? props?.uriKey ?? ''));
+    if (itemsInView.length !== 0) {
+      updateCurrentIndex(itemsInView[0].index);
+      return;
+    }
+  }, []);//end of handleOnViewableItemsChanged
+
+  const viewabilityConfig = {
+    viewAreaCoveragePercentThreshold: 50,
+  };
+  const viewabilityConfigCallbackPairs = useRef([{ viewabilityConfig, onViewableItemsChanged: handleOnViewableItemsChanged }])
+
+
+  // #endregion :: VIEW ABILITY END's FROM HERE 
+
 
   // #region :: AUTOPLAY START's FROM HERE 
 
@@ -176,9 +172,6 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
           }
         });
       } else {
-        console.log("hy");
-
-
         stopAutoPlay();
         setTimeout(() => {
           startAutoplay();
@@ -193,6 +186,9 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
       isFirstEffect.current = false;
       return
     }
+    if (!timer) {
+      return;
+    }
     skipHandleView.current = true;
     if (props.onActiveIndexChanged) {
       const item = dataWithPlaceholders[currentIndex];
@@ -206,21 +202,18 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
         animated: true,
       });
     }
-    // toggleMetaData(p => !p);
   }, [currentIndex])//endo of useEffect for currentIndex
 
 
   // #endregion :: AUTOPLAY END's FROM HERE 
 
   const onScrollToIndexFailed = () => { };
-  console.log("imageCarousel");
 
   return (
     <View style={styles.primaryContainer}  >
       <Animated.FlatList
         ref={flatListRef}
-        data={[...dataWithPlaceholders,]}
-        // extraData={metaData}
+        data={dataWithPlaceholders}
         contentContainerStyle={props.contentContainerStyle}
         style={props.style}
         columnWrapperStyle={props.columnWrapperStyle}
@@ -237,7 +230,6 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
               disabled={!(props?.onPress ?? false) ? true : false}>
               <View style={[{
                 width: props.width ?? ITEM_WIDTH,
-                // backgroundColor: "blue"
               }]}>
                 {/* aspectRatio={16 / 7} */}
                 <View style={[itemStyles.secondaryContainer, props.containerStyle]}>
@@ -265,16 +257,11 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
 
         {...props.autoPlay && {
           onScrollBeginDrag: () => {
-            console.log('SCROLL DTAG START');
-
-
             skipHandleView.current = false;
             clearInterval(timer);
             timer = null;
           },
           onScrollEndDrag: () => {
-            console.log('SCROLL DTAG END');
-
             startAutoplay();
           },
         }
@@ -294,7 +281,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
         initialNumToRender={1}
         maxToRenderPerBatch={1}
         removeClippedSubviews={true}
-      
+
       />
 
 
@@ -303,7 +290,6 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
         <View style={[footerStyles.primaryContainer, props.paginationContainerStyle]}>
           <FlatList
             data={dataWithPlaceholders}
-            extraData={metaData}
             horizontal
             style={{ flexGrow: 0, }}
             contentContainerStyle={{ alignItems: "center", justifyContent: "center", flexGrow: 0, }}
@@ -326,7 +312,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
 };
 
 ImageCarousel.defaultProps = defaultProps;
-export default ImageCarousel;
+export default React.memo(ImageCarousel);
 
 const styles = StyleSheet.create({
   primaryContainer: {
