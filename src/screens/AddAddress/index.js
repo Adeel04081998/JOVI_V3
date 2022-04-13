@@ -189,13 +189,16 @@ export default (props) => {
                         console.log("ADDorUPDATE ADDRESS.RESPONSE", res);
                         if (res.data.statusCode === 200) {
                             sharedGetUserAddressesApi();
-                            dispatch(ReduxActions.setUserFinalDestAction({
-                                finalDestObj: {
-                                    ...finalDestObj,
-                                    "addressType": addressType[0]?.key || '',
-                                    "addressTypeStr": inputs[3].val || ''
-                                },
-                            }))
+                            const applyLocation = props.route?.params?.applyLocation ?? true;
+                            if (applyLocation) {
+                                dispatch(ReduxActions.setUserFinalDestAction({
+                                    finalDestObj: {
+                                        ...finalDestObj,
+                                        "addressType": addressType[0]?.key || '',
+                                        "addressTypeStr": inputs[3].val || ''
+                                    },
+                                }))
+                            }
                             onBackPress(fromScreenIndex === 4 ? false : true);
                         }
                     },

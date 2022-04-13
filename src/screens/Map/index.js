@@ -22,10 +22,14 @@ export default (props) => {
   };//end of updateFinalDestination
 
   const onConfirmLoc = (finalDestObj) => {
+    const applyLocation = props.route?.params?.applyLocation ?? true;
+
     if (props.route.params.index === 0) {
 
       props.route.params.onNavigateBack && props.route.params.onNavigateBack(finalDestObj.title);
-      dispatch(ReduxActions.setUserFinalDestAction({ finalDestObj }))
+      if (applyLocation) {
+        dispatch(ReduxActions.setUserFinalDestAction({ finalDestObj }))
+      }
       NavigationService.NavigationActions.common_actions.goBack();
 
     } else if (props.route.params.index === 1) {
@@ -33,18 +37,22 @@ export default (props) => {
       props.route.params.onNavigateBack && props.route.params.onNavigateBack(finalDestObj);
       NavigationService.NavigationActions.common_actions.goBack();
     }
-    else if (props.route.params.index === 3 || props.route.params.index === 4 ) {
+    else if (props.route.params.index === 3 || props.route.params.index === 4) {
       NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.AddAddress.screen_name, {
         finalDestObj,
         updateFinalDestination,
         isFromEdit,
-        index: props.route.params.index
+        index: props.route.params.index,
+        applyLocation: props.route?.params?.applyLocation ?? true,
       })
     }
     else {
-      dispatch(ReduxActions.setUserFinalDestAction({ finalDestObj }))
+      if (applyLocation) {
+        dispatch(ReduxActions.setUserFinalDestAction({ finalDestObj }))
+      }
       NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.AddAddress.screen_name, {
-        finalDestObj
+        finalDestObj,
+        applyLocation: props.route?.params?.applyLocation ?? true,
       })
     }
   }
@@ -68,7 +76,8 @@ export default (props) => {
       NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.AddAddress.screen_name, {
         finalDestObj: lastLoc,
         updateFinalDestination,
-        isFromEdit
+        isFromEdit,
+        applyLocation: props.route?.params?.applyLocation ?? true,
       })
     } else {
       NavigationService.NavigationActions.common_actions.goBack();

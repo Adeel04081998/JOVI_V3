@@ -127,7 +127,7 @@ export default () => {
                     <Button
                         text={'Add Address'}
                         onPress={() => {
-                            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { onNavigateBack: (placeName) => { }, index: 3 })
+                            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { onNavigateBack: (placeName) => { }, index: 3, applyLocation: false, })
 
                         }}
                         style={{
