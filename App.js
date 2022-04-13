@@ -35,6 +35,7 @@ import actions from './src/redux/actions';
 import constants from "./src/res/constants";
 import FontFamily from "./src/res/FontFamily";
 import AppTheme from './src/res/theme';
+import GenericPopUp from "./src/screens/GenericPopUp";
 import { env } from './src/utils/configs';
 import ENUMS from "./src/utils/ENUMS";
 import { fcmService } from './src/utils/FCMServices';
@@ -255,6 +256,7 @@ const App = () => {
                     <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
                         <RootStack />
                         {visible && <BottomAllignedModal />}
+                        <GenericPopUp />
                     </View>
                 </NavigationContainer>
                 <Robot />
@@ -282,7 +284,7 @@ const SharedGetApis = ({ }) => {
         sharedGetEnumsApi();
         // sharedLogoutUser();
         return () => {
-            console.log('[App] cleared!!');
+            // console.log('[App] cleared!!');
             sharedClearReducers();//modal reducer wasn't clearing when the app was closed on back press.
             localNotificationService.unRegister();
             fcmService.unRegister();
@@ -321,16 +323,16 @@ const SharedGetApis = ({ }) => {
                 }
             }
             const onRegister = (token) => {
-                console.log('Registered--', token);
+                // console.log('Registered--', token);
                 sharedSendFCMTokenToServer(postRequest, token);
 
             }
             const onNotification = (notify) => {
-                console.log('onNotification--', notify);
-                console.log("===> onNotification.notify -> ", notify)
+                // console.log('onNotification--', notify);
+                // console.log("===> onNotification.notify -> ", notify)
                 dispatch(actions.fcmAction({ ...notify }));
                 if (notify.data) {
-                    console.log("notify.data", notify.data);
+                    // console.log("notify.data", notify.data);
                     const results = true;
                     // const results = sharedCheckNotificationExpiry(notify.data.ExpiryDate);
                     pushNotification(notify);
@@ -338,13 +340,13 @@ const SharedGetApis = ({ }) => {
                 else pushNotification(notify)
             }
             const onOpenNotification = (notify) => {
-                console.log('onOpenNotification--', notify);
+                // console.log('onOpenNotification--', notify);
             }
             const onRegistrationError = (err) => {
-                console.log('onRegistrationError--', err);
+                // console.log('onRegistrationError--', err);
             }
             const onAction = (action) => {
-                console.log('onAction--', action);
+                // console.log('onAction--', action);
             }
             fcmService.registerAppWithFCM();
             fcmService.register(onRegister, onNotification, onOpenNotification)

@@ -30,7 +30,7 @@ export const sharedGetDeviceInfo = async () => {
     return { deviceID, model, systemVersion };
 };
 export const sharedExceptionHandler = (err, skipToast = false) => {
-    console.log("[sharedExceptionHandler].err", err);
+    // console.log("[sharedExceptionHandler].err", err);
     const TOAST_SHOW = skipToast ? 0 : 3000;
     if (err) {
         if (err.data) {
@@ -176,7 +176,7 @@ export const sharedGetUserDetailsApi = () => {
     getRequest(
         Endpoints.GET_USER_DETAILS,
         res => {
-            console.log("[getUserDetailsApi].res", res);
+            // console.log("[getUserDetailsApi].res", res);
             dispatch(ReduxActions.setUserAction({ ...res.data.userDetails }));
         },
         err => {
@@ -233,7 +233,7 @@ export const sharedGetUserAddressesApi = () => {
     getRequest(
         Endpoints.GET_USER_ADDRESSES,
         res => {
-            console.log("[sharedGetUserAddressesApi].res", res);
+            // console.log("[sharedGetUserAddressesApi].res", res);
             if (res.data.statusCode === 200)
                 dispatch(ReduxActions.setUserAction({ ...res.data }));
             else dispatch(ReduxActions.setUserAction({ addresses: [] }));
@@ -258,7 +258,7 @@ export const sharedGetPromotions = () => {
             isCitySpecific: true,
         },
         res => {
-            console.log("[sharedGetPromotions].res", res);
+            // console.log("[sharedGetPromotions].res", res);
             dispatch(ReduxActions.setPromotionsAction({ ...res.data }));
         },
         err => {
@@ -373,7 +373,7 @@ export const sharedCalculateMaxTime = (dataArr = [], key = "estimatePrepTime") =
     return estimateTime;
 }
 export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
-    console.log("[sharedCalculateCartTotals]", pitstops);
+    // console.log("[sharedCalculateCartTotals]", pitstops);
     let joviRemainingAmount = constants.max_jovi_order_amount,
         subTotal = 0,
         discount = 0,
@@ -478,7 +478,7 @@ export const sharedAddUpdatePitstop = (
         sharedCalculateCartTotals(swappedPitstops, cartReducer);
         return;
     }
-    console.log("pitstopDetails", pitstopDetails);
+    // console.log("pitstopDetails", pitstopDetails);
     let pitstops = cartReducer.pitstops;
     const pitstopIndex = (pitstopDetails?.pitstopIndex >= 0 ? pitstopDetails.pitstopIndex : null);
     if (pitstopIndex !== null && isDeletePitstop) {
@@ -600,7 +600,7 @@ export const sharedGetFilters = () => {
         "vendorType": 4
 
     }, res => {
-        console.log("[sharedGetFiltersApi].res ====>>", res);
+        // console.log("[sharedGetFiltersApi].res ====>>", res);
         // dispatch(ReduxActionss.setMessagesAction({ ...res.data, robotJson: data }));
         dispatch(ReduxActions.setCategoriesTagsAction({ ...res?.data }))
 
@@ -691,13 +691,13 @@ export const sharedGetServiceCharges = (payload = null, successCb = () => { }) =
             pitstopItems
         }
     }
-    console.log('[sharedGetServiceCharges].payload', payload);
+    // console.log('[sharedGetServiceCharges].payload', payload);
     postRequest(
         Endpoints.SERVICE_CHARGES,
         payload,
         (response) => {
             const { statusCode, serviceCharge, serviceTax, chargeBreakdown, genericDiscount, orderEstimateTime } = response.data;
-            console.log('[sharedGetServiceCharges].response', response);
+            // console.log('[sharedGetServiceCharges].response', response);
             if (statusCode === 200)
                 // NEED TO MODIFY THESE LOGIC FOR FUTURE CASES LIKE CHECKOUT SCREEN...
                 dispatch(ReduxActions.setCartAction({ orderEstimateTime, serviceCharges: serviceCharge, serviceTax, genericDiscount, chargeBreakdown: chargeBreakdown ?? {} }))
@@ -774,7 +774,7 @@ export const sharedSendFCMTokenToServer = async (postRequest, FcmToken) => {
         },
         res => {
             if (res.data.statusCode === 200) {
-                console.log("sharedSendFCMTokenToServer.success :", res)
+                // console.log("sharedSendFCMTokenToServer.success :", res)
             };
         },
         err => {
@@ -791,7 +791,7 @@ export const sharedFetchOrder = (orderID = 0, successCb = () => { }, errCb = () 
     getRequest(
         Endpoints.FetchOrder + '/' + orderID,
         (response) => {
-            console.log('sharedFetchOrder', response);
+            // console.log('sharedFetchOrder', response);
             if (response.data.statusCode === 200) {
                 if (response.data.order.orderStatus === 3) {
                     NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
@@ -834,7 +834,7 @@ export const checkIfFirstPitstopRestaurant = (pitstopsList = [], extraIgnoredSta
     return isFirstPitstopRestaurant;
 }
 export const sharedOrderNavigation = (orderID = null, orderStatus = null, replacingRoute = null, newOrder = null, showBack = false, pitstopsList = []) => {
-    console.log('orderID', orderID);
+    // console.log('orderID', orderID);
     const isFirstPitstopRestaurant = checkIfFirstPitstopRestaurant(pitstopsList);
     const navigationLogic = (route) => {
         if (newOrder) {

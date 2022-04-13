@@ -96,7 +96,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
 
     const itemsInView = viewableItems.filter(({ item }: { item: any }) => VALIDATION_CHECK(item?.uri ?? props?.uriKey ?? ''));
     if (itemsInView.length !== 0) {
-      console.log('itemsInView ', itemsInView[0]);
+      // console.log('itemsInView ', itemsInView[0]);
 
       if (itemsInView[0].index < dataWithPlaceholders.length - 1)
         updateCurrentIndex(itemsInView[0].index);
@@ -176,9 +176,6 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
           }
         });
       } else {
-        console.log("hy");
-
-
         stopAutoPlay();
         setTimeout(() => {
           startAutoplay();
@@ -263,7 +260,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
 
         {...props.autoPlay && {
           onScrollBeginDrag: () => {
-            console.log('SCROLL DTAG START');
+            // console.log('SCROLL DTAG START');
 
 
             skipHandleView.current = false;
@@ -271,7 +268,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
             timer = null;
           },
           onScrollEndDrag: () => {
-            console.log('SCROLL DTAG END');
+            // console.log('SCROLL DTAG END');
 
             startAutoplay();
           },
