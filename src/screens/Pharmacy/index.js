@@ -37,8 +37,6 @@ const WIDTH = constants.window_dimensions.width
 let recordingItem = null;
 export default ({ route }) => {
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[PITSTOP_TYPES.PHARMACY]], Appearance.getColorScheme() === "dark");
-    const customheaderStyles = { ...CustomHeaderStyles(colors.primary) };
-    const userReducer = useSelector(state => state.userReducer);
     const cartReducer = useSelector((store) => {
         return store.cartReducer;
     });
@@ -54,8 +52,8 @@ export default ({ route }) => {
     const [headerHeight, setHeaderHeight] = React.useState(WINDOW_HEIGHT * 0.4);
     const [estimateTimeCollapsed, setEstimateTimeCollapsed] = React.useState(true);
     const pitstopItemObj = route?.params?.pitstopItemObj ?? null;
-    console.log('pitstopItemObj',pitstopItemObj,route?.params);
-    let initState = !__DEV__ ? {
+
+    let initState = __DEV__ ? {
         "pharmacyPitstopType": doesPickupPitstopExists ? ENUMS.PharmacyPitstopType[0].value : ENUMS.PharmacyPitstopType[1].value,
         "medicineName": "Ggg",
         "detail": "Tyy",
@@ -99,7 +97,8 @@ export default ({ route }) => {
             title: null
         },
     };
-    if (pitstopItemObj) {
+
+    if (pitstopItemObj) { // Auto Fill Data when come from cart to edit.
         initState = {
             ...initState,
             ...pitstopItemObj,
@@ -114,7 +113,6 @@ export default ({ route }) => {
         }
         recordingItem = pitstopItemObj.voiceNote;
     }
-    console.log('doesPickupPitstopExists',pitstopItemObj);
     const [state, setState] = React.useState(initState);
     const [loader, setLoader] = React.useState(false);
     const [isAttachment, setIsAttachment] = React.useState(pitstopItemObj?.isAttachment ?? true);
@@ -129,9 +127,12 @@ export default ({ route }) => {
     const customRecordingRef = React.useRef(null);
     const voiceNoteRef = React.useRef(null);
     const imageRef = React.useRef(null);
-    const outputRangeParent = isIOS ? (state.pharmacyPitstopType === 1 ? [0, 0.54] : [0, 0.74]) : [0, 0.74]
+    const outputRangeParent = isIOS ? (state.pharmacyPitstopType === 1 ? [0, 0.54] : [0, 0.74]) : [0, 0.74];
 
-
+    //Validation
+    const pickupValidation = state.pharmacyPitstopType === 1 ? (!isAttachment ? (state.pickUpPitstop.latitude ?? false) : (state.images === null || state.images?.length <1)) : false;
+    const disabledButton = pickupValidation || state.latitude === null || state.medicineName === '' || state.detail === '' || state.estimatePrice < 1;
+    //Logical Functions
     const handlePickImage = () => {
         sharedConfirmationAlert("Alert", "Pick Option!",
             [
@@ -255,25 +256,6 @@ export default ({ route }) => {
     const onLocationPress = (locationType = '1') => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { colors: colors, onNavigateBack: (placeName) => locationTypeEnum[locationType](placeName), index: 1 })
     }
-    const renderSubHeading = (text = '', extraStyles = {}) => (<Text style={{ fontSize: 14, color: colors.black, ...extraStyles }} fontFamily={'PoppinsMedium'}>{text}</Text>);
-    const renderLocationButton = (onPress = () => onLocationPress()) => (<Button
-        onPress={onPress}
-        text="Select location from map"
-        textStyle={_styles.btnText}
-        fontFamily="PoppinsRegular"
-        leftComponent={() => {
-            return (
-                <VectorIcon name="pin-outline" type="MaterialCommunityIcons" size={20} color={colors.white} />
-            )
-        }}
-        style={[_styles.locButton, _styles.selectLocationButton]} />)
-    const renderInput = (inputProps = {}, extraStyles = {},) => (<TextInput
-        style={{
-            ..._styles.inputStyle,
-            ...extraStyles,
-        }}
-        {...inputProps}
-    />);
     const clearData = () => {
         setState({ ...initState });
         recordingItem = null;
@@ -312,6 +294,27 @@ export default ({ route }) => {
         }
         setLoader(false)
     }
+
+    //UI Render Functions
+    const renderSubHeading = (text = '', extraStyles = {}) => (<Text style={{ fontSize: 14, color: colors.black, ...extraStyles }} fontFamily={'PoppinsMedium'}>{text}</Text>);
+    const renderLocationButton = (onPress = () => onLocationPress()) => (<Button
+        onPress={onPress}
+        text="Select location from map"
+        textStyle={_styles.btnText}
+        fontFamily="PoppinsRegular"
+        leftComponent={() => {
+            return (
+                <VectorIcon name="pin-outline" type="MaterialCommunityIcons" size={20} color={colors.white} />
+            )
+        }}
+        style={[_styles.locButton, _styles.selectLocationButton]} />)
+    const renderInput = (inputProps = {}, extraStyles = {},) => (<TextInput
+        style={{
+            ..._styles.inputStyle,
+            ...extraStyles,
+        }}
+        {...inputProps}
+    />);
     const renderRecorder = () => {
         return <Recording
             ref={customRecordingRef}
@@ -552,6 +555,7 @@ export default ({ route }) => {
                 }}
                 fontFamily="PoppinsRegular"
                 isLoading={loader}
+                disabled={disabledButton}
                 style={[_styles.locButton, _styles.saveButton]} />
         </SafeAreaView>
     );
