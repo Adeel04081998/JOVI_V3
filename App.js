@@ -27,7 +27,7 @@ import { _toastRef } from "./src/components/atoms/Toast";
 import View from './src/components/atoms/View';
 import BaseUrlPrompt from "./src/components/molecules/BaseUrlPrompt";
 import Robot from './src/components/organisms/Robot';
-import { sharedClearReducers, sharedGetDashboardCategoryIApi, sharedGetEnumsApi, sharedGetFilters, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedSendFCMTokenToServer } from './src/helpers/SharedActions';
+import { sharedClearReducers, sharedGetDashboardCategoryIApi, sharedGetEnumsApi, sharedGetFilters, sharedGetHomeMsgsApi, sharedGetPendingOrderRating, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedSendFCMTokenToServer } from './src/helpers/SharedActions';
 import { postRequest } from './src/manager/ApiManager';
 import RootStack from "./src/navigations";
 import { _NavgationRef } from './src/navigations/NavigationService';
@@ -297,6 +297,7 @@ const SharedGetApis = ({ }) => {
             sharedGetUserAddressesApi();
             sharedGetPromotions();
             sharedGetFilters();
+            sharedGetPendingOrderRating();
             const pushNotification = (notify = {}) => {
                 if (notify.data) {
                     localNotificationService.showNotification(0, notify.notification.title, notify.notification.body, notify, {

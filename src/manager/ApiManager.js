@@ -93,7 +93,7 @@ export const getRequest = async (url, onSuccess = () => { }, onError = () => { }
         };
     }
 };
-export const multipartPostRequest = (url, formData, onSuccess = () => { }, onError = () => { }, showLoader = false, header = {}) => {
+export const multipartPostRequest = (url, formData, onSuccess = (res) => { }, onError = (err) => { }, showLoader = false, header = {}) => {
     fetch(`${GV.BASE_URL.current}/${url}`, {
         method: 'post',
         headers: {

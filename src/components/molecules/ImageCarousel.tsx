@@ -218,7 +218,6 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
   // #endregion :: AUTOPLAY END's FROM HERE 
 
   const onScrollToIndexFailed = () => { };
-
   return (
     <View style={styles.primaryContainer}  >
       <Animated.FlatList

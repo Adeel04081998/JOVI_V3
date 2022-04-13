@@ -12,7 +12,7 @@ import VectorIcon from "../../components/atoms/VectorIcon";
 import View from "../../components/atoms/View";
 import AnimatedProgressWheel from "../../components/molecules/AnimatedProgressWheel";
 import CustomHeader from "../../components/molecules/CustomHeader";
-import { sharedExceptionHandler, sharedFetchOrder, sharedForegroundCallbackHandler, sharedNotificationHandlerForOrderScreens, sharedOrderNavigation, sharedRiderRating } from "../../helpers/SharedActions";
+import { sharedExceptionHandler, sharedFetchOrder, sharedForegroundCallbackHandler, sharedNotificationHandlerForOrderScreens, sharedOrderNavigation, sharedRiderRating, VALIDATION_CHECK } from "../../helpers/SharedActions";
 import { getRequest } from "../../manager/ApiManager";
 import Endpoints from "../../manager/Endpoints";
 import NavigationService from "../../navigations/NavigationService";
@@ -110,12 +110,11 @@ export default ({ route }) => {
                     }
                     if (i === (totalActivePitstops.length - 1)) return;
                     const pitstopType = item.catID === '0' ? 2 : parseInt(item.catID);
-                    const focusedPitstop = ENUMS.PITSTOP_TYPES.filter(pt => pt.value === pitstopType)[0];
+                    let focusedPitstop = ENUMS.PITSTOP_TYPES.filter(pt => pt.value === pitstopType)[0];
                     if (!currentPitstop && item.joviJobStatus !== 2 && item.joviJobStatus !== 7) {
                         currentPitstop = { ...item, index: i, isFinalDestination: i === (totalActivePitstops.length - 1), };
                     }
-
-                    circularPitstops.push(focusedPitstop);
+                    circularPitstops.push({ ...focusedPitstop, icon: VALIDATION_CHECK(item.pharmacyPitstopType === 0 ? null : item.pharmacyPitstopType) ? ENUMS.PharmacyPitstopTypeServer[item.pharmacyPitstopType].icon : focusedPitstop.icon });
                 });
                 if (res.data.order.subStatusName === ORDER_STATUSES.RiderFound) {
                     fetchRiderLocation();
@@ -247,7 +246,7 @@ export default ({ route }) => {
     }, [isFocused]);
     React.useEffect(() => {
         const subscription = sharedForegroundCallbackHandler(fetchOrderDetails)
-        sharedNotificationHandlerForOrderScreens(fcmReducer, fetchOrderDetails, orderCancelledOrCompleted);
+        sharedNotificationHandlerForOrderScreens(fcmReducer, fetchOrderDetails, orderCancelledOrCompleted, orderIDParam);
         return () => {
             subscription.remove()
         }
@@ -396,7 +395,7 @@ export default ({ route }) => {
                     {
                         isRiderFound && state.currentPitstop ?
                             <Text style={styles.currentPitstopTime}>
-                                {state.currentPitstop.isFinalDestination?`Jovi is at your door step!`: `Estimated arrival at ${state.totalActivePitstops.length === state.currentPitstop.index + 1 ? 'Final Destination' : `Pitstop ${state.currentPitstop?.index + 1}`}\n${state.currentPitstop?.pitstopEstimateTime ?? ' - '} minutes`}
+                                {state.currentPitstop.isFinalDestination ? `Jovi is at your door step!` : `Estimated arrival at ${state.totalActivePitstops.length === state.currentPitstop.index + 1 ? 'Final Destination' : `Pitstop ${state.currentPitstop?.index + 1}`}\n${state.currentPitstop?.pitstopEstimateTime ?? ' - '} minutes`}
                             </Text>
                             :
                             null

@@ -30,6 +30,7 @@ export default () => {
     }
     const _renderHeader = () => (<CustomHeader
         renderLeftIconAsDrawer
+        renderRightIconForHome
         rightIconName={null}
         title={`Contact Us`}
         titleStyle={{
@@ -59,8 +60,8 @@ export default () => {
                 </View>
                 <View style={{ height: '45%', marginTop: -30 }}>
                     <View style={{ height: 115, alignItems: 'center' }}>
-                        <Text style={_styles.contactUsTitle} fontFamily={'PoppinsBold'}>How can we Help You?</Text>
-                        <Text style={_styles.contactUsText} >Experiencing Problems Signing Up?</Text>
+                        <Text style={_styles.contactUsTitle} fontFamily={'PoppinsBold'}>How Can We Help You?</Text>
+                        <Text style={_styles.contactUsText} >Experiencing problems signing up?</Text>
                         <Text style={_styles.contactUsText} >We are here to help.</Text>
                         <Text style={_styles.contactUsText} >Please get in touch with us.</Text>
                     </View>

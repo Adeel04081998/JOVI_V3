@@ -28,7 +28,7 @@ export default React.memo((props) => {
     // colors.primary will recieve value from colors.js file's colors
     const WIDTH = constants.window_dimensions.width
     const HEIGHT = constants.window_dimensions.height
-    const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
+    const colors = props.colors?? theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
     const styles = joviJobStyles(colors, WIDTH, HEIGHT);
     const cartReducer = useSelector((store) => {
         return store.cartReducer;
@@ -45,15 +45,14 @@ export default React.memo((props) => {
         }
         return step
     }
-
     return (
         // <View style={styles.pitStopLocationContainer} >
         //     {
         props.isOpened &&
         <View>
-            <Text style={[styles.attachment, { paddingVertical: 0 }]} >
+            {props.hideHeading !== true && <Text style={[styles.attachment, { paddingVertical: 0 }]} >
                 Estimated Price
-            </Text>
+            </Text>}
             <View style={styles.estPriceContainer}>
 
                 <Slider
@@ -89,7 +88,7 @@ export default React.memo((props) => {
 
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }} >
-                    <View style={{ flexDirection: 'column', justifyContent: 'center', marginLeft: 20 }}>
+                    <View style={{ flexDirection: 'column', justifyContent: 'center', marginLeft: 20,...(props.bottomSectionStyles??{}) }}>
                         <Text fontFamily="PoppinsRegular" style={{ fontSize: 14, color: colors.black }}>Remaining Amount</Text>
                         <Text fontFamily="PoppinsBold" style={{ fontSize: 14, color: colors.primary }} >Rs {`${props.getRemainingAmount()}`}</Text>
                     </View>
@@ -109,8 +108,8 @@ export default React.memo((props) => {
         //     }
         // </View>
     );
-},((n,p)=>{
-    return (n.isOpened === p.isOpened && n.estVal === p.estVal ) 
+}, ((n, p) => {
+    return (n.isOpened === p.isOpened && n.estVal === p.estVal)
 }))
 
 

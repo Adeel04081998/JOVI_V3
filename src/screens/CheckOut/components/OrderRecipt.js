@@ -107,10 +107,11 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                     {
                         pitStops.map((x, i) => {
                             const isJoviJob = x.pitstopType === PITSTOP_TYPES.JOVI;
+                            const isPharmacy = x.pitstopType === PITSTOP_TYPES.PHARMACY;
                             let pitStopNumber = i + 1
                             let pitstopName = x.pitstopName
                             let individualPitstopTotal = x.individualPitstopTotal;
-                            let checkOutItemsListVM = x?.checkOutItemsListVM ?? (isJoviJob ? [{ ...x, isJoviJob }] : []);
+                            let checkOutItemsListVM = x?.checkOutItemsListVM ?? (isJoviJob ? [{ ...x, isJoviJob }] : isPharmacy?[{...x,isPharmacy}]: []);
                             return <View style={{ flex: 1 }} key={i}>
                                 <ReceiptItem
                                     title={pitstopName}
@@ -122,6 +123,8 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                                     totalPrice={individualPitstopTotal}
                                     individualPitstopGst={x.individualPitstopGst}
                                     showFrontValues={true}
+                                    isPharmacy={isPharmacy}
+                                    isPickupPitstop={x.isPickupPitstop}
                                 />
                                 {/* <View style={{
                                     flexDirection: 'row', alignItems: 'center', flex: 1, paddingVertical: i === 0 ? 0 : 0,

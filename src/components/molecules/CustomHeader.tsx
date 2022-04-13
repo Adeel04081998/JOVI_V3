@@ -61,6 +61,7 @@ type Props = React.ComponentProps<typeof RNView> & {
     defaultColor: string;
     hideFinalDestination?: boolean;
     renderLeftIconAsDrawer?: boolean;
+    renderRightIconForHome?: boolean;
     //CENTER PROP's ENDING
 
     centerRightCustom?: () => React.ReactNode;
@@ -178,6 +179,13 @@ const CustomHeader = (props: Props) => {
             <SvgXml xml={svgs.hamburgerMenu()} height={props.leftIconSize} width={props.leftIconSize} />
         </TouchableScale>
     }
+    const _renderRightIconForHome = () => {
+        return  <TouchableScale wait={0} onPress={() => {
+            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
+        }} style={styles.iconContainer}>
+            <SvgXml xml={svgs.hamburgerHome(props.defaultColor)} height={props.rightIconSize} width={props.rightIconSize} />
+        </TouchableScale>
+    }
     return (
         <View style={[styles.primaryContainer, props.containerStyle]}>
 
@@ -228,7 +236,7 @@ const CustomHeader = (props: Props) => {
                 <View style={[styles.sideContainer, {
                     alignItems: "flex-end",
                 }, props.rightSideContainer]}>
-                    {VALIDATION_CHECK(props.rightCustom) ? props.rightCustom : (VALIDATION_CHECK(props.rightIconName) || props.rightDot) &&
+                    {props.renderRightIconForHome ? _renderRightIconForHome() : VALIDATION_CHECK(props.rightCustom) ? props.rightCustom : (VALIDATION_CHECK(props.rightIconName) || props.rightDot) &&
                         <TouchableScale wait={0} style={[styles.iconContainer, props.rightContainerStyle]}
                             {...props.onRightIconPress ? {
                                 onPress: (event) => props.onRightIconPress && props.onRightIconPress(event)

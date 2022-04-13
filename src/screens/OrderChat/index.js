@@ -28,7 +28,6 @@ import FontFamily from '../../res/FontFamily';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import { headerStyles, stylesFunc } from './styles';
-
 dayjs.extend(customParseFormat)
 
 const HEADER_ICON_SIZE_LEFT = CustomHeaderIconBorder.size * 0.7;
@@ -102,7 +101,7 @@ export default ({ navigation, route }) => {
                 //     ...msgObj
                 // }, ...messages]);
             }
-        }, orderCancelledOrCompleted);
+        }, orderCancelledOrCompleted, orderID);
         return () => {
         }
     }, [fcmReducer]);
@@ -382,7 +381,6 @@ export default ({ navigation, route }) => {
             });
         }
 
-        console.log('itemammamaam on sending ', item);
         if (type === CHAT_TYPE_ENUM.audio) {
             const dm = item.duration.split(':')[0].trim();
             const sm = item.duration.split(':')[1].trim();
@@ -394,7 +392,6 @@ export default ({ navigation, route }) => {
         } else {
             formData.append("Message", item?.text?.trim() ?? '');
         }
-        console.log('resssss 2222 PARAM ', formData);
         multipartPostRequest(Endpoints.SEND_ORDER_MESSAGE_TO_RIDER, formData, (res) => {
             console.log('resssss 22222 ', res);
             if ((res.data?.statusCode ?? 400) === 200) {

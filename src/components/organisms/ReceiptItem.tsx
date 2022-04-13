@@ -14,6 +14,8 @@ interface Props {
     pitstopNumber?: number | string;
     itemData?: [];
     isJoviJob?: boolean;
+    isPharmacy?: boolean;
+    isPickupPitstop?: any;
     showDetail?: boolean;
     showItemTotalPrice?: boolean;
     showLeftBorder?: boolean;
@@ -43,6 +45,8 @@ const defaultProps = {
     type: PITSTOP_TYPES.DEFAULT,
     pitstopNumber: 1,
     isJoviJob: false,
+    isPharmacy: false,
+    isPickupPitstop: false,
     showLeftBorder: false,
     showDetail: true,
     useInHistory: false,
@@ -52,10 +56,13 @@ const defaultProps = {
 
 const ReceiptItem = (props: Props) => {
 
+    const isJoviJob = props?.isJoviJob ?? defaultProps.isJoviJob;
+    const isPharmacy = props?.isPharmacy ?? defaultProps.isPharmacy;
+
     // #region :: DOT COLOR using Pitstoptype START's FROM HERE 
     const defaultColors = Appearance.getColorScheme() === "dark" ? DefaultColors.light_mode : DefaultColors.light_mode;
     const dotColor = () => {
-        const pitstopType = props?.type ?? defaultProps.type;
+        const pitstopType = isPharmacy ? PITSTOP_TYPES.PHARMACY : (props?.type ?? defaultProps.type);
         let dotColor = defaultColors.default;
         if (pitstopType === PITSTOP_TYPES.DEFAULT) dotColor = defaultColors.restaurant
         if (pitstopType === PITSTOP_TYPES.JOVI) dotColor = defaultColors.jovi
@@ -69,7 +76,7 @@ const ReceiptItem = (props: Props) => {
     // #endregion :: DOT COLOR using Pitstoptype END's FROM HERE 
 
     // #region :: COLOR & STYLE START's FROM HERE 
-    const isJoviJob = props?.isJoviJob ?? defaultProps.isJoviJob;
+
     const colors = props.colors;
     const styles = stylesFunc(colors, dotColor());
     const itemStyles = itemStylesFunc(colors);
@@ -84,6 +91,8 @@ const ReceiptItem = (props: Props) => {
     }, [props.showDetail])
 
     // #endregion :: STATE, REF & EFFECT END's FROM HERE 
+
+
 
     // #region :: sub item item getting START's FROM HERE 
     const getItemDetail = (item: any) => {
@@ -107,7 +116,15 @@ const ReceiptItem = (props: Props) => {
             actualPrice = '';
             discountedPrice = item.estimatePrice;
         }
+        if (isPharmacy) {
 
+            name = item.title;
+            quantity = '';
+            actualPrice = '';
+            if (!props.isPickupPitstop) {
+                discountedPrice = item.estimatePrice;
+            }
+        }
         return { name, quantity, actualPrice, discountedPrice };
         // return { name, quantity, actualPrice: item.actualPrice, discountedPrice, price: item.price };
     }
@@ -130,7 +147,7 @@ const ReceiptItem = (props: Props) => {
                     return (
                         <View key={index} style={[{ ...itemStyles.primaryContainer, paddingTop: index === 0 ? 0 : 4, }, props.itemContainerStyle]}>
                             <Text style={[itemStyles.name, props.itemTitleStyle]}>{sharedGenerateProductItem(name, quantity)}</Text>
-                            <Text style={[itemStyles.discountedPrice, props.itemDiscountedPriceStyle]}>{renderPrice({ price: isJoviJob ? props.totalPrice : PRICE, showZero: true })}</Text>
+                            <Text style={[itemStyles.discountedPrice, props.itemDiscountedPriceStyle]}>{renderPrice({ price: isJoviJob || isPharmacy ? props.totalPrice : PRICE, showZero: true })}</Text>
 
                             {/* ****************** Start of WHEN DISCOUNT IS ADDED ****************** */}
                             <>

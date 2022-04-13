@@ -27,7 +27,7 @@ export default () => {
         else dispatch(ReduxActions.closeModalAction())
     }
     React.useEffect(() => {
-        if (!IS_CONNECTED) return Toast.info("Oops! Looks like your device is not connected to the Internet.", 3000, "top", false)
+        if (!IS_CONNECTED && !__DEV__) return Toast.info("Oops! Looks like your device is not connected to the Internet.", 3000, "top", false)
         // if (!IS_CONNECTED) {
         //     if (modalReducer?.visible&&currentModal.current===null) {
         //         console.log('modalReducer', modalReducer);

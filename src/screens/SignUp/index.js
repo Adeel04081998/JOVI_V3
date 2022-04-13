@@ -28,10 +28,10 @@ export default () => {
     const { phoneNumber, hash, } = userReducer;
     let initialState = {
         inputsArr: [
-            { id: 1, field: "FirstName", title: 'First Name', placeholder: 'First name', pattern: Regex.name, keyboardType: "default", validationerror: "Invalid first name", backgroundColor: 'white', value: "", maxLength: 15, isValid: true, showError: false },
-            { id: 2, field: "LastName", title: 'Last Name', placeholder: 'Last name', pattern: Regex.name, keyboardType: "default", validationerror: "Invalid last name", backgroundColor: 'white', value: "", maxLength: 15, isValid: true, showError: false },
-            { id: 3, field: "Email", title: 'Email Address', placeholder: 'Email', pattern: Regex.email, keyboardType: "email-address", validationerror: "Invalid email address", backgroundColor: 'white', value: "", maxLength: 56, isValid: true, showError: false },
-            { id: 4, field: "Mobile", title: 'Mobile Number', placeholder: 'Mobile', pattern: Regex.numberOnly, keyboardType: "number-pad", validationerror: "", backgroundColor: '#EFEFEF', value: phoneNumber || '03005069491', maxLength: 15, isValid: true, showError: false },
+            { id: 1, field: "FirstName", title: 'First Name', placeholder: 'First Name', pattern: Regex.name, keyboardType: "default", validationerror: "Invalid first name", backgroundColor: 'white', value: "", maxLength: 15, isValid: true, showError: false },
+            { id: 2, field: "LastName", title: 'Last Name', placeholder: 'Last Name', pattern: Regex.name, keyboardType: "default", validationerror: "Invalid last name", backgroundColor: 'white', value: "", maxLength: 15, isValid: true, showError: false },
+            { id: 3, field: "Email", title: 'Email', placeholder: 'Email', pattern: Regex.email, keyboardType: "email-address", validationerror: "Invalid email address", backgroundColor: 'white', value: "", maxLength: 56, isValid: true, showError: false },
+            { id: 4, field: "Mobile", title: 'Mobile Number', placeholder: 'Mobile Number', pattern: Regex.numberOnly, keyboardType: "number-pad", validationerror: "", backgroundColor: '#EFEFEF', value: phoneNumber || '03005069491', maxLength: 15, isValid: true, showError: false },
         ],
         'isChecked': false,
         'emailAlreadyExist': null,
