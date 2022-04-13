@@ -389,7 +389,6 @@ export default ({ route }) => {
                 }} />
         )
     }
-    console.log('state', state);
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }}>
             <StatusBar backgroundColor={colors.white} />
