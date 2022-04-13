@@ -136,7 +136,7 @@ export default ({ navigation, route }) => {
                 });
             } else {
                 updateQuery({
-                    errorText: sharedExceptionHandler(res),
+                    errorText: sharedExceptionHandler(res,true),
                     error: true,
                     isLoading: false,
                     refreshing: false,
@@ -218,7 +218,7 @@ export default ({ navigation, route }) => {
                 />
             </View>
         </View>
-    } else if (query.error) {
+    } else if (query.error && data.onGoingData.length < 1) {
         return <View style={styles.primaryContainer}>
             {_renderHeader()}
             <NoRecord
@@ -261,8 +261,9 @@ export default ({ navigation, route }) => {
                         )
                     })}
 
-
-                    <RenderTitle title='History' />
+                    {data.historyData.length > 0 &&
+                        <RenderTitle title='History' />
+                    }
                 </>}
                 renderItem={({ item, index }) => {
                     const isDelivered = `${item.status}`.trim().toLowerCase() === "cancelled" ? false : true;

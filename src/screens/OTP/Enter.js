@@ -62,6 +62,7 @@ export default () => {
 
     const [country, setCountry] = React.useState("92");
     const onPress = async () => {
+        Keyboard.dismiss();
         const appHash = Platform.OS === "android" ? (await RNOtpVerify.getHash())[0] : "";
         const phoneNumber = country + cellNo
         if (network.value <= 0) return Toast.info("Please select your mobile network.");
@@ -81,7 +82,6 @@ export default () => {
         const onLoader = (loader) => {
             setIsLoading(loader)
         }
-        Keyboard.dismiss();
         const payload = {
             'phoneNumber': phoneNumber,
             'appHash': appHash,
