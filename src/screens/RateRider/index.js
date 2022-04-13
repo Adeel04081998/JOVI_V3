@@ -63,6 +63,7 @@ export default ({ navigation, route }) => {
             resetState();
         } else {
             onBackPress(false);
+            // NavigationService.NavigationActions.common_actions.goBack();//incase we have to show rating one by one.
         }
         return;
     }
@@ -75,6 +76,7 @@ export default ({ navigation, route }) => {
             ignoreOrder();
         }
         NavigationService.NavigationActions.common_actions.goBack();
+        // updateOrderID();//incase we have to show rating one by one.
         return true;
     }
 
