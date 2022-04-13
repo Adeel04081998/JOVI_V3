@@ -158,7 +158,7 @@ export default ({ route }) => {
             </View>
         }
         return <View style={styles.footerContainer}>
-            {!isRiderFound && <>
+            {isRiderFound && <>
                 <TouchableOpacity onPress={() => onRiderCallPress()} style={styles.footerItemContainer}>
                     {renderCallIcon()}
                     <Text style={{ marginLeft: 10, color: colors.black }}>Jovi Rider</Text>
