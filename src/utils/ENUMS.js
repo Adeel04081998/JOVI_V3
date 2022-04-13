@@ -192,4 +192,15 @@ export default {
         JoviWallet: 1,
         CashOnDelivery: 2,
     },
+    "PharmacyPitstopType": [{
+        text: 'OTC',
+        value: 2
+    }, {
+        text: 'Prescribed',
+        value: 1
+    }],
+    "PharmacyPitstopTypeServer": {
+        1: { text: 'Pharmacy - Pickup', icon: svgs.pharmacy() },
+        2: { text: 'Pharmacy', icon: svgs.pharmacy() },
+    }
 }

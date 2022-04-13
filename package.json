@@ -31,6 +31,7 @@
     "run:ios:staging": "yarn set:env:staging && yarn ios --configuration  Release",
     "run:ios:release": "yarn set:env:release && yarn ios --configuration Release",
     "iphone_13_pro_max": "npx react-native run-ios --simulator \"iPhone 13 Pro Max\"",
+    "get_device_system_time": "echo \"Host\t\t$(date +%Y-%m-%d_%H:%M:%S)\" && echo \"Emulator\t$(adb shell date +%Y-%m-%d_%H:%M:%S)\"",
     "test": "jest",
     "lint": "eslint ."
   },
@@ -46,6 +47,7 @@
     "@react-native-firebase/app": "^14.5.0",
     "@react-native-firebase/firestore": "14.5.0",
     "@react-native-firebase/messaging": "^14.5.0",
+    "@react-native-picker/picker": "^2.4.0",
     "@react-navigation/drawer": "^6.1.8",
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/native-stack": "^6.5.0",
@@ -63,6 +65,7 @@
     "react-native-background-timer": "^2.4.1",
     "react-native-code-push": "^7.0.4",
     "react-native-communications": "^2.2.1",
+    "react-native-contacts": "^7.0.4",
     "react-native-country-picker-modal": "^2.0.0",
     "react-native-device-info": "^8.4.8",
     "react-native-draggable-flatlist": "^3.0.5",

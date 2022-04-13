@@ -62,6 +62,7 @@ export default () => {
     const _renderHeader = () => (<CustomHeader
         // containerStyle={customheaderStyles.containerStyle}
         renderLeftIconAsDrawer
+        renderRightIconForHome
         rightIconName={null}
         title={`Legal`}
         titleStyle={{

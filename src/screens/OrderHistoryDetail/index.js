@@ -4,9 +4,12 @@ import { Appearance, Button as RNButton, FlatList, InputAccessoryView, Keyboard,
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SvgXml } from 'react-native-svg';
 import svgs from '../../assets/svgs';
+import Image from '../../components/atoms/Image';
 import Text from '../../components/atoms/Text';
+import Toast from '../../components/atoms/Toast';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import TouchableScale from '../../components/atoms/TouchableScale';
+import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import Button from '../../components/molecules/Button';
 import CustomHeader, { CustomHeaderIconBorder, CustomHeaderStyles } from '../../components/molecules/CustomHeader';
@@ -15,13 +18,16 @@ import Card from '../../components/organisms/Card';
 import DashedLine from '../../components/organisms/DashedLine';
 import NoRecord from '../../components/organisms/NoRecord';
 import ReceiptItem from '../../components/organisms/ReceiptItem';
-import { getBottomPadding, makeArrayRepeated, renderPrice, sharedExceptionHandler, VALIDATION_CHECK } from '../../helpers/SharedActions';
-import { getRequest, postRequest } from '../../manager/ApiManager';
+import { sharedLaunchCameraorGallery } from '../../helpers/Camera';
+import { getBottomPadding, makeArrayRepeated, renderPrice, sharedConfirmationAlert, sharedExceptionHandler, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { getRequest, multipartPostRequest, postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
+import { store } from '../../redux/store';
 import constants from '../../res/constants';
 import FontFamily from '../../res/FontFamily';
 import theme from '../../res/theme';
+import ENUMS from '../../utils/ENUMS';
 import GV, { isIOS, PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import HistoryItemCardUI from '../OrderHistory/components/HistoryItemCardUI';
 import { headerFuncStyles, stylesFunc } from './styles';
@@ -31,6 +37,7 @@ const HEADER_ICON_SIZE = CustomHeaderIconBorder.size * 0.6;
 const NUMBER_OF_INPUT_LINE = 4
 const INPUT_ACCESSORY_VIEW_ID = 'feedbackDoneButton';
 const FEEDBACK_INPUT_MINIMUM_LENGTH = 4;
+const COMPLAINT_INPUT_MINIMUM_LENGTH = __DEV__ ? 2 : 12;
 // #endregion :: CONSTANT's END's FROM HERE 
 
 export default ({ navigation, route }) => {
@@ -43,6 +50,8 @@ export default ({ navigation, route }) => {
         dateTime: route?.params?.dateTime ?? '',
 
     };
+
+    const userReducer = store.getState().userReducer;
 
     // #endregion :: NAVIGATION PARAM's END's FROM HERE 
 
@@ -62,6 +71,8 @@ export default ({ navigation, route }) => {
         errorText: '',
     });
     const [feedbackModal, updateFeedbackModal] = React.useState({ visible: false, text: '', submitLoading: false, });
+    const [complaintModal, updateComplaintModal] = React.useState({ visible: false, text: '', submitLoading: false, image: [], });
+    const [complaintImageMetaData, toggleComplaintImageMetaData] = React.useState(false);
 
     // #endregion :: STATE's & REF's END's FROM HERE 
 
@@ -190,7 +201,12 @@ export default ({ navigation, route }) => {
     const renderItem = ({ item, index }) => {
         if (index === (data?.pitStopsList ?? []).length - 1) return;//final destination is not in receipt
         const isJoviJob = item.pitstopType === PITSTOP_TYPES.JOVI;
-        const pitstopName = isJoviJob ? 'Jovi Job' : item.title
+        let pitstopName = isJoviJob ? 'Jovi Job' : item.title
+        let isPharmacy = false;
+        if (isJoviJob && VALIDATION_CHECK(item.pharmacyPitstopType === 0 ? null : item.pharmacyPitstopType)) {
+            pitstopName = ENUMS.PharmacyPitstopTypeServer[item.pharmacyPitstopType].text;
+            isPharmacy = true;
+        }
         const individualPitstopTotal = isJoviJob ? item.paidAmount : item.paidAmount;
         let checkOutItemsListVM = item?.jobItemsListViewModel ?? [];
         if (isJoviJob) {
@@ -240,6 +256,7 @@ export default ({ navigation, route }) => {
                             <View style={styles.itemSeperator} />
                         )
                     }}
+                    isPharmacy={isPharmacy}
                 />
             </View>
         )
@@ -265,7 +282,6 @@ export default ({ navigation, route }) => {
         }))
     }
 
-
     // #endregion :: FEEDBACK OPEN & CLOSE MODAL END's FROM HERE 
 
     // #region :: ON FEEDBACK BUTTON PRESS START's FROM HERE 
@@ -277,12 +293,16 @@ export default ({ navigation, route }) => {
             "orderID": navigationParams.orderID,
         };
         postRequest(Endpoints.ADD_ORDER_FEEDBACK, params, (res) => {
-            console.log('ress ', res);
+            const statusCode = (res?.statusCode ?? 400);
+            if (statusCode === 200) {
+                const msg = sharedExceptionHandler(res, true);
+                Toast.success(msg);
+            } else {
+                sharedExceptionHandler(res);
+            }
             updateFeedbackModal(p => ({ ...p, submitLoading: false }));
-            sharedExceptionHandler(res);
             closeFeedbackModal();
         }, (err) => {
-            console.log('err ', err);
             sharedExceptionHandler(err);
             updateFeedbackModal(p => ({ ...p, submitLoading: false }));
         });
@@ -290,13 +310,108 @@ export default ({ navigation, route }) => {
 
     // #endregion :: ON FEEDBACK BUTTON PRESS END's FROM HERE 
 
+    // #region :: COMPLAINT OPEN & CLOSE MODAL START's FROM HERE 
+    const openComplaintModal = () => {
+        updateComplaintModal(p => ({
+            ...p,
+            visible: true,
+        }))
+    }
+    const closeComplaintModal = () => {
+        if (complaintModal.submitLoading) return;
+        updateComplaintModal(p => ({
+            text: '',
+            submitLoading: false,
+            visible: false,
+            image: [],
+        }))
+    }
+
+    // #endregion :: COMPLAINT OPEN & CLOSE MODAL END's FROM HERE 
+
+    // #region :: ON COMPLAINT SUBMIT BUTTON PRESS START's FROM HERE 
+    const onComplaintSubmitPress = () => {
+        if (`${complaintModal.text.trim()}`.length < COMPLAINT_INPUT_MINIMUM_LENGTH) return;
+
+        updateComplaintModal(p => ({ ...p, submitLoading: true }));
+        let formData = new FormData();
+        formData.append("complaintID", 0);
+        formData.append("rating", 0);
+        formData.append("statusID", 0);
+        formData.append("orderID", navigationParams.orderID);
+        formData.append("description", complaintModal.text.trim());
+
+        for (const singleImage of complaintModal.image) {
+            formData.append("PictureList", {
+                uri: Platform.OS === 'android' ? singleImage.uri : singleImage.uri.replace("file://", ""),
+                name: singleImage.uri.split('/').pop(),
+                type: singleImage.type,
+            });
+        }
+
+        multipartPostRequest(Endpoints.CREATE_COMPLAINT, formData, (res) => {
+            const statusCode = (res?.statusCode ?? 400);
+            if (statusCode === 200) {
+                const msg = sharedExceptionHandler(res, true);
+                Toast.success(msg);
+            } else {
+                sharedExceptionHandler(res);
+            }
+            updateComplaintModal(p => ({ ...p, submitLoading: false }));
+            closeComplaintModal();
+        }, (err) => {
+            sharedExceptionHandler(err);
+            updateComplaintModal(p => ({ ...p, submitLoading: false }));
+        }, false, { Authorization: `Bearer ${userReducer?.token?.authToken}` });
+    }
+
+    // #endregion :: ON COMPLAINT SUBMIT BUTTON PRESS END's FROM HERE 
+
+    // #region :: COMPLAINT IMAGES HANDLING START's FROM HERE 
+    const selectImages = () => {
+        sharedConfirmationAlert("Alert", "Pick Option!", [{
+            text: "Choose from Gallery", onPress: () => {
+                sharedLaunchCameraorGallery(0, () => {
+                }, (picData) => {
+                    getPicture(picData);
+                });
+            }
+        }, {
+            text: "Open Camera", onPress: () => {
+                sharedLaunchCameraorGallery(1, () => {
+                }, (picData) => {
+                    getPicture(picData);
+                });
+            }
+        }, {
+            text: "Cancel", onPress: () => { }
+        }])
+    };//end of selectImages
+
+    const getPicture = (pic) => {
+        console.log('getPicture   ', pic);
+        const picArr = pic?.assets ?? [];
+        if (picArr.length > 0) {
+            const slicedArray = picArr.slice(0, constants.maximum_complaint_attachment);
+            updateComplaintModal(pre => ({
+                ...pre,
+                image: [...pre.image, ...slicedArray],
+            }));
+            toggleComplaintImageMetaData(!complaintImageMetaData);
+        } else {
+
+        }
+    };//end of getPicture
+
+    // #endregion :: COMPLAINT IMAGES HANDLING END's FROM HERE 
+
     // #region :: COMPLAINT & FEEDBACK BUTTON START's FROM HERE 
     const _renderButton = () => {
         return (
             <>
                 {/* ****************** Start of BUTTON ****************** */}
                 <View style={styles.buttonPrimaryContainer}>
-                    <TouchableOpacity style={styles.buttonContainerLeft} activeOpacity={0.5}>
+                    <TouchableOpacity style={styles.buttonContainerLeft} activeOpacity={0.5} onPress={() => { openComplaintModal() }}>
                         <Text style={styles.buttonText}>{`Complaint`}</Text>
                     </TouchableOpacity>
 
@@ -378,6 +493,142 @@ export default ({ navigation, route }) => {
 
             {_renderButton()}
 
+            {complaintModal.visible &&
+                <AnimatedModal
+                    position='center'
+                    useKeyboardAvoidingView
+                    disableOutsidePress
+                    visible={complaintModal.visible}
+                    onRequestClose={() => { closeComplaintModal(); }}
+                    contentContainerStyle={{ borderRadius: 7, width: "95%", maxHeight: "60%", }}>
+
+                    <View style={{ paddingHorizontal: constants.spacing_horizontal * 2, marginVertical: constants.spacing_vertical * 1.5, marginBottom: 0, }}>
+                        <Text fontFamily='PoppinsSemiBold' style={{ fontSize: 18, color: "#272727", textAlign: "center" }}>{`Complaint`}</Text>
+                        <Text style={{ fontSize: 14, color: "#272727", paddingTop: 30, paddingBottom: 10, }}>{`Enter your complaint`}</Text>
+                        <RNTextInput
+                            style={{
+                                borderColor: "#272727",
+                                borderWidth: 0.5,
+                                borderRadius: 5,
+                                paddingHorizontal: 8,
+                                paddingVertical: 10,
+                                textAlignVertical: "top",
+                                minHeight: (isIOS && NUMBER_OF_INPUT_LINE) ? (20 * NUMBER_OF_INPUT_LINE) : null,
+                            }}
+                            autoCorrect={false}
+                            textAlignVertical="top"
+                            multiline={true} // ios fix for centering it at the top-left corner 
+                            numberOfLines={isIOS ? null : NUMBER_OF_INPUT_LINE}
+                            inputAccessoryViewID={INPUT_ACCESSORY_VIEW_ID}
+                            value={complaintModal.text}
+                            placeholder={'Enter here'}
+                            maxLength={250}
+                            onChangeText={(text) => {
+                                updateComplaintModal(p => ({
+                                    ...p,
+                                    text: text,
+                                }))
+                            }}
+                        />
+
+                        <TouchableScale style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            backgroundColor: '#EBEBEB',
+                            borderRadius: 18,
+                            paddingHorizontal: constants.spacing_horizontal,
+                            paddingVertical: constants.spacing_vertical / 2,
+                            marginTop: constants.spacing_vertical,
+                        }}
+                            disabled={!(complaintModal.image.length < constants.maximum_complaint_attachment)}
+                            onPress={() => { selectImages(); }}>
+                            <View style={{ flexDirection: "row", alignItems: "center", flex: 1, }}>
+                                <VectorIcon color="#272727" />
+                                <Text fontFamily='PoppinsMedium' style={{
+                                    color: "#272727",
+                                    fontSize: 14,
+                                    paddingLeft: 6,
+                                    paddingRight: 6,
+                                }}>{`Attach an image`}</Text>
+                            </View>
+                            <Text style={{
+                                color: "#272727",
+                                fontSize: 12,
+                            }}>{`Upload limit: ${constants.maximum_complaint_attachment}`}</Text>
+                        </TouchableScale>
+
+                        <FlatList
+                            data={new Array(constants.maximum_complaint_attachment).fill({})}
+                            extraData={complaintImageMetaData}
+                            contentContainerStyle={{ paddingTop: constants.spacing_vertical, }}
+                            horizontal
+                            renderItem={({ item, index }) => {
+                                if (typeof complaintModal.image[index] === 'undefined') {
+                                    return (
+                                        <TouchableScale style={{ marginRight: constants.spacing_horizontal, }} onPress={() => { selectImages() }}>
+                                            <VectorIcon type='FontAwesome5' name='image' size={40} color="#272727" />
+                                        </TouchableScale>
+                                    )
+                                } else {
+                                    return (
+                                        <View style={{ marginRight: constants.spacing_horizontal, }}>
+                                            <Image
+                                                source={{ uri: complaintModal.image[index].uri }}
+                                                style={{ height: 40, width: 40, borderRadius: 5, }}
+                                            />
+                                            <TouchableOpacity style={{
+                                                position: 'absolute', top: -10, right: -10, zIndex: 999,
+                                                backgroundColor: colors.white,
+                                                borderWidth: 1,
+                                                borderColor: "#272727",
+                                                borderRadius: 999,
+                                            }}
+                                                hitSlop={{ top: 20, bottom: 20, left: 20, right: 20, }}
+                                                onPress={() => {
+                                                    const newImages = complaintModal.image;
+                                                    newImages.splice(index, 1);
+                                                    updateComplaintModal(pre => ({
+                                                        ...pre,
+                                                        image: newImages
+                                                    }));
+                                                }}>
+                                                <VectorIcon name='close' size={16} color="#272727" />
+                                            </TouchableOpacity>
+                                        </View>
+                                    )
+                                }
+
+                            }} />
+
+                        <View style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            marginTop: constants.spacing_vertical * 2,
+                            marginLeft: constants.spacing_horizontal * 4,
+                            marginRight: constants.spacing_horizontal * 2,
+                        }}>
+                            <Button
+                                onPress={() => { closeComplaintModal(); }}
+                                style={{ width: "48%", height: 40, borderRadius: 5, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.primary, }}
+                                textStyle={{ color: colors.primary, fontFamily: FontFamily.Poppins.Medium, fontSize: 16 }}
+                                text={`Cancel`}
+                                wait={0}
+                            />
+                            <Button
+                                onPress={() => { onComplaintSubmitPress(); }}
+                                style={{ width: "48%", height: 40, borderRadius: 5, }}
+                                textStyle={{ fontFamily: FontFamily.Poppins.Medium, fontSize: 16 }}
+                                disabled={`${complaintModal.text.trim()}`.length < COMPLAINT_INPUT_MINIMUM_LENGTH}
+                                isLoading={complaintModal.submitLoading}
+                                loaderSize={"small"}
+                                text={`Submit`}
+                            />
+                        </View>
+                    </View>
+                </AnimatedModal>
+            }
 
             {feedbackModal.visible ?
                 <AnimatedModal
@@ -389,7 +640,7 @@ export default ({ navigation, route }) => {
 
                     <View style={{ paddingHorizontal: constants.spacing_horizontal * 2, marginVertical: constants.spacing_vertical * 1.5, }}>
                         <Text fontFamily='PoppinsSemiBold' style={{ fontSize: 18, color: "#272727", textAlign: "center" }}>{`Feedback`}</Text>
-                        <Text style={{ fontSize: 14, color: "#272727", paddingTop: 30, paddingBottom: 10, }}>{`Enter your feedback`}</Text>
+                        <Text style={{ fontSize: 14, color: "#272727", paddingTop: 30, paddingBottom: 10, }}>{`Give your feedback`}</Text>
                         <RNTextInput
                             style={{
                                 borderColor: "#272727",
@@ -407,6 +658,7 @@ export default ({ navigation, route }) => {
                             inputAccessoryViewID={INPUT_ACCESSORY_VIEW_ID}
                             value={feedbackModal.text}
                             maxLength={250}
+                            placeholder={'Enter here'}
                             onChangeText={(text) => {
                                 updateFeedbackModal(p => ({
                                     ...p,
@@ -426,6 +678,7 @@ export default ({ navigation, route }) => {
                                 style={{ width: "48%", height: 40, borderRadius: 5, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.primary, }}
                                 textStyle={{ color: colors.primary, fontFamily: FontFamily.Poppins.Medium, fontSize: 16 }}
                                 text={`Cancel`}
+                                wait={0}
                             />
                             <Button
                                 onPress={() => { onFeedbackSubmitPress(); }}

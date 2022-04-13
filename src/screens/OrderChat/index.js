@@ -1,6 +1,9 @@
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 import AnimatedLottieView from 'lottie-react-native';
 import * as React from 'react';
-import { Appearance, KeyboardAvoidingView, Platform, SafeAreaView, TextInput as RNTextInput } from 'react-native';
+import { Appearance, Platform, SafeAreaView, TextInput as RNTextInput } from 'react-native';
+import BackgroundTimer from 'react-native-background-timer';
 import { SvgXml } from 'react-native-svg';
 import { useSelector } from 'react-redux';
 import { GiftedChat } from '../../../libs/react-native-gifted-chat';
@@ -8,15 +11,13 @@ import RecordButton from '../../../libs/react-native-gifted-chat/RecordButton';
 import ChangeWindowManager from '../../../NativeModules/ChangeWindowManager';
 import svgs from '../../assets/svgs';
 import AudioplayerMultiple from '../../components/atoms/AudioplayerMultiple';
-import Image from '../../components/atoms/Image';
-import Text from '../../components/atoms/Text';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import TouchableScale from '../../components/atoms/TouchableScale';
 import View from '../../components/atoms/View';
 import CustomHeader, { CustomHeaderIconBorder, CustomHeaderStyles } from '../../components/molecules/CustomHeader';
 import ImageWithTextInput from '../../components/organisms/ImageWithTextInput';
 import NoRecord from '../../components/organisms/NoRecord';
-import { padToTwo, renderFile, sharedExceptionHandler, sharedFetchOrder, sharedNotificationHandlerForOrderScreens, sharedRiderRating, uuidGenerator, VALIDATION_CHECK, validURL } from '../../helpers/SharedActions';
+import { padToTwo, renderFile, sharedExceptionHandler, sharedFetchOrder, sharedNotificationHandlerForOrderScreens, sharedRiderRating, uuidGenerator, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { getRequest, multipartPostRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
@@ -27,8 +28,6 @@ import FontFamily from '../../res/FontFamily';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import { headerStyles, stylesFunc } from './styles';
-import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat)
 
 const HEADER_ICON_SIZE_LEFT = CustomHeaderIconBorder.size * 0.7;
@@ -102,7 +101,7 @@ export default ({ navigation, route }) => {
                 //     ...msgObj
                 // }, ...messages]);
             }
-        }, orderCancelledOrCompleted);
+        }, orderCancelledOrCompleted, orderID);
         return () => {
         }
     }, [fcmReducer]);
@@ -163,7 +162,6 @@ export default ({ navigation, route }) => {
 
     // #region :: STOPWATCH START's FROM HERE 
     const timerTextRef = React.useRef(null);
-    const timer = React.useRef(null);
     const time = React.useRef({
         min: 0,
         sec: 0,
@@ -174,17 +172,15 @@ export default ({ navigation, route }) => {
             sec: 0,
         }
 
-        if (timer.current) {
-            clearInterval(timer.current);
-            timer.current = null;
-        }
+
+        BackgroundTimer.stopBackgroundTimer();
 
     }
 
     const handleStart = (value) => {
         if (value) {
             resetTimer();
-            timer.current = setInterval(() => {
+            BackgroundTimer.runBackgroundTimer(() => {
                 if (time.current.sec !== 59) {
                     if (time.current.min >= constants.recording_duration_max_limit) {
                         setStopRecording(true);
@@ -385,7 +381,6 @@ export default ({ navigation, route }) => {
             });
         }
 
-        console.log('itemammamaam on sending ', item);
         if (type === CHAT_TYPE_ENUM.audio) {
             const dm = item.duration.split(':')[0].trim();
             const sm = item.duration.split(':')[1].trim();
@@ -397,7 +392,6 @@ export default ({ navigation, route }) => {
         } else {
             formData.append("Message", item?.text?.trim() ?? '');
         }
-        console.log('resssss 2222 PARAM ', formData);
         multipartPostRequest(Endpoints.SEND_ORDER_MESSAGE_TO_RIDER, formData, (res) => {
             console.log('resssss 22222 ', res);
             if ((res.data?.statusCode ?? 400) === 200) {
@@ -484,6 +478,7 @@ export default ({ navigation, route }) => {
                 {...micTimer && {
                     renderComposer: renderMicTimer
                 }}
+                keyboardShouldPersistTaps="never"
                 renderMessageAudio={(props) => {
                     const currentMessage = props.currentMessage;
                     const isMyUser = currentMessage.user._id === userReducer.id;

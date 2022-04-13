@@ -330,7 +330,10 @@ const PistopListingChild = React.memo(({ route, }) => {
             {isLoading ? <CardLoader styles={listingStyles} /> : null}
             <ScrollView
                 ref={scrollRef}
-                nestedScrollEnabled showsVerticalScrollIndicator={false} scrollEventThrottle={16}
+                nestedScrollEnabled
+                showsVerticalScrollIndicator={false}
+                scrollEventThrottle={16}
+                removeClippedSubviews={true}
                 onScroll={(event) => {
                     const yAxis = event?.nativeEvent?.contentOffset.y ?? 0;
                     if (yAxis > 0)

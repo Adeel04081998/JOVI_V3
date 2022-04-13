@@ -27,13 +27,14 @@ const PitStopEstTime = (props) => {
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
     const styles = joviJobStyles(colors, WIDTH, HEIGHT);
     const [disabled, setDisabled] = useState(false);
+    const dropdownExtraMargin = props.hideHeading !== true? 0 : 30;
     return (
         props.isOpened &&
-        <View style={{ marginBottom: 10, zIndex: 99 }}>
-            <Text style={styles.attachment} >
+        <View style={{ marginBottom: 10, zIndex: 99999 }}>
+            {props.hideHeading !== true&&<Text style={styles.attachment} >
                 Set Time
             </Text>
-
+}
             <TouchableOpacity activeOpacity={1} style={{ ...styles.otpDropdownView, borderBottomLeftRadius: props.collapsed ? 10 : 0, borderBottomRightRadius: props.collapsed ? 10 : 0 }} onPress={props.onPressDropDown}>
                 <Text style={{ color: "#000", ...styles.textAlignCenter }}>{props.estTime.text}</Text>
                 <VectorIcon type='AntDesign' name={props.collapsed ? "down" : "up"} style={{ position: 'absolute', right: 10, alignSelf: 'center' }} size={18} color={"#000"} />
@@ -43,7 +44,7 @@ const PitStopEstTime = (props) => {
                     if (type === 0) setDisabled(true)
                     else setDisabled(false)
                 }}
-                scrollViewStyles={{ top: Platform.OS === "android" ? 76 : 68 , width: SCALED_WIDTH * 0.936, alignSelf: 'center'}}
+                scrollViewStyles={{ top: Platform.OS === "android" ? 76-dropdownExtraMargin : 68-dropdownExtraMargin , width: SCALED_WIDTH * 0.936, alignSelf: 'center'}}
                 options={ENUMS.ESTIMATED_TIME}
                 itemUI={(item, index, collapsed) =>
                     <TouchableOpacity key={`estTime-key-${index}`}

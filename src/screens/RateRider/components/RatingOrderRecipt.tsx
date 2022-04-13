@@ -10,6 +10,7 @@ import DashedLine from '../../../components/organisms/DashedLine'
 import ReceiptItem from '../../../components/organisms/ReceiptItem'
 import { renderPrice, VALIDATION_CHECK } from '../../../helpers/SharedActions'
 import { initColors } from '../../../res/colors'
+import ENUMS from '../../../utils/ENUMS'
 import { PITSTOP_TYPES } from '../../../utils/GV'
 interface Props {
     data?: any[];
@@ -121,8 +122,13 @@ const RatingOrderRecipt = (props: Props) => {
                             .map((x, i) => {
                                 if (i === pitStops.length - 1) return;//final destination is not in receipt
                                 const isJoviJob = x.pitstopType === PITSTOP_TYPES.JOVI;
-                                const pitstopName = isJoviJob ? 'Jovi Job' : x.title
+                                let pitstopName = isJoviJob ? 'Jovi Job' : x.title
                                 const individualPitstopTotal = isJoviJob ? x.paidAmount : x.jobAmount;
+                                let isPharmacy = false;
+                                if (isJoviJob && VALIDATION_CHECK(x.pharmacyPitstopType === 0 ? null : x.pharmacyPitstopType)) {
+                                    pitstopName = ENUMS.PharmacyPitstopTypeServer[x.pharmacyPitstopType].text;
+                                    isPharmacy = true;
+                                }
                                 let checkOutItemsListVM = x?.jobItemsListViewModel ?? [];
                                 if (isJoviJob) {
                                     checkOutItemsListVM = [{
@@ -140,6 +146,7 @@ const RatingOrderRecipt = (props: Props) => {
                                         itemData={checkOutItemsListVM}
                                         showDetail={true}
                                         totalPrice={individualPitstopTotal}
+                                        isPharmacy={isPharmacy}
                                     />
                                 </View>
                             })}

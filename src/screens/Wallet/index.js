@@ -127,7 +127,8 @@ export default () => {
     const renderHeader = () => {
         return (
             <CustomHeader
-                rightIconName={'home'}
+                renderRightIconForHome
+                renderLeftIconAsDrawer
                 rightContainerStyle={{
                     backgroundColor: colors.white,
                 }}
@@ -156,7 +157,7 @@ export default () => {
                 <TouchableOpacity
                     style={styles.topupButton}
                     onPress={() => { NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.TopUp.screen_name) }}>
-                    <Text style={styles.topupTitleText} >{"Top up"}</Text>
+                    <Text style={styles.topupTitleText} >{"Top Up"}</Text>
                 </TouchableOpacity>
             </View>
         )

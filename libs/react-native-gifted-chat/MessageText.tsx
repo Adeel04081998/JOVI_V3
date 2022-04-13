@@ -17,6 +17,7 @@ import Communications from 'react-native-communications'
 import { LeftRightStyle, IMessage } from './Models'
 import { StylePropType } from './utils'
 import FontFamily from '../../src/res/FontFamily'
+import { VALIDATION_CHECK } from '../../src/helpers/SharedActions'
 
 const WWW_URL_PATTERN = /^www\./i
 
@@ -179,6 +180,7 @@ export default class MessageText<
       styles[this.props.position].link,
       this.props.linkStyle && this.props.linkStyle[this.props.position],
     ]
+    if (!VALIDATION_CHECK(this.props.currentMessage!.text)) return null;
     return (
       <View
         style={[

@@ -137,6 +137,8 @@ export default class Composer extends React.Component<ComposerProps> {
         enablesReturnKeyAutomatically
         underlineColorAndroid='transparent'
         keyboardAppearance={this.props.keyboardAppearance}
+        autoCorrect={false}
+        autoCapitalize={"none"}
         {...this.props.textInputProps}
       />
     )

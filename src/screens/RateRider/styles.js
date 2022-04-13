@@ -77,6 +77,19 @@ export const headerStyles = (colors = initColors) => StyleSheet.create({
         borderBottomWidth: 0,
         backgroundColor: 'transparent',
     },
+    pendingOrderNumberContainer: {
+        zIndex: 9999,
+        position: 'absolute',
+        top: Platform.OS === "android" ? getStatusBarHeight(false) : getStatusBarHeight(false) * 1.5,
+        left: constants.spacing_horizontal,
+        // right: 0,
+        // alignItems: "center",
+        // justifyContent: "center",
+    },
+    pendingOrderNumber: {
+        fontSize: 22,
+        color: colors.white,
+    },
     iconContainer: {
         zIndex: 9999,
         position: 'absolute',
