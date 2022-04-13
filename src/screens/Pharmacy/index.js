@@ -130,7 +130,7 @@ export default ({ route }) => {
     const outputRangeParent = isIOS ? (state.pharmacyPitstopType === 1 ? [0, 0.54] : [0, 0.74]) : [0, 0.74];
 
     //Validation
-    const pickupValidation = state.pharmacyPitstopType === 1 ? (!isAttachment ? (state.pickUpPitstop.latitude ?? false) : (state.images === null || state.images?.length <1)) : false;
+    const pickupValidation = state.pharmacyPitstopType === 1 ? (!isAttachment ? (state.pickUpPitstop.latitude === null ?? false) : (state.images === null || state.images?.length < 1)) : false;
     const disabledButton = pickupValidation || state.latitude === null || state.medicineName === '' || state.detail === '' || state.estimatePrice < 1;
     //Logical Functions
     const handlePickImage = () => {
