@@ -29,6 +29,9 @@ import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import { headerStyles, stylesFunc } from './styles';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import TimerMixin from 'react-timer-mixin';
+import BackgroundTimer from 'react-native-background-timer';
+
 dayjs.extend(customParseFormat)
 
 const HEADER_ICON_SIZE_LEFT = CustomHeaderIconBorder.size * 0.7;
@@ -163,7 +166,6 @@ export default ({ navigation, route }) => {
 
     // #region :: STOPWATCH START's FROM HERE 
     const timerTextRef = React.useRef(null);
-    const timer = React.useRef(null);
     const time = React.useRef({
         min: 0,
         sec: 0,
@@ -174,17 +176,15 @@ export default ({ navigation, route }) => {
             sec: 0,
         }
 
-        if (timer.current) {
-            clearInterval(timer.current);
-            timer.current = null;
-        }
+
+        BackgroundTimer.stopBackgroundTimer();
 
     }
 
     const handleStart = (value) => {
         if (value) {
             resetTimer();
-            timer.current = setInterval(() => {
+            BackgroundTimer.runBackgroundTimer(() => {
                 if (time.current.sec !== 59) {
                     if (time.current.min >= constants.recording_duration_max_limit) {
                         setStopRecording(true);
@@ -484,6 +484,7 @@ export default ({ navigation, route }) => {
                 {...micTimer && {
                     renderComposer: renderMicTimer
                 }}
+                keyboardShouldPersistTaps="never"
                 renderMessageAudio={(props) => {
                     const currentMessage = props.currentMessage;
                     const isMyUser = currentMessage.user._id === userReducer.id;

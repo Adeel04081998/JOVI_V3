@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Appearance, Platform, SafeAreaView } from 'react-native';
+import { Appearance, Keyboard, Platform, SafeAreaView } from 'react-native';
 import CountryPicker from 'react-native-country-picker-modal';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import RNOtpVerify from "react-native-otp-verify";
@@ -81,6 +81,7 @@ export default () => {
         const onLoader = (loader) => {
             setIsLoading(loader)
         }
+        Keyboard.dismiss();
         const payload = {
             'phoneNumber': phoneNumber,
             'appHash': appHash,
@@ -139,7 +140,7 @@ export default () => {
                             borderWidth: forcePattern ? 0.5 : 0,
                             marginLeft: 5
                         }}
-                        style={{fontFamily: FontFamily.Poppins.Regular}}
+                        style={{ fontFamily: FontFamily.Poppins.Regular }}
                         onFocus={() => setForcePattern(false)}
                     />
                 </AnimatedView>
