@@ -200,7 +200,7 @@ export default {
         value: 1
     }],
     "PharmacyPitstopTypeServer": {
-        1: { text: 'Pharmacy - Pickup', icon: svgs.pharmacyReceipt() },
+        1: { text: 'Pharmacy - Pickup', icon: svgs.pharmacy() },
         2: { text: 'Pharmacy', icon: svgs.pharmacy() },
     }
 }
