@@ -9,6 +9,7 @@ import {
 import { uniqueKeyExtractor, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import constants from '../../res/constants';
 import { renderFile } from "../../helpers/SharedActions";
+import { useIsFocused } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 
@@ -44,10 +45,8 @@ interface ImageCarouselProps {
   contentContainerStyle?: StyleProp<ViewStyle>;
   style?: StyleProp<ViewStyle>;
   columnWrapperStyle?: StyleProp<ViewStyle>;
+};
 
-
-
-}
 const defaultProps = {
   autoPlay: false,
   autoPlayInterval: 3,
@@ -77,6 +76,7 @@ const defaultProps = {
 let timer: any = null;
 
 const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
+  const isFocused = useIsFocused();
   const skipHandleView = React.useRef(false);
   const theme = {
     primary: '#775EC3',
@@ -103,10 +103,20 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
     if (props.autoPlay && timer === null) {
       startAutoplay();
     }
-    return () => {
-      stopAutoPlay();
-    }
+    return () => stopAutoPlay();
   }, [dataWithPlaceholders]);
+
+  useEffect(() => {
+    if (isFocused && !timer && props.autoPlay) {
+      startAutoplay();
+      return;
+    }
+    if (!isFocused && timer) {
+      stopAutoPlay();
+      return;
+    }
+    return () => { };
+  }, [isFocused])
 
   // #endregion :: PROPS DATA SETTING  END's FROM HERE 
 
@@ -161,7 +171,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
 
   const startAutoplay = () => {
     if (!props.autoPlay) return
-    if (timer) { clearInterval(timer); timer = null; }
+    if (timer) { stopAutoPlay(); }
     timer = setInterval(() => {
       if (flatListRef.current && props.data.length > 0) {
         updateCurrentIndex((oldIndex: number) => {
