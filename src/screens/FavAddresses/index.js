@@ -32,8 +32,9 @@ export default () => {
     const userReducer = useSelector(state => state.userReducer);
     const dispatch = useDispatch()
     // const addresses = userReducer?.addresses ?? [];
-    const [addresses, setAddresses] = useState(userReducer?.addresses ?? [])
-    console.log('addresses ==>>',addresses);
+    const [addresses, setAddresses] = useState(userReducer?.addresses ?? []);
+
+    console.log('addresses ==>>', addresses);
     const _styles = styles(colors);
     React.useEffect(() => {
         setAddresses(userReducer?.addresses)
@@ -62,9 +63,10 @@ export default () => {
             `${Endpoints.DELETE_ADDRESS}/${addressObj.addressID}`,
             {},
             async (res) => {
+                console.log('resss ', res);
                 let filteredAddresses = addresses.filter(ad => ad.addressID !== addressObj.addressID);
                 setAddresses(filteredAddresses)
-                dispatch(actions.setUserAction({ ...filteredAddresses }));
+                dispatch(actions.setUserAction({ addresses: filteredAddresses }));
             },
             err => {
                 console.log(err)
@@ -88,7 +90,7 @@ export default () => {
     const updateFinalDestination = (fd) => {
         isFromEdit = true;
         lastLoc = fd;
-      };
+    };
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }}>
             {_renderHeader()}
@@ -125,7 +127,7 @@ export default () => {
                     <Button
                         text={'Add Address'}
                         onPress={() => {
-                            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { onNavigateBack: (placeName) => { }, index : 3 })
+                            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { onNavigateBack: (placeName) => { }, index: 3 })
 
                         }}
                         style={{
@@ -134,6 +136,7 @@ export default () => {
                             height: 37
                         }}
                         textStyle={{
+                            marginTop: 3.5, //acc to seemab 
                             fontSize: 16
                         }}
                     />
