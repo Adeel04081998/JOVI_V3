@@ -12,6 +12,7 @@ import SafeAreaView from '../../components/atoms/SafeAreaView';
 import SetpProgress from '../../components/atoms/StepProgress';
 import Text from '../../components/atoms/Text';
 import TextInput from '../../components/atoms/TextInput';
+import Toast from '../../components/atoms/Toast';
 import TouchableScale from '../../components/atoms/TouchableScale';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
@@ -474,6 +475,15 @@ export default () => {
                         // if (expanded.length === 1) {
                         //   expandCollapeHanlder(expanded.findIndex(x => x))
                         // }
+                        const pickupPitstop = newData.filter(item=>item.isPickupPitstop)[0];
+                        if(pickupPitstop){
+                            const indexOfPickupPitstop = newData.findIndex(item=>item.pitstopID === pickupPitstop.pitstopID);
+                            const indexOfPickupParentPitstop = newData.findIndex(item=>item.pitstopID === pickupPitstop.linkedPitstopId);
+                            if(indexOfPickupParentPitstop<indexOfPickupPitstop){
+                                Toast.info('Pickup pitstop cannot be before pharmacy pitstop');
+                                return;
+                            }
+                        }
                         sharedGetServiceCharges();
                         sharedAddUpdatePitstop(null, false, newData)
                     }}
