@@ -26,7 +26,6 @@ import sharedStyles from '../../res/sharedStyles';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES } from '../../utils/GV';
 import ProductQuantityCard from '../ProductMenu/components/ProductQuantityCard';
-import stylesheet from './styles';
 import { pencil_icon, routes_icon } from './svgs/cart_svgs';
 const BottomLine = () => (
   <View
@@ -45,7 +44,7 @@ const BottomLine = () => (
 // }
 export default () => {
   const { cartReducer } = useSelector(store => ({ cartReducer: store.cartReducer }));
-  // console.log('[CART_SCREEN] cartReducer', cartReducer);
+  console.log('[CART_SCREEN] cartReducer', cartReducer);
   const dispatch = useDispatch();
   const [expanded, setExpanded] = React.useState([0]);
   const colors = theme.getTheme(

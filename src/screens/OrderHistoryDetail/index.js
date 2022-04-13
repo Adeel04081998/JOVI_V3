@@ -379,7 +379,7 @@ export default ({ navigation, route }) => {
             {_renderButton()}
 
 
-            {feedbackModal.visible &&
+            {feedbackModal.visible ?
                 <AnimatedModal
                     position='center'
                     useKeyboardAvoidingView
@@ -439,9 +439,10 @@ export default ({ navigation, route }) => {
                         </View>
                     </View>
                 </AnimatedModal>
+                : null
             }
 
-            {isIOS&&<InputAccessoryView nativeID={INPUT_ACCESSORY_VIEW_ID}>
+            {isIOS ? <InputAccessoryView nativeID={INPUT_ACCESSORY_VIEW_ID}>
                 <View style={{ backgroundColor: '#fff', alignItems: "flex-end", }}>
                     <RNButton
                         onPress={() => {
@@ -451,7 +452,7 @@ export default ({ navigation, route }) => {
                         title="Done"
                     />
                 </View>
-            </InputAccessoryView>}
+            </InputAccessoryView> : null}
         </View>
     )
 

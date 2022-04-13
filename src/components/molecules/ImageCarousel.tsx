@@ -135,9 +135,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
     if (props.autoPlay && timer === null) {
       startAutoplay();
     }
-    return () => {
-      stopAutoPlay();
-    }
+    return () => stopAutoPlay();
   }, [dataWithPlaceholders]);
 
   // #region :: AUTOPLAY START's FROM HERE 
@@ -176,9 +174,6 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
           }
         });
       } else {
-        console.log("hy");
-
-
         stopAutoPlay();
         setTimeout(() => {
           startAutoplay();
@@ -294,7 +289,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
         initialNumToRender={1}
         maxToRenderPerBatch={1}
         removeClippedSubviews={true}
-      
+
       />
 
 

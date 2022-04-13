@@ -98,7 +98,7 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
         isRequestSent.current = true;
         setState(pre => ({ ...pre, isLoading: true }));
         postRequest(Endpoints.GET_PITSTOPS_PROMOTIONS, {
-            "vendorType": 0,
+            "vendorType": pitstopType,
             "pageNumber": paginationInfo.current.pageNumber,
             "itemsPerPage": paginationInfo.current.itemsPerPage,
             "vendorDashboardCatID": listingObj.vendorDashboardCatID,

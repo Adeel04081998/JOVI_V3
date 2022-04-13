@@ -33,8 +33,6 @@ export default {
     "CreateUpdateOrder": "api/Order/CreateUpdateOrderV2",
     //Fetch Order Details
     "FetchOrder": "api/Order/OrderDetail",
-    //Estimate Service Charge
-    "EstimateServiceCharge": 'api/Order/EstimateServiceChargeV2',
     //Get Open Orders
     "GetOpenOrders": "/api/Dashboard/GetOpenOrderDetails/List",
     //Accept Reject Order
@@ -51,6 +49,7 @@ export default {
 
     "GET_CUSTOMER_ORDER_HISTORY": "api/Order/HistoryV2",//USED IN ORDER HISTORY SCREEN for getting completed & cancelled order of customer
     "GET_CUSTOMER_ONGOING_ORDER": "api/Order/OnGoingOrdersListV2",//USED IN ORDER HISTORY SCREEN for getting ongoing order of customer
+    "GET_CUSTOMER_ONGOING_COUNT": "api/Order/OnGoingOrdersV2",//USED IN ORDER HISTORY SCREEN for getting ongoing order of customer
     "OrderEstimateTime": "api/Order/OrderEstimateTimeV2", //Order Estimate Time
 
     "ADD_ORDER_FEEDBACK": "api/Order/Feedback/Add",//USED IN ORDER HISTORY DETAIL SCREEN for adding feedback for the order
@@ -58,12 +57,12 @@ export default {
     "CLEAR_RECENT_SEARCHES": "api/Intellisense/ClearUserSearchHistory",//USED IN SEARCH SCREEN FOR CLEAR RECENT SEARCHED BY USER
     "SEARCH": "api/Intellisense/MainSearch",//USED IN SEARCH SCREEN FOR SEARCH USER ENTER TEXT
     "VENDOR_SEARCH": "api/Intellisense/PitstopSearch",//USED IN SEARCH SCREEN FOR GETTING SEARCHED ITEM 
-    "ADD_ORDER_FEEDBACK":"api/Order/Feedback/Add",//USED IN ORDER HISTORY DETAIL SCREEN for adding feedback for the order
-    "GET_LEGAL_CERTIFICATES":"api/Menu/Legal/ListByType/1",
-    "GET_LEGAL_HTML":"api/Menu/Legal/List",
-    "GET_FAQs":"api/Menu/FAQ/List",
-    "GET_TRANSACTIONLIST":"api/Payment/Wallet/Transactions/List",
-    "GET_PROMOS":"api/Menu/Promotion/List",
+    "ADD_ORDER_FEEDBACK": "api/Order/Feedback/Add",//USED IN ORDER HISTORY DETAIL SCREEN for adding feedback for the order
+    "GET_LEGAL_CERTIFICATES": "api/Menu/Legal/ListByType/1",
+    "GET_LEGAL_HTML": "api/Menu/Legal/List",
+    "GET_FAQs": "api/Menu/FAQ/List",
+    "GET_TRANSACTIONLIST": "api/Payment/Wallet/Transactions/List",
+    "GET_PROMOS": "api/Menu/Promotion/List",
     "HBL_PAY": "api/Payment/HBLPay",
     "JAZZCASH_PAY": "api/Payment/JazzCashPay",
     "EASYPAISA_PAY": "api/Payment/EasyPaisaPay",

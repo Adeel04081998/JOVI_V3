@@ -34,7 +34,7 @@ export default ({ route }) => {
     const WINDOW_HEIGHT = constants.window_dimensions.height;
     const WIDTH = constants.screen_dimensions.width;
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[2]], Appearance.getColorScheme() === "dark");
-    const orderIDParam = route?.params?.orderID ?? 41231;
+    const orderIDParam = route?.params?.orderID ?? 26746624;
     const SCALED_HEIGHT = PixelRatio.roundToNearestPixel(WINDOW_HEIGHT * (WINDOW_HEIGHT / baseHeight));
     const styles = _styles(colors, WIDTH, SCALED_HEIGHT);
     const isFocused = useIsFocused();
@@ -396,7 +396,7 @@ export default ({ route }) => {
                     {
                         isRiderFound && state.currentPitstop ?
                             <Text style={styles.currentPitstopTime}>
-                                {state.currentPitstop.isFinalDestination?`Jovi is at your door step!`: `Estimated arrival at ${state.totalActivePitstops.length === state.currentPitstop.index + 1 ? 'Final Destination' : `Pitstop ${state.currentPitstop?.index + 1}`}\n${state.currentPitstop?.pitstopEstimateTime ?? ' - '} minutes`}
+                                {state.currentPitstop.isFinalDestination ? `Jovi is at your door step!` : `Estimated arrival at ${state.totalActivePitstops.length === state.currentPitstop.index + 1 ? 'Final Destination' : `Pitstop ${state.currentPitstop?.index + 1}`}\n${state.currentPitstop?.pitstopEstimateTime ?? ' - '} minutes`}
                             </Text>
                             :
                             null

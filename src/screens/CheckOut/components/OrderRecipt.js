@@ -26,7 +26,7 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                 <View style={checkOutStyles.gstMainContainer}>
 
 
-                
+
 
                     <View style={checkOutStyles.gstPrimaryContainer}>
                         <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular'>{`Subtotal (Inc GST ${sharedCalculatedTotals().gst})`}</Text>
@@ -34,7 +34,6 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                             <Text style={checkOutStyles.gstCommonPriceTxtStyle} fontFamily='PoppinsRegular'>{sharedCalculatedTotals().subTotal}</Text>
                         </View>
                     </View>
-
                     {/* <View style={checkOutStyles.gstPrimaryContainer}>
                         <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular'>GST</Text>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
@@ -42,14 +41,12 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                         </View>
                     </View> */}
 
-
                     <View style={{ flexDirection: "row", flex: 1, borderWidth: 0, marginTop: 7, }}>
                         <Text style={[checkOutStyles.gstCommonLabelTxtStyle, { textAlignVertical: 'center', }]} fontFamily='PoppinsRegular'>Total Discount</Text>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1, }}>
                             {<Text style={[checkOutStyles.gstCommonPriceTxtStyle, { textAlignVertical: 'center', }]} fontFamily='PoppinsRegular'>{`${renderPrice({ showZero: true, price: sharedCalculatedTotals().discount }, 'Rs -')}`}</Text>}
                         </View>
                     </View>
-
                 </View>
                 <View style={{ marginHorizontal: 1 }}>
                     <DashedLine dashLineStyles={{ color: "#707070" }} />

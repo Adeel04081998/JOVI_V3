@@ -48,7 +48,7 @@ const NUMBER_OF_COLUMN = 2;
 
 export default ({ navigation, route }) => {
 
-    const orderID = route?.params?.orderID ?? 80914393;//67649554;
+    const orderID = route?.params?.orderID ?? 26746624;//67649554;
 
     // #region :: REDUCER START's FROM HERE 
     const messagesReducer = useSelector(s => s?.messagesReducer);
@@ -68,7 +68,7 @@ export default ({ navigation, route }) => {
     const styles = { ...stylesFunc(colors), };
     const sliderStyles = sliderStylesFunc(colors);
     const customheaderStyles = { ...CustomHeaderStyles(colors.primary), ...headerStyles(colors) };
-    const checkOutStyles = CheckoutStyles.styles(colors);
+     const checkOutStyles = CheckoutStyles.styles(colors);
     const cartReducer = useSelector(store => store.cartReducer);
 
     // #endregion :: STYLES & THEME END's FROM HERE     
@@ -443,10 +443,10 @@ export default ({ navigation, route }) => {
                         data={receiptData?.pitStopsList ?? []}
                         subTotal={receiptData?.orderReceiptVM?.subTotal ?? ''}
                         totalGST={receiptData?.orderReceiptVM?.chargeBreakdown?.totalProductGST ?? ''}
-                        serviceCharges={receiptData?.orderReceiptVM?.chargeBreakdown?.totalEstimateCharge ?? 0}
-                        estimateServiceTax={receiptData?.orderReceiptVM?.chargeBreakdown?.estimateServiceTax ?? 0}
-                        discount={receiptData?.orderReceiptVM?.chargeBreakdown?.discount ?? ''}
-                        total={receiptData?.orderReceiptVM?.estTotalPlusPitstopAmount ?? ''}
+                        serviceCharges={receiptData?.orderReceiptVM?.actualServiceCharges ?? 0}
+                        estimateServiceTax={receiptData?.orderReceiptVM?.actualServiceTax ?? 0}
+                        discount={receiptData?.orderReceiptVM?.chargeBreakdown?.discount ?? 0}
+                        total={receiptData?.orderReceiptVM?.actualTotalPlusPitstopAmount ?? 0}
                         onRightTextPress={() => {
                             setReceiptVisible(false);
                         }}
