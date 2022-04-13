@@ -4,7 +4,7 @@ import { Alert, AppState, Platform, StatusBar } from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
 import DeviceInfo from 'react-native-device-info';
 import Toast from '../components/atoms/Toast';
-import { getRequest, postRequest } from '../manager/ApiManager';
+import { getRequest, multipartPostRequest, postRequest } from '../manager/ApiManager';
 import configs from '../utils/configs';
 import Endpoints from '../manager/Endpoints';
 import NavigationService from '../navigations/NavigationService';
@@ -13,7 +13,7 @@ import { default as actions, default as ReduxActions } from '../redux/actions';
 import { store } from '../redux/store';
 import constants from '../res/constants';
 import ENUMS from '../utils/ENUMS';
-import GV, { ORDER_STATUSES, PITSTOP_TYPES } from '../utils/GV';
+import GV, { isIOS, ORDER_STATUSES, PITSTOP_TYPES } from '../utils/GV';
 import Regex from '../utils/Regex';
 import firestore from '@react-native-firebase/firestore'
 import dayjs from 'dayjs';
@@ -404,7 +404,7 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
             if (openOrdersList.length) {
                 joviPrevOrdersPitstopsAmount += openOrdersList.map((orderInfo, index) => orderInfo?.estimatePrice ?? 0).reduce((a, b) => a + b);
             }
-        } else if(!_pitstop.isPickupPitstop) {
+        } else if (!_pitstop.isPickupPitstop) {
             let _pitTotal = 0;
             let individualPitstopGst = 0;
             vendorMaxEstTime = sharedCalculateMaxTime(_pitstop.pitstopType === PITSTOP_TYPES.RESTAURANT ? _pitstop.checkOutItemsListVM : [], "estimatePrepTime");
@@ -497,18 +497,32 @@ export const sharedAddUpdatePitstop = (
         if (pitstopIndex !== null) {
             console.log('[INDEX] EXIST');
             console.log('[UPDATE Pharmacy PITSTOP]');
+            if (pitstopDetails.isPickupPitstop) {
+                pitstops[pitstopIndex] = { ...pitstopDetails.pickUpPitstop, parentPitstop: { ...pitstopDetails }, }; // TO RETAIN OLD PROPERTIES AS IT IS WITH UPDATED VAUES YOU NEED TO PASS SPREADED (...) OLD ITEM'S FULL DATA WITH UPDATED FIELDS
+                const indexOfLinkedPitstop = pitstops.findIndex(item => item.pitstopID === pitstopDetails.pickUpPitstop.linkedPitstopId);
+                if (indexOfLinkedPitstop !== -1) {
+                    pitstops[indexOfLinkedPitstop] = { ...pitstops[indexOfLinkedPitstop], ...pitstopDetails, pitstopIndex: pitstopIndex, }; // TO RETAIN OLD PROPERTIES AS IT IS WITH UPDATED VAUES YOU NEED TO PASS SPREADED (...) OLD ITEM'S FULL DATA WITH UPDATED FIELDS
+                }
+            } else {
+                pitstops[pitstopIndex] = { ...pitstops[pitstopIndex], ...pitstopDetails, pitstopIndex: pitstopIndex, }; // TO RETAIN OLD PROPERTIES AS IT IS WITH UPDATED VAUES YOU NEED TO PASS SPREADED (...) OLD ITEM'S FULL DATA WITH UPDATED FIELDS
+                const indexOfLinkedPitstop = pitstops.findIndex(item => item.pitstopID === pitstopDetails.linkedPitstopId);
+                console.log('indexOfLinkedPitstop',indexOfLinkedPitstop,{ ...pitstopDetails.pickUpPitstop, parentPitstop: { ...pitstopDetails }, });
+                if (indexOfLinkedPitstop !== -1) {
+                    pitstops[indexOfLinkedPitstop] = { ...pitstops[indexOfLinkedPitstop], ...pitstopDetails.pickUpPitstop, parentPitstop: { ...pitstopDetails }, }; // TO RETAIN OLD PROPERTIES AS IT IS WITH UPDATED VAUES YOU NEED TO PASS SPREADED (...) OLD ITEM'S FULL DATA WITH UPDATED FIELDS
+                }
+            }
             pitstops[pitstopIndex] = { ...pitstopDetails, isPharmacy: true, isJoviJob: false, }; // TO RETAIN OLD PROPERTIES AS IT IS WITH UPDATED VAUES YOU NEED TO PASS SPREADED (...) OLD ITEM'S FULL DATA WITH UPDATED FIELDS
             // pitstops[pitstopIndex] = { ...pitstops[index], ...pitstopDetails }; // ...pitstops[index] IF YOU DON'T HAVE ITEM'S PREVIOUS DATA (VERY RARE CASE)
         } else {
             // ADD NEW PITSTOP
             console.log('[NEW CREATE]');
             const pharmacyId = sharedUniqueIdGenerator();
+            const pickupPitstopId = sharedUniqueIdGenerator();
             if (pitstopDetails.pickUpPitstop) {
-                pitstops.push({ ...pitstopDetails.pickUpPitstop, parentPitstop: { ...pitstopDetails }, pitstopType:3,pitstopName: "Pharmacy - Pickup", parentPharmacyPitstop: pharmacyId, pitstopID: sharedUniqueIdGenerator(), isPharmacy: true, isPickupPitstop: true, isJoviJob: false, isRestaurant: false });
-
+                pitstops.push({ ...pitstopDetails.pickUpPitstop, parentPitstop: { ...pitstopDetails }, pitstopType: 3, pitstopName: ENUMS.PharmacyPitstopTypeServer['1'].text, linkedPitstopId: pharmacyId, pitstopID: pickupPitstopId, isPharmacy: true, isPickupPitstop: true, isJoviJob: false, isRestaurant: false });
             }
-            pitstops.push({ ...pitstopDetails, pitstopID: pharmacyId, isPharmacy: true, isJoviJob: false, isRestaurant: false });
-            console.log('[NEW CREATE]',pitstops,pitstopDetails);
+            pitstops.push({ ...pitstopDetails, linkedPitstopId: pickupPitstopId, pitstopID: pharmacyId, isPharmacy: true, isJoviJob: false, isRestaurant: false });
+            console.log('[NEW CREATE]', pitstops, pitstopDetails);
         }
     } else if (pitstopDetails.pitstopType === PITSTOP_TYPES.JOVI) {
         console.log('[JOVI PITSTOP]');
@@ -1003,7 +1017,7 @@ export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder 
     if (jobNotify) {
         console.log(`[jobNotify]`, jobNotify)
         const { data, notifyClientID } = jobNotify;
-        if(orderID && parseInt(orderID) !== parseInt(data.OrderID)){return;}
+        if (orderID && parseInt(orderID) !== parseInt(data.OrderID)) { return; }
         // const results = sharedCheckNotificationExpiry(data.ExpiryDate);
         // if (results.isSameOrBefore) {
         if (data.NotificationType == notificationTypes[1] || data.NotificationType == notificationTypes[0]) {
@@ -1166,3 +1180,28 @@ export const splitArray = (array, n) => {
 export const randomDate = (start = new Date(2019, 2, 1), end = new Date()) => {
     return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 };
+export const sharedSendFileToServer = (list = [], onSuccess = () => { }, type = 4, extension = 1,) => {
+    const userReducer = store.getState().userReducer;
+    let formData = new FormData();
+    let index = 0;
+    for (const item of list) {
+        formData.append(`JoviImageList[${index}].JoviImage`, {
+            uri: !isIOS ? item.uri : item.uri.replace("file://", ""),
+            name: item.uri.split('/').pop(),
+            type: item.type,
+        });
+        formData.append(`JoviImageList[${index}].JoviImageID`, 0);
+        formData.append(`JoviImageList[${index}].FileType`, type);
+        formData.append(`JoviImageList[${index}].FileExtensionType`, extension);
+        index += 1;
+    }
+    multipartPostRequest(Endpoints.ADD_PITSTOPIMAGE, formData, (res) => {
+        console.log('[sendFileToServer]res', res);
+        const statusCode = (res?.statusCode ?? 400);
+        if (statusCode === 200) {
+            onSuccess(res);
+        }
+    }, (err) => {
+        sharedExceptionHandler(err);
+    }, false, { Authorization: `Bearer ${userReducer?.token?.authToken}` });
+}

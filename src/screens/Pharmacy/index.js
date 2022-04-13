@@ -5,13 +5,14 @@ import Image from '../../components/atoms/Image';
 import SafeAreaView from '../../components/atoms/SafeAreaView';
 import Text from '../../components/atoms/Text';
 import TextInput from '../../components/atoms/TextInput';
+import Toast from '../../components/atoms/Toast';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import Button from '../../components/molecules/Button';
 import { CustomHeaderIconBorder, CustomHeaderStyles } from '../../components/molecules/CustomHeader';
 import Recording from '../../components/organisms/Recording';
 import { sharedLaunchCameraorGallery } from '../../helpers/Camera';
-import { sharedAddUpdatePitstop, sharedConfirmationAlert, uniqueKeyExtractor } from '../../helpers/SharedActions';
+import { renderFile, sharedAddUpdatePitstop, sharedConfirmationAlert, sharedSendFileToServer, uniqueKeyExtractor } from '../../helpers/SharedActions';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
@@ -38,11 +39,24 @@ export default ({ route }) => {
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[PITSTOP_TYPES.PHARMACY]], Appearance.getColorScheme() === "dark");
     const customheaderStyles = { ...CustomHeaderStyles(colors.primary) };
     const userReducer = useSelector(state => state.userReducer);
+    const cartReducer = useSelector((store) => {
+        return store.cartReducer;
+    });
+    let doesPickupPitstopExists = null;
+    if (doesPickupPitstopExists === null) {
+        (cartReducer?.pitstops ?? []).map((item, i) => {
+            if (item.isPickupPitstop) {
+                doesPickupPitstopExists = true;
+            }
+        });
+    }
     const _styles = styles(colors, BORDER_RADIUS, SPACING);
     const [headerHeight, setHeaderHeight] = React.useState(WINDOW_HEIGHT * 0.4);
     const [estimateTimeCollapsed, setEstimateTimeCollapsed] = React.useState(true);
-    const initState = __DEV__ ? {
-        "pharmacyPitstopType": 1,
+    const pitstopItemObj = route?.params?.pitstopItemObj ?? null;
+    console.log('pitstopItemObj',pitstopItemObj,route?.params);
+    let initState = !__DEV__ ? {
+        "pharmacyPitstopType": doesPickupPitstopExists ? ENUMS.PharmacyPitstopType[0].value : ENUMS.PharmacyPitstopType[1].value,
         "medicineName": "Ggg",
         "detail": "Tyy",
         "images": null,
@@ -56,19 +70,16 @@ export default ({ route }) => {
         },
         "estimatePrice": 2500,
         "pickUpPitstop": {
-            "instructions": "Gggh",
-            "latitude": 33.66858767025255,
-            "longitude": 73.07493606582284,
-            "title": "Vapes Direct",
-            "latitudeDelta": 0.01,
-            "longitudeDelta": 0.01,
-            "city": "Islamabad"
+            instructions: '',
+            latitude: null,
+            longitude: null,
+            title: null
         },
         "latitudeDelta": 0.01,
         "longitudeDelta": 0.01,
         "city": "Islamabad"
     } : {
-        pharmacyPitstopType: ENUMS.PharmacyPitstopType[0].value,
+        pharmacyPitstopType: doesPickupPitstopExists ? ENUMS.PharmacyPitstopType[0].value : ENUMS.PharmacyPitstopType[1].value,
         medicineName: '',
         detail: '',
         images: null,
@@ -88,12 +99,25 @@ export default ({ route }) => {
             title: null
         },
     };
+    if (pitstopItemObj) {
+        initState = {
+            ...initState,
+            ...pitstopItemObj,
+            detail: pitstopItemObj.description,
+            images: pitstopItemObj.imageData,
+            voiceRecording: pitstopItemObj.voiceNote,
+            pickUpPitstop: {
+                ...initState.pickUpPitstop,
+                ...pitstopItemObj.pickUpPitstop,
+                instructions: pitstopItemObj?.pickUpPitstop?.description ?? ''
+            },
+        }
+        recordingItem = pitstopItemObj.voiceNote;
+    }
+    console.log('doesPickupPitstopExists',pitstopItemObj);
     const [state, setState] = React.useState(initState);
     const [loader, setLoader] = React.useState(false);
-    const [isAttachment, setIsAttachment] = React.useState(false);
-    const cartReducer = useSelector((store) => {
-        return store.cartReducer;
-    });
+    const [isAttachment, setIsAttachment] = React.useState(pitstopItemObj?.isAttachment ?? true);
     const remainingAmount = cartReducer.joviRemainingAmount;
     const animScroll = React.useRef(new Animated.Value(0)).current;
     const headerTop = animScroll.interpolate({
@@ -153,6 +177,7 @@ export default ({ route }) => {
             }
         } else {
             slicedImages = picData.assets.slice(0, 3).map(_p => ({
+                ..._p,
                 id: Math.floor(Math.random() * 100000),
                 fileName: _p.uri.split('/').pop(),
                 path: _p.uri,
@@ -161,9 +186,19 @@ export default ({ route }) => {
         }
         imageRef.current = slicedImages;
         setState(pre => ({ ...pre, images: slicedImages }));
+        sharedSendFileToServer(slicedImages ?? [], (res) => {
+            const images = slicedImages.map((item, i) => ({ ...item, isUploading: false, ...res.joviImageReturnViewModelList[i] }));
+            imageRef.current = images;
+            setState(pre => ({ ...pre, images: images }));
+        });
 
     };
+
     const toggleAttachment = (isAttachmentBool = false) => {
+        if (isAttachmentBool === false && doesPickupPitstopExists) {
+            Toast.info('Pickup PitStop already exists')
+            return;
+        }
         if (isAttachmentBool && state.pickUpPitstop.latitude) {
             sharedConfirmationAlert('Selected Pickup Location', 'Your selected pickup location will be lost if you choose this option. Are you sure?', [{
                 text: 'Yes',
@@ -246,7 +281,10 @@ export default ({ route }) => {
     }
     const onSave = () => {
         setLoader(true)
+        const index = route?.params?.pitstopItemObj?.pitstopIndex ?? null;
         let pitstopData = {
+            ...state,
+            isAttachment,
             pitstopIndex: route?.params?.pitstopItemObj?.pitstopIndex ?? null, // on update will get from params, 
             title: state.title,
             description: state.detail,
@@ -262,12 +300,17 @@ export default ({ route }) => {
             buyForMe: true,
             pickUpPitstop: state.pickUpPitstop.latitude ? {
                 ...state.pickUpPitstop,
-                description:state.pickUpPitstop.instructions,
+                description: state.pickUpPitstop.instructions,
             } : null,
         }
         sharedAddUpdatePitstop(pitstopData, false, [], false, false, clearData);
-        setLoader(false)
         recordingItem = null
+        if (index !== null) {
+            NavigationService.NavigationActions.common_actions.goBack();
+        } else {
+            NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.Cart.screen_name, {});
+        }
+        setLoader(false)
     }
     const renderRecorder = () => {
         return <Recording
@@ -280,9 +323,12 @@ export default ({ route }) => {
                 setState(pre => ({ ...pre, voiceRecording: null }));
             }}
             onRecordingComplete={(recordItem) => {
+                console.log('Record', recordItem);
                 recordingItem = recordItem;
                 voiceNoteRef.current = recordItem
-                setState(pre => ({ ...pre, voiceRecording: recordingItem }));
+                sharedSendFileToServer([recordItem], (data) => {
+                    setState(pre => ({ ...pre, voiceRecording: data.joviImageReturnViewModelList[0] }));
+                }, 21, 2);
             }}
             onPlayerStopComplete={() => {
             }}
@@ -386,11 +432,13 @@ export default ({ route }) => {
                                     [{
                                         text: 'Attach File',
                                         selected: isAttachment,
+                                        disabled: false,
                                         value: true,
                                     }, {
                                         text: 'Pick Up',
                                         selected: !isAttachment,
                                         value: false,
+                                        disabled: doesPickupPitstopExists,
                                     }].map((item, i) => {
                                         return <TouchableOpacity key={i} onPress={() => toggleAttachment(item.value)} style={{ backgroundColor: item.selected ? colors.black : colors.white, ..._styles.prescriptionButton }}>
                                             <Text style={{ fontSize: 14, color: item.selected ? colors.white : colors.black }} fontFamily={'PoppinsLight'}>{item.text}</Text>
@@ -417,7 +465,14 @@ export default ({ route }) => {
                                                         imageRef.current = tempArr;
                                                         setState(pre => ({ ...pre, images: tempArr }));
                                                     }} />
-                                                    <Image source={{ uri: item.path }} style={{ height: 30, width: 30, resizeMode: "cover", borderRadius: 6 }} />
+                                                    {
+                                                        item.isUploading ?
+                                                            <View style={{ height: 30, width: 30, borderRadius: 6 }}>
+                                                                <Text>...</Text>
+                                                            </View>
+                                                            :
+                                                            <Image source={{ uri: renderFile(item.joviImage) }} style={{ height: 30, width: 30, resizeMode: "cover", borderRadius: 6 }} />
+                                                    }
                                                 </View>
                                             )
                                         })}

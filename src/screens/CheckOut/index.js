@@ -97,17 +97,32 @@ export default () => {
                     if ((item.isJoviJob || item.isPharmacy) && !item.isDestinationPitstop) {
                         let minEstimateTime = item.estTime?.text?.split(' ')[0]?.split('-')[0] ?? '';
                         let maxEstimateTime = item.estTime?.text?.split(' ')[0]?.split('-')[1] ?? '';
+                        let prescriptionImagesID = null;
+                        let fileIDList = null;
                         if (item.estTime?.text?.includes('hour')) {
                             minEstimateTime = '01:00';
                             maxEstimateTime = '01:00';//as instructed by tabish, he was saying that in 1hour+ case, send same value for min max
                         } else {
-                            minEstimateTime = minEstimateTime.length === 1 ? '00:0' + minEstimateTime : '00:' + (minEstimateTime??'00');
-                            maxEstimateTime = maxEstimateTime.length === 1 ? '00:0' + maxEstimateTime : '00:' + (maxEstimateTime??'00');
+                            minEstimateTime = minEstimateTime.length === 1 ? '00:0' + minEstimateTime : '00:' + (minEstimateTime ?? '00');
+                            maxEstimateTime = maxEstimateTime.length === 1 ? '00:0' + maxEstimateTime : '00:' + (maxEstimateTime ?? '00');
                             maxEstimateTime = maxEstimateTime.replace('60', '59');
                         }
-                        if(item.isPickupPitstop){
+                        if (item.isPickupPitstop) {
                             minEstimateTime = '00:15';
                             maxEstimateTime = '00:30';
+                        }
+                        if (item.isPharmacy) {
+                            prescriptionImagesID = (item.imageData ?? []).map((item, index) => {
+                                return item.joviImageID
+                            });
+                            fileIDList = item.voiceNote ? [item.voiceNote.joviImageID] : null;
+                        } else {
+                            fileIDList = (item.imageData ?? []).map((item, index) => {
+                                return item.joviImageID
+                            });
+                            if(item.voiceNote){
+                                fileIDList = [...fileIDList??[],item.voiceNote.joviImageID]
+                            }
                         }
                         return {
                             "pitstopID": null,
@@ -132,7 +147,9 @@ export default () => {
                             "PharmacyPitstopType": item.isPharmacy ? (item.isPickupPitstop ? 1 : 2) : null,
                             "pitstopType": 2,
                             "isDestinationPitstop": false,
-                            "dateTime": new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+                            "dateTime": new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+                            "prescriptionImagesID": prescriptionImagesID,
+                            "fileIDList": fileIDList,
                         }
                     }
                     return {

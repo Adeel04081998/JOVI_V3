@@ -23,7 +23,7 @@ import { askForAudioRecordPermission, sharedLaunchCameraorGallery } from '../../
 import { hybridLocationPermission } from '../../helpers/Location';
 import { multipartPostRequest, postRequest } from '../../manager/ApiManager';
 import Image from '../../components/atoms/Image';
-import { confirmServiceAvailabilityForLocation, sharedAddUpdatePitstop, sharedConfirmationAlert, sharedExceptionHandler, uniqueKeyExtractor } from '../../helpers/SharedActions';
+import { confirmServiceAvailabilityForLocation, renderFile, sharedAddUpdatePitstop, sharedConfirmationAlert, sharedExceptionHandler, sharedSendFileToServer, uniqueKeyExtractor } from '../../helpers/SharedActions';
 import Regex from '../../utils/Regex';
 import { useDispatch, useSelector } from 'react-redux';
 import FontFamily from '../../res/FontFamily';
@@ -399,6 +399,7 @@ export default ({ navigation, route }) => {
             }
         } else {
             slicedImages = picData.assets.slice(0, 3).map(_p => ({
+                ..._p,
                 id: Math.floor(Math.random() * 100000),
                 fileName: _p.uri.split('/').pop(),
                 path: _p.uri,
@@ -408,7 +409,11 @@ export default ({ navigation, route }) => {
         toggleCardData(PITSTOP_CARD_TYPES["estimated-time"], colors.primary, slicedImages, 1);
         imageRef.current = slicedImages
         updateImagesData(slicedImages);
-
+        sharedSendFileToServer(slicedImages, (res) => {
+            const images = slicedImages.map((item, i) => ({ ...item, isUploading: false, ...res.joviImageReturnViewModelList[i] }));
+            imageRef.current = images;
+            updateImagesData(images);
+        });
     };
 
 
@@ -647,7 +652,15 @@ export default ({ navigation, route }) => {
                                             toggleCardData(PITSTOP_CARD_TYPES["estimated-time"], colors.primary, tempArr, 1)
                                             updateImagesData(tempArr)
                                         }} />
-                                        <Image source={{ uri: item.path }} style={{ height: 30, width: 30, resizeMode: "cover", borderRadius: 6 }} />
+                                        {
+                                            item.isUploading ?
+                                                <View style={{ height: 30, width: 30, borderRadius: 6 }}>
+                                                    <Text>...</Text>
+                                                </View>
+                                                :
+                                                <Image source={{ uri: renderFile(item.joviImage) }} style={{ height: 30, width: 30, resizeMode: "cover", borderRadius: 6 }} />
+                                        }
+                                        {/* <Image source={{ uri: item.path }} style={{ height: 30, width: 30, resizeMode: "cover", borderRadius: 6 }} /> */}
                                     </View>
                                 )
                             })}
@@ -674,8 +687,11 @@ export default ({ navigation, route }) => {
                             updateCardOnHeaderPress(updateCardOnHeaderPressItem);
                             closeSecondCard = false;
                         }
-                        setVoiceNote(recordingItem)
+                        // setVoiceNote(recordingItem)
                         toggleCardData(PITSTOP_CARD_TYPES["estimated-time"], colors.primary, recordItem, 2)
+                        sharedSendFileToServer([recordItem], (data) => {
+                            setVoiceNote(data.joviImageReturnViewModelList[0])
+                        }, 21, 2);
                     }}
                     onPlayerStopComplete={() => {
                         if (closeSecondCard) {
