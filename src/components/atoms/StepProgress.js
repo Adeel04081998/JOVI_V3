@@ -31,10 +31,32 @@ export default ({ maxHighlight = 0, DATA = DEFAULT_DATA, hideText = false, conta
             else return 2;
         }
     }
+    const leftDecrement = {
+        1 : 0.25,
+        2 : 1,
+        3 : 0.75,
+    }
+    const rightDecrement = {
+        1 : 0,
+        2 : 1,
+        3 : 0,
+    }
+    const primaryPercentage = ((maxHighlight - leftDecrement[maxHighlight]) / (DATA.length - rightDecrement[maxHighlight])) * 100;
     return (
         <>
-            <View style={{ flexDirection: "row", alignItems: "center", }}>
+            <View style={{ flexDirection: "row", justifyContent: 'space-evenly', width: '100%', alignItems: "center", }}>
+                <View style={{ position: 'absolute', left: 0, width: "100%", flexDirection: 'row', height: 4, }}>
+                    <View style={{ width: `${primaryPercentage}%`, height: 4, backgroundColor: colors.primary }}></View>
+                    <View style={{ width: `${100 - primaryPercentage}%`, height: 4, backgroundColor: colors.grey }}></View>
+                </View>
                 {
+                    DATA.map((p, i) => (
+                        <React.Fragment key={`progress-key-${i}`}>
+                            <View style={[styles.circle, { borderColor: highlight(i) }, selectedCircleStyle]} />
+                        </React.Fragment>
+                    ))
+                }
+                {/* {
                     DATA.map((p, i) => (
                         <React.Fragment key={`progress-key-${i}`}>
                             {invert ?
@@ -52,17 +74,17 @@ export default ({ maxHighlight = 0, DATA = DEFAULT_DATA, hideText = false, conta
                             }
                         </React.Fragment>
                     ))
-                }
-                <View style={[{ backgroundColor: colors.grey, paddingVertical: 2 }, containerStyle]} />
+                } */}
+                {/* <View style={[{ backgroundColor: colors.grey, paddingVertical: 2 }, containerStyle]} /> */}
 
             </View>
             {!hideText &&
-                <View style={{ flexDirection: "row", alignItems: "center", paddingVertical: 1 }}>
+                <View style={{ flexDirection: "row", justifyContent: 'space-evenly', width: '100%', alignItems: "center", paddingVertical: 1 }}>
                     {
                         DATA.map((p, i) => (
                             <React.Fragment key={`progress-key-${i}`} >
-                                <View style={{ width: (width + (CIRCLE_HEIGHT * 2)) / 7 }} />
-                                <Text style={{ color: highlight(i), fontSize: 12, paddingLeft: _paddingLeft(i) }} fontFamily="PoppinsRegular">{StrEnum[i]}</Text>
+                                {/* <View style={{ width: (width + (CIRCLE_HEIGHT * 2)) / 7 }} /> */}
+                                <Text style={{ color: highlight(i), fontSize: 12 }} fontFamily="PoppinsRegular">{StrEnum[i]}</Text>
                             </React.Fragment>
                         ))
                     }
