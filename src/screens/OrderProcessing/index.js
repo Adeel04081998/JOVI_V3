@@ -378,7 +378,7 @@ const PaidWithUI = ({ title = 'Cash on delivery', price = '' }) => {
                 color: "#272727",
                 fontSize: 14,
                 paddingHorizontal: constants.spacing_horizontal,
-            }}>{`Paid with`}</Text>
+            }}>{`Payment Method`}</Text>
 
             <View style={{
                 flexDirection: "row",

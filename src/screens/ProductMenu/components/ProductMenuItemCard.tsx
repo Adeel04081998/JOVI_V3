@@ -36,7 +36,7 @@ interface ProductMenuItemCardItem {
 interface Props {
     index: number;
     itemImageSize: number;
-    itemQuantitySize?:number;
+    itemQuantitySize?: number;
     screenName: number; // 1 for SupermarketMenu 2 for  Shelves
     colors: typeof initColors;
     item: ProductMenuItemCardItem,
@@ -57,7 +57,7 @@ const defaultProps = {
     disabled: false,
     seeAll: false,
     additionalCount: 1,
-    itemQuantitySize:20,
+    itemQuantitySize: 20,
     screenName: 1 // 1 for SupermarketMenu 2 for  Shelves
 
 };
@@ -66,8 +66,8 @@ const defaultProps = {
 
 const ProductMenuItemCard = (props: Props) => {
     const ITEM_IMAGE_SIZE = props.itemImageSize;
-    const ITEM_QUANTITY_SIZE=props?.itemQuantitySize ?? props.itemImageSize;
-    
+    const ITEM_QUANTITY_SIZE = props?.itemQuantitySize ?? props.itemImageSize;
+
     const screenName = props.screenName
     const itemStyles = itemStylesFunc(props.colors, ITEM_IMAGE_SIZE);
 
@@ -102,14 +102,14 @@ const ProductMenuItemCard = (props: Props) => {
                                     color: "#272727",
                                     fontSize: 12,
                                     textAlign: "center",
-                                }}>{`Additional products`}</Text>
+                                }}>{`Additional Products`}</Text>
                             </View>
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", paddingTop: 18, }}>
                                 <Text fontFamily='PoppinsBold' style={{
                                     color: props.colors.primary,
                                     fontSize: 14,
                                     textAlign: "center",
-                                }}>{`See all`}</Text>
+                                }}>{`See All`}</Text>
                                 <VectorIcon name='chevron-right-circle' type='MaterialCommunityIcons' color={props.colors.primary} style={{ marginLeft: 6, marginTop: -4, }} />
                             </View>
                         </>
@@ -189,7 +189,7 @@ const ProductMenuItemCard = (props: Props) => {
                                 {parseInt(`${props.item.discountType}`) === parseInt(`${ENUMS.PROMO_VALUE_TYPE.Percentage.value}`) && (
                                     <>
                                         {/* <SvgXml xml={svgs.discount(props.colors.primary)} height={15} width={15} style={itemStyles.discountTypeIcon} /> */}
-                                      <View style={itemStyles.discountTypeIcon} />
+                                        <View style={itemStyles.discountTypeIcon} />
                                         <Text style={itemStyles.discountTypeText} numberOfLines={1}>{`${renderPrice(props.item.discountAmount, '-', '%', /[^\d.]/g)}`}</Text>
                                     </>
                                 )

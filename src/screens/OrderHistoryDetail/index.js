@@ -640,7 +640,7 @@ export default ({ navigation, route }) => {
 
                     <View style={{ paddingHorizontal: constants.spacing_horizontal * 2, marginVertical: constants.spacing_vertical * 1.5, }}>
                         <Text fontFamily='PoppinsSemiBold' style={{ fontSize: 18, color: "#272727", textAlign: "center" }}>{`Feedback`}</Text>
-                        <Text style={{ fontSize: 14, color: "#272727", paddingTop: 30, paddingBottom: 10, }}>{`Enter your feedback`}</Text>
+                        <Text style={{ fontSize: 14, color: "#272727", paddingTop: 30, paddingBottom: 10, }}>{`Give your feedback`}</Text>
                         <RNTextInput
                             style={{
                                 borderColor: "#272727",

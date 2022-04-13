@@ -299,7 +299,7 @@ export default ({ route }) => {
     const renderSubHeading = (text = '', extraStyles = {}) => (<Text style={{ fontSize: 14, color: colors.black, ...extraStyles }} fontFamily={'PoppinsMedium'}>{text}</Text>);
     const renderLocationButton = (onPress = () => onLocationPress()) => (<Button
         onPress={onPress}
-        text="Select location from map"
+        text="Select Location From Map"
         textStyle={_styles.btnText}
         fontFamily="PoppinsRegular"
         leftComponent={() => {

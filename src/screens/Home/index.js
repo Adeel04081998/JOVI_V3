@@ -112,6 +112,7 @@ export default () => {
             dispatch(ReduxActions.hideRobotAction());
         }
     }, [isFocused]);
+
     const renderLoader = () => {
         return <View style={homeStyles.gifLoader}>
             <LottieView
