@@ -114,7 +114,7 @@ export default ({ route }) => {
                     if (!currentPitstop && item.joviJobStatus !== 2 && item.joviJobStatus !== 7) {
                         currentPitstop = { ...item, index: i, isFinalDestination: i === (totalActivePitstops.length - 1), };
                     }
-                    circularPitstops.push({...focusedPitstop,icon:VALIDATION_CHECK(item.pharmacyPitstopType===0?null:item.pharmacyPitstopType)?ENUMS.PharmacyPitstopTypeServer[item.pharmacyPitstopType].icon:focusedPitstop.icon});
+                    circularPitstops.push({ ...focusedPitstop, icon: VALIDATION_CHECK(item.pharmacyPitstopType === 0 ? null : item.pharmacyPitstopType) ? ENUMS.PharmacyPitstopTypeServer[item.pharmacyPitstopType].icon : focusedPitstop.icon });
                 });
                 if (res.data.order.subStatusName === ORDER_STATUSES.RiderFound) {
                     fetchRiderLocation();
@@ -246,7 +246,7 @@ export default ({ route }) => {
     }, [isFocused]);
     React.useEffect(() => {
         const subscription = sharedForegroundCallbackHandler(fetchOrderDetails)
-        sharedNotificationHandlerForOrderScreens(fcmReducer, fetchOrderDetails, orderCancelledOrCompleted);
+        sharedNotificationHandlerForOrderScreens(fcmReducer, fetchOrderDetails, orderCancelledOrCompleted, orderIDParam);
         return () => {
             subscription.remove()
         }
@@ -395,7 +395,7 @@ export default ({ route }) => {
                     {
                         isRiderFound && state.currentPitstop ?
                             <Text style={styles.currentPitstopTime}>
-                                {state.currentPitstop.isFinalDestination?`Jovi is at your door step!`: `Estimated arrival at ${state.totalActivePitstops.length === state.currentPitstop.index + 1 ? 'Final Destination' : `Pitstop ${state.currentPitstop?.index + 1}`}\n${state.currentPitstop?.pitstopEstimateTime ?? ' - '} minutes`}
+                                {state.currentPitstop.isFinalDestination ? `Jovi is at your door step!` : `Estimated arrival at ${state.totalActivePitstops.length === state.currentPitstop.index + 1 ? 'Final Destination' : `Pitstop ${state.currentPitstop?.index + 1}`}\n${state.currentPitstop?.pitstopEstimateTime ?? ' - '} minutes`}
                             </Text>
                             :
                             null

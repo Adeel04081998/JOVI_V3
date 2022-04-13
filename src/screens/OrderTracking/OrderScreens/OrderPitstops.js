@@ -74,7 +74,7 @@ export default ({ route }) => {
         const pitstopType = isJoviJob ? 2 : pitstop.catID;
         let pitstopTypeTitle = pitstopTitles[pitstop.catID];
         let pitstopColor = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]]);
-        if(isJoviJob&&VALIDATION_CHECK(pitstop.pharmacyPitstopType===0?null:pitstop.pharmacyPitstopType)){
+        if (isJoviJob && VALIDATION_CHECK(pitstop.pharmacyPitstopType === 0 ? null : pitstop.pharmacyPitstopType)) {
             pitstopTypeTitle = ENUMS.PharmacyPitstopTypeServer[pitstop.pharmacyPitstopType].text;
             pitstopColor = theme.getTheme(GV.THEME_VALUES.PHARMACY);
         }
@@ -225,8 +225,8 @@ export default ({ route }) => {
         Linking.openURL(`tel:${number}`)
     }
     const onRiderCallPress = () => {
-        if(userReducer.anonymousHelpNumber){
-            sharedConfirmationAlert('Call Rider','Please choose one of the options',[
+        if (userReducer.anonymousHelpNumber) {
+            sharedConfirmationAlert('Call Rider', 'Please choose one of the options', [
                 {
                     text: "Call Rider",
                     onPress: () => {
@@ -240,7 +240,7 @@ export default ({ route }) => {
                     }
                 },
             ])
-        }else{
+        } else {
             openDialer(state?.riderContactNo);
         }
     }
@@ -248,7 +248,7 @@ export default ({ route }) => {
         fetchOrderDetails();
     }, []);
     React.useEffect(() => {
-        sharedNotificationHandlerForOrderScreens(fcmReducer, fetchOrderDetails, orderCancelledOrCompleted);
+        sharedNotificationHandlerForOrderScreens(fcmReducer, fetchOrderDetails, orderCancelledOrCompleted, orderIDParam);
         return () => {
         }
     }, [fcmReducer]);

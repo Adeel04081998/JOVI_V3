@@ -480,7 +480,7 @@ export default () => {
                             const indexOfPickupPitstop = newData.findIndex(item=>item.pitstopID === pickupPitstop.pitstopID);
                             const indexOfPickupParentPitstop = newData.findIndex(item=>item.pitstopID === pickupPitstop.linkedPitstopId);
                             if(indexOfPickupParentPitstop<indexOfPickupPitstop){
-                                Toast.info('Pickup pitstop cannot be before pharmacy pitstop');
+                                Toast.info('Pharmacy pitstop cannot be before pickup pitstop');
                                 return;
                             }
                         }

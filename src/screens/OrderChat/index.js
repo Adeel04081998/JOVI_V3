@@ -100,7 +100,7 @@ export default ({ navigation, route }) => {
                 //     ...msgObj
                 // }, ...messages]);
             }
-        }, orderCancelledOrCompleted);
+        }, orderCancelledOrCompleted, orderID);
         return () => {
         }
     }, [fcmReducer]);

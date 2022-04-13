@@ -146,7 +146,7 @@ export default ({ navigation, route }) => {
         }, () => { }, {}, false);
     }
     React.useEffect(() => {
-        sharedNotificationHandlerForOrderScreens(fcmReducer, fetchOrderDetails, orderCancelledOrCompleted);
+        sharedNotificationHandlerForOrderScreens(fcmReducer, fetchOrderDetails, orderCancelledOrCompleted,orderIDParam);
         return () => {
         }
     }, [fcmReducer]);
