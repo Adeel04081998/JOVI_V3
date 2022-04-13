@@ -1,6 +1,9 @@
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 import AnimatedLottieView from 'lottie-react-native';
 import * as React from 'react';
-import { Appearance, KeyboardAvoidingView, Platform, SafeAreaView, TextInput as RNTextInput } from 'react-native';
+import { Appearance, Platform, SafeAreaView, TextInput as RNTextInput } from 'react-native';
+import BackgroundTimer from 'react-native-background-timer';
 import { SvgXml } from 'react-native-svg';
 import { useSelector } from 'react-redux';
 import { GiftedChat } from '../../../libs/react-native-gifted-chat';
@@ -8,15 +11,13 @@ import RecordButton from '../../../libs/react-native-gifted-chat/RecordButton';
 import ChangeWindowManager from '../../../NativeModules/ChangeWindowManager';
 import svgs from '../../assets/svgs';
 import AudioplayerMultiple from '../../components/atoms/AudioplayerMultiple';
-import Image from '../../components/atoms/Image';
-import Text from '../../components/atoms/Text';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import TouchableScale from '../../components/atoms/TouchableScale';
 import View from '../../components/atoms/View';
 import CustomHeader, { CustomHeaderIconBorder, CustomHeaderStyles } from '../../components/molecules/CustomHeader';
 import ImageWithTextInput from '../../components/organisms/ImageWithTextInput';
 import NoRecord from '../../components/organisms/NoRecord';
-import { padToTwo, renderFile, sharedExceptionHandler, sharedFetchOrder, sharedNotificationHandlerForOrderScreens, sharedRiderRating, uuidGenerator, VALIDATION_CHECK, validURL } from '../../helpers/SharedActions';
+import { padToTwo, renderFile, sharedExceptionHandler, sharedFetchOrder, sharedNotificationHandlerForOrderScreens, sharedRiderRating, uuidGenerator, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { getRequest, multipartPostRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
@@ -27,10 +28,6 @@ import FontFamily from '../../res/FontFamily';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import { headerStyles, stylesFunc } from './styles';
-import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
-import TimerMixin from 'react-timer-mixin';
-import BackgroundTimer from 'react-native-background-timer';
 
 dayjs.extend(customParseFormat)
 
