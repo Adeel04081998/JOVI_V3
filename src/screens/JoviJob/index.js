@@ -284,6 +284,7 @@ export default ({ navigation, route }) => {
         if (route?.params?.pitstopItemObj) {
             setData();
         }
+        return () => recordingItem = null;
     }, [route])
 
 

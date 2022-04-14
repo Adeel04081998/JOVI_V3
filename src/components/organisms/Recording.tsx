@@ -57,6 +57,9 @@ const Recording = React.forwardRef((props: Props, ref) => {
 
         }
 
+        return () => {
+            recordingItem = null;
+        };
     }, [props.recordingItem])
 
     // #region :: STOPWATCH START's FROM HERE 
