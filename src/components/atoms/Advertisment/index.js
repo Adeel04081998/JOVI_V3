@@ -49,7 +49,7 @@ export default ({ adTypes = [], colors = {}, onAdPressCb = null, containerStyle 
 
                 }
             }}
-            autoPlay={false}
+            autoPlay={true}
             autoPlayInterval={3}
             style={{ borderRadius: 10, }}
             pagination={data.length > 1 ? true : false}

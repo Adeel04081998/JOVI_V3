@@ -6,7 +6,6 @@ import SafeAreaView from "../../components/atoms/SafeAreaView";
 import VectorIcon from "../../components/atoms/VectorIcon";
 import View from "../../components/atoms/View";
 import ImageCarousel from "../../components/molecules/ImageCarousel";
-import AnimatedModal from "../../components/organisms/AnimatedModal";
 import { makeArrayRepeated } from "../../helpers/SharedActions";
 import { postRequest } from "../../manager/ApiManager";
 import Endpoints from "../../manager/Endpoints";
@@ -70,7 +69,7 @@ export default () => {
                                 uriKey={"advertisementFile"}
                                 height={'100%'}
                                 width={constants.window_dimensions.width * 0.99}
-                                pagination={data.length > 1 ? true : false}
+                                pagination={false}
 
 
                             />
