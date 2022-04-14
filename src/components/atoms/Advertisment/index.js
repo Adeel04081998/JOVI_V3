@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import { sharedAddUpdateFirestoreRecord, sharedExceptionHandler, sharedOnVendorPress } from '../../../helpers/SharedActions';
 import { postRequest } from '../../../manager/ApiManager';
 import Endpoints from '../../../manager/Endpoints';
-import theme from '../../../res/theme';
 import ImageCarousel from '../../molecules/ImageCarousel';
 
-export default ({ adTypes = [], colors = {}, onAdPressCb = null, containerStyle = {}, propsData = [], uriKey = "advertisementFile", height, width, paginationContainerStyle = {}, paginationDotStyle = {}, onVendorMove= null }) => {
+export default ({ adTypes = [], colors = {}, onAdPressCb = null, containerStyle = {}, propsData = [], uriKey = "advertisementFile", height, width, paginationContainerStyle = {}, paginationDotStyle = {}, onVendorMove= ()=>{} }) => {
     const [data, setData] = useState(propsData)
     const [isFirestoreHit, setisFirestoreHit] = useState(true)
     const onPressHandler = (item, index) => {
@@ -14,7 +13,6 @@ export default ({ adTypes = [], colors = {}, onAdPressCb = null, containerStyle 
 
     }
     const getAdvertisements = () => {
-        console.log("hello");
         postRequest(Endpoints.GET_ADVERTISEMENTS, {
             "adTypes": adTypes
         }, res => {
@@ -37,13 +35,9 @@ export default ({ adTypes = [], colors = {}, onAdPressCb = null, containerStyle 
             containerStyle={[{ borderRadius: 12, marginHorizontal:0 ,marginLeft:6, marginRight:7 }]}
             height={height}
             width={width}
-            paginationContainerStyle={paginationContainerStyle}
             paginationDotStyle={[{ borderColor: colors.primary, backgroundColor: colors.primary}, paginationDotStyle,]}
-
             onPress={onPressHandler}
             onActiveIndexChanged={(item, index) => {
-                console.log("here", item);
-
                 if (isFirestoreHit) return
                 sharedAddUpdateFirestoreRecord(item)
             }}
@@ -58,6 +52,9 @@ export default ({ adTypes = [], colors = {}, onAdPressCb = null, containerStyle 
             autoPlay={false}
             autoPlayInterval={3}
             style={{ borderRadius: 10, }}
+            pagination={data.length > 1 ? true : false}
+
+        
 
 
 
