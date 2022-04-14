@@ -1296,7 +1296,6 @@ export const sharedSendFileToServer = (list = [], onSuccess = () => { }, type = 
 export const sharedGetPendingOrderRating = () => {
     // NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.RateRider.screen_name, { orderID: 86208765, });
     // return
-    console.log('HI, PENDING RATING CALLED');
     getRequest(Endpoints.GET_PENDING_ORDER_RATING,
         res => {
             const statusCode = res?.data?.statusCode ?? 404;
