@@ -153,7 +153,7 @@ export default () => {
 
                     >
                         <Greetings messagesReducer={messagesReducer} homeStyles={homeStyles} userReducer={userReducer} colors={colors} />
-                        {
+                        {/* {
                             userReducer.openOrders && userReducer.openOrders.length > 0 &&
                             <>
                                 <Text style={{ margin: 5, left: 5, fontWeight: "600", color: colors.primary, fontSize: 16 }}>Orders:</Text>
@@ -168,7 +168,7 @@ export default () => {
                                     }
                                 </ScrollView>
                             </>
-                        }
+                        } */}
                         <ImageCarousel
                             // aspectRatio={16 / 7}
                             data={promotionsReducer?.dashboardContentListViewModel?.dashboardPromoListVM ??
@@ -214,10 +214,10 @@ export default () => {
 };
 const RenderGenericList = React.memo(({ isFinalDestinationSelected, vendorDashboardCategoryIDReducer }) => {
     React.useEffect(() => {
-        sharedGetPendingOrderRating();
+        // sharedGetPendingOrderRating();
         return () => { };
     }, [])
-    return <>{isFinalDestinationSelected && vendorDashboardCategoryIDReducer.map((item, index) => {
+    return <>{(isFinalDestinationSelected && vendorDashboardCategoryIDReducer || []).map((item, index) => {
         return (
             <View key={uniqueKeyExtractor()} style={{ marginHorizontal: -10, }}>
                 <GenericList vendorDashboardCatID={item.vendorDashboardCatID} textContainer={{ paddingHorizontal: 10 }} />
