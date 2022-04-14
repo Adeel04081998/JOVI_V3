@@ -4,7 +4,7 @@ import { Alert, AppState, Platform, StatusBar } from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
 import DeviceInfo from 'react-native-device-info';
 import Toast from '../components/atoms/Toast';
-import { getRequest, postRequest } from '../manager/ApiManager';
+import { getRequest, multipartPostRequest, postRequest } from '../manager/ApiManager';
 import configs from '../utils/configs';
 import Endpoints from '../manager/Endpoints';
 import NavigationService from '../navigations/NavigationService';
@@ -13,7 +13,7 @@ import { default as actions, default as ReduxActions } from '../redux/actions';
 import { store } from '../redux/store';
 import constants from '../res/constants';
 import ENUMS from '../utils/ENUMS';
-import GV, { ORDER_STATUSES, PITSTOP_TYPES } from '../utils/GV';
+import GV, { isIOS, ORDER_STATUSES, PITSTOP_TYPES } from '../utils/GV';
 import Regex from '../utils/Regex';
 import firestore from '@react-native-firebase/firestore'
 import dayjs from 'dayjs';
@@ -373,8 +373,9 @@ export const sharedCalculateMaxTime = (dataArr = [], key = "estimatePrepTime") =
     return estimateTime;
 }
 export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
-    // console.log("[sharedCalculateCartTotals]", pitstops);
-    let joviRemainingAmount = constants.max_jovi_order_amount,
+    console.log("[sharedCalculateCartTotals]", pitstops);
+    // let joviRemainingAmount = constants.max_jovi_order_amount,
+    let joviRemainingAmount = cartReducer.joviRemainingAmount,
         subTotal = 0,
         discount = 0,
         itemsCount = 0,
@@ -396,7 +397,15 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
             if (openOrdersList.length) {
                 joviPrevOrdersPitstopsAmount += openOrdersList.map((orderInfo, index) => orderInfo?.estimatePrice ?? 0).reduce((a, b) => a + b);
             }
-        } else {
+        } else if (_pitstop.pitstopType === PITSTOP_TYPES.PHARMACY) {
+            itemsCount += 1;
+            _pitstop.individualPitstopTotal = _pitstop.estimatePrice || 0;
+            joviPitstopsTotal += _pitstop.individualPitstopTotal;
+            let openOrdersList = cartReducer.openOrdersList;
+            if (openOrdersList.length) {
+                joviPrevOrdersPitstopsAmount += openOrdersList.map((orderInfo, index) => orderInfo?.estimatePrice ?? 0).reduce((a, b) => a + b);
+            }
+        } else if (!_pitstop.isPickupPitstop) {
             let _pitTotal = 0;
             let individualPitstopGst = 0;
             vendorMaxEstTime = sharedCalculateMaxTime(_pitstop.pitstopType === PITSTOP_TYPES.RESTAURANT ? _pitstop.checkOutItemsListVM : [], "estimatePrepTime");
@@ -484,6 +493,38 @@ export const sharedAddUpdatePitstop = (
     if (pitstopIndex !== null && isDeletePitstop) {
         console.log('[DELETE PITSTOP FROM CART]');
         pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIndex);
+    } else if (pitstopDetails.pitstopType === PITSTOP_TYPES.PHARMACY) {
+        console.log('[Pharmacy PITSTOP]');
+        if (pitstopIndex !== null) {
+            console.log('[INDEX] EXIST');
+            console.log('[UPDATE Pharmacy PITSTOP]');
+            if (pitstopDetails.isPickupPitstop) {
+                pitstops[pitstopIndex] = { ...pitstopDetails.pickUpPitstop, parentPitstop: { ...pitstopDetails }, }; // TO RETAIN OLD PROPERTIES AS IT IS WITH UPDATED VAUES YOU NEED TO PASS SPREADED (...) OLD ITEM'S FULL DATA WITH UPDATED FIELDS
+                const indexOfLinkedPitstop = pitstops.findIndex(item => item.pitstopID === pitstopDetails.pickUpPitstop.linkedPitstopId);
+                if (indexOfLinkedPitstop !== -1) {
+                    pitstops[indexOfLinkedPitstop] = { ...pitstops[indexOfLinkedPitstop], ...pitstopDetails, pitstopIndex: pitstopIndex, }; // TO RETAIN OLD PROPERTIES AS IT IS WITH UPDATED VAUES YOU NEED TO PASS SPREADED (...) OLD ITEM'S FULL DATA WITH UPDATED FIELDS
+                }
+            } else {
+                pitstops[pitstopIndex] = { ...pitstops[pitstopIndex], ...pitstopDetails, pitstopIndex: pitstopIndex, }; // TO RETAIN OLD PROPERTIES AS IT IS WITH UPDATED VAUES YOU NEED TO PASS SPREADED (...) OLD ITEM'S FULL DATA WITH UPDATED FIELDS
+                const indexOfLinkedPitstop = pitstops.findIndex(item => item.pitstopID === pitstopDetails.linkedPitstopId);
+                console.log('indexOfLinkedPitstop',indexOfLinkedPitstop,{ ...pitstopDetails.pickUpPitstop, parentPitstop: { ...pitstopDetails }, });
+                if (indexOfLinkedPitstop !== -1) {
+                    pitstops[indexOfLinkedPitstop] = { ...pitstops[indexOfLinkedPitstop], ...pitstopDetails.pickUpPitstop, parentPitstop: { ...pitstopDetails }, }; // TO RETAIN OLD PROPERTIES AS IT IS WITH UPDATED VAUES YOU NEED TO PASS SPREADED (...) OLD ITEM'S FULL DATA WITH UPDATED FIELDS
+                }
+            }
+            pitstops[pitstopIndex] = { ...pitstopDetails, isPharmacy: true, isJoviJob: false, }; // TO RETAIN OLD PROPERTIES AS IT IS WITH UPDATED VAUES YOU NEED TO PASS SPREADED (...) OLD ITEM'S FULL DATA WITH UPDATED FIELDS
+            // pitstops[pitstopIndex] = { ...pitstops[index], ...pitstopDetails }; // ...pitstops[index] IF YOU DON'T HAVE ITEM'S PREVIOUS DATA (VERY RARE CASE)
+        } else {
+            // ADD NEW PITSTOP
+            console.log('[NEW CREATE]');
+            const pharmacyId = sharedUniqueIdGenerator();
+            const pickupPitstopId = sharedUniqueIdGenerator();
+            if (pitstopDetails.pickUpPitstop) {
+                pitstops.push({ ...pitstopDetails.pickUpPitstop, parentPitstop: { ...pitstopDetails }, pitstopType: 3, pitstopName: ENUMS.PharmacyPitstopTypeServer['1'].text, linkedPitstopId: pharmacyId, pitstopID: pickupPitstopId, isPharmacy: true, isPickupPitstop: true, isJoviJob: false, isRestaurant: false });
+            }
+            pitstops.push({ ...pitstopDetails, linkedPitstopId: pickupPitstopId, pitstopID: pharmacyId, isPharmacy: true, isJoviJob: false, isRestaurant: false });
+            console.log('[NEW CREATE]', pitstops, pitstopDetails);
+        }
     } else if (pitstopDetails.pitstopType === PITSTOP_TYPES.JOVI) {
         console.log('[JOVI PITSTOP]');
         if (pitstopIndex !== null) {
@@ -515,7 +556,7 @@ export const sharedAddUpdatePitstop = (
             console.log('[PITSTOP FOUND]', pitstops[pitstopIdx]);
             let itemIndex = currentPitstopItems.findIndex(item => item[actionKey] === upcomingItemDetails[actionKey]);
             console.log('[itemIndex]', itemIndex);
-            if (!fromCart && upcomingItemDetails.selectedOptions?.length) {
+            if (!fromCart && upcomingItemDetails.selectedOptions?.length && itemIndex >= 0) {
                 console.log('[SELECTED OPTIONS EXIST]');
                 upcomingItemDetails = checkSameProduct(currentPitstopItems, upcomingItemDetails).newP;
                 if (upcomingItemDetails.alreadyExisted) {
@@ -959,7 +1000,7 @@ export const sharedOnVendorPress = (pitstop, index) => {
     }
     NavigationService.NavigationActions.common_actions.navigate(routes[pitstop.pitstopType], { ...pitstop, pitstopID });
 }
-export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder = () => { }, orderCompletedOrCancelled = () => { }) => {
+export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder = () => { }, orderCompletedOrCancelled = () => { }, orderID = null) => {
     // console.log("[Order Processing].fcmReducer", fcmReducer);
     // '1',  For job related notification
     // '11',  For rider allocated related notification
@@ -970,13 +1011,15 @@ export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder 
     // '17' jovi job completed at index 6
     // '16' order completed at index 7
     // '2' Chat message at INDEX 8
+    // '21' Chat message at INDEX 9
 
-    const notificationTypes = ["1", "11", "12", "13", "14", "18", "17", "16", "2",]
+    const notificationTypes = ["1", "11", "12", "13", "14", "18", "17", "16", "2", "21"]
     console.log('fcmReducer------OrderPitstops', fcmReducer);
     const jobNotify = fcmReducer.notifications?.find(x => (x.data && (notificationTypes.includes(`${x.data.NotificationType}`))) ? x : false) ?? false;
     if (jobNotify) {
         console.log(`[jobNotify]`, jobNotify)
         const { data, notifyClientID } = jobNotify;
+        if (orderID && parseInt(orderID) !== parseInt(data.OrderID)) { return; }
         // const results = sharedCheckNotificationExpiry(data.ExpiryDate);
         // if (results.isSameOrBefore) {
         if (data.NotificationType == notificationTypes[1] || data.NotificationType == notificationTypes[0]) {
@@ -997,6 +1040,9 @@ export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder 
                 loadChat: true,
                 notificationData: jobNotify,
             })
+        }
+        else if (data.NotificationType == notificationTypes[9]) {
+            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name, { orderID: (data.OrderID || data.orderId || data.orderID || data.OrderId || 0), isFinalDestinationCompleted: true });
         }
         else {
 
@@ -1136,9 +1182,116 @@ export const splitArray = (array, n) => {
     return res;
 };
 
+export const sharedVerifyCartItems = () => {
+    const pitstops = store.getState().cartReducer.pitstops;
+    let payload = {
+        itemIDs: []
+    };
+    pitstops.map((pitstop, index) => {
+        if (pitstop.checkOutItemsListVM) {
+            payload = {
+                "itemIDs": [...payload.itemIDs, ...pitstop.checkOutItemsListVM.map(_item => ({
+                    "pitStopItemID": _item.pitStopDealID > 0 ? 0 : _item.pitStopItemID, // Condition added because we are using `pitStopItemID` in case of deals in some cases.
+                    "pitStopDealID": _item.pitStopDealID || 0
+                }))]
+            }
+        }
+    });
+    console.log("[VERIFY_CART_ITEMS].payload", payload);
+    postRequest(
+        Endpoints.VERIFY_CART_ITEMS,
+        payload,
+        res => {
+            console.log("[VERIFY_CART_ITEMS].res", res);
+            const { statusCode = 200, productList = [] } = res.data;
+            if (statusCode === 200) {
+                let is_difference = false;
+                let removedItems = [];
+                let modifiedPitstops = pitstops.map((_pitstop, j) => {
+                    if (_pitstop.checkOutItemsListVM) {
+                        let modifiedCheckOutItemsListVM = [..._pitstop.checkOutItemsListVM];
+                        const findItem = productList.find(x => modifiedCheckOutItemsListVM.find(y => {
+                            if ((y.pitStopItemID && (y.pitStopItemID === x.pitStopItemID)) || (y.pitStopDealID && (y.pitStopDealID === x.pitStopDealID))) {
+                                return x; // Because we need server's item to check statuses
+                            }
+                        }))
+                        // console.log("findItem", findItem);
+                        if (findItem) {
+                            modifiedCheckOutItemsListVM = modifiedCheckOutItemsListVM.filter((item, index) => {
+                                // console.log("item", item);
+                                const condition = (findItem.availabilityStatus == ENUMS.AVAILABILITY_STATUS.Available && item.gstAddedPrice == findItem.gstAddedPrice && item.discountType == findItem.discountType && findItem.pitStopStatus == 1);
+                                if ((item.pitStopItemID && (item.pitStopItemID === findItem.pitStopItemID) && condition) || (item.pitStopDealID && (item.pitStopDealID === findItem.pitStopDealID && condition))) {
+                                    // console.log("Came...");
+                                    return item;
+                                } else {
+                                    removedItems.push(item)
+                                    is_difference = true;
+                                }
+                            })
+                        }
+                        // console.log("modifiedCheckOutItemsListVM", modifiedCheckOutItemsListVM);
+                        _pitstop.checkOutItemsListVM = modifiedCheckOutItemsListVM;
+
+                    }
+                    return _pitstop;
+                })
+                console.log("is_difference,  modifiedPitstops,removedItems ", is_difference, modifiedPitstops, removedItems);
+                if (is_difference) {
+                    modifiedPitstops = modifiedPitstops.filter(x => x.isJoviJob ? x : x.checkOutItemsListVM.length);
+                    if (modifiedPitstops.length) {
+                        const alertStr = removedItems.map(item => (item.pitStopItemName || item.pitStopDealName)).join(", \n");
+                        Toast.info(`${alertStr} no more available!`, 5000)
+                        sharedAddUpdatePitstop(null, false, modifiedPitstops)
+                    } else {
+                        Toast.info(`Items no more available`);
+                        dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
+                        NavigationService.NavigationActions.common_actions.goBack();
+                    }
+                } else {
+                    console.log("Not any difference");
+
+                }
+
+
+            }
+        },
+        err => {
+            console.log("[VERIFY_CART_ITEMS].err", err);
+        },
+        {},
+        true,
+    ).finally(() => {
+        sharedGetServiceCharges()
+    });
+};
 export const randomDate = (start = new Date(2019, 2, 1), end = new Date()) => {
     return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 };
+export const sharedSendFileToServer = (list = [], onSuccess = () => { }, type = 4, extension = 1,) => {
+    const userReducer = store.getState().userReducer;
+    let formData = new FormData();
+    let index = 0;
+    for (const item of list) {
+        formData.append(`JoviImageList[${index}].JoviImage`, {
+            uri: !isIOS ? item.uri : item.uri.replace("file://", ""),
+            name: item.uri.split('/').pop(),
+            type: item.type,
+        });
+        formData.append(`JoviImageList[${index}].JoviImageID`, 0);
+        formData.append(`JoviImageList[${index}].FileType`, type);
+        formData.append(`JoviImageList[${index}].FileExtensionType`, extension);
+        index += 1;
+    }
+    multipartPostRequest(Endpoints.ADD_PITSTOPIMAGE, formData, (res) => {
+        console.log('[sendFileToServer]res', res);
+        const statusCode = (res?.statusCode ?? 400);
+        if (statusCode === 200) {
+            onSuccess(res);
+        }
+    }, (err) => {
+        sharedExceptionHandler(err);
+    }, false, { Authorization: `Bearer ${userReducer?.token?.authToken}` });
+}
 
 export const sharedGetPendingOrderRating = () => {
     getRequest(Endpoints.GET_PENDING_ORDER_RATING,

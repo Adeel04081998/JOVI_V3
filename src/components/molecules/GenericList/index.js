@@ -20,7 +20,7 @@ import ImageBackground from '../../atoms/ImageBackground';
 import CardDealHover from '../../../screens/PitstopListing/components/CardDealHover';
 import { useIsFocused } from '@react-navigation/native';
 
-export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCatID = 0, imageStyles = {}, themeColors = null, showMoreBtnText = "", cb = () => { }, textContainer = {} }) => {
+export default React.memo(({ pitstopType = 0, vendorDashboardCatID = 0, imageStyles = {}, themeColors = null, showMoreBtnText = "", cb = () => { }, textContainer = {} }) => {
     const SPACING_BOTTOM = 0;
     const [data, setData] = React.useState(null);
     const isLoading = React.useRef(null);
@@ -30,10 +30,10 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
     const ITEMS_PER_PAGE = userReducer.homeScreenItemsPerPage || 10;
 
     const fetchData = () => {
-        if(!isFocused) return;
+        if (!isFocused) return;
         postRequest(Endpoints.GET_VENDOR_DASHBOARD_CATEGORY_ID_DETAIL,
             {
-                "vendorType": vendorType,
+                "vendorType": pitstopType,
                 "pageNumber": 1,
                 "itemsPerPage": ITEMS_PER_PAGE,
                 "vendorDashboardCatID": vendorDashboardCatID,
@@ -57,7 +57,7 @@ export default React.memo(({ vendorType = 0, pitstopType = 2, vendorDashboardCat
     };
     React.useEffect(() => {
         fetchData();
-    }, [vendorType])
+    }, [pitstopType])
     const colors = themeColors ?? theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
 
     const SCALE_IMAGE = {

@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Appearance, Platform, SafeAreaView } from 'react-native';
+import { Appearance, Keyboard, Platform, SafeAreaView } from 'react-native';
 import CountryPicker from 'react-native-country-picker-modal';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import RNOtpVerify from "react-native-otp-verify";
@@ -62,6 +62,7 @@ export default () => {
 
     const [country, setCountry] = React.useState("92");
     const onPress = async () => {
+        Keyboard.dismiss();
         const appHash = Platform.OS === "android" ? (await RNOtpVerify.getHash())[0] : "";
         const phoneNumber = country + cellNo
         if (network.value <= 0) return Toast.info("Please select your mobile network.");

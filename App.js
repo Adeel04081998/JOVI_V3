@@ -4,7 +4,7 @@ import { LogBox, Platform, StatusBar, StyleSheet, TouchableOpacity, useColorSche
 import CodePush from "react-native-code-push"; //for codepush
 import Geolocation from 'react-native-geolocation-service';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { SvgXml } from "react-native-svg";
+import { SvgXml} from "react-native-svg";
 import Toast, { BaseToast } from 'react-native-toast-message';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -18,7 +18,6 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import { useDispatch, useSelector } from 'react-redux';
-import { pkgConf } from "yargs";
 import RNSplashScreen from './NativeModules/RNSplashScreen';
 import svgs from "./src/assets/svgs";
 import BottomAllignedModal from './src/components/atoms/BottomAllignedModal';
@@ -34,6 +33,7 @@ import { _NavgationRef } from './src/navigations/NavigationService';
 import actions from './src/redux/actions';
 import constants from "./src/res/constants";
 import FontFamily from "./src/res/FontFamily";
+import sharedStyles from "./src/res/sharedStyles";
 import AppTheme from './src/res/theme';
 import GenericPopUp from "./src/screens/GenericPopUp";
 import { env } from './src/utils/configs';
@@ -149,15 +149,11 @@ const App = () => {
         return (
             <View style={{}}>
 
+
                 <SvgXml
                     xml={uri}
-                    style={{ position: 'absolute', bottom: 35, }}
-                />
-                <SvgXml
-                    xml={svgs.BubblesToastIcon(color)}
-                    style={{ position: 'absolute', bottom: 1, left: -6 }}
-
-
+                    style={{ position: 'absolute', bottom: 5, marginHorizontal: 5 }}
+                    height={30}
                 />
 
             </View>
@@ -165,7 +161,7 @@ const App = () => {
     }
     const RenderToastCrossUi = () => {
         return (
-            <TouchableOpacity onPress={() => { Toast.hide() }} style={{ right: 15, justifyContent: "center" }}>
+            <TouchableOpacity onPress={() => { Toast.hide() }} style={{ marginHorizontal: 8, justifyContent: "center" }}>
                 <SvgXml
                     xml={svgs.CrossToastIcon()}
                     height={40}
@@ -189,6 +185,10 @@ const App = () => {
                 onTrailingIconPress={() => Toast.hide()}
                 renderLeadingIcon={() => { return (RenderToastSvgUi(svgs.SuccesToastIcon(), "#217E3D")) }}
                 renderTrailingIcon={() => { return (RenderToastCrossUi()) }}
+
+
+
+
             />
         },
         error: ({ text1, ...rest }) => {
@@ -207,6 +207,7 @@ const App = () => {
                 onTrailingIconPress={() => Toast.hide()}
                 renderLeadingIcon={() => { return (RenderToastSvgUi(svgs.ErrorToastIcon(), "#a40a0a")) }}
                 renderTrailingIcon={() => { return (RenderToastCrossUi()) }}
+
             />
         }
         ,
@@ -214,7 +215,7 @@ const App = () => {
             if (!(rest.text2)) return
             return <BaseToast
                 text1NumberOfLines={10}
-                text2NumberOfLines={4}
+                text2NumberOfLines={5}
                 {...rest}
                 style={{ borderLeftColor: '#0070E0', top: constants.screen_dimensions.height / (Platform.OS === 'android' ? "95" : "20"), minHeight: Platform.OS === 'android' ? 70 : 50, width: constants.window_dimensions.width - 15, backgroundColor: '#0070E0', borderRadius: 20 }}
                 contentContainerStyle={{ paddingHorizontal: 65, }}
@@ -231,7 +232,7 @@ const App = () => {
             if (!(rest.text2)) return
             return <BaseToast
                 text1NumberOfLines={10}
-                text2NumberOfLines={4}
+                text2NumberOfLines={5}
                 {...rest}
                 style={{ borderLeftColor: '#F79C0B', top: constants.screen_dimensions.height / (Platform.OS === 'android' ? "95" : "20"), minHeight: Platform.OS === 'android' ? 70 : 50, width: constants.window_dimensions.width - 15, backgroundColor: '#F79C0B', borderRadius: 20 }}
                 contentContainerStyle={{ paddingHorizontal: 65, }}
@@ -265,7 +266,7 @@ const App = () => {
                 // ref={ref => {
                 //     _toastRef.current = ref;
                 //     Toast.setRef(ref);
-                // }}
+                // }}//Function components cannot be given refs. Attempts to access this ref will fail
                 />
                 <NoInternetModal />
             </SafeAreaView>

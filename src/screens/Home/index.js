@@ -179,6 +179,7 @@ export default () => {
                             uriKey="promoImg"
                             containerStyle={homeStyles.imageCarousal}
                             height={170}
+                            // autoPlay={!__DEV__}
                             autoPlay
                             autoPlayInterval={3}
                             onPress={(item) => onPromoPressed(item)}
@@ -192,15 +193,10 @@ export default () => {
                             <Categories homeStyles={homeStyles} />
                             <AvatarAlert messagesReducer={messagesReducer} homeStyles={homeStyles} />
                             {/* <RecentOrders /> AS PER PM WE HAVE TO REMOVE RECENT ORDER FOR NOW*/}
+                            
+                            <RenderGenericList isFinalDestinationSelected={isFinalDestinationSelected} vendorDashboardCategoryIDReducer={vendorDashboardCategoryIDReducer} />
+                            {/*Render Generic List is implemented, so the KPI's on home doesnt get reloaded whenever come to home*/}
 
-                            {isFinalDestinationSelected && vendorDashboardCategoryIDReducer.map((item, index) => {
-                                return (
-                                    <View key={uniqueKeyExtractor()} style={{ marginHorizontal: -10, }}>
-                                        <GenericList vendorDashboardCatID={item.vendorDashboardCatID} textContainer={{ paddingHorizontal: 10 }} />
-
-                                    </View>
-                                )
-                            })}
 
 
                         </View>
@@ -216,3 +212,13 @@ export default () => {
         </View>
     );
 };
+const RenderGenericList = React.memo(({isFinalDestinationSelected,vendorDashboardCategoryIDReducer }) => {
+    return <>{isFinalDestinationSelected && vendorDashboardCategoryIDReducer.map((item, index) => {
+        return (
+            <View key={uniqueKeyExtractor()} style={{ marginHorizontal: -10, }}>
+                <GenericList vendorDashboardCatID={item.vendorDashboardCatID} textContainer={{ paddingHorizontal: 10 }} />
+
+            </View>
+        )
+    })}</>
+}, (n, p) => n !== p)

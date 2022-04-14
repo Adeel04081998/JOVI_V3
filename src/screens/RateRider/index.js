@@ -63,6 +63,7 @@ export default ({ navigation, route }) => {
             resetState();
         } else {
             onBackPress(false);
+            // NavigationService.NavigationActions.common_actions.goBack();//incase we have to show rating one by one.
         }
         return;
     }
@@ -75,6 +76,7 @@ export default ({ navigation, route }) => {
             ignoreOrder();
         }
         NavigationService.NavigationActions.common_actions.goBack();
+        // updateOrderID();//incase we have to show rating one by one.
         return true;
     }
 
@@ -507,10 +509,10 @@ export default ({ navigation, route }) => {
                         data={receiptData?.pitStopsList ?? []}
                         subTotal={receiptData?.orderReceiptVM?.subTotal ?? ''}
                         totalGST={receiptData?.orderReceiptVM?.chargeBreakdown?.totalProductGST ?? ''}
-                        serviceCharges={receiptData?.orderReceiptVM?.chargeBreakdown?.totalEstimateCharge ?? 0}
-                        estimateServiceTax={receiptData?.orderReceiptVM?.chargeBreakdown?.estimateServiceTax ?? 0}
-                        discount={receiptData?.orderReceiptVM?.chargeBreakdown?.discount ?? ''}
-                        total={receiptData?.orderReceiptVM?.estTotalPlusPitstopAmount ?? ''}
+                        serviceCharges={receiptData?.orderReceiptVM?.actualServiceCharges ?? 0}
+                        estimateServiceTax={receiptData?.orderReceiptVM?.actualServiceTax ?? 0}
+                        discount={receiptData?.orderReceiptVM?.chargeBreakdown?.discount ?? 0}
+                        total={receiptData?.orderReceiptVM?.actualTotalPlusPitstopAmount ?? 0}
                         onRightTextPress={() => {
                             setReceiptVisible(false);
                         }}

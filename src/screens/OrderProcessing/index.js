@@ -10,13 +10,14 @@ import CustomHeader from '../../components/molecules/CustomHeader';
 import OrderEstTimeCard from '../../components/organisms/Card/OrderEstTimeCard';
 import DashedLine from '../../components/organisms/DashedLine';
 import SitBackAnimation from '../../components/organisms/SitBackAnimation';
-import { checkIfFirstPitstopRestaurant, renderPrice, sharedFetchOrder, sharedGenerateProductItem, sharedNotificationHandlerForOrderScreens, sharedOrderNavigation } from '../../helpers/SharedActions';
+import { checkIfFirstPitstopRestaurant, renderPrice, sharedFetchOrder, sharedGenerateProductItem, sharedNotificationHandlerForOrderScreens, sharedOrderNavigation, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { getRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService, { _NavgationRef } from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
+import ENUMS from '../../utils/ENUMS';
 import GV, { ORDER_STATUSES, PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import { stylesFunc } from './styles';
 
@@ -138,7 +139,7 @@ export default ({ navigation, route }) => {
         return () => { };
     }, []);
     React.useEffect(() => {
-        sharedNotificationHandlerForOrderScreens(fcmReducer, fetchOrderDetails, orderCancelledOrCompleted);
+        sharedNotificationHandlerForOrderScreens(fcmReducer, fetchOrderDetails, orderCancelledOrCompleted, orderIDParam);
         return () => {
         }
     }, [fcmReducer]);
@@ -279,6 +280,8 @@ export default ({ navigation, route }) => {
                                 dataRightKey={'price'}
                                 estimatePrice={item.estimatePrice}
                                 totalJobGST={item.totalJobGST}
+                                isPharmacy={VALIDATION_CHECK(item.pharmacyPitstopType===0?null:item.pharmacyPitstopType)}
+                                pharmacyPitstopType={item.pharmacyPitstopType??null}
                             />
                         )
                     })}
@@ -446,7 +449,7 @@ export const OrderProcessingChargesUI = ({ title = '', value = '', }) => {
 // #endregion :: CHARGES, GST, DISCOUNT UI END's FROM HERE 
 
 // #region :: PITSTOP ITEM UI  START's FROM HERE 
-const PitStopItemUI = ({ pitstopTitle = '', isJoviJob = false, pitstopNumber = 1, data = [], dataLeftKey = "title", dataRightKey = "value", estimatePrice = 0, actualPrice = 0, totalJobGST = 0 }) => {
+const PitStopItemUI = ({ pitstopTitle = '', isJoviJob = false, pitstopNumber = 1, data = [], dataLeftKey = "title", dataRightKey = "value", estimatePrice = 0, actualPrice = 0, totalJobGST = 0, pharmacyPitstopType = null, isPharmacy = false }) => {
     return (
 
         <View style={{ marginVertical: 8, }}>
@@ -454,7 +457,7 @@ const PitStopItemUI = ({ pitstopTitle = '', isJoviJob = false, pitstopNumber = 1
                 color: "#272727",
                 fontSize: 13,
                 paddingHorizontal: DOUBLE_SPACING,
-            }} numberOfLines={2}>{`Pit Stop ${pitstopNumber} - ${isJoviJob ? 'Jovi Job' : pitstopTitle}`}
+            }} numberOfLines={2}>{`Pit Stop ${pitstopNumber} - ${isPharmacy ? ENUMS.PharmacyPitstopTypeServer[pharmacyPitstopType].text : isJoviJob ? 'Jovi Job' : pitstopTitle}`}
                 <Text style={{
                     color: "#272727",
                     fontSize: 12,

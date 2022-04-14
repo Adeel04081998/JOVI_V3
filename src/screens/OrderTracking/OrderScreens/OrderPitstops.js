@@ -12,13 +12,14 @@ import VectorIcon from '../../../components/atoms/VectorIcon';
 import View from '../../../components/atoms/View';
 import CustomHeader, { CustomHeaderIconBorder } from '../../../components/molecules/CustomHeader';
 import OrderEstTimeCard from '../../../components/organisms/Card/OrderEstTimeCard';
-import { renderPrice, sharedConfirmationAlert, sharedFetchOrder, sharedGenerateProductItem, sharedNotificationHandlerForOrderScreens, sharedRiderRating } from '../../../helpers/SharedActions';
+import { renderPrice, sharedConfirmationAlert, sharedFetchOrder, sharedGenerateProductItem, sharedNotificationHandlerForOrderScreens, sharedRiderRating, VALIDATION_CHECK } from '../../../helpers/SharedActions';
 import { getRequest } from '../../../manager/ApiManager';
 import Endpoints from '../../../manager/Endpoints';
 import NavigationService from '../../../navigations/NavigationService';
 import ROUTES from '../../../navigations/ROUTES';
 import constants from '../../../res/constants';
 import theme from '../../../res/theme';
+import ENUMS from '../../../utils/ENUMS';
 import GV, { ORDER_STATUSES, PITSTOP_TYPES_INVERTED } from '../../../utils/GV';
 import { orderPitstopStyles as _styles } from '../styles';
 const HEADER_ICON_SIZE_LEFT = CustomHeaderIconBorder.size * 0.7;
@@ -60,6 +61,8 @@ export default ({ route }) => {
         estimateTime: null,
     });
     const isRiderFound = state.subStatusName === ORDER_STATUSES.RiderFound;
+    const orderFinalDestination = state.pitStopsList?.slice(0, state.pitStopsList.length - 1)[0] // Value will fill from server's response thats why optional changing added
+    const isFinalDestinationCompleted = route?.params?.isFinalDestinationCompleted ?? orderFinalDestination?.joviJobStatus === ENUMS.JOVI_JOB_STATUS.Closed ?? false;
     const RenderPitstop = ({ pitstop = {}, index = 0 }) => {
         const [pitstopState, setPitstopState] = React.useState({
             expanded: false
@@ -71,8 +74,12 @@ export default ({ route }) => {
         const isFinalDestination = index === state.pitStopsList.length - 1;
         const isJoviJob = pitstop.catID === '0';
         const pitstopType = isJoviJob ? 2 : pitstop.catID;
-        const pitstopTypeTitle = pitstopTitles[pitstop.catID];
+        let pitstopTypeTitle = pitstopTitles[pitstop.catID];
         let pitstopColor = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]]);
+        if (isJoviJob && VALIDATION_CHECK(pitstop.pharmacyPitstopType === 0 ? null : pitstop.pharmacyPitstopType)) {
+            pitstopTypeTitle = ENUMS.PharmacyPitstopTypeServer[pitstop.pharmacyPitstopType].text;
+            pitstopColor = theme.getTheme(GV.THEME_VALUES.PHARMACY);
+        }
         let iconName = 'map-marker';
         let iconType = 'FontAwesome';
         if (isFinalDestination) {
@@ -153,7 +160,7 @@ export default ({ route }) => {
             </View>
         }
         return <View style={styles.footerContainer}>
-            {!isRiderFound && <>
+            {isRiderFound && <>
                 <TouchableOpacity onPress={() => onRiderCallPress()} style={styles.footerItemContainer}>
                     {renderCallIcon()}
                     <Text style={{ marginLeft: 10, color: colors.black }}>Jovi Rider</Text>
@@ -220,8 +227,8 @@ export default ({ route }) => {
         Linking.openURL(`tel:${number}`)
     }
     const onRiderCallPress = () => {
-        if(userReducer.anonymousHelpNumber){
-            sharedConfirmationAlert('Call Rider','Please choose one of the options',[
+        if (userReducer.anonymousHelpNumber) {
+            sharedConfirmationAlert('Call Rider', 'Please choose one of the options', [
                 {
                     text: "Call Rider",
                     onPress: () => {
@@ -235,7 +242,7 @@ export default ({ route }) => {
                     }
                 },
             ])
-        }else{
+        } else {
             openDialer(state?.riderContactNo);
         }
     }
@@ -243,7 +250,7 @@ export default ({ route }) => {
         fetchOrderDetails();
     }, []);
     React.useEffect(() => {
-        sharedNotificationHandlerForOrderScreens(fcmReducer, fetchOrderDetails, orderCancelledOrCompleted);
+        sharedNotificationHandlerForOrderScreens(fcmReducer, fetchOrderDetails, orderCancelledOrCompleted, orderIDParam);
         return () => {
         }
     }, [fcmReducer]);
@@ -264,6 +271,44 @@ export default ({ route }) => {
             />
         </View>
     }
+    const { orderReceiptVM: { subTotal = 0, actualServiceTax = 0, actualServiceCharges = 0, actualTotalPlusPitstopAmount = 0, chargeBreakdown = {} } } = state;
+    const { discount = 0, totalProductGST = 0, } = chargeBreakdown;
+    const Totals = () => {
+        const row = (caption = '', value = 0, isBold = false, showDashed = true) => {
+            if (true) {
+                return <View>
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                        }}>
+                        <Text fontFamily={isBold ? 'PoppinsBold' : 'PoppinsLight'}>
+                            {caption}
+                        </Text>
+                        <Text
+                            fontFamily={
+                                isBold ? 'PoppinsBold' : 'PoppinsLight'
+                            }>{renderPrice({ price: value, showZero: true })}</Text>
+                    </View>
+                    {
+                        showDashed &&
+                        <View style={{ marginHorizontal: 1 }}>
+                            <DashedLine dashLineStyles={{ color: "#707070" }} />
+                        </View>
+                    }
+                </View>
+            } else return null;
+        };
+        return (
+            <View style={{ padding: 10 }}>
+                {row(`Subtotal (Inc GST ${totalProductGST})`, subTotal, false)}
+                {discount ? row('Total Discount', `- ${discount}`) : null}
+                {row(`Service Charges (Incl S.T ${actualServiceTax})`, (actualServiceTax + actualServiceCharges))}
+                {row('Total', actualTotalPlusPitstopAmount, true, false)}
+            </View>
+        );
+    };
     return (
         <SafeAreaView style={styles.safeArea}>
             <View style={styles.container}>
@@ -293,6 +338,10 @@ export default ({ route }) => {
                             }
                         </View>
                     </ScrollView>
+                    {
+                        isFinalDestinationCompleted && <Totals />
+                    }
+
                 </View>
                 {renderFooter()}
             </View>

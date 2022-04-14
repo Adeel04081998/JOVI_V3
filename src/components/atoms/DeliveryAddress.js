@@ -48,9 +48,10 @@ export default ({ instructions = "", contianerStyle = {}, addressTxtStyle = {}, 
     const dispatch = useDispatch();
     const finalDestination = userReducer.finalDestObj;
     const isMounted = React.useRef(false);
+    const finalDestinationRef = React.useRef(finalDestination);
     React.useEffect(() => {
-        if (isMounted.current) {
-            console.log("[Delivery Address] Ran...");
+        if (isMounted.current && cartReducer.pitstops.length > 0 && finalDestinationRef.current.title !== finalDestination.title) {
+            finalDestinationRef.current = finalDestination;
             sharedGetServiceCharges()
         } else isMounted.current = true;
     }, [finalDestination, cartReducer.pitstops.length])
