@@ -33,8 +33,6 @@ export default {
     "CreateUpdateOrder": "api/Order/CreateUpdateOrderV2",
     //Fetch Order Details
     "FetchOrder": "api/Order/OrderDetail",
-    //Estimate Service Charge
-    "EstimateServiceCharge": 'api/Order/EstimateServiceChargeV2',
     //Get Open Orders
     "GetOpenOrders": "/api/Dashboard/GetOpenOrderDetails/List",
     //Accept Reject Order
@@ -51,6 +49,7 @@ export default {
 
     "GET_CUSTOMER_ORDER_HISTORY": "api/Order/HistoryV2",//USED IN ORDER HISTORY SCREEN for getting completed & cancelled order of customer
     "GET_CUSTOMER_ONGOING_ORDER": "api/Order/OnGoingOrdersListV2",//USED IN ORDER HISTORY SCREEN for getting ongoing order of customer
+    "GET_CUSTOMER_ONGOING_COUNT": "api/Order/OnGoingOrdersV2",//USED IN ORDER HISTORY SCREEN for getting ongoing order of customer
     "OrderEstimateTime": "api/Order/OrderEstimateTimeV2", //Order Estimate Time
 
     "ADD_ORDER_FEEDBACK": "api/Order/Feedback/Add",//USED IN ORDER HISTORY DETAIL SCREEN for adding feedback for the order
@@ -68,6 +67,7 @@ export default {
     "JAZZCASH_PAY": "api/Payment/JazzCashPay",
     "EASYPAISA_PAY": "api/Payment/EasyPaisaPay",
     "DELETE_ADDRESS": "api/Menu/Address/Delete",
+    "VERIFY_CART_ITEMS": "api/Product/Cart/VerifyItems",
     "GET_COMPLAINT": "api/Menu/Complaint/List",//USED IN COMPLAINT SCREEN FOR GETTING ACTIVE AND SOLVED COMPLAINT's
     "GET_COMPLAINT_DETAIL": "api/Menu/ComplaintV2/Data/",//USED IN COMPLAINT DETAIL SCREEN FOR GETTING COMPLAINT DETAIL USING COMPLAINTID
     "SEND_COMPLAINT_MESSAGE_TO_ADMIN": "api/Menu/Complaint/ComplainDetails",//USED IN COMPLAINT DETAIL - CHAT COMPONENT SCREEN FOR SENDING MESSAGE TO ADMIN

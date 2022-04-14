@@ -17,7 +17,7 @@ import Switch from '../../components/atoms/Switch'
 import TouchableOpacity from '../../components/atoms/TouchableOpacity'
 import { getRequest, postRequest } from '../../manager/ApiManager'
 import Endpoints from '../../manager/Endpoints'
-import { sharedCalculatedTotals, sharedExceptionHandler, sharedGetDeviceInfo, sharedGetServiceCharges, sharedOrderNavigation } from '../../helpers/SharedActions'
+import { sharedCalculatedTotals, sharedExceptionHandler, sharedGetDeviceInfo, sharedGetServiceCharges, sharedOrderNavigation, sharedVerifyCartItems } from '../../helpers/SharedActions'
 import Button from '../../components/molecules/Button'
 import OrderRecipt from './components/OrderRecipt'
 import { useDispatch, useSelector } from 'react-redux'
@@ -80,7 +80,7 @@ export default () => {
     //             "promoCodeApplied": (promoCode ? promoCode : clearPromo ? "" : state.promoCodeApplied),
     //             "skipEstAmountAndGst": state.pitstops.find(p => p.pitstopID) ? false : true,
     //         }
-    //     postRequest(Endpoints.EstimateServiceCharge, {}, (res) => {
+    //     postRequest(Endpoints.SERVICE_CHARGES, {}, (res) => {
     //         if (res.data.statusCode === 200) {
 
     //         }
@@ -129,9 +129,9 @@ export default () => {
                             "title": item.title,
                             "city": item.city ? item.city : "",
                             "description": item.description ? item.description : "",
-                            "latitude": item.latitude ?? 33.66891485325712,
+                            "latitude": item.latitude ?? 0,
                             "latitudeDelta": item.latitudeDelta ?? 6,
-                            "longitude": item.longitude ?? 73.07291749837015,
+                            "longitude": item.longitude ?? 0,
                             "longitudeDelta": item.longitudeDelta ?? 6,
                             "addressID": item.addressID ? item.addressID : null,
                             "buyForMe": item.buyForMe ? true : false,
@@ -191,6 +191,10 @@ export default () => {
                                 "JoviDiscount": obj.joviDiscount ?? 0,
                                 "JoviDiscountType": obj.joviDiscountType ?? 0,
                                 "joviDiscountedPrice": obj.totalJoviDiscount ?? 0,
+                                // tabish
+                                "joviDiscountAmount": obj.totalJoviDiscount ?? 0,
+                                "discountAmount": obj.itemPrice - obj._totalDiscount,
+                                // tabish
                                 //End New Keys
                                 "estimateTime": obj.estimatePrepTime ?? 0,
                                 "gstPercentage": obj.gstPercentage,
@@ -229,10 +233,10 @@ export default () => {
                 "OrderPaymentType": switchVal ? ENUMS.OrderPaymentType.JoviWallet : ENUMS.OrderPaymentType.CashOnDelivery,
                 // "pitStopsImage": state?.mapImageBase64 ?? null,
                 "joviType": 1,
+                "chargeBreakdown": state.chargeBreakdown,
                 "hardwareID": await sharedGetDeviceInfo().deviceID,
                 // "productNotFoundQ": state.productNotFoundQ,
                 // "prescriptionImagesID": state.prescriptionImages,
-                "chargeBreakdown": state.chargeBreakdown,
                 // "customerLatitude": getLastRecordedLocationOnMap()?.latitude,
                 // "customerLongitude": getLastRecordedLocationOnMap()?.longitude,
                 // ref => https://cibak.atlassian.net/browse/TJA-3225 ==> Mudassir
@@ -377,14 +381,16 @@ export default () => {
         )
     }
 
-    // React.useEffect(() => {
-    //     sharedGetServiceCharges(null, (res) => {
-    //         setState(pre => ({
-    //             ...pre,
-    //             chargeBreakdown: res.data.chargeBreakdown,
-    //         }));
-    //     });
-    // }, []);
+    React.useEffect(() => {
+        sharedVerifyCartItems();
+        // sharedGetServiceCharges(null, (res) => {
+        //     setState(pre => ({
+        //         ...pre,
+        //         chargeBreakdown: res.data.chargeBreakdown,
+        //     }));
+        // });
+
+    }, []);
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }} >
             <CustomHeader

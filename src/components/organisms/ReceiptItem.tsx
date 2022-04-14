@@ -139,11 +139,10 @@ const ReceiptItem = (props: Props) => {
                 {(props?.itemData ?? []).map((item: any, index) => {
 
 
-                    const { name, quantity, actualPrice, } = getItemDetail(item);
+                    const { name, quantity, } = getItemDetail(item);
                     const PRICE = props.showFrontValues ? (item._itemPrice || item.discountedPrice) : item.price;
-                    const ACTUAL_PRICE = props.showFrontValues ? item._itemPriceWithoutDiscount : item.actualPrice;
+                    const ACTUAL_PRICE = props.showFrontValues ? item._itemPriceWithoutDiscount : item.actualPrice > item.price ? item.actualPrice : 0;
                     // const {name, quantity, price, actualPrice, } = item;
-
                     return (
                         <View key={index} style={[{ ...itemStyles.primaryContainer, paddingTop: index === 0 ? 0 : 4, }, props.itemContainerStyle]}>
                             <Text style={[itemStyles.name, props.itemTitleStyle]}>{sharedGenerateProductItem(name, quantity)}</Text>
@@ -151,7 +150,7 @@ const ReceiptItem = (props: Props) => {
 
                             {/* ****************** Start of WHEN DISCOUNT IS ADDED ****************** */}
                             <>
-                                {VALIDATION_CHECK(ACTUAL_PRICE) &&
+                                {ACTUAL_PRICE &&
                                     <Text numberOfLines={3} style={[itemStyles.actualPrice, props.itemActualPriceStyle]}>{renderPrice(`${isJoviJob ? props.totalPrice : ACTUAL_PRICE}`.trim(), '', '.00')}</Text>
                                 }
                             </>

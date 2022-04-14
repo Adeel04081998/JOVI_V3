@@ -374,7 +374,8 @@ export const sharedCalculateMaxTime = (dataArr = [], key = "estimatePrepTime") =
 }
 export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
     console.log("[sharedCalculateCartTotals]", pitstops);
-    let joviRemainingAmount = constants.max_jovi_order_amount,
+    // let joviRemainingAmount = constants.max_jovi_order_amount,
+    let joviRemainingAmount = cartReducer.joviRemainingAmount,
         subTotal = 0,
         discount = 0,
         itemsCount = 0,
@@ -555,7 +556,7 @@ export const sharedAddUpdatePitstop = (
             console.log('[PITSTOP FOUND]', pitstops[pitstopIdx]);
             let itemIndex = currentPitstopItems.findIndex(item => item[actionKey] === upcomingItemDetails[actionKey]);
             console.log('[itemIndex]', itemIndex);
-            if (!fromCart && upcomingItemDetails.selectedOptions?.length) {
+            if (!fromCart && upcomingItemDetails.selectedOptions?.length && itemIndex >= 0) {
                 console.log('[SELECTED OPTIONS EXIST]');
                 upcomingItemDetails = checkSameProduct(currentPitstopItems, upcomingItemDetails).newP;
                 if (upcomingItemDetails.alreadyExisted) {
@@ -1010,8 +1011,9 @@ export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder 
     // '17' jovi job completed at index 6
     // '16' order completed at index 7
     // '2' Chat message at INDEX 8
+    // '21' Chat message at INDEX 9
 
-    const notificationTypes = ["1", "11", "12", "13", "14", "18", "17", "16", "2",]
+    const notificationTypes = ["1", "11", "12", "13", "14", "18", "17", "16", "2", "21"]
     console.log('fcmReducer------OrderPitstops', fcmReducer);
     const jobNotify = fcmReducer.notifications?.find(x => (x.data && (notificationTypes.includes(`${x.data.NotificationType}`))) ? x : false) ?? false;
     if (jobNotify) {
@@ -1038,6 +1040,9 @@ export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder 
                 loadChat: true,
                 notificationData: jobNotify,
             })
+        }
+        else if (data.NotificationType == notificationTypes[9]) {
+            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name, { orderID: (data.OrderID || data.orderId || data.orderID || data.OrderId || 0), isFinalDestinationCompleted: true });
         }
         else {
 
@@ -1177,6 +1182,88 @@ export const splitArray = (array, n) => {
     return res;
 };
 
+export const sharedVerifyCartItems = () => {
+    const pitstops = store.getState().cartReducer.pitstops;
+    let payload = {
+        itemIDs: []
+    };
+    pitstops.map((pitstop, index) => {
+        if (pitstop.checkOutItemsListVM) {
+            payload = {
+                "itemIDs": [...payload.itemIDs, ...pitstop.checkOutItemsListVM.map(_item => ({
+                    "pitStopItemID": _item.pitStopDealID > 0 ? 0 : _item.pitStopItemID, // Condition added because we are using `pitStopItemID` in case of deals in some cases.
+                    "pitStopDealID": _item.pitStopDealID || 0
+                }))]
+            }
+        }
+    });
+    console.log("[VERIFY_CART_ITEMS].payload", payload);
+    postRequest(
+        Endpoints.VERIFY_CART_ITEMS,
+        payload,
+        res => {
+            console.log("[VERIFY_CART_ITEMS].res", res);
+            const { statusCode = 200, productList = [] } = res.data;
+            if (statusCode === 200) {
+                let is_difference = false;
+                let removedItems = [];
+                let modifiedPitstops = pitstops.map((_pitstop, j) => {
+                    if (_pitstop.checkOutItemsListVM) {
+                        let modifiedCheckOutItemsListVM = [..._pitstop.checkOutItemsListVM];
+                        const findItem = productList.find(x => modifiedCheckOutItemsListVM.find(y => {
+                            if ((y.pitStopItemID && (y.pitStopItemID === x.pitStopItemID)) || (y.pitStopDealID && (y.pitStopDealID === x.pitStopDealID))) {
+                                return x; // Because we need server's item to check statuses
+                            }
+                        }))
+                        // console.log("findItem", findItem);
+                        if (findItem) {
+                            modifiedCheckOutItemsListVM = modifiedCheckOutItemsListVM.filter((item, index) => {
+                                // console.log("item", item);
+                                const condition = (findItem.availabilityStatus == ENUMS.AVAILABILITY_STATUS.Available && item.gstAddedPrice == findItem.gstAddedPrice && item.discountType == findItem.discountType && findItem.pitStopStatus == 1);
+                                if ((item.pitStopItemID && (item.pitStopItemID === findItem.pitStopItemID) && condition) || (item.pitStopDealID && (item.pitStopDealID === findItem.pitStopDealID && condition))) {
+                                    // console.log("Came...");
+                                    return item;
+                                } else {
+                                    removedItems.push(item)
+                                    is_difference = true;
+                                }
+                            })
+                        }
+                        // console.log("modifiedCheckOutItemsListVM", modifiedCheckOutItemsListVM);
+                        _pitstop.checkOutItemsListVM = modifiedCheckOutItemsListVM;
+
+                    }
+                    return _pitstop;
+                })
+                console.log("is_difference,  modifiedPitstops,removedItems ", is_difference, modifiedPitstops, removedItems);
+                if (is_difference) {
+                    modifiedPitstops = modifiedPitstops.filter(x => x.isJoviJob ? x : x.checkOutItemsListVM.length);
+                    if (modifiedPitstops.length) {
+                        const alertStr = removedItems.map(item => (item.pitStopItemName || item.pitStopDealName)).join(", \n");
+                        Toast.info(`${alertStr} no more available!`, 5000)
+                        sharedAddUpdatePitstop(null, false, modifiedPitstops)
+                    } else {
+                        Toast.info(`Items no more available`);
+                        dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
+                        NavigationService.NavigationActions.common_actions.goBack();
+                    }
+                } else {
+                    console.log("Not any difference");
+
+                }
+
+
+            }
+        },
+        err => {
+            console.log("[VERIFY_CART_ITEMS].err", err);
+        },
+        {},
+        true,
+    ).finally(() => {
+        sharedGetServiceCharges()
+    });
+};
 export const randomDate = (start = new Date(2019, 2, 1), end = new Date()) => {
     return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 };

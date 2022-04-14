@@ -281,7 +281,9 @@ const PistopListingChild = React.memo(({ route, }) => {
         <View style={{ ...listingStyles.wrapper, paddingBottom: SPACING_VERTICAL, marginHorizontal: 0 }}>
             {vendorDashboardCategoryIDReducer.map((item, index) => {
                 return (
-                    <GenericList themeColors={colors} pitstopType={pitstopType}
+                    <GenericList themeColors={colors}
+                        vendorType={pitstopType}
+                        pitstopType={pitstopType}
                         textContainer={{ paddingHorizontal: 10 }}
                         vendorDashboardCatID={item.vendorDashboardCatID} cb={(loaded) => {
                             setLoadedData(loaded)
