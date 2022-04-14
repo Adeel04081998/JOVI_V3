@@ -5,9 +5,11 @@ import {
     StyleSheet, View,
     ViewStyle
 } from 'react-native';
-import { VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { getBottomPadding, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { initColors } from '../../res/colors';
 import constants from '../../res/constants';
+import Text from '../atoms/Text';
 
 const { width } = Dimensions.get('window');
 const SPACING = constants.horizontal_margin;
@@ -17,6 +19,7 @@ const BORDER_RADIUS = 8;
 interface FlatListCarouselProps {
     data: any[];
     pagination?: boolean;
+    showNumber?: boolean;
 
     width?: number;
 
@@ -24,15 +27,18 @@ interface FlatListCarouselProps {
     paginationDotStyle?: StyleProp<ViewStyle>;
 
     onActiveIndexChanged?: (item: any, index: number) => void;
-    colors: typeof initColors;
+    colors?: typeof initColors;
     renderItem: ListRenderItem<any> | null | undefined;
     contentContainerStyle?: StyleProp<ViewStyle>;
     style?: StyleProp<ViewStyle>;
     columnWrapperStyle?: StyleProp<ViewStyle>;
+    customFooterContainerStyle?: StyleProp<ViewStyle>;
+    customFooter?: (item: any, index: number) => React.ReactNode;
 
 }
 const defaultProps = {
     pagination: true,
+    showNumber: false,
 
     width: ITEM_WIDTH,
 
@@ -44,6 +50,7 @@ const defaultProps = {
     contentContainerStyle: undefined,
     style: undefined,
     columnWrapperStyle: undefined,
+    customFooter: undefined,
 };
 
 
@@ -133,8 +140,28 @@ const FlatListCarousel: FC<FlatListCarouselProps> = (props: FlatListCarouselProp
                 removeClippedSubviews={true}
 
             />
+            {VALIDATION_CHECK(props.customFooter) && <View style={[props.customFooterContainerStyle, {
+                zIndex: 999,
+                position: 'absolute',
+                bottom: getBottomPadding(useSafeAreaInsets(), 20, 40),
+                left: 0,
+                right: 0,
+            }]}>
+                {props.customFooter && props.customFooter(dataWithPlaceholders[currentIndex], currentIndex)}
+            </View>}
 
-
+            {VALIDATION_CHECK(props.showNumber) &&
+                <Text style={{
+                    color: "#fff",
+                    zIndex: 999,
+                    position: 'absolute',
+                    bottom: getBottomPadding(useSafeAreaInsets(), 20, 0),
+                    left: 0,
+                    right: 0,
+                    textAlign: "center",
+                    fontSize: 20,
+                }}>{`${currentIndex + 1} / ${dataWithPlaceholders.length}`}</Text>
+            }
             {/* ****************** Start of FOOTER ****************** */}
             {VALIDATION_CHECK(props.pagination) &&
                 <View style={[footerStyles.primaryContainer, props.paginationContainerStyle]}>

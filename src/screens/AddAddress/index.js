@@ -64,12 +64,12 @@ export default (props) => {
             {
                 key: 3,
                 val: '',
-                placeHolder: '(Optional) Note to Rider',
+                placeHolder: '(Optional) Note to rider',
             },
             {
                 key: 4,
                 val: '',
-                placeHolder: 'Add your label',
+                placeHolder: 'Choose Label',
                 shown: false
             }
         ],
@@ -93,7 +93,7 @@ export default (props) => {
             {
                 key: AddressTypeEnum[4].value,
                 iconName: (color) => svgs.relationIcon(color),
-                lable: 'Relation',
+                lable: 'Partner',
                 borderColor: null,
                 color: colors.black,
                 selected: false
@@ -101,7 +101,7 @@ export default (props) => {
             {
                 key: AddressTypeEnum[5].value,
                 iconName: (color) => svgs.plusIcon(color),
-                lable: 'Other',
+                lable: 'Others',
                 borderColor: null,
                 color: colors.black,
                 selected: false
@@ -288,7 +288,7 @@ export default (props) => {
                 <View style={styles.modalView} >
                     <KeyboardAwareScrollView ref={scrollRef} contentContainerStyle={{ flexGrow: 1 }} >
 
-                        <Text style={styles.mainText} fontFamily="PoppinsMedium" >Your current location</Text>
+                        <Text style={styles.mainText} fontFamily="PoppinsMedium" >Your Current Location</Text>
                         <View style={styles.inputContainer}>
                             <TouchableOpacity style={styles.touchableField} onPress={onPressToGoMap} >
                                 <SvgXml xml={svgs.pinField()} />

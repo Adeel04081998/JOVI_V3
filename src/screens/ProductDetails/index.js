@@ -511,10 +511,10 @@ export default (props) => {
                                         <TextInput
                                             ref={inputRef}
                                             containerStyle={{ backgroundColor: 'white', margin: 0, }}
-                                            placeholder="Type your instructions"
+                                            placeholder="Add notes"
                                             placeholderTextColor={"#CFCFCF"}
                                             titleStyle={{ color: 'black', fontSize: 14, marginVertical: -8 }}
-                                            title="Please add your instructions"
+                                            title="Add Instructions"
                                             textAlignVertical='top'
                                             style={{ textAlign: "left", backgroundColor: colors.drWhite, borderColor: 'rgba(112, 112, 112, 0.1)', borderWidth: 1, color: 'black', margin: 10, borderRadius: 10, minHeight: minHeight, }}
                                             onChangeText={(text) => {

@@ -399,7 +399,6 @@ export default ({ navigation, route }) => {
     return (
         <View style={{ ...styles.primaryContainer, }}>
             {_renderHeader()}
-
             {!showJoviJob && recentSearchesData.length < 1 && searchData[isRestaurantSelected ? "restaurant" : "grocery"].data.length < 1 ? <EmptyUI /> :
                 <>
                     {showProductVendor ?
@@ -416,8 +415,6 @@ export default ({ navigation, route }) => {
                         </>
                     }
                 </>}
-
-
         </View>
     )
 
@@ -429,15 +426,19 @@ const EmptyUI = () => {
     return (
         <View style={{
             flex: 1,
-            marginTop: -120,
             alignItems: "center",
             justifyContent: "center",
         }}>
-            <SvgXml
-                xml={svgs.searchEmptyRobot()}
-                height={WINDOW_WIDTH * 0.5}
-                width={WINDOW_WIDTH * 0.5}
-            />
+            <View style={{
+                marginTop: -120,
+            }}>
+                <SvgXml
+                    xml={svgs.searchEmptyRobot()}
+                    height={WINDOW_WIDTH * 0.5}
+                    width={WINDOW_WIDTH * 0.5}
+                />
+            </View>
+
         </View>
     )
 }

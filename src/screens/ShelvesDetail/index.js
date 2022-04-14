@@ -353,7 +353,6 @@ export default ({ navigation, route }) => {
                         paddingHorizontal: constants.spacing_horizontal,
                     }}
                     renderItem={(parentItem, item, parentIndex, index) => {
-                        console.log('item ==>>>>',item);
                         const image = (item?.images ?? []).length > 0 ? item.images[0].joviImageThumbnail : '';
                         let isOutOfStock = "isOutOfStock" in item ? item.isOutOfStock : false;
                         if (item.availabilityStatus === ENUMS.AVAILABILITY_STATUS.OutOfStock) {

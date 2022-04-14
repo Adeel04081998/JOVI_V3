@@ -52,6 +52,9 @@ const Recording = React.forwardRef((props: Props, ref) => {
                 recordingItem = props.recordingItem;
                 forceUpdate();
             }
+        } else {
+            recordingItem = undefined;;
+
         }
 
     }, [props.recordingItem])

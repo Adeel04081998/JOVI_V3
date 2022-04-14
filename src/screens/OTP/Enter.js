@@ -163,7 +163,7 @@ export default () => {
 
                 <Button
                     style={styles.continueButton}
-                    text={'Continue'}
+                    text={`Send OTP`}
                     textStyle={{ color: '#fff', ...styles.textAlignCenter, fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
                     onPress={onPress}
                     isLoading={isLoading}
@@ -173,10 +173,10 @@ export default () => {
             </View>
 
             <View style={styles.termsAndConditionView}>
-                <Text fontFamily={'PoppinsBold'} style={{ alignSelf: 'center', paddingVertical: 5, fontSize: 12 }}>By tapping Continue I am agreeing to </Text>
+                <Text fontFamily={'PoppinsBold'} style={{ alignSelf: 'center', paddingVertical: 5, fontSize: 12 }}>{`By tapping 'send OTP' I agree With`}</Text>
                 <TouchableOpacity onPress={() => { }}>
                     <Text fontFamily={'PoppinsLight'} style={{ color: "#6D51BB", fontSize: 14 }}>
-                        terms & conditions <Text style={{ color: 'black' }} onPress={() => { }} >and</Text> privacy & policy
+                        Terms & Conditions <Text style={{ color: 'black' }} onPress={() => { }} >and</Text> Privacy Policy
                     </Text>
                 </TouchableOpacity>
             </View>
