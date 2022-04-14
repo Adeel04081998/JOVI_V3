@@ -297,7 +297,7 @@ const SharedGetApis = ({ }) => {
             sharedGetUserAddressesApi();
             sharedGetPromotions();
             sharedGetFilters();
-            sharedGetPendingOrderRating();
+            // sharedGetPendingOrderRating();
             const pushNotification = (notify = {}) => {
                 if (notify.data) {
                     localNotificationService.showNotification(0, notify.notification.title, notify.notification.body, notify, {

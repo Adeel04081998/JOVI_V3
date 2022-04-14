@@ -12,7 +12,7 @@ import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import GenericList from '../../components/molecules/GenericList';
 import ImageCarousel from '../../components/molecules/ImageCarousel';
-import { sharedExceptionHandler, sharedOrderNavigation, uniqueKeyExtractor } from "../../helpers/SharedActions";
+import { sharedExceptionHandler, sharedGetPendingOrderRating, sharedOrderNavigation, uniqueKeyExtractor } from "../../helpers/SharedActions";
 import { getRequest } from "../../manager/ApiManager";
 import Endpoints from "../../manager/Endpoints";
 import NavigationService from "../../navigations/NavigationService";
@@ -193,7 +193,7 @@ export default () => {
                             <Categories homeStyles={homeStyles} />
                             <AvatarAlert messagesReducer={messagesReducer} homeStyles={homeStyles} />
                             {/* <RecentOrders /> AS PER PM WE HAVE TO REMOVE RECENT ORDER FOR NOW*/}
-                            
+
                             <RenderGenericList isFinalDestinationSelected={isFinalDestinationSelected} vendorDashboardCategoryIDReducer={vendorDashboardCategoryIDReducer} />
                             {/*Render Generic List is implemented, so the KPI's on home doesnt get reloaded whenever come to home*/}
 
@@ -212,7 +212,11 @@ export default () => {
         </View>
     );
 };
-const RenderGenericList = React.memo(({isFinalDestinationSelected,vendorDashboardCategoryIDReducer }) => {
+const RenderGenericList = React.memo(({ isFinalDestinationSelected, vendorDashboardCategoryIDReducer }) => {
+    React.useEffect(() => {
+        sharedGetPendingOrderRating();
+        return () => { };
+    }, [])
     return <>{isFinalDestinationSelected && vendorDashboardCategoryIDReducer.map((item, index) => {
         return (
             <View key={uniqueKeyExtractor()} style={{ marginHorizontal: -10, }}>
