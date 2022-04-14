@@ -83,7 +83,7 @@ export default ({ navigation, route }) => {
     React.useEffect(() => {
         const backHandler = BackHandler.addEventListener(
             "hardwareBackPress",
-            onBackPress
+            onBackPress,
         );
         return () => backHandler.remove();
     }, []);
@@ -211,6 +211,8 @@ export default ({ navigation, route }) => {
             } else {
                 setReceiptData({});
             }
+        }, (err) => {
+            setReceiptData({});
         });
     };
 
