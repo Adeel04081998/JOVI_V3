@@ -75,7 +75,7 @@ export default () => {
                             />
                             :
                             <Advertisment
-                                propsData={makeArrayRepeated(data, 2)}
+                                propsData={data}
                                 height={'100%'}
                                 width={constants.window_dimensions.width * 0.99}
                                 uriKey={"advertisementFile"}

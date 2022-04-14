@@ -4,7 +4,7 @@ import { LogBox, Platform, StatusBar, StyleSheet, TouchableOpacity, useColorSche
 import CodePush from "react-native-code-push"; //for codepush
 import Geolocation from 'react-native-geolocation-service';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { SvgXml} from "react-native-svg";
+import { SvgXml } from "react-native-svg";
 import Toast, { BaseToast } from 'react-native-toast-message';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -74,6 +74,8 @@ const CODE_PUSH_OPTIONS = {
 const App = () => {
     const { visible } = useSelector(state => state.modalReducer)
     const [state, setState] = React.useState({ appLoaded: false });
+    const userReducer = useSelector(state => state.userReducer);
+    const isFinalDestinationSelected = userReducer.finalDestObj;
 
     const isDarkMode = useColorScheme() === "dark";
     const theme = isDarkMode ? {
@@ -243,7 +245,7 @@ const App = () => {
                 onTrailingIconPress={() => Toast.hide()}
                 renderLeadingIcon={() => { return (RenderToastSvgUi(svgs.WarningToastIcon(), "#c57701")) }}
                 renderTrailingIcon={() => { return (RenderToastCrossUi()) }}
-            />
+            /> 
         },
 
     };
@@ -255,9 +257,10 @@ const App = () => {
                 {env.name === ENUMS.ENVS.STAGING ? <BaseUrlPrompt /> : null}
                 <NavigationContainer theme={theme} ref={_NavgationRef} >
                     <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
+
                         <RootStack />
                         {visible && <BottomAllignedModal />}
-                        <GenericPopUp />
+                        {isFinalDestinationSelected && <GenericPopUp />}
                     </View>
                 </NavigationContainer>
                 <Robot />

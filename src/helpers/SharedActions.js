@@ -1197,12 +1197,12 @@ export const sharedVerifyCartItems = () => {
             }
         }
     });
-    console.log("[VERIFY_CART_ITEMS].payload", payload);
+    // console.log("[VERIFY_CART_ITEMS].payload", payload);
     postRequest(
         Endpoints.VERIFY_CART_ITEMS,
         payload,
         res => {
-            console.log("[VERIFY_CART_ITEMS].res", res);
+            // console.log("[VERIFY_CART_ITEMS].res", res);
             const { statusCode = 200, productList = [] } = res.data;
             if (statusCode === 200) {
                 let is_difference = false;
@@ -1235,7 +1235,7 @@ export const sharedVerifyCartItems = () => {
                     }
                     return _pitstop;
                 })
-                console.log("is_difference,  modifiedPitstops,removedItems ", is_difference, modifiedPitstops, removedItems);
+                // console.log("is_difference,  modifiedPitstops,removedItems ", is_difference, modifiedPitstops, removedItems);
                 if (is_difference) {
                     modifiedPitstops = modifiedPitstops.filter(x => x.isJoviJob ? x : x.checkOutItemsListVM.length);
                     if (modifiedPitstops.length) {
@@ -1283,7 +1283,7 @@ export const sharedSendFileToServer = (list = [], onSuccess = () => { }, type = 
         index += 1;
     }
     multipartPostRequest(Endpoints.ADD_PITSTOPIMAGE, formData, (res) => {
-        console.log('[sendFileToServer]res', res);
+        // console.log('[sendFileToServer]res', res);
         const statusCode = (res?.statusCode ?? 400);
         if (statusCode === 200) {
             onSuccess(res);
