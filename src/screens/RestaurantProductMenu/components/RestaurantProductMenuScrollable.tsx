@@ -1,3 +1,4 @@
+import AnimatedLottieView from "lottie-react-native";
 import React, { useRef } from "react";
 import { Animated, Easing, FlatList, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StatusBar, StyleProp, StyleSheet, ViewStyle } from "react-native";
 import Text from "../../../components/atoms/Text";
@@ -247,8 +248,31 @@ const RestaurantProductMenuScrollable = (props: Props) => {
             </View>
         );
     }
+    if (props.headerHeight === 0) {
+        return (
+
+            <View style={{
+                flex: 1,
+                marginTop: 40,
+                alignItems: "center",
+                justifyContent: "center",
+            }}>
+
+                {/* @ts-ignore */}
+                <AnimatedLottieView
+                    source={require('../../../assets/LoadingView/OrderChat.json')}
+                    autoPlay
+                    loop
+                    style={{
+                        height: 120,
+                        width: 120,
+                    }}
+                />
+            </View>
+        )
+    }
     return (
-        <>
+        <View style={props.headerHeight === 0 ? { display: "none" } : {}}>
             <Animated.View style={[style.topHeaderStyle, props.topHeaderStyle]}>
                 <ScrollView
                     ref={tabScrollRef}
@@ -332,7 +356,7 @@ const RestaurantProductMenuScrollable = (props: Props) => {
                 </>
             </Animated.ScrollView>
 
-        </>
+        </View>
     )
 }
 
