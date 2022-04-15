@@ -245,7 +245,7 @@ const App = () => {
                 onTrailingIconPress={() => Toast.hide()}
                 renderLeadingIcon={() => { return (RenderToastSvgUi(svgs.WarningToastIcon(), "#c57701")) }}
                 renderTrailingIcon={() => { return (RenderToastCrossUi()) }}
-            /> 
+            />
         },
 
     };
@@ -260,7 +260,7 @@ const App = () => {
 
                         <RootStack />
                         {visible && <BottomAllignedModal />}
-                        {   !__DEV__ && isFinalDestinationSelected && <GenericPopUp />}
+                        {isFinalDestinationSelected && <GenericPopUp />}
                     </View>
                 </NavigationContainer>
                 <Robot />
