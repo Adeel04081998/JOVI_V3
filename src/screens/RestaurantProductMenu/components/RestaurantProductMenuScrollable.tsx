@@ -92,11 +92,11 @@ const RestaurantProductMenuScrollable = (props: Props) => {
     // #endregion :: VERTICAL LAYOUT HANDLER END's FROM HERE 
 
     // #region :: ON HORIZONTAL ITEM PRESS  START's FROM HERE 
-    const handleScroll = (categoryID: any, name: any,skipAnimation=false) => {
+    const handleScroll = (categoryID: any, name: any, skipAnimation = false) => {
         const content = tabs.current.find((singleTab: any) => singleTab.categoryID === categoryID);
         currentTabRef.current = content;
         scrollRef.current && scrollRef.current.scrollTo({ y: content.yy + 2 })
-        if(skipAnimation)return;
+        if (skipAnimation) return;
         Animated.timing(value, {
             toValue: content.x,
             duration: 200,
@@ -190,18 +190,18 @@ const RestaurantProductMenuScrollable = (props: Props) => {
         React.useEffect(() => {
             if (Object.keys(currentTabState ?? {}).length === 0 && props.data.length > 0) {
                 setTimeout(() => {
-                setCurrentTabState(props.data[0]);
-            }, 100);
+                    setCurrentTabState(props.data[0]);
+                }, 100);
 
             }
         }, [props.data]);
         return (
-            <View style={{ marginHorizontal: 10}}>
+            <View style={{ marginHorizontal: 10 }}>
                 <View style={[style.row]}>
                     {props.data && props.data.map((food: any, i: number) => (
                         <TouchableScale
                             key={uniqueKeyExtractor()}
-                            onPress={e => handleScroll(food.categoryID, food.categoryName,true)}
+                            onPress={e => handleScroll(food.categoryID, food.categoryName, true)}
                             onLayout={e => handleTab(food.categoryID, food.categoryName, e.nativeEvent.layout, i)}
                             style={{
                                 backgroundColor: "#F2F1F6",
@@ -289,40 +289,47 @@ const RestaurantProductMenuScrollable = (props: Props) => {
                     { listener: handleOnScroll, },
                 )}
                 contentContainerStyle={{ paddingBottom: 60 }}>
+                <>
+                    {props.renderAboveItems && props.renderAboveItems()}
 
-                {props.renderAboveItems && props.renderAboveItems()}
-
-                <View style={{ paddingHorizontal: 0, paddingBottom: 40 }}>
-                    {props.data && props.data.map((food: any, parentIndex: number) => {
-                        return (
-                            <View
-                                onLayout={e => handleTabContent(food.categoryID, food.categoryName, { ...e.nativeEvent.layout, yy: e.nativeEvent.layout.y, xx: e.nativeEvent.layout.x })}
-                                key={uniqueKeyExtractor()}>
-                                {VALIDATION_CHECK(props.renderSectionHeader) ?
-                                    props.renderSectionHeader && props.renderSectionHeader(food, parentIndex)
-                                    :
-                                    <Text style={style.sectionTitle}>{food.categoryName}</Text>
-                                }
-                                <View style={props.itemsContainerStyle || {}}>
-                                    {(food?.isTopDeal ?? false) ?
-                                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                            {food[props.itemListPropertyName].map((singleFood: any, index: number) => {
-                                                return <View key={uniqueKeyExtractor()}>
-                                                    {props.renderItem && props.renderItem(food, singleFood, parentIndex, index)}
-                                                </View>
-                                            })}
-                                        </ScrollView>
-                                        :
-                                        food[props.itemListPropertyName].map((singleFood: any, index: number) => {
-                                            return <View key={uniqueKeyExtractor()}>
-                                                {props.renderItem && props.renderItem(food, singleFood, parentIndex, index)}
-                                            </View>
-                                        })}
+                    <View style={{ paddingHorizontal: 0, paddingBottom: 40 }}>
+                        {props.data && props.data.map((food: any, parentIndex: number) => {
+                            return (
+                                <View
+                                    onLayout={e => handleTabContent(food.categoryID, food.categoryName, { ...e.nativeEvent.layout, yy: e.nativeEvent.layout.y, xx: e.nativeEvent.layout.x })}
+                                    key={uniqueKeyExtractor()}>
+                                    <>
+                                        {VALIDATION_CHECK(props.renderSectionHeader) ?
+                                            props.renderSectionHeader && props.renderSectionHeader(food, parentIndex)
+                                            :
+                                            <Text style={style.sectionTitle}>{food.categoryName}</Text>
+                                        }
+                                        <View style={props.itemsContainerStyle || {}}>
+                                            {(food?.isTopDeal ?? false) ?
+                                                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                                    {food[props.itemListPropertyName].map((singleFood: any, index: number) => {
+                                                        return <View key={uniqueKeyExtractor()}>
+                                                            <>
+                                                                {props.renderItem && props.renderItem(food, singleFood, parentIndex, index)}
+                                                            </>
+                                                        </View>
+                                                    })}
+                                                </ScrollView>
+                                                :
+                                                food[props.itemListPropertyName].map((singleFood: any, index: number) => {
+                                                    return <View key={uniqueKeyExtractor()}>
+                                                        <>
+                                                            {props.renderItem && props.renderItem(food, singleFood, parentIndex, index)}
+                                                        </>
+                                                    </View>
+                                                })}
+                                        </View>
+                                    </>
                                 </View>
-                            </View>
-                        )
-                    })}
-                </View>
+                            )
+                        })}
+                    </View>
+                </>
             </Animated.ScrollView>
 
         </>
