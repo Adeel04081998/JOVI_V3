@@ -142,7 +142,7 @@ const ReceiptItem = (props: Props) => {
                     const { name, quantity, } = getItemDetail(item);
                     const PRICE = props.showFrontValues ? (item._itemPrice || item.discountedPrice) : item.price;
                     const ACTUAL_PRICE = props.showFrontValues ? item._itemPriceWithoutDiscount : item.actualPrice > item.price ? item.actualPrice : 0;
-                    // const {name, quantity, price, actualPrice, } = item;
+
                     return (
                         <View key={index} style={[{ ...itemStyles.primaryContainer, paddingTop: index === 0 ? 0 : 4, }, props.itemContainerStyle]}>
                             <Text style={[itemStyles.name, props.itemTitleStyle]}>{sharedGenerateProductItem(name, quantity)}</Text>
@@ -150,8 +150,9 @@ const ReceiptItem = (props: Props) => {
 
                             {/* ****************** Start of WHEN DISCOUNT IS ADDED ****************** */}
                             <>
-                                {ACTUAL_PRICE &&
+                                {ACTUAL_PRICE ?
                                     <Text numberOfLines={3} style={[itemStyles.actualPrice, props.itemActualPriceStyle]}>{renderPrice(`${isJoviJob ? props.totalPrice : ACTUAL_PRICE}`.trim(), '', '.00')}</Text>
+                                    : null
                                 }
                             </>
 
@@ -173,24 +174,25 @@ const ReceiptItem = (props: Props) => {
                 borderLeftWidth: 5,
                 borderLeftColor: dotColor(),
             }]}>
+                <>
 
-                {/* ****************** Start of TITLE ****************** */}
-                <View style={[styles.titlePrimaryContainer, props.titleContainerStyle]}>
-                    <View style={styles.titleDot} />
-                    <Text fontFamily="PoppinsMedium" style={[styles.title, props.titleStyle]} numberOfLines={1}>{`Pitstop ${`${props.pitstopNumber}`.padStart(2, '0')} - ${props.title}`}
-                        {
-                            props.individualPitstopGst ? <Text style={{ ...itemStyles.name, fontSize: 11, }} fontFamily="PoppinsMedium">{`- (Incl GST ${props.individualPitstopGst})`}</Text> : ""
-                        }
-                    </Text>
-                    {((!showDetail || props.showItemTotalPrice) && VALIDATION_CHECK(props.totalPrice)) && <>
-                        <Text style={{ color: props.showItemTotalPrice ? dotColor() : "#272727", fontSize: 12, }} fontFamily="PoppinsMedium">{renderPrice({ price: props.totalPrice, showZero: true })}</Text>
-                    </>}
-                </View>
+                    {/* ****************** Start of TITLE ****************** */}
+                    <View style={[styles.titlePrimaryContainer, props.titleContainerStyle]}>
+                        <View style={styles.titleDot} />
+                        <Text fontFamily="PoppinsMedium" style={[styles.title, props.titleStyle]} numberOfLines={1}>{`Pitstop ${`${props.pitstopNumber}`.padStart(2, '0')} - ${props.title}`}
+                            {
+                                props.individualPitstopGst ? <Text style={{ ...itemStyles.name, fontSize: 11, }} fontFamily="PoppinsMedium">{`- (Incl GST ${props.individualPitstopGst})`}</Text> : ""
+                            }
+                        </Text>
+                        {((!showDetail || props.showItemTotalPrice) && VALIDATION_CHECK(props.totalPrice)) && <>
+                            <Text style={{ color: props.showItemTotalPrice ? dotColor() : "#272727", fontSize: 12, }} fontFamily="PoppinsMedium">{renderPrice({ price: props.totalPrice, showZero: true })}</Text>
+                        </>}
+                    </View>
 
-                {/* ****************** End of TITLE ****************** */}
-                {props.customTitleBelowUI && props.customTitleBelowUI()}
-                {showDetail && renderSubItem()}
-
+                    {/* ****************** End of TITLE ****************** */}
+                    {props.customTitleBelowUI && props.customTitleBelowUI()}
+                    {showDetail && renderSubItem()}
+                </>
             </View>
             {props.customEndUI && props.customEndUI()}
         </>

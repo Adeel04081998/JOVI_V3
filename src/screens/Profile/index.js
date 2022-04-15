@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import {  Appearance, BackHandler, Platform,  StyleSheet } from 'react-native';
+import { Appearance, BackHandler, Platform, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
 import Image from '../../components/atoms/Image';
 import SafeAreaView from '../../components/atoms/SafeAreaView';
@@ -21,6 +21,7 @@ import Regex from '../../utils/Regex';
 import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-aware-scroll-view';
 import DatePicker from './component/DatePicker';
 import AnimatedModal from '../../components/organisms/AnimatedModal';
+import Toast from '../../components/atoms/Toast';
 const HEADER_ICON_SIZE = CustomHeaderIconBorder.size * 0.6;
 const ICON_CONTAINER_SIZE = 40;
 const RADIO_BUTTON_SIZE = 20;
@@ -64,7 +65,7 @@ export default () => {
         isModalVisible: false,
         loading: false,
         updateArray: [],
-       
+
 
 
     });
@@ -178,11 +179,12 @@ export default () => {
     };
     const onSuccesHandler = (res) => {
         console.log("CreateUpdateProfileUpdate==>>res=>.", res);
+        Toast.info(res.message)
         setState((pre) => ({ ...pre, loading: false, }))
         sharedGetUserDetailsApi();
 
     }
-   
+
     const onErrorHandler = (err) => { sharedExceptionHandler(err) }
     const _profileUpdateHandler = async () => {
 
@@ -201,8 +203,8 @@ export default () => {
         // let updateArray = [...state.inputsArr]
         // setState((pre) => ({ ...pre, updateArray: updateArray }))
         // let Newfound = state?.inputsArr.some((el, i) => el[i]?.value === state?.updateArray[i]?.value);
-     
-    
+
+
         else {
             setState((pre) => ({ ...pre, loading: true }))
             let deviceInformation = await sharedGetDeviceInfo()
@@ -232,7 +234,7 @@ export default () => {
 
     }
 
- 
+
 
     return (
         <SafeAreaView style={styles.primaryContainer}>

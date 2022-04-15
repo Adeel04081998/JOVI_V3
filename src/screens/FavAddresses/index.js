@@ -96,7 +96,7 @@ export default () => {
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }}>
             {_renderHeader()}
             <View style={{ flex: 1, }}>
-                <Text style={{ ..._styles.title, marginHorizontal: SPACING }} fontFamily={'PoppinsSemiBold'}>Saved Address</Text>
+                <Text style={{ ..._styles.title, marginHorizontal: SPACING, marginTop: 20, }} fontFamily={'PoppinsSemiBold'}>Saved Address</Text>
                 <View style={{ flex: 1 }}>
                     <FlatList
                         data={addresses}

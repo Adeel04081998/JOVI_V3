@@ -126,6 +126,7 @@ const RatingOrderRecipt = (props: Props) => {
                                 const individualPitstopTotal = isJoviJob ? x.paidAmount : x.jobAmount;
                                 let isPharmacy = false;
                                 if (isJoviJob && VALIDATION_CHECK(x.pharmacyPitstopType === 0 ? null : x.pharmacyPitstopType)) {
+                                    //@ts-ignore
                                     pitstopName = ENUMS.PharmacyPitstopTypeServer[x.pharmacyPitstopType].text;
                                     isPharmacy = true;
                                 }

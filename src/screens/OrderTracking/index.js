@@ -395,7 +395,7 @@ export default ({ route }) => {
                     {
                         isRiderFound && state.currentPitstop ?
                             <Text style={styles.currentPitstopTime}>
-                                {state.currentPitstop.isFinalDestination ? `Jovi is at your door step!` : `Estimated arrival at ${state.totalActivePitstops.length === state.currentPitstop.index + 1 ? 'Final Destination' : `Pitstop ${state.currentPitstop?.index + 1}`}\n${state.currentPitstop?.pitstopEstimateTime ?? ' - '} minutes`}
+                                {state.currentPitstop.isFinalDestination && state.currentPitstop.joviJobStatus === 2 ? `Jovi is at your door step!` : `Estimated arrival at ${state.totalActivePitstops.length === state.currentPitstop.index + 1 ? 'Final Destination' : `Pitstop ${state.currentPitstop?.index + 1}`}\n${state.currentPitstop?.pitstopEstimateTime ?? ' - '} minutes`}
                             </Text>
                             :
                             null

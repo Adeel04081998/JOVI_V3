@@ -507,7 +507,7 @@ export const sharedAddUpdatePitstop = (
             } else {
                 pitstops[pitstopIndex] = { ...pitstops[pitstopIndex], ...pitstopDetails, pitstopIndex: pitstopIndex, }; // TO RETAIN OLD PROPERTIES AS IT IS WITH UPDATED VAUES YOU NEED TO PASS SPREADED (...) OLD ITEM'S FULL DATA WITH UPDATED FIELDS
                 const indexOfLinkedPitstop = pitstops.findIndex(item => item.pitstopID === pitstopDetails.linkedPitstopId);
-                console.log('indexOfLinkedPitstop',indexOfLinkedPitstop,{ ...pitstopDetails.pickUpPitstop, parentPitstop: { ...pitstopDetails }, });
+                console.log('indexOfLinkedPitstop', indexOfLinkedPitstop, { ...pitstopDetails.pickUpPitstop, parentPitstop: { ...pitstopDetails }, });
                 if (indexOfLinkedPitstop !== -1) {
                     pitstops[indexOfLinkedPitstop] = { ...pitstops[indexOfLinkedPitstop], ...pitstopDetails.pickUpPitstop, parentPitstop: { ...pitstopDetails }, }; // TO RETAIN OLD PROPERTIES AS IT IS WITH UPDATED VAUES YOU NEED TO PASS SPREADED (...) OLD ITEM'S FULL DATA WITH UPDATED FIELDS
                 }
@@ -1294,6 +1294,8 @@ export const sharedSendFileToServer = (list = [], onSuccess = () => { }, type = 
 }
 
 export const sharedGetPendingOrderRating = () => {
+    // NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.RateRider.screen_name, { orderID: 86208765, });
+    // return
     getRequest(Endpoints.GET_PENDING_ORDER_RATING,
         res => {
             const statusCode = res?.data?.statusCode ?? 404;
@@ -1302,7 +1304,7 @@ export const sharedGetPendingOrderRating = () => {
                 data = data.filter(i => `${i.orderStatus}`.toLowerCase().trim() === `closed`.toLowerCase().trim());
                 if (data.length > 0) {
                     NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.RateRider.screen_name, { orderID: data[0].customOrderID, orderArray: data, });
-                } 
+                }
             }
         },
         err => {

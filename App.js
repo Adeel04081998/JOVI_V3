@@ -26,7 +26,7 @@ import { _toastRef } from "./src/components/atoms/Toast";
 import View from './src/components/atoms/View';
 import BaseUrlPrompt from "./src/components/molecules/BaseUrlPrompt";
 import Robot from './src/components/organisms/Robot';
-import { sharedClearReducers, sharedGetDashboardCategoryIApi, sharedGetEnumsApi, sharedGetFilters, sharedGetHomeMsgsApi, sharedGetPendingOrderRating, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedSendFCMTokenToServer } from './src/helpers/SharedActions';
+import { sharedClearReducers, sharedGetDashboardCategoryIApi, sharedGetEnumsApi, sharedGetFilters, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedSendFCMTokenToServer } from './src/helpers/SharedActions';
 import { postRequest } from './src/manager/ApiManager';
 import RootStack from "./src/navigations";
 import { _NavgationRef } from './src/navigations/NavigationService';
@@ -171,6 +171,7 @@ const App = () => {
             </TouchableOpacity>
         )
     }
+
     const toastConfig = {
         success: ({ text1, ...rest }) => {
             if (!(rest.text2)) return
@@ -178,10 +179,10 @@ const App = () => {
                 text1NumberOfLines={10}
                 text2NumberOfLines={5}
                 {...rest}
-                style={{ borderLeftColor: '#42C757', minHeight: Platform.OS === 'android' ? 70 : 50, width: constants.window_dimensions.width - 15, top: constants.screen_dimensions.height / (Platform.OS === 'android' ? "95" : "20"), backgroundColor: '#42C757', borderRadius: 20, }}
-                contentContainerStyle={{ paddingHorizontal: 65 }}
                 text1Style={{ fontWeight: "500", fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
-                text2Style={{ color: 'white', fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
+                text2Style={{ color: '#272727', fontSize: 14, fontFamily: FontFamily.Poppins.Regular, }}
+                style={{ ...sharedStyles._styles().toastContainer(theme.colors["Transparent_Green "], theme.colors.Bitter_Lime_green_Shade), }}
+                contentContainerStyle={{ paddingLeft: 45, margin: 0, }}
                 text1={text1}
                 text2={rest.text2}
                 onTrailingIconPress={() => Toast.hide()}
@@ -199,11 +200,10 @@ const App = () => {
                 text1NumberOfLines={10}
                 text2NumberOfLines={5}
                 {...rest}
-                style={{ borderLeftColor: '#D80D0D', top: constants.screen_dimensions.height / (Platform.OS === 'android' ? "95" : "20"), minHeight: Platform.OS === 'android' ? 70 : 50, width: constants.window_dimensions.width - 15, backgroundColor: '#D80D0D', borderRadius: 20 }}
-                contentContainerStyle={{ paddingHorizontal: 65 }}
+                style={{ ...sharedStyles._styles().toastContainer(theme.colors.Pink_Sparkle_Pink_Shade, theme.colors.Red_Surrection), }}
+                contentContainerStyle={{ paddingLeft: 51, margin: 0, }}
                 text1Style={{ fontWeight: '500', fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
-                text2Style={{ color: 'white', fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
-
+                text2Style={{ color: '#272727', fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
                 text1={text1}
                 text2={rest.text2}
                 onTrailingIconPress={() => Toast.hide()}
@@ -219,10 +219,10 @@ const App = () => {
                 text1NumberOfLines={10}
                 text2NumberOfLines={5}
                 {...rest}
-                style={{ borderLeftColor: '#0070E0', top: constants.screen_dimensions.height / (Platform.OS === 'android' ? "95" : "20"), minHeight: Platform.OS === 'android' ? 70 : 50, width: constants.window_dimensions.width - 15, backgroundColor: '#0070E0', borderRadius: 20 }}
-                contentContainerStyle={{ paddingHorizontal: 65, }}
+                style={{ ...sharedStyles._styles().toastContainer(theme.colors.Husky_light_blue_Shade, theme.colors.Brak_Bay_Dark_blue_Shade), }}
+                contentContainerStyle={{ paddingLeft: 51, margin: 0, }}
                 text1Style={{ fontWeight: '500', fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
-                text2Style={{ color: 'white', fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
+                text2Style={{ color: '#272727', fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
                 text1={text1}
                 text2={rest.text2}
                 onTrailingIconPress={() => Toast.hide()}
@@ -236,10 +236,10 @@ const App = () => {
                 text1NumberOfLines={10}
                 text2NumberOfLines={5}
                 {...rest}
-                style={{ borderLeftColor: '#F79C0B', top: constants.screen_dimensions.height / (Platform.OS === 'android' ? "95" : "20"), minHeight: Platform.OS === 'android' ? 70 : 50, width: constants.window_dimensions.width - 15, backgroundColor: '#F79C0B', borderRadius: 20 }}
-                contentContainerStyle={{ paddingHorizontal: 65, }}
+                style={{ ...sharedStyles._styles().toastContainer(theme.colors.DoeSkin_LightSkinShade, theme.colors.light_orange_Shade), }}
+                contentContainerStyle={{ paddingLeft: 51, margin: 0, }}
                 text1Style={{ fontWeight: '500', fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
-                text2Style={{ color: 'white', fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
+                text2Style={{ color: '#272727', fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
                 text1={text1}
                 text2={rest.text2}
                 onTrailingIconPress={() => Toast.hide()}
@@ -302,7 +302,6 @@ const SharedGetApis = ({ }) => {
             sharedGetUserAddressesApi();
             sharedGetPromotions();
             sharedGetFilters();
-            sharedGetPendingOrderRating();
             const pushNotification = (notify = {}) => {
                 if (notify.data) {
                     localNotificationService.showNotification(0, notify.notification.title, notify.notification.body, notify, {
