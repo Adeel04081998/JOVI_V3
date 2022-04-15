@@ -19,10 +19,11 @@ const noInternetHandler = (requestCallback, params) => {
 }
 
 const handleErrorBanner = (error) => {
-    dispatch(ReduxActions.setSettingsAction({ banner: error?.response?.data.areaLock?.bannerURL}));
+    dispatch(ReduxActions.setSettingsAction({ banner: error?.data.areaLock?.bannerURL}));
 
 }
 const successErrorBanner = (response ) => {
+    // console.log("response",response);
     dispatch(ReduxActions.setSettingsAction({ banner: response?.data.areaLock?.bannerURL }));
 
 }
@@ -75,8 +76,8 @@ export const postRequest = async (url, data, onSuccess = () => { }, onError = ()
         onSuccess(res);
 
     } catch (error) {
-        // console.log("[ApiManager].postRequest.error", JSON.stringify(error));
-        if (error?.response?.data?.areaLock) {
+        // console.log("[ApiManager].postRequest.error", error);
+        if (error?.data?.areaLock) {
             handleErrorBanner(error);
         }
         if (error?.data?.StatusCode === 401) {
@@ -102,7 +103,7 @@ export const getRequest = async (url, onSuccess = () => { }, onError = () => { }
         onSuccess(res);
     } catch (error) {
         // console.log("[ApiManager].getRequest.error", error);
-        if (error?.response?.data?.areaLock) {
+        if (error?.data?.areaLock) {
             handleErrorBanner(error);
         }
         if (error?.data?.StatusCode === 401) {

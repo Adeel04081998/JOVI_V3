@@ -26,7 +26,7 @@ export default () => {
     const banner = SettingsReducer?.banner
     const adTypes = [ENUMS.ADVERTISMENT_TYPE.POPUP_AD]
     const [data, setData] = useState([])
-  
+
     const getAdvertisements = () => {
         postRequest(Endpoints.GET_ADVERTISEMENTS, {
             "adTypes": adTypes
@@ -42,7 +42,11 @@ export default () => {
         });
     }
     React.useEffect(() => {
-        getAdvertisements();
+        if (!banner.length) {
+
+            getAdvertisements();
+        }
+
     }, [])
 
     if (data.length || banner.length > 0) {
@@ -65,8 +69,8 @@ export default () => {
                     {
                         banner.length > 0 ?
                             <ImageCarousel
-                                data={[SettingsReducer]}
-                                uriKey={"advertisementFile"}
+                                data={[{ url: SettingsReducer.banner }]}
+                                uriKey={"url"}
                                 height={'100%'}
                                 width={constants.window_dimensions.width * 0.99}
                                 pagination={false}
