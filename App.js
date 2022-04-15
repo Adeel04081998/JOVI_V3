@@ -260,7 +260,7 @@ const App = () => {
 
                         <RootStack />
                         {visible && <BottomAllignedModal />}
-                        {isFinalDestinationSelected && <GenericPopUp />}
+                        {   !__DEV__ && isFinalDestinationSelected && <GenericPopUp />}
                     </View>
                 </NavigationContainer>
                 <Robot />
