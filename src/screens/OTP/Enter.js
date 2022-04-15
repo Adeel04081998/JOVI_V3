@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Appearance, Platform, SafeAreaView } from 'react-native';
+import { Appearance, Keyboard, Platform, SafeAreaView } from 'react-native';
 import CountryPicker from 'react-native-country-picker-modal';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import RNOtpVerify from "react-native-otp-verify";
@@ -62,6 +62,7 @@ export default () => {
 
     const [country, setCountry] = React.useState("92");
     const onPress = async () => {
+        Keyboard.dismiss();
         const appHash = Platform.OS === "android" ? (await RNOtpVerify.getHash())[0] : "";
         const phoneNumber = country + cellNo
         if (network.value <= 0) return Toast.info("Please select your mobile network.");
@@ -139,7 +140,7 @@ export default () => {
                             borderWidth: forcePattern ? 0.5 : 0,
                             marginLeft: 5
                         }}
-                        style={{fontFamily: FontFamily.Poppins.Regular}}
+                        style={{ fontFamily: FontFamily.Poppins.Regular }}
                         onFocus={() => setForcePattern(false)}
                     />
                 </AnimatedView>
@@ -162,7 +163,7 @@ export default () => {
 
                 <Button
                     style={styles.continueButton}
-                    text={'Continue'}
+                    text={`Send OTP`}
                     textStyle={{ color: '#fff', ...styles.textAlignCenter, fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
                     onPress={onPress}
                     isLoading={isLoading}
@@ -172,10 +173,10 @@ export default () => {
             </View>
 
             <View style={styles.termsAndConditionView}>
-                <Text fontFamily={'PoppinsBold'} style={{ alignSelf: 'center', paddingVertical: 5, fontSize: 12 }}>By tapping Continue I am agreeing to </Text>
+                <Text fontFamily={'PoppinsBold'} style={{ alignSelf: 'center', paddingVertical: 5, fontSize: 12 }}>{`By tapping 'send OTP' I agree With`}</Text>
                 <TouchableOpacity onPress={() => { }}>
                     <Text fontFamily={'PoppinsLight'} style={{ color: "#6D51BB", fontSize: 14 }}>
-                        terms & conditions <Text style={{ color: 'black' }} onPress={() => { }} >and</Text> privacy & policy
+                        Terms & Conditions <Text style={{ color: 'black' }} onPress={() => { }} >and</Text> Privacy Policy
                     </Text>
                 </TouchableOpacity>
             </View>

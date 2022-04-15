@@ -33,20 +33,21 @@ import ROUTES from '../../navigations/ROUTES';
 
 export default (props) => {
     // console.log("props product Details=>>", props);
+    const propItem = props.route.params?.propItem ?? {};
+    const isEditCase = props.route.params.isEditCase ?? false
     let initialState = {
 
-        'generalProductOrDealDetail': {},
-        'notes': '',
-        'itemCount': 1,
-        discountedPriceWithGst: 0,
+        'generalProductOrDealDetail': propItem ?? {},
+        'notes': propItem.notes ?? '',
+        'itemCount': isEditCase ? propItem.quantity : 1,
+        discountedPriceWithGst: propItem._itemPrice ?? 0,
         totalPriceWithoutDiscount: 0,
         discountedPriceWithoutGstWithoutJovi: 0,
         totalJoviDiscount: 0,
-
         totalAddOnPrice: 0,
         totalDiscount: 0,
         totalGst: 0,
-        selectedOptions: [],
+        selectedOptions: propItem.selectedOptions ?? [],
         loading: true,
         addToCardAnimation: false
     }
@@ -58,7 +59,6 @@ export default (props) => {
     const { itemCount, generalProductOrDealDetail, discountedPriceWithGst, selectedOptions, notes, totalAddOnPrice, loading, addToCardAnimation } = state;
     const { data } = props;
     const pitstopType = props.route.params?.pitstopType ?? 4;
-    const propItem = props.route.params?.propItem ?? {};
     const colors = theme.getTheme(GV.THEME_VALUES[lodash.invert(PITSTOP_TYPES)[pitstopType]], Appearance.getColorScheme() === "dark");
     const productDetailsStyles = styleSheet.styles(colors)
     let productName = generalProductOrDealDetail.pitStopItemName || ""
@@ -70,12 +70,10 @@ export default (props) => {
     let images = generalProductOrDealDetail.images ?? []
     let numberOfLines = 4
     let minHeight = (Platform.OS === 'ios' && numberOfLines) ? (20 * numberOfLines) : null
-    console.log("propItem ==>>>", propItem);
     const discountTypeCallbacks = {
         1: (amount, discount) => discount > 0 ? (amount - ((discount / 100) * amount)) : amount,
         2: (amount, discount) => discount > 0 ? (amount - discount) : amount,
     };
-
 
 
     const loadProductDetails = () => {
@@ -148,7 +146,6 @@ export default (props) => {
 
         {/* ****************** GETTING CURRENT REQUIRED SELECTED --  isRequired is added with every item which lies in the required array  ****************** */ }
         const alreadySelectedCount = updatedArr.filter(x => x.isRequired).length;
-
         setEnable(pre => ({ ...pre, enableBtn: alreadySelectedCount >= mustSelectedCount }));
         return
 
@@ -160,7 +157,6 @@ export default (props) => {
         });
         setEnable(pre => ({ ...pre, enableBtn: enableBtn }));
     }
-    console.log('state ==>>>',state);
     const onPressHandler = (item, isMany, parentIndex, quantity = null, isRequired) => {
         // console.log([1,2,3].)
         const alreadyExist = state.selectedOptions.filter(op => op.itemOptionID === item.itemOptionID)[0];
@@ -194,7 +190,7 @@ export default (props) => {
         const totalGst = Math.round(((generalProductOrDealDetail.gstPercentage / 100) * totalAmountWithoutGst));
         let discountedPriceWithGst = Math.round(discountedPriceWithoutGst + totalGst);
         const totalPriceWithoutDiscount = discountedPriceWithGst + totalDiscount;
-        console.log('updatedArr ==>>>',updatedArr);
+        console.log('updatedArr ==>>>', updatedArr);
         // console.log('discountedPrice', totalAmountWithoutGst, discountedPriceWithoutGst, (totalAddOnPrice + generalProductOrDealDetail.itemPrice) * 0.2, (totalAddOnPrice + generalProductOrDealDetail.itemPrice) - ((20 / 100) * (totalAddOnPrice + generalProductOrDealDetail.itemPrice)));
         setState(pre => ({
             ...pre, selectedOptions: updatedArr, totalAddOnPrice: totalAddOnPrice,
@@ -429,9 +425,16 @@ export default (props) => {
 
 
     useEffect(() => {
-        loadProductDetails()
+        if (isEditCase) {
+            setState((pre) => ({
+                ...pre,
+                loading: false
+            }))
+            enableDisable(selectedOptions)
 
-
+        } else {
+            loadProductDetails()
+        }
     }, [])
     const inputRef = React.useRef(null);
     return (
@@ -508,10 +511,10 @@ export default (props) => {
                                         <TextInput
                                             ref={inputRef}
                                             containerStyle={{ backgroundColor: 'white', margin: 0, }}
-                                            placeholder="Type your instructions"
+                                            placeholder="Add notes"
                                             placeholderTextColor={"#CFCFCF"}
                                             titleStyle={{ color: 'black', fontSize: 14, marginVertical: -8 }}
-                                            title="Please add your instructions"
+                                            title="Add Instructions"
                                             textAlignVertical='top'
                                             style={{ textAlign: "left", backgroundColor: colors.drWhite, borderColor: 'rgba(112, 112, 112, 0.1)', borderWidth: 1, color: 'black', margin: 10, borderRadius: 10, minHeight: minHeight, }}
                                             onChangeText={(text) => {
@@ -521,6 +524,7 @@ export default (props) => {
                                             multiline={true} // ios fix for centering it at the top-left corner 
                                             numberOfLines={Platform.OS === "ios" ? null : numberOfLines}
                                             returnKeyType='done'
+                                            value={notes}
                                         />
                                     </View>
                                     : null}

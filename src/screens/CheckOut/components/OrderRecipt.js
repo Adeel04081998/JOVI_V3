@@ -26,7 +26,7 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                 <View style={checkOutStyles.gstMainContainer}>
 
 
-                
+
 
                     <View style={checkOutStyles.gstPrimaryContainer}>
                         <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular'>{`Subtotal (Inc GST ${sharedCalculatedTotals().gst})`}</Text>
@@ -34,7 +34,6 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                             <Text style={checkOutStyles.gstCommonPriceTxtStyle} fontFamily='PoppinsRegular'>{sharedCalculatedTotals().subTotal}</Text>
                         </View>
                     </View>
-
                     {/* <View style={checkOutStyles.gstPrimaryContainer}>
                         <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular'>GST</Text>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
@@ -42,14 +41,12 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                         </View>
                     </View> */}
 
-
                     <View style={{ flexDirection: "row", flex: 1, borderWidth: 0, marginTop: 7, }}>
                         <Text style={[checkOutStyles.gstCommonLabelTxtStyle, { textAlignVertical: 'center', }]} fontFamily='PoppinsRegular'>Total Discount</Text>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1, }}>
                             {<Text style={[checkOutStyles.gstCommonPriceTxtStyle, { textAlignVertical: 'center', }]} fontFamily='PoppinsRegular'>{`${renderPrice({ showZero: true, price: sharedCalculatedTotals().discount }, 'Rs -')}`}</Text>}
                         </View>
                     </View>
-
                 </View>
                 <View style={{ marginHorizontal: 1 }}>
                     <DashedLine dashLineStyles={{ color: "#707070" }} />
@@ -107,10 +104,11 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                     {
                         pitStops.map((x, i) => {
                             const isJoviJob = x.pitstopType === PITSTOP_TYPES.JOVI;
+                            const isPharmacy = x.pitstopType === PITSTOP_TYPES.PHARMACY;
                             let pitStopNumber = i + 1
                             let pitstopName = x.pitstopName
                             let individualPitstopTotal = x.individualPitstopTotal;
-                            let checkOutItemsListVM = x?.checkOutItemsListVM ?? (isJoviJob ? [{ ...x, isJoviJob }] : []);
+                            let checkOutItemsListVM = x?.checkOutItemsListVM ?? (isJoviJob ? [{ ...x, isJoviJob }] : isPharmacy?[{...x,isPharmacy}]: []);
                             return <View style={{ flex: 1 }} key={i}>
                                 <ReceiptItem
                                     title={pitstopName}
@@ -122,6 +120,8 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
                                     totalPrice={individualPitstopTotal}
                                     individualPitstopGst={x.individualPitstopGst}
                                     showFrontValues={true}
+                                    isPharmacy={isPharmacy}
+                                    isPickupPitstop={x.isPickupPitstop}
                                 />
                                 {/* <View style={{
                                     flexDirection: 'row', alignItems: 'center', flex: 1, paddingVertical: i === 0 ? 0 : 0,

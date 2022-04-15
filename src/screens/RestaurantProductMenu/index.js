@@ -311,12 +311,12 @@ export default ({ navigation, route }) => {
                                 <View style={itemStyles.detailContainer}>
                                     {VALIDATION_CHECK(item.name) &&
                                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                                            <Text fontFamily='PoppinsBold' style={itemStyles.name} numberOfLines={1}>{`${item.name}`}</Text>
+                                            <Text fontFamily='PoppinsBold' style={{ ...itemStyles.name, flex: 5, }} numberOfLines={1}>{`${item.name}`}</Text>
 
 
                                             {/* ****************** Start of DISCOUNT TYPE ****************** */}
                                             {parseInt(`${item.discountType}`) !== parseInt(`${ENUMS.PROMO_VALUE_TYPE.Empty.value}`) &&
-                                                <View style={itemStyles.discountTypeContainer}>
+                                                <View style={{ ...itemStyles.discountTypeContainer, flex: 1, justifyContent: "flex-end", }}>
                                                     {(parseInt(`${item.discountType}`) === parseInt(`${ENUMS.PROMO_VALUE_TYPE.Percentage.value}`) && item.discount > 0) && (
                                                         <>
                                                             {/* <SvgXml xml={svgs.discount(colors.primary)} height={15} width={15} style={itemStyles.discountTypeIcon} /> */}

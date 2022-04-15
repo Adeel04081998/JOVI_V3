@@ -9,6 +9,7 @@ import {
 import { uniqueKeyExtractor, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import constants from '../../res/constants';
 import { renderFile } from "../../helpers/SharedActions";
+import { useIsFocused } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 
@@ -44,10 +45,8 @@ interface ImageCarouselProps {
   contentContainerStyle?: StyleProp<ViewStyle>;
   style?: StyleProp<ViewStyle>;
   columnWrapperStyle?: StyleProp<ViewStyle>;
+};
 
-
-
-}
 const defaultProps = {
   autoPlay: false,
   autoPlayInterval: 3,
@@ -77,12 +76,49 @@ const defaultProps = {
 let timer: any = null;
 
 const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
+  const isFocused = useIsFocused();
   const skipHandleView = React.useRef(false);
   const theme = {
     primary: '#775EC3',
     ...props.theme
   };
   const interval = props?.autoPlayInterval ?? defaultProps.autoPlayInterval;
+
+  // #region :: STATE's & REF's START's FROM HERE 
+  const [dataWithPlaceholders, setDataWithPlaceholders] = useState<any[]>([]);
+
+  const [currentIndex, updateCurrentIndex] = useState<number>(0);
+  const flatListRef = useRef<FlatList<any>>(null);
+  const isFirstEffect = useRef<boolean>(true);
+
+  // #endregion :: STATE's & REF's END's FROM HERE 
+
+  // #region :: PROPS DATA SETTING  START's FROM HERE 
+  useEffect(() => {
+    setDataWithPlaceholders(props.data);
+    updateCurrentIndex(0);
+  }, [props.data]);
+
+  useEffect(() => {
+    if (props.autoPlay && timer === null) {
+      startAutoplay();
+    }
+    return () => stopAutoPlay();
+  }, [dataWithPlaceholders]);
+
+  useEffect(() => {
+    if (isFocused && !timer && props.autoPlay) {
+      startAutoplay();
+      return;
+    }
+    if (!isFocused && timer) {
+      stopAutoPlay();
+      return;
+    }
+    return () => { };
+  }, [isFocused])
+
+  // #endregion :: PROPS DATA SETTING  END's FROM HERE 
 
   // #region :: VIEW ABILITY START's FROM HERE 
   const handleOnViewableItemsChanged = useCallback(({ viewableItems }) => {
@@ -96,17 +132,9 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
 
     const itemsInView = viewableItems.filter(({ item }: { item: any }) => VALIDATION_CHECK(item?.uri ?? props?.uriKey ?? ''));
     if (itemsInView.length !== 0) {
-      console.log('itemsInView ', itemsInView[0]);
-
-      if (itemsInView[0].index < dataWithPlaceholders.length - 1)
-        updateCurrentIndex(itemsInView[0].index);
-      else
-        updateCurrentIndex(0);
-      // console.log("hy");
-
+      updateCurrentIndex(itemsInView[0].index);
       return;
     }
-
   }, []);//end of handleOnViewableItemsChanged
 
   const viewabilityConfig = {
@@ -117,28 +145,6 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
 
   // #endregion :: VIEW ABILITY END's FROM HERE 
 
-  const [dataWithPlaceholders, setDataWithPlaceholders] = useState<any[]>([]);
-
-  const [currentIndex, updateCurrentIndex] = useState<number>(0);
-  const [metaData, toggleMetaData] = useState<boolean>(false);
-  const flatListRef = useRef<FlatList<any>>(null);
-  const isFirstEffect = useRef<boolean>(true);
-  const [SkipOnPress, setSkipOnPress] = useState<boolean>(false);
-
-
-  useEffect(() => {
-    setDataWithPlaceholders(props.data);
-    updateCurrentIndex(0);
-  }, [props.data]);
-
-  useEffect(() => {
-    if (props.autoPlay && timer === null) {
-      startAutoplay();
-    }
-    return () => {
-      stopAutoPlay();
-    }
-  }, [dataWithPlaceholders]);
 
   // #region :: AUTOPLAY START's FROM HERE 
 
@@ -165,7 +171,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
 
   const startAutoplay = () => {
     if (!props.autoPlay) return
-    if (timer) { clearInterval(timer); timer = null; }
+    if (timer) { stopAutoPlay(); }
     timer = setInterval(() => {
       if (flatListRef.current && props.data.length > 0) {
         updateCurrentIndex((oldIndex: number) => {
@@ -176,9 +182,6 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
           }
         });
       } else {
-        console.log("hy");
-
-
         stopAutoPlay();
         setTimeout(() => {
           startAutoplay();
@@ -193,6 +196,9 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
       isFirstEffect.current = false;
       return
     }
+    if (!timer) {
+      return;
+    }
     skipHandleView.current = true;
     if (props.onActiveIndexChanged) {
       const item = dataWithPlaceholders[currentIndex];
@@ -206,21 +212,17 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
         animated: true,
       });
     }
-    // toggleMetaData(p => !p);
   }, [currentIndex])//endo of useEffect for currentIndex
 
 
   // #endregion :: AUTOPLAY END's FROM HERE 
 
   const onScrollToIndexFailed = () => { };
-  console.log("skip", SkipOnPress);
-
   return (
-    <View style={styles.primaryContainer} pointerEvents={SkipOnPress ? 'none' : 'auto'} >
+    <View style={styles.primaryContainer}  >
       <Animated.FlatList
         ref={flatListRef}
-        data={[...dataWithPlaceholders,]}
-        // extraData={metaData}
+        data={dataWithPlaceholders}
         contentContainerStyle={props.contentContainerStyle}
         style={props.style}
         columnWrapperStyle={props.columnWrapperStyle}
@@ -237,7 +239,6 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
               disabled={!(props?.onPress ?? false) ? true : false}>
               <View style={[{
                 width: props.width ?? ITEM_WIDTH,
-                // backgroundColor: "blue"
               }]}>
                 {/* aspectRatio={16 / 7} */}
                 <View style={[itemStyles.secondaryContainer, props.containerStyle]}>
@@ -265,16 +266,11 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
 
         {...props.autoPlay && {
           onScrollBeginDrag: () => {
-            console.log('SCROLL DTAG START');
-
-
             skipHandleView.current = false;
             clearInterval(timer);
             timer = null;
           },
           onScrollEndDrag: () => {
-            console.log('SCROLL DTAG END');
-
             startAutoplay();
           },
         }
@@ -294,7 +290,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
         initialNumToRender={1}
         maxToRenderPerBatch={1}
         removeClippedSubviews={true}
-      
+
       />
 
 
@@ -303,7 +299,6 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
         <View style={[footerStyles.primaryContainer, props.paginationContainerStyle]}>
           <FlatList
             data={dataWithPlaceholders}
-            extraData={metaData}
             horizontal
             style={{ flexGrow: 0, }}
             contentContainerStyle={{ alignItems: "center", justifyContent: "center", flexGrow: 0, }}
@@ -326,7 +321,7 @@ const ImageCarousel: FC<ImageCarouselProps> = (props: ImageCarouselProps) => {
 };
 
 ImageCarousel.defaultProps = defaultProps;
-export default ImageCarousel;
+export default React.memo(ImageCarousel);
 
 const styles = StyleSheet.create({
   primaryContainer: {

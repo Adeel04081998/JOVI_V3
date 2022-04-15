@@ -141,7 +141,19 @@ const vendorDashboardCategoryIDReducer = (state = { data: [] }, action) => {
       return { ...state };
   }
 }
-
+const settingsReducer = (
+  state = { banner:"" },
+  action,
+) => {
+  switch (action.type) {
+    case TYPES.SET_SETTINGS:
+      return { ...state, ...action.payload };
+    case TYPES.CLEAR_SETTINGS:
+      return { ...state, banner: '' };
+    default:
+      return { ...state };
+  }
+};
 export default {
   userReducer,
   cartReducer,
@@ -153,4 +165,5 @@ export default {
   fcmReducer,
   //...
   vendorDashboardCategoryIDReducer,
+  settingsReducer
 }

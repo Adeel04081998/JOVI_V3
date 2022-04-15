@@ -33,8 +33,7 @@ export default (props) => {
     size: 40,
     borderRadius: 6,
   };
-
-  const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
+  const colors = props?.colors?? theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
   const styles = mapStyles(colors, HEIGHT, WIDTH, ICON_BORDER)
   const [placeName, setPlaceName] = useState('')
   const mapView = useRef(null)
@@ -162,6 +161,7 @@ export default (props) => {
           textToShow={placeName}
           isFavourite={''}
           marginBottom={0}
+          parentColors={colors}
           clearInputField={() => { setPlaceName('') }}
         />
       </View>
@@ -181,7 +181,7 @@ export default (props) => {
 
   const rendermarkers = () => {
     return (
-      <SvgXml xml={svgs.pinMap()}
+      <SvgXml xml={svgs.pinMap(colors.primary)}
         style={styles.marker}
       />
     )
@@ -370,7 +370,7 @@ const mapStyles = (colors, height, width, icon_border) => StyleSheet.create({
     left: '50%',
     top: '50%'
   },
-  confirmBtn: { position: 'absolute', bottom: 15, borderRadius: 10 },
+  confirmBtn: { position: 'absolute', bottom: 15, borderRadius: 10,backgroundColor:colors.primary },
   headerLeftIconView: {
     justifyContent: 'center',
     backgroundColor: '#FFFFFF',

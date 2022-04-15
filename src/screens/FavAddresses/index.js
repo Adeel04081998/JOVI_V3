@@ -32,8 +32,9 @@ export default () => {
     const userReducer = useSelector(state => state.userReducer);
     const dispatch = useDispatch()
     // const addresses = userReducer?.addresses ?? [];
-    const [addresses, setAddresses] = useState(userReducer?.addresses ?? [])
-    console.log('addresses ==>>',addresses);
+    const [addresses, setAddresses] = useState(userReducer?.addresses ?? []);
+
+    console.log('addresses ==>>', addresses);
     const _styles = styles(colors);
     React.useEffect(() => {
         setAddresses(userReducer?.addresses)
@@ -48,6 +49,7 @@ export default () => {
     }
     const _renderHeader = () => (<CustomHeader
         renderLeftIconAsDrawer
+        renderRightIconForHome
         rightIconName={null}
         title={`Delivery Address`}
         titleStyle={{
@@ -62,9 +64,10 @@ export default () => {
             `${Endpoints.DELETE_ADDRESS}/${addressObj.addressID}`,
             {},
             async (res) => {
+                console.log('resss ', res);
                 let filteredAddresses = addresses.filter(ad => ad.addressID !== addressObj.addressID);
                 setAddresses(filteredAddresses)
-                dispatch(actions.setUserAction({ ...filteredAddresses }));
+                dispatch(actions.setUserAction({ addresses: filteredAddresses }));
             },
             err => {
                 console.log(err)
@@ -88,12 +91,12 @@ export default () => {
     const updateFinalDestination = (fd) => {
         isFromEdit = true;
         lastLoc = fd;
-      };
+    };
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }}>
             {_renderHeader()}
             <View style={{ flex: 1, }}>
-                <Text style={{ ..._styles.title, marginHorizontal: SPACING }} fontFamily={'PoppinsSemiBold'}>Saved Address</Text>
+                <Text style={{ ..._styles.title, marginHorizontal: SPACING, marginTop: 20, }} fontFamily={'PoppinsSemiBold'}>Saved Address</Text>
                 <View style={{ flex: 1 }}>
                     <FlatList
                         data={addresses}
@@ -101,9 +104,9 @@ export default () => {
                         renderItem={({ item, index }) => (
                             <View style={{ height: 120, marginVertical: SPACING, padding: SPACING * 2, width: '100%', backgroundColor: colors.white, borderRadius: 6, ...sharedStyles._styles(colors).placefor_specific_shadow }}>
                                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
-                                    <View style={{ flexDirection: 'row' }}>
+                                    <View style={{ flexDirection: 'row',maxWidth:'77%' }}>
                                         <SvgXml height={14} width={14} xml={renderFavIcon[item.addressType ?? 4]} style={{ marginRight: SPACING, alignSelf: 'center' }} />
-                                        <Text style={{ fontSize: 14, color: colors.primary }} fontFamily="PoppinsBold">{VALIDATION_CHECK(item.addressTypeStr) ? item.addressTypeStr : 'Other'}</Text>
+                                        <Text style={{ fontSize: 14, color: colors.primary }} fontFamily="PoppinsBold" numberOfLines={1}>{VALIDATION_CHECK(item.addressTypeStr) ? item.addressTypeStr : 'Other'}</Text>
                                     </View>
                                     <View style={{ flexDirection: 'row' }}>
                                         <TouchableOpacity onPress={() => NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.AddAddress.screen_name, { finalDestObj: item, index: 4, updateFinalDestination })} >
@@ -125,7 +128,7 @@ export default () => {
                     <Button
                         text={'Add Address'}
                         onPress={() => {
-                            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { onNavigateBack: (placeName) => { }, index : 3 })
+                            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { onNavigateBack: (placeName) => { }, index: 3, applyLocation: false, })
 
                         }}
                         style={{
@@ -134,6 +137,7 @@ export default () => {
                             height: 37
                         }}
                         textStyle={{
+                            marginTop: 3.5, //acc to seemab 
                             fontSize: 16
                         }}
                     />

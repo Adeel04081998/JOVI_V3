@@ -3,7 +3,7 @@ import { Appearance, Platform, ScrollView, StyleSheet } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { useSelector } from 'react-redux';
 import svgs from '../../../assets/svgs';
-import { renderFile, sharedConfirmationAlert, sharedLogoutUser, VALIDATION_CHECK } from '../../../helpers/SharedActions';
+import { renderFile, sharedConfirmationAlert, sharedLogoutUser, uniqueKeyExtractor, VALIDATION_CHECK } from '../../../helpers/SharedActions';
 import NavigationService from '../../../navigations/NavigationService';
 import ROUTES from '../../../navigations/ROUTES';
 import preference_manager from '../../../preference_manager';
@@ -35,7 +35,7 @@ const drawerRoutes = [
     {
         screenName: 'Support',
         icon: svgs.drawerSupport(),
-        route: ROUTES.APP_DRAWER_ROUTES.ContactUs.screen_name
+        route: ROUTES.APP_DRAWER_ROUTES.Support.screen_name
     },
     {
         screenName: 'Contact Us',
@@ -66,7 +66,7 @@ export default () => {
         return <TouchableOpacity style={{ ...customStyles ? customStyles : styles.navigationItem, ...containerStyles }} onPress={() => onNavigationItemPress(item)}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <SvgXml xml={item.icon} height={20} width={20} style={{ marginBottom: 4 }} />
-                <Text style={{ marginLeft: 10, fontSize: 16 }}>{item.screenName}</Text>
+                <Text style={{ marginLeft: 10, fontSize: 16,color:colors.black }}>{item.screenName}</Text>
             </View>
             <View>
                 <VectorIcon name={'arrow-forward-ios'} type={'MaterialIcons'} size={15} color={colors.primary} />
@@ -90,7 +90,7 @@ export default () => {
                 </TouchableOpacity> */}
             </View>
             <View style={{ width: '50%', alignItems: 'flex-end' }}>
-                <TouchableOpacity style={styles.profilePicContainer} onPress={()=>onNavigationItemPress({route:ROUTES.APP_DRAWER_ROUTES.Profile.screen_name})}>
+                <TouchableOpacity style={styles.profilePicContainer} onPress={() => onNavigationItemPress({ route: ROUTES.APP_DRAWER_ROUTES.Profile.screen_name })}>
                     <View style={styles.profilePicInnerContainer}>
                         <Image tapToOpen={false} source={VALIDATION_CHECK(userReducer.picture) ? { uri: renderFile(userReducer.picture) } : require('../../../assets/images/user.png')}
                             style={{ height: PROFILE_PICTURE_INNER_SECTION, width: PROFILE_PICTURE_INNER_SECTION, borderRadius: PROFILE_PICTURE_INNER_SECTION / 2 }}
@@ -104,13 +104,23 @@ export default () => {
             <ScrollView style={{ flex: 1 }}>
                 {
                     drawerRoutes.map((item, i) => {
-                        return renderNavigationItem(item, i, i === 0 ? { borderTopColor: colors.grey, borderTopWidth: 0.4 } : {})
+                        return (
+                            <View key={uniqueKeyExtractor()}>
+                                {renderNavigationItem(item, i, i === 0 ? { borderTopColor: colors.grey, borderTopWidth: 0.4 } : {})}
+                            </View>
+                        )
+
                     })
                 }
                 <Text style={{ fontSize: 20, margin: SPACING, color: colors.black }} fontFamily={'PoppinsRegular'}>Information</Text>
                 {
                     drawerInfoRoutes.map((item, i) => {
-                        return renderNavigationItem(item, i, {}, styles.informationNavigationItem)
+                        return (
+                            <View key={uniqueKeyExtractor()}>
+                                {renderNavigationItem(item, i, {}, styles.informationNavigationItem)}
+                            </View>
+                        )
+
                     })
                 }
             </ScrollView>

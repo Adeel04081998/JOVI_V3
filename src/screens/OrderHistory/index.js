@@ -136,7 +136,7 @@ export default ({ navigation, route }) => {
                 });
             } else {
                 updateQuery({
-                    errorText: sharedExceptionHandler(res),
+                    errorText: sharedExceptionHandler(res,true),
                     error: true,
                     isLoading: false,
                     refreshing: false,
@@ -218,7 +218,7 @@ export default ({ navigation, route }) => {
                 />
             </View>
         </View>
-    } else if (query.error) {
+    } else if (query.error && data.onGoingData.length < 1) {
         return <View style={styles.primaryContainer}>
             {_renderHeader()}
             <NoRecord
@@ -261,8 +261,9 @@ export default ({ navigation, route }) => {
                         )
                     })}
 
-
-                    <RenderTitle title='History' />
+                    {data.historyData.length > 0 &&
+                        <RenderTitle title='History' />
+                    }
                 </>}
                 renderItem={({ item, index }) => {
                     const isDelivered = `${item.status}`.trim().toLowerCase() === "cancelled" ? false : true;
@@ -308,7 +309,7 @@ const OnGoingItemCardUI = ({ colors = initColors, orderID = '', atPoint = 0, noO
                 <Text fontFamily='PoppinsSemiBold' style={onGoingItemStyles.orderIDText}>{`Order id # ${orderID}`}</Text>
                 <Text style={onGoingItemStyles.inProgressText}>{`In Progress`}</Text>
             </View>
-            <Text style={onGoingItemStyles.noPitstopText}>{`${`${noOfPitstops}`.padStart(2, '0')} pitsops`}</Text>
+            <Text style={onGoingItemStyles.noPitstopText}>{`${`${noOfPitstops}`.padStart(2, '0')} pitstops`}</Text>
 
             <View style={{ marginVertical: 5 }} />
 

@@ -10,11 +10,11 @@ import configs, { env } from "../../utils/configs";
 import GV from "../../utils/GV";
 import VectorIcon from "./VectorIcon";
 
-export default LocationSearch = ({ handleOnInputChange, index, clearInputField, textToShow, onLocationSelected, /* handleAddPitstop, */ handleDeletePitstop, isLast, handleInputFocused, totalPitstops, onSetFavClicked, isFavourite, marginBottom = 5, listViewStyles, inputStyles}) => {
+export default LocationSearch = ({ handleOnInputChange, parentColors = null, index, clearInputField, textToShow, onLocationSelected, /* handleAddPitstop, */ handleDeletePitstop, isLast, handleInputFocused, totalPitstops, onSetFavClicked, isFavourite, marginBottom = 5, listViewStyles, inputStyles, placeholder = "Enter your location" }) => {
 
     const HEIGHT = constants.window_dimensions.height;
     const WIDTH = constants.window_dimensions.width;
-    const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
+    const colors = parentColors ?? theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
     const styles = locationSearchStyles(colors, WIDTH, HEIGHT)
     const locTextRef = React.useRef(null);
     const textValRef = React.useRef(null);
@@ -43,7 +43,7 @@ export default LocationSearch = ({ handleOnInputChange, index, clearInputField, 
         <GooglePlacesAutocomplete
             ref={locTextRef}
             disableScroll={false}
-            placeholder={"Enter your location"}
+            placeholder={placeholder}
             placeholderTextColor="rgba(0, 0, 0, 0.5)"
             onPress={(data, { geometry }) => onLocationSelected(data, geometry, index, null)}
             query={{
@@ -58,7 +58,7 @@ export default LocationSearch = ({ handleOnInputChange, index, clearInputField, 
             predefinedPlaces={predefinedPlaces.map((place, i) => ({ ...place, description: (place.description + Array(i).join(" ")) }))}
             predefinedPlacesAlwaysVisible={false}
             currentLocation={true}
-            currentLocationLabel={"Nearby Locations..."}
+            currentLocationLabel={"Nearby location..."}
             nearbyPlacesAPI="GooglePlacesSearch"
             GooglePlacesSearchQuery={{
                 rankby: "distance", // "prominence" | "distance"
@@ -68,7 +68,7 @@ export default LocationSearch = ({ handleOnInputChange, index, clearInputField, 
                 return (
                     <View style={{ display: "flex", flexDirection: "row" }}>
                         <SvgXml style={{ marginRight: 4 }} xml={data.isFavourite ? svgs.heartIconFilled() : svgs.pinIconDesc()} height={21} width={21} />
-                        {(data.isPredefinedPlace && data.description !== "Nearby Locations...") ?
+                        {(data.isPredefinedPlace && data.description !== "Nearby location...") ?
                             (data.isFavourite) ?
                                 <SvgXml style={{ marginRight: 4 }} height={21} width={21} xml={
                                     data.addressType === 1 ?
@@ -220,7 +220,7 @@ const locationSearchStyles = (color, width, height) => StyleSheet.create({
     iconStyleRight: {
         position: "absolute",
         right: 4,
-        top: 20/2,
+        top: 20 / 2,
         width: 32,
         height: 50,
     },

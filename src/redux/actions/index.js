@@ -118,7 +118,18 @@ const setvendorDashboardCategoryIDAction = (payload = []) => {
         payload: payload
     }
 }
-
+const setSettingsAction = (payload = {}) => {
+    return {
+        type: TYPES.SET_SETTINGS,
+        payload: { ...payload }
+    }
+}
+const clearSettingsAction = (payload = {}) => {
+    return {
+        type: TYPES.CLEAR_SETTINGS,
+        payload,
+    }
+}
 export default {
     setUserAction,
     clearUserAction,
@@ -139,5 +150,7 @@ export default {
     fcmAction,
     setvendorDashboardCategoryIDAction,
     hideRobotAction,
+    setSettingsAction,
+    clearSettingsAction
     //...
 }

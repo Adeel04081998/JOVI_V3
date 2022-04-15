@@ -18,7 +18,6 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import { useDispatch, useSelector } from 'react-redux';
-import { pkgConf } from "yargs";
 import RNSplashScreen from './NativeModules/RNSplashScreen';
 import svgs from "./src/assets/svgs";
 import BottomAllignedModal from './src/components/atoms/BottomAllignedModal';
@@ -34,7 +33,9 @@ import { _NavgationRef } from './src/navigations/NavigationService';
 import actions from './src/redux/actions';
 import constants from "./src/res/constants";
 import FontFamily from "./src/res/FontFamily";
+import sharedStyles from "./src/res/sharedStyles";
 import AppTheme from './src/res/theme';
+import GenericPopUp from "./src/screens/GenericPopUp";
 import { env } from './src/utils/configs';
 import ENUMS from "./src/utils/ENUMS";
 import { fcmService } from './src/utils/FCMServices';
@@ -73,6 +74,8 @@ const CODE_PUSH_OPTIONS = {
 const App = () => {
     const { visible } = useSelector(state => state.modalReducer)
     const [state, setState] = React.useState({ appLoaded: false });
+    const userReducer = useSelector(state => state.userReducer);
+    const isFinalDestinationSelected = userReducer.finalDestObj;
 
     const isDarkMode = useColorScheme() === "dark";
     const theme = isDarkMode ? {
@@ -148,15 +151,11 @@ const App = () => {
         return (
             <View style={{}}>
 
+
                 <SvgXml
                     xml={uri}
-                    style={{ position: 'absolute', bottom: 35, }}
-                />
-                <SvgXml
-                    xml={svgs.BubblesToastIcon(color)}
-                    style={{ position: 'absolute', bottom: 1, left: -6 }}
-
-
+                    style={{ position: 'absolute', bottom: 5, marginHorizontal: 5 }}
+                    height={30}
                 />
 
             </View>
@@ -164,7 +163,7 @@ const App = () => {
     }
     const RenderToastCrossUi = () => {
         return (
-            <TouchableOpacity onPress={() => { Toast.hide() }} style={{ right: 15, justifyContent: "center" }}>
+            <TouchableOpacity onPress={() => { Toast.hide() }} style={{ marginHorizontal: 8, justifyContent: "center" }}>
                 <SvgXml
                     xml={svgs.CrossToastIcon()}
                     height={40}
@@ -172,6 +171,7 @@ const App = () => {
             </TouchableOpacity>
         )
     }
+
     const toastConfig = {
         success: ({ text1, ...rest }) => {
             if (!(rest.text2)) return
@@ -179,15 +179,19 @@ const App = () => {
                 text1NumberOfLines={10}
                 text2NumberOfLines={5}
                 {...rest}
-                style={{ borderLeftColor: '#42C757', minHeight: Platform.OS === 'android' ? 70 : 50, width: constants.window_dimensions.width - 15, top: constants.screen_dimensions.height / (Platform.OS === 'android' ? "95" : "20"), backgroundColor: '#42C757', borderRadius: 20, }}
-                contentContainerStyle={{ paddingHorizontal: 65 }}
-                text1Style={{ fontWeight: "500", fontSize: 14,fontFamily:FontFamily.Poppins.Regular }}
-                text2Style={{ color: 'white', fontSize: 14 ,fontFamily:FontFamily.Poppins.Regular }}
+                text1Style={{ fontWeight: "500", fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
+                text2Style={{ color: '#272727', fontSize: 14, fontFamily: FontFamily.Poppins.Regular, }}
+                style={{ ...sharedStyles._styles().toastContainer(theme.colors["Transparent_Green "], theme.colors.Bitter_Lime_green_Shade), }}
+                contentContainerStyle={{ paddingLeft: 45, margin: 0, }}
                 text1={text1}
                 text2={rest.text2}
                 onTrailingIconPress={() => Toast.hide()}
                 renderLeadingIcon={() => { return (RenderToastSvgUi(svgs.SuccesToastIcon(), "#217E3D")) }}
                 renderTrailingIcon={() => { return (RenderToastCrossUi()) }}
+
+
+
+
             />
         },
         error: ({ text1, ...rest }) => {
@@ -196,16 +200,16 @@ const App = () => {
                 text1NumberOfLines={10}
                 text2NumberOfLines={5}
                 {...rest}
-                style={{ borderLeftColor: '#D80D0D', top: constants.screen_dimensions.height / (Platform.OS === 'android' ? "95" : "20"), minHeight: Platform.OS === 'android' ? 70 : 50, width: constants.window_dimensions.width - 15, backgroundColor: '#D80D0D', borderRadius: 20 }}
-                contentContainerStyle={{ paddingHorizontal: 65 }}
-                text1Style={{ fontWeight: '500', fontSize: 14,fontFamily:FontFamily.Poppins.Regular }}
-                text2Style={{ color: 'white', fontSize: 14,fontFamily:FontFamily.Poppins.Regular  }}
-
+                style={{ ...sharedStyles._styles().toastContainer(theme.colors.Pink_Sparkle_Pink_Shade, theme.colors.Red_Surrection), }}
+                contentContainerStyle={{ paddingLeft: 51, margin: 0, }}
+                text1Style={{ fontWeight: '500', fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
+                text2Style={{ color: '#272727', fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
                 text1={text1}
                 text2={rest.text2}
                 onTrailingIconPress={() => Toast.hide()}
                 renderLeadingIcon={() => { return (RenderToastSvgUi(svgs.ErrorToastIcon(), "#a40a0a")) }}
                 renderTrailingIcon={() => { return (RenderToastCrossUi()) }}
+
             />
         }
         ,
@@ -213,12 +217,12 @@ const App = () => {
             if (!(rest.text2)) return
             return <BaseToast
                 text1NumberOfLines={10}
-                text2NumberOfLines={4}
+                text2NumberOfLines={5}
                 {...rest}
-                style={{ borderLeftColor: '#0070E0', top: constants.screen_dimensions.height / (Platform.OS === 'android' ? "95" : "20"), minHeight: Platform.OS === 'android' ? 70 : 50, width: constants.window_dimensions.width - 15, backgroundColor: '#0070E0', borderRadius: 20 }}
-                contentContainerStyle={{ paddingHorizontal: 65, }}
-                text1Style={{ fontWeight: '500', fontSize: 14,fontFamily:FontFamily.Poppins.Regular }}
-                text2Style={{ color: 'white', fontSize: 14,fontFamily:FontFamily.Poppins.Regular  }}
+                style={{ ...sharedStyles._styles().toastContainer(theme.colors.Husky_light_blue_Shade, theme.colors.Brak_Bay_Dark_blue_Shade), }}
+                contentContainerStyle={{ paddingLeft: 51, margin: 0, }}
+                text1Style={{ fontWeight: '500', fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
+                text2Style={{ color: '#272727', fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
                 text1={text1}
                 text2={rest.text2}
                 onTrailingIconPress={() => Toast.hide()}
@@ -230,12 +234,12 @@ const App = () => {
             if (!(rest.text2)) return
             return <BaseToast
                 text1NumberOfLines={10}
-                text2NumberOfLines={4}
+                text2NumberOfLines={5}
                 {...rest}
-                style={{ borderLeftColor: '#F79C0B', top: constants.screen_dimensions.height / (Platform.OS === 'android' ? "95" : "20"), minHeight: Platform.OS === 'android' ? 70 : 50, width: constants.window_dimensions.width - 15, backgroundColor: '#F79C0B', borderRadius: 20 }}
-                contentContainerStyle={{ paddingHorizontal: 65, }}
-                text1Style={{ fontWeight: '500', fontSize: 14,fontFamily:FontFamily.Poppins.Regular }}
-                text2Style={{ color: 'white', fontSize: 14,fontFamily:FontFamily.Poppins.Regular  }}
+                style={{ ...sharedStyles._styles().toastContainer(theme.colors.DoeSkin_LightSkinShade, theme.colors.light_orange_Shade), }}
+                contentContainerStyle={{ paddingLeft: 51, margin: 0, }}
+                text1Style={{ fontWeight: '500', fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
+                text2Style={{ color: '#272727', fontSize: 14, fontFamily: FontFamily.Poppins.Regular }}
                 text1={text1}
                 text2={rest.text2}
                 onTrailingIconPress={() => Toast.hide()}
@@ -253,17 +257,19 @@ const App = () => {
                 {env.name === ENUMS.ENVS.STAGING ? <BaseUrlPrompt /> : null}
                 <NavigationContainer theme={theme} ref={_NavgationRef} >
                     <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
+
                         <RootStack />
                         {visible && <BottomAllignedModal />}
+                        {isFinalDestinationSelected && <GenericPopUp />}
                     </View>
                 </NavigationContainer>
                 <Robot />
                 <Toast
                     config={toastConfig}
-                    // ref={ref => {
-                    //     _toastRef.current = ref;
-                    //     Toast.setRef(ref);
-                    // }}//Function components cannot be given refs. Attempts to access this ref will fail
+                // ref={ref => {
+                //     _toastRef.current = ref;
+                //     Toast.setRef(ref);
+                // }}//Function components cannot be given refs. Attempts to access this ref will fail
                 />
                 <NoInternetModal />
             </SafeAreaView>
@@ -282,7 +288,7 @@ const SharedGetApis = ({ }) => {
         sharedGetEnumsApi();
         // sharedLogoutUser();
         return () => {
-            console.log('[App] cleared!!');
+            // console.log('[App] cleared!!');
             sharedClearReducers();//modal reducer wasn't clearing when the app was closed on back press.
             localNotificationService.unRegister();
             fcmService.unRegister();
@@ -320,16 +326,16 @@ const SharedGetApis = ({ }) => {
                 }
             }
             const onRegister = (token) => {
-                console.log('Registered--', token);
+                // console.log('Registered--', token);
                 sharedSendFCMTokenToServer(postRequest, token);
 
             }
             const onNotification = (notify) => {
-                console.log('onNotification--', notify);
-                console.log("===> onNotification.notify -> ", notify)
+                // console.log('onNotification--', notify);
+                // console.log("===> onNotification.notify -> ", notify)
                 dispatch(actions.fcmAction({ ...notify }));
                 if (notify.data) {
-                    console.log("notify.data", notify.data);
+                    // console.log("notify.data", notify.data);
                     const results = true;
                     // const results = sharedCheckNotificationExpiry(notify.data.ExpiryDate);
                     pushNotification(notify);
@@ -337,13 +343,13 @@ const SharedGetApis = ({ }) => {
                 else pushNotification(notify)
             }
             const onOpenNotification = (notify) => {
-                console.log('onOpenNotification--', notify);
+                // console.log('onOpenNotification--', notify);
             }
             const onRegistrationError = (err) => {
-                console.log('onRegistrationError--', err);
+                // console.log('onRegistrationError--', err);
             }
             const onAction = (action) => {
-                console.log('onAction--', action);
+                // console.log('onAction--', action);
             }
             fcmService.registerAppWithFCM();
             fcmService.register(onRegister, onNotification, onOpenNotification)

@@ -12,13 +12,14 @@ import SafeAreaView from '../../components/atoms/SafeAreaView';
 import SetpProgress from '../../components/atoms/StepProgress';
 import Text from '../../components/atoms/Text';
 import TextInput from '../../components/atoms/TextInput';
+import Toast from '../../components/atoms/Toast';
 import TouchableScale from '../../components/atoms/TouchableScale';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import DraggableFlatList from '../../components/molecules/DraggableFlatList';
 import DashedLine from '../../components/organisms/DashedLine';
-import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedCalculatedTotals, sharedConfirmationAlert, sharedGetServiceCharges, sharedOnVendorPress } from '../../helpers/SharedActions';
+import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedCalculatedTotals, sharedConfirmationAlert, sharedGetServiceCharges, sharedOnVendorPress, sharedVerifyCartItems } from '../../helpers/SharedActions';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import ReduxActions from '../../redux/actions';
@@ -26,7 +27,6 @@ import sharedStyles from '../../res/sharedStyles';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES } from '../../utils/GV';
 import ProductQuantityCard from '../ProductMenu/components/ProductQuantityCard';
-import stylesheet from './styles';
 import { pencil_icon, routes_icon } from './svgs/cart_svgs';
 const BottomLine = () => (
   <View
@@ -45,18 +45,17 @@ const BottomLine = () => (
 // }
 export default () => {
   const { cartReducer } = useSelector(store => ({ cartReducer: store.cartReducer }));
-  const dispatch = useDispatch();
   console.log('[CART_SCREEN] cartReducer', cartReducer);
+  const dispatch = useDispatch();
   const [expanded, setExpanded] = React.useState([0]);
-  const [data, setData] = React.useState([...cartReducer.pitstops])
   const colors = theme.getTheme(
     GV.THEME_VALUES.DEFAULT,
     Appearance.getColorScheme() === 'dark',
   );
-  const cartStyles = stylesheet.styles(colors);
 
   React.useEffect(() => {
-    sharedGetServiceCharges()
+    // sharedGetServiceCharges();
+    sharedVerifyCartItems();
   }, [])
   const incDecDelHandler = (pitstopDetails, pitstopIndex = null, isDeletePitstop = false) => {
     sharedAddUpdatePitstop({ ...pitstopDetails }, isDeletePitstop, [], false, true, null, false, true);
@@ -72,6 +71,7 @@ export default () => {
     console.log("[onEditPress].pitstop", product);
     // return Alert.alert("Dear lakaas! Bug ni bnana, \n Abi sirf JOVI job ko edit kr skty hain ap log! Bug ni bnana!")
     if (product.pitstopType === PITSTOP_TYPES.JOVI) NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.JoviJob.screen_name, { pitstopItemObj: product });
+    else if (product.pitstopType === PITSTOP_TYPES.PHARMACY) NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Pharmacy.screen_name, { pitstopItemObj: product.isPickupPitstop ? { ...product.parentPitstop, pickUpPitstop: product } : { ...product } });
     else NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, {
       propItem: {
         itemDetails: { ...product },
@@ -91,6 +91,7 @@ export default () => {
     } = pitstop;
     const dynamiColors = theme.getTheme(pitstopType);
     const isJOVI = pitstopType === PITSTOP_TYPES.JOVI;
+    const isPHARMACY = pitstopType === PITSTOP_TYPES.PHARMACY;
     const IS_DISCOUNTED_VENDOR = checkOutItemsListVM.find(x => x.discountType > 0);
     const viewToRender = () => {
       if (isJOVI) return <>
@@ -107,6 +108,24 @@ export default () => {
           key={`jovi-product-key`}
           dynamiColors={dynamiColors}
           isJOVI={isJOVI}
+          product={{ ...pitstop, pitstopType }}
+        />
+      </>
+      else if (isPHARMACY) return <>
+        <View
+          style={{
+            borderBottomColor: colors.grey,
+            borderWidth: 0.2,
+            marginVertical: 5,
+            borderColor: colors.grey,
+
+          }}
+        />
+        <Products
+          key={`jovi-product-key`}
+          dynamiColors={dynamiColors}
+          isPHARMACY={isPHARMACY}
+          isJOVI={isPHARMACY}
           product={{ ...pitstop, pitstopType }}
         />
       </>
@@ -172,10 +191,10 @@ export default () => {
               >
                 {pitstopName}
               </Text>
-              <TouchableScale style={{ paddingTop: 2, maxWidth: 100 }} onPress={() => sharedOnVendorPress(pitstop)}>
+              <TouchableScale style={{ paddingTop: 2, maxWidth: 110 }} onPress={() => sharedOnVendorPress(pitstop)}>
                 <Text
                   style={{ color: dynamiColors.black, fontSize: 12 }}
-                  fontFamily="PoppinsRegular">{`Back to ${isJOVI ? 'Jovi Job' : 'Store'
+                  fontFamily="PoppinsRegular">{`Back to ${isPHARMACY ? 'Pharmacy' : isJOVI ? 'Jovi Job' : 'Store'
                     }`}
                 </Text>
               </TouchableScale>
@@ -253,6 +272,7 @@ export default () => {
   const Products = ({
     dynamiColors = colors,
     isJOVI = false,
+    isPHARMACY = false,
     product,
     incDecDelHandler,
   }) => {
@@ -261,7 +281,7 @@ export default () => {
       return <View style={{ flexDirection: 'row' }}>
         <View style={{ height: 70, width: 70, borderRadius: 10, margin: 5 }}>
           <Image
-            source={require('./assets/jovi.png')}
+            source={isPHARMACY ? require('./assets/pharmacyAvatar.png') : require('./assets/jovi.png')}
             style={{ height: 70, width: 70, borderRadius: 10 }}
           />
         </View>
@@ -290,11 +310,11 @@ export default () => {
             fontFamily="PoppinsRegular">
             {description}
           </Text>
-          <Text
+          {!product.isPickupPitstop ? <Text
             style={{ color: dynamiColors.primary, fontSize: 12 }}
             fontFamily="PoppinsMedium">
             {renderPrice({ showZero: true, price: estimatePrice || 0 })}
-          </Text>
+          </Text> : null}
         </View>
       </View>
     } else {
@@ -439,7 +459,11 @@ export default () => {
           onDragBegin={(index) => expandCollapeHanlder(index)}
           ListHeaderComponent={<View>
             <DeliveryAddress />
-            <Text style={{ padding: 10, fontSize: 12 }} fontFamily="PoppinsLight">{'Hold and drag to rearrange your pitstops to get the better route and less service charges.'}</Text>
+            {
+              cartReducer.pitstops.length > 1 ?
+                <Text style={{ padding: 10, fontSize: 12 }} fontFamily="PoppinsLight">{'Hold and drag to rearrange your pitstops to get the better route and less service charges.'}</Text>
+                : null
+            }
           </View>
           }
           data={cartReducer.pitstops}
@@ -453,6 +477,15 @@ export default () => {
             // if (expanded.length === 1) {
             //   expandCollapeHanlder(expanded.findIndex(x => x))
             // }
+            const pickupPitstop = newData.filter(item => item.isPickupPitstop)[0];
+            if (pickupPitstop) {
+              const indexOfPickupPitstop = newData.findIndex(item => item.pitstopID === pickupPitstop.pitstopID);
+              const indexOfPickupParentPitstop = newData.findIndex(item => item.pitstopID === pickupPitstop.linkedPitstopId);
+              if (indexOfPickupParentPitstop < indexOfPickupPitstop) {
+                Toast.info('Pharmacy pitstop cannot be before pickup pitstop');
+                return;
+              }
+            }
             sharedGetServiceCharges();
             sharedAddUpdatePitstop(null, false, newData)
           }}

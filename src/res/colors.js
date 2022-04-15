@@ -38,7 +38,16 @@ export const initColors = {
     "ASH_TO_ASH": "#4D4D4D",
     "dull_primary": '#F0F4F9',
     "light_input_border": "#CACDD1",
-    "green": 'green'
+    "green": 'green',
+    "Transparent_Green ": '#D8FFD8',
+    "Bitter_Lime_green_Shade": "#27C72C",
+    "Husky_light_blue_Shade": '#E1E9FF',
+    "Brak_Bay_Dark_blue_Shade": '#2D5AD5',
+    "Pink_Sparkle_Pink_Shade": '#FFE8EC',
+    "Red_Surrection": '#D80D0D',
+    "DoeSkin_LightSkinShade": '#FFF3E2',
+    "light_orange_Shade": '#FF9C07'
+
 }
 export default {
 

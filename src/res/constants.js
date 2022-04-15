@@ -1,10 +1,9 @@
 import { Dimensions } from "react-native";
 export default {
     DEFAULT_JOVI_IMAGE: require('../assets/Logo/image_default.png'),
-    app_version: '5.0',
+    app_version: '6.5',
     url_qa: "https://qa-api.jovi-app.com",
     url_qasprint_v1: "https://qasprintv1-api.jovi-app.com",
-    url_ngRok: "https://tabish.ngrok.io",
     url_dev: "https://dev-api.jovi-app.com",
     url_staging: "https://staging-api.jovi-app.com",
     url_live: "https://live-api.jovi-app.com",
@@ -47,4 +46,5 @@ export default {
     i8_markaz: { latitude: 33.6685534, longitude: 73.0727673 },
     recording_duration_max_limit: 2,
     server_time_format: "DD/MM/YYYY H:mm",
+    maximum_complaint_attachment: 3,
 }

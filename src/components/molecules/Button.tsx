@@ -120,7 +120,7 @@ const Button = (props: ButtonProps, textProps: TextProps) => {
                 height: 55,
                 borderRadius: 12,
                 flexDirection: 'row'
-            }, props.style, {
+            }, {
                 alignItems: "center",
                 justifyContent: "center",
             }, props.style, {
@@ -134,16 +134,18 @@ const Button = (props: ButtonProps, textProps: TextProps) => {
                 backgroundColor: 'grey',
             } : {}]}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-                {props.leftComponent && props.leftComponent()}
+                <>
+                    {props.leftComponent && props.leftComponent()}
 
-                <Text {...textProps} style={[{
-                    fontSize: 18,
-                    fontWeight: '500',
-                    color: "#fff",
-                    textAlign: "center",
-                }, props.textStyle]}>{props.isLoading ? <ActivityIndicator color={props.loaderColor} size={props.loaderSize} /> : props.text}</Text>
+                    <Text {...textProps} style={[{
+                        fontSize: 18,
+                        fontWeight: '500',
+                        color: "#fff",
+                        textAlign: "center",
+                    }, props.textStyle]}>{props.isLoading ? <ActivityIndicator color={props.loaderColor} size={props.loaderSize} /> : props.text}</Text>
 
-                {props.rightComponent && props.rightComponent()}
+                    {props.rightComponent && props.rightComponent()}
+                </>
             </View>
         </AnimatedTouchable>
     );

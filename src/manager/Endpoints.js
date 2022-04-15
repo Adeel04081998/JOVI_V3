@@ -33,8 +33,6 @@ export default {
     "CreateUpdateOrder": "api/Order/CreateUpdateOrderV2",
     //Fetch Order Details
     "FetchOrder": "api/Order/OrderDetail",
-    //Estimate Service Charge
-    "EstimateServiceCharge": 'api/Order/EstimateServiceChargeV2',
     //Get Open Orders
     "GetOpenOrders": "/api/Dashboard/GetOpenOrderDetails/List",
     //Accept Reject Order
@@ -51,6 +49,7 @@ export default {
 
     "GET_CUSTOMER_ORDER_HISTORY": "api/Order/HistoryV2",//USED IN ORDER HISTORY SCREEN for getting completed & cancelled order of customer
     "GET_CUSTOMER_ONGOING_ORDER": "api/Order/OnGoingOrdersListV2",//USED IN ORDER HISTORY SCREEN for getting ongoing order of customer
+    "GET_CUSTOMER_ONGOING_COUNT": "api/Order/OnGoingOrdersV2",//USED IN ORDER HISTORY SCREEN for getting ongoing order of customer
     "OrderEstimateTime": "api/Order/OrderEstimateTimeV2", //Order Estimate Time
 
     "ADD_ORDER_FEEDBACK": "api/Order/Feedback/Add",//USED IN ORDER HISTORY DETAIL SCREEN for adding feedback for the order
@@ -58,16 +57,25 @@ export default {
     "CLEAR_RECENT_SEARCHES": "api/Intellisense/ClearUserSearchHistory",//USED IN SEARCH SCREEN FOR CLEAR RECENT SEARCHED BY USER
     "SEARCH": "api/Intellisense/MainSearch",//USED IN SEARCH SCREEN FOR SEARCH USER ENTER TEXT
     "VENDOR_SEARCH": "api/Intellisense/PitstopSearch",//USED IN SEARCH SCREEN FOR GETTING SEARCHED ITEM 
-    "ADD_ORDER_FEEDBACK":"api/Order/Feedback/Add",//USED IN ORDER HISTORY DETAIL SCREEN for adding feedback for the order
-    "GET_LEGAL_CERTIFICATES":"api/Menu/Legal/ListByType/1",
-    "GET_LEGAL_HTML":"api/Menu/Legal/List",
-    "GET_FAQs":"api/Menu/FAQ/List",
-    "GET_TRANSACTIONLIST":"api/Payment/Wallet/Transactions/List",
-    "GET_PROMOS":"api/Menu/Promotion/List",
+    "ADD_ORDER_FEEDBACK": "api/Order/Feedback/Add",//USED IN ORDER HISTORY DETAIL SCREEN for adding feedback for the order
+    "GET_LEGAL_CERTIFICATES": "api/Menu/Legal/ListByType/1",
+    "GET_LEGAL_HTML": "api/Menu/Legal/List",
+    "GET_FAQs": "api/Menu/FAQ/List",
+    "GET_TRANSACTIONLIST": "api/Payment/Wallet/Transactions/List",
+    "GET_PROMOS": "api/Menu/Promotion/List",
     "HBL_PAY": "api/Payment/HBLPay",
     "JAZZCASH_PAY": "api/Payment/JazzCashPay",
     "EASYPAISA_PAY": "api/Payment/EasyPaisaPay",
-    "DELETE_ADDRESS": "api/Menu/Address/Delete"
+    "DELETE_ADDRESS": "api/Menu/Address/Delete",
+    "VERIFY_CART_ITEMS": "api/Product/Cart/VerifyItems",
+    "GET_COMPLAINT": "api/Menu/Complaint/List",//USED IN COMPLAINT SCREEN FOR GETTING ACTIVE AND SOLVED COMPLAINT's
+    "GET_COMPLAINT_DETAIL": "api/Menu/ComplaintV2/Data/",//USED IN COMPLAINT DETAIL SCREEN FOR GETTING COMPLAINT DETAIL USING COMPLAINTID
+    "SEND_COMPLAINT_MESSAGE_TO_ADMIN": "api/Menu/Complaint/ComplainDetails",//USED IN COMPLAINT DETAIL - CHAT COMPONENT SCREEN FOR SENDING MESSAGE TO ADMIN
+    "CLOSE_COMPLAINT": "api/Order/Complaint/AddOrUpdate",//USED IN COMPLAINT DETAIL - TO CLOSE OPEN COMPLAINT
+    "REFERRAL": "api/User/ReferalInvite/",// USED IN INVITE FRIENDS
+    "CREATE_COMPLAINT": "api/Order/Complaint/AddOrUpdate",//USED IN ORDER HISTORY DETAIL - TO CREATE NEW COMPLAINT AGAINEST ORDER
+    "GET_PENDING_ORDER_RATING": "api/Order/Rating/PendingOrders",//USED IN SHARED ACTION - TO SHOW PENDING ORDER's RATING
+    "IGNORE_ORDER_FOR_ORDER_RATING": "api/Order/IgnoreRating",//USED IN RATE RIDER 
 }
 
 

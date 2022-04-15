@@ -12,7 +12,7 @@ import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import GenericList from '../../components/molecules/GenericList';
 import ImageCarousel from '../../components/molecules/ImageCarousel';
-import { sharedExceptionHandler, sharedOrderNavigation, uniqueKeyExtractor } from "../../helpers/SharedActions";
+import { sharedExceptionHandler, sharedGetPendingOrderRating, sharedOrderNavigation, uniqueKeyExtractor } from "../../helpers/SharedActions";
 import { getRequest } from "../../manager/ApiManager";
 import Endpoints from "../../manager/Endpoints";
 import NavigationService from "../../navigations/NavigationService";
@@ -112,6 +112,7 @@ export default () => {
             dispatch(ReduxActions.hideRobotAction());
         }
     }, [isFocused]);
+
     const renderLoader = () => {
         return <View style={homeStyles.gifLoader}>
             <LottieView
@@ -152,7 +153,7 @@ export default () => {
 
                     >
                         <Greetings messagesReducer={messagesReducer} homeStyles={homeStyles} userReducer={userReducer} colors={colors} />
-                        {
+                        {/* {
                             userReducer.openOrders && userReducer.openOrders.length > 0 &&
                             <>
                                 <Text style={{ margin: 5, left: 5, fontWeight: "600", color: colors.primary, fontSize: 16 }}>Orders:</Text>
@@ -167,7 +168,7 @@ export default () => {
                                     }
                                 </ScrollView>
                             </>
-                        }
+                        } */}
                         <ImageCarousel
                             // aspectRatio={16 / 7}
                             data={promotionsReducer?.dashboardContentListViewModel?.dashboardPromoListVM ??
@@ -178,6 +179,7 @@ export default () => {
                             uriKey="promoImg"
                             containerStyle={homeStyles.imageCarousal}
                             height={170}
+                            // autoPlay={!__DEV__}
                             autoPlay
                             autoPlayInterval={3}
                             onPress={(item) => onPromoPressed(item)}
@@ -192,14 +194,9 @@ export default () => {
                             <AvatarAlert messagesReducer={messagesReducer} homeStyles={homeStyles} />
                             {/* <RecentOrders /> AS PER PM WE HAVE TO REMOVE RECENT ORDER FOR NOW*/}
 
-                            {isFinalDestinationSelected && vendorDashboardCategoryIDReducer.map((item, index) => {
-                                return (
-                                    <View key={uniqueKeyExtractor()} style={{ marginHorizontal: -10, }}>
-                                        <GenericList vendorDashboardCatID={item.vendorDashboardCatID} textContainer={{ paddingHorizontal: 10 }} />
+                            <RenderGenericList isFinalDestinationSelected={isFinalDestinationSelected} vendorDashboardCategoryIDReducer={vendorDashboardCategoryIDReducer} />
+                            {/*Render Generic List is implemented, so the KPI's on home doesnt get reloaded whenever come to home*/}
 
-                                    </View>
-                                )
-                            })}
 
 
                         </View>
@@ -215,3 +212,19 @@ export default () => {
         </View>
     );
 };
+const RenderGenericList = React.memo(({ isFinalDestinationSelected, vendorDashboardCategoryIDReducer }) => {
+    React.useEffect(() => {
+        if (isFinalDestinationSelected) {
+            sharedGetPendingOrderRating();
+        }
+        return () => { };
+    }, [isFinalDestinationSelected])
+    return <>{(isFinalDestinationSelected && vendorDashboardCategoryIDReducer || []).map((item, index) => {
+        return (
+            <View key={uniqueKeyExtractor()} style={{ marginHorizontal: -10, }}>
+                <GenericList vendorDashboardCatID={item.vendorDashboardCatID} textContainer={{ paddingHorizontal: 10 }} />
+
+            </View>
+        )
+    })}</>
+}, (n, p) => n !== p)
