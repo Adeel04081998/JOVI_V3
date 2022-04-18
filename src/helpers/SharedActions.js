@@ -980,13 +980,13 @@ export const sharedCalculatedTotals = () => {
     const { subTotal = 0, discount = 0, serviceCharges = 0, serviceTax = 0, genericDiscount = 0, total = 0, gst = 0, itemsTotalWithDiscounts = 0 } = store.getState().cartReducer;
     const _serviceCharges = serviceCharges + serviceTax;
     return {
-        gst,
-        serviceTax,
-        serviceCharges: _serviceCharges,
-        discount: discount + genericDiscount,
-        subTotal,
-        total: total + _serviceCharges,
-        itemsTotalWithDiscounts: itemsTotalWithDiscounts + _serviceCharges,
+        gst:Math.round(gst),
+        serviceTax: Math.round(serviceTax),
+        serviceCharges: Math.round(_serviceCharges) ,
+        discount: Math.round( discount + genericDiscount),
+        subTotal:Math.round(gsubTotalst),
+        total: Math.round( total + _serviceCharges),
+        itemsTotalWithDiscounts: Math.round(itemsTotalWithDiscounts + _serviceCharges) ,
     }
 
 }

@@ -33,7 +33,8 @@
     "iphone_13_pro_max": "npx react-native run-ios --simulator \"iPhone 13 Pro Max\"",
     "get_device_system_time": "echo \"Host\t\t$(date +%Y-%m-%d_%H:%M:%S)\" && echo \"Emulator\t$(adb shell date +%Y-%m-%d_%H:%M:%S)\"",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "time_diff": "echo Host\t\t$(date +%Y-%m-%d_%H:%M:%S) && echo Emulator\t$(adb shell date +%Y-%m-%d_%H:%M:%S)"
   },
   "dependencies": {
     "@expo/react-native-action-sheet": "^3.13.0",

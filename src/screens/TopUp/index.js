@@ -24,6 +24,7 @@ import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import Endpoints from '../../manager/Endpoints';
 import CardHeader from '../JoviJob/components/CardHeader';
 import constants from '../../res/constants';
+import { useIsFocused } from '@react-navigation/native';
 
 
 export default () => {
@@ -50,8 +51,9 @@ export default () => {
   const WIDTH = constants.window_dimensions.width
   const HEIGHT = constants.window_dimensions.height
   const styles = topUpStyles(colors, WIDTH, HEIGHT);
+  const isFocused = useIsFocused();
 
-  const {transactionMethods, mobile, id, email, balance } = useSelector(state => state.userReducer)
+  const { transactionMethods, mobile, id, email, balance } = useSelector(state => state.userReducer)
 
 
   let mobileNumStr = mobile.toString();
@@ -63,9 +65,12 @@ export default () => {
 
   const [topUpAmount, setTopUpAmount] = useState(__DEV__ ? '10' : '')
   // const [mobileNumber, setMobileNumber] = useState(__DEV__ ? "03123456789" : mobileNumStr)
-  const [mobileNumber, setMobileNumber] = useState(__DEV__ ? "03123456780" : mobileNumStr)
-  const [cnic, setCnic] = useState(__DEV__ ? '34567-8' : '')
+  const [mobileNumber, setMobileNumber] = useState(__DEV__ ? "03123456789" : mobileNumStr)
+  const [cnic, setCnic] = useState(__DEV__ ? '345678' : '')
   //This function is here for a reason, if you want to change its position, please dont.
+  React.useEffect(() => {
+    if (!isFocused) setLoader(false);
+  }, [isFocused])
   const cardPaymentAllowed = () => {
     let isHblAllowed = false,
       isJazzcashCCAllowed = false,
@@ -122,7 +127,8 @@ export default () => {
       "svg": svgs.creditCard(),
     },
   ]
-  const [cardData, setCardData] = useState(initCartData)
+  const [cardData, setCardData] = useState(initCartData);
+  const [selectedItem, setSelectedItem] = useState({});
   const [loader, setLoader] = useState(false);
 
   const ref = React.useRef();
@@ -158,27 +164,32 @@ export default () => {
       "pp_MobileNumber": mobileNumber,
       "pp_CNIC": cnic
     }
-    console.log('data ==>>>', data);
+    console.log('[JazzCashHandler].data', data);
     postRequest(
       Endpoints.JAZZCASH_PAY,
       data,
       success => {
-        console.log('success1', success);
-        const { statusCode, jazzCashAuthViewModel } = success.data;
-        if (statusCode === 200) {
-          NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.WebView.screen_name, {
-            uri: {
-              uri: jazzCashAuthViewModel.url,
-              method: 'POST',
-              body: `pp_Language=${jazzCashAuthViewModel.pp_Language}&pp_MerchantID=${jazzCashAuthViewModel.pp_MerchantID}&pp_SubMerchantID=${jazzCashAuthViewModel.pp_SubMerchantID}&pp_Password=${jazzCashAuthViewModel.pp_Password}&pp_BankID=${jazzCashAuthViewModel.pp_BankID}&pp_ProductID=${jazzCashAuthViewModel.pp_ProductID}&pp_TxnRefNo=${jazzCashAuthViewModel.pp_TxnRefNo}&pp_Amount=${jazzCashAuthViewModel.pp_Amount}&pp_TxnCurrency=${jazzCashAuthViewModel.pp_TxnCurrency}&pp_TxnDateTime=${jazzCashAuthViewModel.pp_TxnDateTime}&pp_BillReference=${jazzCashAuthViewModel.pp_BillReference}&pp_Description=${jazzCashAuthViewModel.pp_Description}&pp_TxnExpiryDateTime=${jazzCashAuthViewModel.pp_TxnExpiryDateTime}&pp_SecureHash=${jazzCashAuthViewModel.pp_SecureHash}&ppmpf_1=${jazzCashAuthViewModel.ppmpf_1}&ppmpf_2=${jazzCashAuthViewModel.ppmpf_2}&ppmpf_3=${jazzCashAuthViewModel.ppmpf_3}&ppmpf_4=${jazzCashAuthViewModel.ppmpf_4}&ppmpf_5=${jazzCashAuthViewModel.ppmpf_5}&pp_MobileNumber=${jazzCashAuthViewModel.pp_MobileNumber}&pp_CNIC=${jazzCashAuthViewModel.pp_CNIC}`
-            },
-            html: null,
-            title: "Top Up"
-          })
-        } else sharedExceptionHandler(success)
+        console.log('[JazzCashHandler].success', success);
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.WebView.screen_name, {
+          uri: null,
+          html: success.data,
+          title: "Top Up"
+        })
+        // const { statusCode, jazzCashAuthViewModel } = success.data;
+        // if (statusCode === 200) {
+        //   NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.WebView.screen_name, {
+        //     uri: {
+        //       uri: jazzCashAuthViewModel.url,
+        //       method: 'POST',
+        //       body: `pp_Language=${jazzCashAuthViewModel.pp_Language}&pp_MerchantID=${jazzCashAuthViewModel.pp_MerchantID}&pp_SubMerchantID=${jazzCashAuthViewModel.pp_SubMerchantID}&pp_Password=${jazzCashAuthViewModel.pp_Password}&pp_BankID=${jazzCashAuthViewModel.pp_BankID}&pp_ProductID=${jazzCashAuthViewModel.pp_ProductID}&pp_TxnRefNo=${jazzCashAuthViewModel.pp_TxnRefNo}&pp_Amount=${jazzCashAuthViewModel.pp_Amount}&pp_TxnCurrency=${jazzCashAuthViewModel.pp_TxnCurrency}&pp_TxnDateTime=${jazzCashAuthViewModel.pp_TxnDateTime}&pp_BillReference=${jazzCashAuthViewModel.pp_BillReference}&pp_Description=${jazzCashAuthViewModel.pp_Description}&pp_TxnExpiryDateTime=${jazzCashAuthViewModel.pp_TxnExpiryDateTime}&pp_SecureHash=${jazzCashAuthViewModel.pp_SecureHash}&ppmpf_1=${jazzCashAuthViewModel.ppmpf_1}&ppmpf_2=${jazzCashAuthViewModel.ppmpf_2}&ppmpf_3=${jazzCashAuthViewModel.ppmpf_3}&ppmpf_4=${jazzCashAuthViewModel.ppmpf_4}&ppmpf_5=${jazzCashAuthViewModel.ppmpf_5}&pp_MobileNumber=${jazzCashAuthViewModel.pp_MobileNumber}&pp_CNIC=${jazzCashAuthViewModel.pp_CNIC}`
+        //     },
+        //     html: null,
+        //     title: "Top Up"
+        //   })
+        // } else sharedExceptionHandler(success)
       },
       fail => {
-        console.log('fail', fail);
+        console.log('[JazzCashHandler].fail', fail);
         sharedExceptionHandler(fail)
       })
   }
@@ -350,32 +361,45 @@ export default () => {
     )
   }
 
-  const onAccountPress = (item, index) => {
-    if (Number.isInteger(parseInt(topUpAmount))) {
-      Keyboard.dismiss();
-      if (!topUpAmount.toString().length) return Toast.error(`Amount cannot be less than 1`);
-      else if (topUpAmount.toString()[0] == "0") return Toast.error(`Amount cannot be less than 1`);
-      else if (item.paymentType > 0) return getPayloadForWebViewHandler(item.paymentType);
-    } else {
-      Toast.error(`Please enter amount`);
+  const onContinue = () => {
+    try {
+      const item = selectedItem;
+      // console.log("[onContinue].item", item, topUpAmount);
+      if (!Object.keys(item).length) {
+        Toast.error(`Please select Topup method`);
+      }
+      else if (Number.isInteger(parseInt(topUpAmount))) {
+        Keyboard.dismiss();
+        if (!topUpAmount.toString().length) return Toast.error(`Amount cannot be less than 1`);
+        else if (topUpAmount.toString()[0] == "0") return Toast.error(`Amount cannot be less than 1`);
+        else if (item.paymentType > 0) {
+          setLoader(true);
+          getPayloadForWebViewHandler(item.paymentType);
+        }
+      } else {
+        Toast.error(`Please enter amount`);
+      }
+    } catch (error) {
+      console.log("[onContinue].error", error);
+      setLoader(false);
     }
-
   }
 
-  const updateCardOnHeaderPress = (item) => {
-    const { idx, disabled, } = item;
-    setCardData([...cardData].map(object => {
-      if (object.idx === idx) {
-        return {
-          ...object,
-          isOpened: !object.isOpened,
-        }
-      }
-      else return {
-        ...object,
-        isOpened: false,
-      }
-    }))
+  const updateCardOnHeaderPress = (item, index) => {
+    // const { idx, } = item;
+    // setCardData([...cardData].map(object => {
+    //   if (object.idx === idx) {
+    //     return {
+    //       ...object,
+    //       isOpened: !object.isOpened,
+    //     }
+    //   }
+    //   else return {
+    //     ...object,
+    //     isOpened: false,
+    //   }
+    // }))
+    setSelectedItem((selectedItem.idx === item.idx) ? {} : { ...item, index });
     ref.current.animateNextTransition();
   }
 
@@ -398,7 +422,7 @@ export default () => {
         activeOpacity={0.9}
         disabled={item.disabled}
         onHeaderPress={() => {
-          updateCardOnHeaderPress(item);
+          updateCardOnHeaderPress(item, index);
         }} />
     )
   }
@@ -407,7 +431,7 @@ export default () => {
     return (
       <>
         {
-          item.isOpened &&
+          item.idx === selectedItem.idx &&
           <View>
             <TextInput value={topUpAmount} placeholder="00" onChangeText={(t) => { setTopUpAmount(t) }} title="Enter Amount" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
           </View>
@@ -420,7 +444,7 @@ export default () => {
     return (
       <>
         {
-          item.isOpened &&
+          item.idx === selectedItem.idx &&
           <View>
             <TextInput value={topUpAmount} placeholder="00" onChangeText={(t) => { setTopUpAmount(t) }} title="Enter Amount" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
             <TextInput value={mobileNumber} placeholder="03*********" onChangeText={(t) => { setMobileNumber(t) }} title="Enter Mobile Number" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
@@ -435,7 +459,7 @@ export default () => {
     return (
       <>
         {
-          item.isOpened &&
+          item.idx === selectedItem.idx &&
           <View>
             <TextInput value={topUpAmount} placeholder="00" onChangeText={(t) => { setTopUpAmount(t) }} title="Enter Amount" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
           </View>
@@ -474,10 +498,10 @@ export default () => {
         {
           cardData.map((item, index) => {
             return (
-              <>
+              <React.Fragment key={`acc_type_${index}`}>
                 {renderCardUI(item, index)}
                 {(index === 0 || index === 1) && <DashedLine contentContainerStyle={{ paddingVertical: 8, }} />}
-              </>
+              </React.Fragment>
             )
           })
         }
@@ -490,19 +514,15 @@ export default () => {
     else return true
   }
 
-  const onSaveAndContinue = () => {
-    alert('Hello')
-  }
-
   const renderContinueBtn = () => {
     return (
       <TouchableOpacity
-        onPress={onSaveAndContinue}
+        onPress={onContinue}
         disabled={validationCheck()}
         activeOpacity={1}
         style={[styles.locButton, { height: 60, marginVertical: 10, backgroundColor: loader || validationCheck() ? 'grey' : colors.primary }]}>
         {
-          loader ? <ActivityIndicator size="small" color={colors.primary} /> :
+          loader ? <ActivityIndicator size="small" color={colors.white} /> :
             <Text style={[styles.btnText, { fontSize: 16, fontFamily: FontFamily.Poppins.Regular, color: colors.white }]} >Continue</Text>
         }
       </TouchableOpacity>
