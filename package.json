@@ -32,6 +32,7 @@
     "run:ios:release": "yarn set:env:release && yarn ios --configuration Release",
     "iphone_13_pro_max": "npx react-native run-ios --simulator \"iPhone 13 Pro Max\"",
     "get_device_system_time": "echo \"Host\t\t$(date +%Y-%m-%d_%H:%M:%S)\" && echo \"Emulator\t$(adb shell date +%Y-%m-%d_%H:%M:%S)\"",
+    "source_bash_profile":"source ~/.bash_profile",
     "test": "jest",
     "lint": "eslint ."
   },
