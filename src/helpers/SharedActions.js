@@ -1183,7 +1183,7 @@ export const splitArray = (array, n) => {
 };
 
 export const sharedVerifyCartItems = () => {
-    const pitstops = store.getState().cartReducer.pitstops;
+    const pitstops = [...store.getState().cartReducer.pitstops];
     let payload = {
         itemIDs: []
     };
@@ -1197,72 +1197,77 @@ export const sharedVerifyCartItems = () => {
             }
         }
     });
-    // console.log("[VERIFY_CART_ITEMS].payload", payload);
-    postRequest(
-        Endpoints.VERIFY_CART_ITEMS,
-        payload,
-        res => {
-            // console.log("[VERIFY_CART_ITEMS].res", res);
-            const { statusCode = 200, productList = [] } = res.data;
-            if (statusCode === 200) {
-                let is_difference = false;
-                let removedItems = [];
-                let modifiedPitstops = pitstops.map((_pitstop, j) => {
-                    if (_pitstop.checkOutItemsListVM) {
-                        let modifiedCheckOutItemsListVM = [..._pitstop.checkOutItemsListVM];
-                        const findItem = productList.find(x => modifiedCheckOutItemsListVM.find(y => {
-                            if ((y.pitStopItemID && (y.pitStopItemID === x.pitStopItemID)) || (y.pitStopDealID && (y.pitStopDealID === x.pitStopDealID))) {
-                                return x; // Because we need server's item to check statuses
-                            }
-                        }))
-                        // console.log("findItem", findItem);
-                        if (findItem) {
-                            modifiedCheckOutItemsListVM = modifiedCheckOutItemsListVM.filter((item, index) => {
-                                // console.log("item", item);
-                                const condition = (findItem.availabilityStatus == ENUMS.AVAILABILITY_STATUS.Available && item.gstAddedPrice == findItem.gstAddedPrice && item.discountType == findItem.discountType && findItem.pitStopStatus == 1);
-                                if ((item.pitStopItemID && (item.pitStopItemID === findItem.pitStopItemID) && condition) || (item.pitStopDealID && (item.pitStopDealID === findItem.pitStopDealID && condition))) {
-                                    // console.log("Came...");
-                                    return item;
-                                } else {
-                                    removedItems.push(item)
-                                    is_difference = true;
+    if (pitstops.length > 0) {
+        // console.log("[VERIFY_CART_ITEMS].payload", payload);
+        postRequest(
+            Endpoints.VERIFY_CART_ITEMS,
+            payload,
+            res => {
+                // console.log("[VERIFY_CART_ITEMS].res", res);
+                const { statusCode = 200, productList = [] } = res.data;
+                if (statusCode === 200) {
+                    let is_difference = false;
+                    let removedItems = [];
+                    let modifiedPitstops = pitstops.map((_pitstop, j) => {
+                        if (_pitstop.checkOutItemsListVM) {
+                            let modifiedCheckOutItemsListVM = [..._pitstop.checkOutItemsListVM];
+                            const findItem = productList.find(x => modifiedCheckOutItemsListVM.find(y => {
+                                if ((y.pitStopItemID && (y.pitStopItemID === x.pitStopItemID)) || (y.pitStopDealID && (y.pitStopDealID === x.pitStopDealID))) {
+                                    return x; // Because we need server's item to check statuses
                                 }
-                            })
+                            }))
+                            // console.log("findItem", findItem);
+                            if (findItem) {
+                                modifiedCheckOutItemsListVM = modifiedCheckOutItemsListVM.filter((item, index) => {
+                                    // console.log("item", item);
+                                    const condition = (findItem.availabilityStatus == ENUMS.AVAILABILITY_STATUS.Available && item.gstAddedPrice == findItem.gstAddedPrice && item.discountType == findItem.discountType && findItem.pitStopStatus == 1);
+                                    if ((item.pitStopItemID && (item.pitStopItemID === findItem.pitStopItemID) && condition) || (item.pitStopDealID && (item.pitStopDealID === findItem.pitStopDealID && condition))) {
+                                        // console.log("Came...");
+                                        return item;
+                                    } else {
+                                        removedItems.push(item)
+                                        is_difference = true;
+                                    }
+                                })
+                            }
+                            // console.log("modifiedCheckOutItemsListVM", modifiedCheckOutItemsListVM);
+                            _pitstop.checkOutItemsListVM = modifiedCheckOutItemsListVM;
+
                         }
-                        // console.log("modifiedCheckOutItemsListVM", modifiedCheckOutItemsListVM);
-                        _pitstop.checkOutItemsListVM = modifiedCheckOutItemsListVM;
+                        return _pitstop;
+                    })
+                    // console.log("is_difference,  modifiedPitstops,removedItems ", is_difference, modifiedPitstops, removedItems);
+                    if (is_difference) {
+                        modifiedPitstops = modifiedPitstops.filter(x => x.isJoviJob ? x : x.checkOutItemsListVM.length);
+                        if (modifiedPitstops.length) {
+                            const alertStr = removedItems.map(item => (item.pitStopItemName || item.pitStopDealName)).join(", \n");
+                            Toast.info(`${alertStr} no more available!`, 5000)
+                            sharedAddUpdatePitstop(null, false, modifiedPitstops)
+                        } else {
+                            Toast.info(`Items no more available`);
+                            dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
+                            NavigationService.NavigationActions.common_actions.goBack();
+                        }
+                    } else {
+                        console.log("Not any difference");
 
                     }
-                    return _pitstop;
-                })
-                // console.log("is_difference,  modifiedPitstops,removedItems ", is_difference, modifiedPitstops, removedItems);
-                if (is_difference) {
-                    modifiedPitstops = modifiedPitstops.filter(x => x.isJoviJob ? x : x.checkOutItemsListVM.length);
-                    if (modifiedPitstops.length) {
-                        const alertStr = removedItems.map(item => (item.pitStopItemName || item.pitStopDealName)).join(", \n");
-                        Toast.info(`${alertStr} no more available!`, 5000)
-                        sharedAddUpdatePitstop(null, false, modifiedPitstops)
-                    } else {
-                        Toast.info(`Items no more available`);
-                        dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
-                        NavigationService.NavigationActions.common_actions.goBack();
-                    }
-                } else {
-                    console.log("Not any difference");
+
 
                 }
+            },
+            err => {
+                console.log("[VERIFY_CART_ITEMS].err", err);
+            },
+            {},
+            true,
+        ).finally(() => {
+            sharedGetServiceCharges()
+        });
 
-
-            }
-        },
-        err => {
-            console.log("[VERIFY_CART_ITEMS].err", err);
-        },
-        {},
-        true,
-    ).finally(() => {
+    } else {
         sharedGetServiceCharges()
-    });
+    }
 };
 export const randomDate = (start = new Date(2019, 2, 1), end = new Date()) => {
     return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
