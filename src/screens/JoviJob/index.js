@@ -255,7 +255,8 @@ export default ({ navigation, route }) => {
 
     const setData = (data = route.params.pitstopItemObj) => {
         const { title, nameval, imageData, voiceNote, estTime, description, estimatePrice, buyForMe, latitude, longitude } = data;
-        let tempBool = false
+        console.log(title, nameval, imageData, voiceNote, estTime, description, estimatePrice, buyForMe, latitude, longitude);
+        let estPriceBool = false //temporrary bool for handling estimated amount
         latitudeRef.current = latitude;
         longitudeRef.current = longitude;
         let _estPrice = isNaN(parseInt(`${estimatePrice}`)) ? '' : parseInt(`${estimatePrice}`)
@@ -272,13 +273,13 @@ export default ({ navigation, route }) => {
         setDescription(description)
         setEstVal(_estPrice)
         if (_estPrice >= remainingAmount) {
-            tempBool = false
+            estPriceBool = false
         } else {
-            tempBool = true
+            estPriceBool = true
         }
-        setSwitch(tempBool)
-        recordingItem = voiceNote ?? null
-
+        setSwitch(estPriceBool)
+        recordingItem = Object.keys(voiceNote ?? {}).length ? voiceNote : null
+        console.log('recordingItem ==>>> ', recordingItem);
         //for toggling Card
         toggleCardData(PITSTOP_CARD_TYPES["description"], colors.primary)
         toggleCardData(PITSTOP_CARD_TYPES["estimated-time"], colors.primary, description ?? imageData ?? voiceNote, typeForTogglingDescriptionCard())
@@ -685,6 +686,7 @@ export default ({ navigation, route }) => {
                     colors={colors}
                     recordingItem={recordingItem}
                     onDeleteComplete={() => {
+                        console.log('here in delete ');
                         recordingItem = null;
                         voiceNoteRef.current = {}
                         setVoiceNote({})
@@ -693,6 +695,7 @@ export default ({ navigation, route }) => {
                     }}
                     onRecordingComplete={(recordItem) => {
                         recordingItem = recordItem;
+                        console.log('recordItem', recordItem);
                         voiceNoteRef.current = recordItem
                         if (closeSecondCard) {
                             updateCardOnHeaderPress(updateCardOnHeaderPressItem);
@@ -701,7 +704,7 @@ export default ({ navigation, route }) => {
                         // setVoiceNote(recordingItem)
                         toggleCardData(PITSTOP_CARD_TYPES["estimated-time"], colors.primary, recordItem, 2)
                         sharedSendFileToServer([recordItem], (data) => {
-                            setVoiceNote(data.joviImageReturnViewModelList[0])
+                            setVoiceNote({ ...data.joviImageReturnViewModelList[0], })
                         }, 21, 2);
                     }}
                     onPlayerStopComplete={() => {
@@ -820,7 +823,7 @@ export default ({ navigation, route }) => {
             imageData,
             voiceNote,
             estTime,
-            estimatePrice: parseInt(estVal),
+            estimatePrice: switchVal ? parseInt(`${estVal}`) : 0,
             latitude: latitudeRef.current,
             longitude: longitudeRef.current,
             buyForMe: switchVal
