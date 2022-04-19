@@ -276,6 +276,7 @@ const SupportChat = (supportChatProps: SupportChatProps) => {
                 alignItems: "center",
                 justifyContent: "center",
             }}>
+                {/* @ts-ignore */}
                 <AnimatedLottieView
                     source={require('../../../assets/LoadingView/OrderChat.json')}
                     autoPlay
@@ -411,6 +412,7 @@ const SupportChat = (supportChatProps: SupportChatProps) => {
                     renderInputToolbar: () => null,
                     renderComposer: () => null,
                 }}
+
                 renderSend={(rsProps) => {
                     if (supportChatProps.disableChat) {
                         return null

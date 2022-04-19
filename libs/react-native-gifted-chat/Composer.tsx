@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 16,
     // lineHeight: 16,
-    textAlignVertical: 'top',
+    // textAlignVertical: 'top',
     // ...Platform.select({
     //   web: {
     //     paddingTop: 6,
@@ -104,7 +104,7 @@ export default class Composer extends React.Component<ComposerProps> {
     this.props.onTextChanged!(text)
   }
 
-  
+
   render() {
     return (
       <TextInput
@@ -114,6 +114,7 @@ export default class Composer extends React.Component<ComposerProps> {
         placeholder={this.props.placeholder}
         placeholderTextColor={this.props.placeholderTextColor}
         multiline={this.props.multiline}
+        textAlignVertical="top"
         editable={!this.props.disableComposer}
         // numberOfLines={4}
         onLayout={this.onLayout}
@@ -123,6 +124,8 @@ export default class Composer extends React.Component<ComposerProps> {
           this.props.textInputStyle,
           {
             maxHeight: MAX_COMPOSER_HEIGHT_2,
+            ...Platform.OS === "ios" && { top: -4, },
+            ...Platform.OS === "android" && { top: 2, },
             // ...Platform.select({
             //   web: {
             //     outlineWidth: 0,
