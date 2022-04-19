@@ -31,10 +31,10 @@ export default () => {
     const customheaderStyles = { ...CustomHeaderStyles(colors.primary) };
     const userReducer = useSelector(state => state.userReducer);
     const dispatch = useDispatch()
-    // const addresses = userReducer?.addresses ?? [];
+    const finalDestObj = userReducer?.finalDestObj ?? {};
     const [addresses, setAddresses] = useState(userReducer?.addresses ?? []);
 
-    console.log('addresses ==>>', addresses);
+    console.log('finalDestObj ==>>', finalDestObj);
     const _styles = styles(colors);
     React.useEffect(() => {
         setAddresses(userReducer?.addresses)
@@ -66,6 +66,7 @@ export default () => {
             async (res) => {
                 console.log('resss ', res);
                 let filteredAddresses = addresses.filter(ad => ad.addressID !== addressObj.addressID);
+                // if (addressObj.addressID === finalDestObj.addressID) dispatch(actions.setUserFinalDestAction({ finalDestObj: {} }))
                 setAddresses(filteredAddresses)
                 dispatch(actions.setUserAction({ addresses: filteredAddresses }));
             },
@@ -104,7 +105,7 @@ export default () => {
                         renderItem={({ item, index }) => (
                             <View style={{ height: 120, marginVertical: SPACING, padding: SPACING * 2, width: '100%', backgroundColor: colors.white, borderRadius: 6, ...sharedStyles._styles(colors).placefor_specific_shadow }}>
                                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
-                                    <View style={{ flexDirection: 'row',maxWidth:'77%' }}>
+                                    <View style={{ flexDirection: 'row', maxWidth: '77%' }}>
                                         <SvgXml height={14} width={14} xml={renderFavIcon[item.addressType ?? 4]} style={{ marginRight: SPACING, alignSelf: 'center' }} />
                                         <Text style={{ fontSize: 14, color: colors.primary }} fontFamily="PoppinsBold" numberOfLines={1}>{VALIDATION_CHECK(item.addressTypeStr) ? item.addressTypeStr : 'Other'}</Text>
                                     </View>
