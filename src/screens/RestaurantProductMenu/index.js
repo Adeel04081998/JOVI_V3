@@ -59,7 +59,7 @@ export default ({ navigation, route }) => {
     // #region :: ANIMATION START's FROM HERE 
     const animScroll = React.useRef(new Animated.Value(0)).current;
 
-    const [headerHeight, setHeaderHeight] = React.useState(WINDOW_HEIGHT * 0.4);
+    const [headerHeight, setHeaderHeight] = React.useState(0)//WINDOW_HEIGHT * 0.4);
 
     const headerTop = animScroll.interpolate({
         inputRange: [0, headerHeight],

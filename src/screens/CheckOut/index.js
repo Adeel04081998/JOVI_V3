@@ -127,6 +127,8 @@ export default () => {
                                 fileIDList = [...fileIDList ?? [], item.voiceNote.joviImageID]
                             }
                         }
+
+                        const newFileIDList = fileIDList.filter(n => n);
                         return {
                             "pitstopID": null,
                             "title": item.title,
@@ -152,7 +154,9 @@ export default () => {
                             "isDestinationPitstop": false,
                             "dateTime": new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
                             "prescriptionImagesID": prescriptionImagesID,
-                            "fileIDList": fileIDList,
+                            ...(newFileIDList.length > 0) && {
+                                "fileIDList": newFileIDList,
+                            }
                         }
                     }
                     return {

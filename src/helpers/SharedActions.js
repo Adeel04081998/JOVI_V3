@@ -1012,8 +1012,8 @@ export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder 
     // '16' order completed at index 7
     // '2' Chat message at INDEX 8
     // '21' Chat message at INDEX 9
-
-    const notificationTypes = ["1", "11", "12", "13", "14", "18", "17", "16", "2", "21"]
+    // "22" Final Destination changed at index 10
+    const notificationTypes = ["1", "11", "12", "13", "14", "18", "17", "16", "2", "21","22"]
     console.log('fcmReducer------OrderPitstops', fcmReducer);
     const jobNotify = fcmReducer.notifications?.find(x => (x.data && (notificationTypes.includes(`${x.data.NotificationType}`))) ? x : false) ?? false;
     if (jobNotify) {
@@ -1022,7 +1022,7 @@ export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder 
         if (orderID && parseInt(orderID) !== parseInt(data.OrderID)) { return; }
         // const results = sharedCheckNotificationExpiry(data.ExpiryDate);
         // if (results.isSameOrBefore) {
-        if (data.NotificationType == notificationTypes[1] || data.NotificationType == notificationTypes[0]) {
+        if (data.NotificationType == notificationTypes[1] || data.NotificationType == notificationTypes[0] || data.NotificationType === notificationTypes[10]) {
             // console.log("[Order Processing] Rider Assigned By Firbase...");
             fetchOrder();
         }
