@@ -54,7 +54,7 @@ export default ({ route }) => {
     const pitstopItemObj = route?.params?.pitstopItemObj ?? null;
 
     let initState = __DEV__ ? {
-        "pharmacyPitstopType": doesPickupPitstopExists ? ENUMS.PharmacyPitstopType[0].value : ENUMS.PharmacyPitstopType[1].value,
+        "pharmacyPitstopType": ENUMS.PharmacyPitstopType[0].value,
         "medicineName": "Ggg",
         "detail": "Tyy",
         "images": null,
@@ -77,7 +77,7 @@ export default ({ route }) => {
         "longitudeDelta": 0.01,
         "city": "Islamabad"
     } : {
-        pharmacyPitstopType: doesPickupPitstopExists ? ENUMS.PharmacyPitstopType[0].value : ENUMS.PharmacyPitstopType[1].value,
+        pharmacyPitstopType:ENUMS.PharmacyPitstopType[0].value,
         medicineName: '',
         detail: '',
         images: null,

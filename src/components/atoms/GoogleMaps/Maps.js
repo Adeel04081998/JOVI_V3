@@ -117,7 +117,7 @@ export default (props) => {
   }, []);
 
 
-
+console.log('placeName ==>>>',placeName);
   /******************************************* END OF FUNCTIONS **********************************/
 
 

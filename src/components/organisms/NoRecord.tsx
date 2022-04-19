@@ -72,6 +72,7 @@ const NoRecord = (props: Props) => {
 
                         }}
                         text={props.buttonText}
+                        wait={0}
                         onPress={props.onButtonPress} />
                 </View>
             }

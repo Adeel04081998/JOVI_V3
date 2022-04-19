@@ -6,7 +6,6 @@ import svgs from '../../assets/svgs';
 import SafeAreaView from '../../components/atoms/SafeAreaView';
 import Text from '../../components/atoms/Text';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
-import TouchableScale from '../../components/atoms/TouchableScale';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import Button from '../../components/molecules/Button';
@@ -35,7 +34,6 @@ export default () => {
     // const addresses = userReducer?.addresses ?? [];
     const [addresses, setAddresses] = useState(userReducer?.addresses ?? []);
 
-    console.log('addresses ==>>', addresses);
     const _styles = styles(colors);
     React.useEffect(() => {
         setAddresses(userReducer?.addresses)
@@ -65,7 +63,6 @@ export default () => {
             `${Endpoints.DELETE_ADDRESS}/${addressObj.addressID}`,
             {},
             async (res) => {
-                console.log('resss ', res);
                 let filteredAddresses = addresses.filter(ad => ad.addressID !== addressObj.addressID);
                 setAddresses(filteredAddresses)
                 dispatch(actions.setUserAction({ addresses: filteredAddresses }));
@@ -104,7 +101,7 @@ export default () => {
                         contentContainerStyle={{ paddingHorizontal: SPACING, paddingBottom: 70 }}
                         renderItem={({ item, index }) => (
                             <View style={{
-                                height: 120, marginVertical: SPACING, padding: SPACING * 2, width: '100%', backgroundColor: colors.white, borderRadius: 6,
+                                 marginVertical: SPACING, padding: SPACING * 2, width: '100%', backgroundColor: colors.white, borderRadius: 6,
                                 // ...sharedStyles._styles(colors).placefor_specific_shadow,
                                 ...AppStyles.shadow,
                             }}>

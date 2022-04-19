@@ -18,6 +18,15 @@ const noInternetHandler = (requestCallback, params) => {
     }, DELAY);
 }
 
+const handleErrorBanner = (error) => {
+    dispatch(ReduxActions.setSettingsAction({ banner: error?.data.areaLock?.bannerURL}));
+
+}
+const successErrorBanner = (response ) => {
+    // console.log("response",response);
+    dispatch(ReduxActions.setSettingsAction({ banner: response?.data.areaLock?.bannerURL }));
+
+}
 export const refreshTokenMiddleware = (requestCallback, params) => {
     const userReducer = store.getState().userReducer;
     console.log("[refreshTokenMiddleware].userReducer", userReducer);
@@ -29,6 +38,7 @@ export const refreshTokenMiddleware = (requestCallback, params) => {
         },
         res => {
             console.log("refreshTokenMiddleware.Res :", res);
+           
             if (res?.data?.statusCode === 202) {
                 requestCallback.apply(this, params);
                 return;
@@ -60,10 +70,16 @@ export const postRequest = async (url, data, onSuccess = () => { }, onError = ()
     try {
         let res = await Axios.post(url, data, headers,);
         // console.log("[ApiManager].postRequest.res", JSON.stringify(res));
+        if (res?.data?.areaLock) {
+            successErrorBanner(res);
+        }
         onSuccess(res);
 
     } catch (error) {
-        // console.log("[ApiManager].postRequest.error", JSON.stringify(error));
+        // console.log("[ApiManager].postRequest.error", error);
+        if (error?.data?.areaLock) {
+            handleErrorBanner(error);
+        }
         if (error?.data?.StatusCode === 401) {
             return refreshTokenMiddleware(postRequest, [url, data, onSuccess, onError, headers, false, customLoader]);
         } else {
@@ -81,9 +97,15 @@ export const getRequest = async (url, onSuccess = () => { }, onError = () => { }
     try {
         let res = await Axios.get(url, headers);
         // console.log("[ApiManager].getRequest.res", JSON.stringify(res));
+        if (res?.data?.areaLock) {
+            successErrorBanner(res);
+        }
         onSuccess(res);
     } catch (error) {
         // console.log("[ApiManager].getRequest.error", error);
+        if (error?.data?.areaLock) {
+            handleErrorBanner(error);
+        }
         if (error?.data?.StatusCode === 401) {
             return refreshTokenMiddleware(getRequest, [url, onSuccess, onError, headers, false]);
         } else {
@@ -104,10 +126,14 @@ export const multipartPostRequest = (url, formData, onSuccess = (res) => { }, on
     })
         .then((res) => {
             // console.log("[multipartPostRequest].res", res);
+          
             return res.json();
         })
         .then((data) => {
             // console.log("[multipartPostRequest].data", data);
+            if (data?.areaLock) {
+                successErrorBanner(res);
+            }
             if (data?.StatusCode === 401 || data?.data?.StatusCode === 401) {
                 return refreshTokenMiddleware(multipartPostRequest, [url, formData, onSuccess, onError, showLoader, header]);
             } else {
@@ -121,6 +147,9 @@ export const multipartPostRequest = (url, formData, onSuccess = (res) => { }, on
         })
         .catch(err => {
             // console.log("[multipartPostRequest].err", err);
+            if (error?.response?.data?.areaLock) {
+                handleErrorBanner(error, dispatch);
+            }
             if (err?.data?.StatusCode === 401) {
                 return refreshTokenMiddleware(multipartPostRequest, [url, formData, onSuccess, onError, showLoader, header]);
             } else {

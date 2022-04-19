@@ -19,7 +19,7 @@ export default {
     "SET_ROBOT_JSON": "set_robot_json",
     "SHOW_ROBOT": "show_robot",
     "CLEAR_ROBOT_JSON": "clear_robot_json",
-    "HIDE_ROBOT":"HIDE_ROBOT",
+    "HIDE_ROBOT": "HIDE_ROBOT",
     //USER_FINAL_DESTINATION
     "USER_FINAL_DESTINATION": "user_final_destination",
 
@@ -32,4 +32,7 @@ export default {
     "SET_FCM_ACTION": "set_fcm_action",
     //USED IN SHARED ACTION FOR GETTING CATEGORY ID's AND STORING IN REDUCER
     "SET_VENDOR_DASHBOARD_CATEGORY_ID_ACTION": "set_vendor_dashboard_category_id_action",
+    //SETTINGS_REDUCER
+    "SET_SETTINGS": "set_settings",
+    "CLEAR_SETTINGS":"clear_settings"
 }

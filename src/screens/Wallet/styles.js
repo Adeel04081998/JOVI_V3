@@ -55,7 +55,7 @@ export const walletStyles = (colors = initColors) => StyleSheet.create({
         color: colors.primary
     },
     filterButton: {
-        width: 90,
+        width: 80,
         // alignSelf:'center',
         justifyContent:'center',
         alignItems:'center',
