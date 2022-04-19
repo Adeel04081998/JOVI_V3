@@ -396,7 +396,7 @@ export default () => {
                     position='bottom'
                     useKeyboardAvoidingView
                     visible={state.isModalVisible}
-                    contentContainerStyle={{ borderRadius: 7, width: "100%", maxHeight: "60%", backgroundColor: 'transparent', top: 5 }}
+                    contentContainerStyle={{ borderRadius: 7, width: "100%", maxHeight: "60%", backgroundColor: 'transparent', top: constants.screen_dimensions.height /25 }}
                     containerStyle={{ backgroundColor: 'transparent', }}
                     wrapperStyl={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
                 >
@@ -417,6 +417,7 @@ export default () => {
         }
 
     }
+    console.log("state=>", state);
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }} >
