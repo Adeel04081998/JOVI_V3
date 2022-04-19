@@ -984,7 +984,7 @@ export const sharedCalculatedTotals = () => {
         serviceTax: Math.round(serviceTax),
         serviceCharges: Math.round(_serviceCharges) ,
         discount: Math.round( discount + genericDiscount),
-        subTotal:Math.round(gsubTotalst),
+        subTotal:Math.round(subTotal),
         total: Math.round( total + _serviceCharges),
         itemsTotalWithDiscounts: Math.round(itemsTotalWithDiscounts + _serviceCharges) ,
     }
