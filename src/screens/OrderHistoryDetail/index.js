@@ -463,26 +463,30 @@ export default ({ navigation, route }) => {
 
                 {/* ****************** Start of GST, Service Charges, Discount & ESTIMATED TOTAL ****************** */}
                 <View style={{ paddingTop: 20, paddingBottom: 12, }}>
-                    <ServiceChargesUI
+                    {/* <ServiceChargesUI
                         text='GST'
                         value={`${data?.orderReceiptVM?.chargeBreakdown?.totalProductGST ?? 0}`}
-                    />
+                    /> */}
                     <ServiceChargesUI
-                        text={`Service Charges (Incl S.T ${data?.orderReceiptVM?.gst ?? 0})`}
-                        value={`${data?.orderReceiptVM?.serviceChargesIncTax ?? 0}`}
+                        text={`Subtotal (Incl GST ${data?.orderReceiptVM?.chargeBreakdown?.totalProductGST ?? 0})`}
+                        value={data?.orderReceiptVM?.subTotal ?? 0}
                     />
                     <DashedLine contentContainerStyle={{ paddingVertical: 8, }} />
-
                     <ServiceChargesUI
-                        text={`Discount`}
-                        value={`${data?.orderReceiptVM?.discount ?? 0}`}
+                        text={`Total Discount`}
+                        value={`${data?.orderReceiptVM?.chargeBreakdown?.discount ?? 0}`}
                         pricePrefix='Rs. -'
+                    />
+                    <DashedLine contentContainerStyle={{ paddingVertical: 8, }} />
+                    <ServiceChargesUI
+                        text={`Service Charges (Incl S.T ${data?.orderReceiptVM?.actualServiceTax ?? 0})`}
+                        value={`${(data?.orderReceiptVM?.serviceChargesIncTax ?? 0) + (data?.orderReceiptVM?.actualServiceCharges ?? 0)}`}
                     />
                     <DashedLine contentContainerStyle={{ paddingVertical: 8, }} />
 
                     <TotalChargesUI
                         text={`Total`}
-                        value={`${data?.orderReceiptVM?.totalAmount ?? 0}`}
+                        value={`${data?.orderReceiptVM?.actualTotalPlusPitstopAmount ?? 0}`}
                     />
                 </View>
 
