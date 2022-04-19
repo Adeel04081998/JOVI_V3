@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleProp, StyleSheet, TextStyle, ViewStyle } from "react-native";
+import { Platform, StyleProp, StyleSheet, TextStyle, ViewStyle } from "react-native";
 import { initColors } from "../../res/colors";
 import Text from "../atoms/Text";
 import TouchableScale from "../atoms/TouchableScale";
@@ -93,7 +93,7 @@ const stylesFunc = (colors: typeof initColors) => StyleSheet.create({
         justifyContent: "space-between",
         backgroundColor: colors.white,
         padding: 5,
-        borderRadius: 10,
+        borderRadius: Platform.OS === "android" ? 4 : 10,
         borderColor: colors.primary,
         borderWidth: 0.2,
     },
