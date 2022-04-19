@@ -57,8 +57,8 @@ export function getRegionForCoordinates(points) {
 
     const midX = (minX + maxX) / 2;
     const midY = (minY + maxY) / 2;
-    const deltaX = (maxX - minX) * 2.5;
-    const deltaY = (maxY - minY) * 2.5;
+    const deltaX = (maxX - minX) * 3
+    const deltaY = (maxY - minY) * 3;
 
     return {
         latitude: midX,
@@ -394,7 +394,7 @@ export default (props) => {
                 await hybridLocationPermission();
             }
             locationHandler();
-            // getCurrentPosition()
+            getCurrentPosition()
 
         }
         return () => { isInitialSet = false; }

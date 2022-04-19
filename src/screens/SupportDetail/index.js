@@ -190,8 +190,10 @@ export default ({ navigation, route }) => {
                             style={{
                                 width: WINDOW_WIDTH * 0.35,
                                 height: "auto",
-                                paddingVertical: constants.spacing_vertical,
+                                paddingVertical: constants.spacing_vertical * 0.9,
                                 paddingHorizontal: constants.spacing_horizontal,
+                                borderRadius: 6,
+                                marginTop:-3,
                             }}
                             textStyle={{
                                 fontSize: 12,
@@ -206,7 +208,7 @@ export default ({ navigation, route }) => {
                     backgroundColor: "#272727",
                     height: 0.5,
                     width: "100%",
-                    marginTop: constants.spacing_vertical / 2,
+                    marginTop: constants.spacing_vertical * 0.5,
                     paddingHorizontal: 0,
                 }} />
 
