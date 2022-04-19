@@ -255,6 +255,7 @@ export default ({ navigation, route }) => {
 
     const setData = (data = route.params.pitstopItemObj) => {
         const { title, nameval, imageData, voiceNote, estTime, description, estimatePrice, buyForMe, latitude, longitude } = data;
+        let tempBool = false
         latitudeRef.current = latitude;
         longitudeRef.current = longitude;
         let _estPrice = isNaN(parseInt(`${estimatePrice}`)) ? '' : parseInt(`${estimatePrice}`)
@@ -270,8 +271,12 @@ export default ({ navigation, route }) => {
         setEstTime(estTime)
         setDescription(description)
         setEstVal(_estPrice)
-
-        setSwitch(buyForMe)
+        if (_estPrice >= remainingAmount) {
+            tempBool = false
+        } else {
+            tempBool = true
+        }
+        setSwitch(tempBool)
         recordingItem = voiceNote ?? null
 
         //for toggling Card
@@ -373,7 +378,12 @@ export default ({ navigation, route }) => {
 
 
     const getRemainingAmount = () => {
-        let RA = remainingAmount - estVal
+        let RA = 0
+        if (estVal >= remainingAmount) {
+            RA = 0
+        } else {
+            RA = remainingAmount - estVal
+        }
         return RA
     }
 
@@ -499,7 +509,8 @@ export default ({ navigation, route }) => {
                 description={desc}
                 xmlSrc={svg}
                 isOpened={isOpened}
-                style={styles.cardContainer}
+                isArrowIcon={true}
+                // style={styles.cardContainer}
                 headerBackgroundColor={isDisabled ? colors.lightGreyBorder : headerColor}
                 activeOpacity={0.9}
                 disabled={isDisabled}

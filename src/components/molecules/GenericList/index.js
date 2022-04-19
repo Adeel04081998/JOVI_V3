@@ -41,7 +41,7 @@ export default React.memo(({ pitstopType = 0, vendorDashboardCatID = 0, imageSty
                 "longitude": finalDestination.longitude
             },
             res => {
-                console.log('res.data generic ==>>>', res.data);
+                // console.log('res.data generic ==>>>', res.data);
                 if (res.data.statusCode !== 200) return;
                 cb(true)
                 setData(res.data.vendorCategoryViewModel);

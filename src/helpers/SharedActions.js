@@ -30,7 +30,7 @@ export const sharedGetDeviceInfo = async () => {
     return { deviceID, model, systemVersion };
 };
 export const sharedExceptionHandler = (err, skipToast = false) => {
-    console.log("[sharedExceptionHandler].err", err);
+    // console.log("[sharedExceptionHandler].err", err);
     const TOAST_SHOW = skipToast ? 0 : 3000;
     if (err) {
         if (err.data) {
@@ -176,7 +176,7 @@ export const sharedGetUserDetailsApi = () => {
     getRequest(
         Endpoints.GET_USER_DETAILS,
         res => {
-            console.log("[getUserDetailsApi].res", res);
+            // console.log("[getUserDetailsApi].res", res);
             dispatch(ReduxActions.setUserAction({ ...res.data.userDetails }));
         },
         err => {
@@ -233,7 +233,7 @@ export const sharedGetUserAddressesApi = () => {
     getRequest(
         Endpoints.GET_USER_ADDRESSES,
         res => {
-            console.log("[sharedGetUserAddressesApi].res", res);
+            // console.log("[sharedGetUserAddressesApi].res", res);
             if (res.data.statusCode === 200)
                 dispatch(ReduxActions.setUserAction({ ...res.data }));
             else dispatch(ReduxActions.setUserAction({ addresses: [] }));
@@ -258,7 +258,7 @@ export const sharedGetPromotions = () => {
             isCitySpecific: true,
         },
         res => {
-            console.log("[sharedGetPromotions].res", res);
+            // console.log("[sharedGetPromotions].res", res);
             dispatch(ReduxActions.setPromotionsAction({ ...res.data }));
         },
         err => {
@@ -487,7 +487,7 @@ export const sharedAddUpdatePitstop = (
         sharedCalculateCartTotals(swappedPitstops, cartReducer);
         return;
     }
-    console.log("pitstopDetails", pitstopDetails);
+    // console.log("pitstopDetails", pitstopDetails);
     let pitstops = cartReducer.pitstops;
     const pitstopIndex = (pitstopDetails?.pitstopIndex >= 0 ? pitstopDetails.pitstopIndex : null);
     if (pitstopIndex !== null && isDeletePitstop) {
@@ -641,7 +641,7 @@ export const sharedGetFilters = () => {
         "vendorType": 4
 
     }, res => {
-        console.log("[sharedGetFiltersApi].res ====>>", res);
+        // console.log("[sharedGetFiltersApi].res ====>>", res);
         // dispatch(ReduxActionss.setMessagesAction({ ...res.data, robotJson: data }));
         dispatch(ReduxActions.setCategoriesTagsAction({ ...res?.data }))
 
@@ -732,13 +732,13 @@ export const sharedGetServiceCharges = (payload = null, successCb = () => { }) =
             pitstopItems
         }
     }
-    console.log('[sharedGetServiceCharges].payload', payload);
+    // console.log('[sharedGetServiceCharges].payload', payload);
     postRequest(
         Endpoints.SERVICE_CHARGES,
         payload,
         (response) => {
             const { statusCode, serviceCharge, serviceTax, chargeBreakdown, genericDiscount, orderEstimateTime } = response.data;
-            console.log('[sharedGetServiceCharges].response', response);
+            // console.log('[sharedGetServiceCharges].response', response);
             if (statusCode === 200)
                 // NEED TO MODIFY THESE LOGIC FOR FUTURE CASES LIKE CHECKOUT SCREEN...
                 dispatch(ReduxActions.setCartAction({ orderEstimateTime, serviceCharges: serviceCharge, serviceTax, genericDiscount, chargeBreakdown: chargeBreakdown ?? {} }))
@@ -815,7 +815,7 @@ export const sharedSendFCMTokenToServer = async (postRequest, FcmToken) => {
         },
         res => {
             if (res.data.statusCode === 200) {
-                console.log("sharedSendFCMTokenToServer.success :", res)
+                // console.log("sharedSendFCMTokenToServer.success :", res)
             };
         },
         err => {
@@ -832,7 +832,7 @@ export const sharedFetchOrder = (orderID = 0, successCb = () => { }, errCb = () 
     getRequest(
         Endpoints.FetchOrder + '/' + orderID,
         (response) => {
-            console.log('sharedFetchOrder', response);
+            // console.log('sharedFetchOrder', response);
             if (response.data.statusCode === 200) {
                 if (response.data.order.orderStatus === 3) {
                     NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
@@ -875,7 +875,7 @@ export const checkIfFirstPitstopRestaurant = (pitstopsList = [], extraIgnoredSta
     return isFirstPitstopRestaurant;
 }
 export const sharedOrderNavigation = (orderID = null, orderStatus = null, replacingRoute = null, newOrder = null, showBack = false, pitstopsList = []) => {
-    console.log('orderID', orderID);
+    // console.log('orderID', orderID);
     const isFirstPitstopRestaurant = checkIfFirstPitstopRestaurant(pitstopsList);
     const navigationLogic = (route) => {
         if (newOrder) {
@@ -980,13 +980,13 @@ export const sharedCalculatedTotals = () => {
     const { subTotal = 0, discount = 0, serviceCharges = 0, serviceTax = 0, genericDiscount = 0, total = 0, gst = 0, itemsTotalWithDiscounts = 0 } = store.getState().cartReducer;
     const _serviceCharges = serviceCharges + serviceTax;
     return {
-        gst,
-        serviceTax,
-        serviceCharges: _serviceCharges,
-        discount: discount + genericDiscount,
-        subTotal,
-        total: total + _serviceCharges,
-        itemsTotalWithDiscounts: itemsTotalWithDiscounts + _serviceCharges,
+        gst:Math.round(gst),
+        serviceTax: Math.round(serviceTax),
+        serviceCharges: Math.round(_serviceCharges) ,
+        discount: Math.round( discount + genericDiscount),
+        subTotal:Math.round(subTotal),
+        total: Math.round( total + _serviceCharges),
+        itemsTotalWithDiscounts: Math.round(itemsTotalWithDiscounts + _serviceCharges) ,
     }
 
 }
@@ -1183,7 +1183,7 @@ export const splitArray = (array, n) => {
 };
 
 export const sharedVerifyCartItems = () => {
-    const pitstops = store.getState().cartReducer.pitstops;
+    const pitstops = [...store.getState().cartReducer.pitstops];
     let payload = {
         itemIDs: []
     };
@@ -1197,72 +1197,77 @@ export const sharedVerifyCartItems = () => {
             }
         }
     });
-    console.log("[VERIFY_CART_ITEMS].payload", payload);
-    postRequest(
-        Endpoints.VERIFY_CART_ITEMS,
-        payload,
-        res => {
-            console.log("[VERIFY_CART_ITEMS].res", res);
-            const { statusCode = 200, productList = [] } = res.data;
-            if (statusCode === 200) {
-                let is_difference = false;
-                let removedItems = [];
-                let modifiedPitstops = pitstops.map((_pitstop, j) => {
-                    if (_pitstop.checkOutItemsListVM) {
-                        let modifiedCheckOutItemsListVM = [..._pitstop.checkOutItemsListVM];
-                        const findItem = productList.find(x => modifiedCheckOutItemsListVM.find(y => {
-                            if ((y.pitStopItemID && (y.pitStopItemID === x.pitStopItemID)) || (y.pitStopDealID && (y.pitStopDealID === x.pitStopDealID))) {
-                                return x; // Because we need server's item to check statuses
-                            }
-                        }))
-                        // console.log("findItem", findItem);
-                        if (findItem) {
-                            modifiedCheckOutItemsListVM = modifiedCheckOutItemsListVM.filter((item, index) => {
-                                // console.log("item", item);
-                                const condition = (findItem.availabilityStatus == ENUMS.AVAILABILITY_STATUS.Available && item.gstAddedPrice == findItem.gstAddedPrice && item.discountType == findItem.discountType && findItem.pitStopStatus == 1);
-                                if ((item.pitStopItemID && (item.pitStopItemID === findItem.pitStopItemID) && condition) || (item.pitStopDealID && (item.pitStopDealID === findItem.pitStopDealID && condition))) {
-                                    // console.log("Came...");
-                                    return item;
-                                } else {
-                                    removedItems.push(item)
-                                    is_difference = true;
+    if (pitstops.length > 0) {
+        // console.log("[VERIFY_CART_ITEMS].payload", payload);
+        postRequest(
+            Endpoints.VERIFY_CART_ITEMS,
+            payload,
+            res => {
+                // console.log("[VERIFY_CART_ITEMS].res", res);
+                const { statusCode = 200, productList = [] } = res.data;
+                if (statusCode === 200) {
+                    let is_difference = false;
+                    let removedItems = [];
+                    let modifiedPitstops = pitstops.map((_pitstop, j) => {
+                        if (_pitstop.checkOutItemsListVM) {
+                            let modifiedCheckOutItemsListVM = [..._pitstop.checkOutItemsListVM];
+                            const findItem = productList.find(x => modifiedCheckOutItemsListVM.find(y => {
+                                if ((y.pitStopItemID && (y.pitStopItemID === x.pitStopItemID)) || (y.pitStopDealID && (y.pitStopDealID === x.pitStopDealID))) {
+                                    return x; // Because we need server's item to check statuses
                                 }
-                            })
+                            }))
+                            // console.log("findItem", findItem);
+                            if (findItem) {
+                                modifiedCheckOutItemsListVM = modifiedCheckOutItemsListVM.filter((item, index) => {
+                                    // console.log("item", item);
+                                    const condition = (findItem.availabilityStatus == ENUMS.AVAILABILITY_STATUS.Available && item.gstAddedPrice == findItem.gstAddedPrice && item.discountType == findItem.discountType && findItem.pitStopStatus == 1);
+                                    if ((item.pitStopItemID && (item.pitStopItemID === findItem.pitStopItemID) && condition) || (item.pitStopDealID && (item.pitStopDealID === findItem.pitStopDealID && condition))) {
+                                        // console.log("Came...");
+                                        return item;
+                                    } else {
+                                        removedItems.push(item)
+                                        is_difference = true;
+                                    }
+                                })
+                            }
+                            // console.log("modifiedCheckOutItemsListVM", modifiedCheckOutItemsListVM);
+                            _pitstop.checkOutItemsListVM = modifiedCheckOutItemsListVM;
+
                         }
-                        // console.log("modifiedCheckOutItemsListVM", modifiedCheckOutItemsListVM);
-                        _pitstop.checkOutItemsListVM = modifiedCheckOutItemsListVM;
+                        return _pitstop;
+                    })
+                    // console.log("is_difference,  modifiedPitstops,removedItems ", is_difference, modifiedPitstops, removedItems);
+                    if (is_difference) {
+                        modifiedPitstops = modifiedPitstops.filter(x => x.isJoviJob ? x : x.checkOutItemsListVM.length);
+                        if (modifiedPitstops.length) {
+                            const alertStr = removedItems.map(item => (item.pitStopItemName || item.pitStopDealName)).join(", \n");
+                            Toast.info(`${alertStr} no more available!`, 5000)
+                            sharedAddUpdatePitstop(null, false, modifiedPitstops)
+                        } else {
+                            Toast.info(`Items no more available`);
+                            dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
+                            NavigationService.NavigationActions.common_actions.goBack();
+                        }
+                    } else {
+                        console.log("Not any difference");
 
                     }
-                    return _pitstop;
-                })
-                console.log("is_difference,  modifiedPitstops,removedItems ", is_difference, modifiedPitstops, removedItems);
-                if (is_difference) {
-                    modifiedPitstops = modifiedPitstops.filter(x => x.isJoviJob ? x : x.checkOutItemsListVM.length);
-                    if (modifiedPitstops.length) {
-                        const alertStr = removedItems.map(item => (item.pitStopItemName || item.pitStopDealName)).join(", \n");
-                        Toast.info(`${alertStr} no more available!`, 5000)
-                        sharedAddUpdatePitstop(null, false, modifiedPitstops)
-                    } else {
-                        Toast.info(`Items no more available`);
-                        dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
-                        NavigationService.NavigationActions.common_actions.goBack();
-                    }
-                } else {
-                    console.log("Not any difference");
+
 
                 }
+            },
+            err => {
+                console.log("[VERIFY_CART_ITEMS].err", err);
+            },
+            {},
+            true,
+        ).finally(() => {
+            sharedGetServiceCharges()
+        });
 
-
-            }
-        },
-        err => {
-            console.log("[VERIFY_CART_ITEMS].err", err);
-        },
-        {},
-        true,
-    ).finally(() => {
+    } else {
         sharedGetServiceCharges()
-    });
+    }
 };
 export const randomDate = (start = new Date(2019, 2, 1), end = new Date()) => {
     return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
@@ -1283,7 +1288,7 @@ export const sharedSendFileToServer = (list = [], onSuccess = () => { }, type = 
         index += 1;
     }
     multipartPostRequest(Endpoints.ADD_PITSTOPIMAGE, formData, (res) => {
-        console.log('[sendFileToServer]res', res);
+        // console.log('[sendFileToServer]res', res);
         const statusCode = (res?.statusCode ?? 400);
         if (statusCode === 200) {
             onSuccess(res);
@@ -1296,7 +1301,6 @@ export const sharedSendFileToServer = (list = [], onSuccess = () => { }, type = 
 export const sharedGetPendingOrderRating = () => {
     // NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.RateRider.screen_name, { orderID: 86208765, });
     // return
-    console.log('HI, PENDING RATING CALLED');
     getRequest(Endpoints.GET_PENDING_ORDER_RATING,
         res => {
             const statusCode = res?.data?.statusCode ?? 404;

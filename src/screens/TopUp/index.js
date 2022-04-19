@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import { Appearance, Keyboard } from 'react-native';
+import { ActivityIndicator, Alert, Appearance, Keyboard } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { useSelector } from 'react-redux';
+import { Transition, Transitioning } from 'react-native-reanimated';
 import svgs from '../../assets/svgs';
 import SafeAreaView from '../../components/atoms/SafeAreaView';
 import Text from '../../components/atoms/Text'
@@ -21,38 +22,55 @@ import { postRequest } from '../../manager/ApiManager';
 import { sharedExceptionHandler } from '../../helpers/SharedActions';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import Endpoints from '../../manager/Endpoints';
+import CardHeader from '../JoviJob/components/CardHeader';
+import constants from '../../res/constants';
+import { useIsFocused } from '@react-navigation/native';
 
 
 export default () => {
+
+  const transition = (
+    <Transition.Together>
+      <Transition.Out
+        type="fade"
+        durationMs={200}
+      />
+      <Transition.Change />
+      <Transition.In
+        type="fade"
+        durationMs={200}
+      />
+    </Transition.Together>
+  );//card open/close animation
 
   /////////////// ******************** START of variable initialization ***********************\\\\\\\\\\\\\\\\\\\\\\\\
 
 
   const { MODE_TYPES_ENUM, PAYMENT_TYPES_ENUM, EASY_PAISA_PAYMENT_OPTS, JAZZ_CASH_PAYMENT_OPTS, TNX_TYPES_ENUMS } = TOPUP_ENUMS;
   const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[PITSTOP_TYPES.JOVI]], Appearance.getColorScheme() === "dark");
-  const styles = topUpStyles(colors);
+  const WIDTH = constants.window_dimensions.width
+  const HEIGHT = constants.window_dimensions.height
+  const styles = topUpStyles(colors, WIDTH, HEIGHT);
+  const isFocused = useIsFocused();
 
   const { transactionMethods, mobile, id, email, balance } = useSelector(state => state.userReducer)
-  console.log('transactionMethods ==>>> ', transactionMethods);
+
+
+  let mobileNumStr = mobile.toString();
+  if (mobileNumStr.includes("92")) {
+    mobileNumStr = mobileNumStr.replace("92", "0")
+  }
   const IS_EASYPAISA_ALLOWED = transactionMethods.find(x => (x.name.toLowerCase() === "easypaisa" && x.txnType == 1) || (x.name.toLowerCase() === "easypaisa" && x.txnType == 4) ? x : false);
   const IS_JAZZCASH_ALLOWED = transactionMethods.find(x => (x.name.toLowerCase() === "jazzcash" && x.txnType == 1) || (x.name.toLowerCase() === "jazzcash" && x.txnType == 4) ? x : false);
 
-  const [topUpAmount, setTopUpAmount] = useState('')
-  const [accountsArr, setAccountsArr] = useState([
-    { name: "Easypaisa mobile account", desc: "Use your easypaisa account", paymentType: PAYMENT_TYPES_ENUM.EASYPAISA, disabled: IS_EASYPAISA_ALLOWED ? false : true, icon: svgs.easypaisa() },
-    { name: "Jazzcash mobile account", desc: "Use your jazzcash account", paymentType: PAYMENT_TYPES_ENUM.JAZZCASH, disabled: IS_JAZZCASH_ALLOWED ? false : true, icon: svgs.jazzcash() },
-    { name: "Credit/Debit card", desc: "Use your credit/debit card", paymentType: PAYMENT_TYPES_ENUM.CREDIT_DEBIT_CARD, disabled: true, icon: svgs.creditCard() }, //added disabled checked. 
-  ])
-
-
-  /////////////// ******************** END of variable initialization ***********************\\\\\\\\\\\\\\\\\\\\\\\\
-
-
-
-
-
-  /////////////// ******************** Start of Card Payment Check Function ***********************\\\\\\\\\\\\\\\\\\\\\\\\
-
+  const [topUpAmount, setTopUpAmount] = useState(__DEV__ ? '10' : '')
+  // const [mobileNumber, setMobileNumber] = useState(__DEV__ ? "03123456789" : mobileNumStr)
+  const [mobileNumber, setMobileNumber] = useState(__DEV__ ? "03123456789" : mobileNumStr)
+  const [cnic, setCnic] = useState(__DEV__ ? '345678' : '')
+  //This function is here for a reason, if you want to change its position, please dont.
+  React.useEffect(() => {
+    if (!isFocused) setLoader(false);
+  }, [isFocused])
   const cardPaymentAllowed = () => {
     let isHblAllowed = false,
       isJazzcashCCAllowed = false,
@@ -78,6 +96,53 @@ export default () => {
     }
 
   }
+  const initCartData = [
+    {
+      "idx": 1,
+      "isOpened": true,
+      // "key": PITSTOP_CARD_TYPES["location"],
+      "title": "Easypaisa mobile account",
+      "desc": "Use your easypaisa account",
+      "paymentType": PAYMENT_TYPES_ENUM.EASYPAISA,
+      "disabled": IS_EASYPAISA_ALLOWED ? false : true,
+      "svg": svgs.easypaisa()
+    },
+    {
+      "idx": 2,
+      "isOpened": false,
+      // "key": PITSTOP_CARD_TYPES["location"],
+      "title": "Jazzcash mobile account",
+      "desc": "Use your jazzcash account",
+      "paymentType": PAYMENT_TYPES_ENUM.JAZZCASH,
+      "disabled": IS_JAZZCASH_ALLOWED ? false : true,
+      "svg": svgs.jazzcash()
+    },
+    {
+      "idx": 3,
+      "isOpened": false,
+      "title": "Credit/Debit card",
+      "desc": "Use your credit/debit card",
+      "paymentType": PAYMENT_TYPES_ENUM.CREDIT_DEBIT_CARD,
+      "disabled": cardPaymentAllowed().disabled,
+      "svg": svgs.creditCard(),
+    },
+  ]
+  const [cardData, setCardData] = useState(initCartData);
+  const [selectedItem, setSelectedItem] = useState({});
+  const [loader, setLoader] = useState(false);
+
+  const ref = React.useRef();
+
+
+  /////////////// ******************** END of variable initialization ***********************\\\\\\\\\\\\\\\\\\\\\\\\
+
+
+
+
+
+  /////////////// ******************** Start of Card Payment Check Function ***********************\\\\\\\\\\\\\\\\\\\\\\\\
+
+
 
 
   /////////////// ******************** END of Card Payment Check Function ***********************\\\\\\\\\\\\\\\\\\\\\\\\
@@ -93,22 +158,38 @@ export default () => {
 
 
   const JazzCashHandler = (txnType) => {
+    let data = {
+      "amount": parseInt(topUpAmount),
+      "txnType": txnType,
+      "pp_MobileNumber": mobileNumber,
+      "pp_CNIC": cnic
+    }
+    console.log('[JazzCashHandler].data', data);
     postRequest(
       Endpoints.JAZZCASH_PAY,
-      {
-        "amount": parseInt(topUpAmount),
-        "txnType": txnType,
-      },
+      data,
       success => {
-        const { statusCode, jazzCashHtml } = success.data;
-        if (statusCode === 200) {
-          NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.WebView.screen_name, {
-            uri: null,
-            html: `${jazzCashHtml}`, title: "Top Up"
-          })
-        } else sharedExceptionHandler(success)
+        console.log('[JazzCashHandler].success', success);
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.WebView.screen_name, {
+          uri: null,
+          html: success.data,
+          title: "Top Up"
+        })
+        // const { statusCode, jazzCashAuthViewModel } = success.data;
+        // if (statusCode === 200) {
+        //   NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.WebView.screen_name, {
+        //     uri: {
+        //       uri: jazzCashAuthViewModel.url,
+        //       method: 'POST',
+        //       body: `pp_Language=${jazzCashAuthViewModel.pp_Language}&pp_MerchantID=${jazzCashAuthViewModel.pp_MerchantID}&pp_SubMerchantID=${jazzCashAuthViewModel.pp_SubMerchantID}&pp_Password=${jazzCashAuthViewModel.pp_Password}&pp_BankID=${jazzCashAuthViewModel.pp_BankID}&pp_ProductID=${jazzCashAuthViewModel.pp_ProductID}&pp_TxnRefNo=${jazzCashAuthViewModel.pp_TxnRefNo}&pp_Amount=${jazzCashAuthViewModel.pp_Amount}&pp_TxnCurrency=${jazzCashAuthViewModel.pp_TxnCurrency}&pp_TxnDateTime=${jazzCashAuthViewModel.pp_TxnDateTime}&pp_BillReference=${jazzCashAuthViewModel.pp_BillReference}&pp_Description=${jazzCashAuthViewModel.pp_Description}&pp_TxnExpiryDateTime=${jazzCashAuthViewModel.pp_TxnExpiryDateTime}&pp_SecureHash=${jazzCashAuthViewModel.pp_SecureHash}&ppmpf_1=${jazzCashAuthViewModel.ppmpf_1}&ppmpf_2=${jazzCashAuthViewModel.ppmpf_2}&ppmpf_3=${jazzCashAuthViewModel.ppmpf_3}&ppmpf_4=${jazzCashAuthViewModel.ppmpf_4}&ppmpf_5=${jazzCashAuthViewModel.ppmpf_5}&pp_MobileNumber=${jazzCashAuthViewModel.pp_MobileNumber}&pp_CNIC=${jazzCashAuthViewModel.pp_CNIC}`
+        //     },
+        //     html: null,
+        //     title: "Top Up"
+        //   })
+        // } else sharedExceptionHandler(success)
       },
       fail => {
+        console.log('[JazzCashHandler].fail', fail);
         sharedExceptionHandler(fail)
       })
   }
@@ -127,10 +208,6 @@ export default () => {
 
 
   const EasyPaisaHandler = (paymentMethod) => {
-    let mobileNum = mobile.toString();
-    if (mobileNum.includes("92")) {
-      mobileNum = mobileNum.replace("92", "0")
-    }
 
     postRequest(
       Endpoints.EASYPAISA_PAY,
@@ -139,7 +216,7 @@ export default () => {
         "orderRefNo": id,
         "emailAddr": email,
         "paymentMethod": paymentMethod,
-        "mobileNum": mobileNum
+        "mobileNum": mobileNumStr
       },
       success => {
         if (success.data.statusCode === 200) {
@@ -270,7 +347,6 @@ export default () => {
         <Text style={styles.availableCreditAmount} fontFamily="PoppinsBold" >
           Rs. {`${balance}`}
         </Text>
-        <TextInput value={topUpAmount} placeholder="00" onChangeText={(t) => { setTopUpAmount(t) }} title="Enter Amount" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
       </View>
     )
   }
@@ -285,44 +361,171 @@ export default () => {
     )
   }
 
-  const onAccountPress = (item, index) => {
-    if (Number.isInteger(parseInt(topUpAmount))) {
-      Keyboard.dismiss();
-      if (!topUpAmount.toString().length) return Toast.error(`Amount cannot be less than 1`);
-      else if (topUpAmount.toString()[0] == "0") return Toast.error(`Amount cannot be less than 1`);
-      else if (item.paymentType > 0) return getPayloadForWebViewHandler(item.paymentType);
-    } else {
-      Toast.error(`Please enter amount`);
+  const onContinue = () => {
+    try {
+      const item = selectedItem;
+      // console.log("[onContinue].item", item, topUpAmount);
+      if (!Object.keys(item).length) {
+        Toast.error(`Please select Topup method`);
+      }
+      else if (Number.isInteger(parseInt(topUpAmount))) {
+        Keyboard.dismiss();
+        if (!topUpAmount.toString().length) return Toast.error(`Amount cannot be less than 1`);
+        else if (topUpAmount.toString()[0] == "0") return Toast.error(`Amount cannot be less than 1`);
+        else if (item.paymentType > 0) {
+          setLoader(true);
+          getPayloadForWebViewHandler(item.paymentType);
+        }
+      } else {
+        Toast.error(`Please enter amount`);
+      }
+    } catch (error) {
+      console.log("[onContinue].error", error);
+      setLoader(false);
+    }
+  }
+
+  const updateCardOnHeaderPress = (item, index) => {
+    // const { idx, } = item;
+    // setCardData([...cardData].map(object => {
+    //   if (object.idx === idx) {
+    //     return {
+    //       ...object,
+    //       isOpened: !object.isOpened,
+    //     }
+    //   }
+    //   else return {
+    //     ...object,
+    //     isOpened: false,
+    //   }
+    // }))
+    setSelectedItem((selectedItem.idx === item.idx) ? {} : { ...item, index });
+    ref.current.animateNextTransition();
+  }
+
+  const renderCardHeader = (item, index) => {
+    return (
+      <CardHeader
+        title={item.title}
+        description={item.desc}
+        xmlSrc={item.svg}
+        isOpened={false}
+        isArrowIcon={false}
+        svgStyles={{ backgroundColor: colors.white }}
+        headerStyles={{
+          backgroundColor: colors.white,
+          flexDirection: 'row',
+          marginHorizontal: 5,
+          marginVertical: 10,
+          alignItems: 'center',
+        }}
+        activeOpacity={0.9}
+        disabled={item.disabled}
+        onHeaderPress={() => {
+          updateCardOnHeaderPress(item, index);
+        }} />
+    )
+  }
+
+  const renderEasyPaisaContainer = (item, index) => {
+    return (
+      <>
+        {
+          item.idx === selectedItem.idx &&
+          <View>
+            <TextInput value={topUpAmount} placeholder="00" onChangeText={(t) => { setTopUpAmount(t) }} title="Enter Amount" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
+          </View>
+        }
+      </>
+    )
+  }
+
+  const renderJazzCashContainer = (item, index) => {
+    return (
+      <>
+        {
+          item.idx === selectedItem.idx &&
+          <View>
+            <TextInput value={topUpAmount} placeholder="00" onChangeText={(t) => { setTopUpAmount(t) }} title="Enter Amount" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
+            <TextInput value={mobileNumber} placeholder="03*********" onChangeText={(t) => { setMobileNumber(t) }} title="Enter Mobile Number" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
+            <TextInput value={cnic} placeholder="*****-*******-*" onChangeText={(t) => { setCnic(t) }} title="Last 6 Digits CNIC" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
+          </View>
+        }
+      </>
+    )
+  }
+
+  const renderCreditCardContainer = (item, index) => {
+    return (
+      <>
+        {
+          item.idx === selectedItem.idx &&
+          <View>
+            <TextInput value={topUpAmount} placeholder="00" onChangeText={(t) => { setTopUpAmount(t) }} title="Enter Amount" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
+          </View>
+        }
+      </>
+    )
+  }
+
+  const renderBody = (item, index) => {
+    const { idx } = item
+    if (idx === 1) {
+      return renderEasyPaisaContainer(item, index)
+    } else if (idx === 2) {
+      return renderJazzCashContainer(item, index)
+    } else if (idx === 3) {
+      return renderCreditCardContainer(item, index)
+    }
+    else {
+      return <View />
     }
 
+  }
+
+  const renderCardUI = (item, index) => {
+    return (
+      <View>
+        {renderCardHeader(item, index)}
+        {renderBody(item, index)}
+      </View>
+    )
   }
 
   const renderAccountContainer = () => {
     return (
       <View style={styles.dataContainerStyle} >
         {
-          accountsArr.map((item, index) => {
+          cardData.map((item, index) => {
             return (
-              <>
-                <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 5 }} disabled={item.disabled} onPress={() => onAccountPress(item, index)} >
-                  <SvgXml xml={item.icon} height={35} width={35} style={{ marginHorizontal: 20 }} />
-                  <View style={{ flexDirection: 'column' }} >
-                    <Text style={styles.accountTitle} fontFamily="PoppinsSemiBold" >{item.name}</Text>
-                    <Text style={styles.filterDateStyle} fontFamily="PoppinsRegular" >{item.desc}</Text>
-                  </View>
-                  {item.disabled &&
-                    <>
-                      <View style={{ flexDirection: 'row', height: 50, width: '100%', borderRadius: 5, opacity: 0.6, alignItems: 'center', backgroundColor: '#444', position: 'absolute' }} />
-                      <View style={{ height: 50, width: "100%", position: "absolute", justifyContent: 'center', }}>
-                      </View>
-                    </>}
-                </TouchableOpacity>
+              <React.Fragment key={`acc_type_${index}`}>
+                {renderCardUI(item, index)}
                 {(index === 0 || index === 1) && <DashedLine contentContainerStyle={{ paddingVertical: 8, }} />}
-              </>
+              </React.Fragment>
             )
           })
         }
       </View>
+    )
+  }
+
+  const validationCheck = () => {
+    if (topUpAmount !== '' && mobileNumber !== '') return false
+    else return true
+  }
+
+  const renderContinueBtn = () => {
+    return (
+      <TouchableOpacity
+        onPress={onContinue}
+        disabled={validationCheck()}
+        activeOpacity={1}
+        style={[styles.locButton, { height: 60, marginVertical: 10, backgroundColor: loader || validationCheck() ? 'grey' : colors.primary }]}>
+        {
+          loader ? <ActivityIndicator size="small" color={colors.white} /> :
+            <Text style={[styles.btnText, { fontSize: 16, fontFamily: FontFamily.Poppins.Regular, color: colors.white }]} >Continue</Text>
+        }
+      </TouchableOpacity>
     )
   }
 
@@ -335,9 +538,15 @@ export default () => {
   return (
     <SafeAreaView style={styles.container}>
       {renderHeader()}
-      {renderBalanceContainer()}
-      {renderTextRow()}
-      {renderAccountContainer()}
+      <Transitioning.View
+        ref={ref}
+        transition={transition}
+        style={styles.container}>
+        {renderBalanceContainer()}
+        {renderTextRow()}
+        {renderAccountContainer()}
+        {renderContinueBtn()}
+      </Transitioning.View>
     </SafeAreaView>
   )
 }
