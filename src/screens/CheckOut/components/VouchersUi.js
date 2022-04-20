@@ -10,8 +10,8 @@ import AnimatedModal from '../../../components/organisms/AnimatedModal'
 import GoodyBag from '../../GoodyBag'
 const TOPSPACING = 8
 
-export default ({ checkOutStyles = {}, onPressClBk = () => { }, state = {} }) => {
-    let selectedVoucherLength = Object.keys(state?.selectedVoucher).length
+export default ({ checkOutStyles = {}, onPressClBk = () => { }, state = {},promoList=[] }) => {
+    let selectedVoucherLength = Object.keys(state?.selectedVoucher)?.length
     let cuts = [{
         "dashedLine": true,
         "index": 0,
@@ -48,7 +48,7 @@ export default ({ checkOutStyles = {}, onPressClBk = () => { }, state = {} }) =>
                         selectedVoucherLength > 0 ?
                             <Text style={{fontSize: 12,color: '#fff',  width: '70%', alignSelf: 'center', textAlign: 'center', }} numberOfLines={1}>{`${state.selectedVoucher.title} `}</Text>
                             :
-                            <Text style={{  fontSize: 12,color: '#fff', width: '70%',  alignSelf: 'center',textAlign: 'center',  }} numberOfLines={1}>{`You have ${state.promoList.length > 2 ? state.promoList.length : 0} vouchers`}</Text>
+                            <Text style={{  fontSize: 12,color: '#fff', width: '70%',  alignSelf: 'center',textAlign: 'center',  }} numberOfLines={1}>{`You have ${promoList.length > 0 ? promoList.length : 0} vouchers`}</Text>
 
                     }
                     <TouchableOpacity

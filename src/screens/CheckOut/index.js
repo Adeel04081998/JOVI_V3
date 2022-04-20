@@ -54,12 +54,22 @@ export default () => {
     const paymentType = "Wallet"
     const walletAmount = userReducer.balance || 0;
     const instructionForRider = GV.RIDER_INSTRUCTIONS.current;
+    React.useEffect(() => {
+        sharedGetPromoList()
+        sharedVerifyCartItems();
+        // sharedGetServiceCharges(null, (res) => {
+        //     setState(pre => ({
+        //         ...pre,
+        //         chargeBreakdown: res.data.chargeBreakdown,
+        //     }));
+        // });
 
+    }, []);
+    let promoList = userReducer.promoList ?? []
     const [state, setState] = React.useState({
         chargeBreakdown: cartReducer.chargeBreakdown,
         isLoading: false,
         isModalVisible: false,
-        promoList: userReducer.promoList ?? [],
         selectedVoucher: {}
     });
     // console.log("[Checkout] cartReducer", cartReducer);
@@ -99,6 +109,7 @@ export default () => {
         const placeOrder = async () => {
             setState(pre => ({ ...pre, isLoading: true }));
             const finalPitstops = [...cartReducer.pitstops || [], { ...userReducer.finalDestObj, isDestinationPitstop: true }];
+            let selectedPromoCode = state.selectedVoucher?.promoCode ?? ''
             const finalOrder = {
                 "pitStopsList": finalPitstops.map((item, index) => {
                     if ((item.isJoviJob || item.isPharmacy) && !item.isDestinationPitstop) {
@@ -235,7 +246,7 @@ export default () => {
                         "catTitle": (!item.isDestinationPitstop) ? PITSTOP_TYPES_INVERTED[item.pitstopType] : "Final Destination"
                     }
                 }),
-                // "promotionCode": state.promoCodeApplied,
+                "promotionCode": selectedPromoCode,
                 "orderTypeID": 2,
                 "OrderPaymentType": switchVal ? ENUMS.OrderPaymentType.JoviWallet : ENUMS.OrderPaymentType.CashOnDelivery,
                 // "pitStopsImage": state?.mapImageBase64 ?? null,
@@ -377,47 +388,39 @@ export default () => {
         )
     }
 
-    React.useEffect(() => {
-        sharedVerifyCartItems();
-        sharedGetPromoList()
-        // sharedGetServiceCharges(null, (res) => {
-        //     setState(pre => ({
-        //         ...pre,
-        //         chargeBreakdown: res.data.chargeBreakdown,
-        //     }));
-        // });
-
-    }, []);
 
     const SeeAllVoucher = () => {
-        if (state.isModalVisible && state.promoList.length > 0) {
+        if (state.isModalVisible && promoList?.length > 0) {
             return (
                 <AnimatedModal
                     position='bottom'
                     useKeyboardAvoidingView
                     visible={state.isModalVisible}
-                    contentContainerStyle={{ borderRadius: 7, width: "100%", maxHeight: "60%", backgroundColor: 'transparent', top: constants.screen_dimensions.height /25 }}
+                    contentContainerStyle={{ borderRadius: 7, width: "100%", backgroundColor: 'transparent' }}
                     containerStyle={{ backgroundColor: 'transparent', }}
                     wrapperStyl={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
                 >
-                    <GoodyBag
-                        showHeader={false}
-                        onPressClbk={(item) => {
-                            setState((pre) => ({
-                                ...pre,
-                                selectedVoucher: item,
-                                isModalVisible: false
-                            }))
-                        }}
+                    <ScrollView style={{ maxHeight: constants.screen_dimensions.height * .8, borderRadius: 10, marginHorizontal: 5, }}>
+                        <GoodyBag
+                            showHeader={false}
+                            onPressClbk={(item) => {
+                                setState((pre) => ({
+                                    ...pre,
+                                    selectedVoucher: item,
+                                    isModalVisible: false
+                                }))
+                            }}
+                            containerStyle={{ marginHorizontal: 5, borderRadius: 10, paddingBottom: 10, paddingTop: 10 }}
 
 
-                    />
+                        />
+                    </ScrollView>
                 </AnimatedModal>
             )
         }
 
     }
-    console.log("state=>", state);
+    // console.log("state=>", state);
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }} >
@@ -469,12 +472,13 @@ export default () => {
                             if (visible) {
                                 setState((pre) => ({ ...pre, isModalVisible: visible }))
                             }
-                            else{
-                            setState((pre) => ({ ...pre, selectedVoucher: {} }))
+                            else {
+                                setState((pre) => ({ ...pre, selectedVoucher: {} }))
 
                             }
                         }}
                         state={state}
+                        promoList={promoList}
 
                     />
                     <OrderRecipt checkOutStyles={checkOutStyles} cartReducer={cartReducer} colors={colors} />

@@ -19,7 +19,7 @@ import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 const HEADER_ICON_SIZE = CustomHeaderIconBorder.size * 0.6;
 const ICON_CONTAINER_SIZE = 40;
-export default ({ showHeader = true, onPressClbk = () => { } }) => {
+export default ({ showHeader = true, onPressClbk = () => { }, containerStyle ={}}) => {
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[PITSTOP_TYPES.JOVI]], Appearance.getColorScheme() === "dark");
     const customheaderStyles = { ...CustomHeaderStyles(colors.primary) };
     const userReducer = useSelector(state => state.userReducer);
@@ -67,7 +67,7 @@ export default ({ showHeader = true, onPressClbk = () => { } }) => {
     }
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#F6F5FA' }}>
+        <SafeAreaView style={[{ flex: 1, backgroundColor: '#F6F5FA' }, containerStyle]}>
             {showHeader && _renderHeader()}
             <View style={{ flex: 1 }}>
                 <FlatList
@@ -115,13 +115,13 @@ const Voucher = ({ parentScrollHandler = () => { }, item = {}, index = {}, color
     }
     return (
         <View>
-            <VoucherUi colors={colors} title={item.title} description={item.promoCode} discountPercentage={item.discountValue ?? ''} discountValidityDate={item.expiryTime} maxDiscount={item.discountCap} voucherOpened={state.opened} 
-            onPress={() => {
-                if (showHeader === false) {
-                    onPressClbk(item)
-                };
-                setState(pre => ({ ...pre, opened: !pre.opened })); console.log('voucherPressed', state.opened);
-            }} />
+            <VoucherUi colors={colors} title={item.title} description={item.promoCode} discountPercentage={item.discountValue ?? ''} discountValidityDate={item.expiryTime} maxDiscount={item.discountCap} voucherOpened={state.opened}
+                onPress={() => {
+                    if (showHeader === false) {
+                        onPressClbk(item)
+                    };
+                    setState(pre => ({ ...pre, opened: !pre.opened })); console.log('voucherPressed', state.opened);
+                }} />
             {showHeader && renderVoucherWebView()}
         </View>
     );
@@ -175,7 +175,7 @@ const voucherStyles = (colors) => StyleSheet.create({
     voucherWebViewScreen: { width: '100%', minHeight: 200, height: 200, backgroundColor: "#fff", },
 });
 const voucherUIStyles = (colors) => StyleSheet.create({
-    container: { position: 'relative', paddingTop: 10, height: 100, },
+    container: { position: 'relative', paddingTop: 10, height: 100},
     svgContainer: {
         flexDirection: "column", marginHorizontal: 20, bottom: 10,
     },

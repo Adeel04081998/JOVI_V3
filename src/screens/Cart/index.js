@@ -23,11 +23,13 @@ import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedCalculatedTotals
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import ReduxActions from '../../redux/actions';
+import constants from '../../res/constants';
 import sharedStyles from '../../res/sharedStyles';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES } from '../../utils/GV';
 import ProductQuantityCard from '../ProductMenu/components/ProductQuantityCard';
 import { pencil_icon, routes_icon } from './svgs/cart_svgs';
+
 const BottomLine = () => (
     <View
         style={{
@@ -44,63 +46,64 @@ const BottomLine = () => (
 
 // }
 export default () => {
-  const { cartReducer } = useSelector(store => ({ cartReducer: store.cartReducer }));
-  console.log('[CART_SCREEN] cartReducer', cartReducer);
-  const dispatch = useDispatch();
-  const [expanded, setExpanded] = React.useState([0]);
-  const colors = theme.getTheme(
-    GV.THEME_VALUES.DEFAULT,
-    Appearance.getColorScheme() === 'dark',
-  );
+    const { cartReducer } = useSelector(store => ({ cartReducer: store.cartReducer }));
+    // console.log('[CART_SCREEN] cartReducer', cartReducer);
+    const dispatch = useDispatch();
+    const [expanded, setExpanded] = React.useState([0]);
 
-  React.useEffect(() => {
-    // sharedGetServiceCharges();
-    sharedVerifyCartItems();
-  }, [])
-  const incDecDelHandler = (pitstopDetails, pitstopIndex = null, isDeletePitstop = false) => {
-    sharedAddUpdatePitstop({ ...pitstopDetails }, isDeletePitstop, [], false, true, null, false, true);
-  };
-  const expandCollapeHanlder = (idx) => {
-    let _list = [...expanded];
-    const _idx = _list.findIndex(_num => _num === idx);
-    if (_idx >= 0) _list = _list.filter(i => i !== idx);
-    else _list.push(idx);
-    setExpanded(_list)
-  }
-  const onEditPress = (product) => {
-    console.log("[onEditPress].pitstop", product);
-    // return Alert.alert("Dear lakaas! Bug ni bnana, \n Abi sirf JOVI job ko edit kr skty hain ap log! Bug ni bnana!")
-    if (product.pitstopType === PITSTOP_TYPES.JOVI) NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.JoviJob.screen_name, { pitstopItemObj: product });
-    else if (product.pitstopType === PITSTOP_TYPES.PHARMACY) NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Pharmacy.screen_name, { pitstopItemObj: product.isPickupPitstop ? { ...product.parentPitstop, pickUpPitstop: product } : { ...product } });
-    else NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, {
-        propItem: {
-            itemDetails: { ...product },
-            ...product,
-            vendorDetails: { ...product },
-        },
-        pitstopType: product.pitstopType
-    })
-}
-  const PitstopsCard = ({ pitstop }) => {
-    const {
-      pitstopIndex, // from cart pitstops
-      pitstopID, // from cart pitstops
-      pitstopName, // fill from component and got from cart iteration
-      pitstopType, // fill from component and got from cart iteration
-      checkOutItemsListVM = [], //fill from component and got from cart's pitstops nesting iteration
-    } = pitstop;
-    const dynamiColors = theme.getTheme(pitstopType);
-    const isJOVI = pitstopType === PITSTOP_TYPES.JOVI;
-    const isPHARMACY = pitstopType === PITSTOP_TYPES.PHARMACY;
-    const IS_DISCOUNTED_VENDOR = checkOutItemsListVM.find(x => x.discountType > 0);
-    const viewToRender = () => {
-      if (isJOVI) return <>
-        <View
-          style={{
-            borderBottomColor: colors.grey,
-            borderWidth: 0.2,
-            marginVertical: 5,
-            borderColor: colors.grey,
+    const colors = theme.getTheme(
+        GV.THEME_VALUES.DEFAULT,
+        Appearance.getColorScheme() === 'dark',
+    );
+
+    React.useEffect(() => {
+        // sharedGetServiceCharges();
+        sharedVerifyCartItems();
+    }, [])
+    const incDecDelHandler = (pitstopDetails, pitstopIndex = null, isDeletePitstop = false) => {
+        sharedAddUpdatePitstop({ ...pitstopDetails }, isDeletePitstop, [], false, true, null, false, true);
+    };
+    const expandCollapeHanlder = (idx) => {
+        let _list = [...expanded];
+        const _idx = _list.findIndex(_num => _num === idx);
+        if (_idx >= 0) _list = _list.filter(i => i !== idx);
+        else _list.push(idx);
+        setExpanded(_list)
+    }
+    const onEditPress = (product) => {
+        // console.log("[onEditPress].pitstop", product);
+        // return Alert.alert("Dear lakaas! Bug ni bnana, \n Abi sirf JOVI job ko edit kr skty hain ap log! Bug ni bnana!")
+        if (product.pitstopType === PITSTOP_TYPES.JOVI) NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.JoviJob.screen_name, { pitstopItemObj: product });
+        else if (product.pitstopType === PITSTOP_TYPES.PHARMACY) NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Pharmacy.screen_name, { pitstopItemObj: product.isPickupPitstop ? { ...product.parentPitstop, pickUpPitstop: product } : { ...product } });
+        else NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, {
+            propItem: {
+                itemDetails: { ...product },
+                ...product,
+                vendorDetails: { ...product },
+            },
+            pitstopType: product.pitstopType
+        })
+    }
+    const PitstopsCard = ({ pitstop }) => {
+        const {
+            pitstopIndex, // from cart pitstops
+            pitstopID, // from cart pitstops
+            pitstopName, // fill from component and got from cart iteration
+            pitstopType, // fill from component and got from cart iteration
+            checkOutItemsListVM = [], //fill from component and got from cart's pitstops nesting iteration
+        } = pitstop;
+        const dynamiColors = theme.getTheme(pitstopType);
+        const isJOVI = pitstopType === PITSTOP_TYPES.JOVI;
+        const isPHARMACY = pitstopType === PITSTOP_TYPES.PHARMACY;
+        const IS_DISCOUNTED_VENDOR = checkOutItemsListVM.find(x => x.discountType > 0);
+        const viewToRender = () => {
+            if (isJOVI) return <>
+                <View
+                    style={{
+                        borderBottomColor: colors.grey,
+                        borderWidth: 0.2,
+                        marginVertical: 5,
+                        borderColor: colors.grey,
 
                     }}
                 />
@@ -276,7 +279,7 @@ export default () => {
         product,
         incDecDelHandler,
     }) => {
-        const { title, estimatePrice, description, discountedPrice, notes, images, _itemPriceWithoutDiscount, _totalDiscount, _itemPrice, quantity, pitstopType } = product;
+        const { title, estimatePrice, description, discountedPrice, notes, images, _itemPriceWithoutDiscount, _totalDiscount, _itemPrice, quantity, pitstopType, pitStopItemID, marketID, pitStopID } = product;
         if (isJOVI) {
             return <View style={{ flexDirection: 'row' }}>
                 <View style={{ height: 70, width: 70, borderRadius: 10, margin: 5 }}>
@@ -389,6 +392,7 @@ export default () => {
                                     </Text>
                                 }
                             </View>
+
                             <ProductQuantityCard
                                 initialQuantity={quantity}
                                 colors={dynamiColors}
@@ -400,6 +404,9 @@ export default () => {
                                     incDecDelHandler(quantity)
                                 }}
                                 fromCart={true}
+                                pitstopItemID={pitStopItemID}
+                                marketID={marketID || pitStopID}
+
                             />
                         </View>
                     </View>
@@ -473,11 +480,11 @@ export default () => {
                         // if (expanded.length === 1) {
                         //   expandCollapeHanlder(expanded.findIndex(x => x))
                         // }
-                        const pickupPitstop = newData.filter(item=>item.isPickupPitstop)[0];
-                        if(pickupPitstop){
-                            const indexOfPickupPitstop = newData.findIndex(item=>item.pitstopID === pickupPitstop.pitstopID);
-                            const indexOfPickupParentPitstop = newData.findIndex(item=>item.pitstopID === pickupPitstop.linkedPitstopId);
-                            if(indexOfPickupParentPitstop<indexOfPickupPitstop){
+                        const pickupPitstop = newData.filter(item => item.isPickupPitstop)[0];
+                        if (pickupPitstop) {
+                            const indexOfPickupPitstop = newData.findIndex(item => item.pitstopID === pickupPitstop.pitstopID);
+                            const indexOfPickupParentPitstop = newData.findIndex(item => item.pitstopID === pickupPitstop.linkedPitstopId);
+                            if (indexOfPickupParentPitstop < indexOfPickupPitstop) {
                                 Toast.info('Pharmacy pitstop cannot be before pickup pitstop');
                                 return;
                             }
