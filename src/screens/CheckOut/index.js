@@ -394,9 +394,8 @@ export default () => {
             </AnimatedView>
         )
     }
-
-
-    const SeeAllVoucher = () => {
+ 
+    const seeAllVoucher = () => {
         if (state.isModalVisible && promoList?.length > 0) {
             return (
                 <AnimatedModal
@@ -504,7 +503,7 @@ export default () => {
                     textStyle={{}}
                 />
             </AnimatedView>
-            {SeeAllVoucher()}
+            {seeAllVoucher()}
         </SafeAreaView>
     )
 }
