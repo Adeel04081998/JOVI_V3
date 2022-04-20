@@ -54,7 +54,7 @@ export default ({ route }) => {
     const pitstopItemObj = route?.params?.pitstopItemObj ?? null;
 
     let initState = __DEV__ ? {
-        "pharmacyPitstopType": doesPickupPitstopExists ? ENUMS.PharmacyPitstopType[0].value : ENUMS.PharmacyPitstopType[1].value,
+        "pharmacyPitstopType": ENUMS.PharmacyPitstopType[0].value,
         "medicineName": "Ggg",
         "detail": "Tyy",
         "images": null,
@@ -77,7 +77,7 @@ export default ({ route }) => {
         "longitudeDelta": 0.01,
         "city": "Islamabad"
     } : {
-        pharmacyPitstopType: doesPickupPitstopExists ? ENUMS.PharmacyPitstopType[0].value : ENUMS.PharmacyPitstopType[1].value,
+        pharmacyPitstopType:ENUMS.PharmacyPitstopType[0].value,
         medicineName: '',
         detail: '',
         images: null,
@@ -308,7 +308,9 @@ export default ({ route }) => {
             )
         }}
         style={[_styles.locButton, _styles.selectLocationButton]} />)
-    const renderInput = (inputProps = {}, extraStyles = {},) => (<TextInput
+    const renderInput = (inputProps = {}, extraStyles = {
+        fontFamily: FontFamily.Poppins.Regular
+    },) => (<TextInput
         style={{
             ..._styles.inputStyle,
             ...extraStyles,
@@ -526,7 +528,7 @@ export default ({ route }) => {
                                     multiline: true,
                                     onChangeText: (value) => onChangeText(value, 'detail')
                                 }, {
-                                    height: 150
+                                    height: 150,
                                 })
                             }
                         </View>

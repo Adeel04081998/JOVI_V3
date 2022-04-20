@@ -164,27 +164,30 @@ export default (props) => {
         }
         else return true
     }
+    console.log('data 123 ==>>',props.route?.params);
 
     const onPressSaveAndContinue = () => {
         const finalDestObj = props.route?.params?.finalDestObj;
+        let addressType = addressTypeList.filter(x => x.selected === true)
+        let data = {
+            "addressID": fromScreenIndex === 4 ? finalDestObj.addressID : 0,
+            "title": props.route.params.finalDestObj.title,
+            "latitude": props.route?.params?.finalDestObj.latitude,
+            "longitude": props.route?.params?.finalDestObj.longitude,
+            "latitudeDelta": LATITUDE_DELTA,
+            "longitudeDelta": LONGITUDE_DELTA,
+            "note": inputs[2].val.trim() ?? '',
+            "city": props.route?.params?.finalDestObj.city,
+            "addressType": addressType[0]?.key ?? '',
+            "addressTypeStr": inputs[3].val.trim() ?? '',
+            "house": inputs[1].val.trim() ?? '',
+            "street": inputs[0].val.trim() ?? '',
+        }
+        console.log('data 1234 ==>>',data);
         confirmServiceAvailabilityForLocation(postRequest, props.route?.params?.finalDestObj.latitude, props.route?.params?.finalDestObj.longitude,
             (resp) => {
-                let addressType = addressTypeList.filter(x => x.selected === true)
                 postRequest(Endpoints.AddorUpdateAddress,
-                    {
-                        "addressID": 0,
-                        "title": props.route.params.finalDestObj.title,
-                        "latitude": props.route?.params?.finalDestObj.latitude,
-                        "longitude": props.route?.params?.finalDestObj.longitude,
-                        "latitudeDelta": LATITUDE_DELTA,
-                        "longitudeDelta": LONGITUDE_DELTA,
-                        "note": inputs[2].val.trim() ?? '',
-                        "city": props.route?.params?.finalDestObj.city,
-                        "addressType": addressType[0]?.key ?? '',
-                        "addressTypeStr": inputs[3].val.trim() ?? '',
-                        "house": inputs[1].val.trim() ?? '',
-                        "street": inputs[0].val.trim() ?? '',
-                    },
+                    data,
                     res => {
                         console.log("ADDorUPDATE ADDRESS.RESPONSE", res);
                         if (res.data.statusCode === 200) {
@@ -252,7 +255,7 @@ export default (props) => {
 
     const onPressToGoMap = () => {
         props.route.params.updateFinalDestination(props.route.params.finalDestObj);
-        if (fromScreenIndex === 4) NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { latitude: finalDestinationObj.latitude, longitude: finalDestinationObj.longitude, index: fromScreenIndex });
+        if (fromScreenIndex === 4) NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { latitude: finalDestinationObj.latitude, longitude: finalDestinationObj.longitude, index: fromScreenIndex, originalObjBeforeEdit: finalDestinationObj });
         else NavigationService.NavigationActions.stack_actions.pop(1);
     }
 

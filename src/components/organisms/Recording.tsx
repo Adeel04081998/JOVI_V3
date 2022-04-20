@@ -53,10 +53,12 @@ const Recording = React.forwardRef((props: Props, ref) => {
                 forceUpdate();
             }
         } else {
-            recordingItem = undefined;;
-
+            recordingItem = undefined;
         }
 
+        return () => {
+            recordingItem = null;
+        };
     }, [props.recordingItem])
 
     // #region :: STOPWATCH START's FROM HERE 
@@ -180,6 +182,7 @@ const Recording = React.forwardRef((props: Props, ref) => {
     }
 
     const onDeletePress = () => {
+        recordingItem = null
         props.onDeleteComplete && props.onDeleteComplete();
         setStopAudioPlayer(true);
     };

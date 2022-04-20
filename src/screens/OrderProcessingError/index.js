@@ -146,7 +146,7 @@ export default ({ navigation, route }) => {
         }, () => { }, {}, false);
     }
     React.useEffect(() => {
-        sharedNotificationHandlerForOrderScreens(fcmReducer, fetchOrderDetails, orderCancelledOrCompleted,orderIDParam);
+        sharedNotificationHandlerForOrderScreens(fcmReducer, fetchOrderDetails, orderCancelledOrCompleted, orderIDParam);
         return () => {
         }
     }, [fcmReducer]);
@@ -273,9 +273,9 @@ export default ({ navigation, route }) => {
                     return (
                         <View style={styles.cardContainer} key={index}>
                             <CardTitle
-                                pitstopType={VALIDATION_CHECK(item.pharmacyPitstopType===0?null:item.pharmacyPitstopType)?PITSTOP_TYPES.PHARMACY:isJoviJob ? 2 : item.catID}
+                                pitstopType={VALIDATION_CHECK(item.pharmacyPitstopType === 0 ? null : item.pharmacyPitstopType) ? PITSTOP_TYPES.PHARMACY : isJoviJob ? 2 : item.catID}
                                 pitstopNumber={`${index + 1}`}
-                                title={isJoviJob ? (VALIDATION_CHECK(item.pharmacyPitstopType===0?null:item.pharmacyPitstopType)?ENUMS.PharmacyPitstopTypeServer[item.pharmacyPitstopType].text : 'Jovi Job') : item.title}
+                                title={isJoviJob ? (VALIDATION_CHECK(item.pharmacyPitstopType === 0 ? null : item.pharmacyPitstopType) ? ENUMS.PharmacyPitstopTypeServer[item.pharmacyPitstopType].text : 'Jovi Job') : item.title}
                                 strikethrough={item.joviJobStatus === ENUMS.JOVI_JOB_STATUS.Cancel || (item?.forceStrikethrough ?? false)}
                             />
                             <DashedLine />
@@ -462,7 +462,7 @@ const CardText = ({ title = '', price = '', type, quantity = null, options = nul
                     color: "#B1B1B1",
                     textDecorationLine: "line-through",
                     textDecorationColor: "#B1B1B1",
-                }} numberOfLines={1}>{`${renderPrice(`${price}`)}`}</Text>
+                }} numberOfLines={1}>{`${renderPrice({ showZero: true, price: `${price}` })}`}</Text>
             </View>
         )
     }
@@ -479,7 +479,7 @@ const CardText = ({ title = '', price = '', type, quantity = null, options = nul
                     <Text fontFamily='PoppinsMedium' style={{
                         fontSize: 12,
                         color: "#272727",
-                    }} numberOfLines={1}>{`${renderPrice(`${price}`)}  `}</Text>
+                    }} numberOfLines={1}>{`${renderPrice({ showZero: true, price: `${price}` })}  `}</Text>
                     {
                         actualPrice > price ?
                             <Text style={{

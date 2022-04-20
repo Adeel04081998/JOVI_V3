@@ -245,7 +245,7 @@ const App = () => {
                 onTrailingIconPress={() => Toast.hide()}
                 renderLeadingIcon={() => { return (RenderToastSvgUi(svgs.WarningToastIcon(), "#c57701")) }}
                 renderTrailingIcon={() => { return (RenderToastCrossUi()) }}
-            /> 
+            />
         },
 
     };

@@ -112,6 +112,7 @@ export default () => {
             let selectedPromoCode = state.selectedVoucher?.promoCode ?? ''
             const finalOrder = {
                 "pitStopsList": finalPitstops.map((item, index) => {
+                    console.log('item ==>>>', item);
                     if ((item.isJoviJob || item.isPharmacy) && !item.isDestinationPitstop) {
                         let minEstimateTime = item.estTime?.text?.split(' ')[0]?.split('-')[0] ?? '';
                         let maxEstimateTime = item.estTime?.text?.split(' ')[0]?.split('-')[1] ?? '';
@@ -135,13 +136,17 @@ export default () => {
                             });
                             fileIDList = item.voiceNote ? [item.voiceNote.joviImageID] : null;
                         } else {
-                            fileIDList = (item.imageData ?? []).map((item, index) => {
-                                return item.joviImageID
-                            });
-                            if (item.voiceNote) {
+                            if (item.imageData.length) {
+                                fileIDList = (item.imageData ?? []).map((item, index) => {
+                                    return item.joviImageID ?? ''
+                                });
+                            }
+                            if (item.voiceNote&&item.voiceNote?.joviImageID) {
                                 fileIDList = [...fileIDList ?? [], item.voiceNote.joviImageID]
                             }
                         }
+
+                        const newFileIDList = fileIDList.filter(n => n);
                         return {
                             "pitstopID": null,
                             "title": item.title,
@@ -167,7 +172,9 @@ export default () => {
                             "isDestinationPitstop": false,
                             "dateTime": new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
                             "prescriptionImagesID": prescriptionImagesID,
-                            "fileIDList": fileIDList,
+                            ...(newFileIDList.length > 0) && {
+                                "fileIDList": newFileIDList,
+                            }
                         }
                     }
                     return {
@@ -178,7 +185,7 @@ export default () => {
                         "latitude": item.latitude,
                         "latitudeDelta": item.latitudeDelta ?? 6,
                         "longitude": item.longitude,
-                        "estimateTime": '00:20',
+                        "estimateTime": item.vendorMaxEstTime || "",
                         "longitudeDelta": item.longitudeDelta ?? 6,
                         "addressID": item.addressID ? item.addressID : null,
                         // "estimateTime": item.estPrepTime ?? 20,
@@ -214,7 +221,7 @@ export default () => {
                                 "discountAmount": obj.itemPrice - obj._totalDiscount,
                                 // tabish
                                 //End New Keys
-                                "estimateTime": obj.estimatePrepTime ?? 0,
+                                "estimateTime": obj.estimatePrepTime || 0,
                                 "gstPercentage": obj.gstPercentage,
                                 "gstAddedPrice": obj.gstAddedPrice + (obj.totalJoviDiscount || 0) + (obj._totalDiscount || 0),//backend is expecting gst added price without discounts, due to deadline, it couldn't be calculated from backend,
                                 "restaurantProductNotFound": (obj.isRestaurant && obj.restaurantProductNotFound) ? obj.restaurantProductNotFound : 0,

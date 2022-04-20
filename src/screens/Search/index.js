@@ -15,6 +15,7 @@ import CustomHeader from '../../components/molecules/CustomHeader';
 import { sharedExceptionHandler, sharedOnVendorPress } from '../../helpers/SharedActions';
 import { getRequest, postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
+import NavigationService from '../../navigations/NavigationService';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
@@ -25,7 +26,10 @@ import { stylesFunc } from './styles';
 const WINDOW_WIDTH = constants.window_dimensions.width;
 
 export default ({ navigation, route }) => {
-
+    //#region :: params
+    const pitstopType = route.params.pitstopType;
+    const isFromListing = pitstopType ? true : false;
+    // //#endregion :: params
     // #region :: STYLES & THEME START's FROM HERE 
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[PITSTOP_TYPES.JOVI]], Appearance.getColorScheme() === "dark");
     const restaurantColors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[PITSTOP_TYPES.RESTAURANT]], Appearance.getColorScheme() === "dark");
@@ -34,8 +38,8 @@ export default ({ navigation, route }) => {
     // #endregion :: STYLES & THEME END's FROM HERE     
 
     // #region :: STATE & REF's START's FROM HERE 
-    const [isRestaurantSelected, toggleIsRestaurantSelected] = React.useState(true);
-    const [showProductVendor, toggleShowProductVendor] = React.useState(false);
+    const [isRestaurantSelected, toggleIsRestaurantSelected] = React.useState(route.params.pitstopType === 1 ? false : true);
+    const [showProductVendor, toggleShowProductVendor] = React.useState(isFromListing);
     const [showJoviJob, toggleShowJoviJob] = React.useState(false);
     const [searchText, setSearchText] = React.useState('');
     const searchTextRef = React.useRef('');
@@ -90,7 +94,7 @@ export default ({ navigation, route }) => {
     };
 
     const _renderHeader = () => {
-        const headerColors = showProductVendor ? isRestaurantSelected ? restaurantColors : smColors : colors;
+        const headerColors = showProductVendor || isFromListing ? isRestaurantSelected ? restaurantColors : smColors : colors;
         return (
             <SafeAreaView>
                 <CustomHeader
@@ -102,9 +106,13 @@ export default ({ navigation, route }) => {
                             borderBottomColor: headerColors.primary,
                         },
                     }}
-                    {...showProductVendor && {
+                    {...(showProductVendor || isFromListing) && {
                         leftIconColor: headerColors.primary,
                         onLeftIconPress: () => {
+                            if(isFromListing){
+                                NavigationService.NavigationActions.common_actions.goBack();
+                                return;
+                            }
                             hideShowProductVendor();
                         },
                     }}
@@ -139,7 +147,7 @@ export default ({ navigation, route }) => {
                             </View>
                         )
                     }} />
-                {!showProductVendor &&
+                {!showProductVendor && !isFromListing &&
                     <View style={{
                         flexDirection: "row",
                         alignItems: "center",

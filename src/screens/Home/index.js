@@ -213,9 +213,11 @@ export default () => {
 };
 const RenderGenericList = React.memo(({ isFinalDestinationSelected, vendorDashboardCategoryIDReducer }) => {
     React.useEffect(() => {
-        // sharedGetPendingOrderRating();
+        if (isFinalDestinationSelected) {
+            sharedGetPendingOrderRating();
+        }
         return () => { };
-    }, [])
+    }, [isFinalDestinationSelected])
     return <>{(isFinalDestinationSelected && vendorDashboardCategoryIDReducer || []).map((item, index) => {
         return (
             <View key={uniqueKeyExtractor()} style={{ marginHorizontal: -10, }}>

@@ -25,9 +25,8 @@ export default LocationSearch = ({ handleOnInputChange, parentColors = null, ind
     const { show, predefinedPlaces } = placesState;
 
     useEffect(() => {
-        locTextRef.current && locTextRef.current.setAddressText(textToShow);
+        locTextRef.current && locTextRef.current.setAddressText(textToShow ?? '');
     });
-
 
     const clearField = () => {
         locTextRef.current && locTextRef.current.clear();

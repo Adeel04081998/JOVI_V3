@@ -60,9 +60,9 @@ export default () => {
                         <VectorIcon
                             name="cross"
                             type="Entypo"
-                            size={40}
-                            color={"black"}
-                            style={{ right: 8, }}
+                            size={30}
+                            color={"#fff"}
+                            style={{ right: 10, top: 5 }}
 
                         />
                     </TouchableOpacity>

@@ -43,6 +43,8 @@
 	<string>$(PRODUCT_NAME) would like access to your music</string>
 	<key>NSCameraUsageDescription</key>
 	<string>This will allow you to take and upload pictures to be used in your profile. You will also be able to send pictures at the time of placing an order. You may also send pictures to your allocated Jovi during an order via the live chat, to ensure the accuracy of you order.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>$(PRODUCT_NAME) would like access to your contacts</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>To allocate the nearest Jovi rider when you place your order. It will help us in providing a more accurate estimate of the cost and time of the Jovi job.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
@@ -53,6 +55,8 @@
 	<string>$(PRODUCT_NAME) would like to access your microphone to share voice notes during your order, to ensure the accuracy of your order.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>$(PRODUCT_NAME) would like access to your photo gallery</string>
+	<key>NSContactsUsageDescription</key>
+	<string>$(PRODUCT_NAME) would like access to your contacts</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>PoppinsBlack.ttf</string>
