@@ -123,12 +123,12 @@ export default () => {
                                     return item.joviImageID ?? ''
                                 });
                             }
-                            if (item.voiceNote&&item.voiceNote?.joviImageID) {
+                            if (item.voiceNote && item.voiceNote?.joviImageID) {
                                 fileIDList = [...fileIDList ?? [], item.voiceNote.joviImageID]
                             }
                         }
 
-                        const newFileIDList = fileIDList.filter(n => n);
+                        const newFileIDList = Array.isArray(fileIDList) ? fileIDList.filter(n => n) : [];
                         return {
                             "pitstopID": null,
                             "title": item.title,
@@ -149,6 +149,7 @@ export default () => {
                             "addressType": item.addressType ? item.addressType : null,
                             "catID": 0,
                             "catTitle": "Jovi",
+
                             "PharmacyPitstopType": item.isPharmacy ? (item.isPickupPitstop ? 1 : 2) : null,
                             "pitstopType": 2,
                             "isDestinationPitstop": false,
