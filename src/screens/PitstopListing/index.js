@@ -219,7 +219,11 @@ const PistopListingChild = React.memo(({ route, }) => {
             placeholder={currentPitstopType.searchPlaceHolder}
             colors={colors}
             homeStyles={listingStyles}
+            onPress={()=>{
+                NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Search.screen_name,{pitstopType});
+            }}
             onSearch={onSearchHandler}
+            editable={false}
             fontSize={12}
         />
 
