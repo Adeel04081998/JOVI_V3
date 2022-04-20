@@ -31,7 +31,7 @@ export default () => {
     const customheaderStyles = { ...CustomHeaderStyles(colors.primary) };
     const userReducer = useSelector(state => state.userReducer);
     const dispatch = useDispatch()
-    // const addresses = userReducer?.addresses ?? [];
+    const finalDestObj = userReducer?.finalDestObj ?? {};
     const [addresses, setAddresses] = useState(userReducer?.addresses ?? []);
 
     const _styles = styles(colors);
@@ -64,6 +64,7 @@ export default () => {
             {},
             async (res) => {
                 let filteredAddresses = addresses.filter(ad => ad.addressID !== addressObj.addressID);
+                // if (addressObj.addressID === finalDestObj.addressID) dispatch(actions.setUserFinalDestAction({ finalDestObj: {} }))
                 setAddresses(filteredAddresses)
                 dispatch(actions.setUserAction({ addresses: filteredAddresses }));
             },

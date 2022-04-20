@@ -308,7 +308,9 @@ export default ({ route }) => {
             )
         }}
         style={[_styles.locButton, _styles.selectLocationButton]} />)
-    const renderInput = (inputProps = {}, extraStyles = {},) => (<TextInput
+    const renderInput = (inputProps = {}, extraStyles = {
+        fontFamily: FontFamily.Poppins.Regular
+    },) => (<TextInput
         style={{
             ..._styles.inputStyle,
             ...extraStyles,
@@ -526,7 +528,7 @@ export default ({ route }) => {
                                     multiline: true,
                                     onChangeText: (value) => onChangeText(value, 'detail')
                                 }, {
-                                    height: 150
+                                    height: 150,
                                 })
                             }
                         </View>

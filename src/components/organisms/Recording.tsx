@@ -53,8 +53,7 @@ const Recording = React.forwardRef((props: Props, ref) => {
                 forceUpdate();
             }
         } else {
-            recordingItem = undefined;;
-
+            recordingItem = undefined;
         }
 
         return () => {
@@ -183,6 +182,7 @@ const Recording = React.forwardRef((props: Props, ref) => {
     }
 
     const onDeletePress = () => {
+        recordingItem = null
         props.onDeleteComplete && props.onDeleteComplete();
         setStopAudioPlayer(true);
     };

@@ -12,7 +12,7 @@ import GV from '../../utils/GV';
 let isFromEdit = false;
 let lastLoc = {};
 export default (props) => {
-  const colors = props.route?.params?.colors?? theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
+  const colors = props.route?.params?.colors ?? theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
   const dispatch = useDispatch();
 
   const updateFinalDestination = (fd) => {
@@ -38,7 +38,7 @@ export default (props) => {
     }
     else if (props.route.params.index === 3 || props.route.params.index === 4) {
       NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.AddAddress.screen_name, {
-        finalDestObj,
+        finalDestObj: { ...finalDestObj, addressID: props.route?.params?.originalObjBeforeEdit?.addressID ?? finalDestObj?.addressID },
         updateFinalDestination,
         isFromEdit,
         index: props.route.params.index,

@@ -18,7 +18,7 @@ import GV, { hblRequestRef, PITSTOP_TYPES, PITSTOP_TYPES_INVERTED, TOPUP_ENUMS }
 import { topUpStyles } from './styles';
 import DashedLine from '../../components/organisms/DashedLine';
 import Toast from '../../components/atoms/Toast';
-import { postRequest } from '../../manager/ApiManager';
+import { getRequest, postRequest } from '../../manager/ApiManager';
 import { sharedExceptionHandler } from '../../helpers/SharedActions';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import Endpoints from '../../manager/Endpoints';
@@ -53,8 +53,8 @@ export default () => {
   const styles = topUpStyles(colors, WIDTH, HEIGHT);
   const isFocused = useIsFocused();
 
-  const { transactionMethods, mobile, id, email, balance } = useSelector(state => state.userReducer)
-
+  const { transactionMethods, mobile, id, email } = useSelector(state => state.userReducer)
+  console.log('transactionMethods', transactionMethods);
 
   let mobileNumStr = mobile.toString();
   if (mobileNumStr.includes("92")) {
@@ -130,6 +130,7 @@ export default () => {
   const [cardData, setCardData] = useState(initCartData);
   const [selectedItem, setSelectedItem] = useState({});
   const [loader, setLoader] = useState(false);
+  const [balance, setBalance] = useState('');
 
   const ref = React.useRef();
 
@@ -140,12 +141,27 @@ export default () => {
 
 
 
-  /////////////// ******************** Start of Card Payment Check Function ***********************\\\\\\\\\\\\\\\\\\\\\\\\
+  /////////////// ******************** Start of Useffect Function ***********************\\\\\\\\\\\\\\\\\\\\\\\\
 
 
+  React.useEffect(() => {
+    getBallance()
+  }, [])
 
+  const getBallance = () => {
+    getRequest(`${Endpoints.GET_BALANCE}`,
+      (resp) => {
+        console.log('resp', resp);
+        setBalance(resp.data.userBalance)
+      },
+      (err) => {
+        console.log('err', err);
+        sharedExceptionHandler(err)
+      }
+    )
 
-  /////////////// ******************** END of Card Payment Check Function ***********************\\\\\\\\\\\\\\\\\\\\\\\\
+  }
+  /////////////// ******************** END of Useffect Function ***********************\\\\\\\\\\\\\\\\\\\\\\\\
 
 
 

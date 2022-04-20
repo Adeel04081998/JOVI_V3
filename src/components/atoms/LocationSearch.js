@@ -28,7 +28,6 @@ export default LocationSearch = ({ handleOnInputChange, parentColors = null, ind
         locTextRef.current && locTextRef.current.setAddressText(textToShow ?? '');
     });
 
-    console.log('textToShow ==>>>', textToShow);
     const clearField = () => {
         locTextRef.current && locTextRef.current.clear();
         locTextRef.current && locTextRef.current.blur();
@@ -96,7 +95,6 @@ export default LocationSearch = ({ handleOnInputChange, parentColors = null, ind
             }}
             renderRightButton={
                 () => {
-                    console.log('locTextRef?.current?.getAddressText()', locTextRef?.current?.getAddressText());
                     if (locTextRef?.current?.isFocused() && locTextRef?.current?.getAddressText().length) {
                         return (
                             <View>

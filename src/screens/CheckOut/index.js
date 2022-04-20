@@ -94,6 +94,7 @@ export default () => {
             const finalPitstops = [...cartReducer.pitstops || [], { ...userReducer.finalDestObj, isDestinationPitstop: true }];
             const finalOrder = {
                 "pitStopsList": finalPitstops.map((item, index) => {
+                    console.log('item ==>>>', item);
                     if ((item.isJoviJob || item.isPharmacy) && !item.isDestinationPitstop) {
                         let minEstimateTime = item.estTime?.text?.split(' ')[0]?.split('-')[0] ?? '';
                         let maxEstimateTime = item.estTime?.text?.split(' ')[0]?.split('-')[1] ?? '';
@@ -117,10 +118,12 @@ export default () => {
                             });
                             fileIDList = item.voiceNote ? [item.voiceNote.joviImageID] : null;
                         } else {
-                            fileIDList = (item.imageData ?? []).map((item, index) => {
-                                return item.joviImageID
-                            });
-                            if (item.voiceNote) {
+                            if (item.imageData.length) {
+                                fileIDList = (item.imageData ?? []).map((item, index) => {
+                                    return item.joviImageID ?? ''
+                                });
+                            }
+                            if (item.voiceNote&&item.voiceNote?.joviImageID) {
                                 fileIDList = [...fileIDList ?? [], item.voiceNote.joviImageID]
                             }
                         }
