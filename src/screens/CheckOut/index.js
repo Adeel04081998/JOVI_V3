@@ -406,8 +406,14 @@ export default () => {
                     contentContainerStyle={{ borderRadius: 7, width: "100%", backgroundColor: 'transparent' }}
                     containerStyle={{ backgroundColor: 'transparent', }}
                     wrapperStyl={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+                    onRequestClose={() => {
+                        setState((pre) => ({
+                            ...pre,
+                            isModalVisible: false
+                        }))
+                    }}
                 >
-                    <ScrollView style={{ maxHeight: constants.screen_dimensions.height * .8, borderRadius: 10, marginHorizontal: 5, }}>
+                    <ScrollView style={{ maxHeight: constants.screen_dimensions.height * .8, borderRadius: 10, }}>
                         <GoodyBag
                             showHeader={false}
                             onPressClbk={(item) => {
@@ -417,7 +423,7 @@ export default () => {
                                     isModalVisible: false
                                 }))
                             }}
-                            containerStyle={{ marginHorizontal: 5, borderRadius: 10, paddingBottom: 10, paddingTop: 10 }}
+                            containerStyle={{ borderRadius: 10, paddingTop: 10, marginTop: 20, height: constants.screen_dimensions.height * .4 }}
 
 
                         />
