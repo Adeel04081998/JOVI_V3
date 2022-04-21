@@ -26,6 +26,7 @@ import { initColors } from '../../res/colors';
 import { getRequest, postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import HistoryItemCardUI from './components/HistoryItemCardUI';
+import { useIsFocused } from "@react-navigation/native";
 
 
 const HEADER_ICON_SIZE = CustomHeaderIconBorder.size * 0.6;
@@ -59,6 +60,7 @@ export default ({ navigation, route }) => {
         errorText: '',
         refreshing: false,
     });
+    const isFocused = useIsFocused();
 
     // #endregion :: STATE's & REF's END's FROM HERE 
 
@@ -94,9 +96,15 @@ export default ({ navigation, route }) => {
 
     React.useEffect(() => {
         loadHistoryData(paginationInfo.currentRequestNumber);
-        loadOnGoingData();
+        // loadOnGoingData();
         return () => { };
     }, []);
+    React.useEffect(() => {
+        if (isFocused === true) {
+            loadOnGoingData();
+        }
+     
+    }, [isFocused]);
 
     const loadHistoryData = (currentRequestNumber, append = false) => {
         updateQuery({
