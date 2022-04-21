@@ -175,7 +175,7 @@ export default ({ navigation, route }) => {
     const [ratingData, setRatingData] = React.useState([]);//ALL RATING GETTING FROM SERVER
     const [data, updateData] = React.useState({
         heading: joviRatingTitle?.header ?? 'Rate your Jovi',
-        headingDescription: joviRatingTitle?.body ?? 'Your rating helps us improve',
+        headingDescription: joviRatingTitle?.body ?? 'Your rating helps us to improve',
         commentData: [],
     })
     const resetState = () => {
