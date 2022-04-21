@@ -141,12 +141,12 @@ export default () => {
                                     return item.joviImageID ?? ''
                                 });
                             }
-                            if (item.voiceNote&&item.voiceNote?.joviImageID) {
+                            if (item.voiceNote && item.voiceNote?.joviImageID) {
                                 fileIDList = [...fileIDList ?? [], item.voiceNote.joviImageID]
                             }
                         }
 
-                        const newFileIDList = fileIDList.filter(n => n);
+                        const newFileIDList = fileIDList?.filter(n => n) ?? [];
                         return {
                             "pitstopID": null,
                             "title": item.title,
@@ -394,7 +394,7 @@ export default () => {
             </AnimatedView>
         )
     }
- 
+
     const seeAllVoucher = () => {
         if (state.isModalVisible && promoList?.length > 0) {
             return (

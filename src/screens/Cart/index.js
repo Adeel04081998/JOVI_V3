@@ -50,6 +50,10 @@ export default () => {
   // console.log('[CART_SCREEN] cartReducer', cartReducer);
   const dispatch = useDispatch();
   const [expanded, setExpanded] = React.useState([0]);
+  const colors = theme.getTheme(
+    GV.THEME_VALUES.DEFAULT,
+    Appearance.getColorScheme() === 'dark',
+);
 
   React.useEffect(() => {
     // sharedGetServiceCharges();
