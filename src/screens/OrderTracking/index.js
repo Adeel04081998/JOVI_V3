@@ -348,6 +348,7 @@ export default ({ route }) => {
                     customPitstops={state.pitStopsList}
                     customCenter={state.currentPitstop}
                     smoothRiderPlacement
+                    minZoomLevel={12}
                     onMapPress={() => {
                         if (loadAnimationCurrentValue.current === 0) {
                             return;
