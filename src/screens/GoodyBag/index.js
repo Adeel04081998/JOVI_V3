@@ -157,7 +157,7 @@ const VoucherUi = ({ title = "", colors = {}, voucherOpened = false, discountPer
 }
 
 const voucherStyles = (colors) => StyleSheet.create({
-    voucherDetailsContainer: { marginHorizontal: 23, bottom: Platform.OS === 'android' ? 5 : 2, height: 200, },
+    voucherDetailsContainer: { marginHorizontal: 23, bottom: Platform.OS === 'android' ? 5 : 2, height: 200, marginTop: 5, },
     voucherWebViewScreen: { width: '100%', minHeight: 200, height: 200, backgroundColor: "#fff", },
 });
 const voucherUIStyles = (colors) => StyleSheet.create({
@@ -165,9 +165,9 @@ const voucherUIStyles = (colors) => StyleSheet.create({
     svgContainer: {
         flexDirection: "column", marginHorizontal: 20, bottom: 10,
     },
-    voucherTopContainer:{ height: '55%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 5 },
-    lowerText:{ fontSize: 10, color: colors.black },
-    lineSeparator:{ top: -7, position: 'absolute', width: '97%', alignSelf: 'center' },
-    topText:{fontSize: 15, color: colors.black},
+    voucherTopContainer: { height: '55%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 5 },
+    lowerText: { fontSize: 10, color: colors.black },
+    lineSeparator: { top: -7, position: 'absolute', width: '97%', alignSelf: 'center' },
+    topText: { fontSize: 15, color: colors.black },
 
 });

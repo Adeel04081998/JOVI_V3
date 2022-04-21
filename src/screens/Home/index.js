@@ -215,7 +215,8 @@ export default () => {
 const RenderGenericList = React.memo(({ isFinalDestinationSelected, vendorDashboardCategoryIDReducer }) => {
     React.useEffect(() => {
         if (isFinalDestinationSelected) {
-            sharedGetPendingOrderRating();
+
+           !__DEV__ && sharedGetPendingOrderRating();
         }
         return () => { };
     }, [isFinalDestinationSelected])
