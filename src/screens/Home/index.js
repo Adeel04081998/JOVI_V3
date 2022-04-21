@@ -179,8 +179,7 @@ export default () => {
                             uriKey="promoImg"
                             containerStyle={homeStyles.imageCarousal}
                             height={170}
-                            // autoPlay={!__DEV__}
-                            autoPlay
+                            autoPlay={!__DEV__}
                             autoPlayInterval={3}
                             onPress={(item) => onPromoPressed(item)}
                         />

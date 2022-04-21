@@ -9,6 +9,7 @@ const persistUserConfig = {
     key: PreferenceManagerKeys.PERSIST_USER,
     storage: RNAsyncStorage,
     // whitelist: [""] // whitelist would be used if we want to persist specific keys of a reducer
+    blacklist: ['promoList']
 };
 
 const persistCartConfig = {

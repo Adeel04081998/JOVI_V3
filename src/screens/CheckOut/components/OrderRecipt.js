@@ -16,7 +16,7 @@ const subDetailListTxtFontFamily = 'PoppinsRegular'
 export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData = [] }) => {
     const [showDetails, setShowDetails] = useState(true)
     const pitStops = cartReducer.pitstops || []
-    console.log("[Order Reciept] cartReducer", cartReducer);
+    // console.log("[Order Reciept] cartReducer", cartReducer);
     const onShowDetails = () => {
         setShowDetails(!showDetails)
     }
