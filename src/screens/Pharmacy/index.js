@@ -413,12 +413,12 @@ export default ({ route }) => {
                         marginTop: 20
                     } : {},
                     backgroundColor: colors.light_grey,
-                    transform: [{
-                        translateY: animScroll.interpolate({
-                            inputRange: [0, 10],
-                            outputRange: outputRangeParent
-                        })
-                    }]
+                    // transform: [{
+                    //     translateY: animScroll.interpolate({
+                    //         inputRange: [0, 10],
+                    //         outputRange: outputRangeParent
+                    //     })
+                    // }]// dont remove this code, it is related to pharmacy Title animation
                 }}>
                     <Animated.ScrollView
                         bounces={0}

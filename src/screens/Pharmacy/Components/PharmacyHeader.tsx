@@ -164,13 +164,13 @@ export const PharmacyHeaderContainer = (props: ContainerProps) => {
             <Animated.View style={{ position: 'absolute', top: 0, zIndex: 999999, }}>
                 <CustomHeader
                     hideFinalDestination
-                    title={'Pharmacy'}
+                    // title={'Pharmacy'}
                     titleStyle={{
                         color: props.colors.primary,
-                        opacity: props.animScroll.interpolate({
-                            inputRange: [0, props.headerHeight],
-                            outputRange: [0, 1]
-                        }),
+                        // opacity: props.animScroll.interpolate({
+                        //     inputRange: [200, props.headerHeight],
+                        //     outputRange: [0, 1]
+                        // }),
                     }}
                     leftIconName="chevron-back"
                     leftContainerStyle={{

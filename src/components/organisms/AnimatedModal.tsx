@@ -20,7 +20,7 @@ interface Props {
     onRequestClose?: () => void;
 
     disableOutsidePress?: boolean;
-
+    wrapperStyl?: StyleProp<ViewStyle>;
     containerStyle?: StyleProp<ViewStyle>;
     contentContainerStyle?: StyleProp<ViewStyle>;
     position: "bottom" | "top" | "center" | "full",
@@ -130,11 +130,20 @@ const AnimatedModal = (props: Props) => {
 
     const Wrapper = props.useKeyboardAvoidingView ? KeyboardAwareScrollView : View;
     return (
-        <Wrapper style={{
-            backgroundColor: 'transparent', position: 'absolute',
-            height: HEIGHT, width: WIDTH,
-            top: 0, zIndex: 999,
-        }}
+        <Wrapper
+            style={[
+                {
+                    backgroundColor: 'transparent', position: 'absolute',
+                    height: HEIGHT, width: WIDTH,
+                    top: 0, zIndex: 999,
+                },
+                props.wrapperStyl,
+            ]}
+            // style={{
+            //     backgroundColor: 'transparent', position: 'absolute',
+            //     height: HEIGHT, width: WIDTH,
+            //     top: 0, zIndex: 999,
+            // }}
             {...props.useKeyboardAvoidingView && {
                 contentContainerStyle: { flexGrow: 1, },
                 scrollEnabled: props.scrollEnabled,
@@ -170,7 +179,7 @@ const AnimatedModal = (props: Props) => {
                         marginTop: getStatusBarHeight(true),
                     },
                     props.containerStyle
-                ]}>
+                ]} >
                 <Animated.View style={[{
                     width: '100%',
                     backgroundColor: '#fff',

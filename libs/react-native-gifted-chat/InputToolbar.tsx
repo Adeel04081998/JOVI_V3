@@ -151,6 +151,7 @@ export default class InputToolbar extends React.Component<
     if (this.props.renderAccessory) {
       return (
         <View style={[styles.accessory, this.props.accessoryStyle]}>
+          {/* @ts-ignore */}
           {this.props.renderAccessory(this.props)}
         </View>
       )
@@ -164,16 +165,18 @@ export default class InputToolbar extends React.Component<
         style={
           [
             styles.container,
-            Platform.OS==="android" &&{marginBottom: 15,},
+            // Platform.OS==="android" &&{marginBottom: 15,},
             { position: this.state.position },
             this.props.containerStyle,
           ] as ViewStyle
         }
       >
         <View style={[styles.primary, this.props.primaryStyle]}>
+          <>
           {this.renderActions()}
           {this.renderComposer()}
           {this.renderSend()}
+          </>
         </View>
         {this.renderAccessory()}
       </View>

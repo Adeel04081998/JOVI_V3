@@ -29,7 +29,7 @@ interface Props {
 }
 
 const defaultProps = {
-    size: 25,
+    size: 30,
     updateQuantity: undefined,
     initialQuantity: 0,
     outOfStock: false,
@@ -130,10 +130,12 @@ const ProductQuantityCard = (props: Props) => {
     //     backgroundColor: colors.white,
     // }}><Text>Deleting...</Text></View>;
     // if(props.fromCart && state.quantity <= 0) return null;
+    // console.log("state=>", state);
+    
     return (
         <View style={{
-            width: state.quantity > 0 || props.outOfStock ? CARD_ITEM_SIZE * 0.88 : ITEM_SIZE,
-            height: state.quantity > 0 || props.outOfStock ? CARD_ITEM_SIZE * 0.25 : ITEM_SIZE,
+            width: state.quantity > 0 || props.outOfStock ? CARD_ITEM_SIZE * 0.88 : defaultProps.size,
+            height: state.quantity > 0 || props.outOfStock ? CARD_ITEM_SIZE * 0.25 : defaultProps.size,
             borderRadius: ITEM_SIZE,
             justifyContent: state.quantity > 0 && !props.outOfStock ? "space-between" : "center",
             paddingHorizontal: state.quantity > 0 || props.outOfStock ? 8 : 0,

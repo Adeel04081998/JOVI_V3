@@ -29,6 +29,7 @@ import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES } from '../../utils/GV';
 import ProductQuantityCard from '../ProductMenu/components/ProductQuantityCard';
 import { pencil_icon, routes_icon } from './svgs/cart_svgs';
+
 const BottomLine = () => (
   <View
     style={{
@@ -46,13 +47,13 @@ const BottomLine = () => (
 // }
 export default () => {
   const { cartReducer } = useSelector(store => ({ cartReducer: store.cartReducer }));
-  console.log('[CART_SCREEN] cartReducer', cartReducer);
+  // console.log('[CART_SCREEN] cartReducer', cartReducer);
   const dispatch = useDispatch();
   const [expanded, setExpanded] = React.useState([0]);
   const colors = theme.getTheme(
     GV.THEME_VALUES.DEFAULT,
     Appearance.getColorScheme() === 'dark',
-  );
+);
 
   React.useEffect(() => {
     // sharedGetServiceCharges();
@@ -277,7 +278,7 @@ export default () => {
     product,
     incDecDelHandler,
   }) => {
-    const { title, estimatePrice, description, discountedPrice, notes, images, _itemPriceWithoutDiscount, _totalDiscount, _itemPrice, quantity, pitstopType } = product;
+    const { title, estimatePrice, description, discountedPrice, notes, images, _itemPriceWithoutDiscount, _totalDiscount, _itemPrice, quantity, pitstopType, pitStopItemID, marketID, pitStopID } = product;
     if (isJOVI) {
       return <View style={{ flexDirection: 'row' }}>
         <View style={{ height: 70, width: 70, borderRadius: 10, margin: 5 }}>
@@ -401,6 +402,8 @@ export default () => {
                   incDecDelHandler(quantity)
                 }}
                 fromCart={true}
+                pitstopItemID={pitStopItemID}
+                marketID={marketID || pitStopID}
               />
             </View>
           </View>
