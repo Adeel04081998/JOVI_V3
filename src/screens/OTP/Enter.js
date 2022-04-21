@@ -93,6 +93,9 @@ export default () => {
         };
         sendOTPToServer(payload, onSuccess, onError, onLoader)
     }
+    const legalScreen = () => {
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.AUTH_ROUTES.Legal.screen_name)
+    }
 
     const disbleContinueButton = network.value <= 0 || cellNo.length < 10;
     return <SafeAreaView style={styles.otpSafeArea}>
@@ -174,12 +177,23 @@ export default () => {
 
             <View style={styles.termsAndConditionView}>
                 <Text fontFamily={'PoppinsBold'} style={{ alignSelf: 'center', paddingVertical: 5, fontSize: 12 }}>{`By tapping 'send OTP' I agree With`}</Text>
-                <TouchableOpacity onPress={() => { }}>
-                    <Text fontFamily={'PoppinsLight'} style={{ color: "#6D51BB", fontSize: 14 }}>
-                        Terms & Conditions <Text style={{ color: 'black' }} onPress={() => { }} >and</Text> Privacy Policy
-                    </Text>
-                </TouchableOpacity>
+                <View style={{ flexDirection: 'row' }} >
+                    <TouchableOpacity onPress={() => { legalScreen() }}>
+                        <Text fontFamily={'PoppinsLight'} style={{ color: "#6D51BB", fontSize: 14 }}>
+                            Terms & Conditions
+                        </Text>
+                    </TouchableOpacity>
+                        <Text fontFamily={'PoppinsLight'} style={{ color: 'black', fontSize: 14, paddingHorizontal: 5 }}>
+                            and
+                        </Text>
+                    <TouchableOpacity onPress={() => { legalScreen()}}>
+                        <Text fontFamily={'PoppinsLight'} style={{ color: "#6D51BB", fontSize: 14 }}>
+                            Privacy Policy
+                        </Text>
+                    </TouchableOpacity>
+                </View>
             </View>
+            {/* <Text style={{ color: 'black' }} onPress={() => { }} >and</Text> Privacy Policy */}
             {/* Country Code Picker */}
             <Picker pickerVisible={pickerVisible} setCountry={setCountry} setPickerVisible={setPickerVisible} />
         </KeyboardAwareScrollView>

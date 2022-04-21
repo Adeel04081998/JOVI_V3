@@ -74,6 +74,8 @@ const AuthComponents = {
     VerifyOTP,
     SignUp,
     WebView,
+    Legal,
+
 }//will open with Slide Animation
 const AppComponents = {
     AppDrawerStack,

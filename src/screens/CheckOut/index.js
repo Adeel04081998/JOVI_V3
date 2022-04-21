@@ -138,7 +138,7 @@ export default () => {
                         } else {
                             if (item.imageData.length) {
                                 fileIDList = (item.imageData ?? []).map((item, index) => {
-                                    return item.joviImageID ?? ''
+                                    return item.joviImageID
                                 });
                             }
                             if (item.voiceNote && item.voiceNote?.joviImageID) {

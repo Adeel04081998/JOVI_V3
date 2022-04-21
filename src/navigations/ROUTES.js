@@ -19,6 +19,16 @@ const AUTH_ROUTES = {
         screen_name: "SIGN_UP",
         options: null,
     },
+    "Legal": {
+        screen_name: "LEGAL",
+        options: {
+            animation: 'fade'
+        },
+    },
+    "WebView": {
+        screen_name: "WEBVIEW",
+        options: { animation: 'slide_from_bottom' },
+    },
 };
 const APP_DRAWER_ROUTES = {
     "Home": {
