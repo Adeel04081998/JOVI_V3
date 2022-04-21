@@ -12,6 +12,7 @@ import VectorIcon from '../../../components/atoms/VectorIcon';
 import View from '../../../components/atoms/View';
 import CustomHeader, { CustomHeaderIconBorder } from '../../../components/molecules/CustomHeader';
 import OrderEstTimeCard from '../../../components/organisms/Card/OrderEstTimeCard';
+import DashedLine from '../../../components/organisms/DashedLine';
 import { renderPrice, sharedConfirmationAlert, sharedFetchOrder, sharedGenerateProductItem, sharedNotificationHandlerForOrderScreens, sharedRiderRating, VALIDATION_CHECK } from '../../../helpers/SharedActions';
 import { getRequest } from '../../../manager/ApiManager';
 import Endpoints from '../../../manager/Endpoints';
