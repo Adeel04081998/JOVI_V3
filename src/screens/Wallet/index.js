@@ -15,10 +15,13 @@ import Text from '../../components/atoms/Text';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import { useSelector } from 'react-redux';
 import AnimatedLottieView from 'lottie-react-native';
-import { postRequest } from '../../manager/ApiManager';
+import { getRequest, postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import { isNextPage, sharedExceptionHandler } from '../../helpers/SharedActions';
 import NoRecord from '../../components/organisms/NoRecord';
+import Button from '../../components/molecules/Button';
+import TouchableScale from '../../components/atoms/TouchableScale';
+import VectorIcon from '../../components/atoms/VectorIcon';
 
 const DEFAULT_PAGINATION_INFO = { totalItem: 0, itemPerRequest: 20, currentRequestNumber: 1 };
 
@@ -26,12 +29,13 @@ const DEFAULT_PAGINATION_INFO = { totalItem: 0, itemPerRequest: 20, currentReque
 export default () => {
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[PITSTOP_TYPES.JOVI]], Appearance.getColorScheme() === "dark");
     const styles = walletStyles(colors);
-    const { balance } = useSelector(state => state.userReducer)
+    // const { balance } = useSelector(state => state.userReducer)
     const { CustomerTransactionTypeEnum } = useSelector(state => state.enumsReducer)
     const [filters, setFilters] = useState([])
     const [paginationInfo, updatePaginationInfo] = React.useState(DEFAULT_PAGINATION_INFO);
     const [metaData, toggleMetaData] = React.useState(false);
     const [pressedValue, setPressedValue] = React.useState(1);
+    const [balance, setBalance] = useState('');
     const [query, updateQuery] = React.useState({
         isLoading: true,
         error: false,
@@ -43,7 +47,21 @@ export default () => {
         loadTransactionList();
         return () => { };
     }, []);
+    React.useEffect(() => {
+        getBallance()
+    }, [])
 
+    const getBallance = () => {
+        getRequest(`${Endpoints.GET_BALANCE}`,
+            (resp) => {
+                setBalance(resp.data.userBalance)
+            },
+            (err) => {
+                sharedExceptionHandler(err)
+            }
+        )
+
+    }
 
     const loadTransactionList = (transactionType = 1, currentRequestNumber = 1, append = false) => {
         updateQuery({
@@ -159,6 +177,10 @@ export default () => {
                     onPress={() => { NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.TopUp.screen_name) }}>
                     <Text style={styles.topupTitleText} >{"Top Up"}</Text>
                 </TouchableOpacity>
+                {/* <Button style={{ position: 'absolute', right: 10, height: 30, width: 80, top: 20 }} text="Refresh" textStyle={{fontSize: 10}} onPress={() => {getBallance() }} /> */}
+                <TouchableScale style={{ position: 'absolute', right: -42, height: 30, width: 80, top: 20 }} onPress={() => { getBallance() }} >
+                    <VectorIcon name="refresh" type="Ionicons" color={colors.black} />
+                </TouchableScale>
             </View>
         )
     }
@@ -203,7 +225,7 @@ export default () => {
             <ScrollView
                 horizontal
                 style={{ height: 75, flexGrow: 0, paddingHorizontal: 15 }}
-                >
+            >
                 {
                     (CustomerTransactionTypeEnum ?? []).map((item, index) => _renderItem(item, index))
                 }
@@ -232,7 +254,7 @@ export default () => {
         const isOrder = item.type === "Order"
         return (
             <View style={styles.dataContainerStyle} >
-                <View style={{ flexDirection: 'column', width: '10%' }} >
+                <View style={{ flexDirection: 'column' }} >
                     <View style={styles.svgCircle}>
                         <SvgXml xml={getSvgXML(item)} />
                     </View>
@@ -246,9 +268,9 @@ export default () => {
                         <Text numberOfLines={1} fontFamily="PoppinsLight" style={styles.filterDateStyle} >{item.details}</Text>
                     </View>
                 </View>
-                <View style={{ width: '20%' }} >
+                <View style={{ flexDirection: 'column' }} >
                     <SvgXml xml={isOrder ? svgs.redArrow() : svgs.greenArrow()} style={{ alignSelf: 'center' }} />
-                    <Text numberOfLines={1} fontFamily="PoppinsMedium" style={styles.filterTypeStyle} >Rs. {item.amount}</Text>
+                    <Text fontFamily="PoppinsMedium" style={styles.filterTypeStyle} >Rs. {item.amount}</Text>
                 </View>
             </View>
         )
@@ -262,7 +284,7 @@ export default () => {
                 renderItem={_renderFlatListItem}
                 onEndReachedThreshold={0.8}
                 onEndReached={onEndReached}
-                initialNumToRender={3}
+                initialNumToRender={10}
                 maxToRenderPerBatch={paginationInfo.itemPerRequest}
                 ListFooterComponent={
                     <ActivityIndicator size="large" color={colors.primary}

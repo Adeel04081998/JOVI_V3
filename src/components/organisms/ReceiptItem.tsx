@@ -141,7 +141,7 @@ const ReceiptItem = (props: Props) => {
 
                     const { name, quantity, } = getItemDetail(item);
                     const PRICE = props.showFrontValues ? (item._itemPrice || item.discountedPrice) : item.price;
-                    const ACTUAL_PRICE = props.showFrontValues ? item._itemPriceWithoutDiscount : item.actualPrice > item.price ? item.actualPrice : 0;
+                    const ACTUAL_PRICE = props.showFrontValues ? (item._itemPriceWithoutDiscount > PRICE) ? item._itemPriceWithoutDiscount : 0 : item.actualPrice > item.price ? item.actualPrice : 0;
 
                     return (
                         <View key={index} style={[{ ...itemStyles.primaryContainer, paddingTop: index === 0 ? 0 : 4, }, props.itemContainerStyle]}>

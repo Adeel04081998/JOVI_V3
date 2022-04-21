@@ -1,6 +1,7 @@
 import React from 'react';
 import { Appearance, FlatList, Platform, StyleSheet, TouchableOpacity } from 'react-native';
 import { SvgXml } from 'react-native-svg';
+import { useSelector } from 'react-redux';
 import svgs from '../../assets/svgs';
 import SafeAreaView from '../../components/atoms/SafeAreaView';
 import Text from '../../components/atoms/Text';
@@ -9,7 +10,7 @@ import View from '../../components/atoms/View';
 import CustomHeader, { CustomHeaderIconBorder, CustomHeaderStyles } from '../../components/molecules/CustomHeader';
 import CustomWebView from '../../components/organisms/CustomWebView';
 import DashedLine from '../../components/organisms/DashedLine';
-import { renderPrice, sharedExceptionHandler } from '../../helpers/SharedActions';
+import { makeArrayRepeated, renderPrice, sharedExceptionHandler, sharedGetPromoList } from '../../helpers/SharedActions';
 import { getRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
@@ -18,9 +19,12 @@ import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 const HEADER_ICON_SIZE = CustomHeaderIconBorder.size * 0.6;
 const ICON_CONTAINER_SIZE = 40;
-export default () => {
+export default ({ showHeader = true, onPressClbk = () => { }, containerStyle ={}}) => {
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[PITSTOP_TYPES.JOVI]], Appearance.getColorScheme() === "dark");
     const customheaderStyles = { ...CustomHeaderStyles(colors.primary) };
+    const userReducer = useSelector(state => state.userReducer);
+    // console.log("userReducer==>>> goddy bag",userReducer);
+    let promoListData = userReducer.promoList ?? []
     const [state, setState] = React.useState({
         data: []
     });
@@ -36,7 +40,8 @@ export default () => {
         });
     }
     React.useEffect(() => {
-        getData();
+        // getData();
+        sharedGetPromoList()
     }, []);
     const _renderHeader = () => (<CustomHeader
         renderLeftIconAsDrawer
@@ -56,15 +61,18 @@ export default () => {
             index={i}
             key={i}
             parentScrollHandler={setScrollEnabled}
+            showHeader={showHeader}
+            onPressClbk={onPressClbk}
         />
     }
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#F6F5FA' }}>
-            {_renderHeader()}
+        <SafeAreaView style={[{ flex: 1, backgroundColor: '#F6F5FA' }, containerStyle]}>
+            {showHeader && _renderHeader()}
             <View style={{ flex: 1 }}>
                 <FlatList
-                    data={state.data}
+                    // data={state.data}
+                    data={promoListData}
                     scrollEnabled={scrollEnabled}
                     renderItem={({ item, index }) => renderItem(item, index)}
                 />
@@ -72,7 +80,7 @@ export default () => {
         </SafeAreaView>
     );
 };
-const Voucher = ({ parentScrollHandler = () => { }, item = {}, index = {}, colors = {} }) => {
+const Voucher = ({ parentScrollHandler = () => { }, item = {}, index = {}, colors = {}, showHeader = { showHeader }, onPressClbk = () => { } }) => {
     const [state, setState] = React.useState({
         opened: false
     });
@@ -107,8 +115,14 @@ const Voucher = ({ parentScrollHandler = () => { }, item = {}, index = {}, color
     }
     return (
         <View>
-            <VoucherUi colors={colors} title={item.title} description={item.promoCode} discountPercentage={item.discountValue ?? ''} discountValidityDate={item.expiryTime} maxDiscount={item.discountCap} voucherOpened={state.opened} onPress={() => { setState(pre => ({ ...pre, opened: !pre.opened })); console.log('voucherPressed', state.opened); }} />
-            {renderVoucherWebView()}
+            <VoucherUi colors={colors} title={item.title} description={item.promoCode} discountPercentage={item.discountValue ?? ''} discountValidityDate={item.expiryTime} maxDiscount={item.discountCap} voucherOpened={state.opened}
+                onPress={() => {
+                    if (showHeader === false) {
+                        onPressClbk(item)
+                    };
+                    setState(pre => ({ ...pre, opened: !pre.opened })); console.log('voucherPressed', state.opened);
+                }} />
+            {showHeader && renderVoucherWebView()}
         </View>
     );
 }
@@ -161,7 +175,7 @@ const voucherStyles = (colors) => StyleSheet.create({
     voucherWebViewScreen: { width: '100%', minHeight: 200, height: 200, backgroundColor: "#fff", },
 });
 const voucherUIStyles = (colors) => StyleSheet.create({
-    container: { position: 'relative', paddingTop: 10, height: 100, },
+    container: { position: 'relative', paddingTop: 10, height: 100},
     svgContainer: {
         flexDirection: "column", marginHorizontal: 20, bottom: 10,
     },

@@ -7,6 +7,7 @@ import Text from '../../../components/atoms/Text';
 import TextInput from '../../../components/atoms/TextInput';
 import View from '../../../components/atoms/View';
 import constants from '../../../res/constants';
+import FontFamily from '../../../res/FontFamily';
 import theme from '../../../res/theme';
 import GV from '../../../utils/GV';
 import joviJobStyles from '../styles';
@@ -96,6 +97,7 @@ export default React.memo((props) => {
                         maxLength={5}
                         placeholder={"Type your amount"}
                         containerStyle={{ width: WIDTH * 0.4, alignSelf: 'flex-end' }}
+                        style={{fontFamily: FontFamily.Poppins.Regular}}
                         value={`${props.textinputVal}`}
                         onChangeText={(text) => {
                             isSliderUse.current = false;

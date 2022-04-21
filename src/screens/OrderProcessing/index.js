@@ -280,8 +280,8 @@ export default ({ navigation, route }) => {
                                 dataRightKey={'price'}
                                 estimatePrice={item.estimatePrice}
                                 totalJobGST={item.totalJobGST}
-                                isPharmacy={VALIDATION_CHECK(item.pharmacyPitstopType===0?null:item.pharmacyPitstopType)}
-                                pharmacyPitstopType={item.pharmacyPitstopType??null}
+                                isPharmacy={VALIDATION_CHECK(item.pharmacyPitstopType === 0 ? null : item.pharmacyPitstopType)}
+                                pharmacyPitstopType={item.pharmacyPitstopType ?? null}
                             />
                         )
                     })}
@@ -488,6 +488,8 @@ const PitStopItemUI = ({ pitstopTitle = '', isJoviJob = false, pitstopNumber = 1
                     null
             }
             {data.map((item, index) => {
+                const ACTUAL_PRICE = parseInt(item.actualPrice) > parseInt(item[dataRightKey]) ? parseInt(item.actualPrice) : 0;
+                console.log("ACTUAL_PRICE", ACTUAL_PRICE);
                 return (
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }} key={index}>
                         <Text style={{
@@ -500,12 +502,12 @@ const PitStopItemUI = ({ pitstopTitle = '', isJoviJob = false, pitstopNumber = 1
                             <Text style={{
                                 color: "#272727",
                                 fontSize: 12,
-                                paddingHorizontal: item.actualPrice > item[dataRightKey] ? 0 : DOUBLE_SPACING,
+                                paddingHorizontal: ACTUAL_PRICE ? 0 : DOUBLE_SPACING,
                                 textAlign: "right",
                             }} numberOfLines={1}>{renderPrice(`${item[dataRightKey]}`)}
                             </Text>
                             {
-                                item.actualPrice > item[dataRightKey] ?
+                                ACTUAL_PRICE ?
                                     <Text style={{
                                         color: "#6B6B6B",
                                         fontSize: 12,
@@ -513,7 +515,7 @@ const PitStopItemUI = ({ pitstopTitle = '', isJoviJob = false, pitstopNumber = 1
                                         paddingHorizontal: 10,
                                         textAlign: "right",
                                         textDecorationLine: "line-through"
-                                    }} numberOfLines={1}>{renderPrice(`${item.actualPrice}`)}
+                                    }} numberOfLines={1}>{renderPrice(`${ACTUAL_PRICE}`)}
 
                                     </Text>
                                     : null
