@@ -62,7 +62,8 @@ export default ({ route }) => {
         estimateTime: null,
     });
     const isRiderFound = state.subStatusName === ORDER_STATUSES.RiderFound;
-    const orderFinalDestination = state.pitStopsList?.slice(0, state.pitStopsList.length - 1)[0] // Value will fill from server's response thats why optional changing added
+    const orderFinalDestination = state.pitStopsList[state.pitStopsList.length - 1] // Value will fill from server's response thats why optional changing added
+    console.log("orderFinalDestination", orderFinalDestination)
     const isFinalDestinationCompleted = route?.params?.isFinalDestinationCompleted ?? orderFinalDestination?.joviJobStatus === ENUMS.JOVI_JOB_STATUS.Closed ?? false;
     const RenderPitstop = ({ pitstop = {}, index = 0 }) => {
         const [pitstopState, setPitstopState] = React.useState({
@@ -276,7 +277,7 @@ export default ({ route }) => {
     const { discount = 0, totalProductGST = 0, } = chargeBreakdown;
     const Totals = () => {
         const row = (caption = '', value = 0, isBold = false, showDashed = true) => {
-            if (true) {
+            if (value) {
                 return <View>
                     <View
                         style={{

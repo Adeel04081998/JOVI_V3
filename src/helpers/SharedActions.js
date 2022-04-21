@@ -1285,6 +1285,9 @@ export const sharedSendFileToServer = (list = [], onSuccess = () => { }, type = 
         formData.append(`JoviImageList[${index}].JoviImageID`, 0);
         formData.append(`JoviImageList[${index}].FileType`, type);
         formData.append(`JoviImageList[${index}].FileExtensionType`, extension);
+        if(type === 21){
+            formData.append(`JoviImageList[${index}].audioDuration`, item.duration);
+        }
         index += 1;
     }
     multipartPostRequest(Endpoints.ADD_PITSTOPIMAGE, formData, (res) => {

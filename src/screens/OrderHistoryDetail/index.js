@@ -207,7 +207,7 @@ export default ({ navigation, route }) => {
             pitstopName = ENUMS.PharmacyPitstopTypeServer[item.pharmacyPitstopType].text;
             isPharmacy = true;
         }
-        const individualPitstopTotal = isJoviJob ? item.paidAmount : item.paidAmount;
+        const individualPitstopTotal = isJoviJob ? item.paidAmount : item.jobAmount;
         let checkOutItemsListVM = item?.jobItemsListViewModel ?? [];
         if (isJoviJob) {
             checkOutItemsListVM = [{
@@ -480,7 +480,7 @@ export default ({ navigation, route }) => {
                     <DashedLine contentContainerStyle={{ paddingVertical: 8, }} />
                     <ServiceChargesUI
                         text={`Service Charges (Incl S.T ${data?.orderReceiptVM?.actualServiceTax ?? 0})`}
-                        value={`${(data?.orderReceiptVM?.serviceChargesIncTax ?? 0) + (data?.orderReceiptVM?.actualServiceCharges ?? 0)}`}
+                        value={`${(data?.orderReceiptVM?.actualServiceTax ?? 0) + (data?.orderReceiptVM?.actualServiceCharges ?? 0)}`}
                     />
                     <DashedLine contentContainerStyle={{ paddingVertical: 8, }} />
 

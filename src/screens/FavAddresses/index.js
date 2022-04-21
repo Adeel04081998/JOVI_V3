@@ -112,7 +112,7 @@ export default () => {
                                         <Text style={{ fontSize: 14, color: colors.primary }} fontFamily="PoppinsBold" numberOfLines={1}>{VALIDATION_CHECK(item.addressTypeStr) ? item.addressTypeStr : 'Other'}</Text>
                                     </View>
                                     <View style={{ flexDirection: 'row' }}>
-                                        <TouchableOpacity onPress={() => NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.AddAddress.screen_name, { finalDestObj: item, index: 4, updateFinalDestination })} >
+                                        <TouchableOpacity onPress={() => NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.AddAddress.screen_name, { finalDestObj: item, index: 4, updateFinalDestination, applyLocation: false, })} >
                                             <VectorIcon size={17} color={colors.primary} name={'edit'} type={'MaterialIcons'} style={{ marginRight: 5 }} />
                                         </TouchableOpacity>
                                         <TouchableOpacity onPress={() => deleteAddressWarn(item, index)} >

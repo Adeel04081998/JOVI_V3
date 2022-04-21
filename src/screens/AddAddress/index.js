@@ -255,7 +255,7 @@ export default (props) => {
 
     const onPressToGoMap = () => {
         props.route.params.updateFinalDestination(props.route.params.finalDestObj);
-        if (fromScreenIndex === 4) NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { latitude: finalDestinationObj.latitude, longitude: finalDestinationObj.longitude, index: fromScreenIndex, originalObjBeforeEdit: finalDestinationObj });
+        if (fromScreenIndex === 4) NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Map.screen_name, { latitude: finalDestinationObj.latitude, longitude: finalDestinationObj.longitude, index: fromScreenIndex, originalObjBeforeEdit: finalDestinationObj, applyLocation: props.route?.params?.applyLocation ?? true });
         else NavigationService.NavigationActions.stack_actions.pop(1);
     }
 
