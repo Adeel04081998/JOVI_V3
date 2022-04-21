@@ -77,7 +77,7 @@ export default ({ route }) => {
         "longitudeDelta": 0.01,
         "city": "Islamabad"
     } : {
-        pharmacyPitstopType:ENUMS.PharmacyPitstopType[0].value,
+        pharmacyPitstopType: ENUMS.PharmacyPitstopType[0].value,
         medicineName: '',
         detail: '',
         images: null,
@@ -510,7 +510,9 @@ export default ({ route }) => {
                                 renderInput({
                                     placeholder: 'Enter medicine name',
                                     value: state.medicineName,
-                                    onChangeText: (value) => onChangeText(value, 'medicineName')
+                                    onChangeText: (value) => onChangeText(value, 'medicineName'),
+                                    maxLength: 50
+
                                 })
                             }
                         </View>
@@ -526,9 +528,12 @@ export default ({ route }) => {
                                     placeholder: 'Enter details here',
                                     value: state.detail,
                                     multiline: true,
-                                    onChangeText: (value) => onChangeText(value, 'detail')
+                                    onChangeText: (value) => onChangeText(value, 'detail'),
+                                    maxLength: 250
+
                                 }, {
                                     height: 150,
+
                                 })
                             }
                         </View>

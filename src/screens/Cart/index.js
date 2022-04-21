@@ -23,6 +23,7 @@ import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedCalculatedTotals
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import ReduxActions from '../../redux/actions';
+import FontFamily from '../../res/FontFamily';
 import sharedStyles from '../../res/sharedStyles';
 import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES } from '../../utils/GV';
@@ -553,6 +554,7 @@ export default () => {
                 borderColor: colors.grey,
                 borderWidth: 0.5,
                 borderRadius: 7,
+                fontFamily: FontFamily.Poppins.Regular
               }}
               onChangeText={text => GV.RIDER_INSTRUCTIONS.current = text.trim()}
               defaultValue={GV.RIDER_INSTRUCTIONS.current}

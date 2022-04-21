@@ -120,15 +120,15 @@ export default () => {
                         } else {
                             if (item.imageData.length) {
                                 fileIDList = (item.imageData ?? []).map((item, index) => {
-                                    return item.joviImageID ?? ''
+                                    return item.joviImageID
                                 });
                             }
-                            if (item.voiceNote&&item.voiceNote?.joviImageID) {
+                            if (item.voiceNote && item.voiceNote?.joviImageID) {
                                 fileIDList = [...fileIDList ?? [], item.voiceNote.joviImageID]
                             }
                         }
-
-                        const newFileIDList = fileIDList.filter(n => n);
+                  
+                        const newFileIDList = (fileIDList ?? []).filter(n => n);
                         return {
                             "pitstopID": null,
                             "title": item.title,

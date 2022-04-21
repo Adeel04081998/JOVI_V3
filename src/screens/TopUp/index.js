@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ActivityIndicator, Alert, Appearance, Keyboard } from 'react-native';
+import { ActivityIndicator, Alert, Appearance, Keyboard, ScrollView } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { useSelector } from 'react-redux';
 import { Transition, Transitioning } from 'react-native-reanimated';
@@ -25,6 +25,8 @@ import Endpoints from '../../manager/Endpoints';
 import CardHeader from '../JoviJob/components/CardHeader';
 import constants from '../../res/constants';
 import { useIsFocused } from '@react-navigation/native';
+import Button from '../../components/molecules/Button';
+import VectorIcon from '../../components/atoms/VectorIcon';
 
 
 export default () => {
@@ -151,11 +153,9 @@ export default () => {
   const getBallance = () => {
     getRequest(`${Endpoints.GET_BALANCE}`,
       (resp) => {
-        console.log('resp', resp);
         setBalance(resp.data.userBalance)
       },
       (err) => {
-        console.log('err', err);
         sharedExceptionHandler(err)
       }
     )
@@ -344,7 +344,7 @@ export default () => {
         onRightIconPress={() => {
           NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name);
         }}
-        title={`Wallet`}
+        title={`Top up`}
         titleStyle={{
           fontFamily: FontFamily.Poppins.SemiBold,
           fontSize: 16,
@@ -357,12 +357,16 @@ export default () => {
   const renderBalanceContainer = () => {
     return (
       <View style={styles.balanceContainer}>
-        <Text style={styles.availableCreditText} fontFamily="PoppinsMedium" >
-          Available Credit
-        </Text>
-        <Text style={styles.availableCreditAmount} fontFamily="PoppinsBold" >
-          Rs. {`${balance}`}
-        </Text>
+          <Text style={styles.availableCreditText} fontFamily="PoppinsMedium" >
+            Available Credit
+          </Text>
+          <Text style={styles.availableCreditAmount} fontFamily="PoppinsBold" >
+            Rs. {`${balance}`}
+          </Text>
+        {/* <Button style={{  }} text="Refresh" textStyle={{fontSize: 10}} onPress={() => {getBallance() }} /> */}
+        <TouchableScale style={{ position: 'absolute', right: -40, height: 30, width: 80, top: 15 }} onPress={() => { getBallance() }} >
+          <VectorIcon name="refresh" type="Ionicons" color={colors.black} size={21} />
+        </TouchableScale>
       </View>
     )
   }
@@ -370,7 +374,7 @@ export default () => {
   const renderTextRow = () => {
     return (
       <View style={styles.viewAllRow} >
-        <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 10 }} >
+        <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 5 }} >
           <Text style={styles.recentActivityText} fontFamily="PoppinsSemiBold" >Top Up</Text>
         </View>
       </View>
@@ -449,7 +453,7 @@ export default () => {
         {
           item.idx === selectedItem.idx &&
           <View>
-            <TextInput value={topUpAmount} placeholder="00" onChangeText={(t) => { setTopUpAmount(t) }} title="Enter Amount" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
+            <TextInput value={topUpAmount} placeholder="Rs. 100" onChangeText={(t) => { setTopUpAmount(t) }} title="Enter Amount" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} keyboardType="numeric" />
           </View>
         }
       </>
@@ -462,9 +466,9 @@ export default () => {
         {
           item.idx === selectedItem.idx &&
           <View>
-            <TextInput value={topUpAmount} placeholder="00" onChangeText={(t) => { setTopUpAmount(t) }} title="Enter Amount" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
-            <TextInput value={mobileNumber} placeholder="03*********" onChangeText={(t) => { setMobileNumber(t) }} title="Enter Mobile Number" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
-            <TextInput value={cnic} placeholder="*****-*******-*" onChangeText={(t) => { setCnic(t) }} title="Last 6 Digits CNIC" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
+            <TextInput value={topUpAmount} placeholder="Rs. 100" onChangeText={(t) => { setTopUpAmount(t) }} keyboardType="numeric" title="Enter Amount" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
+            <TextInput value={mobileNumber} placeholder="03*********" onChangeText={(t) => { setMobileNumber(t) }} keyboardType="numeric" title="Enter Mobile Number" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
+            <TextInput value={cnic} placeholder="*****-*******-*" onChangeText={(t) => { setCnic(t) }} keyboardType="numeric" title="Last 6 Digits CNIC" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
           </View>
         }
       </>
@@ -477,7 +481,7 @@ export default () => {
         {
           item.idx === selectedItem.idx &&
           <View>
-            <TextInput value={topUpAmount} placeholder="00" onChangeText={(t) => { setTopUpAmount(t) }} title="Enter Amount" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
+            <TextInput value={topUpAmount} placeholder="Rs. 100" onChangeText={(t) => { setTopUpAmount(t) }} keyboardType="numeric" title="Enter Amount" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
           </View>
         }
       </>
@@ -511,16 +515,18 @@ export default () => {
   const renderAccountContainer = () => {
     return (
       <View style={styles.dataContainerStyle} >
-        {
-          cardData.map((item, index) => {
-            return (
-              <React.Fragment key={`acc_type_${index}`}>
-                {renderCardUI(item, index)}
-                {(index === 0 || index === 1) && <DashedLine contentContainerStyle={{ paddingVertical: 8, }} />}
-              </React.Fragment>
-            )
-          })
-        }
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} >
+          {
+            cardData.map((item, index) => {
+              return (
+                <React.Fragment key={`acc_type_${index}`}>
+                  {renderCardUI(item, index)}
+                  {(index === 0 || index === 1) && <DashedLine contentContainerStyle={{ paddingVertical: 8, }} />}
+                </React.Fragment>
+              )
+            })
+          }
+        </ScrollView>
       </View>
     )
   }
@@ -559,8 +565,10 @@ export default () => {
         transition={transition}
         style={styles.container}>
         {renderBalanceContainer()}
-        {renderTextRow()}
-        {renderAccountContainer()}
+        <ScrollView>
+          {renderTextRow()}
+          {renderAccountContainer()}
+        </ScrollView>
         {renderContinueBtn()}
       </Transitioning.View>
     </SafeAreaView>

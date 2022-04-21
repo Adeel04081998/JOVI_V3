@@ -687,7 +687,6 @@ export default ({ navigation, route }) => {
                     colors={colors}
                     recordingItem={recordingItem}
                     onDeleteComplete={() => {
-                        console.log('here in delete ');
                         recordingItem = null;
                         voiceNoteRef.current = {}
                         setVoiceNote({})
@@ -696,7 +695,6 @@ export default ({ navigation, route }) => {
                     }}
                     onRecordingComplete={(recordItem) => {
                         recordingItem = recordItem;
-                        console.log('recordItem', recordItem);
                         voiceNoteRef.current = recordItem
                         if (closeSecondCard) {
                             updateCardOnHeaderPress(updateCardOnHeaderPressItem);
@@ -855,6 +853,7 @@ export default ({ navigation, route }) => {
                                 {
                                     userReducer.recentJoviPitstops?.map((item, i) => {
                                         return <TouchableOpacity style={{ display: 'flex', flexDirection: 'column', paddingLeft: 10, alignItems: 'flex-start', justifyContent: 'center', borderWidth: 0.3, marginHorizontal: 3, borderRadius: 7, borderColor: colors.black, width: 192, padding: 5, backgroundColor: colors.white, height: 50, }} onPress={() => {
+                                            customRecordingRef.current?.setStopRecording(true);
                                             setData(item)
                                         }}>
                                             <TextRN style={{ fontSize: 12, color: colors.black }} fontFamily={'PoppinsRegular'} numberOfLines={1}>{item.title}</TextRN>

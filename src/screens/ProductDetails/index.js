@@ -28,6 +28,7 @@ import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-awa
 import constants from '../../res/constants';
 import AppStyles from '../../res/AppStyles';
 import ROUTES from '../../navigations/ROUTES';
+import FontFamily from '../../res/FontFamily';
 
 
 
@@ -516,7 +517,7 @@ export default (props) => {
                                             titleStyle={{ color: 'black', fontSize: 14, marginVertical: -8 }}
                                             title="Add Instructions"
                                             textAlignVertical='top'
-                                            style={{ textAlign: "left", backgroundColor: colors.drWhite, borderColor: 'rgba(112, 112, 112, 0.1)', borderWidth: 1, color: 'black', margin: 10, borderRadius: 10, minHeight: minHeight, }}
+                                            style={{ textAlign: "left", backgroundColor: colors.drWhite, borderColor: 'rgba(112, 112, 112, 0.1)', borderWidth: 1, color: 'black', margin: 10, borderRadius: 10, minHeight: minHeight, fontFamily: FontFamily.Poppins.Regular }}
                                             onChangeText={(text) => {
                                                 if (Regex.Space_Regex.test(text)) return
                                                 setState((pre) => ({ ...pre, notes: text }))

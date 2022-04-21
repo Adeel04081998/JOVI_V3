@@ -11,9 +11,10 @@ export const topUpStyles = (colors = initColors, width, height) => StyleSheet.cr
         backgroundColor: colors.white,
         borderBottomLeftRadius: 26,
         borderBottomRightRadius: 26,
-        justifyContent: 'center',
+        justifyContent: "center",
         alignItems: 'center',
-        paddingVertical: 25
+        // flexDirection: 'row',
+        paddingVertical: 15
     },
     availableCreditText: {
         fontSize: 14,
@@ -80,7 +81,7 @@ export const topUpStyles = (colors = initColors, width, height) => StyleSheet.cr
         // justifyContent: 'space-between',
         // alignItems:'center',
         paddingHorizontal: 10,
-        paddingVertical: 10
+        paddingVertical: 10,
     },
     svgCircle: {
         height: 25,
@@ -107,9 +108,9 @@ export const topUpStyles = (colors = initColors, width, height) => StyleSheet.cr
         height: 35,
         borderRadius: 8,
         alignSelf: 'center',
-        justifyContent:'center',
-        alignItems:'center',
-        position:'absolute',
+        justifyContent: 'center',
+        alignItems: 'center',
+        // position: 'absolute',
         bottom: 10
     },
     btnText: {

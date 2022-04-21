@@ -2,6 +2,7 @@ import AnimatedLottieView from 'lottie-react-native';
 import React from 'react';
 import { Appearance, FlatList, StyleSheet } from 'react-native';
 import { SvgXml } from 'react-native-svg';
+import { useSelector } from 'react-redux';
 import svgs from '../../assets/svgs';
 import SafeAreaView from '../../components/atoms/SafeAreaView';
 import Text from '../../components/atoms/Text';
@@ -24,6 +25,7 @@ const HEADER_ICON_SIZE = CustomHeaderIconBorder.size * 0.6;
 export default () => {
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[PITSTOP_TYPES.JOVI]], Appearance.getColorScheme() === "dark");
     const customheaderStyles = { ...CustomHeaderStyles(colors.primary) };
+    const { isLoggedIn } = useSelector(state => state.userReducer);
     const _styles = styles(colors);
     const [state, setState] = React.useState({
         data: [],
@@ -61,9 +63,9 @@ export default () => {
     };
     const _renderHeader = () => (<CustomHeader
         // containerStyle={customheaderStyles.containerStyle}
-        renderLeftIconAsDrawer
-        renderRightIconForHome
-        rightIconName={null}
+        renderLeftIconAsDrawer={isLoggedIn ? true : false}
+        renderRightIconForHome={isLoggedIn ? true : false}
+        rightIconName={isLoggedIn ? null : ""}
         title={`Legal`}
         titleStyle={{
             fontFamily: FontFamily.Poppins.SemiBold,
@@ -88,7 +90,7 @@ export default () => {
             }}
         />
     </View>);
-    const renderItem = (item,index) => (<TouchableOpacity
+    const renderItem = (item, index) => (<TouchableOpacity
         onPress={() => onPress(item)}
         style={_styles.itemStyles}
     >
@@ -127,7 +129,7 @@ export default () => {
                     contentContainerStyle={{
                         padding: 10,
                     }}
-                    renderItem={({ item, index }) => renderItem(item,index)}
+                    renderItem={({ item, index }) => renderItem(item, index)}
                 />
             </View>
         </SafeAreaView>
@@ -139,7 +141,7 @@ const styles = (colors) => StyleSheet.create({
         flex: 1,
         backgroundColor: colors.white,
     },
-    screenLoaderStyles:{
+    screenLoaderStyles: {
         position: 'absolute',
         top: 30,
         marginTop: -50,
@@ -149,7 +151,7 @@ const styles = (colors) => StyleSheet.create({
         width: constants.screen_dimensions.width,
         justifyContent: 'center',
     },
-    itemStyles:{
+    itemStyles: {
         height: 50,
         width: '100%',
         display: 'flex',
