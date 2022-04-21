@@ -1296,7 +1296,7 @@ export const sharedSendFileToServer = (list = [], onSuccess = () => { }, type = 
     }, (err) => {
         sharedExceptionHandler(err);
     }, false, { Authorization: `Bearer ${userReducer?.token?.authToken}` });
-}
+};
 
 export const sharedGetPendingOrderRating = () => {
     // NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.RateRider.screen_name, { orderID: 86208765, });
@@ -1316,3 +1316,20 @@ export const sharedGetPendingOrderRating = () => {
             sharedExceptionHandler(err);
         }, {}, false);
 };//end of sharedGetPendingOrderRating
+export const sharedGetPromoList = (onSuccess = () => { },) => {
+    getRequest(Endpoints.GET_PROMOS, (res) => {
+        console.log('[GET_PROMOS]', res);
+        if (res.data.statusCode === 200) {
+            dispatch(ReduxActions.setUserAction({ promoList: res.data.promoList || [] }));
+
+
+        }
+    }, err => {
+        sharedExceptionHandler(err);
+    });
+
+
+}
+
+
+

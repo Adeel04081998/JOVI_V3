@@ -17,7 +17,7 @@ import Switch from '../../components/atoms/Switch'
 import TouchableOpacity from '../../components/atoms/TouchableOpacity'
 import { getRequest, postRequest } from '../../manager/ApiManager'
 import Endpoints from '../../manager/Endpoints'
-import { sharedCalculatedTotals, sharedExceptionHandler, sharedGetDeviceInfo, sharedGetServiceCharges, sharedOrderNavigation, sharedVerifyCartItems } from '../../helpers/SharedActions'
+import { sharedCalculatedTotals, sharedExceptionHandler, sharedGetDeviceInfo, sharedGetPromoList, sharedGetServiceCharges, sharedOrderNavigation, sharedVerifyCartItems } from '../../helpers/SharedActions'
 import Button from '../../components/molecules/Button'
 import OrderRecipt from './components/OrderRecipt'
 import { useDispatch, useSelector } from 'react-redux'
@@ -31,6 +31,8 @@ import ROUTES from '../../navigations/ROUTES'
 import Toast from '../../components/atoms/Toast';
 import actions from '../../redux/actions'
 import ENUMS from '../../utils/ENUMS'
+import AnimatedModal from '../../components/organisms/AnimatedModal'
+import GoodyBag from '../GoodyBag'
 
 const WINDOW_WIDTH = constants.screen_dimensions.width;
 const CARD_WIDTH = WINDOW_WIDTH * 0.3;
@@ -52,11 +54,25 @@ export default () => {
     const paymentType = "Wallet"
     const walletAmount = userReducer.balance || 0;
     const instructionForRider = GV.RIDER_INSTRUCTIONS.current;
+    React.useEffect(() => {
+        sharedGetPromoList()
+        sharedVerifyCartItems();
+        // sharedGetServiceCharges(null, (res) => {
+        //     setState(pre => ({
+        //         ...pre,
+        //         chargeBreakdown: res.data.chargeBreakdown,
+        //     }));
+        // });
+
+    }, []);
+    let promoList = userReducer.promoList ?? []
     const [state, setState] = React.useState({
         chargeBreakdown: cartReducer.chargeBreakdown,
         isLoading: false,
+        isModalVisible: false,
+        selectedVoucher: {}
     });
-    console.log("[Checkout] cartReducer", cartReducer);
+    // console.log("[Checkout] cartReducer", cartReducer);
 
 
     // const estimateServiceCharge = () => {
@@ -88,10 +104,12 @@ export default () => {
     //         sharedExceptionHandler(err);
     //     });
     // }
+
     const onPlaceOrder = () => {
         const placeOrder = async () => {
             setState(pre => ({ ...pre, isLoading: true }));
             const finalPitstops = [...cartReducer.pitstops || [], { ...userReducer.finalDestObj, isDestinationPitstop: true }];
+            let selectedPromoCode = state.selectedVoucher?.promoCode ?? ''
             const finalOrder = {
                 "pitStopsList": finalPitstops.map((item, index) => {
                     console.log('item ==>>>', item);
@@ -123,12 +141,12 @@ export default () => {
                                     return item.joviImageID ?? ''
                                 });
                             }
-                            if (item.voiceNote&&item.voiceNote?.joviImageID) {
+                            if (item.voiceNote && item.voiceNote?.joviImageID) {
                                 fileIDList = [...fileIDList ?? [], item.voiceNote.joviImageID]
                             }
                         }
 
-                        const newFileIDList = fileIDList.filter(n => n);
+                        const newFileIDList = fileIDList?.filter(n => n) ?? [];
                         return {
                             "pitstopID": null,
                             "title": item.title,
@@ -235,7 +253,7 @@ export default () => {
                         "catTitle": (!item.isDestinationPitstop) ? PITSTOP_TYPES_INVERTED[item.pitstopType] : "Final Destination"
                     }
                 }),
-                // "promotionCode": state.promoCodeApplied,
+                "promotionCode": selectedPromoCode,
                 "orderTypeID": 2,
                 "OrderPaymentType": switchVal ? ENUMS.OrderPaymentType.JoviWallet : ENUMS.OrderPaymentType.CashOnDelivery,
                 // "pitStopsImage": state?.mapImageBase64 ?? null,
@@ -265,9 +283,9 @@ export default () => {
             if (recentJoviPitstops.length > 12) {
                 recentJoviPitstops.splice(11, recentJoviPitstops.length - 12);
             }
-            console.log("Final Order =>", finalOrder, recentJoviPitstops);
+            // console.log("Final Order =>", finalOrder, recentJoviPitstops);
             postRequest(Endpoints.CreateUpdateOrder, finalOrder, (res) => {
-                console.log('order place res', res);
+                // console.log('order place res', res);
                 if (res.data.statusCode === 200) {
                     Toast.success(res.data.message ?? 'Order Placed!!');
                     dispatch(actions.setUserAction({ recentJoviPitstops: recentJoviPitstops }));
@@ -307,18 +325,7 @@ export default () => {
         NavigationService.NavigationActions.common_actions.goBack()
     }
 
-    const getVouchersList = () => {
-        getRequest(Endpoints.GET_VOUCHERS_LIST,
-            res => {
-                console.log("getVouchersList res===>", res);
-            },
-            err => {
-                console.log("err===>", err);
-                sharedExceptionHandler(err)
 
-            }
-        )
-    }
     const RenderPaymentMethodCardUi = () => {
         const SHOW_WALLET = switchVal && walletAmount > 0;
 
@@ -388,16 +395,39 @@ export default () => {
         )
     }
 
-    React.useEffect(() => {
-        sharedVerifyCartItems();
-        // sharedGetServiceCharges(null, (res) => {
-        //     setState(pre => ({
-        //         ...pre,
-        //         chargeBreakdown: res.data.chargeBreakdown,
-        //     }));
-        // });
+    const seeAllVoucher = () => {
+        if (state.isModalVisible && promoList?.length > 0) {
+            return (
+                <AnimatedModal
+                    position='bottom'
+                    useKeyboardAvoidingView
+                    visible={state.isModalVisible}
+                    contentContainerStyle={{ borderRadius: 7, width: "100%", backgroundColor: 'transparent' }}
+                    containerStyle={{ backgroundColor: 'transparent', }}
+                    wrapperStyl={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+                >
+                    <ScrollView style={{ maxHeight: constants.screen_dimensions.height * .8, borderRadius: 10, marginHorizontal: 5, }}>
+                        <GoodyBag
+                            showHeader={false}
+                            onPressClbk={(item) => {
+                                setState((pre) => ({
+                                    ...pre,
+                                    selectedVoucher: item,
+                                    isModalVisible: false
+                                }))
+                            }}
+                            containerStyle={{ marginHorizontal: 5, borderRadius: 10, paddingBottom: 10, paddingTop: 10 }}
 
-    }, []);
+
+                        />
+                    </ScrollView>
+                </AnimatedModal>
+            )
+        }
+
+    }
+    // console.log("state=>", state);
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }} >
             <CustomHeader
@@ -442,11 +472,28 @@ export default () => {
                         finalDestinationPrimaryContainer={{ paddingLeft: 18, paddingVertical: 0, bottom: 3 }}
                     />
                     {RenderPaymentMethodCardUi()}
-                    <VouchersUi checkOutStyles={checkOutStyles} />
+
+                    <VouchersUi checkOutStyles={checkOutStyles}
+                        onPressClBk={(visible) => {
+                            if (visible) {
+                                setState((pre) => ({ ...pre, isModalVisible: visible }))
+                            }
+                            else {
+                                setState((pre) => ({ ...pre, selectedVoucher: {} }))
+
+                            }
+                        }}
+                        state={state}
+                        promoList={promoList}
+
+                    />
                     <OrderRecipt checkOutStyles={checkOutStyles} cartReducer={cartReducer} colors={colors} />
 
                 </ScrollView>
+
+
             </View>
+
             <AnimatedView style={{ backgroundColor: colors.white, opacity: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 10, paddingVertical: 3, width: '100%', ...AppStyles.shadow, marginBottom: Platform.OS === 'ios' ? 0 : 0.5 }}>
                 <Button
                     onPress={onPlaceOrder}
@@ -456,7 +503,7 @@ export default () => {
                     textStyle={{}}
                 />
             </AnimatedView>
-
+            {seeAllVoucher()}
         </SafeAreaView>
     )
 }
