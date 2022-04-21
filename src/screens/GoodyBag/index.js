@@ -72,7 +72,7 @@ export default ({ showHeader = true, onPressClbk = () => { }, containerStyle ={}
             <View style={{ flex: 1 }}>
                 <FlatList
                     // data={state.data}
-                    data={makeArrayRepeated(promoListData,7)}
+                    data={promoListData}
                     scrollEnabled={scrollEnabled}
                     renderItem={({ item, index }) => renderItem(item, index)}
                 />
