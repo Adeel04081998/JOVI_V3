@@ -735,7 +735,6 @@ export default ({ navigation, route }) => {
                 estTime={estTime}
                 isOpened={isDisabled ? false : isOpened}
                 onEstTimePress={(item) => {
-                    console.log('item ==>>>', item);
                     setEstTime(item);
                     setCollapsed(true);
                     toggleCardData(PITSTOP_CARD_TYPES["buy-for-me"]);
@@ -882,7 +881,7 @@ export default ({ navigation, route }) => {
                         }
                     </View>
                 </KeyboardAwareScrollView>
-                {/* <Button
+                <Button
                     text="Save and Continue"
                     onPress={onSaveAndContinue}
                     disabled={validationCheck()}
@@ -890,9 +889,9 @@ export default ({ navigation, route }) => {
                     style={[styles.locButton, { height: 60, marginVertical: 10 }]}
                     textStyle={[styles.btnText, { fontSize: 16 }]}
                     fontFamily="PoppinsRegular"
-                    wait={0.4}
-                /> */}
-                <TouchableOpacity
+                    wait={0.2}
+                />
+                {/* <TouchableOpacity
                     onPress={onSaveAndContinue}
                     disabled={validationCheck()}
                     activeOpacity={1}
@@ -901,7 +900,7 @@ export default ({ navigation, route }) => {
                         loader ? <ActivityIndicator size="small" color={colors.primary} /> :
                             <Text style={[styles.btnText, { fontSize: 16, fontFamily: FontFamily.Poppins.Regular, color: colors.white }]} >Save and Continue</Text>
                     }
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </Transitioning.View>
         </SafeAreaView >
     );

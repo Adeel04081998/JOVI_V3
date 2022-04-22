@@ -296,7 +296,7 @@ export default ({ route }) => {
     }
 
     //UI Render Functions
-    const renderSubHeading = (text = '', extraStyles = {}) => (<Text style={{ fontSize: 14, color: colors.black, ...extraStyles }} fontFamily={'PoppinsMedium'}>{text}</Text>);
+    const renderSubHeading = (text = '', extraStyles = {}) => (<Text style={{ fontSize: 14, color: colors.black, paddingBottom: 1, ...extraStyles }} fontFamily={'PoppinsMedium'}>{text}</Text>);
     const renderLocationButton = (onPress = () => onLocationPress()) => (<Button
         onPress={onPress}
         text="Select Location From Map"
@@ -309,7 +309,9 @@ export default ({ route }) => {
         }}
         style={[_styles.locButton, _styles.selectLocationButton]} />)
     const renderInput = (inputProps = {}, extraStyles = {
-        fontFamily: FontFamily.Poppins.Regular
+        fontFamily: FontFamily.Poppins.Regular,
+        marginLeft: -20
+
     },) => (<TextInput
         style={{
             ..._styles.inputStyle,
@@ -533,7 +535,9 @@ export default ({ route }) => {
 
                                 }, {
                                     height: 150,
-
+                                    fontFamily: FontFamily.Poppins.Regular,
+                                    marginLeft: -20,
+                                    textAlignVertical: 'top'
                                 })
                             }
                         </View>

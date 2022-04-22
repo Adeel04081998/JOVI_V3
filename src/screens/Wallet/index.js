@@ -13,7 +13,7 @@ import ROUTES from '../../navigations/ROUTES';
 import View from '../../components/atoms/View';
 import Text from '../../components/atoms/Text';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import AnimatedLottieView from 'lottie-react-native';
 import { getRequest, postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
@@ -22,6 +22,7 @@ import NoRecord from '../../components/organisms/NoRecord';
 import Button from '../../components/molecules/Button';
 import TouchableScale from '../../components/atoms/TouchableScale';
 import VectorIcon from '../../components/atoms/VectorIcon';
+import actions from '../../redux/actions';
 
 const DEFAULT_PAGINATION_INFO = { totalItem: 0, itemPerRequest: 20, currentRequestNumber: 1 };
 
@@ -29,13 +30,15 @@ const DEFAULT_PAGINATION_INFO = { totalItem: 0, itemPerRequest: 20, currentReque
 export default () => {
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[PITSTOP_TYPES.JOVI]], Appearance.getColorScheme() === "dark");
     const styles = walletStyles(colors);
-    // const { balance } = useSelector(state => state.userReducer)
+    const { userReducer } = useSelector(state => state)
+    const { balance } = userReducer;
     const { CustomerTransactionTypeEnum } = useSelector(state => state.enumsReducer)
     const [filters, setFilters] = useState([])
     const [paginationInfo, updatePaginationInfo] = React.useState(DEFAULT_PAGINATION_INFO);
     const [metaData, toggleMetaData] = React.useState(false);
     const [pressedValue, setPressedValue] = React.useState(1);
-    const [balance, setBalance] = useState('');
+    const dispatch = useDispatch();
+    // const [balance, setBalance] = useState('');
     const [query, updateQuery] = React.useState({
         isLoading: true,
         error: false,
@@ -47,14 +50,11 @@ export default () => {
         loadTransactionList();
         return () => { };
     }, []);
-    React.useEffect(() => {
-        getBallance()
-    }, [])
 
     const getBallance = () => {
         getRequest(`${Endpoints.GET_BALANCE}`,
             (resp) => {
-                setBalance(resp.data.userBalance)
+                dispatch(actions.setUserAction({ ...userReducer, balance: resp.data.userBalance }))
             },
             (err) => {
                 sharedExceptionHandler(err)
@@ -199,7 +199,8 @@ export default () => {
             </View>
         )
     }
-    const onFilterPress = (item, index) => {
+    const onFilterPress = (item, index, isSelected) => {
+        if (isSelected) return
         setPressedValue(parseInt(item.value))
 
         loadTransactionList(parseInt(item.value))
@@ -213,7 +214,7 @@ export default () => {
                     borderWidth: isSelected ? 0 : 0.5,
                     borderColor: '#C2C2C2'
                 }]}
-                onPress={() => onFilterPress(item, index)}>
+                onPress={() => onFilterPress(item, index, isSelected)}>
                 <Text style={[styles.filterButtonText, { color: isSelected ? colors.white : colors.primary }]}>
                     {item.text}
                 </Text>
@@ -254,23 +255,23 @@ export default () => {
         const isOrder = item.type === "Order"
         return (
             <View style={styles.dataContainerStyle} >
-                <View style={{ flexDirection: 'column' }} >
+                <View style={{ flexDirection: 'column', width: '5%' }} >
                     <View style={styles.svgCircle}>
                         <SvgXml xml={getSvgXML(item)} />
                     </View>
                 </View>
-                <View style={{ flexDirection: 'column', width: '70%' }} >
+                <View style={{ flexDirection: 'column', width: '65%' }} >
                     <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                        <Text fontFamily="PoppinsMedium" style={styles.filterTypeStyle} >{item.type}</Text>
-                        <Text fontFamily="PoppinsLight" style={[styles.filterDateStyle, { paddingLeft: 5 }]} >{item.date}</Text>
+                        <Text fontFamily="PoppinsMedium" style={[styles.filterTypeStyle, { textAlign: 'left' }]} >{item.type}</Text>
+                        <Text fontFamily="PoppinsLight" style={[styles.filterDateStyle, { paddingLeft: 5, textAlign: 'left' }]} >{item.date}</Text>
                     </View>
                     <View style={{ flexDirection: 'row' }} >
                         <Text numberOfLines={1} fontFamily="PoppinsLight" style={styles.filterDateStyle} >{item.details}</Text>
                     </View>
                 </View>
-                <View style={{ flexDirection: 'column' }} >
+                <View style={{ flexDirection: 'column', width: '20%' }} >
                     <SvgXml xml={isOrder ? svgs.redArrow() : svgs.greenArrow()} style={{ alignSelf: 'center' }} />
-                    <Text fontFamily="PoppinsMedium" style={styles.filterTypeStyle} >Rs. {item.amount}</Text>
+                    <Text fontFamily="PoppinsMedium" style={[styles.filterTypeStyle, { textAlign: 'right' }]} >Rs. {item.amount}</Text>
                 </View>
             </View>
         )
@@ -282,6 +283,7 @@ export default () => {
                 data={filters}
                 extraData={metaData}
                 renderItem={_renderFlatListItem}
+                keyExtractor={(item, index) => { item.details }}
                 onEndReachedThreshold={0.8}
                 onEndReached={onEndReached}
                 initialNumToRender={10}
