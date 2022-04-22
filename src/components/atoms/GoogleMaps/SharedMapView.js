@@ -5,7 +5,7 @@ import { sharedStartingRegionPK } from '../../../helpers/SharedActions';
 import VectorIcon from '../VectorIcon';
 import { addressInfo, hybridLocationPermission } from '../../../helpers/Location';
 import Button from '../../molecules/Button';
-import GV from '../../../utils/GV';
+import GV, { isIOS } from '../../../utils/GV';
 import theme from '../../../res/theme';
 import svgs from '../../../assets/svgs';
 import TouchableOpacity from '../TouchableOpacity';
@@ -240,81 +240,84 @@ export default (props) => {
     /******************************************* START OF FUNCTIONS **********************************/
 
     const _Direction = () => {
-        console.log("[_Direction].pitstops", pitstops);
+        const renderDirection = (pitstop,index) => {
+            return (<>
+                <Marker identifier={`marker ${index + 1}`} key={`marker-key${index + 1}`} coordinate={pitstop} anchor={{ x: 0.46, y: 0.7 }}>
+                    {
+                        pitstop.isFinalDestination ? <View>
+                            <SvgXml xml={FINAL_DESTINATION_SVG} height={35} width={35} />
+                        </View>
+                            :
+                            <View style={{
+                                backgroundColor: "#fff",
+                                borderRadius: 10,
+                                width: 30,
+                                height: 30,
+                                shadowColor: '#7359BE',
+                                shadowOffset: {
+                                    width: 0,
+                                    height: 2,
+                                },
+                                borderWidth: 2,
+                                shadowOpacity: 0.25,
+                                shadowRadius: 3.84,
+                                elevation: 5,
+                                borderColor: initColors.primary
+                            }}>
+                                <Text style={{
+                                    paddingVertical: 2.5,
+                                    fontWeight: "bold",
+                                    alignSelf: "center",
+                                    fontSize: 16,
+                                    color: initColors.primary
+                                }}>{index + 1}</Text>
+                            </View>
+                    }
+                </Marker>
+                <Directions
+                    key={index}
+                    {
+                    ...pitstop.isFinalDestination ? {
+                        origin: pitstops[index - 1],
+                        destination: { ...customPitstops ? pitstop : userReducer.finalDestObj }
+                    } : {
+                        origin: pitstops[index],
+                        destination: pitstops[index + 1]
+                    }
+                    }
+                    apikey={env.GOOGLE_API_KEY}
+                    strokeWidth={3.5}
+                    strokeColor={initColors.primary}
+                    // optimizeWaypoints={false}
+                    mode="DRIVING"
+                    // strokeColors={["#000"]}
+                    // origin={origin}
+                    // destination={destination}
+                    // waypoints={[origin, destination]}
+                    onStart={(param) => console.log("param", param)}
+                    onReady={(param) => {
+                        // if (isInitialSet) return
+                        // const getRegionForCoord = getRegionForCoordinates(pitstops ?? []);
+                        // console.log('getRegionForCoord ', getRegionForCoord);
+                        // console.log("param ready", pitstops ?? [])
+                        // mapView?.current?.animateToRegion(getRegionForCoord);
+                        // mapView?.current?.animateToRegion({
+                        //     latitude: getRegionForCoord.latitude,
+                        //     longitude: getRegionForCoord.longitude,
+                        //     latitudeDelta: 0.0122,
+                        //     longitudeDelta: (Dimensions.get("window").width / Dimensions.get("window").height) * 0.0122,
+
+                        // });
+                        // isInitialSet = true;
+                        setLocation();
+                    }}
+                    onError={(error) => console.log("[Directions].error", error)}
+                /></>)
+        }
         if (showDirections) {
             return (pitstops || []).map((pitstop, index) => {
-                return <View key={index}>
-                    <Marker identifier={`marker ${index + 1}`} key={`marker-key${index + 1}`} coordinate={pitstop} anchor={{ x: 0.46, y: 0.7 }}>
-                        {
-                            pitstop.isFinalDestination ? <View>
-                                <SvgXml xml={FINAL_DESTINATION_SVG} height={35} width={35} />
-                            </View>
-                                :
-                                <View style={{
-                                    backgroundColor: "#fff",
-                                    borderRadius: 10,
-                                    width: 30,
-                                    height: 30,
-                                    shadowColor: '#7359BE',
-                                    shadowOffset: {
-                                        width: 0,
-                                        height: 2,
-                                    },
-                                    borderWidth: 2,
-                                    shadowOpacity: 0.25,
-                                    shadowRadius: 3.84,
-                                    elevation: 5,
-                                    borderColor: initColors.primary
-                                }}>
-                                    <Text style={{
-                                        paddingVertical: 2.5,
-                                        fontWeight: "bold",
-                                        alignSelf: "center",
-                                        fontSize: 16,
-                                        color: initColors.primary
-                                    }}>{index + 1}</Text>
-                                </View>
-                        }
-                    </Marker>
-                    <Directions
-                        key={index}
-                        {
-                        ...pitstop.isFinalDestination ? {
-                            origin: pitstops[index - 1],
-                            destination: { ...customPitstops ? pitstop : userReducer.finalDestObj }
-                        } : {
-                            origin: pitstops[index],
-                            destination: pitstops[index + 1]
-                        }
-                        }
-                        apikey={env.GOOGLE_API_KEY}
-                        strokeWidth={3.5}
-                        strokeColor={initColors.primary}
-                        optimizeWaypoints={false}
-                        mode="DRIVING"
-                        // strokeColors={["#000"]}
-                        // origin={origin}
-                        // destination={destination}
-                        // waypoints={[origin, destination]}
-                        onStart={(param) => console.log("param", param)}
-                        onReady={(param) => {
-                            // if (isInitialSet) return
-                            // const getRegionForCoord = getRegionForCoordinates(pitstops ?? []);
-                            // console.log('getRegionForCoord ', getRegionForCoord);
-                            // console.log("param ready", pitstops ?? [])
-                            // mapView?.current?.animateToRegion(getRegionForCoord);
-                            // mapView?.current?.animateToRegion({
-                            //     latitude: getRegionForCoord.latitude,
-                            //     longitude: getRegionForCoord.longitude,
-                            //     latitudeDelta: 0.0122,
-                            //     longitudeDelta: (Dimensions.get("window").width / Dimensions.get("window").height) * 0.0122,
-
-                            // });
-                            // isInitialSet = true;
-                            setLocation();
-                        }}
-                        onError={(error) => console.log("[Directions].error", error)}
-                    />
+                return isIOS?renderDirection(pitstop,index):<View key={index}>
+                    {renderDirection(pitstop,index)}
                 </View>
             })
         } else return null;
