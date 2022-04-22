@@ -32,7 +32,7 @@ import Toast from '../../components/atoms/Toast';
 const HEADER_ICON_SIZE_RIGHT = CustomHeaderIconBorder.size * 0.7;
 const RATING_SIZE = constants.window_dimensions.height * 0.3;
 let selectedItem = null;
-const DEFAULT_RATING_NUMBER = 2;
+const DEFAULT_RATING_NUMBER = 4;
 
 
 const RATING_JSON = {

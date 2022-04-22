@@ -132,7 +132,11 @@ export default ({ route }) => {
             title={'Order#: ' + orderIDParam}
             rightCustom={(
                 <TouchableScale wait={0} onPress={() => {
-                    NavigationService.NavigationActions.common_actions.goBack();
+                    if(route.params?.isFinalDestinationCompleted){
+                        NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderTracking.screen_name,{orderID:orderIDParam});
+                    }else{
+                        NavigationService.NavigationActions.common_actions.goBack();
+                    }
                 }}
                     style={styles.iconContainer}>
                     <SvgXml xml={svgs.order_chat_header_location(colors.primary)} height={HEADER_ICON_SIZE_LEFT} width={HEADER_ICON_SIZE_LEFT} />
@@ -140,7 +144,7 @@ export default ({ route }) => {
             )}
             leftCustom={(<>
                 <TouchableOpacity disabled={!isRiderFound} onPress={() => {
-                    NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderChat.screen_name, { orderID: orderIDParam, riderProfilePic: state.userPic, }, ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name)
+                    NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderChat.screen_name, { orderID: orderIDParam, riderProfilePic: state.userPic,isFinalDestinationCompleted:route.params?.isFinalDestinationCompleted }, ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name)
                 }} style={{ ...styles.iconContainer }}>
                     <VectorIcon size={25} name={'md-chatbubble-ellipses'} type={'Ionicons'} color={isRiderFound ? colors.primary : colors.grey} />
                 </TouchableOpacity>
