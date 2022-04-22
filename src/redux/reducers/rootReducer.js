@@ -17,6 +17,11 @@ const persistCartConfig = {
     storage: RNAsyncStorage,
     // whitelist: [""] // whitelist would be used if we want to persist specific keys of a reducer
 };
+const persistSettingConfig = {
+    key: PreferenceManagerKeys.PERSIST_SETTINGS,
+    storage: RNAsyncStorage,
+    // whitelist: [""] // whitelist would be used if we want to persist specific keys of a reducer
+};
 
 
 const rootReducer = combineReducers({
@@ -29,7 +34,7 @@ const rootReducer = combineReducers({
     modalReducer: Reducers.modalReducer,
     fcmReducer: Reducers.fcmReducer,
     vendorDashboardCategoryIDReducer: Reducers.vendorDashboardCategoryIDReducer,
-    settingsReducer :Reducers.settingsReducer
+    settingsReducer :persistReducer(persistSettingConfig,Reducers.settingsReducer),
     // cartReducer: Reducers.cartReducer,
 });
 
