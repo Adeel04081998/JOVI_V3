@@ -980,13 +980,13 @@ export const sharedCalculatedTotals = () => {
     const { subTotal = 0, discount = 0, serviceCharges = 0, serviceTax = 0, genericDiscount = 0, total = 0, gst = 0, itemsTotalWithDiscounts = 0 } = store.getState().cartReducer;
     const _serviceCharges = serviceCharges + serviceTax;
     return {
-        gst:Math.round(gst),
+        gst: Math.round(gst),
         serviceTax: Math.round(serviceTax),
-        serviceCharges: Math.round(_serviceCharges) ,
-        discount: Math.round( discount + genericDiscount),
-        subTotal:Math.round(subTotal),
-        total: Math.round( total + _serviceCharges),
-        itemsTotalWithDiscounts: Math.round(itemsTotalWithDiscounts + _serviceCharges) ,
+        serviceCharges: Math.round(_serviceCharges),
+        discount: Math.round(discount + genericDiscount),
+        subTotal: Math.round(subTotal),
+        total: Math.round(total + _serviceCharges),
+        itemsTotalWithDiscounts: Math.round(itemsTotalWithDiscounts + _serviceCharges),
     }
 
 }
@@ -1013,7 +1013,7 @@ export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder 
     // '2' Chat message at INDEX 8
     // '21' Chat message at INDEX 9
     // "22" Final Destination changed at index 10
-    const notificationTypes = ["1", "11", "12", "13", "14", "18", "17", "16", "2", "21","22"]
+    const notificationTypes = ["1", "11", "12", "13", "14", "18", "17", "16", "2", "21", "22"]
     console.log('fcmReducer------OrderPitstops', fcmReducer);
     const jobNotify = fcmReducer.notifications?.find(x => (x.data && (notificationTypes.includes(`${x.data.NotificationType}`))) ? x : false) ?? false;
     if (jobNotify) {
@@ -1285,7 +1285,7 @@ export const sharedSendFileToServer = (list = [], onSuccess = () => { }, type = 
         formData.append(`JoviImageList[${index}].JoviImageID`, 0);
         formData.append(`JoviImageList[${index}].FileType`, type);
         formData.append(`JoviImageList[${index}].FileExtensionType`, extension);
-        if(type === 21){
+        if (type === 21) {
             formData.append(`JoviImageList[${index}].audioDuration`, item.duration);
         }
         index += 1;
@@ -1332,7 +1332,41 @@ export const sharedGetPromoList = (onSuccess = () => { },) => {
     });
 
 
-}
+};
+export const sharedGetRiderRatingReasonsList = () => {
+    const params = {
+        ratingLevel: 0
+    };
+
+    const settingsReducer = store.getState().settingsReducer;
+    let currentTime = new Date().getTime()
+    let ratingTimeStamp = settingsReducer.timeStamps.ratingsTimeStamp;
+    if (ratingTimeStamp) {
+        let seconds = (currentTime - ratingTimeStamp) / 1000
+        let hours = (seconds / 60) / 60
+        if (hours < 24) return
+    }
+    postRequest(Endpoints.GET_RIDER_ORDER_RATING_REASON, params, (res) => {
+        console.log("res", res);
+        if (res.data.statusCode === 200) {
+            const resData = (res.data.reasonsList?.ratingLevels ?? []);
+            dispatch(ReduxActions.setUserAction({ ratingReasonsList: resData }));
+            dispatch(ReduxActions.setSettingsAction({
+                timeStamps: {
+                    ratingsTimeStamp: currentTime
+                }
+            }))
+        } else {
+            return
+        }
+    }, (err) => {
+        sharedExceptionHandler(err);
+    })
+};
+
+
+
+
 
 
 

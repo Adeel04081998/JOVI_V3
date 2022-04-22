@@ -165,6 +165,8 @@ export default ({ navigation, route }) => {
     // #endregion :: ROBOT / JSON ANIMATION END's FROM HERE 
 
     // #region :: STATE's & REF's START's FROM HERE 
+    const userReducer = useSelector(state => state.userReducer);
+    const ratingReasonsList = userReducer?.ratingReasonsList??[];
     const skipEffect = React.useRef(false);
     const [rating, setRating] = React.useState(DEFAULT_RATING_NUMBER);//1 TO 5
     const [switchVal, setSwitchVal] = React.useState(true);
@@ -172,7 +174,7 @@ export default ({ navigation, route }) => {
     const [receiptData, setReceiptData] = React.useState({});
     const [disableSubmit, setDisableSubmit] = React.useState(true);
     const [amount, setAmount] = React.useState('');
-    const [ratingData, setRatingData] = React.useState([]);//ALL RATING GETTING FROM SERVER
+    const [ratingData, setRatingData] = React.useState(ratingReasonsList??[]);//ALL RATING GETTING FROM SERVER
     const [data, updateData] = React.useState({
         heading: joviRatingTitle?.header ?? 'Rate your Jovi',
         headingDescription: joviRatingTitle?.body ?? 'Your rating helps us to improve',
@@ -195,7 +197,10 @@ export default ({ navigation, route }) => {
 
     // #region :: API IMPLEMENTATION START's FROM HERE 
     React.useEffect(() => {
-        loadData();
+        if (!ratingReasonsList) {
+            loadData();
+
+        }
         return () => { };
     }, []);
 
@@ -280,7 +285,7 @@ export default ({ navigation, route }) => {
             "description": selectedItem?.description ?? '',
             "tipAmount": amount
         };
-        console.log('PARAMS  ', params);
+        // console.log('PARAMS  ', params);
 
         postRequest(Endpoints.SUBMIT_RATING_FOR_RIDER_ORDER, params, (res) => {
             if (res.data.statusCode === 200) {
