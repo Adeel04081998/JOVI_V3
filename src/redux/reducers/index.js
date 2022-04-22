@@ -142,7 +142,11 @@ const vendorDashboardCategoryIDReducer = (state = { data: [] }, action) => {
   }
 }
 const settingsReducer = (
-  state = { banner:"" },
+  state = { banner:"" ,
+    timeStamps: {
+        ratingsTimeStamp:null,
+    },
+},
   action,
 ) => {
   switch (action.type) {
