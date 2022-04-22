@@ -218,8 +218,8 @@ export default () => {
                                 "JoviDiscountType": obj.joviDiscountType ?? 0,
                                 "joviDiscountedPrice": obj.totalJoviDiscount ?? 0,
                                 // tabish
-                                "joviDiscountAmount": obj.totalJoviDiscount ?? 0,
-                                "discountAmount": obj.itemPrice - obj._totalDiscount,
+                                "joviDiscountAmount": (obj.isJoviDiscount && obj.totalJoviDiscount) ? obj.totalJoviDiscount : 0,
+                                "discountAmount": obj.discountType > 0 ? (obj.itemPrice - obj._totalDiscount) : 0,
                                 // tabish
                                 //End New Keys
                                 "estimateTime": obj.estimatePrepTime || 0,

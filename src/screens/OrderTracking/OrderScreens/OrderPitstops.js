@@ -277,7 +277,7 @@ export default ({ route }) => {
             />
         </View>
     }
-    const { orderReceiptVM: { subTotal = 0, actualServiceTax = 0, actualServiceCharges = 0, actualTotalPlusPitstopAmount = 0, chargeBreakdown = {} } } = state;
+    const { orderReceiptVM: { subTotal = 0, actualServiceTax = 0, actualServiceCharges = 0, actualTotalPlusPitstopAmount = 0, chargeBreakdown = {}, arrears = 0, walletDeduction = 0 } } = state;
     const { discount = 0, totalProductGST = 0, } = chargeBreakdown;
     const Totals = () => {
         const row = (caption = '', value = 0, isBold = false, showDashed = true) => {
@@ -311,7 +311,10 @@ export default ({ route }) => {
                 {row(`Subtotal (Inc GST ${totalProductGST})`, subTotal, false)}
                 {discount ? row('Total Discount', `- ${discount}`) : null}
                 {row(`Service Charges (Incl S.T ${actualServiceTax})`, (actualServiceTax + actualServiceCharges))}
+                {walletDeduction ? row('Wallet Deduction', `- ${walletDeduction}`) : null}
+                {arrears ? row('Arrears', `${arrears}`) : null}
                 {row('Total', actualTotalPlusPitstopAmount, true, false)}
+
             </View>
         );
     };

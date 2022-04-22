@@ -463,28 +463,36 @@ export default ({ navigation, route }) => {
 
                 {/* ****************** Start of GST, Service Charges, Discount & ESTIMATED TOTAL ****************** */}
                 <View style={{ paddingTop: 20, paddingBottom: 12, }}>
-                    {/* <ServiceChargesUI
+                    {/* <RenderPrice
                         text='GST'
                         value={`${data?.orderReceiptVM?.chargeBreakdown?.totalProductGST ?? 0}`}
                     /> */}
-                    <ServiceChargesUI
+                    <RenderPrice
                         text={`Subtotal (Incl GST ${data?.orderReceiptVM?.chargeBreakdown?.totalProductGST ?? 0})`}
                         value={data?.orderReceiptVM?.subTotal ?? 0}
                     />
-                    <DashedLine contentContainerStyle={{ paddingVertical: 8, }} />
-                    <ServiceChargesUI
+                    <RenderPrice
                         text={`Total Discount`}
-                        value={`${data?.orderReceiptVM?.chargeBreakdown?.discount ?? 0}`}
+                        value={data?.orderReceiptVM?.chargeBreakdown?.discount ?? 0}
                         pricePrefix='Rs. -'
                     />
-                    <DashedLine contentContainerStyle={{ paddingVertical: 8, }} />
-                    <ServiceChargesUI
+                    <RenderPrice
                         text={`Service Charges (Incl S.T ${data?.orderReceiptVM?.actualServiceTax ?? 0})`}
                         value={`${(data?.orderReceiptVM?.actualServiceTax ?? 0) + (data?.orderReceiptVM?.actualServiceCharges ?? 0)}`}
                     />
-                    <DashedLine contentContainerStyle={{ paddingVertical: 8, }} />
 
-                    <TotalChargesUI
+                    <RenderPrice
+                        text={`Wallet Deduction`}
+                        value={data?.orderReceiptVM?.walletDeduction ?? 0}
+                        pricePrefix='Rs. -'
+                    />
+
+                    <RenderPrice
+                        text={`Arrears`}
+                        value={data?.orderReceiptVM?.arrears ?? 0}
+                    />
+
+                    <RenderPrice
                         text={`Total`}
                         value={`${data?.orderReceiptVM?.actualTotalPlusPitstopAmount ?? 0}`}
                     />
@@ -738,6 +746,20 @@ const TotalChargesUI = ({ text = '', value = '', pricePrefix = 'Rs. ' }) => {
             <Text fontFamily='PoppinsSemiBold' style={{ color: "#272727", fontSize: 16, }}>{text}</Text>
             <Text fontFamily='PoppinsSemiBold' style={{ color: "#272727", fontSize: 16, }}>{renderPrice({ showZero: true, price: value, }, pricePrefix)}</Text>
         </View>
+
+    )
+}
+
+const RenderPrice = ({ text = '', value = '', pricePrefix = 'Rs. ' }) => {
+    if (!value) return null;
+    return (
+        <>
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: constants.spacing_horizontal, }}>
+                <Text style={{ color: "#4D4D4D", fontSize: 13, }}>{text}</Text>
+                <Text style={{ color: "#4D4D4D", fontSize: 13, }}>{renderPrice({ price: value, }, pricePrefix)}</Text>
+            </View>
+            <DashedLine contentContainerStyle={{ paddingVertical: 8, }} />
+        </>
     )
 }
 
