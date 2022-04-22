@@ -1,3 +1,4 @@
+import React from 'react';
 import Toast from '../components/atoms/Toast';
 import { sharedExceptionHandler, sharedLogoutUser } from '../helpers/SharedActions';
 import ReduxActions from '../redux/actions';
@@ -27,9 +28,28 @@ const successErrorBanner = (response ) => {
     dispatch(ReduxActions.setSettingsAction({ banner: response?.data.areaLock?.bannerURL }));
 
 }
+
+const pendingApiCalls = React.createRef(null);
 export const refreshTokenMiddleware = (requestCallback, params) => {
     const userReducer = store.getState().userReducer;
     console.log("[refreshTokenMiddleware].userReducer", userReducer);
+    if(pendingApiCalls.current&&pendingApiCalls.current?.length){
+        pendingApiCalls.current.push({requestCallback,params});
+        return;
+    }else{
+        pendingApiCalls.current = [{
+            requestCallback,params
+        }];
+    }
+    const callApis = () => {
+        if(pendingApiCalls.current){
+            console.log('[refreshTokenMiddleware]-ApiCalls',pendingApiCalls.current);
+            pendingApiCalls.current.map((item)=>{
+                item.requestCallback.apply(this,item.params);
+            });
+            pendingApiCalls.current = null;
+        }
+    }
     postRequest(
         "/api/User/RefreshToken",
         {
@@ -40,8 +60,9 @@ export const refreshTokenMiddleware = (requestCallback, params) => {
             console.log("refreshTokenMiddleware.Res :", res);
            
             if (res?.data?.statusCode === 202) {
-                requestCallback.apply(this, params);
+                callApis();
                 return;
+                requestCallback.apply(this, params);
             }
             else if (res?.data?.statusCode === 403) {
                 Toast.error("Session Expired!");
@@ -50,8 +71,10 @@ export const refreshTokenMiddleware = (requestCallback, params) => {
             }
             else {
                 dispatch(ReduxActions.setUserAction({ ...res.data }))
-                requestCallback.apply(this, params);
+                callApis();
                 if (__DEV__) Toast.success("Its only for DEV => User session refreshed....", 3000)
+                return;
+                requestCallback.apply(this, params);
             }
         },
         err => {

@@ -6,7 +6,7 @@ import SafeAreaView from "../../components/atoms/SafeAreaView";
 import VectorIcon from "../../components/atoms/VectorIcon";
 import View from "../../components/atoms/View";
 import ImageCarousel from "../../components/molecules/ImageCarousel";
-import { makeArrayRepeated } from "../../helpers/SharedActions";
+import { makeArrayRepeated, sharedExceptionHandler } from "../../helpers/SharedActions";
 import { postRequest } from "../../manager/ApiManager";
 import Endpoints from "../../manager/Endpoints";
 import { store } from "../../redux/store";

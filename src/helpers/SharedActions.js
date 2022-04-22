@@ -1011,8 +1011,7 @@ export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder 
     // '17' jovi job completed at index 6
     // '16' order completed at index 7
     // '2' Chat message at INDEX 8
-    // '21' Chat message at INDEX 9
-    // "22" Final Destination changed at index 10
+    // "21" Final Destination changed at index 9
     const notificationTypes = ["1", "11", "12", "13", "14", "18", "17", "16", "2", "21","22"]
     console.log('fcmReducer------OrderPitstops', fcmReducer);
     const jobNotify = fcmReducer.notifications?.find(x => (x.data && (notificationTypes.includes(`${x.data.NotificationType}`))) ? x : false) ?? false;
@@ -1042,7 +1041,7 @@ export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder 
             })
         }
         else if (data.NotificationType == notificationTypes[9]) {
-            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name, { orderID: (data.OrderID || data.orderId || data.orderID || data.OrderId || 0), isFinalDestinationCompleted: true });
+            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name, { orderID: (data.OrderID || data.orderId || data.orderID || data.OrderId || orderID), isFinalDestinationCompleted: true });
         }
         else {
 

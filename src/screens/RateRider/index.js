@@ -32,7 +32,7 @@ import Toast from '../../components/atoms/Toast';
 const HEADER_ICON_SIZE_RIGHT = CustomHeaderIconBorder.size * 0.7;
 const RATING_SIZE = constants.window_dimensions.height * 0.3;
 let selectedItem = null;
-const DEFAULT_RATING_NUMBER = 2;
+const DEFAULT_RATING_NUMBER = 4;
 
 
 const RATING_JSON = {
@@ -53,7 +53,7 @@ export default ({ navigation, route }) => {
     // #region :: ORDER ID HANDLING START's FROM HERE 
 
     const orderArray = route?.params?.orderArray ?? [];
-    const [orderID, setorderID] = React.useState(route?.params?.orderID ?? 0);
+    const [orderID, setorderID] = React.useState(route?.params?.orderID ?? 0); //92465177
     const orderIDArrayIndex = React.useRef(0);
 
     const updateOrderID = () => {
@@ -206,6 +206,7 @@ export default ({ navigation, route }) => {
 
     const getOrderDetailFromServer = () => {
         sharedFetchOrder(orderID, (res) => {
+            // console.log("[getOrderDetailFromServer].res", res);
             if (res.data.statusCode === 200) {
                 setReceiptData(res.data.order);
             } else {
@@ -515,6 +516,8 @@ export default ({ navigation, route }) => {
                         estimateServiceTax={receiptData?.orderReceiptVM?.actualServiceTax ?? 0}
                         discount={receiptData?.orderReceiptVM?.chargeBreakdown?.discount ?? 0}
                         total={receiptData?.orderReceiptVM?.actualTotalPlusPitstopAmount ?? 0}
+                        walletDeduction={receiptData?.orderReceiptVM?.walletDeduction ?? 0}
+                        arrears={receiptData?.orderReceiptVM?.arrears ?? 0}
                         onRightTextPress={() => {
                             setReceiptVisible(false);
                         }}
