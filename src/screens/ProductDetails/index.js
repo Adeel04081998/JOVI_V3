@@ -525,7 +525,7 @@ export default (props) => {
                                             multiline={true} // ios fix for centering it at the top-left corner 
                                             numberOfLines={Platform.OS === "ios" ? null : numberOfLines}
                                             returnKeyType='done'
-                                            value={notes}
+                                            // value={notes}
                                         />
                                     </View>
                                     : null}
