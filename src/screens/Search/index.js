@@ -1,4 +1,3 @@
-import debounce from 'lodash.debounce'; // 4.0.8
 import AnimatedLottieView from 'lottie-react-native';
 import * as React from 'react';
 import { Animated, Appearance, FlatList, SafeAreaView } from 'react-native';
@@ -25,6 +24,18 @@ import { stylesFunc } from './styles';
 
 const WINDOW_WIDTH = constants.window_dimensions.width;
 
+const debounceFunction = (func, delay) => {
+    let timer;
+    return function () {
+        let self = this;
+        let args = arguments;
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            func.apply(self, args)
+        }, delay)
+    }
+}
+
 export default ({ navigation, route }) => {
     //#region :: params
     const pitstopType = route.params.pitstopType;
@@ -42,7 +53,6 @@ export default ({ navigation, route }) => {
     const [showProductVendor, toggleShowProductVendor] = React.useState(isFromListing);
     const [showJoviJob, toggleShowJoviJob] = React.useState(false);
     const [searchText, setSearchText] = React.useState('');
-    const searchTextRef = React.useRef('');
     const [recentSearchesData, updateRecentSearchedData] = React.useState([]);
     const [searchData, updateSearchData] = React.useState({ restaurant: { text: '', data: [] }, grocery: { text: '', data: [] }, });
 
@@ -92,6 +102,7 @@ export default ({ navigation, route }) => {
     const hideShowProductVendor = () => {
         toggleShowProductVendor(false);
     };
+    const debounceInputSearch = React.useCallback(debounceFunction((nextValue) => executeSearching(nextValue), 1000), [])
 
     const _renderHeader = () => {
         const headerColors = showProductVendor || isFromListing ? isRestaurantSelected ? restaurantColors : smColors : colors;
@@ -109,7 +120,7 @@ export default ({ navigation, route }) => {
                     {...(showProductVendor || isFromListing) && {
                         leftIconColor: headerColors.primary,
                         onLeftIconPress: () => {
-                            if(isFromListing){
+                            if (isFromListing) {
                                 NavigationService.NavigationActions.common_actions.goBack();
                                 return;
                             }
@@ -142,6 +153,8 @@ export default ({ navigation, route }) => {
                                     placeholder={`Search by restaurant name or food`}
                                     onChangeText={(text) => {
                                         setSearchText(text);
+                                        debounceInputSearch(text);
+
                                     }}
                                 />
                             </View>
@@ -164,6 +177,7 @@ export default ({ navigation, route }) => {
     // #endregion :: RENDER HEADER END's FROM HERE 
 
     // #region :: GETTING & CLEARING RECENT SERACHES START's FROM HERE 
+
     React.useEffect(() => {
         loadRecentSearches();
         return () => { };
@@ -197,17 +211,13 @@ export default ({ navigation, route }) => {
 
     // #endregion :: GETTING & CLEARING RECENT SERACHES END's FROM HERE 
 
-    const debounceSearching = debounce(() => {
-        searching();
-    }, 500, { leading: false, trailing: true, });
 
-
-    React.useEffect(() => {
-        searchTextRef.current = searchText;
-        if (`${searchText}`.trim().length > 2) {
+    const executeSearching = (text) => {
+        const textLength = `${text}`.trim().length;
+        if (textLength > 2) {
             hideJOVIJob();
-            debounceSearching();
-        } else if (`${searchText}`.trim().length === 0) {
+            searching(text);
+        } else if (textLength === 0) {
             hideJOVIJob();
             clearBothSearch();
             toggleLoading(false);
@@ -216,7 +226,13 @@ export default ({ navigation, route }) => {
             clearBothSearch();
             toggleLoading(false);
         }
-    }, [searchText, isRestaurantSelected])
+    }
+
+
+
+    React.useEffect(() => {
+        executeSearching(searchText);
+    }, [isRestaurantSelected])
 
     const showJOVIJob = () => {
         toggleShowJoviJob(true);
@@ -233,7 +249,6 @@ export default ({ navigation, route }) => {
     }
 
     const searching = (text = `${searchText}`.trim()) => {
-        text = `${searchTextRef.current}`.trim();
         const selectedKey = isRestaurantSelected ? "restaurant" : "grocery";
         if (`${text}`.toLowerCase() === `${searchData[selectedKey].text}`.toLowerCase()) {
             if (text.length > 0)
@@ -243,7 +258,6 @@ export default ({ navigation, route }) => {
         if (text.length < 1) {
             hideJOVIJob();
             clearBothSearch();
-            return;
         }
         const params = {
             "userID": null,
@@ -263,7 +277,7 @@ export default ({ navigation, route }) => {
                     }
                 }))
             } else {
-                if (searchTextRef.current.length > 0) {
+                if (text.length > 0) {
                     showJOVIJob();
                     updateSearchData(pre => ({
                         ...pre,
@@ -322,7 +336,10 @@ export default ({ navigation, route }) => {
                             marginBottom: 6,
                         }}
                             key={index}
-                            onPress={() => { setSearchText(item); }}>
+                            onPress={() => {
+                                setSearchText(item);
+                                searching(item);
+                            }}>
 
                             <Text style={{
                                 color: "#848484",
@@ -363,6 +380,7 @@ export default ({ navigation, route }) => {
                             } else {
                                 visibleShowProductVendor(name);
                             }
+                            executeSearching(name);
                         }}>
                             <View style={{
                                 flexDirection: "row",

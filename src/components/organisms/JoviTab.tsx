@@ -95,7 +95,7 @@ const stylesFunc = (colors: typeof initColors) => StyleSheet.create({
         padding: 5,
         borderRadius: Platform.OS === "android" ? 4 : 10,
         borderColor: colors.primary,
-        borderWidth: 0.2,
+        borderWidth: StyleSheet.hairlineWidth*0.7,
     },
 
 });

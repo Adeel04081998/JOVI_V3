@@ -204,6 +204,7 @@ const SearchProductVendors = (props: Props) => {
     if (query.loading) {
         return (
             <View style={{ flex: 1, margin: 10, }}>
+                {/* @ts-ignore */}
                 <AnimatedLottieView
                     autoSize={true}
                     resizeMode={'contain'}
