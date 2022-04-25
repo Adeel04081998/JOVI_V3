@@ -196,7 +196,7 @@ export default () => {
               <TouchableScale style={{ paddingTop: 2, maxWidth: 110 }} onPress={() => sharedOnVendorPress(pitstop)}>
                 <Text
                   style={{ color: dynamiColors.black, fontSize: 12 }}
-                  fontFamily="PoppinsRegular">{`Back to ${isPHARMACY ? 'Pharmacy' : isJOVI ? 'Jovi Job' : 'Store'
+                  fontFamily="PoppinsRegular">{`Back to ${isPHARMACY ? 'Pharmacy' : isJOVI ? 'JOVI Job' : 'Store'
                     }`}
                 </Text>
               </TouchableScale>
@@ -448,7 +448,7 @@ export default () => {
         rightIconSize={20}
         onRightIconPress={() => NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name)}
         leftIconName="arrow-back"
-        title="Jovi Cart"
+        title="JOVI Cart"
         containerStyle={{
           backgroundColor: '#FFFFFF',
           borderBottomWidth: 0,
@@ -546,7 +546,7 @@ export default () => {
               }}
             >
               <Text style={{ color: colors.primary, paddingHorizontal: 5 }}>
-                Empty entire jovi cart
+                Empty entire JOVI cart
               </Text>
             </TouchableScale>
             <TextInput

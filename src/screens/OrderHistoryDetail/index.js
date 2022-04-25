@@ -201,7 +201,7 @@ export default ({ navigation, route }) => {
     const renderItem = ({ item, index }) => {
         if (index === (data?.pitStopsList ?? []).length - 1) return;//final destination is not in receipt
         const isJoviJob = item.pitstopType === PITSTOP_TYPES.JOVI;
-        let pitstopName = isJoviJob ? 'Jovi Job' : item.title
+        let pitstopName = isJoviJob ? 'JOVI Job' : item.title
         let isPharmacy = false;
         if (isJoviJob && VALIDATION_CHECK(item.pharmacyPitstopType === 0 ? null : item.pharmacyPitstopType)) {
             pitstopName = ENUMS.PharmacyPitstopTypeServer[item.pharmacyPitstopType].text;

@@ -457,7 +457,7 @@ const PitStopItemUI = ({ pitstopTitle = '', isJoviJob = false, pitstopNumber = 1
                 color: "#272727",
                 fontSize: 13,
                 paddingHorizontal: DOUBLE_SPACING,
-            }} numberOfLines={2}>{`Pit Stop ${pitstopNumber} - ${isPharmacy ? ENUMS.PharmacyPitstopTypeServer[pharmacyPitstopType].text : isJoviJob ? 'Jovi Job' : pitstopTitle}`}
+            }} numberOfLines={2}>{`Pit Stop ${pitstopNumber} - ${isPharmacy ? ENUMS.PharmacyPitstopTypeServer[pharmacyPitstopType].text : isJoviJob ? 'JOVI Job' : pitstopTitle}`}
                 <Text style={{
                     color: "#272727",
                     fontSize: 12,

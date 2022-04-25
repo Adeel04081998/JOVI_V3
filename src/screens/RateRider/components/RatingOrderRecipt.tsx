@@ -126,7 +126,7 @@ const RatingOrderRecipt = (props: Props) => {
                             .map((x, i) => {
                                 if (i === pitStops.length - 1) return;//final destination is not in receipt
                                 const isJoviJob = x.pitstopType === PITSTOP_TYPES.JOVI;
-                                let pitstopName = isJoviJob ? 'Jovi Job' : x.title
+                                let pitstopName = isJoviJob ? 'JOVI Job' : x.title
                                 const individualPitstopTotal = isJoviJob ? x.paidAmount : x.jobAmount;
                                 let isPharmacy = false;
                                 if (isJoviJob && VALIDATION_CHECK(x.pharmacyPitstopType === 0 ? null : x.pharmacyPitstopType)) {

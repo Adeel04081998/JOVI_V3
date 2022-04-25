@@ -37,7 +37,7 @@ const defaultProps = {
     forceError: false,
     spaceFree: false,
     placeholderTextColor: "#7F7F7F",
-    placeholder: 'Jovi',
+    placeholder: 'JOVI',
     isValid: () => { },
 
     containerStyle: {},
