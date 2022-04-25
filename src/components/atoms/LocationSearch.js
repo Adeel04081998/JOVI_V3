@@ -5,6 +5,7 @@ import { SvgXml } from "react-native-svg";
 import images from "../../assets/images";
 import svgs from "../../assets/svgs";
 import constants from "../../res/constants";
+import FontFamily from "../../res/FontFamily";
 import theme from "../../res/theme";
 import configs, { env } from "../../utils/configs";
 import GV from "../../utils/GV";
@@ -89,7 +90,7 @@ export default LocationSearch = ({ handleOnInputChange, parentColors = null, ind
                             :
                             null
                         }
-                        <Text numberOfLines={1} style={{ color: "#000", fontSize: 16 }}>{(data.description || data.name)?.trim()?.replace(/\r|\n/gi, "")?.replace(/،/gi, ",")}</Text>
+                        <Text numberOfLines={1} style={{ color: "#000", fontSize: 16, fontFamily: FontFamily.Poppins.Regular }}>{(data.description || data.name)?.trim()?.replace(/\r|\n/gi, "")?.replace(/،/gi, ",")}</Text>
                     </View>
                 );
             }}
@@ -170,6 +171,7 @@ export default LocationSearch = ({ handleOnInputChange, parentColors = null, ind
                     color: "#000",
                     zIndex: -1,
                     backgroundColor: "#F8F9FD",
+                    fontFamily: FontFamily.Poppins.Regular
                 }],
 
                 listView: [listViewStyles || {

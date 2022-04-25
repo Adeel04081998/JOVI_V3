@@ -97,7 +97,7 @@ export default React.memo((props) => {
                         maxLength={5}
                         placeholder={"Type your amount"}
                         containerStyle={{ width: WIDTH * 0.4, alignSelf: 'flex-end' }}
-                        style={{fontFamily: FontFamily.Poppins.Regular}}
+                        style={{fontFamily: FontFamily.Poppins.Regular, fontSize:13}}
                         value={`${props.textinputVal}`}
                         onChangeText={(text) => {
                             isSliderUse.current = false;
