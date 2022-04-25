@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Animated, Appearance, FlatList, SafeAreaView } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-aware-scroll-view';
+import ChangeWindowManager from '../../../NativeModules/ChangeWindowManager';
 import svgs from '../../assets/svgs';
 import Image from '../../components/atoms/Image';
 import Text from '../../components/atoms/Text';
@@ -489,9 +490,19 @@ const LoadingUI = () => {
     )
 }
 
-
+const JOVI_JOB_ICON_SIZE = {
+    backgroundColor: constants.window_dimensions.width * 0.15,
+    image: constants.window_dimensions.width * 0.1,
+};
 const JoviJobUI = ({ }) => {
     const animate = React.useRef(new Animated.Value(100)).current;
+    const [isKeyboardVisible, toggleKeyboardVisible] = React.useState(false);
+    React.useEffect(() => {
+        ChangeWindowManager.setAdjustResize();
+        return () => {
+            ChangeWindowManager.setAdjustPan();
+        };
+    }, [])
     React.useEffect(() => {
         Animated.spring(
             animate, {
@@ -505,74 +516,95 @@ const JoviJobUI = ({ }) => {
     })
     return (
         <SafeAreaView style={{ flex: 1, }}>
-            <KeyboardAwareScrollView
-                style={{ flex: 1, flexGrow: 1, }}
-                contentContainerStyle={{ flex: 1, flexGrow: 1, }}
-                bounces={false}>
-                <View style={{
-                    flex: 1,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginTop: 20,
-                }}>
-                    <AnimatedLottieView
-                        source={require('../../assets/gifs/RobotSearch.json')}
-                        autoPlay
-                        loop
-                    />
-                </View>
-                <Animated.View style={{
-                    flex: 1,
-                    alignItems: "flex-end",
-                    justifyContent: "flex-end",
-                    transform: [{ translateY: animate }]
-                }}>
-                    <TouchableOpacity activeOpacity={1} wait={0}
-                        onPress={() => {
-                            sharedOnVendorPress({ pitstopType: PITSTOP_TYPES.JOVI }, 0)
-                        }}
-                        style={{
-                            minHeight: 250,
-                            width: "90%",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            alignSelf: "center",
-                            backgroundColor: '#6D51BB',
-                            borderRadius: 32,
+            <Animated.View style={{
+                marginTop: 20,
+                transform: [{ translateY: animate }]
+            }}>
+                <TouchableOpacity activeOpacity={1} wait={0}
+                    onPress={() => {
+                        sharedOnVendorPress({ pitstopType: PITSTOP_TYPES.JOVI }, 0)
+                    }}
+                    style={{
+                        flexDirection: "row",
+                        width: "90%",
+                        alignItems: "center",
+                        // justifyContent: "center",
+                        alignSelf: "center",
+                        backgroundColor: '#6D51BB',
+                        borderRadius: 32,
+                        padding: constants.spacing_horizontal,
+                    }}>
 
-                        }}>
+                    <View style={{
+                        height: JOVI_JOB_ICON_SIZE.backgroundColor,
+                        width: JOVI_JOB_ICON_SIZE.backgroundColor,
+                        borderRadius: JOVI_JOB_ICON_SIZE.backgroundColor,
+                        backgroundColor: "#fff",
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}>
+                        <SvgXml xml={svgs.jovi()} height={JOVI_JOB_ICON_SIZE.image} width={JOVI_JOB_ICON_SIZE.image} />
+                    </View>
 
+                    <View style={{
+                        flex: 1,
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}>
                         <Text fontFamily='PoppinsMedium' style={{
-                            fontSize: 20,
+                            fontSize: 18,
                             color: "#FFFFFF",
-                        }}>{`Couldn't find your Product ?`}</Text>
+                        }}>{`Couldn't find your Product?`}</Text>
                         <Text fontFamily='PoppinsLight' style={{
                             fontSize: 30,
                             color: "#FFFFFF",
                         }}>{`Book a Jovi`}</Text>
+                    </View>
 
-                        <View style={{ height: 75, width: 75, backgroundColor: "#fff", borderRadius: 75, alignItems: "center", justifyContent: "center", marginTop: 30, }}>
-                            <SvgXml xml={svgs.jovi()} height={60} width={60} />
-                        </View>
+                    <SvgXml xml={svgs.searchBookJoviBackground()}
+                        style={{
+                            position: 'absolute',
+                            left: 0,
+                            top: 0,
+                            right: 0,
+                            bottom: 0,
+                            borderRadius: 70,
+                            overflow: 'hidden',
+                            maxWidth: "100%",
+                            maxHeight: "100%",
+                            opacity: 0.3,
+                        }}
+                    />
+                </TouchableOpacity>
+            </Animated.View>
+
+            <View style={{
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: 20,
+                height: "30%",
+                width: "100%",
+            }}>
+                <AnimatedLottieView
+                    source={require('../../assets/gifs/RobotSearch.json')}
+                    autoPlay
+                    loop
+                />
+            </View>
+
+            {/* <KeyboardAwareScrollView
+                style={{ flex: 1, flexGrow: 1, backgroundColor: 'red', }}
+                contentContainerStyle={{ flex: 1, flexGrow: 1, }}
+                bounces={false}
+                onKeyboardWillShow={() => {
+                    toggleKeyboardVisible(true);
+                }}
+                onKeyboardWillHide={() => {
+                    toggleKeyboardVisible(false);
+                }}> */}
 
 
-                        <SvgXml xml={svgs.searchBookJoviBackground()}
-                            style={{
-                                position: 'absolute',
-                                left: 0,
-                                top: 0,
-                                right: 0,
-                                bottom: 0,
-                                borderRadius: 70,
-                                overflow: 'hidden',
-                                maxWidth: "100%",
-                                maxHeight: "100%",
-                                opacity: 0.3,
-                            }}
-                        />
-                    </TouchableOpacity>
-                </Animated.View>
-            </KeyboardAwareScrollView>
+            {/* </KeyboardAwareScrollView> */}
         </SafeAreaView>
     )
 }
