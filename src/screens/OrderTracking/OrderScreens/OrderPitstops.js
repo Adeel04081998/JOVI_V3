@@ -325,7 +325,7 @@ export default ({ route }) => {
                 <OrderEstTimeCard
                     imageHeight={IMAGE_SIZE * 0.6}
                     color={colors}
-                    right={{ value: state.totalPitstops }}
+                    right={{ value: state.totalPitstops-1 }}
                     middle={{
                         value: state.orderEstimateTimeViewModel ? state.orderEstimateTimeViewModel?.orderEstimateTime?.trim() : ' - ',
                     }}
