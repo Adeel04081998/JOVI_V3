@@ -170,11 +170,11 @@ const BottomBarComponent = (props: Props) => {
             setMaxWidth(w);
         }
     }, [orientation]);//end of dimension Effect
-    React.useEffect(()=>{
-        if(!isFocused&&isCloseIcon){
+    React.useEffect(() => {
+        if (!isFocused && isCloseIcon) {
             animateCenterButtonPress();
         }
-    },[isFocused]);
+    }, [isFocused]);
 
     // #endregion :: EFFECT's END's FROM HERE 
 
@@ -296,6 +296,9 @@ const BottomBarComponent = (props: Props) => {
             }} key={index}
                 disabled={!VALIDATION_CHECK(item.onPress)}
                 onPress={() => {
+                    if (isCloseIcon) {
+                        toggleCloseIcon(false);
+                    }
                     item.onPress && item.onPress();
                 }}>
                 {

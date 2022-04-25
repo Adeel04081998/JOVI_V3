@@ -187,6 +187,7 @@ export default ({ navigation, route }) => {
         getRequest(
             Endpoints.GET_RECENT_SEARCHES,
             res => {
+                console.log(`${Endpoints.GET_RECENT_SEARCHES} res ---  `, res);
                 const statusCode = res.data?.statusCode ?? 404;
                 if (statusCode === 200) {
                     updateRecentSearchedData(res.data.recentSearches)
@@ -227,8 +228,6 @@ export default ({ navigation, route }) => {
             toggleLoading(false);
         }
     }
-
-
 
     React.useEffect(() => {
         executeSearching(searchText);
@@ -506,70 +505,74 @@ const JoviJobUI = ({ }) => {
     })
     return (
         <SafeAreaView style={{ flex: 1, }}>
-
-            <View style={{
-                flex: 1,
-                alignItems: "center",
-                justifyContent: "center",
-                marginTop: 20,
-            }}>
-                <AnimatedLottieView
-                    source={require('../../assets/gifs/RobotSearch.json')}
-                    autoPlay
-                    loop
-                />
-            </View>
-            <Animated.View style={{
-                flex: 1,
-                alignItems: "flex-end",
-                justifyContent: "flex-end",
-                transform: [{ translateY: animate }]
-            }}>
-                <TouchableOpacity activeOpacity={1} wait={0}
-                    onPress={() => {
-                        sharedOnVendorPress({ pitstopType: PITSTOP_TYPES.JOVI }, 0)
-                    }}
-                    style={{
-                        minHeight: 250,
-                        width: "90%",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        alignSelf: "center",
-                        backgroundColor: '#6D51BB',
-                        borderRadius: 32,
-
-                    }}>
-
-                    <Text fontFamily='PoppinsMedium' style={{
-                        fontSize: 20,
-                        color: "#FFFFFF",
-                    }}>{`Couldn't find your Product ?`}</Text>
-                    <Text fontFamily='PoppinsLight' style={{
-                        fontSize: 30,
-                        color: "#FFFFFF",
-                    }}>{`Book a Jovi`}</Text>
-
-                    <View style={{ height: 75, width: 75, backgroundColor: "#fff", borderRadius: 75, alignItems: "center", justifyContent: "center", marginTop: 30, }}>
-                        <SvgXml xml={svgs.jovi()} height={60} width={60} />
-                    </View>
-
-
-                    <SvgXml xml={svgs.searchBookJoviBackground()}
-                        style={{
-                            position: 'absolute',
-                            left: 0,
-                            top: 0,
-                            right: 0,
-                            bottom: 0,
-                            borderRadius: 70,
-                            overflow: 'hidden',
-                            maxWidth: "100%",
-                            maxHeight: "100%",
-                            opacity: 0.3,
-                        }}
+            <KeyboardAwareScrollView
+                style={{ flex: 1, flexGrow: 1, }}
+                contentContainerStyle={{ flex: 1, flexGrow: 1, }}
+                bounces={false}>
+                <View style={{
+                    flex: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginTop: 20,
+                }}>
+                    <AnimatedLottieView
+                        source={require('../../assets/gifs/RobotSearch.json')}
+                        autoPlay
+                        loop
                     />
-                </TouchableOpacity>
-            </Animated.View>
+                </View>
+                <Animated.View style={{
+                    flex: 1,
+                    alignItems: "flex-end",
+                    justifyContent: "flex-end",
+                    transform: [{ translateY: animate }]
+                }}>
+                    <TouchableOpacity activeOpacity={1} wait={0}
+                        onPress={() => {
+                            sharedOnVendorPress({ pitstopType: PITSTOP_TYPES.JOVI }, 0)
+                        }}
+                        style={{
+                            minHeight: 250,
+                            width: "90%",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            alignSelf: "center",
+                            backgroundColor: '#6D51BB',
+                            borderRadius: 32,
+
+                        }}>
+
+                        <Text fontFamily='PoppinsMedium' style={{
+                            fontSize: 20,
+                            color: "#FFFFFF",
+                        }}>{`Couldn't find your Product ?`}</Text>
+                        <Text fontFamily='PoppinsLight' style={{
+                            fontSize: 30,
+                            color: "#FFFFFF",
+                        }}>{`Book a Jovi`}</Text>
+
+                        <View style={{ height: 75, width: 75, backgroundColor: "#fff", borderRadius: 75, alignItems: "center", justifyContent: "center", marginTop: 30, }}>
+                            <SvgXml xml={svgs.jovi()} height={60} width={60} />
+                        </View>
+
+
+                        <SvgXml xml={svgs.searchBookJoviBackground()}
+                            style={{
+                                position: 'absolute',
+                                left: 0,
+                                top: 0,
+                                right: 0,
+                                bottom: 0,
+                                borderRadius: 70,
+                                overflow: 'hidden',
+                                maxWidth: "100%",
+                                maxHeight: "100%",
+                                opacity: 0.3,
+                            }}
+                        />
+                    </TouchableOpacity>
+                </Animated.View>
+            </KeyboardAwareScrollView>
         </SafeAreaView>
     )
 }
