@@ -592,19 +592,6 @@ const JoviJobUI = ({ }) => {
                 />
             </View>
 
-            {/* <KeyboardAwareScrollView
-                style={{ flex: 1, flexGrow: 1, backgroundColor: 'red', }}
-                contentContainerStyle={{ flex: 1, flexGrow: 1, }}
-                bounces={false}
-                onKeyboardWillShow={() => {
-                    toggleKeyboardVisible(true);
-                }}
-                onKeyboardWillHide={() => {
-                    toggleKeyboardVisible(false);
-                }}> */}
-
-
-            {/* </KeyboardAwareScrollView> */}
         </SafeAreaView>
     )
 }
