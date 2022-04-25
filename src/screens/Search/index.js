@@ -3,7 +3,6 @@ import * as React from 'react';
 import { Animated, Appearance, FlatList, SafeAreaView } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-aware-scroll-view';
-import ChangeWindowManager from '../../../NativeModules/ChangeWindowManager';
 import svgs from '../../assets/svgs';
 import Image from '../../components/atoms/Image';
 import Text from '../../components/atoms/Text';
@@ -496,13 +495,6 @@ const JOVI_JOB_ICON_SIZE = {
 };
 const JoviJobUI = ({ }) => {
     const animate = React.useRef(new Animated.Value(100)).current;
-    const [isKeyboardVisible, toggleKeyboardVisible] = React.useState(false);
-    React.useEffect(() => {
-        ChangeWindowManager.setAdjustResize();
-        return () => {
-            ChangeWindowManager.setAdjustPan();
-        };
-    }, [])
     React.useEffect(() => {
         Animated.spring(
             animate, {
