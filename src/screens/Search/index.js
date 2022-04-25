@@ -182,11 +182,12 @@ export default ({ navigation, route }) => {
     React.useEffect(() => {
         loadRecentSearches();
         return () => { };
-    }, []);
+    }, [isRestaurantSelected]);
 
     const loadRecentSearches = () => {
+        const typ = isRestaurantSelected ? PITSTOP_TYPES.RESTAURANT : PITSTOP_TYPES.SUPER_MARKET;
         getRequest(
-            Endpoints.GET_RECENT_SEARCHES,
+            `${Endpoints.GET_RECENT_SEARCHES}/${typ}`,
             res => {
                 console.log(`${Endpoints.GET_RECENT_SEARCHES} res ---  `, res);
                 const statusCode = res.data?.statusCode ?? 404;
