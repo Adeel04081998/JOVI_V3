@@ -186,7 +186,8 @@ export default ({ navigation, route }) => {
     const loadRecentSearches = () => {
         const typ = isRestaurantSelected ? PITSTOP_TYPES.RESTAURANT : PITSTOP_TYPES.SUPER_MARKET;
         getRequest(
-            `${Endpoints.GET_RECENT_SEARCHES}/${typ}`,
+            // `${Endpoints.GET_RECENT_SEARCHES}/${typ}`,
+            `${Endpoints.GET_RECENT_SEARCHES}`,
             res => {
                 console.log(`${Endpoints.GET_RECENT_SEARCHES} res ---  `, res);
                 const statusCode = res.data?.statusCode ?? 404;
@@ -523,7 +524,7 @@ const JoviJobUI = ({ }) => {
                         // justifyContent: "center",
                         alignSelf: "center",
                         backgroundColor: '#6D51BB',
-                        borderRadius: 32,
+                        borderRadius: 16,
                         padding: constants.spacing_horizontal,
                     }}>
 
