@@ -26,6 +26,7 @@ import Greetings from './components/Greetings';
 import RenderBottomBarComponent from "./components/RenderBottomBarComponent";
 import Search from './components/Search';
 import stylesheet from './styles';
+
 export default () => {
     let initState = {
         "modalVisible": false,
