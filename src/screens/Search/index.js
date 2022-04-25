@@ -197,7 +197,6 @@ export default ({ navigation, route }) => {
                 }
             },
             err => {
-                sharedExceptionHandler(err);
             }, {}, false);
     }
 
