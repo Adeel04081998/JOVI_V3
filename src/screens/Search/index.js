@@ -186,7 +186,7 @@ export default ({ navigation, route }) => {
     const loadRecentSearches = () => {
         const typ = isRestaurantSelected ? PITSTOP_TYPES.RESTAURANT : PITSTOP_TYPES.SUPER_MARKET;
         getRequest(
-            // `${Endpoints.GET_RECENT_SEARCHES}/${typ}`,
+            // `${Endpoints.GET_RECENT_SEARCHES}/${typ}`, //ONCE SERVER IS UPDATE UNCOMMENT THIS LINE AND REMOVE BELOW LINE
             `${Endpoints.GET_RECENT_SEARCHES}`,
             res => {
                 console.log(`${Endpoints.GET_RECENT_SEARCHES} res ---  `, res);
