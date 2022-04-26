@@ -82,7 +82,7 @@ export default React.memo(({ pitstopType = 0, vendorDashboardCatID = 0, imageSty
             const DISTANCE = distance || estTime;
             return (
                 <TouchableOpacity activeOpacity={0.8} style={{ padding: 10 }} onPress={() => sharedOnVendorPress(item, index)}>
-                    <ImageBackground source={{ uri: renderFile(image) }} style={[styles.image_Small, imageStyles]} tapToOpen={false} >
+                    <ImageBackground source={{ uri: renderFile(image) }} imageStyle={{borderRadius:10}} style={[styles.image_Small, imageStyles]} tapToOpen={false} >
                         <CardDealHover colors={colors} text={item?.discountTitle ?? ''} />
                         <CardDealHover colors={colors} text={item?.discountPercentage ?? ''} />
                     </ImageBackground>
@@ -107,7 +107,7 @@ export default React.memo(({ pitstopType = 0, vendorDashboardCatID = 0, imageSty
             const DISTANCE = distance || estTime;
             return (
                 <TouchableOpacity activeOpacity={0.8} onPress={() => sharedOnVendorPress(item, index)}>
-                    <ImageBackground source={{ uri: renderFile(image) }} style={[styles.image, imageStyles]} tapToOpen={false} >
+                    <ImageBackground source={{ uri: renderFile(image) }} imageStyle={{borderRadius:10}} style={[styles.image, imageStyles]} tapToOpen={false} >
                         <CardDealHover colors={colors} text={item?.discountTitle ?? ''} />
                         <CardDealHover colors={colors} text={item?.discountPercentage ?? ''} />
                     </ImageBackground>
@@ -219,9 +219,9 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
 
     },
     image: {
-        height: height,
+        height: height+30,
         width: width,
-        borderRadius: 10
+        borderRadius: 10,
     },
     image_Small: {
         height: height_sm,

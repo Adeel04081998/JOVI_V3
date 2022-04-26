@@ -15,8 +15,8 @@ export default ({ maxHighlight = 0, DATA = DEFAULT_DATA, hideText = false, conta
         "1": "Cart",
         "2": "Checkout",
     }
-    const highlight = (i) => {
-        let clr = colors.grey;
+    const highlight = (i, falseColor = null) => {
+        let clr = falseColor ?? colors.grey;
         if (i < maxHighlight) clr = colors.primary
         return clr;
     }
@@ -32,14 +32,14 @@ export default ({ maxHighlight = 0, DATA = DEFAULT_DATA, hideText = false, conta
         }
     }
     const leftDecrement = {
-        1 : 0.25,
-        2 : 1,
-        3 : 0.75,
+        1: 0.25,
+        2: 1,
+        3: 0.75,
     }
     const rightDecrement = {
-        1 : 0,
-        2 : 1,
-        3 : 0,
+        1: 0,
+        2: 1,
+        3: 0,
     }
     const primaryPercentage = ((maxHighlight - leftDecrement[maxHighlight]) / (DATA.length - rightDecrement[maxHighlight])) * 100;
     return (
@@ -52,7 +52,7 @@ export default ({ maxHighlight = 0, DATA = DEFAULT_DATA, hideText = false, conta
                 {
                     DATA.map((p, i) => (
                         <React.Fragment key={`progress-key-${i}`}>
-                            <View style={[styles.circle, { borderColor: highlight(i) }, selectedCircleStyle]} />
+                            <View style={[styles.circle, { borderColor: highlight(i), backgroundColor: highlight(i, colors.white) }, selectedCircleStyle]} />
                         </React.Fragment>
                     ))
                 }

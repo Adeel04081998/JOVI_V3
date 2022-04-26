@@ -31,8 +31,8 @@ const pitstopTitles = {
     1: 'Supermarket',
     4: 'Restaurant',
     3: 'Pharmacy',
-    2: 'Jovi Job',
-    0: 'Jovi Job',
+    2: 'JOVI Job',
+    0: 'JOVI Job',
 };
 const ICON_BORDER = {
     color: "#E5E2F5",
@@ -169,14 +169,14 @@ export default ({ route }) => {
             {isRiderFound && <>
                 <TouchableOpacity onPress={() => onRiderCallPress()} style={styles.footerItemContainer}>
                     {renderCallIcon()}
-                    <Text style={{ marginLeft: 10, color: colors.black }}>Jovi Rider</Text>
+                    <Text style={{ marginLeft: 10, color: colors.black }}>JOVI Rider</Text>
                 </TouchableOpacity>
                 <View style={{ width: 1, height: 30, borderWidth: 1, borderColor: colors.black }}></View>
             </>
             }
             <TouchableOpacity onPress={() => openDialer(userReducer?.customerHelpNumber)} style={styles.footerItemContainer}>
                 {renderCallIcon()}
-                <Text style={{ marginLeft: 10, color: colors.black }}>Jovi Support</Text>
+                <Text style={{ marginLeft: 10, color: colors.black }}>JOVI Support</Text>
             </TouchableOpacity>
         </View>
     };
@@ -325,7 +325,7 @@ export default ({ route }) => {
                 <OrderEstTimeCard
                     imageHeight={IMAGE_SIZE * 0.6}
                     color={colors}
-                    right={{ value: state.totalPitstops }}
+                    right={{ value: state.totalPitstops-1 }}
                     middle={{
                         value: state.orderEstimateTimeViewModel ? state.orderEstimateTimeViewModel?.orderEstimateTime?.trim() : ' - ',
                     }}

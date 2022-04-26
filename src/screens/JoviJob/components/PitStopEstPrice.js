@@ -29,7 +29,7 @@ export default React.memo((props) => {
     // colors.primary will recieve value from colors.js file's colors
     const WIDTH = constants.window_dimensions.width
     const HEIGHT = constants.window_dimensions.height
-    const colors = props.colors?? theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
+    const colors = props.colors ?? theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
     const styles = joviJobStyles(colors, WIDTH, HEIGHT);
     const cartReducer = useSelector((store) => {
         return store.cartReducer;
@@ -39,7 +39,7 @@ export default React.memo((props) => {
 
 
     const getSliderStep = () => {
-        let step = Math.ceil(parseInt(remainingAmount) / 4);
+        let step = Math.ceil(parseInt(remainingAmount) / 10);
         // let step = Math.ceil((parseInt(remainingAmount) / 4) / 100) * 100;
         if (step < 1) {
             step = 1;
@@ -89,21 +89,25 @@ export default React.memo((props) => {
 
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }} >
-                    <View style={{ flexDirection: 'column', justifyContent: 'center', marginLeft: 20,...(props.bottomSectionStyles??{}) }}>
-                        <Text fontFamily="PoppinsRegular" style={{ fontSize: 14, color: colors.black }}>Remaining Amount</Text>
-                        <Text fontFamily="PoppinsBold" style={{ fontSize: 14, color: colors.primary }} >Rs {`${props.getRemainingAmount()}`}</Text>
-                    </View>
                     <TextInput
                         maxLength={5}
                         placeholder={"Type your amount"}
-                        containerStyle={{ width: WIDTH * 0.4, alignSelf: 'flex-end' }}
-                        style={{fontFamily: FontFamily.Poppins.Regular}}
+                        containerStyle={{ textAlign: 'flex-end', width: WIDTH * 0.4, borderWidth: 0.5, borderColor: colors.primary, backgroundColor: colors.white, alignSelf: 'flex-end' }}
+                        style={{
+                            fontFamily:props.textinputVal? FontFamily.Poppins.Bold:FontFamily.Poppins.Regular,
+                            textAlign: 'right',
+                            fontSize:13
+                        }}
                         value={`${props.textinputVal}`}
                         onChangeText={(text) => {
                             isSliderUse.current = false;
                             props.onChangeSliderText(text);
                         }}
                         keyboardType="number-pad" />
+                    <View style={{ flexDirection: 'column', justifyContent: 'center', marginRight: 20, ...(props.bottomSectionStyles ?? {}) }}>
+                        <Text fontFamily="PoppinsRegular" style={{ fontSize: 10, color: colors.black }}>Remaining Amount</Text>
+                        <Text fontFamily="PoppinsRegular" style={{ fontSize: 10, color: colors.primary }} >Rs {`${props.getRemainingAmount()}`}</Text>
+                    </View>
                 </View>
             </View>
         </View>

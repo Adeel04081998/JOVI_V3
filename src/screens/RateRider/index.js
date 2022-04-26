@@ -96,7 +96,7 @@ export default ({ navigation, route }) => {
     React.useEffect(() => {
         updateData(pre => ({
             ...pre,
-            heading: joviRatingTitle?.header ?? 'Rate your Jovi',
+            heading: joviRatingTitle?.header ?? 'Rate your JOVI',
             headingDescription: joviRatingTitle?.body ?? 'Your rating helps us improve',
         }))
     }, [joviRatingTitle]);
@@ -174,7 +174,7 @@ export default ({ navigation, route }) => {
     const [amount, setAmount] = React.useState('');
     const [ratingData, setRatingData] = React.useState([]);//ALL RATING GETTING FROM SERVER
     const [data, updateData] = React.useState({
-        heading: joviRatingTitle?.header ?? 'Rate your Jovi',
+        heading: joviRatingTitle?.header ?? 'Rate your JOVI',
         headingDescription: joviRatingTitle?.body ?? 'Your rating helps us to improve',
         commentData: [],
     })
@@ -389,7 +389,7 @@ export default ({ navigation, route }) => {
                         : <>
                             {/* ****************** Start of TIP SWITCH YES OR NO ****************** */}
                             <View style={styles.tipSwitchPrimaryContainer}>
-                                <Text style={styles.tipSwitchText}>{`Were you satisfied enough to tip your Jovi?`}</Text>
+                                <Text style={styles.tipSwitchText}>{`Were you satisfied enough to tip your JOVI?`}</Text>
 
                                 <View style={styles.tipSwitchContainer}>
                                     <Text style={styles.switchText}>{`No`}</Text>
