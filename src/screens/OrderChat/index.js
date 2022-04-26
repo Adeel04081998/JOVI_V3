@@ -544,25 +544,27 @@ export default ({ navigation, route }) => {
 
 
                             {/* ****************** Start of MIC ICON ****************** */}
-                            <RecordButton
-                                ref={recordButtonRef}
-                                stop={stopRecording}
-                                renderComposer={(val) => {
-                                    handleStart(val);
-                                    toggleMicTimer(val);
-                                }}
-                                onRecordAudio={(item) => {
-                                    const { onSend: propOnSend } = rsProps;
-                                    sendMessageToRider(CHAT_TYPE_ENUM.audio, null, item)
-                                    propOnSend({
-                                        _id: uuidGenerator(),
-                                        audio: item.uri,
-                                        isFile: true,
-                                        user: MY_USER, createdAt: new Date(),
-                                    }, true)
-                                    setStopRecording(false);
-                                }}
-                            />
+                            {!hasText &&
+                                <RecordButton
+                                    ref={recordButtonRef}
+                                    stop={stopRecording}
+                                    renderComposer={(val) => {
+                                        handleStart(val);
+                                        toggleMicTimer(val);
+                                    }}
+                                    onRecordAudio={(item) => {
+                                        const { onSend: propOnSend } = rsProps;
+                                        sendMessageToRider(CHAT_TYPE_ENUM.audio, null, item)
+                                        propOnSend({
+                                            _id: uuidGenerator(),
+                                            audio: item.uri,
+                                            isFile: true,
+                                            user: MY_USER, createdAt: new Date(),
+                                        }, true)
+                                        setStopRecording(false);
+                                    }}
+                                />
+                            }
 
                             {/* ****************** End of MIC ICON ****************** */}
 
