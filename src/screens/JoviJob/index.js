@@ -816,7 +816,7 @@ export default ({ navigation, route }) => {
             pitstopIndex: route?.params?.pitstopItemObj?.pitstopIndex ?? null, // on update will get from params, 
             title: locationVal,
             description: description.trim(),
-            pitstopName: 'Jovi Job',
+            pitstopName: 'JOVI Job',
             pitstopType: route.params?.pitstopItemObj?.pitstopType ?? route.params?.pitstopType,
             nameval: nameval.trim(),
             imageData,

@@ -529,7 +529,7 @@ const JoviJobUI = ({ }) => {
                     <Text fontFamily='PoppinsLight' style={{
                         fontSize: 30,
                         color: "#FFFFFF",
-                    }}>{`Book a Jovi`}</Text>
+                    }}>{`Book a JOVI`}</Text>
 
                     <View style={{ height: 75, width: 75, backgroundColor: "#fff", borderRadius: 75, alignItems: "center", justifyContent: "center", marginTop: 30, }}>
                         <SvgXml xml={svgs.jovi()} height={60} width={60} />

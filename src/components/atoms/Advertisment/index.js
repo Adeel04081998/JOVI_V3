@@ -4,7 +4,7 @@ import { postRequest } from '../../../manager/ApiManager';
 import Endpoints from '../../../manager/Endpoints';
 import ImageCarousel from '../../molecules/ImageCarousel';
 
-export default ({ adTypes = [], colors = {}, onAdPressCb = null, containerStyle = {}, propsData = [], uriKey = "advertisementFile", height, width, paginationContainerStyle = {}, paginationDotStyle = {}, onVendorMove= ()=>{} }) => {
+export default ({ adTypes = [], colors = {}, onAdPressCb = null, containerStyle = {}, propsData = [], uriKey = "advertisementFile", height, width, paginationContainerStyle = {}, paginationDotStyle = {}, onVendorMove = () => { } }) => {
     const [data, setData] = useState(propsData)
     const [isFirestoreHit, setisFirestoreHit] = useState(true)
     const onPressHandler = (item, index) => {
@@ -16,9 +16,15 @@ export default ({ adTypes = [], colors = {}, onAdPressCb = null, containerStyle 
         postRequest(Endpoints.GET_ADVERTISEMENTS, {
             "adTypes": adTypes
         }, res => {
-            const { bannerAds } = res.data.adListViewModel;
-            console.log('res --- GET_ADVERTISEMENTS', res);
-            setData(bannerAds)
+            // const { bannerAds } = res.data.adListViewModel;
+            // console.log('res --- GET_ADVERTISEMENTS', res);
+            // setData(bannerAds)
+            if (res.data.statusCode === 200) {
+                const { bannerAds } = res.data.adListViewModel;
+                setData(bannerAds)
+            } else {
+                setData([])
+            }
         }, err => { sharedExceptionHandler(err); });
     }
     React.useEffect(() => {
@@ -32,10 +38,10 @@ export default ({ adTypes = [], colors = {}, onAdPressCb = null, containerStyle 
         <ImageCarousel
             data={data ?? []}
             uriKey={uriKey}
-            containerStyle={[{ borderRadius: 12, marginHorizontal:0 ,marginLeft:6, marginRight:7 }]}
+            containerStyle={[{ borderRadius: 12, marginHorizontal: 0, marginLeft: 6, marginRight: 7 }]}
             height={height}
             width={width}
-            paginationDotStyle={[{ borderColor: colors.primary, backgroundColor: colors.primary}, paginationDotStyle,]}
+            paginationDotStyle={[{ borderColor: colors.primary, backgroundColor: colors.primary }, paginationDotStyle,]}
             onPress={onPressHandler}
             onActiveIndexChanged={(item, index) => {
                 if (isFirestoreHit) return
@@ -54,7 +60,7 @@ export default ({ adTypes = [], colors = {}, onAdPressCb = null, containerStyle 
             style={{ borderRadius: 10, }}
             pagination={data.length > 1 ? true : false}
 
-        
+
 
 
 
