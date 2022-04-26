@@ -1,6 +1,8 @@
 import React from 'react';
 import { Animated, Appearance, KeyboardAvoidingView, StatusBar, TouchableOpacity } from 'react-native';
+import { SvgXml } from 'react-native-svg';
 import { useSelector } from 'react-redux';
+import svgs from '../../assets/svgs';
 import Image from '../../components/atoms/Image';
 import SafeAreaView from '../../components/atoms/SafeAreaView';
 import Text from '../../components/atoms/Text';
@@ -447,6 +449,7 @@ export default ({ route }) => {
                                         disabled: doesPickupPitstopExists,
                                     }].map((item, i) => {
                                         return <TouchableOpacity key={i} onPress={() => toggleAttachment(item.value)} style={{ backgroundColor: item.selected ? colors.black : colors.white, ..._styles.prescriptionButton }}>
+                                            {item.text === "Attach File" && <SvgXml xml={svgs.attachFile(item.selected  ? colors.white : colors.black)} height={20} width={20} style={{ marginRight: 5, marginBottom: 3 }} />}
                                             <Text style={{ fontSize: 14, color: item.selected ? colors.white : colors.black }} fontFamily={'PoppinsLight'}>{item.text}</Text>
                                         </TouchableOpacity>
                                     })
@@ -506,7 +509,7 @@ export default ({ route }) => {
                                 }
                             </View> : null}
                         </>}
-                        <View style={{ ..._styles.subSection, }}>
+                        <View style={{ ..._styles.subSection,  ..._styles.borderTopRadius }}>
                             {renderSubHeading('Medicine Name')}
                             {
                                 renderInput({

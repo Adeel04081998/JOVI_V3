@@ -225,7 +225,10 @@ export default () => {
         return (
             <ScrollView
                 horizontal
-                style={{ height: 75, flexGrow: 0, paddingHorizontal: 15 }}
+                style={{ height: 75, flexGrow: 0, marginHorizontal: 15 }}
+                contentContainerStyle={{
+                    justifyContent: 'space-evenly'
+                }}
             >
                 {
                     (CustomerTransactionTypeEnum ?? []).map((item, index) => _renderItem(item, index))

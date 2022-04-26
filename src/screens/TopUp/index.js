@@ -188,11 +188,16 @@ export default () => {
       data,
       success => {
         console.log('[JazzCashHandler].success', success);
-        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.WebView.screen_name, {
-          uri: null,
-          html: success.data,
-          title: "Top Up"
-        })
+        const { jazzCashHtml, statusCode } = success.data
+        if (statusCode === 200) {
+          NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.WebView.screen_name, {
+            uri: null,
+            html: `${jazzCashHtml}`,
+            title: "Top Up"
+          })
+        } else {
+          sharedExceptionHandler(success)
+        }
         // const { statusCode, jazzCashAuthViewModel } = success.data;
         // if (statusCode === 200) {
         //   NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.WebView.screen_name, {
