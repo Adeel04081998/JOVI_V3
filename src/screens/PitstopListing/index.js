@@ -134,7 +134,7 @@ const PistopListingChild = React.memo(({ route, }) => {
     const { height, width } = SCALE_IMAGE;
     const colors = theme.getTheme(GV.THEME_VALUES[PITSTOP_TYPES_INVERTED[pitstopType]], Appearance.getColorScheme() === "dark");
     const listingStyles = stylesheet.styles(colors, width, height);
-    const [loadedData, setLoadedData] = useState(false)
+    const [loadedData, setLoadedData] = useState(vendorDashboardCategoryIDReducer?.length < 1 ? true : false)
     const isLoading = !loadedData;
 
     const filterValidations = {
@@ -219,8 +219,8 @@ const PistopListingChild = React.memo(({ route, }) => {
             placeholder={currentPitstopType.searchPlaceHolder}
             colors={colors}
             homeStyles={listingStyles}
-            onPress={()=>{
-                NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Search.screen_name,{pitstopType});
+            onPress={() => {
+                NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Search.screen_name, { pitstopType });
             }}
             onSearch={onSearchHandler}
             editable={false}
@@ -282,6 +282,7 @@ const PistopListingChild = React.memo(({ route, }) => {
             height={128}
             theme={colors}
         /> */}
+
         <View style={{ ...listingStyles.wrapper, paddingBottom: SPACING_VERTICAL, marginHorizontal: 0 }}>
             {vendorDashboardCategoryIDReducer.map((item, index) => {
                 return (
@@ -292,12 +293,14 @@ const PistopListingChild = React.memo(({ route, }) => {
                         vendorDashboardCatID={item.vendorDashboardCatID} cb={(loaded) => {
                             setLoadedData(loaded)
 
-                        }} />
+                        }}/>
                 )
             })}
 
         </View>
     </Animated.View>);
+
+
 
     const renderAllRestaurantsListing = () => (<Animated.View style={{
         ...listingStyles.wrapper,

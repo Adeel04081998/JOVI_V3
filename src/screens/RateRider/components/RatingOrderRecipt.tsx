@@ -26,6 +26,8 @@ interface Props {
     containerStyle?: StyleProp<ViewStyle>;
     estimateServiceTax: number;
     subTotal: number;
+    walletDeduction: number;
+    arrears: number;
 };
 
 const defaultProps = {
@@ -40,6 +42,8 @@ const defaultProps = {
     useScrollView: true,
     estimateServiceTax: 0,
     subTotal: 0,
+    walletDeduction: 0,
+    arrears: 0,
 };
 
 // const RatingOrderRecipt= ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData = [] }) => {
@@ -52,42 +56,42 @@ const RatingOrderRecipt = (props: Props) => {
     const RenderGSTServiceChargeUi = ({ }) => {
         return (
             <View style={{}}>
-                <View style={checkOutStyles.gstMainContainer}>
-                    <RenderGSTPrice1
-                        checkOutStyles={checkOutStyles}
-                        text={`Subtotal (Incl GST ${props.totalGST})`}
-                        value={props.subTotal}
-                    />
-                </View>
+                <RenderPrice
+                    checkOutStyles={checkOutStyles}
+                    text={`Subtotal (Incl GST ${props.totalGST})`}
+                    value={props.subTotal}
+                />
                 {/* <View style={checkOutStyles.gstMainContainer}>
-                    <RenderGSTPrice1
+                    <RenderPrice
                         checkOutStyles={checkOutStyles}
                         text={"Total Gst"}
                         value={props.totalGST}
                     />
                 </View> */}
-                <View style={{ marginHorizontal: 1 }}>
-                    <DashedLine dashLineStyles={{ color: "#707070" }} />
-                </View>
-                <RenderGSTPrice2
+                <RenderPrice
                     checkOutStyles={checkOutStyles}
                     text={"Total Discount"}
-                    value={props.discount}
+                    value={props.discount ? `- ${props.discount}` : 0}
                 />
-                <View style={{ marginHorizontal: 1 }}>
-                    <DashedLine dashLineStyles={{ color: "#707070" }} />
-                </View>
-                <View style={checkOutStyles.gstMainContainer}>
-                    <RenderGSTPrice1
-                        checkOutStyles={checkOutStyles}
-                        text={`Service Charge (Incl S.T ${props.estimateServiceTax})`}
-                        value={(props.serviceCharges + props.estimateServiceTax)}
-                    />
-                </View>
 
-                <View style={{ marginHorizontal: 1 }}>
-                    <DashedLine dashLineStyles={{ color: "#707070" }} />
-                </View>
+                <RenderPrice
+                    checkOutStyles={checkOutStyles}
+                    text={`Service Charge (Incl S.T ${props.estimateServiceTax})`}
+                    value={(props.serviceCharges + props.estimateServiceTax)}
+                />
+
+                <RenderPrice
+                    checkOutStyles={checkOutStyles}
+                    text={"Wallet Deduction"}
+                    value={props.walletDeduction ? `- ${props.walletDeduction}` : 0}
+                />
+
+                <RenderPrice
+                    checkOutStyles={checkOutStyles}
+                    text={"Arrears"}
+                    value={props.arrears}
+                />
+
                 <RenderTotal
                     checkOutStyles={checkOutStyles}
                     text={"Total"}
@@ -122,7 +126,7 @@ const RatingOrderRecipt = (props: Props) => {
                             .map((x, i) => {
                                 if (i === pitStops.length - 1) return;//final destination is not in receipt
                                 const isJoviJob = x.pitstopType === PITSTOP_TYPES.JOVI;
-                                let pitstopName = isJoviJob ? 'Jovi Job' : x.title
+                                let pitstopName = isJoviJob ? 'JOVI Job' : x.title
                                 const individualPitstopTotal = isJoviJob ? x.paidAmount : x.jobAmount;
                                 let isPharmacy = false;
                                 if (isJoviJob && VALIDATION_CHECK(x.pharmacyPitstopType === 0 ? null : x.pharmacyPitstopType)) {
@@ -166,6 +170,7 @@ interface PriceInter {
     checkOutStyles: any,
     text: any, value: any,
 }
+
 export const RenderGSTPrice1 = ({ checkOutStyles, text, value }: PriceInter) => {
     if (!VALIDATION_CHECK(value)) return null;
     return (
@@ -201,6 +206,23 @@ export const RenderTotal = ({ text, value }: PriceInter) => {
                 <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
                     <Text style={{ fontSize: 16, color: "#272727" }} fontFamily='PoppinsSemiBold' >{`${renderPrice({ showZero: true, price: value })}`}</Text>
                 </View>
+            </View>
+        </View>
+    )
+}
+
+export const RenderPrice = ({ checkOutStyles, text, value }: PriceInter) => {
+    if (!value) return null;
+    return (
+        <View style={{ paddingHorizontal: 5, padding: 2 }}>
+            <View style={checkOutStyles.gstPrimaryContainer}>
+                <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular'>{text}</Text>
+                <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
+                    <Text style={checkOutStyles.gstCommonPriceTxtStyle} fontFamily='PoppinsRegular'>{`${renderPrice({ price: value })}`}</Text>
+                </View>
+            </View>
+            <View style={{ marginHorizontal: 1 }}>
+                <DashedLine dashLineStyles={{ color: "#707070" }} />
             </View>
         </View>
     )

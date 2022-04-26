@@ -141,7 +141,7 @@ export default () => {
                 <Text style={{ marginLeft: 5, fontSize: 16 }}>Log Out</Text>
             </View>
             <View>
-                <Text style={{ fontSize: 16, }} fontFamily={'PoppinsLight'}>Jovi, v.{constants.app_version}</Text>
+                <Text style={{ fontSize: 16, }} fontFamily={'PoppinsLight'}>JOVI, v.{constants.app_version}</Text>
             </View>
         </TouchableOpacity>
     </View>

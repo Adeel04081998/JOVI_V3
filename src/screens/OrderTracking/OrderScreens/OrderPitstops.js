@@ -31,8 +31,8 @@ const pitstopTitles = {
     1: 'Supermarket',
     4: 'Restaurant',
     3: 'Pharmacy',
-    2: 'Jovi Job',
-    0: 'Jovi Job',
+    2: 'JOVI Job',
+    0: 'JOVI Job',
 };
 const ICON_BORDER = {
     color: "#E5E2F5",
@@ -132,7 +132,11 @@ export default ({ route }) => {
             title={'Order#: ' + orderIDParam}
             rightCustom={(
                 <TouchableScale wait={0} onPress={() => {
-                    NavigationService.NavigationActions.common_actions.goBack();
+                    if(route.params?.isFinalDestinationCompleted){
+                        NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderTracking.screen_name,{orderID:orderIDParam});
+                    }else{
+                        NavigationService.NavigationActions.common_actions.goBack();
+                    }
                 }}
                     style={styles.iconContainer}>
                     <SvgXml xml={svgs.order_chat_header_location(colors.primary)} height={HEADER_ICON_SIZE_LEFT} width={HEADER_ICON_SIZE_LEFT} />
@@ -140,7 +144,7 @@ export default ({ route }) => {
             )}
             leftCustom={(<>
                 <TouchableOpacity disabled={!isRiderFound} onPress={() => {
-                    NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderChat.screen_name, { orderID: orderIDParam, riderProfilePic: state.userPic, }, ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name)
+                    NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderChat.screen_name, { orderID: orderIDParam, riderProfilePic: state.userPic,isFinalDestinationCompleted:route.params?.isFinalDestinationCompleted }, ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name)
                 }} style={{ ...styles.iconContainer }}>
                     <VectorIcon size={25} name={'md-chatbubble-ellipses'} type={'Ionicons'} color={isRiderFound ? colors.primary : colors.grey} />
                 </TouchableOpacity>
@@ -165,14 +169,14 @@ export default ({ route }) => {
             {isRiderFound && <>
                 <TouchableOpacity onPress={() => onRiderCallPress()} style={styles.footerItemContainer}>
                     {renderCallIcon()}
-                    <Text style={{ marginLeft: 10, color: colors.black }}>Jovi Rider</Text>
+                    <Text style={{ marginLeft: 10, color: colors.black }}>JOVI Rider</Text>
                 </TouchableOpacity>
                 <View style={{ width: 1, height: 30, borderWidth: 1, borderColor: colors.black }}></View>
             </>
             }
             <TouchableOpacity onPress={() => openDialer(userReducer?.customerHelpNumber)} style={styles.footerItemContainer}>
                 {renderCallIcon()}
-                <Text style={{ marginLeft: 10, color: colors.black }}>Jovi Support</Text>
+                <Text style={{ marginLeft: 10, color: colors.black }}>JOVI Support</Text>
             </TouchableOpacity>
         </View>
     };
@@ -273,7 +277,7 @@ export default ({ route }) => {
             />
         </View>
     }
-    const { orderReceiptVM: { subTotal = 0, actualServiceTax = 0, actualServiceCharges = 0, actualTotalPlusPitstopAmount = 0, chargeBreakdown = {} } } = state;
+    const { orderReceiptVM: { subTotal = 0, actualServiceTax = 0, actualServiceCharges = 0, actualTotalPlusPitstopAmount = 0, chargeBreakdown = {}, arrears = 0, walletDeduction = 0 } } = state;
     const { discount = 0, totalProductGST = 0, } = chargeBreakdown;
     const Totals = () => {
         const row = (caption = '', value = 0, isBold = false, showDashed = true) => {
@@ -307,7 +311,10 @@ export default ({ route }) => {
                 {row(`Subtotal (Inc GST ${totalProductGST})`, subTotal, false)}
                 {discount ? row('Total Discount', `- ${discount}`) : null}
                 {row(`Service Charges (Incl S.T ${actualServiceTax})`, (actualServiceTax + actualServiceCharges))}
+                {walletDeduction ? row('Wallet Deduction', `- ${walletDeduction}`) : null}
+                {arrears ? row('Arrears', `${arrears}`) : null}
                 {row('Total', actualTotalPlusPitstopAmount, true, false)}
+
             </View>
         );
     };
@@ -318,7 +325,7 @@ export default ({ route }) => {
                 <OrderEstTimeCard
                     imageHeight={IMAGE_SIZE * 0.6}
                     color={colors}
-                    right={{ value: state.totalPitstops }}
+                    right={{ value: state.totalPitstops-1 }}
                     middle={{
                         value: state.orderEstimateTimeViewModel ? state.orderEstimateTimeViewModel?.orderEstimateTime?.trim() : ' - ',
                     }}

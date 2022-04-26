@@ -45,9 +45,12 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
             totalItems: null,
         }
     });
-    const getData = () => {
+    const getData = (isResetRecord = false) => {
         isRequestSent.current = true;
         setState(pre => ({ ...pre, isLoading: true }));
+        if (isResetRecord) {
+            setState(pre => ({ ...pre, pitstopListViewModel: { list: [] } }));
+        }
         postRequest(Endpoints.GET_PITSTOPS, {
             "latitude": finalDestination.latitude ?? 0,
             "longitude": finalDestination.longitude ?? 0,
@@ -62,7 +65,7 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
                     'categoryID': filters.cuisines[0] ?? '',
                 },
             "pitstopType": pitstopType,
-            "applyDiscountFilter":filters?.filter[0]?true:false,
+            "applyDiscountFilter": filters?.filter[0] ? true : false,
         }, (res) => {
             setTimeout(() => {
                 isRequestSent.current = false;
@@ -117,7 +120,7 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
             pageNumber: 1,
             itemsPerPage: ITEMS_PER_PAGE
         }
-        getData();
+        getData(true);
     }
     React.useEffect(() => {
         if ((fetchPitstopsFlagParent) && state.pitstopListViewModel.list.length > 0 && !isRequestSent.current) {
