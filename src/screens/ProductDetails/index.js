@@ -230,6 +230,7 @@ export default (props) => {
                 actionKey: propItem.pitStopItemID ? "pitStopItemID" : "pitStopDealID",
                 estimatePrepTime: pitstopType === PITSTOP_TYPES.RESTAURANT ? generalProductOrDealDetail.estimateTime : "",
                 totalJoviDiscount: state.totalJoviDiscount,
+                _clientGstAddedPrice: generalProductOrDealDetail.gstAddedPrice,
                 ...!selectedOptions.length ? { ...sharedAddToCartKeys(null, { ...state.generalProductOrDealDetail, pitstopType }).item } : {},
 
             },
@@ -525,7 +526,7 @@ export default (props) => {
                                             multiline={true} // ios fix for centering it at the top-left corner 
                                             numberOfLines={Platform.OS === "ios" ? null : numberOfLines}
                                             returnKeyType='done'
-                                            // value={notes}
+                                        // value={notes}
                                         />
                                     </View>
                                     : null}

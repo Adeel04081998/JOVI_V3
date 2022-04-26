@@ -705,7 +705,7 @@ export const sharedGetServiceCharges = (payload = null, successCb = () => { }) =
                     "gstAmount": product._totalGst,
                     "quantity": product.quantity,
                     "pitStopType": item.pitstopType,
-                    "pitstopID": item.marketID,
+                    "pitstopID": item.marketID || item.pitstopID || 0,
                     "pitstopItemID": product.pitStopItemID
                 });
             });
@@ -949,7 +949,8 @@ export const sharedAddToCartKeys = (restaurant = null, item = null) => {
         item._toCalculateDiscountOnAmount = item.actualPrice || item.itemPrice || item.gstAddedPrice;
         item._totalDiscount = item?.discountType === ENUMS.DISCOUNT_TYPES.Percentage ? sharedDiscountsCalculator(item._toCalculateDiscountOnAmount, item.discountAmount)._discountAmount : item.discountAmount; // if discount type is fixed then discount amount would be the discounted price
         item._totalGst = item.gstAmount;
-        item._totalJoviDiscount = sharedCalculateJoviDiscount(item)
+        item._clientGstAddedPrice = item.gstAddedPrice;
+        item._totalJoviDiscount = sharedCalculateJoviDiscount(item);
     }
     return {
         restaurant,
@@ -980,13 +981,13 @@ export const sharedCalculatedTotals = () => {
     const { subTotal = 0, discount = 0, serviceCharges = 0, serviceTax = 0, genericDiscount = 0, total = 0, gst = 0, itemsTotalWithDiscounts = 0 } = store.getState().cartReducer;
     const _serviceCharges = serviceCharges + serviceTax;
     return {
-        gst:Math.round(gst),
+        gst: Math.round(gst),
         serviceTax: Math.round(serviceTax),
-        serviceCharges: Math.round(_serviceCharges) ,
-        discount: Math.round( discount + genericDiscount),
-        subTotal:Math.round(subTotal),
-        total: Math.round( total + _serviceCharges),
-        itemsTotalWithDiscounts: Math.round(itemsTotalWithDiscounts + _serviceCharges) ,
+        serviceCharges: Math.round(_serviceCharges),
+        discount: Math.round(discount + genericDiscount),
+        subTotal: Math.round(subTotal),
+        total: Math.round(total + _serviceCharges),
+        itemsTotalWithDiscounts: Math.round(itemsTotalWithDiscounts + _serviceCharges),
     }
 
 }
@@ -1012,7 +1013,7 @@ export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder 
     // '16' order completed at index 7
     // '2' Chat message at INDEX 8
     // "21" Final Destination changed at index 9
-    const notificationTypes = ["1", "11", "12", "13", "14", "18", "17", "16", "2", "21","22"]
+    const notificationTypes = ["1", "11", "12", "13", "14", "18", "17", "16", "2", "21", "22"]
     console.log('fcmReducer------OrderPitstops', fcmReducer);
     const jobNotify = fcmReducer.notifications?.find(x => (x.data && (notificationTypes.includes(`${x.data.NotificationType}`))) ? x : false) ?? false;
     if (jobNotify) {
@@ -1202,50 +1203,83 @@ export const sharedVerifyCartItems = () => {
             Endpoints.VERIFY_CART_ITEMS,
             payload,
             res => {
-                // console.log("[VERIFY_CART_ITEMS].res", res);
+                console.log("[VERIFY_CART_ITEMS].res", res);
                 const { statusCode = 200, productList = [] } = res.data;
                 if (statusCode === 200) {
                     let is_difference = false;
                     let removedItems = [];
+                    // console.log("Pitstops", pitstops);
                     let modifiedPitstops = pitstops.map((_pitstop, j) => {
-                        if (_pitstop.checkOutItemsListVM) {
-                            let modifiedCheckOutItemsListVM = [..._pitstop.checkOutItemsListVM];
-                            const findItem = productList.find(x => modifiedCheckOutItemsListVM.find(y => {
-                                if ((y.pitStopItemID && (y.pitStopItemID === x.pitStopItemID)) || (y.pitStopDealID && (y.pitStopDealID === x.pitStopDealID))) {
-                                    return x; // Because we need server's item to check statuses
-                                }
-                            }))
-                            // console.log("findItem", findItem);
-                            if (findItem) {
-                                modifiedCheckOutItemsListVM = modifiedCheckOutItemsListVM.filter((item, index) => {
-                                    // console.log("item", item);
-                                    const condition = (findItem.availabilityStatus == ENUMS.AVAILABILITY_STATUS.Available && item.gstAddedPrice == findItem.gstAddedPrice && item.discountType == findItem.discountType && findItem.pitStopStatus == 1);
-                                    if ((item.pitStopItemID && (item.pitStopItemID === findItem.pitStopItemID) && condition) || (item.pitStopDealID && (item.pitStopDealID === findItem.pitStopDealID && condition))) {
-                                        // console.log("Came...");
-                                        return item;
-                                    } else {
-                                        removedItems.push(item)
-                                        is_difference = true;
+                        const checkOutItemsListVM = _pitstop.checkOutItemsListVM || null;
+                        if (checkOutItemsListVM) {
+                            for (let index = 0; index < _pitstop.checkOutItemsListVM.length; index++) {
+                                for (let j = 0; j < productList.length; j++) {
+                                    const clientItem = checkOutItemsListVM[index];
+                                    const serverItem = productList[j];
+                                    const clientItemID = clientItem && (clientItem.pitStopItemID || clientItem.pitStopDealID);
+                                    const serverItemID = serverItem && (serverItem.pitStopItemID || serverItem.pitStopDealID);
+                                    if ((clientItem && serverItem && (clientItemID || serverItemID)) && clientItemID === serverItemID) {
+                                        // 1725 => Desi Ghee 1kg,  439 => The Chicken Wooper, 234 => "Cheese Tomato"
+                                        const condition = (serverItem.availabilityStatus === ENUMS.AVAILABILITY_STATUS.Available && serverItem.gstAddedPrice === clientItem._clientGstAddedPrice && serverItem.discountType === clientItem.discountType && serverItem.pitStopStatus === 1);
+                                        console.log("condition", condition)
+                                        if (!condition) {
+                                            console.log("clientItem", clientItem)
+                                            console.log("serverItem", serverItem)
+                                            is_difference = true;
+                                            _pitstop['checkOutItemsListVM'] = checkOutItemsListVM.filter((item, index) => {
+                                                const cartItemID = item.pitStopItemID || item.pitStopDealID;
+                                                if (cartItemID !== serverItemID) {
+                                                    removedItems.push({ ...item, marketName: _pitstop.pitstopName });
+                                                    return item;
+                                                }
+                                            })
+                                        }
                                     }
-                                })
+                                }
                             }
-                            // console.log("modifiedCheckOutItemsListVM", modifiedCheckOutItemsListVM);
-                            _pitstop.checkOutItemsListVM = modifiedCheckOutItemsListVM;
-
                         }
                         return _pitstop;
-                    })
-                    // console.log("is_difference,  modifiedPitstops,removedItems ", is_difference, modifiedPitstops, removedItems);
+                    }).filter(_p => _p.isJoviJob ? _p : _p.checkOutItemsListVM.length)
+
+                    // let modifiedPitstops = pitstops.map((_pitstop, j) => {
+                    //     if (_pitstop.checkOutItemsListVM) {
+                    //         let modifiedCheckOutItemsListVM = [..._pitstop.checkOutItemsListVM];
+                    //         const findItem = productList.find(x => modifiedCheckOutItemsListVM.find(y => {
+                    //             if ((y.pitStopItemID && (y.pitStopItemID === x.pitStopItemID)) || (y.pitStopDealID && (y.pitStopDealID === x.pitStopDealID))) {
+                    //                 return x; // Because we need server's item to check statuses
+                    //             }
+                    //         }))
+                    //         console.log("findItem", findItem);
+                    //         if (findItem) {
+                    //             modifiedCheckOutItemsListVM = modifiedCheckOutItemsListVM.filter((item, index) => {
+                    //                 console.log("item", item);
+                    //                 const condition = (findItem.availabilityStatus == ENUMS.AVAILABILITY_STATUS.Available && item.gstAddedPrice == findItem.gstAddedPrice && item.discountType == findItem.discountType && findItem.pitStopStatus == 1);
+                    //                 if ((item.pitStopItemID && (item.pitStopItemID === findItem.pitStopItemID) && condition) || (item.pitStopDealID && (item.pitStopDealID === findItem.pitStopDealID && condition))) {
+                    //                     console.log("Came...");
+                    //                     return item;
+                    //                 } else {
+                    //                     removedItems.push(item)
+                    //                     is_difference = true;
+                    //                 }
+                    //             })
+                    //         }
+                    //         console.log("modifiedCheckOutItemsListVM", modifiedCheckOutItemsListVM);
+                    //         _pitstop.checkOutItemsListVM = modifiedCheckOutItemsListVM;
+
+                    //     }
+                    //     return _pitstop;
+                    // })
+                    console.log("is_difference,  modifiedPitstops,removedItems ", is_difference, modifiedPitstops, removedItems);
                     if (is_difference) {
-                        modifiedPitstops = modifiedPitstops.filter(x => x.isJoviJob ? x : x.checkOutItemsListVM.length);
-                        if (modifiedPitstops.length) {
-                            const alertStr = removedItems.map(item => (item.pitStopItemName || item.pitStopDealName)).join(", \n");
-                            Toast.info(`${alertStr} no more available!`, 5000)
-                            sharedAddUpdatePitstop(null, false, modifiedPitstops)
-                        } else {
+                        if (!modifiedPitstops.length) {
                             Toast.info(`Items no more available`);
                             dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
                             NavigationService.NavigationActions.common_actions.goBack();
+                        }
+                        else if (removedItems.length) {
+                            const alertStr = removedItems.map(item => (`${item.marketName}: \n ${item.pitStopItemName || item.pitStopDealName}`)).join(", \n");
+                            Toast.info(`${alertStr} no more available in market!`, 5000)
+                            sharedAddUpdatePitstop(null, false, modifiedPitstops)
                         }
                     } else {
                         console.log("Not any difference");
@@ -1284,7 +1318,7 @@ export const sharedSendFileToServer = (list = [], onSuccess = () => { }, type = 
         formData.append(`JoviImageList[${index}].JoviImageID`, 0);
         formData.append(`JoviImageList[${index}].FileType`, type);
         formData.append(`JoviImageList[${index}].FileExtensionType`, extension);
-        if(type === 21){
+        if (type === 21) {
             formData.append(`JoviImageList[${index}].audioDuration`, item.duration);
         }
         index += 1;
