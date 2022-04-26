@@ -50,6 +50,7 @@ export default ({ navigation, route }) => {
 
     // #region :: STATE & REF's START's FROM HERE 
     const [isRestaurantSelected, toggleIsRestaurantSelected] = React.useState(route.params.pitstopType === 1 ? false : true);
+    const isRestaurantSelectedRef = React.useRef(route.params.pitstopType === 1 ? false : true);
     const [showProductVendor, toggleShowProductVendor] = React.useState(isFromListing);
     const [showJoviJob, toggleShowJoviJob] = React.useState(false);
     const [searchText, setSearchText] = React.useState('');
@@ -65,6 +66,7 @@ export default ({ navigation, route }) => {
         return (
             <TouchableScale wait={0} onPress={() => {
                 toggleIsRestaurantSelected(!isRestaurantSelected);
+                isRestaurantSelectedRef.current = !isRestaurantSelectedRef.current;
             }} disabled={selected}
                 style={{
                     flex: 1,
@@ -156,6 +158,10 @@ export default ({ navigation, route }) => {
                                         debounceInputSearch(text);
 
                                     }}
+                                    searchIconPressDisable={false}
+                                    onSearch={(text) => {
+                                        executeSearching(text);
+                                    }}
                                 />
                             </View>
                         )
@@ -180,11 +186,12 @@ export default ({ navigation, route }) => {
 
     React.useEffect(() => {
         loadRecentSearches();
+        executeSearching(searchText);
         return () => { };
     }, [isRestaurantSelected]);
 
     const loadRecentSearches = () => {
-        const typ = isRestaurantSelected ? PITSTOP_TYPES.RESTAURANT : PITSTOP_TYPES.SUPER_MARKET;
+        const typ = isRestaurantSelectedRef.current ? PITSTOP_TYPES.RESTAURANT : PITSTOP_TYPES.SUPER_MARKET;
         getRequest(
             // `${Endpoints.GET_RECENT_SEARCHES}/${typ}`, //ONCE SERVER IS UPDATE UNCOMMENT THIS LINE AND REMOVE BELOW LINE
             `${Endpoints.GET_RECENT_SEARCHES}`,
@@ -230,10 +237,6 @@ export default ({ navigation, route }) => {
         }
     }
 
-    React.useEffect(() => {
-        executeSearching(searchText);
-    }, [isRestaurantSelected])
-
     const showJOVIJob = () => {
         toggleShowJoviJob(true);
     }
@@ -248,11 +251,14 @@ export default ({ navigation, route }) => {
         })
     }
 
-    const searching = (text = `${searchText}`.trim()) => {
-        const selectedKey = isRestaurantSelected ? "restaurant" : "grocery";
+    const searching = (text) => {
+        const selectedKey = isRestaurantSelectedRef.current ? "restaurant" : "grocery";
         if (`${text}`.toLowerCase() === `${searchData[selectedKey].text}`.toLowerCase()) {
-            if (text.length > 0)
+            if (searchData[selectedKey].data.length < 1) {
                 showJOVIJob();
+            } else {
+                hideJOVIJob();
+            }
             return;
         }
         if (text.length < 1) {
@@ -262,10 +268,12 @@ export default ({ navigation, route }) => {
         const params = {
             "userID": null,
             "searchTxt": text,
-            "pitstopType": isRestaurantSelected ? PITSTOP_TYPES.RESTAURANT : PITSTOP_TYPES.SUPER_MARKET,
+            "pitstopType": isRestaurantSelectedRef.current ? PITSTOP_TYPES.RESTAURANT : PITSTOP_TYPES.SUPER_MARKET,
         }
         toggleLoading(true);
+        console.log(`${Endpoints.SEARCH} PARAMS ---  `, params);
         postRequest(Endpoints.SEARCH, params, (res) => {
+            console.log(`${Endpoints.SEARCH} res ---  `, res);
             const statusCode = res.data?.statusCode ?? 404;
             if (statusCode === 200) {
                 const searchedResData = res.data?.mainSearchResults ?? [];
