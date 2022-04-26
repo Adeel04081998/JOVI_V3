@@ -26,6 +26,7 @@ import { store } from '../../redux/store';
 import constants from '../../res/constants';
 import FontFamily from '../../res/FontFamily';
 import theme from '../../res/theme';
+import CustomInterval from '../../utils/CustomInterval';
 import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import { headerStyles, stylesFunc } from './styles';
 dayjs.extend(customParseFormat)
@@ -173,14 +174,19 @@ export default ({ navigation, route }) => {
         }
 
 
-        BackgroundTimer.stopBackgroundTimer();
+        // BackgroundTimer.stopBackgroundTimer();
+        CustomInterval.stopInterval();
 
     }
 
     const handleStart = (value) => {
         if (value) {
             resetTimer();
-            BackgroundTimer.runBackgroundTimer(() => {
+            // BackgroundTimer.runBackgroundTimer(() => {
+
+            CustomInterval.handleInterval(() => {
+
+
                 if (time.current.sec !== 59) {
                     if (time.current.min >= constants.recording_duration_max_limit) {
                         setStopRecording(true);
@@ -209,7 +215,8 @@ export default ({ navigation, route }) => {
                         sec: 0
                     }
                 }
-            }, 1000);
+            }, 1);
+            // }, 1000);
 
         } else {
             recordButtonRef.current.setDuration(`${padToTwo(time.current.min)} : ${padToTwo(time.current.sec)}`)
