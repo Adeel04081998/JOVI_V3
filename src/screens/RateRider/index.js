@@ -32,7 +32,7 @@ import Toast from '../../components/atoms/Toast';
 const HEADER_ICON_SIZE_RIGHT = CustomHeaderIconBorder.size * 0.7;
 const RATING_SIZE = constants.window_dimensions.height * 0.3;
 let selectedItem = null;
-const DEFAULT_RATING_NUMBER = 4;
+const DEFAULT_RATING_NUMBER = 5;
 
 
 const RATING_JSON = {
@@ -362,7 +362,7 @@ export default ({ navigation, route }) => {
 
                 {/* ****************** Start of BOTTOM VIEW ****************** */}
                 <View style={{ flex: 5, }}>
-                    <Text fontFamily='PoppinsLight' style={styles.optionHeading}>{`What could've been better?`}</Text>
+                    {rating<4&&<Text fontFamily='PoppinsLight' style={styles.optionHeading}>{`What could've been better?`}</Text>}
 
                     {rating < 4 ?
                         <>
@@ -388,7 +388,7 @@ export default ({ navigation, route }) => {
                         </>
                         : <>
                             {/* ****************** Start of TIP SWITCH YES OR NO ****************** */}
-                            <View style={styles.tipSwitchPrimaryContainer}>
+                            {/* <View style={styles.tipSwitchPrimaryContainer}>
                                 <Text style={styles.tipSwitchText}>{`Were you satisfied enough to tip your JOVI?`}</Text>
 
                                 <View style={styles.tipSwitchContainer}>
@@ -409,13 +409,13 @@ export default ({ navigation, route }) => {
                                         />
                                     </View>
                                     <Text style={styles.switchText}>{`Yes`}</Text>
-                                </View>
-                            </View>
+                                </View>//https://cibak.atlassian.net/browse/JV3-1997
+                            </View> */}
 
                             {/* ****************** End of TIP SWITCH YES OR NO ****************** */}
                         </>
                     }
-                    {(switchVal && rating > 3) && (
+                    {/* {(switchVal && rating > 3) && (
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginHorizontal: "10%", marginTop: 6 }}>
                             <Text style={{
                                 fontSize: 13,
@@ -450,9 +450,9 @@ export default ({ navigation, route }) => {
                             />
 
 
-                        </View>
+                        </View>//https://cibak.atlassian.net/browse/JV3-1997    Commenting tip option for now
                     )
-                    }
+                    } */}
 
                     {/* ****************** Start of RATING SLIDER ****************** */}
                     <RatingSliderUI
@@ -486,7 +486,8 @@ export default ({ navigation, route }) => {
                 />
 
                 <TextWithBoxUI
-                    disabled={rating < 4 ? disableSubmit : (switchVal ? (!VALIDATION_CHECK(amount)) : switchVal)}
+                    disabled={rating < 4 ? disableSubmit : false}
+                    // disabled={rating < 4 ? disableSubmit : (switchVal ? (!VALIDATION_CHECK(amount)) : switchVal)} // https://cibak.atlassian.net/browse/JV3-1997 tip option is commented
                     colors={colors}
                     text={`Submit`}
                     onPress={() => { onSubmitPress(); }}
