@@ -25,6 +25,7 @@ import NoInternetModal from "./src/components/atoms/NoInternetModal";
 import { _toastRef } from "./src/components/atoms/Toast";
 import View from './src/components/atoms/View';
 import BaseUrlPrompt from "./src/components/molecules/BaseUrlPrompt";
+import CustomAlert from "./src/components/molecules/CustomAlert";
 import Robot from './src/components/organisms/Robot';
 import { sharedClearReducers, sharedGetDashboardCategoryIApi, sharedGetEnumsApi, sharedGetFilters, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedSendFCMTokenToServer } from './src/helpers/SharedActions';
 import { postRequest } from './src/manager/ApiManager';
@@ -73,7 +74,8 @@ const CODE_PUSH_OPTIONS = {
 };
 
 const App = () => {
-    const { visible } = useSelector(state => state.modalReducer)
+    const modalReducer = useSelector(state => state.modalReducer)
+    const {visible} = modalReducer;
     const [state, setState] = React.useState({ appLoaded: false });
     const userReducer = useSelector(state => state.userReducer);
     const isFinalDestinationSelected = userReducer.finalDestObj;
@@ -264,6 +266,7 @@ const App = () => {
                         {isFinalDestinationSelected && <GenericPopUp />}
                     </View>
                 </NavigationContainer>
+                {modalReducer?.customAlertVisible&&<CustomAlert customAlertDetails={modalReducer.customAlertDetails} />}
                 <Robot />
                 <Toast
                     config={toastConfig}

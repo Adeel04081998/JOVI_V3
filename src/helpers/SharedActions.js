@@ -280,8 +280,18 @@ export const sharedStartingRegionPK = {
     longitudeDelta: 15.910217463970177
 };
 
-export const sharedConfirmationAlert = (title, message, buttons = [], options = { cancelable: true, onDismiss: () => { } }) => {
-    Alert.alert(title, message, buttons, options)
+export const sharedConfirmationAlert = (title, message, buttons = [], options = { cancelable: true, onDismiss: () => { } }, customAlert = null) => {
+    if (customAlert) {
+        store.dispatch(actions.setCustomAlertAction({
+            title,
+            message,
+            okButton: customAlert.okButton,
+            cancelButton: customAlert.cancelButton,
+            options,
+        }))
+    } else {
+        Alert.alert(title, message, buttons, options)
+    }
 }
 export const secToHourMinSec = (sec = 1,) => {
     let totalSeconds = parseInt(sec);

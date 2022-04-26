@@ -75,18 +75,12 @@ export default () => {
         )
 
     };
-    const deleteAddressWarn = (addressObj, index) => sharedConfirmationAlert("Alert", "Are You sure you want to delete the address?", [
-        {
-            text: "OK",
-            onPress: () => { deleteAddressHandler(addressObj, index) }
-        },
-        {
-            text: "Cancel",
-            onPress: () => {
-                console.log('cancel pressed');
-            }
-        },
-    ])
+    const deleteAddressWarn = (addressObj, index) => sharedConfirmationAlert("Alert", "Are You sure you want to delete the address?", null,null,{
+        cancelButton: { text: "No", onPress: () => { } },
+            okButton: {
+                text: "Yes", onPress: () => { deleteAddressHandler(addressObj, index) }
+            },
+    })
     const updateFinalDestination = (fd) => {
         isFromEdit = true;
         lastLoc = fd;
