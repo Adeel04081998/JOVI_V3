@@ -1,7 +1,7 @@
 import { Dimensions } from "react-native";
 export default {
     DEFAULT_JOVI_IMAGE: require('../assets/Logo/image_default.png'),
-    app_version: '6.9',
+    app_version: '6.10',
     url_qa: "https://qa-api.jovi-app.com",
     url_qasprint_v1: "https://qasprintv1-api.jovi-app.com",
     url_dev: "https://dev-api.jovi-app.com",
