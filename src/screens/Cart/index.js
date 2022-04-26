@@ -215,22 +215,20 @@ export default () => {
             <TouchableScale onPress={() => {
               sharedConfirmationAlert(
                 "Alert!", "Are you sure you want to clear the pitstop?",
-                [
-                  {
-                    text: "No",
-                    onPress: () => { }
-                  },
-                  {
-                    text: "Yes",
-                    onPress: () => sharedAddUpdatePitstop({ pitstopIndex, pitstopType }, true, [], false, false, () => {
-                      if ((cartReducer.pitstops.length - 1) <= 0) {
-                        NavigationService.NavigationActions.common_actions.goBack()
-                      } else {
-
-                      }
-                    })
-                  },
-                ]
+                null,
+                null,
+                {
+                    cancelButton: { text: "No", onPress: () => { } },
+                    okButton: {
+                        text: "Yes", onPress: () => sharedAddUpdatePitstop({ pitstopIndex, pitstopType }, true, [], false, false, () => {
+                            if ((cartReducer.pitstops.length - 1) <= 0) {
+                              NavigationService.NavigationActions.common_actions.goBack()
+                            } else {
+      
+                            }
+                          })
+                    },
+                }
               )
             }} >
               <Text
@@ -526,22 +524,19 @@ export default () => {
               onPress={() => {
                 sharedConfirmationAlert(
                   "Alert!", "Are you sure you want to clear entire cart?",
-                  [
-                    {
-                      text: "No",
-                      onPress: () => { }
+                  null,
+                  null,
+                  {
+                    cancelButton: { text: "No", onPress: () => { } },
+                    okButton: {
+                        text: "Yes", onPress: () => {
+                            dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
+                            setTimeout(() => {
+                              NavigationService.NavigationActions.common_actions.goBack();
+                            }, 0);
+                          }
                     },
-                    {
-                      text: "Yes",
-                      onPress: () => {
-                        dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
-                        setTimeout(() => {
-                          NavigationService.NavigationActions.common_actions.goBack();
-                        }, 0);
-                      }
-                    },
-                  ],
-                  { cancelable: false }
+                  }
                 )
               }}
             >

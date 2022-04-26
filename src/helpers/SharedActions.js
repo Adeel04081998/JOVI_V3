@@ -280,8 +280,18 @@ export const sharedStartingRegionPK = {
     longitudeDelta: 15.910217463970177
 };
 
-export const sharedConfirmationAlert = (title, message, buttons = [], options = { cancelable: true, onDismiss: () => { } }) => {
-    Alert.alert(title, message, buttons, options)
+export const sharedConfirmationAlert = (title, message, buttons = [], options = { cancelable: true, onDismiss: () => { } }, customAlert = null) => {
+    if (customAlert) {
+        store.dispatch(actions.setCustomAlertAction({
+            title,
+            message,
+            okButton: customAlert.okButton,
+            cancelButton: customAlert.cancelButton,
+            options,
+        }))
+    } else {
+        Alert.alert(title, message, buttons, options)
+    }
 }
 export const secToHourMinSec = (sec = 1,) => {
     let totalSeconds = parseInt(sec);
@@ -980,13 +990,13 @@ export const sharedCalculatedTotals = () => {
     const { subTotal = 0, discount = 0, serviceCharges = 0, serviceTax = 0, genericDiscount = 0, total = 0, gst = 0, itemsTotalWithDiscounts = 0 } = store.getState().cartReducer;
     const _serviceCharges = serviceCharges + serviceTax;
     return {
-        gst:Math.round(gst),
+        gst: Math.round(gst),
         serviceTax: Math.round(serviceTax),
-        serviceCharges: Math.round(_serviceCharges) ,
-        discount: Math.round( discount + genericDiscount),
-        subTotal:Math.round(subTotal),
-        total: Math.round( total + _serviceCharges),
-        itemsTotalWithDiscounts: Math.round(itemsTotalWithDiscounts + _serviceCharges) ,
+        serviceCharges: Math.round(_serviceCharges),
+        discount: Math.round(discount + genericDiscount),
+        subTotal: Math.round(subTotal),
+        total: Math.round(total + _serviceCharges),
+        itemsTotalWithDiscounts: Math.round(itemsTotalWithDiscounts + _serviceCharges),
     }
 
 }
@@ -1012,7 +1022,7 @@ export const sharedNotificationHandlerForOrderScreens = (fcmReducer, fetchOrder 
     // '16' order completed at index 7
     // '2' Chat message at INDEX 8
     // "21" Final Destination changed at index 9
-    const notificationTypes = ["1", "11", "12", "13", "14", "18", "17", "16", "2", "21","22"]
+    const notificationTypes = ["1", "11", "12", "13", "14", "18", "17", "16", "2", "21", "22"]
     console.log('fcmReducer------OrderPitstops', fcmReducer);
     const jobNotify = fcmReducer.notifications?.find(x => (x.data && (notificationTypes.includes(`${x.data.NotificationType}`))) ? x : false) ?? false;
     if (jobNotify) {
@@ -1284,7 +1294,7 @@ export const sharedSendFileToServer = (list = [], onSuccess = () => { }, type = 
         formData.append(`JoviImageList[${index}].JoviImageID`, 0);
         formData.append(`JoviImageList[${index}].FileType`, type);
         formData.append(`JoviImageList[${index}].FileExtensionType`, extension);
-        if(type === 21){
+        if (type === 21) {
             formData.append(`JoviImageList[${index}].audioDuration`, item.duration);
         }
         index += 1;

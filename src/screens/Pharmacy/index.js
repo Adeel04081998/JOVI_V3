@@ -201,29 +201,25 @@ export default ({ route }) => {
             return;
         }
         if (isAttachmentBool && state.pickUpPitstop.latitude) {
-            sharedConfirmationAlert('Selected Pickup Location', 'Your selected pickup location will be lost if you choose this option. Are you sure?', [{
-                text: 'Yes',
-                onPress: () => {
-                    setIsAttachment(isAttachmentBool);
-                    setState(pre => ({ ...pre, pickUpPitstop: initState.pickUpPitstop }));
-                }
-            }, {
-                text: 'No',
-                onPress: () => {
-                }
-            }]);
+            sharedConfirmationAlert('Selected Pickup Location', 'Your selected pickup location will be lost if you choose this option. Are you sure?', null, null, {
+                cancelButton: { text: "No", onPress: () => { } },
+                okButton: {
+                    text: "Yes", onPress: () => {
+                        setIsAttachment(isAttachmentBool);
+                        setState(pre => ({ ...pre, pickUpPitstop: initState.pickUpPitstop }));
+                    }
+                },
+            });
         } else if (!isAttachmentBool && state.images?.length) {
-            sharedConfirmationAlert('Uploaded Images', 'Your uploaded images will be lost if you choose this option. Are you sure?', [{
-                text: 'Yes',
-                onPress: () => {
-                    setIsAttachment(isAttachmentBool);
-                    setState(pre => ({ ...pre, images: null }));
-                }
-            }, {
-                text: 'No',
-                onPress: () => {
-                }
-            }]);
+            sharedConfirmationAlert('Uploaded Images', 'Your uploaded images will be lost if you choose this option. Are you sure?', null,null, {
+                cancelButton: { text: "No", onPress: () => { } },
+                okButton: {
+                    text: "Yes", onPress: () => {
+                        setIsAttachment(isAttachmentBool);
+                        setState(pre => ({ ...pre, images: null }));
+                    }
+                },
+            });
         } else {
             setIsAttachment(isAttachmentBool);
         }
