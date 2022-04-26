@@ -66,7 +66,7 @@ export default () => {
 
 
     const signUpSuccessHandler = (res) => {
-        if (res?.statusCode === 417) {
+        if (res?.statusCode === 401) {
             sharedExceptionHandler(res);
             NavigationService.NavigationActions.common_actions.goBack();
             return
