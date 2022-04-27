@@ -217,7 +217,7 @@ const RenderGenericList = React.memo(({ isFinalDestinationSelected, vendorDashbo
         }
         return () => { };
     }, [isFinalDestinationSelected])
-    return <>{(finalDestObj && vendorDashboardCategoryIDReducer || []).map((item, index) => {
+    return <>{(isFinalDestinationSelected && vendorDashboardCategoryIDReducer || []).map((item, index) => {
         return (
             <View key={uniqueKeyExtractor()} style={{ marginHorizontal: -10, }}>
                 <GenericList vendorDashboardCatID={item.vendorDashboardCatID} textContainer={{ paddingHorizontal: 10 }} />
