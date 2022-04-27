@@ -175,7 +175,9 @@ const APP_DRAWER_ROUTES = {
     },
     "Support": {
         screen_name: "SUPPORT",
-        options: null,
+        options: {
+            animation:'fade'
+        },
     },
     "SupportDetail": {
         screen_name: "SUPPORT_DETAIL",
