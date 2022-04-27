@@ -66,6 +66,7 @@ const ProductQuantityCard = (props: Props) => {
     React.useEffect(() => {
         if (firstPitstop.current) {
             firstPitstop.current = false;
+            // console.log("firstPitstop.current");
             props.updateQuantity && props.updateQuantity(1);
             return;
         }
@@ -77,6 +78,7 @@ const ProductQuantityCard = (props: Props) => {
             clearTimeout(delayCbRef.current);
         }
         delayCbRef.current = setTimeout(() => {
+            // console.log("setTimeout");
             props.updateQuantity && props.updateQuantity(state.quantity);
         }, 800);
 
@@ -94,12 +96,13 @@ const ProductQuantityCard = (props: Props) => {
                     updatedQuantity = item.quantity;
                 }
             });
-            
+            if(!isFocused && updatedQuantity>0){
+                skipEffect.current = true;
+            }
             // ref => https://cibak.atlassian.net/browse/JV3-1337
             // if ((updatedQuantity < 1)) {
             //     skipEffect.current = true;
             // }
-
             setState(pre => ({ ...pre, quantity: updatedQuantity }));
         } else {
             skipEffect.current = false;

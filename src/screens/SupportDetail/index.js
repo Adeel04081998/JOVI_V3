@@ -145,13 +145,12 @@ export default ({ navigation, route }) => {
             }, false, { Authorization: `Bearer ${userReducer?.token?.authToken}` });
         };//end of apiImplementationCloseComplaint
 
-        sharedConfirmationAlert("Confirm!", "Are you sure you want to close this complaint?", [{
-            text: "No",
-            onPress: () => { }
-        }, {
-            text: "Yes",
-            onPress: () => apiImplementationCloseComplaint()
-        }])
+        sharedConfirmationAlert("Confirm!", "Are you sure you want to close this complaint?", null, null, {
+            cancelButton: { text: "No", onPress: () => { } },
+            okButton: {
+                text: "Yes", onPress: () => apiImplementationCloseComplaint()
+            },
+        });
     };//end of onCloseComplaintPress
 
 
@@ -193,7 +192,7 @@ export default ({ navigation, route }) => {
                                 paddingVertical: constants.spacing_vertical * 0.9,
                                 paddingHorizontal: constants.spacing_horizontal,
                                 borderRadius: 6,
-                                marginTop:-3,
+                                marginTop: -3,
                             }}
                             textStyle={{
                                 fontSize: 12,

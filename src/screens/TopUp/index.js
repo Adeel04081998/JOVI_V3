@@ -59,7 +59,6 @@ export default () => {
   const isFocused = useIsFocused();
 
   const { transactionMethods, mobile, id, email } = useSelector(state => state.userReducer)
-  console.log('transactionMethods', transactionMethods);
 
   let mobileNumStr = mobile.toString();
   if (mobileNumStr.includes("92")) {
@@ -547,8 +546,13 @@ export default () => {
   }
 
   const validationCheck = () => {
-    if (topUpAmount !== '' && mobileNumber !== '' && cnic !== '') return false
-    else return true
+    if (cardData[0].isOpened || cardData[2].isOpened) {
+      if (topUpAmount !== '') return false
+      else return true
+    } else {
+      if (topUpAmount !== '' && mobileNumber !== '' && cnic !== '') return false
+      else return true
+    }
   }
 
   const renderContinueBtn = () => {

@@ -130,6 +130,17 @@ const clearSettingsAction = (payload = {}) => {
         payload,
     }
 }
+const setCustomAlertAction = (payload = {}) => {
+    return {
+        type: TYPES.SET_CUSTOM_ALERT,
+        payload: { ...payload }
+    }
+}
+const closeCustomAlertAction = () => {
+    return {
+        type: TYPES.CLOSE_CUSTOM_ALERT,
+    }
+}
 export default {
     setUserAction,
     clearUserAction,
@@ -151,6 +162,8 @@ export default {
     setvendorDashboardCategoryIDAction,
     hideRobotAction,
     setSettingsAction,
-    clearSettingsAction
+    clearSettingsAction,
+    setCustomAlertAction,
+    closeCustomAlertAction,
     //...
 }

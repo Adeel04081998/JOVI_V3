@@ -51,7 +51,7 @@ const cartReducer = (state = INIT_CART_DATA, action) => {
       return { ...state };
   }
 };
-const modalReducer = (state = { visible: false, closeModal: false, ModalContent: null, }, action) => {
+const modalReducer = (state = { visible: false, closeModal: false, ModalContent: null, customAlertVisible:false, customAlertDetails:null }, action) => {
 
   switch (action.type) {
     case TYPES.SET_MODAL:
@@ -59,8 +59,13 @@ const modalReducer = (state = { visible: false, closeModal: false, ModalContent:
     case TYPES.CLOSE_MODAL: {
       return { ...state, closeModal: true, }
     }
+    case TYPES.SET_CUSTOM_ALERT:
+      return { ...state, customAlertDetails:{...action.payload},customAlertVisible:true};
+    case TYPES.CLOSE_CUSTOM_ALERT: {
+      return { ...state, customAlertVisible: false,customAlertDetails:null }
+    }
     case TYPES.CLEAR_MODAL_REDUCER:
-      return { visible: false, closeModal: false, ModalContent: null }
+      return { visible: false, closeModal: false, ModalContent: null, customAlertVisible:false, customAlertDetails:null }
     default:
       return { ...state };
   }

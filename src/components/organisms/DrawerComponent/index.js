@@ -4,7 +4,7 @@ import { SvgXml } from 'react-native-svg';
 import { useSelector } from 'react-redux';
 import svgs from '../../../assets/svgs';
 import { renderFile, sharedConfirmationAlert, sharedLogoutUser, uniqueKeyExtractor, VALIDATION_CHECK } from '../../../helpers/SharedActions';
-import NavigationService from '../../../navigations/NavigationService';
+import NavigationService, { _NavgationRef } from '../../../navigations/NavigationService';
 import ROUTES from '../../../navigations/ROUTES';
 import preference_manager from '../../../preference_manager';
 import constants from '../../../res/constants';
@@ -59,14 +59,20 @@ export default () => {
     const userReducer = useSelector(store => store.userReducer);
     const styles = drawerStyles(colors);
     const onNavigationItemPress = (item) => {
+        const drawerRoutesCheck = [...drawerRoutes,...drawerInfoRoutes];
+        drawerRoutesCheck.shift();
         NavigationService.NavigationActions.drawer_actions.toggleDrawer();
-        NavigationService.NavigationActions.common_actions.navigate(item.route)
+        if(drawerRoutesCheck.find((item)=>item.route===_NavgationRef.current.getCurrentRoute().name)){
+            NavigationService.NavigationActions.stack_actions.replace(item.route);
+        }else{
+            NavigationService.NavigationActions.common_actions.navigate(item.route)
+        }
     }
     const renderNavigationItem = (item, i, containerStyles = {}, customStyles = null) => {
         return <TouchableOpacity style={{ ...customStyles ? customStyles : styles.navigationItem, ...containerStyles }} onPress={() => onNavigationItemPress(item)}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <SvgXml xml={item.icon} height={20} width={20} style={{ marginBottom: 4 }} />
-                <Text style={{ marginLeft: 10, fontSize: 16,color:colors.black }}>{item.screenName}</Text>
+                <Text style={{ marginLeft: 10, fontSize: 16, color: colors.black }}>{item.screenName}</Text>
             </View>
             <View>
                 <VectorIcon name={'arrow-forward-ios'} type={'MaterialIcons'} size={15} color={colors.primary} />
@@ -126,15 +132,17 @@ export default () => {
             </ScrollView>
         </View>
         <TouchableOpacity style={styles.logoutContainer} onPress={() => sharedConfirmationAlert("Alert", "Log me out and remove all the cache?",
-            [
-                { text: "No", onPress: () => { } },
-                {
+            null,
+            {},
+            {
+                cancelButton: { text: "No", onPress: () => { } },
+                okButton: {
                     text: "Yes", onPress: () => {
                         NavigationService.NavigationActions.drawer_actions.toggleDrawer();
                         preference_manager.clearAllCacheAsync().then(() => sharedLogoutUser());
                     }
                 },
-            ]
+            }
         )}>
             <View style={{ flexDirection: 'row' }}>
                 <VectorIcon type="AntDesign" name="logout" color={colors.black} style={{ marginTop: 2 }} />

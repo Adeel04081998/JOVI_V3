@@ -134,6 +134,7 @@ export default ({ route }) => {
     //Validation
     const pickupValidation = state.pharmacyPitstopType === 1 ? (!isAttachment ? (state.pickUpPitstop.latitude === null ?? false) : (state.images === null || state.images?.length < 1)) : false;
     const disabledButton = pickupValidation || state.latitude === null || state.medicineName === '' || state.detail === '' || state.estimatePrice < 1;
+    const isImageUploading = isAttachment && state.images && (state.images.find(item=>item.isUploading === true)?true:false);
     //Logical Functions
     const handlePickImage = () => {
         sharedConfirmationAlert("Alert", "Pick Option!",
@@ -203,29 +204,25 @@ export default ({ route }) => {
             return;
         }
         if (isAttachmentBool && state.pickUpPitstop.latitude) {
-            sharedConfirmationAlert('Selected Pickup Location', 'Your selected pickup location will be lost if you choose this option. Are you sure?', [{
-                text: 'Yes',
-                onPress: () => {
-                    setIsAttachment(isAttachmentBool);
-                    setState(pre => ({ ...pre, pickUpPitstop: initState.pickUpPitstop }));
-                }
-            }, {
-                text: 'No',
-                onPress: () => {
-                }
-            }]);
+            sharedConfirmationAlert('Selected Pickup Location', 'Your selected pickup location will be lost if you choose this option. Are you sure?', null, null, {
+                cancelButton: { text: "No", onPress: () => { } },
+                okButton: {
+                    text: "Yes", onPress: () => {
+                        setIsAttachment(isAttachmentBool);
+                        setState(pre => ({ ...pre, pickUpPitstop: initState.pickUpPitstop }));
+                    }
+                },
+            });
         } else if (!isAttachmentBool && state.images?.length) {
-            sharedConfirmationAlert('Uploaded Images', 'Your uploaded images will be lost if you choose this option. Are you sure?', [{
-                text: 'Yes',
-                onPress: () => {
-                    setIsAttachment(isAttachmentBool);
-                    setState(pre => ({ ...pre, images: null }));
-                }
-            }, {
-                text: 'No',
-                onPress: () => {
-                }
-            }]);
+            sharedConfirmationAlert('Uploaded Images', 'Your uploaded images will be lost if you choose this option. Are you sure?', null,null, {
+                cancelButton: { text: "No", onPress: () => { } },
+                okButton: {
+                    text: "Yes", onPress: () => {
+                        setIsAttachment(isAttachmentBool);
+                        setState(pre => ({ ...pre, images: null }));
+                    }
+                },
+            });
         } else {
             setIsAttachment(isAttachmentBool);
         }
@@ -561,14 +558,14 @@ export default ({ route }) => {
             </KeyboardAvoidingView>
             <Button
                 onPress={onSave}
-                text="Save and Continue"
+                text={isImageUploading?"Image Uploading...":"Save and Continue"}
                 textStyle={{
                     fontSize: 16,
                     fontFamily: FontFamily.Poppins.Regular
                 }}
                 fontFamily="PoppinsRegular"
                 isLoading={loader}
-                disabled={disabledButton}
+                disabled={disabledButton||isImageUploading}
                 style={[_styles.locButton, _styles.saveButton]} />
         </SafeAreaView>
     );

@@ -8,6 +8,7 @@ import AnimatedFlatlist from "../../../components/molecules/AnimatedScrolls/Anim
 import { sharedHandleInfinityScroll, uniqueKeyExtractor, VALIDATION_CHECK } from "../../../helpers/SharedActions";
 import { initColors } from '../../../res/colors';
 import constants from "../../../res/constants";
+import { isIOS } from "../../../utils/GV";
 
 // #region :: INTERFACE START's FROM HERE 
 type Props = React.ComponentProps<typeof Animated.View> & {
@@ -197,7 +198,7 @@ const RestaurantProductMenuScrollable = (props: Props) => {
             }
         }, [props.data]);
         return (
-            <View style={{ marginHorizontal: 10 }}>
+            <View style={{ marginHorizontal: 10,...isIOS?{paddingTop:5}:{} }}>
                 <View style={[style.row]}>
                     {props.data && props.data.map((food: any, i: number) => (
                         <TouchableScale

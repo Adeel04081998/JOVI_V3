@@ -17,7 +17,7 @@ import Switch from '../../components/atoms/Switch'
 import TouchableOpacity from '../../components/atoms/TouchableOpacity'
 import { getRequest, postRequest } from '../../manager/ApiManager'
 import Endpoints from '../../manager/Endpoints'
-import { sharedCalculatedTotals, sharedExceptionHandler, sharedGetDeviceInfo, sharedGetPromoList, sharedGetServiceCharges, sharedOrderNavigation, sharedVerifyCartItems } from '../../helpers/SharedActions'
+import { sharedCalculatedTotals, sharedConfirmationAlert, sharedExceptionHandler, sharedGetDeviceInfo, sharedGetPromoList, sharedGetServiceCharges, sharedOrderNavigation, sharedVerifyCartItems } from '../../helpers/SharedActions'
 import Button from '../../components/molecules/Button'
 import OrderRecipt from './components/OrderRecipt'
 import { useDispatch, useSelector } from 'react-redux'
@@ -54,6 +54,7 @@ export default () => {
     const paymentType = "Wallet"
     const walletAmount = userReducer.balance || 0;
     const instructionForRider = GV.RIDER_INSTRUCTIONS.current;
+    const isOnlyJoviJobs = (cartReducer.pitstops??[]).every( (val, i) => val.pitstopType === PITSTOP_TYPES.JOVI || val.pitstopType === PITSTOP_TYPES.PHARMACY );
     React.useEffect(() => {
         sharedGetPromoList()
         sharedVerifyCartItems();
@@ -302,24 +303,14 @@ export default () => {
                 sharedExceptionHandler(err);
             }, {}, true);
         }
-        Alert.alert(
-            'Are you sure?',
-            'Do you want to place this order?',
-            [
-                {
-                    text: 'No',
-                    onPress: () => { },
-                    style: 'cancel'
-                },
-                {
-                    text: 'Yes',
-                    onPress: () => {
-                        placeOrder();
-                    }
+        sharedConfirmationAlert('Place Order', 'Are you sure you want to place this order?', null, null, {
+            cancelButton: { text: "No", onPress: () => { } },
+            okButton: {
+                text: "Yes", onPress: () => {
+                    placeOrder();
                 }
-            ],
-            { cancelable: false }
-        );
+            },
+        });
     }
 
     const goBack = () => {
@@ -494,7 +485,7 @@ export default () => {
                         promoList={promoList}
 
                     />
-                    <OrderRecipt checkOutStyles={checkOutStyles} cartReducer={cartReducer} colors={colors} />
+                    <OrderRecipt isOnlyJoviJobs={isOnlyJoviJobs} checkOutStyles={checkOutStyles} cartReducer={cartReducer} colors={colors} />
 
                 </ScrollView>
 

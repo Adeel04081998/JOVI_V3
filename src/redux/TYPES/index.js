@@ -34,5 +34,8 @@ export default {
     "SET_VENDOR_DASHBOARD_CATEGORY_ID_ACTION": "set_vendor_dashboard_category_id_action",
     //SETTINGS_REDUCER
     "SET_SETTINGS": "set_settings",
-    "CLEAR_SETTINGS":"clear_settings"
+    "CLEAR_SETTINGS":"clear_settings",
+    //CUSTOM ALERT TYPES
+    "SET_CUSTOM_ALERT": "set_custom_alert",
+    "CLOSE_CUSTOM_ALERT": "close_custom_alert",
 }

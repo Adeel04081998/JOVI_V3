@@ -132,9 +132,9 @@ export default ({ route }) => {
             title={'Order#: ' + orderIDParam}
             rightCustom={(
                 <TouchableScale wait={0} onPress={() => {
-                    if(route.params?.isFinalDestinationCompleted){
-                        NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderTracking.screen_name,{orderID:orderIDParam});
-                    }else{
+                    if (route.params?.isFinalDestinationCompleted) {
+                        NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderTracking.screen_name, { orderID: orderIDParam });
+                    } else {
                         NavigationService.NavigationActions.common_actions.goBack();
                     }
                 }}
@@ -144,7 +144,7 @@ export default ({ route }) => {
             )}
             leftCustom={(<>
                 <TouchableOpacity disabled={!isRiderFound} onPress={() => {
-                    NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderChat.screen_name, { orderID: orderIDParam, riderProfilePic: state.userPic,isFinalDestinationCompleted:route.params?.isFinalDestinationCompleted }, ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name)
+                    NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderChat.screen_name, { orderID: orderIDParam, riderProfilePic: state.userPic, isFinalDestinationCompleted: route.params?.isFinalDestinationCompleted }, ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name)
                 }} style={{ ...styles.iconContainer }}>
                     <VectorIcon size={25} name={'md-chatbubble-ellipses'} type={'Ionicons'} color={isRiderFound ? colors.primary : colors.grey} />
                 </TouchableOpacity>
@@ -277,8 +277,8 @@ export default ({ route }) => {
             />
         </View>
     }
-    const { orderReceiptVM: { subTotal = 0, actualServiceTax = 0, actualServiceCharges = 0, actualTotalPlusPitstopAmount = 0, chargeBreakdown = {}, arrears = 0, walletDeduction = 0 } } = state;
-    const { discount = 0, totalProductGST = 0, } = chargeBreakdown;
+    const { orderReceiptVM: { subTotal = 0, discount = 0, actualServiceTax = 0, actualServiceCharges = 0, actualTotalPlusPitstopAmount = 0, chargeBreakdown = {}, arrears = 0, walletDeduction = 0 } } = state;
+    const { totalProductGST = 0, } = chargeBreakdown;
     const Totals = () => {
         const row = (caption = '', value = 0, isBold = false, showDashed = true) => {
             if (value) {
@@ -325,7 +325,7 @@ export default ({ route }) => {
                 <OrderEstTimeCard
                     imageHeight={IMAGE_SIZE * 0.6}
                     color={colors}
-                    right={{ value: state.totalPitstops-1 }}
+                    right={{ value: state.totalPitstops - 1 }}
                     middle={{
                         value: state.orderEstimateTimeViewModel ? state.orderEstimateTimeViewModel?.orderEstimateTime?.trim() : ' - ',
                     }}
