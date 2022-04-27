@@ -4,7 +4,7 @@ import { SvgXml } from 'react-native-svg';
 import { useSelector } from 'react-redux';
 import svgs from '../../../assets/svgs';
 import { renderFile, sharedConfirmationAlert, sharedLogoutUser, uniqueKeyExtractor, VALIDATION_CHECK } from '../../../helpers/SharedActions';
-import NavigationService from '../../../navigations/NavigationService';
+import NavigationService, { _NavgationRef } from '../../../navigations/NavigationService';
 import ROUTES from '../../../navigations/ROUTES';
 import preference_manager from '../../../preference_manager';
 import constants from '../../../res/constants';
@@ -59,8 +59,14 @@ export default () => {
     const userReducer = useSelector(store => store.userReducer);
     const styles = drawerStyles(colors);
     const onNavigationItemPress = (item) => {
+        const drawerRoutesCheck = [...drawerRoutes,...drawerInfoRoutes];
+        drawerRoutesCheck.shift();
         NavigationService.NavigationActions.drawer_actions.toggleDrawer();
-        NavigationService.NavigationActions.common_actions.navigate(item.route)
+        if(drawerRoutesCheck.find((item)=>item.route===_NavgationRef.current.getCurrentRoute().name)){
+            NavigationService.NavigationActions.stack_actions.replace(item.route);
+        }else{
+            NavigationService.NavigationActions.common_actions.navigate(item.route)
+        }
     }
     const renderNavigationItem = (item, i, containerStyles = {}, customStyles = null) => {
         return <TouchableOpacity style={{ ...customStyles ? customStyles : styles.navigationItem, ...containerStyles }} onPress={() => onNavigationItemPress(item)}>
@@ -127,22 +133,24 @@ export default () => {
             </ScrollView>
         </View>
         <TouchableOpacity style={styles.logoutContainer} onPress={() => sharedConfirmationAlert("Alert", "Log me out and remove all the cache?",
-            [
-                { text: "No", onPress: () => { } },
-                {
+            null,
+            {},
+            {
+                cancelButton: { text: "No", onPress: () => { } },
+                okButton: {
                     text: "Yes", onPress: () => {
                         NavigationService.NavigationActions.drawer_actions.toggleDrawer();
                         preference_manager.clearAllCacheAsync().then(() => sharedLogoutUser());
                     }
                 },
-            ]
+            }
         )}>
             <View style={{ flexDirection: 'row' }}>
                 <VectorIcon type="AntDesign" name="logout" color={colors.black} style={{ marginTop: 2 }} />
                 <Text style={{ marginLeft: 5, fontSize: 16 }}>Log Out</Text>
             </View>
             <View>
-                <Text style={{ fontSize: 16, }} fontFamily={'PoppinsLight'}>Jovi, v.{constants.app_version}</Text>
+                <Text style={{ fontSize: 16, }} fontFamily={'PoppinsLight'}>JOVI, v.{constants.app_version}</Text>
             </View>
         </TouchableOpacity>
     </View>
@@ -152,7 +160,7 @@ const drawerStyles = (colors) => StyleSheet.create({
     container: { flex: 1, backgroundColor: '#F8F8F8', paddingTop: isIOS ? (deviceInfoModule.hasNotch ? 40 : 0) : 0 },
     profileContainer: { height: '25%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: SPACING },
     crossIcon: { height: 30, width: 30, position: 'absolute', top: 5, right: -5 },
-    greetingText: { fontSize: 25, color: colors.black },
+    greetingText: { fontSize: 25, color: colors.black, paddingVertical: Platform.OS === "ios" ? 8 :  0 },
     userName: { fontSize: 25, color: colors.black, marginTop: -13 },
     profilePicContainer: { height: PROFILE_PICTURE_SECTION, width: PROFILE_PICTURE_SECTION, borderRadius: PROFILE_PICTURE_SECTION / 2, borderWidth: 3, borderColor: colors.black, backgroundColor: colors.white, justifyContent: 'center', alignItems: 'center' },
     profilePicInnerContainer: { height: PROFILE_PICTURE_INNER_SECTION, width: PROFILE_PICTURE_INNER_SECTION, borderRadius: PROFILE_PICTURE_INNER_SECTION / 2, backgroundColor: colors.primary },

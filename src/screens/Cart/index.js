@@ -19,7 +19,7 @@ import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import DraggableFlatList from '../../components/molecules/DraggableFlatList';
 import DashedLine from '../../components/organisms/DashedLine';
-import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedCalculatedTotals, sharedConfirmationAlert, sharedGetServiceCharges, sharedOnVendorPress, sharedVerifyCartItems } from '../../helpers/SharedActions';
+import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedCalculatedTotals, sharedConfirmationAlert, sharedExpectedMarketID, sharedGetServiceCharges, sharedOnVendorPress, sharedVerifyCartItems } from '../../helpers/SharedActions';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import ReduxActions from '../../redux/actions';
@@ -29,6 +29,7 @@ import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES } from '../../utils/GV';
 import ProductQuantityCard from '../ProductMenu/components/ProductQuantityCard';
 import { pencil_icon, routes_icon } from './svgs/cart_svgs';
+// import { useIsFocused } from '@react-navigation/native';
 
 const BottomLine = () => (
   <View
@@ -48,15 +49,16 @@ const BottomLine = () => (
 export default () => {
   const { cartReducer } = useSelector(store => ({ cartReducer: store.cartReducer }));
   // console.log('[CART_SCREEN] cartReducer', cartReducer);
+  const isOnlyJoviJobs = (cartReducer.pitstops??[]).every( (val, i) => val.pitstopType === PITSTOP_TYPES.JOVI || val.pitstopType === PITSTOP_TYPES.PHARMACY );
   const dispatch = useDispatch();
   const [expanded, setExpanded] = React.useState([0]);
   const colors = theme.getTheme(
     GV.THEME_VALUES.DEFAULT,
     Appearance.getColorScheme() === 'dark',
-);
+  );
+  // const isFocused = useIsFocused();
 
   React.useEffect(() => {
-    // sharedGetServiceCharges();
     sharedVerifyCartItems();
   }, [])
   const incDecDelHandler = (pitstopDetails, pitstopIndex = null, isDeletePitstop = false) => {
@@ -76,14 +78,15 @@ export default () => {
     else if (product.pitstopType === PITSTOP_TYPES.PHARMACY) NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Pharmacy.screen_name, { pitstopItemObj: product.isPickupPitstop ? { ...product.parentPitstop, pickUpPitstop: product } : { ...product } });
     else NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, {
       propItem: {
-        itemDetails: { ...product },
         ...product,
+        itemDetails: { ...product, productEditCase: true },
         vendorDetails: { ...product },
       },
       pitstopType: product.pitstopType
     })
   }
   const PitstopsCard = ({ pitstop }) => {
+    // console.log("pitstop", pitstop);
     const {
       pitstopIndex, // from cart pitstops
       pitstopID, // from cart pitstops
@@ -143,7 +146,7 @@ export default () => {
               key={`product-key-${idx}`}
               dynamiColors={dynamiColors}
               isJOVI={isJOVI}
-              product={{ ...product, title: product.title || product.pitStopItemName, pitstopType }}
+              product={{ ...pitstop, ...product, title: product.title || product.pitStopItemName, pitstopType }}
               incDecDelHandler={quantity => {
                 incDecDelHandler({
                   // pitstopIndex,
@@ -196,7 +199,7 @@ export default () => {
               <TouchableScale style={{ paddingTop: 2, maxWidth: 110 }} onPress={() => sharedOnVendorPress(pitstop)}>
                 <Text
                   style={{ color: dynamiColors.black, fontSize: 12 }}
-                  fontFamily="PoppinsRegular">{`Back to ${isPHARMACY ? 'Pharmacy' : isJOVI ? 'Jovi Job' : 'Store'
+                  fontFamily="PoppinsRegular">{`Back to ${isPHARMACY ? 'Pharmacy' : isJOVI ? 'JOVI Job' : 'Store'
                     }`}
                 </Text>
               </TouchableScale>
@@ -215,14 +218,12 @@ export default () => {
             <TouchableScale onPress={() => {
               sharedConfirmationAlert(
                 "Alert!", "Are you sure you want to clear the pitstop?",
-                [
-                  {
-                    text: "No",
-                    onPress: () => { }
-                  },
-                  {
-                    text: "Yes",
-                    onPress: () => sharedAddUpdatePitstop({ pitstopIndex, pitstopType }, true, [], false, false, () => {
+                null,
+                null,
+                {
+                  cancelButton: { text: "No", onPress: () => { } },
+                  okButton: {
+                    text: "Yes", onPress: () => sharedAddUpdatePitstop({ pitstopIndex, pitstopType }, true, [], false, false, () => {
                       if ((cartReducer.pitstops.length - 1) <= 0) {
                         NavigationService.NavigationActions.common_actions.goBack()
                       } else {
@@ -230,7 +231,7 @@ export default () => {
                       }
                     })
                   },
-                ]
+                }
               )
             }} >
               <Text
@@ -278,6 +279,7 @@ export default () => {
     product,
     incDecDelHandler,
   }) => {
+    // console.log("product", product);
     const { title, estimatePrice, description, discountedPrice, notes, images, _itemPriceWithoutDiscount, _totalDiscount, _itemPrice, quantity, pitstopType, pitStopItemID, marketID, pitStopID } = product;
     if (isJOVI) {
       return <View style={{ flexDirection: 'row' }}>
@@ -303,7 +305,7 @@ export default () => {
             >
               {title}
             </Text>
-            <TouchableScale style={{ width: "10%" }} onPress={() => onEditPress(product)}>
+            <TouchableScale style={{ width: "10%" }} onPress={() => onEditPress({ ...product, ...sharedExpectedMarketID(product) })}>
               <SvgXml xml={pencil_icon()} height={25} width={16} />
             </TouchableScale>
           </View>
@@ -356,7 +358,7 @@ export default () => {
                 } */}
 
               </View>
-              <TouchableScale style={{ width: "10%" }} onPress={() => onEditPress(product)}>
+              <TouchableScale style={{ width: "10%" }} onPress={() => onEditPress({ ...product, ...sharedExpectedMarketID(product) })}>
                 <SvgXml xml={pencil_icon()} height={25} width={16} />
               </TouchableScale>
             </View>
@@ -411,7 +413,7 @@ export default () => {
       );
     }
   };
-  const Totals = () => {
+  const Totals = ({isOnlyJoviJobs=false}) => {
     const row = (caption = '', value = 0, isBold = false) => {
       if (value) {
         return <View
@@ -432,7 +434,7 @@ export default () => {
     };
     return (
       <View style={{ paddingHorizontal: 10 }}>
-        {row(`Subtotal (Inc GST ${sharedCalculatedTotals().gst})`, sharedCalculatedTotals().subTotal, false)}
+        {row(`Subtotal ${isOnlyJoviJobs?'':'(Inc GST '+sharedCalculatedTotals().gst+')'}`, sharedCalculatedTotals().subTotal, false)}
         {sharedCalculatedTotals().discount ? row('Total Discount', `- ${sharedCalculatedTotals().discount}`) : null}
         {row(`Service Charges (Incl S.T ${sharedCalculatedTotals().serviceTax})`, sharedCalculatedTotals().serviceCharges)}
         <BottomLine />
@@ -448,7 +450,7 @@ export default () => {
         rightIconSize={20}
         onRightIconPress={() => NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Home.screen_name)}
         leftIconName="arrow-back"
-        title="Jovi Cart"
+        title="JOVI Cart"
         containerStyle={{
           backgroundColor: '#FFFFFF',
           borderBottomWidth: 0,
@@ -526,27 +528,24 @@ export default () => {
               onPress={() => {
                 sharedConfirmationAlert(
                   "Alert!", "Are you sure you want to clear entire cart?",
-                  [
-                    {
-                      text: "No",
-                      onPress: () => { }
-                    },
-                    {
-                      text: "Yes",
-                      onPress: () => {
+                  null,
+                  null,
+                  {
+                    cancelButton: { text: "No", onPress: () => { } },
+                    okButton: {
+                      text: "Yes", onPress: () => {
                         dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
                         setTimeout(() => {
                           NavigationService.NavigationActions.common_actions.goBack();
                         }, 0);
                       }
                     },
-                  ],
-                  { cancelable: false }
+                  }
                 )
               }}
             >
               <Text style={{ color: colors.primary, paddingHorizontal: 5 }}>
-                Empty entire jovi cart
+                Empty entire JOVI cart
               </Text>
             </TouchableScale>
             <TextInput
@@ -562,7 +561,7 @@ export default () => {
               onChangeText={text => GV.RIDER_INSTRUCTIONS.current = text.trim()}
               defaultValue={GV.RIDER_INSTRUCTIONS.current}
             />
-            <Totals />
+            <Totals isOnlyJoviJobs={isOnlyJoviJobs} />
           </View>}
         />
       </View>

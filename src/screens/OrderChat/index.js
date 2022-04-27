@@ -48,6 +48,7 @@ export default ({ navigation, route }) => {
         name: `${userReducer.firstName} ${userReducer.lastName}`,
     }
     const orderID = route?.params?.orderID;
+    const isFinalDestinationCompleted = route?.params?.isFinalDestinationCompleted;
     const riderPicture = route?.params?.riderProfilePic;
     const getEnumValue = (value) => {
         const ChatFileTypeEnum = enumsReducer.ChatFileTypeEnum;
@@ -122,14 +123,18 @@ export default ({ navigation, route }) => {
                     containerStyle={customheaderStyles.containerStyle}
                     leftCustom={(
                         <TouchableScale wait={0} onPress={() => {
-                            NavigationService.NavigationActions.common_actions.goBack();
+                            if(isFinalDestinationCompleted){
+                                NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderTracking.screen_name,{orderID:orderID});
+                            }else{
+                                NavigationService.NavigationActions.common_actions.goBack();
+                            }
                         }} style={customheaderStyles.iconContainer}>
                             <SvgXml xml={svgs.order_chat_header_location(colors.primary)} height={HEADER_ICON_SIZE_LEFT} width={HEADER_ICON_SIZE_LEFT} />
                         </TouchableScale>
                     )}
                     rightCustom={(
                         <TouchableScale wait={0} onPress={() => {
-                            NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name, { orderID: orderID }, ROUTES.APP_DRAWER_ROUTES.OrderChat.screen_name)
+                            NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name, { orderID: orderID, isFinalDestinationCompleted }, ROUTES.APP_DRAWER_ROUTES.OrderChat.screen_name)
                         }} style={customheaderStyles.iconContainer}>
                             <SvgXml xml={svgs.order_chat_header_receipt(colors.primary)} height={HEADER_ICON_SIZE_RIGHT} width={HEADER_ICON_SIZE_RIGHT} />
                         </TouchableScale>

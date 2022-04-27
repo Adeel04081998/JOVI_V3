@@ -1,5 +1,5 @@
 import * as React from "react";
-import { GestureResponderEvent, Platform, StyleProp, StyleSheet, TextStyle, View as RNView, ViewStyle } from "react-native";
+import { GestureResponderEvent, Keyboard, Platform, StyleProp, StyleSheet, TextStyle, View as RNView, ViewStyle } from "react-native";
 import { SvgXml } from "react-native-svg";
 import { useDispatch, useSelector } from "react-redux";
 import svgs from "../../assets/svgs";
@@ -175,6 +175,7 @@ const CustomHeader = (props: Props) => {
     const _renderLeftIconForDrawer = () => {
         return <TouchableScale wait={0} onPress={() => {
             NavigationService.NavigationActions.drawer_actions.toggleDrawer();
+            Keyboard.dismiss();
         }} style={[styles.iconContainer, props.leftContainerStyle]}>
             <SvgXml xml={svgs.hamburgerMenu()} height={props.leftIconSize} width={props.leftIconSize} />
         </TouchableScale>

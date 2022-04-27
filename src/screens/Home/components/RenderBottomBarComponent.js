@@ -1,17 +1,10 @@
 import React from 'react';
-import CategoryCardItem from '../../../components/molecules/CategoryCardItem';
-import AnimatedView from '../../../components/atoms/AnimatedView';
-import ENUMS from '../../../utils/ENUMS';
-import constants from '../../../res/constants';
-import Text from '../../../components/atoms/Text';
-import { sharedConfirmationAlert, sharedLogoutUser, sharedOnCategoryPress } from '../../../helpers/SharedActions';
-import BottomBarComponent from '../../../components/organisms/BottomBarComponent';
 import { SvgXml } from 'react-native-svg';
+import { useSelector } from 'react-redux';
 import svgs from '../../../assets/svgs';
+import BottomBarComponent from '../../../components/organisms/BottomBarComponent';
 import NavigationService from '../../../navigations/NavigationService';
 import ROUTES from '../../../navigations/ROUTES';
-import preference_manager from '../../../preference_manager';
-import { useSelector } from 'react-redux';
 import { PITSTOP_TYPES } from '../../../utils/GV';
 
 export default React.memo(({ homeStyles, showCategories = false, bottomBarComponentProps = {}, pitstopType = PITSTOP_TYPES.JOVI, colors = null }) => {

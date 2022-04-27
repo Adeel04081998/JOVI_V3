@@ -1,6 +1,8 @@
 import React from 'react';
 import { Animated, Appearance, KeyboardAvoidingView, StatusBar, TouchableOpacity } from 'react-native';
+import { SvgXml } from 'react-native-svg';
 import { useSelector } from 'react-redux';
+import svgs from '../../assets/svgs';
 import Image from '../../components/atoms/Image';
 import SafeAreaView from '../../components/atoms/SafeAreaView';
 import Text from '../../components/atoms/Text';
@@ -132,6 +134,7 @@ export default ({ route }) => {
     //Validation
     const pickupValidation = state.pharmacyPitstopType === 1 ? (!isAttachment ? (state.pickUpPitstop.latitude === null ?? false) : (state.images === null || state.images?.length < 1)) : false;
     const disabledButton = pickupValidation || state.latitude === null || state.medicineName === '' || state.detail === '' || state.estimatePrice < 1;
+    const isImageUploading = isAttachment && state.images && (state.images.find(item=>item.isUploading === true)?true:false);
     //Logical Functions
     const handlePickImage = () => {
         sharedConfirmationAlert("Alert", "Pick Option!",
@@ -201,29 +204,25 @@ export default ({ route }) => {
             return;
         }
         if (isAttachmentBool && state.pickUpPitstop.latitude) {
-            sharedConfirmationAlert('Selected Pickup Location', 'Your selected pickup location will be lost if you choose this option. Are you sure?', [{
-                text: 'Yes',
-                onPress: () => {
-                    setIsAttachment(isAttachmentBool);
-                    setState(pre => ({ ...pre, pickUpPitstop: initState.pickUpPitstop }));
-                }
-            }, {
-                text: 'No',
-                onPress: () => {
-                }
-            }]);
+            sharedConfirmationAlert('Selected Pickup Location', 'Your selected pickup location will be lost if you choose this option. Are you sure?', null, null, {
+                cancelButton: { text: "No", onPress: () => { } },
+                okButton: {
+                    text: "Yes", onPress: () => {
+                        setIsAttachment(isAttachmentBool);
+                        setState(pre => ({ ...pre, pickUpPitstop: initState.pickUpPitstop }));
+                    }
+                },
+            });
         } else if (!isAttachmentBool && state.images?.length) {
-            sharedConfirmationAlert('Uploaded Images', 'Your uploaded images will be lost if you choose this option. Are you sure?', [{
-                text: 'Yes',
-                onPress: () => {
-                    setIsAttachment(isAttachmentBool);
-                    setState(pre => ({ ...pre, images: null }));
-                }
-            }, {
-                text: 'No',
-                onPress: () => {
-                }
-            }]);
+            sharedConfirmationAlert('Uploaded Images', 'Your uploaded images will be lost if you choose this option. Are you sure?', null,null, {
+                cancelButton: { text: "No", onPress: () => { } },
+                okButton: {
+                    text: "Yes", onPress: () => {
+                        setIsAttachment(isAttachmentBool);
+                        setState(pre => ({ ...pre, images: null }));
+                    }
+                },
+            });
         } else {
             setIsAttachment(isAttachmentBool);
         }
@@ -296,7 +295,7 @@ export default ({ route }) => {
     }
 
     //UI Render Functions
-    const renderSubHeading = (text = '', extraStyles = {}) => (<Text style={{ fontSize: 14, color: colors.black, ...extraStyles }} fontFamily={'PoppinsMedium'}>{text}</Text>);
+    const renderSubHeading = (text = '', extraStyles = {}) => (<Text style={{ fontSize: 14, color: colors.black, paddingBottom: 1, ...extraStyles }} fontFamily={'PoppinsMedium'}>{text}</Text>);
     const renderLocationButton = (onPress = () => onLocationPress()) => (<Button
         onPress={onPress}
         text="Select Location From Map"
@@ -309,7 +308,9 @@ export default ({ route }) => {
         }}
         style={[_styles.locButton, _styles.selectLocationButton]} />)
     const renderInput = (inputProps = {}, extraStyles = {
-        fontFamily: FontFamily.Poppins.Regular
+        fontFamily: FontFamily.Poppins.Regular,
+        marginLeft: -20
+
     },) => (<TextInput
         style={{
             ..._styles.inputStyle,
@@ -446,6 +447,7 @@ export default ({ route }) => {
                                         disabled: doesPickupPitstopExists,
                                     }].map((item, i) => {
                                         return <TouchableOpacity key={i} onPress={() => toggleAttachment(item.value)} style={{ backgroundColor: item.selected ? colors.black : colors.white, ..._styles.prescriptionButton }}>
+                                            {item.text === "Attach File" && <SvgXml xml={svgs.attachFile(item.selected  ? colors.white : colors.black)} height={20} width={20} style={{ marginRight: 5, marginBottom: 3 }} />}
                                             <Text style={{ fontSize: 14, color: item.selected ? colors.white : colors.black }} fontFamily={'PoppinsLight'}>{item.text}</Text>
                                         </TouchableOpacity>
                                     })
@@ -505,7 +507,7 @@ export default ({ route }) => {
                                 }
                             </View> : null}
                         </>}
-                        <View style={{ ..._styles.subSection, }}>
+                        <View style={{ ..._styles.subSection,  ..._styles.borderTopRadius }}>
                             {renderSubHeading('Medicine Name')}
                             {
                                 renderInput({
@@ -534,7 +536,9 @@ export default ({ route }) => {
 
                                 }, {
                                     height: 150,
-
+                                    fontFamily: FontFamily.Poppins.Regular,
+                                    marginLeft: -20,
+                                    textAlignVertical: 'top'
                                 })
                             }
                         </View>
@@ -555,14 +559,14 @@ export default ({ route }) => {
             </KeyboardAvoidingView>
             <Button
                 onPress={onSave}
-                text="Save and Continue"
+                text={isImageUploading?"Image Uploading...":"Save and Continue"}
                 textStyle={{
                     fontSize: 16,
                     fontFamily: FontFamily.Poppins.Regular
                 }}
                 fontFamily="PoppinsRegular"
                 isLoading={loader}
-                disabled={disabledButton}
+                disabled={disabledButton||isImageUploading}
                 style={[_styles.locButton, _styles.saveButton]} />
         </SafeAreaView>
     );

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { ActivityIndicator, Alert, Appearance, Keyboard, ScrollView } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Transition, Transitioning } from 'react-native-reanimated';
 import svgs from '../../assets/svgs';
 import SafeAreaView from '../../components/atoms/SafeAreaView';
@@ -27,6 +27,8 @@ import constants from '../../res/constants';
 import { useIsFocused } from '@react-navigation/native';
 import Button from '../../components/molecules/Button';
 import VectorIcon from '../../components/atoms/VectorIcon';
+import actions from '../../redux/actions';
+import Regex from '../../utils/Regex';
 
 
 export default () => {
@@ -56,7 +58,6 @@ export default () => {
   const isFocused = useIsFocused();
 
   const { transactionMethods, mobile, id, email } = useSelector(state => state.userReducer)
-  console.log('transactionMethods', transactionMethods);
 
   let mobileNumStr = mobile.toString();
   if (mobileNumStr.includes("92")) {
@@ -132,7 +133,9 @@ export default () => {
   const [cardData, setCardData] = useState(initCartData);
   const [selectedItem, setSelectedItem] = useState({});
   const [loader, setLoader] = useState(false);
-  const [balance, setBalance] = useState('');
+  const { userReducer } = useSelector(state => state)
+  const { balance } = userReducer;
+  const dispatch = useDispatch();
 
   const ref = React.useRef();
 
@@ -146,14 +149,12 @@ export default () => {
   /////////////// ******************** Start of Useffect Function ***********************\\\\\\\\\\\\\\\\\\\\\\\\
 
 
-  React.useEffect(() => {
-    getBallance()
-  }, [])
 
   const getBallance = () => {
     getRequest(`${Endpoints.GET_BALANCE}`,
       (resp) => {
-        setBalance(resp.data.userBalance)
+        dispatch(actions.setUserAction({ ...userReducer, balance: resp.data.userBalance }))
+
       },
       (err) => {
         sharedExceptionHandler(err)
@@ -186,11 +187,16 @@ export default () => {
       data,
       success => {
         console.log('[JazzCashHandler].success', success);
-        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.WebView.screen_name, {
-          uri: null,
-          html: success.data,
-          title: "Top Up"
-        })
+        const { jazzCashHtml, statusCode } = success.data
+        if (statusCode === 200) {
+          NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.WebView.screen_name, {
+            uri: null,
+            html: `${jazzCashHtml}`,
+            title: "Top Up"
+          })
+        } else {
+          sharedExceptionHandler(success)
+        }
         // const { statusCode, jazzCashAuthViewModel } = success.data;
         // if (statusCode === 200) {
         //   NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.WebView.screen_name, {
@@ -207,6 +213,7 @@ export default () => {
       fail => {
         console.log('[JazzCashHandler].fail', fail);
         sharedExceptionHandler(fail)
+        setLoader(false)
       })
   }
 
@@ -357,12 +364,12 @@ export default () => {
   const renderBalanceContainer = () => {
     return (
       <View style={styles.balanceContainer}>
-          <Text style={styles.availableCreditText} fontFamily="PoppinsMedium" >
-            Available Credit
-          </Text>
-          <Text style={styles.availableCreditAmount} fontFamily="PoppinsBold" >
-            Rs. {`${balance}`}
-          </Text>
+        <Text style={styles.availableCreditText} fontFamily="PoppinsMedium" >
+          Available Credit
+        </Text>
+        <Text style={styles.availableCreditAmount} fontFamily="PoppinsBold" >
+          Rs. {`${balance}`}
+        </Text>
         {/* <Button style={{  }} text="Refresh" textStyle={{fontSize: 10}} onPress={() => {getBallance() }} /> */}
         <TouchableScale style={{ position: 'absolute', right: -40, height: 30, width: 80, top: 15 }} onPress={() => { getBallance() }} >
           <VectorIcon name="refresh" type="Ionicons" color={colors.black} size={21} />
@@ -390,8 +397,10 @@ export default () => {
       }
       else if (Number.isInteger(parseInt(topUpAmount))) {
         Keyboard.dismiss();
+        console.log('topUpAmount', topUpAmount);
         if (!topUpAmount.toString().length) return Toast.error(`Amount cannot be less than 1`);
         else if (topUpAmount.toString()[0] == "0") return Toast.error(`Amount cannot be less than 1`);
+        else if (parseInt(topUpAmount) < 10) return Toast.error(`Amount cannot be less than 10`);
         else if (item.paymentType > 0) {
           setLoader(true);
           getPayloadForWebViewHandler(item.paymentType);
@@ -453,7 +462,7 @@ export default () => {
         {
           item.idx === selectedItem.idx &&
           <View>
-            <TextInput value={topUpAmount} placeholder="Rs. 100" onChangeText={(t) => { setTopUpAmount(t) }} title="Enter Amount" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} keyboardType="numeric" />
+            <TextInput value={topUpAmount} placeholder="Rs. 100" maxLength={5} spaceFree={true} pattern={Regex.numberOnly} onChangeText={(t) => { setTopUpAmount(t) }} title="Enter Amount" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} keyboardType="numeric" />
           </View>
         }
       </>
@@ -466,9 +475,9 @@ export default () => {
         {
           item.idx === selectedItem.idx &&
           <View>
-            <TextInput value={topUpAmount} placeholder="Rs. 100" onChangeText={(t) => { setTopUpAmount(t) }} keyboardType="numeric" title="Enter Amount" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
-            <TextInput value={mobileNumber} placeholder="03*********" onChangeText={(t) => { setMobileNumber(t) }} keyboardType="numeric" title="Enter Mobile Number" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
-            <TextInput value={cnic} placeholder="*****-*******-*" onChangeText={(t) => { setCnic(t) }} keyboardType="numeric" title="Last 6 Digits CNIC" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
+            <TextInput value={topUpAmount} placeholder="Rs. 100" maxLength={5} spaceFree={true} pattern={Regex.numberOnly} onChangeText={(t) => { setTopUpAmount(t) }} keyboardType="numeric" title="Enter Amount" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
+            <TextInput value={mobileNumber} placeholder="03*********" maxLength={12} spaceFree={true} pattern={Regex.numberOnly} onChangeText={(t) => { setMobileNumber(t) }} keyboardType="numeric" title="Enter Mobile Number" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
+            <TextInput value={cnic} placeholder="******" maxLength={6} spaceFree={true} pattern={Regex.numberOnly} onChangeText={(t) => { setCnic(t) }} keyboardType="numeric" title="Last 6 Digits CNIC" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
           </View>
         }
       </>
@@ -481,7 +490,7 @@ export default () => {
         {
           item.idx === selectedItem.idx &&
           <View>
-            <TextInput value={topUpAmount} placeholder="Rs. 100" onChangeText={(t) => { setTopUpAmount(t) }} keyboardType="numeric" title="Enter Amount" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
+            <TextInput value={topUpAmount} pattern={Regex.numberOnly} placeholder="Rs. 100" spaceFree={true} onChangeText={(t) => { setTopUpAmount(t) }} keyboardType="numeric" title="Enter Amount" maxLength={5} titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
           </View>
         }
       </>
@@ -532,8 +541,13 @@ export default () => {
   }
 
   const validationCheck = () => {
-    if (topUpAmount !== '' && mobileNumber !== '') return false
-    else return true
+    if (cardData[0].isOpened || cardData[2].isOpened) {
+      if (topUpAmount !== '') return false
+      else return true
+    } else {
+      if (topUpAmount !== '' && mobileNumber !== '' && cnic !== '') return false
+      else return true
+    }
   }
 
   const renderContinueBtn = () => {
