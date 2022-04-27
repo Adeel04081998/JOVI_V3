@@ -252,14 +252,14 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
                     <View style={{ ...styles.container, marginVertical: SPACING_VERTICAL }} >
                         <Text style={styles.mainText} >{listingObj?.header ?? 'Vendors'}</Text>
                     </View>
-                    <Filters
+                    {/* <Filters
                         colors={colors}
                         parentFilterHandler={onFilterChange}
                         filterConfig={{}}
                         screenName={'Vertical Listing Page'}
                         goToFilters={goToFilters}
                         selectedFilters={state.filters.filter}
-                    />
+                    /> */}
                     {pitstopType === 4 && <Categories
                         colors={colors}
                         parentCategoryHandler={onCategoryChange}
@@ -272,7 +272,7 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
                         onEndReached={() => {
                             setFetchDataFlag(Math.random());
                         }}
-                        style={{ marginTop: SPACING_VERTICAL, marginBottom: pitstopType === 4 ? 100 : 0 }}
+                        style={{ marginTop: SPACING_VERTICAL, marginBottom: pitstopType === 4 ? 40 : 0 }}
                         ListFooterComponent={
                             state.isLoading ? <CardLoader styles={styles} loaderStyles={{ marginTop: -15 }} type={2} /> : <></>
                         }
