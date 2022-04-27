@@ -11,7 +11,7 @@ import TouchableScale from '../../components/atoms/TouchableScale';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
-import { sharedExceptionHandler, sharedOnVendorPress } from '../../helpers/SharedActions';
+import { renderFile, sharedExceptionHandler, sharedOnVendorPress } from '../../helpers/SharedActions';
 import { getRequest, postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
@@ -54,7 +54,7 @@ export default ({ navigation, route }) => {
     const [showProductVendor, toggleShowProductVendor] = React.useState(isFromListing);
     const [showJoviJob, toggleShowJoviJob] = React.useState(false);
     const [searchText, setSearchText] = React.useState('');
-    const [recentSearchesData, updateRecentSearchedData] = React.useState([]);
+    const [recentSearchesData, updateRecentSearchedData] = React.useState({ restaurant: [], grocery: [], });
     const [searchData, updateSearchData] = React.useState({ restaurant: { text: '', data: [] }, grocery: { text: '', data: [] }, });
 
     const [loading, toggleLoading] = React.useState(false);
@@ -191,15 +191,19 @@ export default ({ navigation, route }) => {
     }, [isRestaurantSelected]);
 
     const loadRecentSearches = () => {
+        const selectedKey = isRestaurantSelectedRef.current ? "restaurant" : "grocery";
         const typ = isRestaurantSelectedRef.current ? PITSTOP_TYPES.RESTAURANT : PITSTOP_TYPES.SUPER_MARKET;
+        if (recentSearchesData[selectedKey].length > 1) return
         getRequest(
-            // `${Endpoints.GET_RECENT_SEARCHES}/${typ}`, //ONCE SERVER IS UPDATE UNCOMMENT THIS LINE AND REMOVE BELOW LINE
-            `${Endpoints.GET_RECENT_SEARCHES}`,
+            `${Endpoints.GET_RECENT_SEARCHES}/${typ}`,
             res => {
                 console.log(`${Endpoints.GET_RECENT_SEARCHES} res ---  `, res);
                 const statusCode = res.data?.statusCode ?? 404;
                 if (statusCode === 200) {
-                    updateRecentSearchedData(res.data.recentSearches)
+                    updateRecentSearchedData(pre => ({
+                        ...pre,
+                        [selectedKey]: res.data.mainSearchResults,
+                    }))
                     return;
                 }
             },
@@ -208,7 +212,9 @@ export default ({ navigation, route }) => {
     }
 
     const onClearRecentPress = () => {
-        updateRecentSearchedData([]);
+        const selectedKey = isRestaurantSelectedRef.current ? "restaurant" : "grocery";
+
+        updateRecentSearchedData(pre => ({ ...pre, [selectedKey]: [] }));
         getRequest(
             Endpoints.CLEAR_RECENT_SEARCHES,
             res => {
@@ -308,7 +314,8 @@ export default ({ navigation, route }) => {
     };//end of searching -- getting record from server using text user enter
 
     const renderRecentlyItem = () => {
-        if (recentSearchesData.length < 1) return null;
+        const selectedKey = isRestaurantSelectedRef.current ? "restaurant" : "grocery";
+        if (recentSearchesData[selectedKey].length < 1) return null;
         return (
             <KeyboardAwareScrollView bounces={false} contentContainerStyle={{ paddingBottom: constants.spacing_vertical * 2, }}>
                 <View style={{
@@ -334,7 +341,9 @@ export default ({ navigation, route }) => {
                     width: '100%',
                     paddingHorizontal: constants.spacing_horizontal,
                 }}>
-                    {recentSearchesData.map((item, index) => {
+                    {recentSearchesData[selectedKey].map((item, index) => {
+                        const { name } = extractItem(item);
+
                         return <TouchableScale wait={0} style={{
                             backgroundColor: "#E1E1E1",
                             borderRadius: 18,
@@ -345,14 +354,14 @@ export default ({ navigation, route }) => {
                         }}
                             key={index}
                             onPress={() => {
-                                setSearchText(item);
-                                searching(item);
+                                setSearchText(name);
+                                onItemPress(item, index);
                             }}>
 
                             <Text style={{
                                 color: "#848484",
                                 fontSize: 12,
-                            }}>{`${item}`}</Text>
+                            }}>{`${name}`}</Text>
                         </TouchableScale>
                     })
                     }
@@ -360,6 +369,62 @@ export default ({ navigation, route }) => {
             </KeyboardAwareScrollView>
         )
     }
+
+    const onItemPress = (item, index) => {
+        const selectedKey = isRestaurantSelectedRef.current ? "restaurant" : "grocery";
+        const { isVendor, name, pitstopType } = extractItem(item);
+        if (isVendor) {
+            sharedOnVendorPress({ ...item, pitstopType }, index);
+            addSearchedText(item);
+        } else {
+            visibleShowProductVendor(name);
+        }
+        const itemIndex = recentSearchesData[selectedKey].findIndex(i => i.name === name);
+        if (itemIndex === -1) {
+            updateRecentSearchedData(pre => ({
+                ...pre,
+                [selectedKey]: [item, ...pre[selectedKey]],
+            }));
+        } else {
+            recentSearchesData[selectedKey].splice(itemIndex, 1);
+            updateRecentSearchedData(pre => ({
+                ...pre,
+                [selectedKey]: [item, ...recentSearchesData[selectedKey]],
+            }));
+        }
+        executeSearching(name);
+    };//end of onItemPress
+
+    const addSearchedText = (item) => {
+        const { name, pitstopType, pitstopID } = extractItem(item);
+        const params = {
+            "userID": null,
+            "text": name,
+            "pitstopType": pitstopType,
+            "pitstopID": pitstopID,
+        }
+
+        console.log(`${Endpoints.ADD_SEARCHED_TEXT} PARAMS ---  `, params);
+        postRequest(Endpoints.ADD_SEARCHED_TEXT, params, (res) => {
+            console.log(`${Endpoints.ADD_SEARCHED_TEXT} res ---  `, res);
+        }, (err) => {
+        }, {}, false)
+    };//end of addSearchedText
+
+    const extractItem = (item) => {
+        const pitstopID = item?.pitstopID ?? '0';
+        const isVendor = pitstopID && `${pitstopID}` !== '0' ? true : false;
+        const name = item?.name ?? '';
+        const image = isVendor ? item?.image ?? null : null;
+        const pitstopType = isRestaurantSelected ? PITSTOP_TYPES.RESTAURANT : PITSTOP_TYPES.SUPER_MARKET;
+        return {
+            pitstopID,
+            isVendor,
+            name,
+            image,
+            pitstopType,
+        };
+    };//end of extractItem
 
     const renderSearchedItem = () => {
         let searchedData = searchData.grocery.data;
@@ -377,18 +442,11 @@ export default ({ navigation, route }) => {
                     paddingTop: constants.spacing_vertical * 2,
                 }}
                 renderItem={({ item, index }) => {
-                    const pitstopID = item?.pitstopID ?? '0';
-                    const isVendor = pitstopID && `${pitstopID}` !== '0' ? true : false;
-                    const name = item?.name ?? '';
-                    const pitstopType = isRestaurantSelected ? PITSTOP_TYPES.RESTAURANT : PITSTOP_TYPES.SUPER_MARKET;
+                    const { isVendor, name, image, } = extractItem(item);
+
                     return (
                         <TouchableScale wait={0} onPress={() => {
-                            if (isVendor) {
-                                sharedOnVendorPress({ ...item, pitstopType }, index)
-                            } else {
-                                visibleShowProductVendor(name);
-                            }
-                            executeSearching(name);
+                            onItemPress(item, index)
                         }}>
                             <View style={{
                                 flexDirection: "row",
@@ -402,7 +460,7 @@ export default ({ navigation, route }) => {
                                     alignItems: "center",
                                 }}>
                                     {isVendor &&
-                                        <Image source={{ uri: `https://picsum.photos/20` }} style={{
+                                        <Image source={{ uri: renderFile(image) }} style={{
                                             height: 20,
                                             width: 20,
                                             resizeMode: "contain",
@@ -433,7 +491,7 @@ export default ({ navigation, route }) => {
     return (
         <View style={{ ...styles.primaryContainer, }}>
             {_renderHeader()}
-            {!showJoviJob && recentSearchesData.length < 1 && searchData[isRestaurantSelected ? "restaurant" : "grocery"].data.length < 1 ? <EmptyUI /> :
+            {!showJoviJob && recentSearchesData[isRestaurantSelected ? "restaurant" : "grocery"].length < 1 && searchData[isRestaurantSelected ? "restaurant" : "grocery"].data.length < 1 ? <EmptyUI /> :
                 <>
                     {showProductVendor ?
                         <SearchProductVendors

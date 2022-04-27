@@ -57,6 +57,7 @@ export default {
     "CLEAR_RECENT_SEARCHES": "api/Intellisense/ClearUserSearchHistory",//USED IN SEARCH SCREEN FOR CLEAR RECENT SEARCHED BY USER
     "SEARCH": "api/Intellisense/MainSearch",//USED IN SEARCH SCREEN FOR SEARCH USER ENTER TEXT
     "VENDOR_SEARCH": "api/Intellisense/PitstopSearch",//USED IN SEARCH SCREEN FOR GETTING SEARCHED ITEM 
+    "ADD_SEARCHED_TEXT": "api/Intellisense/UserSearchHistory/Add",//USED IN SEARCH SCREEN FOR saving data in database to get in recent item
     "ADD_ORDER_FEEDBACK": "api/Order/Feedback/Add",//USED IN ORDER HISTORY DETAIL SCREEN for adding feedback for the order
     "GET_LEGAL_CERTIFICATES": "api/Menu/Legal/ListByType/1",
     "GET_LEGAL_HTML": "api/Menu/Legal/List",
