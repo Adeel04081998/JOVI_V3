@@ -182,7 +182,6 @@ export default () => {
       "pp_MobileNumber": mobileNumber,
       "pp_CNIC": cnic
     }
-    console.log('[JazzCashHandler].data', data);
     postRequest(
       Endpoints.JAZZCASH_PAY,
       data,
@@ -232,17 +231,20 @@ export default () => {
 
 
   const EasyPaisaHandler = (paymentMethod) => {
-
+    let data =
+    {
+      "amount": parseInt(topUpAmount),
+      "orderRefNo": id,
+      "emailAddr": email,
+      "paymentMethod": paymentMethod,
+      "mobileNum": mobileNumStr
+    }
+    console.log('data', data);
     postRequest(
       Endpoints.EASYPAISA_PAY,
-      {
-        "amount": parseInt(topUpAmount),
-        "orderRefNo": id,
-        "emailAddr": email,
-        "paymentMethod": paymentMethod,
-        "mobileNum": mobileNumStr
-      },
+      data,
       success => {
+        console.log('success ==>>>', success);
         if (success.data.statusCode === 200) {
           NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.WebView.screen_name, {
             uri: { uri: success.data.easyPaisaAuthViewModel.url, method: 'POST', body: `postBackURL=${success.data.easyPaisaAuthViewModel.postBackURL}&auth_token=${success.data.easyPaisaAuthViewModel.auth_token}` }, html: null, title: "Top Up"
@@ -251,6 +253,8 @@ export default () => {
         } else sharedExceptionHandler(success)
       },
       fail => {
+        console.log('fail ==>>>', fail);
+        setLoader(false)
         sharedExceptionHandler(fail)
       })
   }
@@ -284,6 +288,7 @@ export default () => {
         } else sharedExceptionHandler(success)
       },
       fail => {
+        setLoader(false)
         sharedExceptionHandler(fail)
       })
   }
@@ -390,6 +395,9 @@ export default () => {
   }
 
   const onContinue = () => {
+    // setTopUpAmount('')
+    // setMobileNumber('')
+    // setCnic('')
     try {
       const item = selectedItem;
       // console.log("[onContinue].item", item, topUpAmount);
@@ -398,7 +406,6 @@ export default () => {
       }
       else if (Number.isInteger(parseInt(topUpAmount))) {
         Keyboard.dismiss();
-        console.log('topUpAmount', topUpAmount);
         if (!topUpAmount.toString().length) return Toast.error(`Amount cannot be less than 1`);
         else if (topUpAmount.toString()[0] == "0") return Toast.error(`Amount cannot be less than 1`);
         else if (parseInt(topUpAmount) < 10) return Toast.error(`Amount cannot be less than 10`);
@@ -407,9 +414,11 @@ export default () => {
           getPayloadForWebViewHandler(item.paymentType);
         }
       } else {
+        setLoader(false);
         Toast.error(`Please enter amount`);
       }
     } catch (error) {
+      setLoader(false);
       console.log("[onContinue].error", error);
       setLoader(false);
     }
@@ -575,7 +584,7 @@ export default () => {
         transition={transition}
         style={styles.container}>
         {renderBalanceContainer()}
-        <ScrollView>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} >
           {renderTextRow()}
           {renderAccountContainer()}
         </ScrollView>

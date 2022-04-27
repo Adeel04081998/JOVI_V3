@@ -77,6 +77,7 @@ export default {
     "GET_PENDING_ORDER_RATING": "api/Order/Rating/PendingOrders",//USED IN SHARED ACTION - TO SHOW PENDING ORDER's RATING
     "IGNORE_ORDER_FOR_ORDER_RATING": "api/Order/IgnoreRating",//USED IN RATE RIDER 
     "GET_BALANCE" : "api/Payment/Wallet/Balance",//USED IN TOP UP
+    "ERROR_LOGGER": "api/ErrorLog/FrontEndError/AddOrUpdate"
 }
 
 

@@ -82,7 +82,7 @@ export default () => {
             if (statusCode === 200) {
                 const resData = res.data?.customerWalletTransactionsList?.data ?? [];
                 let newData = []
-                if (transactionType === pressedValue) newData = [...filters, ...resData]
+                if (transactionType === pressedValue && append) newData = [...filters, ...resData]
                 else newData = resData
                 setFilters(newData);
                 toggleMetaData(!metaData);
@@ -200,9 +200,7 @@ export default () => {
         )
     }
     const onFilterPress = (item, index, isSelected) => {
-        if (isSelected) return
         setPressedValue(parseInt(item.value))
-
         loadTransactionList(parseInt(item.value))
     }
     const _renderItem = (item, index) => {

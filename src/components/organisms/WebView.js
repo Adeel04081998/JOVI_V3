@@ -7,6 +7,7 @@ import CustomHeader from '../molecules/CustomHeader';
 import SafeAreaView from '../atoms/SafeAreaView';
 import { postRequest } from '../../manager/ApiManager';
 import { sharedExceptionHandler } from '../../helpers/SharedActions';
+import Endpoints from '../../manager/Endpoints';
 export default ({ screenStyles = {}, route }) => {
     const html = route?.params?.html;
     const title = route?.params?.title;
@@ -30,6 +31,25 @@ export default ({ screenStyles = {}, route }) => {
     //             sharedExceptionHandler(fail)
     //         })
     // }
+    const getDerivedStateFromError = (error) => {
+        if (__DEV__) return;
+        postRequest(Endpoints.ERROR_LOGGER, {
+            "userID": null,
+            "frontEndErrorID": 0,
+            "description": `${JSON.stringify({ error })}`,
+            "creationDate": null
+        },
+            success => {
+                console.log('success', success);
+            },
+            fail => {
+                console.log('fail', fail);
+            }
+        )
+
+
+    }
+    console.log('uri ==>>>>', uri);
     return (
         <SafeAreaView style={{ flex: 1, }}>
             <View style={{ flex: 1, flexDirection: 'column' }}>
@@ -61,12 +81,17 @@ export default ({ screenStyles = {}, route }) => {
                     domStorageEnabled={true}
                     startInLoadingState={true}
                     scalesPageToFit={true}
-                    onError={(err) => console.log('[onError].err', err)}
+                    onError={(err) =>
+                        getDerivedStateFromError(err)
+                    }
                     onHttpError={err => {
                         console.log("[onHttpError.err", err);
+                        getDerivedStateFromError(err)
                     }}
                     onMessage={(event) => {
                         console.log('[onMessage].event', event.nativeEvent.data)
+                        getDerivedStateFromError(event.nativeEvent)
+
                     }}
                     onNavigationStateChange={(event) => {
                         console.log('[onNavigationStateChange].event', event)
