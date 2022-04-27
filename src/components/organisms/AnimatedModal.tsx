@@ -128,7 +128,7 @@ const AnimatedModal = (props: Props) => {
 
     // #endregion :: POSITION STYLING END's FROM HERE 
 
-    const Wrapper = props.useKeyboardAvoidingView ? KeyboardAwareScrollView : View;
+    const Wrapper = props.useKeyboardAvoidingView ? KeyboardAwareScrollView : TouchableOpacity;
     return (
         <Wrapper
             style={[
@@ -152,7 +152,11 @@ const AnimatedModal = (props: Props) => {
                 showsHorizontalScrollIndicator: false,
 
             }
-            }>
+            }
+            onPress={() => {
+                props.onRequestClose && props.onRequestClose();
+            }}
+        >
             {/* <View style={{ position: 'absolute', height: HEIGHT, width: WIDTH, top: 0, zIndex: 999, }}> */}
             {/* <AnimatedToucableOpacity
                 activeOpacity={1}

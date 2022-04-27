@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Appearance, Linking, Platform, StyleSheet } from 'react-native';
+import { Alert, Appearance, Linking, Platform, ScrollView, StyleSheet } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { useSelector } from 'react-redux';
 import Contacts from 'react-native-contacts';
@@ -48,7 +48,7 @@ export default () => {
         askForContactPermissions(cbSuccess, cbFailure)
     }
 
-  
+
     const _renderHeader = () => (<CustomHeader
         rightIconName={null}
         title={`Invite Friends`}
@@ -86,7 +86,7 @@ export default () => {
     }
     const _renderShareLink = () => {
         return (
-            <TouchableOpacity onPress={()=>{}} >
+            <TouchableOpacity onPress={() => { }} >
                 <Text style={_styles.inviteLinkTextStyle} fontFamily="PoppinsRegular">Share Link</Text>
             </TouchableOpacity>
         )
@@ -95,11 +95,13 @@ export default () => {
     return (
         <SafeAreaView style={_styles.primaryContainer}>
             {_renderHeader()}
-            <View style={{ flex: 1 }}>
-                {_renderSvg()}
-                {_renderInviteText()}
-                {_renderInviteCode()}
-                {_renderButton()}
+            <View style={{ flex: 1,}}>
+                <ScrollView contentContainerStyle={{paddingBottom:20}}>
+                    {_renderSvg()}
+                    {_renderInviteText()}
+                    {_renderInviteCode()}
+                    {_renderButton()}
+                </ScrollView>
                 {/* {_renderShareLink()} */}
             </View>
         </SafeAreaView>

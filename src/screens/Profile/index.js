@@ -121,8 +121,8 @@ export default () => {
     }
     const renderGenderUI = () => {
         return (<View style={{ height: 100, paddingHorizontal: SPACING }}>
-            <Text style={{ fontSize: 16, }} fontFamily={'PoppinsMedium'}>Gender</Text>
-            <View style={{ width: '100%', flexDirection: 'row', borderBottomWidth: 0.5, borderBottomColor: colors.black, padding: SPACING * 2 }}>
+            <Text style={{ fontSize: 16, color:colors.black }} fontFamily={'PoppinsMedium'}>Gender</Text>
+            <View style={{ width: '100%', flexDirection: 'row', borderBottomWidth: 0.5, borderBottomColor: colors.grey, padding: SPACING * 2 }}>
                 <View style={{ flexDirection: 'row', marginRight: SPACING * 3 }}>
                     <RadioButton selected={state.genderEnum === 1} onPress={() => handleOnGenderPress(1)} />
                     <View style={{ marginLeft: SPACING, flexDirection: 'row' }}>
@@ -304,7 +304,7 @@ export default () => {
                                             }}
                                             forceError={isError}
                                             titleStyle={{ top: -30, color: 'black', fontSize: 17 }}
-                                            containerStyle={{ borderColor: isError ? "red" : "#E2E2E2", backgroundColor: x.backgroundColor, borderWidth: 1 }}
+                                            containerStyle={{ borderColor: isError ? "red" : colors.grey, backgroundColor: x.backgroundColor, borderWidth: 0.5 }}
                                             editable={x.field === "Mobile" ? false : true}
                                             errorTextStyle={[styles.errorText, { fontSize: 12 }]}
                                             maxLength={x.maxLength}
@@ -319,7 +319,7 @@ export default () => {
                                         :
                                         <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderRadius: 7, borderColor: '#707070', borderWidth: 0, margin: 10, }}>
                                             <Text style={[{ color: 'black', position: 'absolute', top: -30, left: 0, fontSize: 17, marginBottom: 50, justifyContent: 'center' }]}>{x.title}</Text>
-                                            <TouchableOpacity style={{ width: '100%', borderWidth: 1, borderRadius: 5, padding: 10, borderColor: isError ? "red" : "#E2E2E2", backgroundColor: x.backgroundColor, borderWidth: 1 }}
+                                            <TouchableOpacity style={{ width: '100%', borderWidth: 1, borderRadius: 5, padding: 10, borderColor: isError ? "red" : colors.grey, backgroundColor: x.backgroundColor, borderWidth: 0.5 }}
                                                 onPress={() => { setState((pre) => ({ ...pre, isModalVisible: true })) }} >
                                                 <Text style={{ alignItems: 'center', }}>{userReducer.dob ? x.value : "dd/mm/yyyy"}</Text>
 

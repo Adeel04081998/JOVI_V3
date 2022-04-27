@@ -63,7 +63,7 @@ export default {
     ],
     "PITSTOP_TYPES": [
         {
-            "text": "Jovi",
+            "text": "JOVI",
             "value": 2,
             "icon": svgs.jovi(),
             "isActive": true,
@@ -91,7 +91,7 @@ export default {
             "color": "#1945BE",
         },
         {
-            "text": "Jovi Mart",
+            "text": "JOVI Mart",
             "value": 5,
             "icon": null,
             "isActive": false,
@@ -122,7 +122,7 @@ export default {
     "FILTER_BY": [
         {
 
-            "text": "New on Jovi",
+            "text": "New on JOVI",
             "value": 1,
             // "icon": svgs.newOnJovi(),
 

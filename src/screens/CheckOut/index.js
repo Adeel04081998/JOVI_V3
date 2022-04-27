@@ -17,7 +17,7 @@ import Switch from '../../components/atoms/Switch'
 import TouchableOpacity from '../../components/atoms/TouchableOpacity'
 import { getRequest, postRequest } from '../../manager/ApiManager'
 import Endpoints from '../../manager/Endpoints'
-import { sharedCalculatedTotals, sharedExceptionHandler, sharedGetDeviceInfo, sharedGetPromoList, sharedGetServiceCharges, sharedOrderNavigation, sharedVerifyCartItems } from '../../helpers/SharedActions'
+import { sharedCalculatedTotals, sharedConfirmationAlert, sharedExceptionHandler, sharedGetDeviceInfo, sharedGetPromoList, sharedGetServiceCharges, sharedOrderNavigation, sharedVerifyCartItems } from '../../helpers/SharedActions'
 import Button from '../../components/molecules/Button'
 import OrderRecipt from './components/OrderRecipt'
 import { useDispatch, useSelector } from 'react-redux'
@@ -54,6 +54,7 @@ export default () => {
     const paymentType = "Wallet"
     const walletAmount = userReducer.balance || 0;
     const instructionForRider = GV.RIDER_INSTRUCTIONS.current;
+    const isOnlyJoviJobs = (cartReducer.pitstops??[]).every( (val, i) => val.pitstopType === PITSTOP_TYPES.JOVI || val.pitstopType === PITSTOP_TYPES.PHARMACY );
     React.useEffect(() => {
         sharedGetPromoList()
         sharedVerifyCartItems();
@@ -218,8 +219,8 @@ export default () => {
                                 "JoviDiscountType": obj.joviDiscountType ?? 0,
                                 "joviDiscountedPrice": obj.totalJoviDiscount ?? 0,
                                 // tabish
-                                "joviDiscountAmount": obj.totalJoviDiscount ?? 0,
-                                "discountAmount": obj.itemPrice - obj._totalDiscount,
+                                "joviDiscountAmount": (obj.isJoviDiscount && obj.totalJoviDiscount) ? obj.totalJoviDiscount : 0,
+                                "discountAmount": obj.discountType > 0 ? (obj.itemPrice - obj._totalDiscount) : 0,
                                 // tabish
                                 //End New Keys
                                 "estimateTime": obj.estimatePrepTime || 0,
@@ -302,24 +303,14 @@ export default () => {
                 sharedExceptionHandler(err);
             }, {}, true);
         }
-        Alert.alert(
-            'Are you sure?',
-            'Do you want to place this order?',
-            [
-                {
-                    text: 'No',
-                    onPress: () => { },
-                    style: 'cancel'
-                },
-                {
-                    text: 'Yes',
-                    onPress: () => {
-                        placeOrder();
-                    }
+        sharedConfirmationAlert('Place Order', 'Are you sure you want to place this order?', null, null, {
+            cancelButton: { text: "No", onPress: () => { } },
+            okButton: {
+                text: "Yes", onPress: () => {
+                    placeOrder();
                 }
-            ],
-            { cancelable: false }
-        );
+            },
+        });
     }
 
     const goBack = () => {
@@ -406,8 +397,14 @@ export default () => {
                     contentContainerStyle={{ borderRadius: 7, width: "100%", backgroundColor: 'transparent' }}
                     containerStyle={{ backgroundColor: 'transparent', }}
                     wrapperStyl={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+                    onRequestClose={() => {
+                        setState((pre) => ({
+                            ...pre,
+                            isModalVisible: false
+                        }))
+                    }}
                 >
-                    <ScrollView style={{ maxHeight: constants.screen_dimensions.height * .8, borderRadius: 10, marginHorizontal: 5, }}>
+                    <ScrollView style={{ maxHeight: constants.screen_dimensions.height * .8, borderRadius: 10, }}>
                         <GoodyBag
                             showHeader={false}
                             onPressClbk={(item) => {
@@ -417,7 +414,7 @@ export default () => {
                                     isModalVisible: false
                                 }))
                             }}
-                            containerStyle={{ marginHorizontal: 5, borderRadius: 10, paddingBottom: 10, paddingTop: 10 }}
+                            containerStyle={{ borderRadius: 10, paddingTop: 10, marginTop: 20, height: constants.screen_dimensions.height * .4 }}
 
 
                         />
@@ -488,7 +485,7 @@ export default () => {
                         promoList={promoList}
 
                     />
-                    <OrderRecipt checkOutStyles={checkOutStyles} cartReducer={cartReducer} colors={colors} />
+                    <OrderRecipt isOnlyJoviJobs={isOnlyJoviJobs} checkOutStyles={checkOutStyles} cartReducer={cartReducer} colors={colors} />
 
                 </ScrollView>
 

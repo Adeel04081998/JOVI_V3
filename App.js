@@ -25,11 +25,13 @@ import NoInternetModal from "./src/components/atoms/NoInternetModal";
 import { _toastRef } from "./src/components/atoms/Toast";
 import View from './src/components/atoms/View';
 import BaseUrlPrompt from "./src/components/molecules/BaseUrlPrompt";
+import CustomAlert from "./src/components/molecules/CustomAlert";
 import Robot from './src/components/organisms/Robot';
 import { sharedClearReducers, sharedGetDashboardCategoryIApi, sharedGetEnumsApi, sharedGetFilters, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedSendFCMTokenToServer } from './src/helpers/SharedActions';
 import { postRequest } from './src/manager/ApiManager';
 import RootStack from "./src/navigations";
-import { _NavgationRef } from './src/navigations/NavigationService';
+import NavigationService, { _NavgationRef } from './src/navigations/NavigationService';
+import ROUTES from "./src/navigations/ROUTES";
 import actions from './src/redux/actions';
 import constants from "./src/res/constants";
 import FontFamily from "./src/res/FontFamily";
@@ -72,7 +74,8 @@ const CODE_PUSH_OPTIONS = {
 };
 
 const App = () => {
-    const { visible } = useSelector(state => state.modalReducer)
+    const modalReducer = useSelector(state => state.modalReducer)
+    const {visible} = modalReducer;
     const [state, setState] = React.useState({ appLoaded: false });
     const userReducer = useSelector(state => state.userReducer);
     const isFinalDestinationSelected = userReducer.finalDestObj;
@@ -263,6 +266,7 @@ const App = () => {
                         {isFinalDestinationSelected && <GenericPopUp />}
                     </View>
                 </NavigationContainer>
+                {modalReducer?.customAlertVisible&&<CustomAlert customAlertDetails={modalReducer.customAlertDetails} />}
                 <Robot />
                 <Toast
                     config={toastConfig}
@@ -331,8 +335,11 @@ const SharedGetApis = ({ }) => {
 
             }
             const onNotification = (notify) => {
-                // console.log('onNotification--', notify);
+                console.log('onNotification--', notify);
                 // console.log("===> onNotification.notify -> ", notify)
+                if(parseInt(notify.data.NotificationType)=== 21){
+                    NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name, { orderID: notify.data?.OrderID, isFinalDestinationCompleted: true });
+                }
                 dispatch(actions.fcmAction({ ...notify }));
                 if (notify.data) {
                     // console.log("notify.data", notify.data);

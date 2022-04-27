@@ -24,7 +24,7 @@ interface Props {
     outOfStockText?: string;
     pitstopItemID: number | string;
     marketID: number | string;
-    screenName : number,
+    screenName: number,
     fromCart: boolean,
 }
 
@@ -34,7 +34,7 @@ const defaultProps = {
     initialQuantity: 0,
     outOfStock: false,
     outOfStockText: 'Out of stock',
-    screenName:1,
+    screenName: 1,
     fromCart: false
 
 };
@@ -44,7 +44,7 @@ const defaultProps = {
 const ProductQuantityCard = (props: Props) => {
     const ITEM_SIZE = props?.size ?? defaultProps.size;
     const CARD_ITEM_SIZE = props?.cardSize ?? ITEM_SIZE;
-    const TEXT_ICON_SIZE=props?.textSize ?? ITEM_SIZE;
+    const TEXT_ICON_SIZE = props?.textSize ?? ITEM_SIZE;
 
     // const ITEM_SIZE = props.screenName === 2? constants.window_dimensions.width * 0.35 : props.size;
 
@@ -64,8 +64,9 @@ const ProductQuantityCard = (props: Props) => {
     }, [props.initialQuantity])
 
     React.useEffect(() => {
-        if(firstPitstop.current){
+        if (firstPitstop.current) {
             firstPitstop.current = false;
+            // console.log("firstPitstop.current");
             props.updateQuantity && props.updateQuantity(1);
             return;
         }
@@ -77,6 +78,7 @@ const ProductQuantityCard = (props: Props) => {
             clearTimeout(delayCbRef.current);
         }
         delayCbRef.current = setTimeout(() => {
+            // console.log("setTimeout");
             props.updateQuantity && props.updateQuantity(state.quantity);
         }, 800);
 
@@ -94,21 +96,25 @@ const ProductQuantityCard = (props: Props) => {
                     updatedQuantity = item.quantity;
                 }
             });
-            if ((updatedQuantity < 1)) {
+            if(!isFocused && updatedQuantity>0){
                 skipEffect.current = true;
             }
+            // ref => https://cibak.atlassian.net/browse/JV3-1337
+            // if ((updatedQuantity < 1)) {
+            //     skipEffect.current = true;
+            // }
             setState(pre => ({ ...pre, quantity: updatedQuantity }));
-        }else{
+        } else {
             skipEffect.current = false;
         }
     }, [cartReducer]);
 
 
-    
+
 
     const incrementQuantity = () => {
         setState(pre => ({ ...pre, quantity: pre.quantity + 1 }))
-        if(cartReducer.pitstops.length < 1) {
+        if (cartReducer.pitstops.length < 1) {
             // props.updateQuantity && props.updateQuantity(1);
             firstPitstop.current = true;
         }
@@ -117,7 +123,7 @@ const ProductQuantityCard = (props: Props) => {
     const decrementQuantity = () => {
         setState(pre => ({ ...pre, quantity: pre.quantity - 1 }));
     }
-    
+
 
     // if(props.fromCart && state.quantity <= 0) return <View style={{
     //     justifyContent:  "center",
@@ -131,7 +137,7 @@ const ProductQuantityCard = (props: Props) => {
     // }}><Text>Deleting...</Text></View>;
     // if(props.fromCart && state.quantity <= 0) return null;
     // console.log("state=>", state);
-    
+
     return (
         <View style={{
             width: state.quantity > 0 || props.outOfStock ? CARD_ITEM_SIZE * 0.88 : defaultProps.size,
@@ -162,10 +168,10 @@ const ProductQuantityCard = (props: Props) => {
                                     <VectorIcon color={colors.primary} name="minus" type="Feather" size={TEXT_ICON_SIZE} />
                                 }
                             </TouchableOpacity>
-                            <Text style={{...styles.text,fontSize:TEXT_ICON_SIZE*0.7}}>{state.quantity}</Text>
+                            <Text style={{ ...styles.text, fontSize: TEXT_ICON_SIZE * 0.7 }}>{state.quantity}</Text>
                         </>
                     }
-                    <TouchableOpacity wait={0} onPress={incrementQuantity}style={{}}
+                    <TouchableOpacity wait={0} onPress={incrementQuantity} style={{}}
                         hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}>
                         <VectorIcon color={colors.primary} name="plus" type="Feather" size={TEXT_ICON_SIZE} />
                     </TouchableOpacity>

@@ -111,13 +111,14 @@ const RestaurantProductMenuHeader = (props: Props) => {
 
                     <View style={styles.detailNameRightContainer}>
                         <TouchableScale
-                            onPress={() => { Alert.alert('heartPress') }}
+                            onPress={() => { console.log("Heart Press");
+                             }}
                             hitSlop={{ top: 20, bottom: 20, left: 20, right: 0 }}>
                             <VectorIcon name="heart-o" type="FontAwesome" color="#272727" style={styles.heartIcon} />
                         </TouchableScale>
 
                         <TouchableScale
-                            onPress={() => { Alert.alert('share Press') }}
+                            onPress={() => { console.log("share Press") }}
                             hitSlop={{ top: 20, bottom: 20, left: 0, right: 20 }}>
                             <VectorIcon name="forward" type="Entypo" color="#272727" />
                         </TouchableScale>
