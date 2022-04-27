@@ -54,6 +54,7 @@ export default () => {
     const paymentType = "Wallet"
     const walletAmount = userReducer.balance || 0;
     const instructionForRider = GV.RIDER_INSTRUCTIONS.current;
+    const isOnlyJoviJobs = (cartReducer.pitstops??[]).every( (val, i) => val.pitstopType === PITSTOP_TYPES.JOVI || val.pitstopType === PITSTOP_TYPES.PHARMACY );
     React.useEffect(() => {
         sharedGetPromoList()
         sharedVerifyCartItems();
@@ -484,7 +485,7 @@ export default () => {
                         promoList={promoList}
 
                     />
-                    <OrderRecipt checkOutStyles={checkOutStyles} cartReducer={cartReducer} colors={colors} />
+                    <OrderRecipt isOnlyJoviJobs={isOnlyJoviJobs} checkOutStyles={checkOutStyles} cartReducer={cartReducer} colors={colors} />
 
                 </ScrollView>
 

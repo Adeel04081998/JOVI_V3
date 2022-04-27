@@ -13,7 +13,7 @@ import { PITSTOP_TYPES } from '../../../utils/GV'
 
 const subDetailListTxtFontFamily = 'PoppinsRegular'
 
-export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData = [] }) => {
+export default ({ checkOutStyles = {},isOnlyJoviJobs=false, cartReducer = [], colors = {}, secondData = [] }) => {
     const [showDetails, setShowDetails] = useState(true)
     const pitStops = cartReducer.pitstops || []
     // console.log("[Order Reciept] cartReducer", cartReducer);
@@ -29,7 +29,7 @@ export default ({ checkOutStyles = {}, cartReducer = [], colors = {}, secondData
 
 
                     <View style={checkOutStyles.gstPrimaryContainer}>
-                        <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular'>{`Subtotal (Inc GST ${sharedCalculatedTotals().gst})`}</Text>
+                        <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular'>{`Subtotal ${isOnlyJoviJobs?'':'(Inc GST '+sharedCalculatedTotals().gst+')'}`}</Text>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
                             <Text style={checkOutStyles.gstCommonPriceTxtStyle} fontFamily='PoppinsRegular'>{sharedCalculatedTotals().subTotal}</Text>
                         </View>
