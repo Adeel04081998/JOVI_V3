@@ -33,26 +33,26 @@ import FontFamily from '../../res/FontFamily';
 
 
 export default (props) => {
-    // console.log("props product Details=>>", props);
     const propItem = props.route.params?.propItem ?? {};
-    const isEditCase = props.route.params.isEditCase ?? false
+    const productEditCase = propItem?.quantity > 0 ?? false
     let initialState = {
-
-        'generalProductOrDealDetail': propItem ?? {},
-        'notes': propItem.notes ?? '',
-        'itemCount': isEditCase ? propItem.quantity : 1,
+        generalProductOrDealDetail: propItem ?? {},
+        notes: propItem.notes || '',
+        itemCount: propItem.quantity || 1,
         discountedPriceWithGst: propItem._itemPrice ?? 0,
-        totalPriceWithoutDiscount: 0,
-        discountedPriceWithoutGstWithoutJovi: 0,
-        totalJoviDiscount: 0,
-        totalAddOnPrice: 0,
-        totalDiscount: 0,
-        totalGst: 0,
+        totalPriceWithoutDiscount: propItem._priceForSubtotals || propItem._itemPriceWithoutDiscount || 0,
+        discountedPriceWithoutGstWithoutJovi: propItem._itemPriceWithoutJoviDiscount || 0,
+        totalJoviDiscount: propItem._totalJoviDiscount || 0,
+        totalAddOnPrice: propItem.totalAddOnPrice || 0,
+        totalDiscount: propItem._totalDiscount || 0,
+        totalGst: propItem._totalGst,
         selectedOptions: propItem.selectedOptions ?? [],
         loading: true,
         addToCardAnimation: false
     }
     const [state, setState] = useState(initialState);
+    console.log("[Product Details].propItem", state);
+    console.log("[Product Details].state", state);
     const [enable, setEnable] = useState({
         enableBtn: false,
         requiredIds: [],
@@ -75,6 +75,7 @@ export default (props) => {
         1: (amount, discount) => discount > 0 ? (amount - ((discount / 100) * amount)) : amount,
         2: (amount, discount) => discount > 0 ? (amount - discount) : amount,
     };
+    const dataToSendRef = React.useRef(null);
 
 
     const loadProductDetails = () => {
@@ -212,6 +213,7 @@ export default (props) => {
     const addToCartHandler = () => {
         let dataToSend = {
             pitstopType,
+            productEditCase,
             itemDetails: {
                 ...generalProductOrDealDetail,
                 selectedOptions,
@@ -231,13 +233,14 @@ export default (props) => {
                 estimatePrepTime: pitstopType === PITSTOP_TYPES.RESTAURANT ? generalProductOrDealDetail.estimateTime : "",
                 totalJoviDiscount: state.totalJoviDiscount,
                 _clientGstAddedPrice: generalProductOrDealDetail.gstAddedPrice,
-                ...!selectedOptions.length ? { ...sharedAddToCartKeys(null, { ...state.generalProductOrDealDetail, pitstopType }).item } : {},
+                ...!selectedOptions.length ? { ...sharedAddToCartKeys(null, { ...state.generalProductOrDealDetail, quantity: itemCount, notes, pitstopType }).item } : {},
 
             },
             vendorDetails: {
-                ...propItem.vendorDetails, pitstopType, pitstopActionKey: "marketID", productsDealsCategories: undefined
+                ...propItem.vendorDetails, pitstopType, actionKey: "marketID", productsDealsCategories: undefined
             },
         }
+        // console.log("dataTo", dataToSend);
         setState((pre) => ({
             ...pre,
             addToCardAnimation: true,
@@ -266,6 +269,7 @@ export default (props) => {
 
     React.useEffect(() => {
         if (enable.dataToSend) {
+            // console.log("Ran...")
             sharedAddUpdatePitstop(enable.dataToSend, false, [], true, false, () => { }, true)
         }
     }, [enable.dataToSend]);
@@ -337,6 +341,7 @@ export default (props) => {
         )
     }
     const cartText = () => {
+        if (productEditCase) return 'Update';
         let txt = 'Add to cart ';
         if (selectedOptions.length) {
             txt = txt + renderPrice(discountedPriceWithGst, '-', '', /[pkr|rs|rs.|pkr.|-]{1,}/i);
@@ -427,7 +432,7 @@ export default (props) => {
 
 
     useEffect(() => {
-        if (isEditCase) {
+        if (productEditCase) {
             setState((pre) => ({
                 ...pre,
                 loading: false

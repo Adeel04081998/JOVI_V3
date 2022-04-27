@@ -362,7 +362,7 @@ export default ({ navigation, route }) => {
 
                 {/* ****************** Start of BOTTOM VIEW ****************** */}
                 <View style={{ flex: 5, }}>
-                    {rating<4&&<Text fontFamily='PoppinsLight' style={styles.optionHeading}>{`What could've been better?`}</Text>}
+                    {rating < 4 && <Text fontFamily='PoppinsLight' style={styles.optionHeading}>{`What could've been better?`}</Text>}
 
                     {rating < 4 ?
                         <>
@@ -515,7 +515,9 @@ export default ({ navigation, route }) => {
                         totalGST={receiptData?.orderReceiptVM?.chargeBreakdown?.totalProductGST ?? ''}
                         serviceCharges={receiptData?.orderReceiptVM?.actualServiceCharges ?? 0}
                         estimateServiceTax={receiptData?.orderReceiptVM?.actualServiceTax ?? 0}
-                        discount={receiptData?.orderReceiptVM?.chargeBreakdown?.discount ?? 0}
+                        // discount={receiptData?.orderReceiptVM?.chargeBreakdown?.discount ?? 0}
+                        // ref => https://cibak.atlassian.net/browse/JV3-2107
+                        discount={receiptData?.orderReceiptVM?.discount ?? 0}
                         total={receiptData?.orderReceiptVM?.actualTotalPlusPitstopAmount ?? 0}
                         walletDeduction={receiptData?.orderReceiptVM?.walletDeduction ?? 0}
                         arrears={receiptData?.orderReceiptVM?.arrears ?? 0}

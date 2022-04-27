@@ -19,7 +19,7 @@ import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import DraggableFlatList from '../../components/molecules/DraggableFlatList';
 import DashedLine from '../../components/organisms/DashedLine';
-import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedCalculatedTotals, sharedConfirmationAlert, sharedGetServiceCharges, sharedOnVendorPress, sharedVerifyCartItems } from '../../helpers/SharedActions';
+import { renderFile, renderPrice, sharedAddUpdatePitstop, sharedCalculatedTotals, sharedConfirmationAlert, sharedExpectedMarketID, sharedGetServiceCharges, sharedOnVendorPress, sharedVerifyCartItems } from '../../helpers/SharedActions';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import ReduxActions from '../../redux/actions';
@@ -29,6 +29,7 @@ import theme from '../../res/theme';
 import GV, { PITSTOP_TYPES } from '../../utils/GV';
 import ProductQuantityCard from '../ProductMenu/components/ProductQuantityCard';
 import { pencil_icon, routes_icon } from './svgs/cart_svgs';
+// import { useIsFocused } from '@react-navigation/native';
 
 const BottomLine = () => (
   <View
@@ -54,10 +55,10 @@ export default () => {
   const colors = theme.getTheme(
     GV.THEME_VALUES.DEFAULT,
     Appearance.getColorScheme() === 'dark',
-);
+  );
+  // const isFocused = useIsFocused();
 
   React.useEffect(() => {
-    // sharedGetServiceCharges();
     sharedVerifyCartItems();
   }, [])
   const incDecDelHandler = (pitstopDetails, pitstopIndex = null, isDeletePitstop = false) => {
@@ -77,14 +78,15 @@ export default () => {
     else if (product.pitstopType === PITSTOP_TYPES.PHARMACY) NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Pharmacy.screen_name, { pitstopItemObj: product.isPickupPitstop ? { ...product.parentPitstop, pickUpPitstop: product } : { ...product } });
     else NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, {
       propItem: {
-        itemDetails: { ...product },
         ...product,
+        itemDetails: { ...product, productEditCase: true },
         vendorDetails: { ...product },
       },
       pitstopType: product.pitstopType
     })
   }
   const PitstopsCard = ({ pitstop }) => {
+    // console.log("pitstop", pitstop);
     const {
       pitstopIndex, // from cart pitstops
       pitstopID, // from cart pitstops
@@ -144,7 +146,7 @@ export default () => {
               key={`product-key-${idx}`}
               dynamiColors={dynamiColors}
               isJOVI={isJOVI}
-              product={{ ...product, title: product.title || product.pitStopItemName, pitstopType }}
+              product={{ ...pitstop, ...product, title: product.title || product.pitStopItemName, pitstopType }}
               incDecDelHandler={quantity => {
                 incDecDelHandler({
                   // pitstopIndex,
@@ -219,16 +221,16 @@ export default () => {
                 null,
                 null,
                 {
-                    cancelButton: { text: "No", onPress: () => { } },
-                    okButton: {
-                        text: "Yes", onPress: () => sharedAddUpdatePitstop({ pitstopIndex, pitstopType }, true, [], false, false, () => {
-                            if ((cartReducer.pitstops.length - 1) <= 0) {
-                              NavigationService.NavigationActions.common_actions.goBack()
-                            } else {
-      
-                            }
-                          })
-                    },
+                  cancelButton: { text: "No", onPress: () => { } },
+                  okButton: {
+                    text: "Yes", onPress: () => sharedAddUpdatePitstop({ pitstopIndex, pitstopType }, true, [], false, false, () => {
+                      if ((cartReducer.pitstops.length - 1) <= 0) {
+                        NavigationService.NavigationActions.common_actions.goBack()
+                      } else {
+
+                      }
+                    })
+                  },
                 }
               )
             }} >
@@ -277,6 +279,7 @@ export default () => {
     product,
     incDecDelHandler,
   }) => {
+    // console.log("product", product);
     const { title, estimatePrice, description, discountedPrice, notes, images, _itemPriceWithoutDiscount, _totalDiscount, _itemPrice, quantity, pitstopType, pitStopItemID, marketID, pitStopID } = product;
     if (isJOVI) {
       return <View style={{ flexDirection: 'row' }}>
@@ -302,7 +305,7 @@ export default () => {
             >
               {title}
             </Text>
-            <TouchableScale style={{ width: "10%" }} onPress={() => onEditPress(product)}>
+            <TouchableScale style={{ width: "10%" }} onPress={() => onEditPress({ ...product, ...sharedExpectedMarketID(product) })}>
               <SvgXml xml={pencil_icon()} height={25} width={16} />
             </TouchableScale>
           </View>
@@ -355,7 +358,7 @@ export default () => {
                 } */}
 
               </View>
-              <TouchableScale style={{ width: "10%" }} onPress={() => onEditPress(product)}>
+              <TouchableScale style={{ width: "10%" }} onPress={() => onEditPress({ ...product, ...sharedExpectedMarketID(product) })}>
                 <SvgXml xml={pencil_icon()} height={25} width={16} />
               </TouchableScale>
             </View>
@@ -530,12 +533,12 @@ export default () => {
                   {
                     cancelButton: { text: "No", onPress: () => { } },
                     okButton: {
-                        text: "Yes", onPress: () => {
-                            dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
-                            setTimeout(() => {
-                              NavigationService.NavigationActions.common_actions.goBack();
-                            }, 0);
-                          }
+                      text: "Yes", onPress: () => {
+                        dispatch(ReduxActions.clearCartAction({ pitstops: [] }));
+                        setTimeout(() => {
+                          NavigationService.NavigationActions.common_actions.goBack();
+                        }, 0);
+                      }
                     },
                   }
                 )

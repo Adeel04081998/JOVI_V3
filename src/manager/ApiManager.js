@@ -7,7 +7,7 @@ import GV from '../utils/GV';
 import Axios from './Axios';
 const dispatch = store.dispatch;
 const noInternetHandler = (requestCallback, params) => {
-    if ((GV.NET_INFO_REF.current.isConnected && GV.NET_INFO_REF.current.isInternetReachable)) {
+    if ((GV.NET_INFO_REF.current?.isConnected && GV.NET_INFO_REF.current?.isInternetReachable)) {
         //WHEN INTERNET IS CONNECTED BUT THERE WAS SOME ERROR FROM SERVER
         Toast.error('Something went wrong!')
         return;
@@ -20,10 +20,10 @@ const noInternetHandler = (requestCallback, params) => {
 }
 
 const handleErrorBanner = (error) => {
-    dispatch(ReduxActions.setSettingsAction({ banner: error?.data.areaLock?.bannerURL}));
+    dispatch(ReduxActions.setSettingsAction({ banner: error?.data.areaLock?.bannerURL }));
 
 }
-const successErrorBanner = (response ) => {
+const successErrorBanner = (response) => {
     // console.log("response",response);
     dispatch(ReduxActions.setSettingsAction({ banner: response?.data.areaLock?.bannerURL }));
 
@@ -33,19 +33,19 @@ const pendingApiCalls = React.createRef(null);
 export const refreshTokenMiddleware = (requestCallback, params) => {
     const userReducer = store.getState().userReducer;
     console.log("[refreshTokenMiddleware].userReducer", userReducer);
-    if(pendingApiCalls.current&&pendingApiCalls.current?.length){
-        pendingApiCalls.current.push({requestCallback,params});
+    if (pendingApiCalls.current && pendingApiCalls.current?.length) {
+        pendingApiCalls.current.push({ requestCallback, params });
         return;
-    }else{
+    } else {
         pendingApiCalls.current = [{
-            requestCallback,params
+            requestCallback, params
         }];
     }
     const callApis = () => {
-        if(pendingApiCalls.current){
-            console.log('[refreshTokenMiddleware]-ApiCalls',pendingApiCalls.current);
-            pendingApiCalls.current.map((item)=>{
-                item.requestCallback.apply(this,item.params);
+        if (pendingApiCalls.current) {
+            console.log('[refreshTokenMiddleware]-ApiCalls', pendingApiCalls.current);
+            pendingApiCalls.current.map((item) => {
+                item.requestCallback.apply(this, item.params);
             });
             pendingApiCalls.current = null;
         }
@@ -58,7 +58,7 @@ export const refreshTokenMiddleware = (requestCallback, params) => {
         },
         res => {
             console.log("refreshTokenMiddleware.Res :", res);
-           
+
             if (res?.data?.statusCode === 202) {
                 callApis();
                 return;
@@ -149,7 +149,7 @@ export const multipartPostRequest = (url, formData, onSuccess = (res) => { }, on
     })
         .then((res) => {
             // console.log("[multipartPostRequest].res", res);
-          
+
             return res.json();
         })
         .then((data) => {

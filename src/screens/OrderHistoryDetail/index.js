@@ -473,7 +473,7 @@ export default ({ navigation, route }) => {
                     />
                     <RenderPrice
                         text={`Total Discount`}
-                        value={data?.orderReceiptVM?.chargeBreakdown?.discount ?? 0}
+                        value={data?.orderReceiptVM?.discount ?? 0}
                         pricePrefix='Rs. -'
                     />
                     <RenderPrice

@@ -466,7 +466,7 @@ export const sharedDiscountsCalculator = (
 export const sharedUniqueIdGenerator = (randomNum = 1000) => {
     return Math.floor(Math.random() * randomNum) + new Date().getTime();
 };
-const checkSameProduct = (currentCheckoutItems, newP) => {
+const checkSameProduct = (currentCheckoutItems, newP, productEditCase = false) => {
     let newProductOptionsListIds = newP.selectedOptions.map(item => (item.itemOptionID)).slice().sort();
     currentCheckoutItems.map((item, i) => {
         let isOptionsSame = item.selectedOptions.map(x => (x.itemOptionID)).slice().sort().every(function (value, index) {
@@ -474,7 +474,7 @@ const checkSameProduct = (currentCheckoutItems, newP) => {
         });
         let isNotesSame = item.notes.toString().toLowerCase() === newP.notes.toString().toLowerCase();
         if (isOptionsSame && isNotesSame) {
-            newP = { ...newP, quantity: newP.quantity + item.quantity, alreadyExisted: true, checkoutIndex: i };
+            newP = { ...newP, quantity: productEditCase ? newP.quantity : newP.quantity + item.quantity, alreadyExisted: true, checkoutIndex: i };
         }
     });
     return {
@@ -497,11 +497,14 @@ export const sharedAddUpdatePitstop = (
         sharedCalculateCartTotals(swappedPitstops, cartReducer);
         return;
     }
-    // console.log("pitstopDetails", pitstopDetails);
+    console.log("pitstopDetails", pitstopDetails);
     let pitstops = cartReducer.pitstops;
     const pitstopIndex = (pitstopDetails?.pitstopIndex >= 0 ? pitstopDetails.pitstopIndex : null);
     if (pitstopIndex !== null && isDeletePitstop) {
         console.log('[DELETE PITSTOP FROM CART]');
+        if (pitstops[pitstopIndex].pitstopType === PITSTOP_TYPES.JOVI || pitstops[pitstopIndex].pitstopType === PITSTOP_TYPES.PHARMACY) {
+            cartReducer.joviRemainingAmount += pitstops[pitstopIndex].estimatePrice ?? 0;
+        }
         pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIndex);
     } else if (pitstopDetails.pitstopType === PITSTOP_TYPES.PHARMACY) {
         console.log('[Pharmacy PITSTOP]');
@@ -558,7 +561,7 @@ export const sharedAddUpdatePitstop = (
         let upcomingItemDetails = pitstopDetails.itemDetails;
         const actionKey = upcomingItemDetails.actionKey || 'checkOutItemID'; //
         const pitstopActionKey = upcomingVendorDetails.actionKey || 'marketID'; //
-        console.log('[PITSTOP IDACTION KEY]', pitstopActionKey);
+        console.log('[PITSTOP ID ACTION KEY]', pitstopActionKey);
         console.log('[ITEM ID ACTION KEY]', actionKey);
         const pitstopIdx = pitstops.findIndex(x => x[pitstopActionKey] === upcomingVendorDetails[pitstopActionKey]); //(x.pitstopID === pitstopDetails.pitstopID || x.smid === pitstopDetails.smid))
         if (pitstopIdx !== -1) {
@@ -568,17 +571,23 @@ export const sharedAddUpdatePitstop = (
             console.log('[itemIndex]', itemIndex);
             if (!fromCart && upcomingItemDetails.selectedOptions?.length && itemIndex >= 0) {
                 console.log('[SELECTED OPTIONS EXIST]');
-                upcomingItemDetails = checkSameProduct(currentPitstopItems, upcomingItemDetails).newP;
-                if (upcomingItemDetails.alreadyExisted) {
-                    console.log('[CHECKOUT ITEMS ALREADY EXIST]');
-                    itemIndex = upcomingItemDetails.checkoutIndex;
-                    if (!upcomingItemDetails.quantity) {
-                        console.log('[QUANTITY LESS THAN OR EQUAL TO ZERO]');
-                        if ((currentPitstopItems.length - 1) <= 0) pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIdx);
-                    } else {
-                        console.log('[Update EXISTING CHECKOUT ITEMS]');
-                        currentPitstopItems[itemIndex] = { ...upcomingItemDetails, alreadyExisted: undefined, checkoutIndex: undefined, checkOutItemID: currentPitstopItems[itemIndex].checkOutItemID };
-                        pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
+                if (pitstopDetails.productEditCase) {
+                    console.log('[EDIT CASE -> UPDATE EXISTING CHECKOUT ITEMS]');
+                    currentPitstopItems[itemIndex] = { ...upcomingItemDetails, alreadyExisted: undefined, checkoutIndex: undefined, checkOutItemID: currentPitstopItems[itemIndex].checkOutItemID };
+                    pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
+                } else {
+                    upcomingItemDetails = checkSameProduct(currentPitstopItems, upcomingItemDetails, pitstopDetails.productEditCase).newP;
+                    if (upcomingItemDetails.alreadyExisted) {
+                        console.log('[CHECKOUT ITEMS ALREADY EXIST]');
+                        itemIndex = upcomingItemDetails.checkoutIndex;
+                        if (!upcomingItemDetails.quantity) {
+                            console.log('[QUANTITY LESS THAN OR EQUAL TO ZERO]');
+                            if ((currentPitstopItems.length - 1) <= 0) pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIdx);
+                        } else {
+                            console.log('[UPDATE EXISTING CHECKOUT ITEMS]');
+                            currentPitstopItems[itemIndex] = { ...upcomingItemDetails, alreadyExisted: undefined, checkoutIndex: undefined, checkOutItemID: currentPitstopItems[itemIndex].checkOutItemID };
+                            pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
+                        }
                     }
                 }
             }
@@ -602,7 +611,7 @@ export const sharedAddUpdatePitstop = (
                         pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
                     } else {
                         console.log('[UPDATE QUANTITY OF AN EXISTING ITEM]');
-                        currentPitstopItems[itemIndex] = { ...upcomingItemDetails, quantity: currentPitstopItems[itemIndex].quantity + upcomingItemDetails.quantity, checkOutItemID: currentPitstopItems[itemIndex].checkOutItemID };
+                        currentPitstopItems[itemIndex] = { ...upcomingItemDetails, quantity: pitstopDetails.productEditCase ? upcomingItemDetails.quantity : currentPitstopItems[itemIndex].quantity + upcomingItemDetails.quantity, checkOutItemID: currentPitstopItems[itemIndex].checkOutItemID };
                         pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
                     }
                 }
@@ -996,7 +1005,7 @@ export const sharedCalculatedTotals = () => {
         serviceCharges: Math.round(_serviceCharges),
         discount: Math.round(discount + genericDiscount),
         subTotal: Math.round(subTotal),
-        total: Math.round(total + _serviceCharges),
+        total: Math.round((total - genericDiscount) + _serviceCharges),
         itemsTotalWithDiscounts: Math.round(itemsTotalWithDiscounts + _serviceCharges),
     }
 
@@ -1193,6 +1202,8 @@ export const splitArray = (array, n) => {
 };
 
 export const sharedVerifyCartItems = () => {
+    sharedGetServiceCharges()
+    return;
     const pitstops = [...store.getState().cartReducer.pitstops];
     let payload = {
         itemIDs: []
@@ -1377,5 +1388,15 @@ export const sharedGetPromoList = (onSuccess = () => { },) => {
 
 }
 
+
+export const sharedExpectedMarketID = (pitstop = {}) => {
+    console.log("[sharedExpectedMarketID].pitstop", pitstop);
+    let _id = pitstop.pitstopID || pitstop.marketID || pitstop.vendorID
+    return {
+        pitstopID: _id,
+        vendorID: _id,
+        marketID: _id,
+    }
+}
 
 
