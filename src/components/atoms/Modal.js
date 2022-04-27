@@ -11,6 +11,7 @@ export default (props) => {
                 transparent={true}
                 visible={props.modalVisible}
                 onRequestClose={props.onRequestClose}
+                {...props.modalProps??{}}
             >
                 <View style={styles.centeredView}>
                     <View style={[styles.modalView, props.modalViewStyles]}>

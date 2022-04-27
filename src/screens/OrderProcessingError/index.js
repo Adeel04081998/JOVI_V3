@@ -184,16 +184,12 @@ export default ({ navigation, route }) => {
         );
     }
     const verifyCustomerDecision = (isConfirm) => {
-        sharedConfirmationAlert("Confirm!", `Are you sure you want to ${isConfirm ? "continue" : "cancel"} this order?`, [
-            {
-                text: "No",
-                onPress: () => console.log('Cancel Pressed')
+        sharedConfirmationAlert("Confirm!", `Are you sure you want to ${isConfirm ? "continue" : "cancel"} this order?`, null,null,{
+            cancelButton: { text: "No", onPress: () => { } },
+            okButton: {
+                text: "Yes", onPress: () => orderDecision(isConfirm)
             },
-            {
-                text: "Yes",
-                onPress: () => orderDecision(isConfirm)
-            },
-        ]);
+        });
     }
     const _renderFooter = () => {
         return (

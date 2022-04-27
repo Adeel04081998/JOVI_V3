@@ -42,7 +42,7 @@ export default ({ navigation, route }) => {
                     title={`Support`}
                     rightIconName={null}
                 />
-                <JoviTab
+                {/* <JoviTab
                     data={["Active", "Solved"]}
                     onActiveIndexChanged={(_, index) => {
                         setActiveIndex(index);
@@ -50,8 +50,8 @@ export default ({ navigation, route }) => {
                     containerStyle={{
                         marginHorizontal: constants.spacing_horizontal,
                         marginTop: constants.spacing_vertical,
-                    }}
-                />
+                    }}//Solved Complaints shouldn't be shown to customer as per sir kamran's requirement
+                /> */}
             </SafeAreaView>
         )
     }

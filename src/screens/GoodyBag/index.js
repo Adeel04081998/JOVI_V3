@@ -177,7 +177,7 @@ const voucherStyles = (colors) => StyleSheet.create({
 const voucherUIStyles = (colors) => StyleSheet.create({
     container: { position: 'relative', paddingTop: 10, height: 100},
     svgContainer: {
-        flexDirection: "column", marginHorizontal: 20, bottom: 10,
+        flexDirection: "column", marginHorizontal: 20, bottom: 10,marginVertical:5
     },
     voucherTopContainer: { height: '55%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 5 },
     lowerText: { fontSize: 10, color: colors.black },

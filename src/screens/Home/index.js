@@ -1,13 +1,12 @@
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import React, { useState } from 'react';
-import { Animated, Appearance, Easing, ScrollView } from "react-native";
+import { Animated, Appearance, Easing } from "react-native";
 import { useDispatch, useSelector } from 'react-redux';
 // import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-aware-scroll-view';
 import AddressesList from "../../components/atoms/FinalDestination/AddressesList";
 import SafeAreaView from "../../components/atoms/SafeAreaView";
-import Text from "../../components/atoms/Text";
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import GenericList from '../../components/molecules/GenericList';
@@ -113,7 +112,6 @@ export default () => {
             dispatch(ReduxActions.hideRobotAction());
         }
     }, [isFocused]);
-
     const renderLoader = () => {
         return <View style={homeStyles.gifLoader}>
             <LottieView
@@ -213,13 +211,15 @@ export default () => {
     );
 };
 const RenderGenericList = React.memo(({ isFinalDestinationSelected, vendorDashboardCategoryIDReducer }) => {
+    const userReducer = useSelector(state => state.userReducer);
+    const finalDestObj = userReducer.finalDestObj;
     React.useEffect(() => {
-        if (isFinalDestinationSelected) {
+        if (finalDestObj) {
             sharedGetPendingOrderRating();
         }
         return () => { };
-    }, [isFinalDestinationSelected])
-    return <>{(isFinalDestinationSelected && vendorDashboardCategoryIDReducer || []).map((item, index) => {
+    }, [finalDestObj])
+    return <>{(finalDestObj && vendorDashboardCategoryIDReducer || []).map((item, index) => {
         return (
             <View key={uniqueKeyExtractor()} style={{ marginHorizontal: -10, }}>
                 <GenericList vendorDashboardCatID={item.vendorDashboardCatID} textContainer={{ paddingHorizontal: 10 }} />

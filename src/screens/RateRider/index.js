@@ -32,7 +32,7 @@ import Toast from '../../components/atoms/Toast';
 const HEADER_ICON_SIZE_RIGHT = CustomHeaderIconBorder.size * 0.7;
 const RATING_SIZE = constants.window_dimensions.height * 0.3;
 let selectedItem = null;
-const DEFAULT_RATING_NUMBER = 2;
+const DEFAULT_RATING_NUMBER = 5;
 
 
 const RATING_JSON = {
@@ -53,7 +53,7 @@ export default ({ navigation, route }) => {
     // #region :: ORDER ID HANDLING START's FROM HERE 
 
     const orderArray = route?.params?.orderArray ?? [];
-    const [orderID, setorderID] = React.useState(route?.params?.orderID ?? 0);
+    const [orderID, setorderID] = React.useState(route?.params?.orderID ?? 0); //92465177
     const orderIDArrayIndex = React.useRef(0);
 
     const updateOrderID = () => {
@@ -96,7 +96,7 @@ export default ({ navigation, route }) => {
     React.useEffect(() => {
         updateData(pre => ({
             ...pre,
-            heading: joviRatingTitle?.header ?? 'Rate your Jovi',
+            heading: joviRatingTitle?.header ?? 'Rate your JOVI',
             headingDescription: joviRatingTitle?.body ?? 'Your rating helps us improve',
         }))
     }, [joviRatingTitle]);
@@ -174,8 +174,8 @@ export default ({ navigation, route }) => {
     const [amount, setAmount] = React.useState('');
     const [ratingData, setRatingData] = React.useState([]);//ALL RATING GETTING FROM SERVER
     const [data, updateData] = React.useState({
-        heading: joviRatingTitle?.header ?? 'Rate your Jovi',
-        headingDescription: joviRatingTitle?.body ?? 'Your rating helps us improve',
+        heading: joviRatingTitle?.header ?? 'Rate your JOVI',
+        headingDescription: joviRatingTitle?.body ?? 'Your rating helps us to improve',
         commentData: [],
     })
     const resetState = () => {
@@ -206,6 +206,7 @@ export default ({ navigation, route }) => {
 
     const getOrderDetailFromServer = () => {
         sharedFetchOrder(orderID, (res) => {
+            // console.log("[getOrderDetailFromServer].res", res);
             if (res.data.statusCode === 200) {
                 setReceiptData(res.data.order);
             } else {
@@ -361,7 +362,7 @@ export default ({ navigation, route }) => {
 
                 {/* ****************** Start of BOTTOM VIEW ****************** */}
                 <View style={{ flex: 5, }}>
-                    <Text fontFamily='PoppinsLight' style={styles.optionHeading}>{`What could've been better?`}</Text>
+                    {rating < 4 && <Text fontFamily='PoppinsLight' style={styles.optionHeading}>{`What could've been better?`}</Text>}
 
                     {rating < 4 ?
                         <>
@@ -387,8 +388,8 @@ export default ({ navigation, route }) => {
                         </>
                         : <>
                             {/* ****************** Start of TIP SWITCH YES OR NO ****************** */}
-                            <View style={styles.tipSwitchPrimaryContainer}>
-                                <Text style={styles.tipSwitchText}>{`Were you satisfied enough to tip your Jovi?`}</Text>
+                            {/* <View style={styles.tipSwitchPrimaryContainer}>
+                                <Text style={styles.tipSwitchText}>{`Were you satisfied enough to tip your JOVI?`}</Text>
 
                                 <View style={styles.tipSwitchContainer}>
                                     <Text style={styles.switchText}>{`No`}</Text>
@@ -408,13 +409,13 @@ export default ({ navigation, route }) => {
                                         />
                                     </View>
                                     <Text style={styles.switchText}>{`Yes`}</Text>
-                                </View>
-                            </View>
+                                </View>//https://cibak.atlassian.net/browse/JV3-1997
+                            </View> */}
 
                             {/* ****************** End of TIP SWITCH YES OR NO ****************** */}
                         </>
                     }
-                    {(switchVal && rating > 3) && (
+                    {/* {(switchVal && rating > 3) && (
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginHorizontal: "10%", marginTop: 6 }}>
                             <Text style={{
                                 fontSize: 13,
@@ -449,9 +450,9 @@ export default ({ navigation, route }) => {
                             />
 
 
-                        </View>
+                        </View>//https://cibak.atlassian.net/browse/JV3-1997    Commenting tip option for now
                     )
-                    }
+                    } */}
 
                     {/* ****************** Start of RATING SLIDER ****************** */}
                     <RatingSliderUI
@@ -485,7 +486,8 @@ export default ({ navigation, route }) => {
                 />
 
                 <TextWithBoxUI
-                    disabled={rating < 4 ? disableSubmit : (switchVal ? (!VALIDATION_CHECK(amount)) : switchVal)}
+                    disabled={rating < 4 ? disableSubmit : false}
+                    // disabled={rating < 4 ? disableSubmit : (switchVal ? (!VALIDATION_CHECK(amount)) : switchVal)} // https://cibak.atlassian.net/browse/JV3-1997 tip option is commented
                     colors={colors}
                     text={`Submit`}
                     onPress={() => { onSubmitPress(); }}
@@ -513,8 +515,12 @@ export default ({ navigation, route }) => {
                         totalGST={receiptData?.orderReceiptVM?.chargeBreakdown?.totalProductGST ?? ''}
                         serviceCharges={receiptData?.orderReceiptVM?.actualServiceCharges ?? 0}
                         estimateServiceTax={receiptData?.orderReceiptVM?.actualServiceTax ?? 0}
-                        discount={receiptData?.orderReceiptVM?.chargeBreakdown?.discount ?? 0}
+                        // discount={receiptData?.orderReceiptVM?.chargeBreakdown?.discount ?? 0}
+                        // ref => https://cibak.atlassian.net/browse/JV3-2107
+                        discount={receiptData?.orderReceiptVM?.discount ?? 0}
                         total={receiptData?.orderReceiptVM?.actualTotalPlusPitstopAmount ?? 0}
+                        walletDeduction={receiptData?.orderReceiptVM?.walletDeduction ?? 0}
+                        arrears={receiptData?.orderReceiptVM?.arrears ?? 0}
                         onRightTextPress={() => {
                             setReceiptVisible(false);
                         }}
