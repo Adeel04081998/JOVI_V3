@@ -29,6 +29,7 @@ import Button from '../../components/molecules/Button';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import actions from '../../redux/actions';
 import Regex from '../../utils/Regex';
+import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-aware-scroll-view';
 
 
 export default () => {
@@ -181,34 +182,20 @@ export default () => {
       "pp_MobileNumber": mobileNumber,
       "pp_CNIC": cnic
     }
-    console.log('[JazzCashHandler].data', data);
     postRequest(
       Endpoints.JAZZCASH_PAY,
       data,
       success => {
         console.log('[JazzCashHandler].success', success);
-        const { jazzCashHtml, statusCode } = success.data
-        if (statusCode === 200) {
-          NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.WebView.screen_name, {
-            uri: null,
-            html: `${jazzCashHtml}`,
-            title: "Top Up"
-          })
-        } else {
-          sharedExceptionHandler(success)
-        }
-        // const { statusCode, jazzCashAuthViewModel } = success.data;
-        // if (statusCode === 200) {
-        //   NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.WebView.screen_name, {
-        //     uri: {
-        //       uri: jazzCashAuthViewModel.url,
-        //       method: 'POST',
-        //       body: `pp_Language=${jazzCashAuthViewModel.pp_Language}&pp_MerchantID=${jazzCashAuthViewModel.pp_MerchantID}&pp_SubMerchantID=${jazzCashAuthViewModel.pp_SubMerchantID}&pp_Password=${jazzCashAuthViewModel.pp_Password}&pp_BankID=${jazzCashAuthViewModel.pp_BankID}&pp_ProductID=${jazzCashAuthViewModel.pp_ProductID}&pp_TxnRefNo=${jazzCashAuthViewModel.pp_TxnRefNo}&pp_Amount=${jazzCashAuthViewModel.pp_Amount}&pp_TxnCurrency=${jazzCashAuthViewModel.pp_TxnCurrency}&pp_TxnDateTime=${jazzCashAuthViewModel.pp_TxnDateTime}&pp_BillReference=${jazzCashAuthViewModel.pp_BillReference}&pp_Description=${jazzCashAuthViewModel.pp_Description}&pp_TxnExpiryDateTime=${jazzCashAuthViewModel.pp_TxnExpiryDateTime}&pp_SecureHash=${jazzCashAuthViewModel.pp_SecureHash}&ppmpf_1=${jazzCashAuthViewModel.ppmpf_1}&ppmpf_2=${jazzCashAuthViewModel.ppmpf_2}&ppmpf_3=${jazzCashAuthViewModel.ppmpf_3}&ppmpf_4=${jazzCashAuthViewModel.ppmpf_4}&ppmpf_5=${jazzCashAuthViewModel.ppmpf_5}&pp_MobileNumber=${jazzCashAuthViewModel.pp_MobileNumber}&pp_CNIC=${jazzCashAuthViewModel.pp_CNIC}`
-        //     },
-        //     html: null,
-        //     title: "Top Up"
-        //   })
-        // } else sharedExceptionHandler(success)
+        let jazzCashHtml;
+        let jazzCashResp = success.data
+        if (typeof jazzCashResp === "object") jazzCashHtml = jazzCashResp.jazzCashHtml
+        else jazzCashHtml = jazzCashResp
+        NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.WebView.screen_name, {
+          uri: null,
+          html: `${jazzCashHtml}`,
+          title: "Top Up"
+        })
       },
       fail => {
         console.log('[JazzCashHandler].fail', fail);
@@ -231,17 +218,20 @@ export default () => {
 
 
   const EasyPaisaHandler = (paymentMethod) => {
-
+    let data =
+    {
+      "amount": parseInt(topUpAmount),
+      "orderRefNo": id,
+      "emailAddr": email,
+      "paymentMethod": paymentMethod,
+      "mobileNum": mobileNumStr
+    }
+    console.log('data', data);
     postRequest(
       Endpoints.EASYPAISA_PAY,
-      {
-        "amount": parseInt(topUpAmount),
-        "orderRefNo": id,
-        "emailAddr": email,
-        "paymentMethod": paymentMethod,
-        "mobileNum": mobileNumStr
-      },
+      data,
       success => {
+        console.log('success ==>>>', success);
         if (success.data.statusCode === 200) {
           NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.WebView.screen_name, {
             uri: { uri: success.data.easyPaisaAuthViewModel.url, method: 'POST', body: `postBackURL=${success.data.easyPaisaAuthViewModel.postBackURL}&auth_token=${success.data.easyPaisaAuthViewModel.auth_token}` }, html: null, title: "Top Up"
@@ -250,6 +240,8 @@ export default () => {
         } else sharedExceptionHandler(success)
       },
       fail => {
+        console.log('fail ==>>>', fail);
+        setLoader(false)
         sharedExceptionHandler(fail)
       })
   }
@@ -283,6 +275,7 @@ export default () => {
         } else sharedExceptionHandler(success)
       },
       fail => {
+        setLoader(false)
         sharedExceptionHandler(fail)
       })
   }
@@ -389,6 +382,9 @@ export default () => {
   }
 
   const onContinue = () => {
+    // setTopUpAmount('')
+    // setMobileNumber('')
+    // setCnic('')
     try {
       const item = selectedItem;
       // console.log("[onContinue].item", item, topUpAmount);
@@ -397,7 +393,6 @@ export default () => {
       }
       else if (Number.isInteger(parseInt(topUpAmount))) {
         Keyboard.dismiss();
-        console.log('topUpAmount', topUpAmount);
         if (!topUpAmount.toString().length) return Toast.error(`Amount cannot be less than 1`);
         else if (topUpAmount.toString()[0] == "0") return Toast.error(`Amount cannot be less than 1`);
         else if (parseInt(topUpAmount) < 10) return Toast.error(`Amount cannot be less than 10`);
@@ -406,9 +401,11 @@ export default () => {
           getPayloadForWebViewHandler(item.paymentType);
         }
       } else {
+        setLoader(false);
         Toast.error(`Please enter amount`);
       }
     } catch (error) {
+      setLoader(false);
       console.log("[onContinue].error", error);
       setLoader(false);
     }
@@ -462,7 +459,15 @@ export default () => {
         {
           item.idx === selectedItem.idx &&
           <View>
-            <TextInput value={topUpAmount} placeholder="Rs. 100" maxLength={5} spaceFree={true} pattern={Regex.numberOnly} onChangeText={(t) => { setTopUpAmount(t) }} title="Enter Amount" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} keyboardType="numeric" />
+            <TextInput value={topUpAmount} placeholder="Rs. 100" maxLength={5} spaceFree={true} pattern={Regex.restrict_zero} onChangeText={(t) => {
+              if (t === '0') {
+                t = ''
+              } else {
+                t
+              }
+              setTopUpAmount(t)
+
+            }} title="Enter Amount" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} keyboardType="numeric" />
           </View>
         }
       </>
@@ -524,7 +529,7 @@ export default () => {
   const renderAccountContainer = () => {
     return (
       <View style={styles.dataContainerStyle} >
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }} >
+        <KeyboardAwareScrollView contentContainerStyle={{ flexGrow: 0 }}>
           {
             cardData.map((item, index) => {
               return (
@@ -535,7 +540,7 @@ export default () => {
               )
             })
           }
-        </ScrollView>
+        </KeyboardAwareScrollView>
       </View>
     )
   }
@@ -579,7 +584,7 @@ export default () => {
         transition={transition}
         style={styles.container}>
         {renderBalanceContainer()}
-        <ScrollView>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} >
           {renderTextRow()}
           {renderAccountContainer()}
         </ScrollView>

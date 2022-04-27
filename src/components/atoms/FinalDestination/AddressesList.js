@@ -115,7 +115,7 @@ export default (props) => {
             </TouchableOpacity>
 
             {state.addressList &&
-                <ScrollView style={{ maxHeight: HEIGHT * 0.18 }}>
+                <ScrollView style={{ maxHeight: HEIGHT * 0.33 }}>
                     {renderAddressList()}
                 </ScrollView>
             }
