@@ -1,5 +1,5 @@
 import React from 'react';
-import { Appearance, StyleSheet, Platform, Alert } from 'react-native';
+import { Appearance, StyleSheet, Platform, Alert, Animated } from 'react-native';
 import theme from '../../../res/theme';
 import GV from '../../../utils/GV';
 import Image from '../../atoms/Image';
@@ -20,7 +20,7 @@ import ImageBackground from '../../atoms/ImageBackground';
 import CardDealHover from '../../../screens/PitstopListing/components/CardDealHover';
 import { useIsFocused } from '@react-navigation/native';
 
-export default React.memo(({ pitstopType = 0, vendorDashboardCatID = 0, imageStyles = {}, themeColors = null, showMoreBtnText = "", cb = () => { }, textContainer = {} }) => {
+export default React.memo(({ pitstopType = 0, index = null, vendorDashboardCatID = 0, imageStyles = {}, themeColors = null, showMoreBtnText = "", cb = () => { }, textContainer = {} }) => {
     const SPACING_BOTTOM = 0;
     const [data, setData] = React.useState(null);
     const isLoading = React.useRef(null);
@@ -28,6 +28,7 @@ export default React.memo(({ pitstopType = 0, vendorDashboardCatID = 0, imageSty
     const userReducer = useSelector(store => store.userReducer);
     const finalDestination = userReducer?.finalDestObj ?? { latitude: 0, longitude: 0 };
     const ITEMS_PER_PAGE = userReducer.homeScreenItemsPerPage || 10;
+    const titleAnimation = React.useRef(new Animated.Value(0)).current;
 
     const fetchData = () => {
         if (!isFocused) return;
@@ -45,6 +46,7 @@ export default React.memo(({ pitstopType = 0, vendorDashboardCatID = 0, imageSty
                 if (res.data.statusCode !== 200) return;
                 cb(true)
                 setData(res.data.vendorCategoryViewModel);
+                titleAnimationHandler();
             },
             err => {
                 isLoading.current = true
@@ -55,6 +57,13 @@ export default React.memo(({ pitstopType = 0, vendorDashboardCatID = 0, imageSty
             false,
         );
     };
+    const titleAnimationHandler = () => {
+        Animated.timing(titleAnimation, {
+            toValue: 1,
+            duration: 700,
+            useNativeDriver: true
+        }).start();
+    }
     React.useEffect(() => {
         fetchData();
     }, [pitstopType])
@@ -82,7 +91,7 @@ export default React.memo(({ pitstopType = 0, vendorDashboardCatID = 0, imageSty
             const DISTANCE = distance || estTime;
             return (
                 <TouchableOpacity activeOpacity={0.8} style={{ padding: 10 }} onPress={() => sharedOnVendorPress(item, index)}>
-                    <ImageBackground source={{ uri: renderFile(image) }} imageStyle={{borderRadius:10}} style={[styles.image_Small, imageStyles]} tapToOpen={false} >
+                    <ImageBackground source={{ uri: renderFile(image) }} imageStyle={{ borderRadius: 10 }} style={[styles.image_Small, imageStyles]} tapToOpen={false} >
                         <CardDealHover colors={colors} text={item?.discountTitle ?? ''} />
                         <CardDealHover colors={colors} text={item?.discountPercentage ?? ''} />
                     </ImageBackground>
@@ -107,7 +116,7 @@ export default React.memo(({ pitstopType = 0, vendorDashboardCatID = 0, imageSty
             const DISTANCE = distance || estTime;
             return (
                 <TouchableOpacity activeOpacity={0.8} onPress={() => sharedOnVendorPress(item, index)}>
-                    <ImageBackground source={{ uri: renderFile(image) }} imageStyle={{borderRadius:10}} style={[styles.image, imageStyles]} tapToOpen={false} >
+                    <ImageBackground source={{ uri: renderFile(image) }} imageStyle={{ borderRadius: 10 }} style={[styles.image, imageStyles]} tapToOpen={false} >
                         <CardDealHover colors={colors} text={item?.discountTitle ?? ''} />
                         <CardDealHover colors={colors} text={item?.discountPercentage ?? ''} />
                     </ImageBackground>
@@ -140,12 +149,12 @@ export default React.memo(({ pitstopType = 0, vendorDashboardCatID = 0, imageSty
             {/* {
                 data.map((item, index) => ( */}
             <React.Fragment key={`generic-item-key-${'index'}`}>
-                <View style={{ ...textContainer, ...styles.container }} >
+                <Animated.View style={{ ...textContainer, ...styles.container, opacity: titleAnimation }} >
                     <Text style={styles.mainText} numberOfLines={1} >{data?.header}</Text>
                     <TouchableOpacity onPress={() => onPressViewMore()}>
                         <Text style={styles.viewMoreBtn} >{showMoreBtnText || `View More`}</Text>
                     </TouchableOpacity>
-                </View>
+                </Animated.View>
 
                 <AnimatedFlatlist
 
@@ -219,7 +228,7 @@ const _styles = (colors, width, height, height_sm, width_sm) => StyleSheet.creat
 
     },
     image: {
-        height: height+30,
+        height: height + 30,
         width: width,
         borderRadius: 10,
     },
