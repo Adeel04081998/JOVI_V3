@@ -134,6 +134,7 @@ export default ({ route }) => {
     //Validation
     const pickupValidation = state.pharmacyPitstopType === 1 ? (!isAttachment ? (state.pickUpPitstop.latitude === null ?? false) : (state.images === null || state.images?.length < 1)) : false;
     const disabledButton = pickupValidation || state.latitude === null || state.medicineName === '' || state.detail === '' || state.estimatePrice < 1;
+    const isImageUploading = isAttachment && state.images && (state.images.find(item=>item.isUploading === true)?true:false);
     //Logical Functions
     const handlePickImage = () => {
         sharedConfirmationAlert("Alert", "Pick Option!",
@@ -557,14 +558,14 @@ export default ({ route }) => {
             </KeyboardAvoidingView>
             <Button
                 onPress={onSave}
-                text="Save and Continue"
+                text={isImageUploading?"Image Uploading...":"Save and Continue"}
                 textStyle={{
                     fontSize: 16,
                     fontFamily: FontFamily.Poppins.Regular
                 }}
                 fontFamily="PoppinsRegular"
                 isLoading={loader}
-                disabled={disabledButton}
+                disabled={disabledButton||isImageUploading}
                 style={[_styles.locButton, _styles.saveButton]} />
         </SafeAreaView>
     );
