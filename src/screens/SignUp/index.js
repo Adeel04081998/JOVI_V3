@@ -72,11 +72,12 @@ export default () => {
             return
         }
         setState((pre) => ({ ...pre, isLoading: false }))
-        const { statusCode, loginResult, message, } = res;
+        const { statusCode, loginResult, message, errors } = res;
         if (statusCode !== 200) {
+            inputsArr[2].isValid = false;
             inputsArr[2].showError = true,
-                inputsArr[2].validationerror = message;
-            setState(pre => ({ ...pre, inputsArr }))
+                inputsArr[2].validationerror = errors.Error[0];
+            setState(pre => ({ ...pre, emailAlreadyExist: true, inputsArr }))
         } else { dispatch(ReduxActions.setUserAction({ ...loginResult, isLoggedIn: true, introScreenViewed: true })); }
     }
     const signUpErrorHandler = (err) => {
@@ -145,7 +146,6 @@ export default () => {
         if (IS_DISABLED) return false
         else return true
     }
-
     return (
         <SafeAreaView style={[styles.container]}>
             <View style={styles.headerPrimarycontainer}>
@@ -162,6 +162,7 @@ export default () => {
             <KeyboardAwareScrollView  >
                 <View style={{ flex: 1, }}>
                     {inputsArr.map((x, i) => {
+                        const isEmailMessage = x.id === 3 ? emailAlreadyExist : false // for email
                         const isError = x.id !== 4 && x.showError; // mob no
                         return <View style={{ marginTop: 25 }} key={`key-${i}`}>
                             <TextInput
@@ -171,13 +172,13 @@ export default () => {
                                 value={x.value}
                                 onChangeText={(value) => (_onChangeHandler(x.field, value, i))}
                                 pattern={x.pattern}
-                                errorText={isError ? x.validationerror : ""}
+                                errorText={isError || isEmailMessage ? x.validationerror : ""}
                                 keyboardType={x.keyboardType}
                                 isValid={(value) => {
                                     inputsArr[i].isValid = value;
                                     setState((pre) => ({ ...pre, inputsArr }))
                                 }}
-                                forceError={isError}
+                                forceError={isError || isEmailMessage}
                                 titleStyle={{ top: -30, color: 'black', fontSize: 17 }}
                                 containerStyle={{ borderColor: isError ? "red" : "#E2E2E2", backgroundColor: x.backgroundColor, borderWidth: 1 }}
                                 editable={x.field === "Mobile" ? false : true}
