@@ -26,6 +26,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ENUMS from '../../utils/ENUMS';
 import svgs from '../../assets/svgs';
 import { SvgXml } from 'react-native-svg';
+import VendorOpening from '../../components/organisms/Overlays/VendorOpening';
 
 const WINDOW_HEIGHT = constants.window_dimensions.height;
 const PITSTOPS = {
@@ -189,6 +190,10 @@ export default ({ navigation, route }) => {
 
     return (
         <SafeAreaView style={{ flex: 1, top: getStatusBarHeight(true) }}>
+            {(data?.isClosed ?? false) &&
+                <VendorOpening colors={colors} time={data?.openingTime ?? ''} />
+            }
+
             <StatusBar backgroundColor={colors.white} />
             <Animated.View style={{ position: 'absolute', top: 0, zIndex: 9999, }}>
                 <CustomHeader

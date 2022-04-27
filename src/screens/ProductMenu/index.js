@@ -8,6 +8,7 @@ import TouchableScale from '../../components/atoms/TouchableScale';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import NoRecord from '../../components/organisms/NoRecord';
+import VendorOpening from '../../components/organisms/Overlays/VendorOpening';
 import { isNextPage, renderFile, sharedAddToCartKeys, sharedAddUpdatePitstop, sharedExceptionHandler, sharedGetFinalDestintionRequest, sharedGetPitstopData, uniqueKeyExtractor, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import { postRequest } from '../../manager/ApiManager';
@@ -109,6 +110,7 @@ export default ({ navigation, route }) => {
         };
 
         postRequest(Endpoints.GET_PRODUCT_MENU_LIST, params, (res) => {
+            console.log('response supermarket  ', res);
             if (res.data.statusCode === 404) {
                 updateQuery({
                     errorText: res.data.message,
@@ -393,6 +395,9 @@ export default ({ navigation, route }) => {
 
     return (
         <SafeAreaView style={styles.primaryContainer}>
+            {(allData?.isClosed ?? false) &&
+                <VendorOpening colors={colors} time={allData?.openingTime ?? ''} />
+            }
             {_renderHeader('')}
             <FlatList
                 ref={flatlistRef}
