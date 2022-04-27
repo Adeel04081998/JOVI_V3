@@ -13,3 +13,4 @@ declare module 'react-native-vector-icons/Foundation';
 declare module 'react-native-vector-icons/SimpleLineIcons';
 declare module 'd3-shape';
 declare module 'react-timer-mixin';
+declare module 'react-native-background-timer';

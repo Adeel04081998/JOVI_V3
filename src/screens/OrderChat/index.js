@@ -26,6 +26,7 @@ import { store } from '../../redux/store';
 import constants from '../../res/constants';
 import FontFamily from '../../res/FontFamily';
 import theme from '../../res/theme';
+import CustomInterval from '../../utils/CustomInterval';
 import GV, { PITSTOP_TYPES, PITSTOP_TYPES_INVERTED } from '../../utils/GV';
 import { headerStyles, stylesFunc } from './styles';
 dayjs.extend(customParseFormat)
@@ -178,14 +179,19 @@ export default ({ navigation, route }) => {
         }
 
 
-        BackgroundTimer.stopBackgroundTimer();
+        // BackgroundTimer.stopBackgroundTimer();
+        CustomInterval.stopInterval();
 
     }
 
     const handleStart = (value) => {
         if (value) {
             resetTimer();
-            BackgroundTimer.runBackgroundTimer(() => {
+            // BackgroundTimer.runBackgroundTimer(() => {
+
+            CustomInterval.handleInterval(() => {
+
+
                 if (time.current.sec !== 59) {
                     if (time.current.min >= constants.recording_duration_max_limit) {
                         setStopRecording(true);
@@ -214,7 +220,8 @@ export default ({ navigation, route }) => {
                         sec: 0
                     }
                 }
-            }, 1000);
+            }, 1);
+            // }, 1000);
 
         } else {
             recordButtonRef.current.setDuration(`${padToTwo(time.current.min)} : ${padToTwo(time.current.sec)}`)
@@ -549,25 +556,27 @@ export default ({ navigation, route }) => {
 
 
                             {/* ****************** Start of MIC ICON ****************** */}
-                            <RecordButton
-                                ref={recordButtonRef}
-                                stop={stopRecording}
-                                renderComposer={(val) => {
-                                    handleStart(val);
-                                    toggleMicTimer(val);
-                                }}
-                                onRecordAudio={(item) => {
-                                    const { onSend: propOnSend } = rsProps;
-                                    sendMessageToRider(CHAT_TYPE_ENUM.audio, null, item)
-                                    propOnSend({
-                                        _id: uuidGenerator(),
-                                        audio: item.uri,
-                                        isFile: true,
-                                        user: MY_USER, createdAt: new Date(),
-                                    }, true)
-                                    setStopRecording(false);
-                                }}
-                            />
+                            {!hasText &&
+                                <RecordButton
+                                    ref={recordButtonRef}
+                                    stop={stopRecording}
+                                    renderComposer={(val) => {
+                                        handleStart(val);
+                                        toggleMicTimer(val);
+                                    }}
+                                    onRecordAudio={(item) => {
+                                        const { onSend: propOnSend } = rsProps;
+                                        sendMessageToRider(CHAT_TYPE_ENUM.audio, null, item)
+                                        propOnSend({
+                                            _id: uuidGenerator(),
+                                            audio: item.uri,
+                                            isFile: true,
+                                            user: MY_USER, createdAt: new Date(),
+                                        }, true)
+                                        setStopRecording(false);
+                                    }}
+                                />
+                            }
 
                             {/* ****************** End of MIC ICON ****************** */}
 

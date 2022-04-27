@@ -97,7 +97,7 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
     const getData = (params = {}) => {
         isRequestSent.current = true;
         setState(pre => ({ ...pre, isLoading: true }));
-        postRequest(Endpoints.GET_PITSTOPS_PROMOTIONS, {
+        postRequest(Endpoints.GET_VENDOR_DASHBOARD_CATEGORY_ID_DETAIL, {
             "vendorType": pitstopType,
             "pageNumber": paginationInfo.current.pageNumber,
             "itemsPerPage": paginationInfo.current.itemsPerPage,
@@ -122,7 +122,7 @@ const PitstopsVerticalList = ({ imageStyles = {}, route }) => {
                     totalItems: res.data.vendorCategoryViewModel?.paginationInfo?.totalItems
                 }
             }
-            console.log('GET_PITSTOPS_PROMOTIONS', res);
+            console.log('GET_VENDOR_DASHBOARD_CATEGORY_ID_DETAIL', res);
         }, err => {
             sharedExceptionHandler(err);
             isRequestSent.current = false;

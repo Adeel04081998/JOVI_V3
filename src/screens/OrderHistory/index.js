@@ -345,7 +345,7 @@ const OnGoingItemCardUI = ({ colors = initColors, orderID = '', atPoint = 0, noO
             </View>
 
             <View style={onGoingItemStyles.valueContainer}>
-                <Text style={onGoingItemStyles.value}>{`${paymentMethod}`}</Text>
+                <Text style={onGoingItemStyles.value}>{`${VALIDATION_CHECK(paymentMethod) ? paymentMethod : ' '}`}</Text>
                 <Text style={onGoingItemStyles.value}>{`${estDeliveryTime}`}</Text>
             </View>
         </Card>

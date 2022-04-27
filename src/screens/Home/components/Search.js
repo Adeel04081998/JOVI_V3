@@ -9,7 +9,7 @@ import FontFamily from '../../../res/FontFamily';
 let numberOfLines = 2
 let minHeight = (Platform.OS === 'ios' && numberOfLines) ? (40 * numberOfLines) : null;
 const HEIGHT = 50
-export default ({ colors, homeStyles, onSearch = () => { }, placeholder = null, searchProps = {}, fontSize = 12, containerStyle = {}, textInputStyle = {}, onChangeText = (text) => { }, text = '', editable = true, onPress = undefined,autoFocus=false }) => {
+export default ({ colors, homeStyles, onSearch = (text) => { }, placeholder = null, searchProps = {}, fontSize = 12, containerStyle = {}, textInputStyle = {}, onChangeText = (text) => { }, text = '', editable = true, onPress = undefined, autoFocus = false, searchIconPressDisable = true, }) => {
     const [state, setState] = React.useState({
         value: '',
     });
@@ -67,7 +67,13 @@ export default ({ colors, homeStyles, onSearch = () => { }, placeholder = null, 
                     numberOfLines={Platform.OS === "ios" ? null : numberOfLines}
 
                 />
-                <VectorIcon name='search' style={{ right: constants.window_dimensions.width * 0.08, paddingRight: 5, backgroundColor: "#F2F1F6", }} size={constants.window_dimensions.height * 0.03} color={'#C6C5C8'} onPress={() => onSearch(state.value)} />
+                <TouchableOpacity
+                    activeOpacity={0}
+                    disabled={searchIconPressDisable} onPress={() => {
+                        onSearch(state.value)
+                    }}>
+                    <VectorIcon name='search' style={{ right: constants.window_dimensions.width * 0.08, paddingRight: 5, backgroundColor: "#F2F1F6", }} size={constants.window_dimensions.height * 0.03} color={'#C6C5C8'} />
+                </TouchableOpacity>
             </View>
         </Wrapper>
     );

@@ -1,4 +1,3 @@
-import debounce from 'lodash.debounce'; // 4.0.8
 import AnimatedLottieView from 'lottie-react-native';
 import * as React from 'react';
 import { Animated, Appearance, FlatList, SafeAreaView } from 'react-native';
@@ -12,7 +11,7 @@ import TouchableScale from '../../components/atoms/TouchableScale';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
-import { sharedExceptionHandler, sharedOnVendorPress } from '../../helpers/SharedActions';
+import { renderFile, sharedExceptionHandler, sharedOnVendorPress } from '../../helpers/SharedActions';
 import { getRequest, postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
@@ -24,6 +23,18 @@ import SearchProductVendors from './components/SearchProductVendors';
 import { stylesFunc } from './styles';
 
 const WINDOW_WIDTH = constants.window_dimensions.width;
+
+const debounceFunction = (func, delay) => {
+    let timer;
+    return function () {
+        let self = this;
+        let args = arguments;
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            func.apply(self, args)
+        }, delay)
+    }
+}
 
 export default ({ navigation, route }) => {
     //#region :: params
@@ -39,11 +50,11 @@ export default ({ navigation, route }) => {
 
     // #region :: STATE & REF's START's FROM HERE 
     const [isRestaurantSelected, toggleIsRestaurantSelected] = React.useState(route.params.pitstopType === 1 ? false : true);
+    const isRestaurantSelectedRef = React.useRef(route.params.pitstopType === 1 ? false : true);
     const [showProductVendor, toggleShowProductVendor] = React.useState(isFromListing);
     const [showJoviJob, toggleShowJoviJob] = React.useState(false);
     const [searchText, setSearchText] = React.useState('');
-    const searchTextRef = React.useRef('');
-    const [recentSearchesData, updateRecentSearchedData] = React.useState([]);
+    const [recentSearchesData, updateRecentSearchedData] = React.useState({ restaurant: [], grocery: [], });
     const [searchData, updateSearchData] = React.useState({ restaurant: { text: '', data: [] }, grocery: { text: '', data: [] }, });
 
     const [loading, toggleLoading] = React.useState(false);
@@ -55,6 +66,7 @@ export default ({ navigation, route }) => {
         return (
             <TouchableScale wait={0} onPress={() => {
                 toggleIsRestaurantSelected(!isRestaurantSelected);
+                isRestaurantSelectedRef.current = !isRestaurantSelectedRef.current;
             }} disabled={selected}
                 style={{
                     flex: 1,
@@ -92,6 +104,7 @@ export default ({ navigation, route }) => {
     const hideShowProductVendor = () => {
         toggleShowProductVendor(false);
     };
+    const debounceInputSearch = React.useCallback(debounceFunction((nextValue) => executeSearching(nextValue), 1000), [])
 
     const _renderHeader = () => {
         const headerColors = showProductVendor || isFromListing ? isRestaurantSelected ? restaurantColors : smColors : colors;
@@ -109,7 +122,7 @@ export default ({ navigation, route }) => {
                     {...(showProductVendor || isFromListing) && {
                         leftIconColor: headerColors.primary,
                         onLeftIconPress: () => {
-                            if(isFromListing){
+                            if (isFromListing) {
                                 NavigationService.NavigationActions.common_actions.goBack();
                                 return;
                             }
@@ -142,6 +155,12 @@ export default ({ navigation, route }) => {
                                     placeholder={`Search by restaurant name or food`}
                                     onChangeText={(text) => {
                                         setSearchText(text);
+                                        debounceInputSearch(text);
+
+                                    }}
+                                    searchIconPressDisable={false}
+                                    onSearch={(text) => {
+                                        executeSearching(text);
                                     }}
                                 />
                             </View>
@@ -164,28 +183,38 @@ export default ({ navigation, route }) => {
     // #endregion :: RENDER HEADER END's FROM HERE 
 
     // #region :: GETTING & CLEARING RECENT SERACHES START's FROM HERE 
+
     React.useEffect(() => {
         loadRecentSearches();
+        executeSearching(searchText);
         return () => { };
-    }, []);
+    }, [isRestaurantSelected]);
 
     const loadRecentSearches = () => {
+        const selectedKey = isRestaurantSelectedRef.current ? "restaurant" : "grocery";
+        const typ = isRestaurantSelectedRef.current ? PITSTOP_TYPES.RESTAURANT : PITSTOP_TYPES.SUPER_MARKET;
+        if (recentSearchesData[selectedKey].length > 1) return
         getRequest(
-            Endpoints.GET_RECENT_SEARCHES,
+            `${Endpoints.GET_RECENT_SEARCHES}/${typ}`,
             res => {
+                console.log(`${Endpoints.GET_RECENT_SEARCHES} res ---  `, res);
                 const statusCode = res.data?.statusCode ?? 404;
                 if (statusCode === 200) {
-                    updateRecentSearchedData(res.data.recentSearches)
+                    updateRecentSearchedData(pre => ({
+                        ...pre,
+                        [selectedKey]: res.data.mainSearchResults,
+                    }))
                     return;
                 }
             },
             err => {
-                sharedExceptionHandler(err);
             }, {}, false);
     }
 
     const onClearRecentPress = () => {
-        updateRecentSearchedData([]);
+        const selectedKey = isRestaurantSelectedRef.current ? "restaurant" : "grocery";
+
+        updateRecentSearchedData(pre => ({ ...pre, [selectedKey]: [] }));
         getRequest(
             Endpoints.CLEAR_RECENT_SEARCHES,
             res => {
@@ -197,17 +226,13 @@ export default ({ navigation, route }) => {
 
     // #endregion :: GETTING & CLEARING RECENT SERACHES END's FROM HERE 
 
-    const debounceSearching = debounce(() => {
-        searching();
-    }, 500, { leading: false, trailing: true, });
 
-
-    React.useEffect(() => {
-        searchTextRef.current = searchText;
-        if (`${searchText}`.trim().length > 2) {
+    const executeSearching = (text) => {
+        const textLength = `${text}`.trim().length;
+        if (textLength > 2) {
             hideJOVIJob();
-            debounceSearching();
-        } else if (`${searchText}`.trim().length === 0) {
+            searching(text);
+        } else if (textLength === 0) {
             hideJOVIJob();
             clearBothSearch();
             toggleLoading(false);
@@ -216,7 +241,7 @@ export default ({ navigation, route }) => {
             clearBothSearch();
             toggleLoading(false);
         }
-    }, [searchText, isRestaurantSelected])
+    }
 
     const showJOVIJob = () => {
         toggleShowJoviJob(true);
@@ -232,26 +257,29 @@ export default ({ navigation, route }) => {
         })
     }
 
-    const searching = (text = `${searchText}`.trim()) => {
-        text = `${searchTextRef.current}`.trim();
-        const selectedKey = isRestaurantSelected ? "restaurant" : "grocery";
+    const searching = (text) => {
+        const selectedKey = isRestaurantSelectedRef.current ? "restaurant" : "grocery";
         if (`${text}`.toLowerCase() === `${searchData[selectedKey].text}`.toLowerCase()) {
-            if (text.length > 0)
+            if (searchData[selectedKey].data.length < 1) {
                 showJOVIJob();
+            } else {
+                hideJOVIJob();
+            }
             return;
         }
         if (text.length < 1) {
             hideJOVIJob();
             clearBothSearch();
-            return;
         }
         const params = {
             "userID": null,
             "searchTxt": text,
-            "pitstopType": isRestaurantSelected ? PITSTOP_TYPES.RESTAURANT : PITSTOP_TYPES.SUPER_MARKET,
+            "pitstopType": isRestaurantSelectedRef.current ? PITSTOP_TYPES.RESTAURANT : PITSTOP_TYPES.SUPER_MARKET,
         }
         toggleLoading(true);
+        console.log(`${Endpoints.SEARCH} PARAMS ---  `, params);
         postRequest(Endpoints.SEARCH, params, (res) => {
+            console.log(`${Endpoints.SEARCH} res ---  `, res);
             const statusCode = res.data?.statusCode ?? 404;
             if (statusCode === 200) {
                 const searchedResData = res.data?.mainSearchResults ?? [];
@@ -263,7 +291,7 @@ export default ({ navigation, route }) => {
                     }
                 }))
             } else {
-                if (searchTextRef.current.length > 0) {
+                if (text.length > 0) {
                     showJOVIJob();
                     updateSearchData(pre => ({
                         ...pre,
@@ -286,7 +314,8 @@ export default ({ navigation, route }) => {
     };//end of searching -- getting record from server using text user enter
 
     const renderRecentlyItem = () => {
-        if (recentSearchesData.length < 1) return null;
+        const selectedKey = isRestaurantSelectedRef.current ? "restaurant" : "grocery";
+        if (recentSearchesData[selectedKey].length < 1) return null;
         return (
             <KeyboardAwareScrollView bounces={false} contentContainerStyle={{ paddingBottom: constants.spacing_vertical * 2, }}>
                 <View style={{
@@ -312,7 +341,9 @@ export default ({ navigation, route }) => {
                     width: '100%',
                     paddingHorizontal: constants.spacing_horizontal,
                 }}>
-                    {recentSearchesData.map((item, index) => {
+                    {recentSearchesData[selectedKey].map((item, index) => {
+                        const { name } = extractItem(item);
+
                         return <TouchableScale wait={0} style={{
                             backgroundColor: "#E1E1E1",
                             borderRadius: 18,
@@ -322,12 +353,15 @@ export default ({ navigation, route }) => {
                             marginBottom: 6,
                         }}
                             key={index}
-                            onPress={() => { setSearchText(item); }}>
+                            onPress={() => {
+                                setSearchText(name);
+                                onItemPress(item, index);
+                            }}>
 
                             <Text style={{
                                 color: "#848484",
                                 fontSize: 12,
-                            }}>{`${item}`}</Text>
+                            }}>{`${name}`}</Text>
                         </TouchableScale>
                     })
                     }
@@ -335,6 +369,62 @@ export default ({ navigation, route }) => {
             </KeyboardAwareScrollView>
         )
     }
+
+    const onItemPress = (item, index) => {
+        const selectedKey = isRestaurantSelectedRef.current ? "restaurant" : "grocery";
+        const { isVendor, name, pitstopType } = extractItem(item);
+        if (isVendor) {
+            sharedOnVendorPress({ ...item, pitstopType }, index);
+            addSearchedText(item);
+        } else {
+            visibleShowProductVendor(name);
+        }
+        const itemIndex = recentSearchesData[selectedKey].findIndex(i => i.name === name);
+        if (itemIndex === -1) {
+            updateRecentSearchedData(pre => ({
+                ...pre,
+                [selectedKey]: [item, ...pre[selectedKey]],
+            }));
+        } else {
+            recentSearchesData[selectedKey].splice(itemIndex, 1);
+            updateRecentSearchedData(pre => ({
+                ...pre,
+                [selectedKey]: [item, ...recentSearchesData[selectedKey]],
+            }));
+        }
+        executeSearching(name);
+    };//end of onItemPress
+
+    const addSearchedText = (item) => {
+        const { name, pitstopType, pitstopID } = extractItem(item);
+        const params = {
+            "userID": null,
+            "text": name,
+            "pitstopType": pitstopType,
+            "pitstopID": pitstopID,
+        }
+
+        console.log(`${Endpoints.ADD_SEARCHED_TEXT} PARAMS ---  `, params);
+        postRequest(Endpoints.ADD_SEARCHED_TEXT, params, (res) => {
+            console.log(`${Endpoints.ADD_SEARCHED_TEXT} res ---  `, res);
+        }, (err) => {
+        }, {}, false)
+    };//end of addSearchedText
+
+    const extractItem = (item) => {
+        const pitstopID = item?.pitstopID ?? '0';
+        const isVendor = pitstopID && `${pitstopID}` !== '0' ? true : false;
+        const name = item?.name ?? '';
+        const image = isVendor ? item?.image ?? null : null;
+        const pitstopType = isRestaurantSelected ? PITSTOP_TYPES.RESTAURANT : PITSTOP_TYPES.SUPER_MARKET;
+        return {
+            pitstopID,
+            isVendor,
+            name,
+            image,
+            pitstopType,
+        };
+    };//end of extractItem
 
     const renderSearchedItem = () => {
         let searchedData = searchData.grocery.data;
@@ -352,17 +442,11 @@ export default ({ navigation, route }) => {
                     paddingTop: constants.spacing_vertical * 2,
                 }}
                 renderItem={({ item, index }) => {
-                    const pitstopID = item?.pitstopID ?? '0';
-                    const isVendor = pitstopID && `${pitstopID}` !== '0' ? true : false;
-                    const name = item?.name ?? '';
-                    const pitstopType = isRestaurantSelected ? PITSTOP_TYPES.RESTAURANT : PITSTOP_TYPES.SUPER_MARKET;
+                    const { isVendor, name, image, } = extractItem(item);
+
                     return (
                         <TouchableScale wait={0} onPress={() => {
-                            if (isVendor) {
-                                sharedOnVendorPress({ ...item, pitstopType }, index)
-                            } else {
-                                visibleShowProductVendor(name);
-                            }
+                            onItemPress(item, index)
                         }}>
                             <View style={{
                                 flexDirection: "row",
@@ -376,7 +460,7 @@ export default ({ navigation, route }) => {
                                     alignItems: "center",
                                 }}>
                                     {isVendor &&
-                                        <Image source={{ uri: `https://picsum.photos/20` }} style={{
+                                        <Image source={{ uri: renderFile(image) }} style={{
                                             height: 20,
                                             width: 20,
                                             resizeMode: "contain",
@@ -407,7 +491,7 @@ export default ({ navigation, route }) => {
     return (
         <View style={{ ...styles.primaryContainer, }}>
             {_renderHeader()}
-            {!showJoviJob && recentSearchesData.length < 1 && searchData[isRestaurantSelected ? "restaurant" : "grocery"].data.length < 1 ? <EmptyUI /> :
+            {!showJoviJob && recentSearchesData[isRestaurantSelected ? "restaurant" : "grocery"].length < 1 && searchData[isRestaurantSelected ? "restaurant" : "grocery"].data.length < 1 ? <EmptyUI /> :
                 <>
                     {showProductVendor ?
                         <SearchProductVendors
@@ -472,7 +556,10 @@ const LoadingUI = () => {
     )
 }
 
-
+const JOVI_JOB_ICON_SIZE = {
+    backgroundColor: constants.window_dimensions.width * 0.15,
+    image: constants.window_dimensions.width * 0.1,
+};
 const JoviJobUI = ({ }) => {
     const animate = React.useRef(new Animated.Value(100)).current;
     React.useEffect(() => {
@@ -488,23 +575,8 @@ const JoviJobUI = ({ }) => {
     })
     return (
         <SafeAreaView style={{ flex: 1, }}>
-
-            <View style={{
-                flex: 1,
-                alignItems: "center",
-                justifyContent: "center",
-                marginTop: 20,
-            }}>
-                <AnimatedLottieView
-                    source={require('../../assets/gifs/RobotSearch.json')}
-                    autoPlay
-                    loop
-                />
-            </View>
             <Animated.View style={{
-                flex: 1,
-                alignItems: "flex-end",
-                justifyContent: "flex-end",
+                marginTop: 20,
                 transform: [{ translateY: animate }]
             }}>
                 <TouchableOpacity activeOpacity={1} wait={0}
@@ -512,29 +584,41 @@ const JoviJobUI = ({ }) => {
                         sharedOnVendorPress({ pitstopType: PITSTOP_TYPES.JOVI }, 0)
                     }}
                     style={{
-                        minHeight: 250,
+                        flexDirection: "row",
                         width: "90%",
                         alignItems: "center",
-                        justifyContent: "center",
+                        // justifyContent: "center",
                         alignSelf: "center",
                         backgroundColor: '#6D51BB',
-                        borderRadius: 32,
-
+                        borderRadius: 16,
+                        padding: constants.spacing_horizontal,
                     }}>
 
-                    <Text fontFamily='PoppinsMedium' style={{
-                        fontSize: 20,
-                        color: "#FFFFFF",
-                    }}>{`Couldn't find your Product ?`}</Text>
-                    <Text fontFamily='PoppinsLight' style={{
-                        fontSize: 30,
-                        color: "#FFFFFF",
-                    }}>{`Book a JOVI`}</Text>
-
-                    <View style={{ height: 75, width: 75, backgroundColor: "#fff", borderRadius: 75, alignItems: "center", justifyContent: "center", marginTop: 30, }}>
-                        <SvgXml xml={svgs.jovi()} height={60} width={60} />
+                    <View style={{
+                        height: JOVI_JOB_ICON_SIZE.backgroundColor,
+                        width: JOVI_JOB_ICON_SIZE.backgroundColor,
+                        borderRadius: JOVI_JOB_ICON_SIZE.backgroundColor,
+                        backgroundColor: "#fff",
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}>
+                        <SvgXml xml={svgs.jovi()} height={JOVI_JOB_ICON_SIZE.image} width={JOVI_JOB_ICON_SIZE.image} />
                     </View>
 
+                    <View style={{
+                        flex: 1,
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}>
+                        <Text fontFamily='PoppinsMedium' style={{
+                            fontSize: 18,
+                            color: "#FFFFFF",
+                        }}>{`Couldn't find your Product?`}</Text>
+                        <Text fontFamily='PoppinsLight' style={{
+                            fontSize: 30,
+                            color: "#FFFFFF",
+                        }}>{`Book a Jovi`}</Text>
+                    </View>
 
                     <SvgXml xml={svgs.searchBookJoviBackground()}
                         style={{
@@ -552,6 +636,21 @@ const JoviJobUI = ({ }) => {
                     />
                 </TouchableOpacity>
             </Animated.View>
+
+            <View style={{
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: 20,
+                height: "30%",
+                width: "100%",
+            }}>
+                <AnimatedLottieView
+                    source={require('../../assets/gifs/RobotSearch.json')}
+                    autoPlay
+                    loop
+                />
+            </View>
+
         </SafeAreaView>
     )
 }
