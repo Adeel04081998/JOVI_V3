@@ -382,7 +382,7 @@ export default ({ route }) => {
                         }
                     }
                     else {
-                        setState(pre => ({ ...pre, estimatePrice: 0 }));
+                        setState(pre => ({ ...pre, estimatePrice: '' }));
                     }
                 }
                 }
@@ -392,6 +392,7 @@ export default ({ route }) => {
                 }} />
         )
     }
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }}>
             <StatusBar backgroundColor={colors.white} />
@@ -510,7 +511,7 @@ export default ({ route }) => {
                             {renderSubHeading('Medicine Name')}
                             {
                                 renderInput({
-                                    placeholder: 'Enter medicine name',
+                                    placeholder: 'Please Enter medicine name',
                                     value: state.medicineName,
                                     onChangeText: (value) => onChangeText(value, 'medicineName'),
                                     maxLength: 50
@@ -527,7 +528,7 @@ export default ({ route }) => {
                             {renderSubHeading('Detail', { marginBottom: SPACING })}
                             {
                                 renderInput({
-                                    placeholder: 'Enter details here',
+                                    placeholder: 'Please Type Your Detail',
                                     value: state.detail,
                                     multiline: true,
                                     onChangeText: (value) => onChangeText(value, 'detail'),

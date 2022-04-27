@@ -11,5 +11,7 @@ export default {
 
     price: /[pkr|rs|rs.|pkr.]{2,}/i,
     distanceM: /[m]+/i,
-    time: /:\d\d([ ap]|$)/
+    time: /:\d\d([ ap]|$)/,
+    restrict_zero: /^[1-9][0-9]*$/
+
 }

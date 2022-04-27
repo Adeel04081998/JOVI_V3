@@ -171,7 +171,7 @@ const VoucherUi = ({ title = "", colors = {}, voucherOpened = false, discountPer
 }
 
 const voucherStyles = (colors) => StyleSheet.create({
-    voucherDetailsContainer: { marginHorizontal: 23, bottom: Platform.OS === 'android' ? 5 : 2, height: 200, },
+    voucherDetailsContainer: { marginHorizontal: 23, bottom: Platform.OS === 'android' ? 5 : 2, height: 200, marginTop: 5, },
     voucherWebViewScreen: { width: '100%', minHeight: 200, height: 200, backgroundColor: "#fff", },
 });
 const voucherUIStyles = (colors) => StyleSheet.create({

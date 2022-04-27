@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import FontFamily from "../../res/FontFamily";
 import sharedStyles from "../../res/sharedStyles";
 
 export default (colors,BORDER_RADIUS,SPACING,) => StyleSheet.create({
@@ -36,6 +37,9 @@ export default (colors,BORDER_RADIUS,SPACING,) => StyleSheet.create({
         backgroundColor: colors.light_grey,
         margin: -13,
         marginVertical: -15,
+        fontFamily: FontFamily.Poppins.Regular,
+     
+        
     },
     selectLocationButton:{ width: '100%', marginVertical: SPACING, backgroundColor: colors.black, height: 35, zIndex: -1 },
 

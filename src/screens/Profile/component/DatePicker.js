@@ -9,11 +9,10 @@ import colors from '../../../res/colors';
 
 
 export default (props) => {
-
     const [dateState, setDateState] = useState({
-        "D": props.parentState.dob?.split("-")[0] || props.parentState.daysArr[0],
-        "M": props.parentState.dob?.split("-")[1] || props.parentState.monthsArr[0],
-        "Y": props.parentState.dob?.split("-")[2] || props.parentState.yearsArr[0],
+        "D": props.parentState.dob?.split("/")[0] || props.parentState.daysArr[0],
+        "M": props.parentState.dob?.split("/")[1] || props.parentState.monthsArr[0],
+        "Y": props.parentState.dob?.split("/")[2] || props.parentState.yearsArr[0],
         // "dateString": props.parentState.dob || ""
     });
 

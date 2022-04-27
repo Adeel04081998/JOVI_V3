@@ -26,6 +26,7 @@ import Greetings from './components/Greetings';
 import RenderBottomBarComponent from "./components/RenderBottomBarComponent";
 import Search from './components/Search';
 import stylesheet from './styles';
+
 export default () => {
     let initState = {
         "modalVisible": false,
@@ -211,15 +212,13 @@ export default () => {
     );
 };
 const RenderGenericList = React.memo(({ isFinalDestinationSelected, vendorDashboardCategoryIDReducer }) => {
-    const userReducer = useSelector(state => state.userReducer);
-    const finalDestObj = userReducer.finalDestObj;
     React.useEffect(() => {
-        if (finalDestObj) {
+        if (isFinalDestinationSelected) {
             sharedGetPendingOrderRating();
         }
         return () => { };
-    }, [finalDestObj])
-    return <>{(finalDestObj && vendorDashboardCategoryIDReducer || []).map((item, index) => {
+    }, [isFinalDestinationSelected])
+    return <>{(isFinalDestinationSelected && vendorDashboardCategoryIDReducer || []).map((item, index) => {
         return (
             <View key={uniqueKeyExtractor()} style={{ marginHorizontal: -10, }}>
                 <GenericList vendorDashboardCatID={item.vendorDashboardCatID} textContainer={{ paddingHorizontal: 10 }} />

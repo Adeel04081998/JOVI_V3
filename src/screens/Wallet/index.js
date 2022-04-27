@@ -48,6 +48,7 @@ export default () => {
 
     React.useEffect(() => {
         loadTransactionList();
+        getBallance()
         return () => { };
     }, []);
 
@@ -82,7 +83,7 @@ export default () => {
             if (statusCode === 200) {
                 const resData = res.data?.customerWalletTransactionsList?.data ?? [];
                 let newData = []
-                if (transactionType === pressedValue) newData = [...filters, ...resData]
+                if (transactionType === pressedValue && append) newData = [...filters, ...resData]
                 else newData = resData
                 setFilters(newData);
                 toggleMetaData(!metaData);
@@ -200,9 +201,7 @@ export default () => {
         )
     }
     const onFilterPress = (item, index, isSelected) => {
-        if (isSelected) return
         setPressedValue(parseInt(item.value))
-
         loadTransactionList(parseInt(item.value))
     }
     const _renderItem = (item, index) => {
@@ -225,7 +224,7 @@ export default () => {
         return (
             <ScrollView
                 horizontal
-                style={{ height: 75, flexGrow: 0, marginHorizontal: 15 }}
+                style={{ height: 75, flexGrow: 0,  marginLeft: 0, paddingHorizontal: 15 }}
                 contentContainerStyle={{
                     justifyContent: 'space-evenly'
                 }}
@@ -255,7 +254,8 @@ export default () => {
 
 
     const _renderFlatListItem = ({ item, index }) => {
-        const isOrder = item.type === "Order"
+        let amount = item.amount.toString()
+        const isOrder = amount.includes("-")
         return (
             <View style={styles.dataContainerStyle} >
                 <View style={{ flexDirection: 'column', width: '5%' }} >
@@ -273,7 +273,7 @@ export default () => {
                     </View>
                 </View>
                 <View style={{ flexDirection: 'column', width: '20%' }} >
-                    <SvgXml xml={isOrder ? svgs.redArrow() : svgs.greenArrow()} style={{ alignSelf: 'center' }} />
+                    <SvgXml xml={isOrder ? svgs.redArrow() : svgs.greenArrow()} style={{alignSelf:'flex-end', marginRight: 5 }} />
                     <Text fontFamily="PoppinsMedium" style={[styles.filterTypeStyle, { textAlign: 'right' }]} >Rs. {item.amount}</Text>
                 </View>
             </View>
@@ -286,6 +286,7 @@ export default () => {
                 data={filters}
                 extraData={metaData}
                 renderItem={_renderFlatListItem}
+                key={(item, index) => { `${item.details} renderFilterData` }}
                 keyExtractor={(item, index) => { item.details }}
                 onEndReachedThreshold={0.8}
                 onEndReached={onEndReached}

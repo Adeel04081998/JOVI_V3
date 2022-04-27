@@ -22,6 +22,7 @@ import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-awa
 import DatePicker from './component/DatePicker';
 import AnimatedModal from '../../components/organisms/AnimatedModal';
 import Toast from '../../components/atoms/Toast';
+import constants from '../../res/constants';
 const HEADER_ICON_SIZE = CustomHeaderIconBorder.size * 0.6;
 const ICON_CONTAINER_SIZE = 40;
 const RADIO_BUTTON_SIZE = 20;
@@ -65,6 +66,7 @@ export default () => {
         isModalVisible: false,
         loading: false,
         updateArray: [],
+        dob: userReducer.dob
 
 
 
@@ -94,13 +96,15 @@ export default () => {
         }
         inputsArr[i].value = trimValue;
         inputsArr[i].showError = false;
+        let selectedDob = i === 4 ? value : ''
         // if (!VALIDATION_CHECK(trimValue)) {
         //     inputsArr[i].showError = true;
         //     inputsArr[i].validationerror = 'Required';
         // }
         setState(pre => ({
             ...pre,
-            emailAlreadyExist: false
+            emailAlreadyExist: false,
+            dob: selectedDob,
         }));
     }
     const _renderHeader = () => (<CustomHeader
@@ -145,6 +149,7 @@ export default () => {
             <AnimatedModal
                 visible={isModalVisible}
                 position={'bottom'}
+                useKeyboardAvoidingView={true}
             >
 
                 <DatePicker
@@ -155,6 +160,8 @@ export default () => {
                     onClose={() => { setState((pre) => ({ ...pre, isModalVisible: false })) }}
                     colors={colors}
                 />
+
+
             </AnimatedModal>
         )
     }
@@ -178,7 +185,6 @@ export default () => {
 
     };
     const onSuccesHandler = (res) => {
-        console.log("CreateUpdateProfileUpdate==>>res=>.", res);
         Toast.info(res.message)
         setState((pre) => ({ ...pre, loading: false, }))
         sharedGetUserDetailsApi();
@@ -225,7 +231,6 @@ export default () => {
                 Endpoints.CREATE_UPDATE,
                 formData,
                 res => {
-
                     onSuccesHandler(res)
                 },
                 err => { onErrorHandler(err) },
@@ -233,9 +238,6 @@ export default () => {
         }
 
     }
-
-
-
     return (
         <SafeAreaView style={styles.primaryContainer}>
             {_renderHeader()}
@@ -321,7 +323,7 @@ export default () => {
                                             <Text style={[{ color: 'black', position: 'absolute', top: -30, left: 0, fontSize: 17, marginBottom: 50, justifyContent: 'center' }]}>{x.title}</Text>
                                             <TouchableOpacity style={{ width: '100%', borderWidth: 1, borderRadius: 5, padding: 10, borderColor: isError ? "red" : colors.grey, backgroundColor: x.backgroundColor, borderWidth: 0.5 }}
                                                 onPress={() => { setState((pre) => ({ ...pre, isModalVisible: true })) }} >
-                                                <Text style={{ alignItems: 'center', }}>{userReducer.dob ? x.value : "dd/mm/yyyy"}</Text>
+                                                <Text style={{ alignItems: 'center', }}>{userReducer.dob || inputsArr[4].value ? x.value : "dd/mm/yyyy"}</Text>
 
                                             </TouchableOpacity>
                                         </View>
