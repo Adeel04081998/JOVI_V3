@@ -48,6 +48,7 @@ const BottomLine = () => (
 export default () => {
   const { cartReducer } = useSelector(store => ({ cartReducer: store.cartReducer }));
   // console.log('[CART_SCREEN] cartReducer', cartReducer);
+  const isOnlyJoviJobs = (cartReducer.pitstops??[]).every( (val, i) => val.pitstopType === PITSTOP_TYPES.JOVI || val.pitstopType === PITSTOP_TYPES.PHARMACY );
   const dispatch = useDispatch();
   const [expanded, setExpanded] = React.useState([0]);
   const colors = theme.getTheme(
@@ -409,7 +410,7 @@ export default () => {
       );
     }
   };
-  const Totals = () => {
+  const Totals = ({isOnlyJoviJobs=false}) => {
     const row = (caption = '', value = 0, isBold = false) => {
       if (value) {
         return <View
@@ -430,7 +431,7 @@ export default () => {
     };
     return (
       <View style={{ paddingHorizontal: 10 }}>
-        {row(`Subtotal (Inc GST ${sharedCalculatedTotals().gst})`, sharedCalculatedTotals().subTotal, false)}
+        {row(`Subtotal ${isOnlyJoviJobs?'':'(Inc GST '+sharedCalculatedTotals().gst+')'}`, sharedCalculatedTotals().subTotal, false)}
         {sharedCalculatedTotals().discount ? row('Total Discount', `- ${sharedCalculatedTotals().discount}`) : null}
         {row(`Service Charges (Incl S.T ${sharedCalculatedTotals().serviceTax})`, sharedCalculatedTotals().serviceCharges)}
         <BottomLine />
@@ -557,7 +558,7 @@ export default () => {
               onChangeText={text => GV.RIDER_INSTRUCTIONS.current = text.trim()}
               defaultValue={GV.RIDER_INSTRUCTIONS.current}
             />
-            <Totals />
+            <Totals isOnlyJoviJobs={isOnlyJoviJobs} />
           </View>}
         />
       </View>
