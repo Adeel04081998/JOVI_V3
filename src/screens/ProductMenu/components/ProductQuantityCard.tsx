@@ -7,6 +7,8 @@ import Text from '../../../components/atoms/Text';
 import TouchableOpacity from '../../../components/atoms/TouchableOpacity';
 import VectorIcon from '../../../components/atoms/VectorIcon';
 import View from '../../../components/atoms/View';
+import { _NavgationRef } from '../../../navigations/NavigationService';
+import ROUTES from '../../../navigations/ROUTES';
 import AppStyles from '../../../res/AppStyles';
 import { initColors } from '../../../res/colors';
 import constants from '../../../res/constants';
@@ -86,7 +88,7 @@ const ProductQuantityCard = (props: Props) => {
 
     React.useEffect(() => {
         const forceUpdate = cartReducer.pitstops.length < 1 ? true : cartReducer?.forceUpdate ?? false;
-        if ((!isFocused && state.quantity > 0) || forceUpdate) {
+        if (((!isFocused && state.quantity > 0) || forceUpdate)&&_NavgationRef.current.getCurrentRoute().name === ROUTES.APP_DRAWER_ROUTES.Cart.screen_name) {
             const pitstops = cartReducer.pitstops;
             let updatedQuantity = 0;//state.quantity;
 
@@ -96,7 +98,7 @@ const ProductQuantityCard = (props: Props) => {
                     updatedQuantity = item.quantity;
                 }
             });
-            if(!isFocused && updatedQuantity>0&&updatedQuantity!==state.quantity){
+            if((!isFocused && updatedQuantity>0)||updatedQuantity===state.quantity || !currentPitstop){
                 skipEffect.current = true;
             }
             // ref => https://cibak.atlassian.net/browse/JV3-1337
