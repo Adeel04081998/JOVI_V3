@@ -96,7 +96,7 @@ const ProductQuantityCard = (props: Props) => {
                     updatedQuantity = item.quantity;
                 }
             });
-            if(!isFocused && updatedQuantity>0){
+            if(!isFocused && updatedQuantity>0&&updatedQuantity!==state.quantity){
                 skipEffect.current = true;
             }
             // ref => https://cibak.atlassian.net/browse/JV3-1337
