@@ -173,11 +173,13 @@ export default ({ route }) => {
                     : slicedImages.length === 2 ? 1 : 3;
             for (let index = 0; index < maxIterator; index++) {
                 let imgObj = picData.assets[index];
-                imgObj.id = Math.floor(Math.random() * 100000)
-                imgObj.fileName = imgObj.uri.split('/').pop();
-                imgObj.path = imgObj.uri
-                imgObj.isUploading = true;
-                slicedImages.push(imgObj);
+                if(imgObj){
+                    imgObj.id = Math.floor(Math.random() * 100000)
+                    imgObj.fileName = imgObj.uri.split('/').pop();
+                    imgObj.path = imgObj.uri
+                    imgObj.isUploading = true;
+                    slicedImages.push(imgObj);
+                }
             }
         } else {
             slicedImages = picData.assets.slice(0, 3).map(_p => ({
