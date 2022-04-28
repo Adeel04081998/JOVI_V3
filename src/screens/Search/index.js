@@ -460,7 +460,7 @@ export default ({ navigation, route }) => {
                                     alignItems: "center",
                                 }}>
                                     {isVendor &&
-                                        <Image source={{ uri: renderFile(image) }} style={{
+                                        <Image tapToOpen={false} source={{ uri: renderFile(image) }} style={{
                                             height: 20,
                                             width: 20,
                                             resizeMode: "contain",
