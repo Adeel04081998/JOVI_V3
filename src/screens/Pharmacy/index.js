@@ -214,6 +214,7 @@ export default ({ route }) => {
                         setState(pre => ({ ...pre, pickUpPitstop: initState.pickUpPitstop }));
                     }
                 },
+                customColors:colors,
             });
         } else if (!isAttachmentBool && state.images?.length) {
             sharedConfirmationAlert('Uploaded Images', 'Your uploaded images will be lost if you choose this option. Are you sure?', null,null, {
@@ -224,6 +225,7 @@ export default ({ route }) => {
                         setState(pre => ({ ...pre, images: null }));
                     }
                 },
+                customColors:colors,
             });
         } else {
             setIsAttachment(isAttachmentBool);

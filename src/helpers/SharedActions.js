@@ -287,7 +287,7 @@ export const sharedConfirmationAlert = (title, message, buttons = [], options = 
             message,
             okButton: customAlert.okButton,
             cancelButton: customAlert.cancelButton,
-            options,
+            ...customAlert,
         }))
     } else {
         Alert.alert(title, message, buttons, options)

@@ -14,10 +14,10 @@ import View from "../atoms/View";
 
 const width = constants.screen_dimensions.width;
 export default ({ customAlertDetails = {} }) => {
+    const { title = '', message = '', okButton, cancelButton, cancelable = true, customColors = null } = customAlertDetails;
     const alertAnimation = React.useRef(new Animated.Value(0)).current;
-    const colors = theme.getTheme(ENUMS.PITSTOP_TYPES[0].value);
+    const colors =  customColors ?? theme.getTheme(ENUMS.PITSTOP_TYPES[0].value);
     const dispatch = useDispatch();
-    const { title = '', message = '', okButton, cancelButton, cancelable = true } = customAlertDetails;
     const isCancelable = cancelable || (!okButton && !cancelButton); 
     const styles = _styles(colors); 
     const closeCustomAlert = () => {
