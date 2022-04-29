@@ -308,7 +308,8 @@ export default ({ navigation, route }) => {
             pitstopType: PITSTOP_TYPES.SUPER_MARKET,
             vendorDetails: {
                 ...data[parentIndex], pitstopItemList: null, marketID, actionKey: "marketID", pitstopName: allData.pitstopName, pitstopIndex: null, pitstopType, ...route.params,
-                ...sharedAddToCartKeys(data[parentIndex], null).restaurant
+                ...sharedAddToCartKeys(data[parentIndex], null).restaurant,
+                pitstopType: PITSTOP_TYPES.SUPER_MARKET,
             },
             itemDetails: {
                 ...data[parentIndex].pitstopItemList[index],
@@ -319,8 +320,8 @@ export default ({ navigation, route }) => {
                 _totalDiscount: discountAmount,
                 _totalGst: currentItem.gstAmount,
                 totalAddOnPrice: 0,
-                ...sharedAddToCartKeys(null, currentItem).item
-
+                ...sharedAddToCartKeys(null, currentItem).item,
+                pitstopType: PITSTOP_TYPES.SUPER_MARKET,
             },
         }
 

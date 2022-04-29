@@ -103,7 +103,7 @@ export default ({ navigation, route }) => {
         if (isFocused === true) {
             loadOnGoingData();
         }
-     
+
     }, [isFocused]);
 
     const loadHistoryData = (currentRequestNumber, append = false) => {
@@ -144,7 +144,7 @@ export default ({ navigation, route }) => {
                 });
             } else {
                 updateQuery({
-                    errorText: sharedExceptionHandler(res,true),
+                    errorText: sharedExceptionHandler(res, true),
                     error: true,
                     isLoading: false,
                     refreshing: false,
@@ -165,6 +165,7 @@ export default ({ navigation, route }) => {
 
     const loadOnGoingData = () => {
         getRequest(Endpoints.GET_CUSTOMER_ONGOING_ORDER, (res) => {
+            // console.log('[ORDERS].[GET_CUSTOMER_ONGOING_ORDER]', res);
             const statusCode = res.data?.statusCode ?? 404;
             if (statusCode === 200) {
                 const resData = res.data?.onGoingOrders?.onGoingOrdersList ?? [];

@@ -88,6 +88,7 @@ export default ({ navigation, route }) => {
     }
     const fetchOrderDetails = () => {
         sharedFetchOrder(orderIDParam, (res) => {
+            // console.log("[fetchOrderDetails].res", res);
             if (res.data.statusCode === 200) {
                 let allowedOrderStatuses = [ORDER_STATUSES.VendorApproval, ORDER_STATUSES.VendorProblem, ORDER_STATUSES.Initiated];
                 const isFirstPitstopRestaurant = checkIfFirstPitstopRestaurant(res.data?.order?.pitStopsList);

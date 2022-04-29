@@ -497,8 +497,14 @@ export const sharedAddUpdatePitstop = (
         sharedCalculateCartTotals(swappedPitstops, cartReducer);
         return;
     }
-    console.log("pitstopDetails", pitstopDetails);
     let pitstops = cartReducer.pitstops;
+    // if (pitstops.length >= constants.max_pitstops_limit) {
+    //     sharedConfirmationAlert("Alert", `Maximum pitstops ${pitstops.length} limit reached!`,
+    //         [],
+    //     )
+    //     return;
+    // }
+    console.log("pitstopDetails", pitstopDetails);
     const pitstopIndex = (pitstopDetails?.pitstopIndex >= 0 ? pitstopDetails.pitstopIndex : null);
     if (pitstopIndex !== null && isDeletePitstop) {
         console.log('[DELETE PITSTOP FROM CART]');
@@ -757,9 +763,8 @@ export const sharedGetServiceCharges = (payload = null, successCb = () => { }) =
         payload,
         (response) => {
             const { statusCode, serviceCharge, serviceTax, chargeBreakdown, genericDiscount, orderEstimateTime } = response.data;
-            // console.log('[sharedGetServiceCharges].response', response);
+            console.log('[sharedGetServiceCharges].response', response);
             if (statusCode === 200)
-                // NEED TO MODIFY THESE LOGIC FOR FUTURE CASES LIKE CHECKOUT SCREEN...
                 dispatch(ReduxActions.setCartAction({ orderEstimateTime, serviceCharges: serviceCharge, serviceTax, genericDiscount, chargeBreakdown: chargeBreakdown ?? {} }))
             successCb(response);
         },
@@ -1003,8 +1008,10 @@ export const sharedCalculatedTotals = () => {
         gst: Math.round(gst),
         serviceTax: Math.round(serviceTax),
         serviceCharges: Math.round(_serviceCharges),
-        discount: Math.round(discount + genericDiscount),
+        discount: Math.round(discount + genericDiscount), // ref => Mudassir: Because we are calculating discounts on frontend so we are adding just genericDiscount.
+        genericDiscount: Math.round(genericDiscount),
         subTotal: Math.round(subTotal),
+        // total: Math.round(total + _serviceCharges),
         total: Math.round((total - genericDiscount) + _serviceCharges),
         itemsTotalWithDiscounts: Math.round(itemsTotalWithDiscounts + _serviceCharges),
     }

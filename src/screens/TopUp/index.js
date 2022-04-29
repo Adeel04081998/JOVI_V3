@@ -264,6 +264,7 @@ export default () => {
         "userID": id,
       },
       success => {
+        console.log("[HBLHandler].success", success);
         hblRequestRef.current = JSON.parse(success.config.data)
         const { statusCode, hblTransactionViewModel } = success.data;
         const { url, signature } = hblTransactionViewModel

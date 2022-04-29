@@ -14,6 +14,17 @@ export default ({ screenStyles = {}, route }) => {
     const uri = route?.params?.uri;
     const _ref = React.useRef(null);
     const jsCode = `window.ReactNativeWebView.postMessage(document.getElementsByTagName("body")[0].innerText)`;
+    const source = html ? { html } : Platform.select({
+        ios: {
+            ...uri,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+        },
+        android: {
+            ...uri,
+        }
+    })
     // const cb = (data = {}) => {
     //     console.log("data..".data);
     //     postRequest(
@@ -36,7 +47,7 @@ export default ({ screenStyles = {}, route }) => {
         postRequest(Endpoints.ERROR_LOGGER, {
             "userID": null,
             "frontEndErrorID": 0,
-            "description": `${JSON.stringify({ error })}`,
+            "description": `${JSON.stringify({ error, request: source })}`,
             "creationDate": null
         },
             success => {
@@ -59,17 +70,7 @@ export default ({ screenStyles = {}, route }) => {
                 />
                 <WebView
                     ref={_ref}
-                    source={html ? { html } : Platform.select({
-                        ios: {
-                            ...uri,
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                            },
-                        },
-                        android: {
-                            ...uri,
-                        }
-                    })}
+                    source={source}
                     {...Platform.OS === "ios" && {
                         onShouldStartLoadWithRequest: (event) => {
                             console.log("[onShouldStartLoadWithRequest].event");

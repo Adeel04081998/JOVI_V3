@@ -49,7 +49,7 @@ const BottomLine = () => (
 export default () => {
   const { cartReducer } = useSelector(store => ({ cartReducer: store.cartReducer }));
   // console.log('[CART_SCREEN] cartReducer', cartReducer);
-  const isOnlyJoviJobs = (cartReducer.pitstops??[]).every( (val, i) => val.pitstopType === PITSTOP_TYPES.JOVI || val.pitstopType === PITSTOP_TYPES.PHARMACY );
+  const isOnlyJoviJobs = (cartReducer.pitstops ?? []).every((val, i) => val.pitstopType === PITSTOP_TYPES.JOVI || val.pitstopType === PITSTOP_TYPES.PHARMACY);
   const dispatch = useDispatch();
   const [expanded, setExpanded] = React.useState([0]);
   const colors = theme.getTheme(
@@ -413,7 +413,7 @@ export default () => {
       );
     }
   };
-  const Totals = ({isOnlyJoviJobs=false}) => {
+  const Totals = ({ isOnlyJoviJobs = false }) => {
     const row = (caption = '', value = 0, isBold = false) => {
       if (value) {
         return <View
@@ -434,11 +434,12 @@ export default () => {
     };
     return (
       <View style={{ paddingHorizontal: 10 }}>
-        {row(`Subtotal ${isOnlyJoviJobs?'':'(Inc GST '+sharedCalculatedTotals().gst+')'}`, sharedCalculatedTotals().subTotal, false)}
+        {row(`Subtotal ${isOnlyJoviJobs ? '' : '(Inc GST ' + sharedCalculatedTotals().gst + ')'}`, sharedCalculatedTotals().subTotal, false)}
         {sharedCalculatedTotals().discount ? row('Total Discount', `- ${sharedCalculatedTotals().discount}`) : null}
         {row(`Service Charges (Incl S.T ${sharedCalculatedTotals().serviceTax})`, sharedCalculatedTotals().serviceCharges)}
         <BottomLine />
-        {row('Total', sharedCalculatedTotals().total, true)}
+        {row(`Total`, sharedCalculatedTotals().total, true)}
+        {/* {row(sharedCalculatedTotals().genericDiscount ? `Total (Excl J.D ${sharedCalculatedTotals().genericDiscount})` : `Total`, sharedCalculatedTotals().total, true)} */}
       </View>
     );
   };

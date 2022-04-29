@@ -70,7 +70,7 @@ export default () => {
         React.useCallback(() => {
             getRequest(Endpoints.GET_CUSTOMER_ONGOING_ORDER, (res) => {
                 const statusCode = res.data?.statusCode ?? 404;
-                console.log('[GET_CUSTOMER_ONGOING_ORDER]', res);
+                // console.log('[GET_CUSTOMER_ONGOING_ORDER]', res);
                 if (statusCode === 200) {
                     const openOrders = res.data?.onGoingOrders?.onGoingOrdersList ?? [];
                     dispatch(ReduxActions.setUserAction({ openOrders, noOfOpenOrders: openOrders.length }));
@@ -218,6 +218,7 @@ const RenderGenericList = React.memo(({ isFinalDestinationSelected, vendorDashbo
         }
         return () => { };
     }, [isFinalDestinationSelected])
+    // console.log("vendorDashboardCategoryIDReducer", vendorDashboardCategoryIDReducer);
     return <>{(isFinalDestinationSelected && vendorDashboardCategoryIDReducer || []).map((item, index) => {
         return (
             <View key={uniqueKeyExtractor()} style={{ marginHorizontal: -10, }}>

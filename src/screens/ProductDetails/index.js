@@ -234,7 +234,7 @@ export default (props) => {
                 totalJoviDiscount: state.totalJoviDiscount,
                 _clientGstAddedPrice: generalProductOrDealDetail.gstAddedPrice,
                 ...!selectedOptions.length ? { ...sharedAddToCartKeys(null, { ...state.generalProductOrDealDetail, quantity: itemCount, notes, pitstopType }).item } : {},
-
+                pitstopType,
             },
             vendorDetails: {
                 ...propItem.vendorDetails, pitstopType, actionKey: "marketID", productsDealsCategories: undefined

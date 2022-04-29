@@ -54,7 +54,7 @@ export default () => {
     const paymentType = "Wallet"
     const walletAmount = userReducer.balance || 0;
     const instructionForRider = GV.RIDER_INSTRUCTIONS.current;
-    const isOnlyJoviJobs = (cartReducer.pitstops??[]).every( (val, i) => val.pitstopType === PITSTOP_TYPES.JOVI || val.pitstopType === PITSTOP_TYPES.PHARMACY );
+    const isOnlyJoviJobs = (cartReducer.pitstops ?? []).every((val, i) => val.pitstopType === PITSTOP_TYPES.JOVI || val.pitstopType === PITSTOP_TYPES.PHARMACY);
     React.useEffect(() => {
         sharedGetPromoList()
         sharedVerifyCartItems();
@@ -198,6 +198,7 @@ export default () => {
                         "isDestinationPitstop": item.isDestinationPitstop ? item.isDestinationPitstop : false,
                         "pitstopItemsList": (item.checkOutItemsListVM && Array.isArray(item.checkOutItemsListVM) ?
                             item.checkOutItemsListVM.map((obj) => ({
+                                ...console.log("obj...", obj),
                                 "pitstopItemID": obj.pitStopItemID ? obj.pitStopItemID : null,
                                 "pitstopDealID": obj.pitStopDealID && obj.pitStopDealID !== 0 ? obj.pitStopDealID : null,
                                 "pitstopItemName": obj.pitStopItemName ?? '',
@@ -220,7 +221,8 @@ export default () => {
                                 "joviDiscountedPrice": obj.totalJoviDiscount ?? 0,
                                 // tabish
                                 "joviDiscountAmount": (obj.isJoviDiscount && obj.totalJoviDiscount) ? obj.totalJoviDiscount : 0,
-                                "discountAmount": obj.discountType > 0 ? (obj.itemPrice - obj._totalDiscount) : 0,
+                                "discountAmount": obj.discountType > 0 ? obj._totalDiscount : 0,
+                                // "discountAmount": obj.discountType > 0 ? (obj.itemPrice - obj._totalDiscount) : 0,
                                 // tabish
                                 //End New Keys
                                 "estimateTime": obj.estimatePrepTime || 0,

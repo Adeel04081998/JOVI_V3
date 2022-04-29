@@ -13,7 +13,7 @@ import PitStopEstPrice from './components/PitStopEstPrice';
 import PitStopEstTime from './components/PitStopEstTime';
 import PitStopLocation from './components/PitStopLocation';
 import Button from '../../components/molecules/Button';
-import GV from '../../utils/GV';
+import GV, { PITSTOP_TYPES } from '../../utils/GV';
 import theme from '../../res/theme';
 import joviJobStyles from './styles';
 import constants from '../../res/constants';
@@ -816,7 +816,8 @@ export default ({ navigation, route }) => {
             title: locationVal,
             description: description.trim(),
             pitstopName: 'JOVI Job',
-            pitstopType: route.params?.pitstopItemObj?.pitstopType ?? route.params?.pitstopType,
+            // pitstopType: route.params?.pitstopItemObj?.pitstopType ?? route.params?.pitstopType,
+            pitstopType: PITSTOP_TYPES.JOVI,
             nameval: nameval.trim(),
             imageData,
             voiceNote,

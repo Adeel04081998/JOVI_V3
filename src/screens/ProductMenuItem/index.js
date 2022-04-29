@@ -197,12 +197,14 @@ export default ({ navigation, route }) => {
                 pitstopItemList: null,
                 marketID,
                 ...sharedAddToCartKeys(null, null).restaurant,
-                actionKey: "marketID"
+                actionKey: "marketID",
+                pitstopType: PITSTOP_TYPES.SUPER_MARKET,
             },
             itemDetails: {
                 ...data[index],
                 ...sharedAddToCartKeys(null, currentItem).item,
-                actionKey: "pitStopItemID"
+                actionKey: "pitStopItemID",
+                pitstopType: PITSTOP_TYPES.SUPER_MARKET,
             },
         }
 
