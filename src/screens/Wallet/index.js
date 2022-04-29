@@ -114,7 +114,7 @@ export default () => {
                 setFilters([]);
             }
         }, (err) => {
-            sharedExceptionHandler(err);
+            // sharedExceptionHandler(err);
             updateQuery({
                 errorText: sharedExceptionHandler(err),
                 isLoading: false,
