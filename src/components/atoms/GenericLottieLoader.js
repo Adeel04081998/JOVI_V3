@@ -1,5 +1,6 @@
 import AnimatedLottieView from 'lottie-react-native';
 import React, { useEffect } from 'react';
+import Image from './Image';
 import View from './View';
 
 export default (props) => {
@@ -10,7 +11,16 @@ export default (props) => {
             alignItems: "center",
             justifyContent: "center",
         }, props.customStyle]}>
-            <AnimatedLottieView
+            <Image
+                source={require('../../assets/gifs/loader.gif')}
+                height={50}
+                width={50}
+                style={{
+                    height: 50,
+                    width: 50
+                }}
+            />
+            {/* <AnimatedLottieView
                 source={require('../../assets/LoadingView/OrderChat.json')}
                 autoPlay
                 loop
@@ -18,7 +28,7 @@ export default (props) => {
                     height: 120,
                     width: 120,
                 }}
-            />
+            /> */}
         </View>
     );
 }
