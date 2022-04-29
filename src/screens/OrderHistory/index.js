@@ -27,6 +27,7 @@ import { getRequest, postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import HistoryItemCardUI from './components/HistoryItemCardUI';
 import { useIsFocused } from "@react-navigation/native";
+import GenericLottieLoader from '../../components/atoms/GenericLottieLoader';
 
 
 const HEADER_ICON_SIZE = CustomHeaderIconBorder.size * 0.6;
@@ -209,22 +210,7 @@ export default ({ navigation, route }) => {
     if (query.isLoading) {
         return <View style={styles.primaryContainer}>
             {_renderHeader()}
-            <View style={{
-                flex: 1,
-                marginTop: -80,
-                alignItems: "center",
-                justifyContent: "center",
-            }}>
-                <AnimatedLottieView
-                    source={require('../../assets/LoadingView/OrderChat.json')}
-                    autoPlay
-                    loop
-                    style={{
-                        height: 120,
-                        width: 120,
-                    }}
-                />
-            </View>
+            <GenericLottieLoader />
         </View>
     } else if (query.error && data.onGoingData.length < 1) {
         return <View style={styles.primaryContainer}>

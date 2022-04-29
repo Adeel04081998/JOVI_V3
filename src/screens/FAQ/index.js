@@ -3,6 +3,7 @@ import React from 'react';
 import { Appearance, FlatList, StyleSheet } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import svgs from '../../assets/svgs';
+import GenericLottieLoader from '../../components/atoms/GenericLottieLoader';
 import SafeAreaView from '../../components/atoms/SafeAreaView';
 import Text from '../../components/atoms/Text';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
@@ -26,7 +27,7 @@ export default () => {
     const customheaderStyles = { ...CustomHeaderStyles(colors.primary) };
     const _styles = styles(colors);
     const [state, setState] = React.useState({
-        data:[],
+        data: [],
         activeIndex: null,
         error: false,
         isLoading: true,
@@ -64,24 +65,12 @@ export default () => {
         }}
         defaultColor={colors.primary}
     />)
-    const _renderLoader = (customStyles = {}) => (<View style={{
-        flex: 1,
-        marginTop: -80,
-        alignItems: "center",
-        justifyContent: "center",
-        ...customStyles
-    }}>
-        <AnimatedLottieView
-            source={require('../../assets/LoadingView/OrderChat.json')}
-            autoPlay
-            loop
-            style={{
-                height: 120,
-                width: 120,
-            }}
-        />
-    </View>);
-    const renderItem = (item, index) => (<View style={{ ..._styles.itemStyles, ...index === 0?{borderTopWidth:0}:{} }}>
+    const _renderLoader = () => {
+        return (<GenericLottieLoader />)
+    }
+
+
+    const renderItem = (item, index) => (<View style={{ ..._styles.itemStyles, ...index === 0 ? { borderTopWidth: 0 } : {} }}>
         <TouchableOpacity
             onPress={() => onPress(item, index)}
             style={_styles.itemQuestion}
@@ -154,7 +143,7 @@ const styles = (colors) => StyleSheet.create({
         // marginVertical: 10,
         backgroundColor: colors.white
     },
-    itemQuestion:{
+    itemQuestion: {
         paddingVertical: 20,
         width: '100%',
         display: 'flex',
@@ -162,5 +151,5 @@ const styles = (colors) => StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
     },
-    itemAnswer:{marginTop:-10,fontSize:12,marginBottom:10},
+    itemAnswer: { marginTop: -10, fontSize: 12, marginBottom: 10 },
 });

@@ -1,6 +1,7 @@
 import AnimatedLottieView from 'lottie-react-native';
 import * as React from 'react';
 import { Appearance, FlatList, SafeAreaView } from 'react-native';
+import GenericLottieLoader from '../../components/atoms/GenericLottieLoader';
 import Text from '../../components/atoms/Text';
 import TouchableScale from '../../components/atoms/TouchableScale';
 import View from '../../components/atoms/View';
@@ -152,24 +153,9 @@ export default ({ navigation, route }) => {
                 title={query.errorText}
                 buttonText={`Retry`}
                 onButtonPress={() => { loadData(true) }} /> :
-                query.isLoading ? <View style={{
-                    flex: 1,
-                    marginTop: -80,
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}>
-                    <AnimatedLottieView
-                        source={require('../../assets/LoadingView/OrderChat.json')}
-                        autoPlay
-                        loop
-                        style={{
-                            height: 120,
-                            width: 120,
-                        }}
-                    />
-                </View> :
-
-
+                query.isLoading ?
+                    <GenericLottieLoader />
+                    :
                     <FlatList
                         data={data[activeIndex === 0 ? "active" : "solved"]}
                         extraData={metaData}

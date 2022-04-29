@@ -4,6 +4,7 @@ import { Animated, Appearance, FlatList, SafeAreaView } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-aware-scroll-view';
 import svgs from '../../assets/svgs';
+import GenericLottieLoader from '../../components/atoms/GenericLottieLoader';
 import Image from '../../components/atoms/Image';
 import Text from '../../components/atoms/Text';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
@@ -537,22 +538,7 @@ const EmptyUI = () => {
 
 const LoadingUI = () => {
     return (
-        <View style={{
-            flex: 1,
-            marginTop: -80,
-            alignItems: "center",
-            justifyContent: "center",
-        }}>
-            <AnimatedLottieView
-                source={require('../../assets/LoadingView/OrderChat.json')}
-                autoPlay
-                loop
-                style={{
-                    height: 120,
-                    width: 120,
-                }}
-            />
-        </View>
+        <GenericLottieLoader />
     )
 }
 

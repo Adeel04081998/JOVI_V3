@@ -4,6 +4,7 @@ import { Appearance, FlatList, StyleSheet } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { useSelector } from 'react-redux';
 import svgs from '../../assets/svgs';
+import GenericLottieLoader from '../../components/atoms/GenericLottieLoader';
 import SafeAreaView from '../../components/atoms/SafeAreaView';
 import Text from '../../components/atoms/Text';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
@@ -73,23 +74,9 @@ export default () => {
         }}
         defaultColor={colors.primary}
     />)
-    const _renderLoader = (customStyles = {}) => (<View style={{
-        flex: 1,
-        marginTop: -80,
-        alignItems: "center",
-        justifyContent: "center",
-        ...customStyles
-    }}>
-        <AnimatedLottieView
-            source={require('../../assets/LoadingView/OrderChat.json')}
-            autoPlay
-            loop
-            style={{
-                height: 120,
-                width: 120,
-            }}
-        />
-    </View>);
+    const _renderLoader = () => {
+        return (<GenericLottieLoader />)
+    }
     const renderItem = (item, index) => (<TouchableOpacity
         onPress={() => onPress(item)}
         style={_styles.itemStyles}
