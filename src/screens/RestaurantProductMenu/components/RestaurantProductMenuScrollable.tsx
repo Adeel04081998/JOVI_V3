@@ -1,6 +1,7 @@
 import AnimatedLottieView from "lottie-react-native";
 import React, { useRef } from "react";
 import { Animated, Easing, FlatList, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StatusBar, StyleProp, StyleSheet, ViewStyle } from "react-native";
+import GenericLottieLoader from "../../../components/atoms/GenericLottieLoader";
 import Text from "../../../components/atoms/Text";
 import TouchableScale from "../../../components/atoms/TouchableScale";
 import View from "../../../components/atoms/View";
@@ -198,7 +199,7 @@ const RestaurantProductMenuScrollable = (props: Props) => {
             }
         }, [props.data]);
         return (
-            <View style={{ marginHorizontal: 10,...isIOS?{paddingTop:5}:{} }}>
+            <View style={{ marginHorizontal: 10, ...isIOS ? { paddingTop: 5 } : {} }}>
                 <View style={[style.row]}>
                     {props.data && props.data.map((food: any, i: number) => (
                         <TouchableScale
@@ -250,27 +251,7 @@ const RestaurantProductMenuScrollable = (props: Props) => {
         );
     }
     if (props.headerHeight === 0) {
-        return (
-
-            <View style={{
-                flex: 1,
-                marginTop: 40,
-                alignItems: "center",
-                justifyContent: "center",
-            }}>
-
-                {/* @ts-ignore */}
-                <AnimatedLottieView
-                    source={require('../../../assets/LoadingView/OrderChat.json')}
-                    autoPlay
-                    loop
-                    style={{
-                        height: 120,
-                        width: 120,
-                    }}
-                />
-            </View>
-        )
+        return (<GenericLottieLoader />)
     }
     return (
         <View style={props.headerHeight === 0 ? { display: "none" } : {}}>

@@ -11,6 +11,7 @@ import RecordButton from '../../../libs/react-native-gifted-chat/RecordButton';
 import ChangeWindowManager from '../../../NativeModules/ChangeWindowManager';
 import svgs from '../../assets/svgs';
 import AudioplayerMultiple from '../../components/atoms/AudioplayerMultiple';
+import GenericLottieLoader from '../../components/atoms/GenericLottieLoader';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import TouchableScale from '../../components/atoms/TouchableScale';
 import View from '../../components/atoms/View';
@@ -124,9 +125,9 @@ export default ({ navigation, route }) => {
                     containerStyle={customheaderStyles.containerStyle}
                     leftCustom={(
                         <TouchableScale wait={0} onPress={() => {
-                            if(isFinalDestinationCompleted){
-                                NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderTracking.screen_name,{orderID:orderID});
-                            }else{
+                            if (isFinalDestinationCompleted) {
+                                NavigationService.NavigationActions.stack_actions.replace(ROUTES.APP_DRAWER_ROUTES.OrderTracking.screen_name, { orderID: orderID });
+                            } else {
                                 NavigationService.NavigationActions.common_actions.goBack();
                             }
                         }} style={customheaderStyles.iconContainer}>
@@ -422,22 +423,7 @@ export default ({ navigation, route }) => {
     if (query.isLoading) {
         return <View style={styles.primaryContainer}>
             {_renderHeader()}
-            <View style={{
-                flex: 1,
-                marginTop: -80,
-                alignItems: "center",
-                justifyContent: "center",
-            }}>
-                <AnimatedLottieView
-                    source={require('../../assets/LoadingView/OrderChat.json')}
-                    autoPlay
-                    loop
-                    style={{
-                        height: 120,
-                        width: 120,
-                    }}
-                />
-            </View>
+            <GenericLottieLoader />
         </View>
     } else if (query.error) {
         return <View style={styles.primaryContainer}>

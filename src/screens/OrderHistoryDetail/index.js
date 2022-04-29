@@ -4,6 +4,7 @@ import { Appearance, Button as RNButton, FlatList, InputAccessoryView, Keyboard,
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SvgXml } from 'react-native-svg';
 import svgs from '../../assets/svgs';
+import GenericLottieLoader from '../../components/atoms/GenericLottieLoader';
 import Image from '../../components/atoms/Image';
 import Text from '../../components/atoms/Text';
 import Toast from '../../components/atoms/Toast';
@@ -160,22 +161,7 @@ export default ({ navigation, route }) => {
                 noOfPitstops={navigationParams.noOfPitstops}
                 dateTime={navigationParams.dateTime}
             />
-            <View style={{
-                flex: 1,
-                marginTop: -80,
-                alignItems: "center",
-                justifyContent: "center",
-            }}>
-                <AnimatedLottieView
-                    source={require('../../assets/LoadingView/OrderChat.json')}
-                    autoPlay
-                    loop
-                    style={{
-                        height: 120,
-                        width: 120,
-                    }}
-                />
-            </View>
+            <GenericLottieLoader />
         </View>
     } else if (query.error) {
         return <View style={styles.primaryContainer}>

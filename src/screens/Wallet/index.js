@@ -23,6 +23,7 @@ import Button from '../../components/molecules/Button';
 import TouchableScale from '../../components/atoms/TouchableScale';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import actions from '../../redux/actions';
+import GenericLottieLoader from '../../components/atoms/GenericLottieLoader';
 
 const DEFAULT_PAGINATION_INFO = { totalItem: 0, itemPerRequest: 20, currentRequestNumber: 1 };
 
@@ -113,7 +114,7 @@ export default () => {
                 setFilters([]);
             }
         }, (err) => {
-            sharedExceptionHandler(err);
+            // sharedExceptionHandler(err);
             updateQuery({
                 errorText: sharedExceptionHandler(err),
                 isLoading: false,
@@ -224,7 +225,7 @@ export default () => {
         return (
             <ScrollView
                 horizontal
-                style={{ height: 75, flexGrow: 0,  marginLeft: 0, paddingHorizontal: 15 }}
+                style={{ height: 75, flexGrow: 0, marginLeft: 0, paddingHorizontal: 15 }}
                 contentContainerStyle={{
                     justifyContent: 'space-evenly'
                 }}
@@ -273,7 +274,7 @@ export default () => {
                     </View>
                 </View>
                 <View style={{ flexDirection: 'column', width: '20%' }} >
-                    <SvgXml xml={isOrder ? svgs.redArrow() : svgs.greenArrow()} style={{alignSelf:'flex-end', marginRight: 5 }} />
+                    <SvgXml xml={isOrder ? svgs.redArrow() : svgs.greenArrow()} style={{ alignSelf: 'flex-end', marginRight: 5 }} />
                     <Text fontFamily="PoppinsMedium" style={[styles.filterTypeStyle, { textAlign: 'right' }]} >Rs. {item.amount}</Text>
                 </View>
             </View>
@@ -310,26 +311,7 @@ export default () => {
 
 
 
-    const renderLoading = () => {
-        return (
-            <View style={{
-                flex: 1,
-                marginTop: -80,
-                alignItems: "center",
-                justifyContent: "center",
-            }}>
-                <AnimatedLottieView
-                    source={require('../../assets/LoadingView/OrderChat.json')}
-                    autoPlay
-                    loop
-                    style={{
-                        height: 120,
-                        width: 120,
-                    }}
-                />
-            </View>
-        )
-    }
+    const renderLoading = () => { return (<GenericLottieLoader />) }
     const renderError = () => {
         return (
             <NoRecord

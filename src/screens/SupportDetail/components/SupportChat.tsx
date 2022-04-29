@@ -30,6 +30,7 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { initColors } from '../../../res/colors';
 import MultipleImagesUI from './MultipleImagesUI';
+import GenericLottieLoader from '../../../components/atoms/GenericLottieLoader';
 dayjs.extend(customParseFormat)
 
 
@@ -270,23 +271,7 @@ const SupportChat = (supportChatProps: SupportChatProps) => {
     // #region :: LOADING AND ERROR UI START's FROM HERE 
     if (query.isLoading) {
         return <View style={styles.primaryContainer}>
-            <View style={{
-                flex: 1,
-                marginTop: -80,
-                alignItems: "center",
-                justifyContent: "center",
-            }}>
-                {/* @ts-ignore */}
-                <AnimatedLottieView
-                    source={require('../../../assets/LoadingView/OrderChat.json')}
-                    autoPlay
-                    loop
-                    style={{
-                        height: 120,
-                        width: 120,
-                    }}
-                />
-            </View>
+            <GenericLottieLoader />
         </View>
     } else if (query.error) {
         return <View style={styles.primaryContainer}>
