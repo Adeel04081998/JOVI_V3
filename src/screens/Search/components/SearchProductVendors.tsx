@@ -48,7 +48,9 @@ const SearchProductVendors = (props: Props) => {
     });
 
     React.useEffect(() => {
-        loadData();
+        if(props.searchText && props.searchText !== ''){
+            loadData();
+        }
         return () => { };
     }, [props.searchText])
 
