@@ -23,7 +23,8 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
         pitstopListViewModel: {
             list: []
         },
-        isLoading: true
+        isLoading: true,
+        isAllDataLoaded:false,
     });
     const userReducer = useSelector(store => store.userReducer);
     const isFocused = useIsFocused();
@@ -71,15 +72,20 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
                 isRequestSent.current = false;
             }, 500);
             if (res.data.statusCode === 200 && res.data.pitstopListViewModel?.list) {
+                let isAllDataLoaded = false;
+                const totalItems = res.data.pitstopListViewModel?.paginationInfo?.totalItems??'';
+                if(paginationInfo.current&&totalItems){
+                    isAllDataLoaded = totalItems && (ITEMS_PER_PAGE * paginationInfo.current.pageNumber) >= totalItems;
+                }//Loader comes late, so changing loader logic.
                 if (paginationInfo.current.pageNumber > 1 && res.data.pitstopListViewModel?.list) {
                     const prevData = [...state.pitstopListViewModel.list, ...res.data.pitstopListViewModel?.list];
-                    setState(pre => ({ ...pre, isLoading: false, pitstopListViewModel: { list: prevData, } }));
+                    setState(pre => ({ ...pre, isLoading: false,isAllDataLoaded, pitstopListViewModel: { list: prevData, } }));
                 } else {
-                    setState(pre => ({ ...pre, isLoading: false, pitstopListViewModel: res.data.pitstopListViewModel }));
+                    setState(pre => ({ ...pre, isLoading: false,isAllDataLoaded, pitstopListViewModel: res.data.pitstopListViewModel }));
                 }
                 paginationInfo.current = {
                     ...paginationInfo.current,
-                    totalItems: res.data.pitstopListViewModel?.paginationInfo?.totalItems
+                    totalItems: totalItems
                 }
             }
             else if (res.data.statusCode === 404) {
@@ -158,7 +164,7 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
                     state.pitstopListViewModel.list.map((item, index) => renderItem(item, index))
                 }
                 {
-                    state.isLoading ? <CardLoader styles={styles} type={2} loaderStyles={{ marginTop: -15 }} /> : <></>
+                    !state.isAllDataLoaded ? <CardLoader styles={styles} type={2} loaderStyles={{ marginTop: -15 }} /> : <></>
                 }
                 {
                     state.pitstopListViewModel.list.length < 1 && state.isLoading === false ? <Text style={{ marginTop: 50, alignSelf: 'center', color: colors.grey }} fontFamily={'PoppinsMedium'}>

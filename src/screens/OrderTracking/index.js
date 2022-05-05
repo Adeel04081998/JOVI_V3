@@ -393,14 +393,14 @@ export default ({ route }) => {
                         renderTime(30, 14)
                     }
                     <Text style={styles.orderCaption} fontFamily={'PoppinsSemiBold'}>Almost there! Your order is being prepared now.</Text>
-                    {
+                    {/* {
                         isRiderFound && state.currentPitstop ?
                             <Text style={styles.currentPitstopTime}>
                                 {state.currentPitstop.isFinalDestination && state.currentPitstop.joviJobStatus === 2 ? `JOVI is at your door step!` : `Estimated arrival at ${state.totalActivePitstops.length === state.currentPitstop.index + 1 ? 'Final Destination' : `Pitstop ${state.currentPitstop?.index + 1}`}\n${state.currentPitstop?.pitstopEstimateTime ?? ' - '} minutes`}
                             </Text>
                             :
                             null
-                    }
+                    }//commented due to urgent launch notes - 6th may 2022 */}
                 </View>
             </Animated.View>
             {/* </PanGestureHandler> */}

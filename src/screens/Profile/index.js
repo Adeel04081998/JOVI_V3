@@ -198,6 +198,7 @@ export default () => {
         for (let index = 0; index < inputsArr.length; index++) {
             let showError = false;
             const x = inputsArr[index];
+            if(x.field === 'DateOfBirth') continue;
             showError = (!String(x.value).length || !x.isValid) ? true : false;
             arr.push({ ...x, showError })
         }

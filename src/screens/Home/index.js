@@ -45,6 +45,7 @@ export default () => {
     const [state, setState] = useState(initState)
     const { modalVisible, finalDestTitle } = state;
     const isFinalDestinationSelected = userReducer.finalDestObj;
+    const roboShownOnce = React.useRef(false);
     // #region :: SELECTING FINAL DESTINATION IF NOT SELECTED START's FROM HERE 
     const gotoFinalDestinationModal = () => {
         dispatch(ReduxActions.setModalAction({
@@ -102,7 +103,8 @@ export default () => {
                 useNativeDriver: true,
                 easing: Easing.ease
             }).start(finished => {
-                if (finished && !__DEV__) {
+                if (finished && !__DEV__ && !roboShownOnce.current) {
+                    roboShownOnce.current = true;
                     dispatch(ReduxActions.showRobotAction());
                 }
             });
