@@ -33,6 +33,7 @@ interface Props {
 
     useKeyboardAvoidingView?: boolean;
     scrollEnabled?: boolean;
+    isTopViewPressable?: boolean;
 }
 
 const defaultProps = {
@@ -44,6 +45,9 @@ const defaultProps = {
     androidSkipBottom: 30,
     useKeyboardAvoidingView: false,
     scrollEnabled: false,
+    isTopViewPressable: false
+
+
 }
 
 const AnimatedModal = (props: Props) => {
@@ -128,48 +132,39 @@ const AnimatedModal = (props: Props) => {
 
     // #endregion :: POSITION STYLING END's FROM HERE 
 
-    const Wrapper = props.useKeyboardAvoidingView ? KeyboardAwareScrollView : TouchableOpacity;
+    const componentSelection = props.isTopViewPressable ? TouchableOpacity : View
+    const Wrapper: typeof KeyboardAwareScrollView | typeof TouchableOpacity | typeof View = props.useKeyboardAvoidingView ? KeyboardAwareScrollView : componentSelection;
+
     return (
+        //@ts-ignore
         <Wrapper
             style={[
                 {
-                    backgroundColor: 'transparent', position: 'absolute',
-                    height: HEIGHT, width: WIDTH,
-                    top: 0, zIndex: 999,
+                    backgroundColor: 'transparent',
+                    position: 'absolute',
+                    height: HEIGHT,
+                    width: WIDTH,
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    zIndex: 9999,
+                    elevation: 9999,
                 },
                 props.wrapperStyl,
             ]}
-            // style={{
-            //     backgroundColor: 'transparent', position: 'absolute',
-            //     height: HEIGHT, width: WIDTH,
-            //     top: 0, zIndex: 999,
-            // }}
-            {...props.useKeyboardAvoidingView && {
+
+            {...props.useKeyboardAvoidingView ? {
                 contentContainerStyle: { flexGrow: 1, },
                 scrollEnabled: props.scrollEnabled,
                 bounces: false,
                 showsVerticalScrollIndicator: false,
                 showsHorizontalScrollIndicator: false,
-
-            }
-            }
-            onPress={() => {
-                props.onRequestClose && props.onRequestClose();
-            }}
-        >
-            {/* <View style={{ position: 'absolute', height: HEIGHT, width: WIDTH, top: 0, zIndex: 999, }}> */}
-            {/* <AnimatedToucableOpacity
-                activeOpacity={1}
-                disabled={props.disableOutsidePress}
-                onPress={() => {
+            } : {
+                onPress: () => {
                     props.onRequestClose && props.onRequestClose();
-                }}
-                style={[{
-                    flex: 1, opacity: openAnimation,
-                    backgroundColor: 'red',
-                },
-                props.containerStyle
-                ]} /> */}
+                }
+            }}>
 
             <AnimatedToucableOpacity
                 disabled={props.disableOutsidePress}
@@ -182,7 +177,7 @@ const AnimatedModal = (props: Props) => {
                     props.skipStatusBar && {
                         marginTop: getStatusBarHeight(true),
                     },
-                    props.containerStyle
+                    props.containerStyle,
                 ]} >
                 <Animated.View style={[{
                     width: '100%',
@@ -198,17 +193,15 @@ const AnimatedModal = (props: Props) => {
                     //@ts-ignore
                     paddingBottom: "paddingBottom" in (props?.contentContainerStyle ?? {}) ? insets.bottom + parseInt(`${props?.contentContainerStyle?.paddingBottom ?? 0}`) : insets.bottom,
                 },
-
                 //@ts-ignore
                 (props.androidSkipBottom && Platform.OS === "android") && {
                     //@ts-ignore
                     paddingBottom: "paddingBottom" in (props?.contentContainerStyle ?? {}) ? props.androidSkipBottom + parseInt(`${props?.contentContainerStyle?.paddingBottom ?? 0}`) : props.androidSkipBottom,
-                }
+                },
                 ]}>
                     {props.children}
                 </Animated.View>
             </AnimatedToucableOpacity>
-            {/* </View> */}
         </Wrapper>
     )
 }

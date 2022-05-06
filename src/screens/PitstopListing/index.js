@@ -113,7 +113,7 @@ const PistopListingChild = React.memo(({ route, }) => {
         [PITSTOP_TYPES.RESTAURANT]: {
             filterTitleShown: false,
             filterScreenIcon: true,
-            searchPlaceHolder: 'What do you want to eat?',
+            searchPlaceHolder: 'Search for food or restaurant ',
             categorySection: true,
             categoryTitle: false,
             pitstopListingTitle: 'All Restaurants'
@@ -121,7 +121,7 @@ const PistopListingChild = React.memo(({ route, }) => {
         [PITSTOP_TYPES.SUPER_MARKET]: {
             filterTitleShown: true,
             filterScreenIcon: true,
-            searchPlaceHolder: 'What do you want to order?',
+            searchPlaceHolder: 'Search for products or shops',
             categorySection: true,
             pitstopListingTitle: 'All Supermarkets'
         },
@@ -293,7 +293,7 @@ const PistopListingChild = React.memo(({ route, }) => {
                         vendorDashboardCatID={item.vendorDashboardCatID} cb={(loaded) => {
                             setLoadedData(loaded)
 
-                        }}/>
+                        }} />
                 )
             })}
 

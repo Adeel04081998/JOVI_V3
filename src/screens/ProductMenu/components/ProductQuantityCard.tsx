@@ -21,6 +21,7 @@ interface Props {
     cardSize?: number;
     textSize?: number;
     updateQuantity?: (quantity: number) => void;
+    listener?: (quantity: number) => void;
     initialQuantity?: string | number;
     outOfStock?: boolean;
     outOfStockText?: string;
@@ -88,7 +89,7 @@ const ProductQuantityCard = (props: Props) => {
 
     React.useEffect(() => {
         const forceUpdate = cartReducer.pitstops.length < 1 ? true : cartReducer?.forceUpdate ?? false;
-        if (((!isFocused && state.quantity > 0) || forceUpdate)&&_NavgationRef.current.getCurrentRoute().name === ROUTES.APP_DRAWER_ROUTES.Cart.screen_name) {
+        if (((!isFocused && state.quantity > 0) || forceUpdate) && _NavgationRef.current.getCurrentRoute().name === ROUTES.APP_DRAWER_ROUTES.Cart.screen_name) {
             const pitstops = cartReducer.pitstops;
             let updatedQuantity = 0;//state.quantity;
 
@@ -98,9 +99,11 @@ const ProductQuantityCard = (props: Props) => {
                     updatedQuantity = item.quantity;
                 }
             });
-            if((!isFocused && updatedQuantity>0)||updatedQuantity===state.quantity || !currentPitstop){
+
+            if ((!isFocused && updatedQuantity > 0) || updatedQuantity === state.quantity || !currentPitstop) {
                 skipEffect.current = true;
             }
+
             // ref => https://cibak.atlassian.net/browse/JV3-1337
             // if ((updatedQuantity < 1)) {
             //     skipEffect.current = true;
@@ -110,6 +113,12 @@ const ProductQuantityCard = (props: Props) => {
             skipEffect.current = false;
         }
     }, [cartReducer]);
+
+    React.useEffect(() => {
+        if (!state.quantity) {
+            props.listener && props.listener(state.quantity)
+        }
+    }, [state.quantity])
 
 
 

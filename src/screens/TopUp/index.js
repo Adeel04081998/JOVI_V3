@@ -265,15 +265,20 @@ export default () => {
       },
       success => {
         console.log("[HBLHandler].success", success);
-        hblRequestRef.current = JSON.parse(success.config.data)
-        const { statusCode, hblTransactionViewModel } = success.data;
-        const { url, signature } = hblTransactionViewModel
-        if (statusCode === 200) {
-          NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.WebView.screen_name, {
-            uri: { uri: url, method: 'POST' }, html: null, title: "Top Up",
-          });
+        if (success?.config?.data) {
+          hblRequestRef.current = JSON.parse(success.config.data)
+        }
+        if (success?.data) {
+          const { statusCode, hblTransactionViewModel } = success.data;
+          const { url, signature } = hblTransactionViewModel
+          if (statusCode === 200) {
+            NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.WebView.screen_name, {
+              uri: { uri: url, method: 'POST' }, html: null, title: "Top Up",
+            });
 
-        } else sharedExceptionHandler(success)
+          } else sharedExceptionHandler(success)
+        }
+
       },
       fail => {
         setLoader(false)

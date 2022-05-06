@@ -37,7 +37,7 @@ const BottomLine = ({ lineStyle = {} }) => (
         }, lineStyle]}
     />
 );
-export default ({ instructions = "", contianerStyle = {}, addressTxtStyle = {}, editIconStyle = {}, edit_icon_Height = 0, isShowLine = true, finalDestinationPrimaryContainer = {} }) => {
+export default ({ instructions = "", contianerStyle = {}, addressTxtStyle = {}, editIconStyle = {}, edit_icon_Height = 0, isShowLine = true, finalDestinationPrimaryContainer = {}, onFinalDestinationChange = () => { } }) => {
     const SPACING = 10;
     const ICON_HEIGHT = 20;
     const ICON_WIDTH = 20;
@@ -52,7 +52,8 @@ export default ({ instructions = "", contianerStyle = {}, addressTxtStyle = {}, 
     React.useEffect(() => {
         if (isMounted.current && cartReducer.pitstops.length > 0 && finalDestinationRef.current.title !== finalDestination.title) {
             finalDestinationRef.current = finalDestination;
-            sharedGetServiceCharges()
+            sharedGetServiceCharges();
+            onFinalDestinationChange();
         } else isMounted.current = true;
     }, [finalDestination, cartReducer.pitstops.length])
     return (

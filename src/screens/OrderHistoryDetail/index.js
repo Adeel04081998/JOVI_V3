@@ -468,12 +468,14 @@ export default ({ navigation, route }) => {
 
                     <RenderPrice
                         text={`Wallet Deduction`}
+                        showZero={false}
                         value={data?.orderReceiptVM?.walletDeduction ?? 0}
                         pricePrefix='Rs. -'
                     />
 
                     <RenderPrice
                         text={`Arrears`}
+                        showZero={false}
                         value={data?.orderReceiptVM?.arrears ?? 0}
                     />
 
@@ -499,7 +501,7 @@ export default ({ navigation, route }) => {
                     onRequestClose={() => { closeComplaintModal(); }}
                     contentContainerStyle={{ borderRadius: 7, width: "95%", maxHeight: "60%", }}>
 
-                    <View style={{ paddingHorizontal: constants.spacing_horizontal * 2, marginVertical: constants.spacing_vertical * 1.5 }}>
+                    <View style={{ paddingHorizontal: constants.spacing_horizontal * 2, marginVertical: constants.spacing_vertical * 1.5, marginBottom: 0,  }}>
                         <Text fontFamily='PoppinsSemiBold' style={{ fontSize: 18, color: "#272727", textAlign: "center" }}>{`Complaint`}</Text>
                         <Text style={{ fontSize: 14, color: "#272727", paddingTop: 30, paddingBottom: 10, }}>{`Enter your complaint`}</Text>
                         <RNTextInput
@@ -518,9 +520,9 @@ export default ({ navigation, route }) => {
                             multiline={true} // ios fix for centering it at the top-left corner 
                             numberOfLines={isIOS ? null : NUMBER_OF_INPUT_LINE}
                             inputAccessoryViewID={INPUT_ACCESSORY_VIEW_ID}
+                            maxLength={250}
                             value={complaintModal.text}
                             placeholder={'Enter here'}
-                            maxLength={250}
                             onChangeText={(text) => {
                                 updateComplaintModal(p => ({
                                     ...p,
@@ -737,13 +739,13 @@ const TotalChargesUI = ({ text = '', value = '', pricePrefix = 'Rs. ' }) => {
     )
 }
 
-const RenderPrice = ({ text = '', value = '', pricePrefix = 'Rs. ' }) => {
+const RenderPrice = ({ text = '', value = '', pricePrefix = 'Rs. ', showZero = true }) => {
     if (!value) return null;
     return (
         <>
             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: constants.spacing_horizontal, }}>
                 <Text style={{ color: "#4D4D4D", fontSize: 13, }}>{text}</Text>
-                <Text style={{ color: "#4D4D4D", fontSize: 13, }}>{renderPrice({ price: value, }, pricePrefix)}</Text>
+                <Text style={{ color: "#4D4D4D", fontSize: 13, }}>{renderPrice({ price: value, showZero: showZero }, pricePrefix)}</Text>
             </View>
             <DashedLine contentContainerStyle={{ paddingVertical: 8, }} />
         </>
