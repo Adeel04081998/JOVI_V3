@@ -842,7 +842,7 @@ export default ({ navigation, route }) => {
                 ref={ref}
                 transition={transition}
                 style={styles.container}>
-                <KeyboardAwareScrollView nestedScrollEnabled={true} scrollEnabled={scrollEnabled} style={{}} contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+                <KeyboardAwareScrollView nestedScrollEnabled={true} scrollEnabled={scrollEnabled} contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
                     {
                         userReducer.recentJoviPitstops && userReducer.recentJoviPitstops.length > 0 &&
                         <View style={{
@@ -852,7 +852,7 @@ export default ({ navigation, route }) => {
                             <ScrollView horizontal contentContainerStyle={{ flexDirection: "row", paddingHorizontal: 10, paddingVertical: 10, justifyContent: "flex-start", alignItems: "center" }}>
                                 {
                                     userReducer.recentJoviPitstops?.map((item, i) => {
-                                        return <TouchableOpacity style={{ display: 'flex', flexDirection: 'column', paddingLeft: 10, alignItems: 'flex-start', justifyContent: 'center', borderWidth: 0.3, marginHorizontal: 3, borderRadius: 7, borderColor: colors.black, width: 192, padding: 5, backgroundColor: colors.white, height: 50, }} onPress={() => {
+                                        return <TouchableOpacity style={{ display: 'flex', flexDirection: 'column', paddingLeft: 10, alignItems: 'flex-start', justifyContent: 'center', borderWidth: 0.3, marginHorizontal: 3, borderRadius: 7, borderColor: colors.primary, width: 192, padding: 5, backgroundColor: colors.white, height: 50, }} onPress={() => {
                                             customRecordingRef.current?.setStopRecording(true);
                                             setData(item)
                                         }}>
@@ -865,7 +865,7 @@ export default ({ navigation, route }) => {
                         </View>
                     }
                     <View style={{
-                        margin: 15, borderRadius: 10, backgroundColor: colors.white,
+                        margin: 10, borderRadius: 10, backgroundColor: colors.white,
                         marginBottom: !collapsed ? 50 : 0
                     }} >
                         {cardData.map(({ idx, title, desc, svg, isOpened, key, headerColor, disabled }, index) => {
@@ -892,16 +892,6 @@ export default ({ navigation, route }) => {
                     fontFamily="PoppinsRegular"
                     wait={0.2}
                 />
-                {/* <TouchableOpacity
-                    onPress={onSaveAndContinue}
-                    disabled={validationCheck()}
-                    activeOpacity={1}
-                    style={[styles.locButton, { height: 60, marginVertical: 10, backgroundColor: loader || validationCheck() ? 'grey' : colors.primary }]}>
-                    {
-                        loader ? <ActivityIndicator size="small" color={colors.primary} /> :
-                            <Text style={[styles.btnText, { fontSize: 16, fontFamily: FontFamily.Poppins.Regular, color: colors.white }]} >Save and Continue</Text>
-                    }
-                </TouchableOpacity> */}
             </Transitioning.View>
         </SafeAreaView >
     );

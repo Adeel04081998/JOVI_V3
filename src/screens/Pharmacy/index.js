@@ -134,7 +134,7 @@ export default ({ route }) => {
     //Validation
     const pickupValidation = state.pharmacyPitstopType === 1 ? (!isAttachment ? (state.pickUpPitstop.latitude === null ?? false) : (state.images === null || state.images?.length < 1)) : false;
     const disabledButton = pickupValidation || state.latitude === null || state.medicineName === '' || state.detail === '' || state.estimatePrice < 1;
-    const isImageUploading = isAttachment && state.images && (state.images.find(item=>item.isUploading === true)?true:false);
+    const isImageUploading = isAttachment && state.images && (state.images.find(item => item.isUploading === true) ? true : false);
     //Logical Functions
     const handlePickImage = () => {
         sharedConfirmationAlert("Alert", "Pick Option!",
@@ -217,7 +217,7 @@ export default ({ route }) => {
                 customColors:colors,
             });
         } else if (!isAttachmentBool && state.images?.length) {
-            sharedConfirmationAlert('Uploaded Images', 'Your uploaded images will be lost if you choose this option. Are you sure?', null,null, {
+            sharedConfirmationAlert('Uploaded Images', 'Your uploaded images will be lost if you choose this option. Are you sure?', null, null, {
                 cancelButton: { text: "No", onPress: () => { } },
                 okButton: {
                     text: "Yes", onPress: () => {
@@ -451,7 +451,7 @@ export default ({ route }) => {
                                         disabled: doesPickupPitstopExists,
                                     }].map((item, i) => {
                                         return <TouchableOpacity key={i} onPress={() => toggleAttachment(item.value)} style={{ backgroundColor: item.selected ? colors.black : colors.white, ..._styles.prescriptionButton }}>
-                                            {item.text === "Attach File" && <SvgXml xml={svgs.attachFile(item.selected  ? colors.white : colors.black)} height={20} width={20} style={{ marginRight: 5, marginBottom: 3 }} />}
+                                            {item.text === "Attach File" && <SvgXml xml={svgs.attachFile(item.selected ? colors.white : colors.black)} height={20} width={20} style={{ marginRight: 5, marginBottom: 3 }} />}
                                             <Text style={{ fontSize: 14, color: item.selected ? colors.white : colors.black }} fontFamily={'PoppinsLight'}>{item.text}</Text>
                                         </TouchableOpacity>
                                     })
@@ -511,7 +511,7 @@ export default ({ route }) => {
                                 }
                             </View> : null}
                         </>}
-                        <View style={{ ..._styles.subSection,  ..._styles.borderTopRadius }}>
+                        <View style={{ ..._styles.subSection, ..._styles.borderTopRadius }}>
                             {renderSubHeading('Medicine Name')}
                             {
                                 renderInput({
@@ -563,14 +563,14 @@ export default ({ route }) => {
             </KeyboardAvoidingView>
             <Button
                 onPress={onSave}
-                text={isImageUploading?"Image Uploading...":"Save and Continue"}
+                text={isImageUploading ? "Image Uploading..." : "Save and Continue"}
                 textStyle={{
                     fontSize: 16,
                     fontFamily: FontFamily.Poppins.Regular
                 }}
                 fontFamily="PoppinsRegular"
                 isLoading={loader}
-                disabled={disabledButton||isImageUploading}
+                disabled={disabledButton || isImageUploading}
                 style={[_styles.locButton, _styles.saveButton]} />
         </SafeAreaView>
     );

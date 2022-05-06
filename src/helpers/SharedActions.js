@@ -402,7 +402,7 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
         if (_pitstop.pitstopType === PITSTOP_TYPES.JOVI) {
             itemsCount += 1;
             _pitstop.individualPitstopTotal = _pitstop.estimatePrice || 0;
-            joviPitstopsTotal += _pitstop.individualPitstopTotal;
+            joviPitstopsTotal = _pitstop.individualPitstopTotal;
             let openOrdersList = cartReducer.openOrdersList;
             if (openOrdersList.length) {
                 joviPrevOrdersPitstopsAmount += openOrdersList.map((orderInfo, index) => orderInfo?.estimatePrice ?? 0).reduce((a, b) => a + b);
@@ -448,9 +448,19 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
     estimateTime = sharedCalculateMaxTime([...pitstops].filter(_p => _p.pitstopType === PITSTOP_TYPES.RESTAURANT), "vendorMaxEstTime")
     // console.log("estimateTime", estimateTime);
     subTotal = subTotal + joviPitstopsTotal;
+    console.log("subTotal", subTotal);
+
     total = itemsTotalWithDiscounts + joviPitstopsTotal;
+    console.log("total", total);
+    console.log("joviPitstopsTotal", joviPitstopsTotal);
+    console.log("joviPrevOrdersPitstopsAmount", joviPrevOrdersPitstopsAmount);
+
     joviCalculation = joviRemainingAmount - (joviPitstopsTotal + joviPrevOrdersPitstopsAmount)
+    console.log("joviCalculation", joviCalculation);
+
     joviRemainingAmount = joviCalculation <= 0 ? 0 : joviCalculation;
+    console.log("joviRemainingAmountInside", joviRemainingAmount);
+
     dispatch(ReduxActions.setCartAction({ pitstops, joviRemainingAmount, subTotal, itemsTotalWithDiscounts, itemsCount, joviPitstopsTotal, joviPrevOrdersPitstopsAmount, joviCalculation, total, estimateTime, gst, discount }));
 };
 export const sharedDiscountsCalculator = (

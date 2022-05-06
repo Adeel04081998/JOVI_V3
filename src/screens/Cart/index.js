@@ -403,6 +403,10 @@ export default () => {
                 updateQuantity={(quantity) => {
                   incDecDelHandler(quantity)
                 }}
+                listener={qty => {
+                  // console.log("qty", qty);
+                  incDecDelHandler(qty)
+                }}
                 fromCart={true}
                 pitstopItemID={pitStopItemID}
                 marketID={marketID || pitStopID}
