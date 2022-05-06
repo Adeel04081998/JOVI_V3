@@ -96,7 +96,7 @@ export default () => {
     // #endregion :: SELECTING FINAL DESTINATION IF NOT SELECTED END's FROM HERE 
 
     React.useEffect(() => {
-        if (!loaderVisible && userReducer?.finalDestObj?.latitude) {
+        if (!loaderVisible && userReducer?.finalDestObj?.latitude && isFocused) {
             Animated.timing(homeFadeIn, {
                 toValue: 1,
                 duration: 300,
@@ -187,6 +187,7 @@ export default () => {
                         />
                         <View style={homeStyles.wrapper}>
                             <Search colors={colors} homeStyles={homeStyles} fontSize={12} editable={false}
+                                placeholder={'Search whatever you want...'}
                                 onPress={() => {
                                     NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Search.screen_name);
                                 }}

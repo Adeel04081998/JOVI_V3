@@ -153,7 +153,7 @@ export default ({ navigation, route }) => {
                                     containerStyle={{ height: 40, }}
                                     colors={colors}
                                     fontSize={12}
-                                    placeholder={`Search by restaurant name or food`}
+                                    placeholder={isRestaurantSelected?'Search for food or restaurant': 'Search for products or shops'}
                                     onChangeText={(text) => {
                                         setSearchText(text);
                                         debounceInputSearch(text);
@@ -174,7 +174,7 @@ export default ({ navigation, route }) => {
                         justifyContent: "space-between",
                     }}>
                         {renderTabItem("Food", isRestaurantSelected)}
-                        {renderTabItem("Grocery", !isRestaurantSelected)}
+                        {renderTabItem("Shops", !isRestaurantSelected)}
                     </View>
                 }
             </SafeAreaView>
