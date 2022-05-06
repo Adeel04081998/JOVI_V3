@@ -59,6 +59,7 @@ export default ({ route }) => {
     const [componentLoaded, setComponentLoaded] = React.useState(false);
     const circleColor = state.subStatusName === ORDER_STATUSES.RiderFound ? '#37c130' : colors.primary;
     const isRiderFound = state.subStatusName === ORDER_STATUSES.RiderFound;
+    const isChatEnable = state.subStatusName === ORDER_STATUSES.RiderFound && (state?.orderStatus??-1)===1;
     const colorChangeAnimation = React.useRef(new Animated.Value(0)).current;
     const loadAnimation = React.useRef(new Animated.Value(0)).current;
     const loadAnimationCurrentValue = React.useRef(0);
@@ -300,7 +301,7 @@ export default ({ route }) => {
                 {renderUI[state.subStatusName ?? ORDER_STATUSES.Processing]()}
             </View>
             <View style={styles.orderNavigationContainer}>
-                <TouchableOpacity disabled={!isRiderFound} onPress={() => onOrderNavigationPress(ROUTES.APP_DRAWER_ROUTES.OrderChat.screen_name, { riderProfilePic: state.userPic })} style={{ ...styles.orderNavigationButton, backgroundColor: isRiderFound ? colors.primary : colors.grey }}>
+                <TouchableOpacity disabled={!isChatEnable} onPress={() => onOrderNavigationPress(ROUTES.APP_DRAWER_ROUTES.OrderChat.screen_name, { riderProfilePic: state.userPic })} style={{ ...styles.orderNavigationButton, backgroundColor: isChatEnable ? colors.primary : colors.grey }}>
                     <VectorIcon size={25} name={'md-chatbubble-ellipses'} type={'Ionicons'} color={colors.white} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => onOrderNavigationPress(ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name)} style={styles.orderNavigationButton}>

@@ -192,11 +192,10 @@ export default ({ navigation, route }) => {
 
             CustomInterval.handleInterval(() => {
 
-
                 if (time.current.sec !== 59) {
                     if (time.current.min >= constants.recording_duration_max_limit) {
                         setStopRecording(true);
-                        recordButtonRef.current.setDuration(`${padToTwo(time.current.min)} : ${padToTwo(time.current.sec)}`)
+                        recordButtonRef.current?.setDuration(`${padToTwo(time.current.min)} : ${padToTwo(time.current.sec)}`)
                         resetTimer();
                         return
                     }
@@ -210,7 +209,7 @@ export default ({ navigation, route }) => {
                     const nextMin = time.current.min + 1;
                     if (nextMin >= constants.recording_duration_max_limit) {
                         setStopRecording(true);
-                        recordButtonRef.current.setDuration(`${padToTwo(nextMin)} : ${padToTwo(0)}`)
+                        recordButtonRef.current?.setDuration(`${padToTwo(nextMin)} : ${padToTwo(0)}`)
                         resetTimer();
                         return
                     }
@@ -395,8 +394,8 @@ export default ({ navigation, route }) => {
         }
 
         if (type === CHAT_TYPE_ENUM.audio) {
-            const dm = item.duration.split(':')[0].trim();
-            const sm = item.duration.split(':')[1].trim();
+            const dm = (item?.duration ?? '').split(':')[0].trim();
+            const sm = (item?.duration ?? '').split(':')[1].trim();
             const second = (parseInt(`${dm}`) * 60) + parseInt(`${sm}`);
             formData.append("AudioDuration", second);
         }
@@ -407,9 +406,12 @@ export default ({ navigation, route }) => {
         }
         multipartPostRequest(Endpoints.SEND_ORDER_MESSAGE_TO_RIDER, formData, (res) => {
             console.log('resssss 22222 ', res);
-            if ((res.data?.statusCode ?? 400) === 200) {
+            if ((res?.statusCode ?? 400) === 200) {
                 //REQUEST SUCCESSFULLY....
                 return
+            } else {
+                NavigationService.NavigationActions.stack_actions.popToTop();
+                sharedExceptionHandler(res);
             }
 
         }, (err) => {

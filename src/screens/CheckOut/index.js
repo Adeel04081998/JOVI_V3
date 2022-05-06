@@ -410,6 +410,7 @@ export default () => {
                         <GoodyBag
                             showHeader={false}
                             onPressClbk={(item) => {
+                                sharedGetServiceCharges({ promoCodeApplied: item.promoCode })
                                 setState((pre) => ({
                                     ...pre,
                                     selectedVoucher: item,
@@ -470,6 +471,9 @@ export default () => {
                         edit_icon_Height={18}
                         isShowLine={false}
                         finalDestinationPrimaryContainer={{ paddingLeft: 18, paddingVertical: 0, bottom: 3 }}
+                        onFinalDestinationChange={() => {
+                            setState((pre) => ({ ...pre, selectedVoucher: {} }))
+                        }}
                     />
                     {RenderPaymentMethodCardUi()}
 
@@ -479,6 +483,7 @@ export default () => {
                                 setState((pre) => ({ ...pre, isModalVisible: visible }))
                             }
                             else {
+                                sharedGetServiceCharges();
                                 setState((pre) => ({ ...pre, selectedVoucher: {} }))
 
                             }

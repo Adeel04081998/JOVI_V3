@@ -736,6 +736,18 @@ export const sharedGetServiceCharges = (payload = null, successCb = () => { }) =
             });
         }
     });
+    // #region :: Handling Promo Code START's FROM HERE 
+    let promoCodeApplied = null;
+    if (payload && typeof payload === "object") {
+        if (Object.keys(payload).length === 1) {
+            if ("promoCodeApplied" in payload) {
+                promoCodeApplied = payload.promoCodeApplied;
+                payload = null;
+            }
+        }
+    }
+
+    // #endregion :: Handling Promo Code END's FROM HERE 
     payload = payload ? payload : {
         "joviJobAmount": cartReducer.joviPitstopsTotal,
         "estimateTime": estimateTime || null,
@@ -745,6 +757,9 @@ export const sharedGetServiceCharges = (payload = null, successCb = () => { }) =
             "pitStopType": _pitstop.pitstopType || 0,
         })),
         "skipEstAmountAndGst": cartReducer.pitstops.every(pt => pt.pitstopType === 2 || pt.pitstopType === undefined) ? true : false,
+        ...promoCodeApplied && {
+            promoCodeApplied,
+        }
         // "hardwareID": "string",
         // "promoCodeApplied": "string",
         // "adminID": "string",
@@ -757,7 +772,7 @@ export const sharedGetServiceCharges = (payload = null, successCb = () => { }) =
             pitstopItems
         }
     }
-    // console.log('[sharedGetServiceCharges].payload', payload);
+    console.log('[sharedGetServiceCharges].payload', payload);
     postRequest(
         Endpoints.SERVICE_CHARGES,
         payload,
