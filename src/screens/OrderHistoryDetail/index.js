@@ -52,7 +52,6 @@ export default ({ navigation, route }) => {
     };
 
     const userReducer = store.getState().userReducer;
-
     // #endregion :: NAVIGATION PARAM's END's FROM HERE 
 
     // #region :: STYLES & THEME START's FROM HERE 
@@ -514,7 +513,7 @@ export default ({ navigation, route }) => {
                     onRequestClose={() => { closeComplaintModal(); }}
                     contentContainerStyle={{ borderRadius: 7, width: "95%", maxHeight: "60%", }}>
 
-                    <View style={{ paddingHorizontal: constants.spacing_horizontal * 2, marginVertical: constants.spacing_vertical * 1.5, marginBottom: 0, }}>
+                    <View style={{ paddingHorizontal: constants.spacing_horizontal * 2, marginVertical: constants.spacing_vertical * 1.5 }}>
                         <Text fontFamily='PoppinsSemiBold' style={{ fontSize: 18, color: "#272727", textAlign: "center" }}>{`Complaint`}</Text>
                         <Text style={{ fontSize: 14, color: "#272727", paddingTop: 30, paddingBottom: 10, }}>{`Enter your complaint`}</Text>
                         <RNTextInput
@@ -526,6 +525,7 @@ export default ({ navigation, route }) => {
                                 paddingVertical: 10,
                                 textAlignVertical: "top",
                                 minHeight: (isIOS && NUMBER_OF_INPUT_LINE) ? (20 * NUMBER_OF_INPUT_LINE) : null,
+                                maxHeight: (isIOS && NUMBER_OF_INPUT_LINE) ? (20 * NUMBER_OF_INPUT_LINE) : 200,
                             }}
                             autoCorrect={false}
                             textAlignVertical="top"
@@ -620,6 +620,7 @@ export default ({ navigation, route }) => {
                             marginTop: constants.spacing_vertical * 2,
                             marginLeft: constants.spacing_horizontal * 4,
                             marginRight: constants.spacing_horizontal * 2,
+                             
                         }}>
                             <Button
                                 onPress={() => { closeComplaintModal(); }}
