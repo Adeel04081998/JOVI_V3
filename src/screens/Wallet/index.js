@@ -264,7 +264,7 @@ export default () => {
                         <SvgXml xml={getSvgXML(item)} />
                     </View>
                 </View>
-                <View style={{ flexDirection: 'column', width: '65%' }} >
+                <View style={{ flexDirection: 'column', width: '60%' }} >
                     <View style={{ flexDirection: 'row', alignItems: 'center' }} >
                         <Text fontFamily="PoppinsMedium" style={[styles.filterTypeStyle, { textAlign: 'left' }]} >{item.type}</Text>
                         <Text fontFamily="PoppinsLight" style={[styles.filterDateStyle, { paddingLeft: 5, textAlign: 'left' }]} >{item.date}</Text>
@@ -273,9 +273,9 @@ export default () => {
                         <Text numberOfLines={1} fontFamily="PoppinsLight" style={styles.filterDateStyle} >{item.details}</Text>
                     </View>
                 </View>
-                <View style={{ flexDirection: 'column', width: '20%' }} >
-                    <SvgXml xml={isOrder ? svgs.redArrow() : svgs.greenArrow()} style={{ alignSelf: 'flex-end', marginRight: 5 }} />
-                    <Text fontFamily="PoppinsMedium" style={[styles.filterTypeStyle, { textAlign: 'right' }]} >Rs. {item.amount}</Text>
+                <View style={{ flexDirection: 'column', width: '25%' }} >
+                    <SvgXml xml={isOrder ? svgs.redArrow() : svgs.greenArrow()} style={{alignSelf:'flex-end', marginRight: 5 }} />
+                    <Text fontFamily="PoppinsMedium" style={[styles.filterTypeStyle, { textAlign: 'right' }]} >Rs. {item.amount}0</Text>
                 </View>
             </View>
         )

@@ -53,7 +53,6 @@ export default ({ navigation, route }) => {
     };
 
     const userReducer = store.getState().userReducer;
-
     // #endregion :: NAVIGATION PARAM's END's FROM HERE 
 
     // #region :: STYLES & THEME START's FROM HERE 
@@ -514,6 +513,7 @@ export default ({ navigation, route }) => {
                                 paddingVertical: 10,
                                 textAlignVertical: "top",
                                 minHeight: (isIOS && NUMBER_OF_INPUT_LINE) ? (20 * NUMBER_OF_INPUT_LINE) : null,
+                                maxHeight: (isIOS && NUMBER_OF_INPUT_LINE) ? (20 * NUMBER_OF_INPUT_LINE) : 200,
                             }}
                             autoCorrect={false}
                             textAlignVertical="top"
@@ -608,6 +608,7 @@ export default ({ navigation, route }) => {
                             marginTop: constants.spacing_vertical * 2,
                             marginLeft: constants.spacing_horizontal * 4,
                             marginRight: constants.spacing_horizontal * 2,
+                             
                         }}>
                             <Button
                                 onPress={() => { closeComplaintModal(); }}
