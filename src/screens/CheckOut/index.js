@@ -394,7 +394,7 @@ export default () => {
             return (
                 <AnimatedModal
                     position='bottom'
-                    useKeyboardAvoidingView
+                    // useKeyboardAvoidingView
                     visible={state.isModalVisible}
                     contentContainerStyle={{ borderRadius: 7, width: "100%", backgroundColor: 'transparent' }}
                     containerStyle={{ backgroundColor: 'transparent', }}
@@ -405,6 +405,7 @@ export default () => {
                             isModalVisible: false
                         }))
                     }}
+                    isTopViewPressable={true}
                 >
                     <ScrollView style={{ maxHeight: constants.screen_dimensions.height * .8, borderRadius: 10, }}>
                         <GoodyBag

@@ -125,7 +125,7 @@ export default () => {
     }
     const renderGenderUI = () => {
         return (<View style={{ height: 100, paddingHorizontal: SPACING }}>
-            <Text style={{ fontSize: 16, color:colors.black }} fontFamily={'PoppinsMedium'}>Gender</Text>
+            <Text style={{ fontSize: 16, color: colors.black }} fontFamily={'PoppinsMedium'}>Gender</Text>
             <View style={{ width: '100%', flexDirection: 'row', borderBottomWidth: 0.5, borderBottomColor: colors.grey, padding: SPACING * 2 }}>
                 <View style={{ flexDirection: 'row', marginRight: SPACING * 3 }}>
                     <RadioButton selected={state.genderEnum === 1} onPress={() => handleOnGenderPress(1)} />
@@ -150,6 +150,8 @@ export default () => {
                 visible={isModalVisible}
                 position={'bottom'}
                 useKeyboardAvoidingView={true}
+                wrapperStyl={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+
             >
 
                 <DatePicker
@@ -198,7 +200,7 @@ export default () => {
         for (let index = 0; index < inputsArr.length; index++) {
             let showError = false;
             const x = inputsArr[index];
-            if(x.field === 'DateOfBirth') continue;
+            if (x.field === 'DateOfBirth') continue;
             showError = (!String(x.value).length || !x.isValid) ? true : false;
             arr.push({ ...x, showError })
         }
