@@ -46,7 +46,7 @@ const RecordButton = React.forwardRef<Recorder, Props>((props: Props, ref: any) 
 
             if (props.onRecordAudio) {
                 //@ts-ignore
-                const path = recorderRef.current?._fsPath;
+                const path = recorderRef.current?._fsPath ?? '';
                 const obj: RecordButtonItemProps = {
                     id: Math.floor(Math.random() * 100000),
                     uri: Platform.OS === "android" ? `file://${path}` : path,

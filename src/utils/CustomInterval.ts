@@ -15,8 +15,10 @@ export default {
         }
     },
     stopInterval: () => {
-        if (timerListener) {
+        if (timerListener && Platform.OS === "ios") {
             clearInterval(timerListener);
+        } else {
+            BackgroundTimer.stopBackgroundTimer();
         }
     }
 }
