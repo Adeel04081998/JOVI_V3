@@ -34,7 +34,7 @@ export default React.memo((props) => {
     const cartReducer = useSelector((store) => {
         return store.cartReducer;
     });
-    const remainingAmount = cartReducer.joviRemainingAmount;
+    const remainingAmount =props.remainingAmount;// cartReducer.joviRemainingAmount;
 
 
 

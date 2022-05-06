@@ -36,7 +36,7 @@ let closeSecondCard = false;
 let recordingItem = null;
 
 export default ({ navigation, route }) => {
-
+    const isFromEdit = route?.params?.isEdit ?? false;
     const transition = (
         <Transition.Together>
             <Transition.Out
@@ -211,7 +211,7 @@ export default ({ navigation, route }) => {
         return store.cartReducer;
     });
     console.log("JOVI cartReducer", cartReducer);
-    const remainingAmount = cartReducer.joviRemainingAmount;
+    const [remainingAmount, setRemainingAmount] = React.useState(cartReducer.joviRemainingAmount);
     const [estVal, setEstVal] = useState('')
     // const [estVal, setEstVal] = useState(__DEV__ ? "1500" : '')
     const [initialEstVal, setInitialEstVal] = useState('')
@@ -255,8 +255,7 @@ export default ({ navigation, route }) => {
 
     const setData = (data = route.params.pitstopItemObj) => {
         const { title, nameval, imageData, voiceNote, estTime, description, estimatePrice, buyForMe, latitude, longitude } = data;
-        console.log(title, nameval, imageData, voiceNote, estTime, description, estimatePrice, buyForMe, latitude, longitude);
-        let estPriceBool = false //temporrary bool for handling estimated amount
+        let estPriceBool = false // bool for handling estimated amount
         latitudeRef.current = latitude;
         longitudeRef.current = longitude;
         let _estPrice = isNaN(parseInt(`${estimatePrice}`)) ? '' : parseInt(`${estimatePrice}`)
@@ -265,6 +264,7 @@ export default ({ navigation, route }) => {
             else if (imageData) return 1
             else return 2
         }
+        const newAmount = isFromEdit ? cartReducer.joviRemainingAmount + _estPrice : cartReducer.joviRemainingAmount;
         setLocationVal(title)
         setNameVal(nameval)
         updateImagesData(imageData ?? [])
@@ -272,18 +272,20 @@ export default ({ navigation, route }) => {
         setEstTime(estTime)
         setDescription(description)
         setEstVal(_estPrice)
-        if (_estPrice >= remainingAmount) {
+        if (_estPrice > newAmount) {
             estPriceBool = false
         } else {
             estPriceBool = true
         }
         setSwitch(estPriceBool)
         recordingItem = Object.keys(voiceNote ?? {}).length ? voiceNote : null
-        console.log('recordingItem ==>>> ', recordingItem);
         //for toggling Card
         toggleCardData(PITSTOP_CARD_TYPES["description"], colors.primary)
         toggleCardData(PITSTOP_CARD_TYPES["estimated-time"], colors.primary, description ?? imageData ?? voiceNote, typeForTogglingDescriptionCard())
         toggleCardData(PITSTOP_CARD_TYPES["buy-for-me"], colors.primary)
+        if (isFromEdit) {
+            setRemainingAmount(newAmount)
+        }
     }
     // to be used for editing purposes
     useEffect(() => {
@@ -770,17 +772,18 @@ export default ({ navigation, route }) => {
 
         return (
             <PitStopEstPrice
+                remainingAmount={remainingAmount}
                 estVal={isNaN(parseInt(`${estVal}`)) ? '' : parseInt(`${estVal}`)}
                 textinputVal={`${estVal}`}
                 isOpened={isDisabled ? false : isOpened}
                 onChangeSliderText={newsliderValue => {
                     if (Regex.numberOnly.test(newsliderValue)) {
-                        let remainingAmountLength = (`${remainingAmount}`.length) - 1;
+                        let remainingAmountLength = (`${remainingAmount}`.length)
                         if (remainingAmountLength < 1) {
                             remainingAmountLength = 1;
                         }
                         const maxLengthRegex = new RegExp(`^([0-${remainingAmountLength > 1 ? '9' : remainingAmount}]{0,${remainingAmountLength}}|${remainingAmount})$`, "g");
-                        if (maxLengthRegex.test(newsliderValue)) {
+                        if (maxLengthRegex.test(newsliderValue) && (`${newsliderValue}` <= `${remainingAmount}`)) {
                             setEstVal(newsliderValue);
                             setInitialEstVal(newsliderValue);
                         }
