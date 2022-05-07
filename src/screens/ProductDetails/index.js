@@ -167,9 +167,11 @@ export default (props) => {
         if (quantity && getOccurrence(state.selectedOptions, parentIndex) === quantity) {
             if (alreadyExist) {
                 updatedArr = updatedArr.filter(x => x.itemOptionID !== item.itemOptionID);
-            } else return;
-        };
-        if (!isMany && quantity === null && getOccurrence(state.selectedOptions, parentIndex) > 0) {
+            } else {
+                updatedArr.splice(updatedArr.findIndex(x=>x.parentIndex === parentIndex),1)
+                updatedArr.push({ ...item, parentIndex, isRequired });
+            };
+        }else if (!isMany && quantity === null && getOccurrence(state.selectedOptions, parentIndex) > 0) {
             updatedArr = [...updatedArr.filter(x => x.parentIndex !== parentIndex), { ...item, parentIndex }];
         } else if (alreadyExist) {
             updatedArr = updatedArr.filter(x => x.itemOptionID !== item.itemOptionID);
