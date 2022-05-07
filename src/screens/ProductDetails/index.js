@@ -193,7 +193,7 @@ export default (props) => {
         }
         const totalGst = Math.round(((generalProductOrDealDetail.gstPercentage / 100) * totalAmountWithoutGst));
         let discountedPriceWithGst = Math.round(discountedPriceWithoutGst + totalGst);
-        const totalPriceWithoutDiscount = discountedPriceWithGst + totalDiscount;
+        const totalPriceWithoutDiscount = discountedPriceWithGst + totalDiscount + totalJoviDiscount;
         console.log('updatedArr ==>>>', updatedArr);
         // console.log('discountedPrice', totalAmountWithoutGst, discountedPriceWithoutGst, (totalAddOnPrice + generalProductOrDealDetail.itemPrice) * 0.2, (totalAddOnPrice + generalProductOrDealDetail.itemPrice) - ((20 / 100) * (totalAddOnPrice + generalProductOrDealDetail.itemPrice)));
         setState(pre => ({

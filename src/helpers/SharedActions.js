@@ -429,7 +429,7 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
 
                 gst += product._totalGst * product.quantity;
                 individualPitstopGst += product._totalGst * product.quantity;
-                discount += product._totalDiscount * product.quantity;
+                discount += (product._totalDiscount + (product._totalJoviDiscount??0)) * product.quantity;
                 _pitTotal += product._itemPrice * product.quantity;
                 // subTotal += _pitTotal + discount;
                 // itemsTotalWithDiscounts += _pitTotal;
