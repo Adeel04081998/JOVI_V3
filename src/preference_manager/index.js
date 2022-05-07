@@ -41,6 +41,7 @@ export default {
             const keys = Object.keys(PreferenceManagerKeys).map(key => PreferenceManagerKeys[key])
             await AsyncStorage.multiRemove(keys);
             console.log('Cache cleaned successfully...');
+            IS_ALL_CACHE_CLEANED.current = true;
         } catch (error) {
             console.log(`An error occured during cache cleanup..`, error)
         }
@@ -48,3 +49,4 @@ export default {
 }
 
 
+export let IS_ALL_CACHE_CLEANED = { current: false };

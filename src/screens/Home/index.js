@@ -105,14 +105,13 @@ export default () => {
                 useNativeDriver: true,
                 easing: Easing.ease
             }).start(finished => {
-                if (finished && !GV.IS_ROBOT_SHOWN && lattitude !== -1 && isFocused) {
+                if (finished && GV.IS_ROBOT_SHOWN === false && lattitude !== -1 && isFocused) {
                     GV.IS_ROBOT_SHOWN = true;
                     dispatch(ReduxActions.showRobotAction());
                 }
                 // if (finished && !roboShownOnce.current) {
                 //     roboShownOnce.current = true;
                 // if (!GV.IS_ROBOT_SHOWN) {
-                //     GV.IS_ROBOT_SHOWN = true;
                 //     dispatch(ReduxActions.showRobotAction());
                 // }
                 // }

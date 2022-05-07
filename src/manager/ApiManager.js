@@ -1,6 +1,7 @@
 import React from 'react';
 import Toast from '../components/atoms/Toast';
 import { sharedExceptionHandler, sharedLogoutUser } from '../helpers/SharedActions';
+import { IS_ALL_CACHE_CLEANED } from '../preference_manager';
 import ReduxActions from '../redux/actions';
 import { store } from '../redux/store';
 import GV from '../utils/GV';
@@ -65,7 +66,8 @@ export const refreshTokenMiddleware = (requestCallback, params) => {
                 requestCallback.apply(this, params);
             }
             else if (res?.data?.statusCode === 403) {
-                Toast.error("Session Expired!");
+                if (!IS_ALL_CACHE_CLEANED.current)
+                    Toast.error("Session Expired!");
                 sharedLogoutUser();
                 return;
             }

@@ -270,8 +270,6 @@ export const sharedGetPromotions = () => {
 };
 
 export const sharedLogoutUser = () => {
-    GV.IS_ROBOT_SHOWN = false;
-    dispatch(ReduxActions.setUserFinalDestAction({ finalDestObj: { latitude: -1, } }))
     dispatch(ReduxActions.clearUserAction({ introScreenViewed: true }));
 };
 
@@ -723,6 +721,7 @@ const convertTime12to24 = (time12h) => {
 }
 export const sharedGetServiceCharges = (payload = null, successCb = () => { }) => {
     const cartReducer = store.getState().cartReducer;
+    console.log('cartReducercartReducercartReducercartReducercartReducercartReducercartReducer   ', cartReducer);
     const userReducer = store.getState().userReducer;
     // const estimateTime = cartReducer?.estimateTime?.includes('AM') || cartReducer?.estimateTime?.includes('PM') ? convertTime12to24(cartReducer.estimateTime) : cartReducer.estimateTime;
     const estimateTime = cartReducer.estimateTime;
@@ -751,6 +750,7 @@ export const sharedGetServiceCharges = (payload = null, successCb = () => { }) =
             });
         }
     });
+    console.log('payloadpayloadpayload befirreer      ', payload);
     // #region :: Handling Promo Code START's FROM HERE 
     let promoCodeApplied = null;
     if (payload && typeof payload === "object") {
@@ -761,7 +761,7 @@ export const sharedGetServiceCharges = (payload = null, successCb = () => { }) =
             }
         }
     }
-
+    console.log('payloadpayloadpayload ', payload);
     // #endregion :: Handling Promo Code END's FROM HERE 
     payload = payload ? payload : {
         "joviJobAmount": cartReducer.joviPitstopsTotal,

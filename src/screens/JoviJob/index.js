@@ -836,6 +836,7 @@ export default ({ navigation, route }) => {
             longitude: longitudeRef.current,
             buyForMe: switchVal
         }
+        console.log('Jovi Job Pitstop Addedd ', pitstopData);
         sharedAddUpdatePitstop(pitstopData, false, [], false, false, clearData);
         setLoader(false)
         recordingItem = null

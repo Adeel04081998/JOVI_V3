@@ -17,7 +17,7 @@ import Dropdown from '../../components/molecules/Dropdown/Index';
 import { sendOTPToServer, sharedExceptionHandler } from '../../helpers/SharedActions';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
-import preference_manager from '../../preference_manager';
+import preference_manager, { IS_ALL_CACHE_CLEANED } from '../../preference_manager';
 import FontFamily from '../../res/FontFamily';
 import theme from '../../res/theme';
 import ENUMS from '../../utils/ENUMS';
@@ -62,6 +62,7 @@ export default () => {
 
     const [country, setCountry] = React.useState("92");
     const onPress = async () => {
+        IS_ALL_CACHE_CLEANED.current = false;
         Keyboard.dismiss();
         const appHash = Platform.OS === "android" ? (await RNOtpVerify.getHash())[0] : "";
         const phoneNumber = country + cellNo
@@ -183,10 +184,10 @@ export default () => {
                             Terms & Conditions
                         </Text>
                     </TouchableOpacity>
-                        <Text fontFamily={'PoppinsLight'} style={{ color: 'black', fontSize: 14, paddingHorizontal: 5 }}>
-                            and
-                        </Text>
-                    <TouchableOpacity onPress={() => { legalScreen()}}>
+                    <Text fontFamily={'PoppinsLight'} style={{ color: 'black', fontSize: 14, paddingHorizontal: 5 }}>
+                        and
+                    </Text>
+                    <TouchableOpacity onPress={() => { legalScreen() }}>
                         <Text fontFamily={'PoppinsLight'} style={{ color: "#6D51BB", fontSize: 14 }}>
                             Privacy Policy
                         </Text>

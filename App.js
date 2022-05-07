@@ -277,6 +277,7 @@ const App = () => {
                     //     Toast.setRef(ref);
                     // }}//Function components cannot be given refs. Attempts to access this ref will fail
                     />
+                    {(userReducer?.isLoggedIn ?? false) ? <Robot /> : null}
                     <NoInternetModal />
                 </SafeAreaView>
                 <SharedGetApis />
@@ -369,6 +370,5 @@ const SharedGetApis = ({ }) => {
         }
     }, [isLoggedIn])
     return (<>
-        {isLoggedIn && <Robot />}
     </>);
 }
