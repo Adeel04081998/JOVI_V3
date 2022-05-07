@@ -96,20 +96,29 @@ export default () => {
     // #endregion :: SELECTING FINAL DESTINATION IF NOT SELECTED END's FROM HERE 
 
     React.useEffect(() => {
-        if (!loaderVisible && userReducer?.finalDestObj?.latitude && isFocused) {
+        const lattitude = userReducer?.finalDestObj?.latitude ?? -1;
+        if (!loaderVisible && lattitude !== -1) {
+
             Animated.timing(homeFadeIn, {
                 toValue: 1,
                 duration: 300,
                 useNativeDriver: true,
                 easing: Easing.ease
             }).start(finished => {
-                if (finished && !__DEV__ && !roboShownOnce.current) {
-                    roboShownOnce.current = true;
+                if (finished && !GV.IS_ROBOT_SHOWN && lattitude !== -1 && isFocused) {
+                    GV.IS_ROBOT_SHOWN = true;
                     dispatch(ReduxActions.showRobotAction());
                 }
+                // if (finished && !roboShownOnce.current) {
+                //     roboShownOnce.current = true;
+                // if (!GV.IS_ROBOT_SHOWN) {
+                //     GV.IS_ROBOT_SHOWN = true;
+                //     dispatch(ReduxActions.showRobotAction());
+                // }
+                // }
             });
         }
-    }, [loaderVisible, userReducer?.finalDestObj]);
+    }, [loaderVisible, userReducer]);
     React.useEffect(() => {
         if (!isFocused) {
             dispatch(ReduxActions.hideRobotAction());

@@ -270,6 +270,8 @@ export const sharedGetPromotions = () => {
 };
 
 export const sharedLogoutUser = () => {
+    GV.IS_ROBOT_SHOWN = false;
+    dispatch(ReduxActions.setUserFinalDestAction({ finalDestObj: { latitude: -1, } }))
     dispatch(ReduxActions.clearUserAction({ introScreenViewed: true }));
 };
 
@@ -604,6 +606,9 @@ export const sharedAddUpdatePitstop = (
                             currentPitstopItems[itemIndex] = { ...upcomingItemDetails, alreadyExisted: undefined, checkoutIndex: undefined, checkOutItemID: currentPitstopItems[itemIndex].checkOutItemID };
                             pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
                         }
+                    } else {
+                        currentPitstopItems.push({ checkOutItemID: sharedUniqueIdGenerator(), ...upcomingItemDetails, });
+                        pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
                     }
                 }
             }

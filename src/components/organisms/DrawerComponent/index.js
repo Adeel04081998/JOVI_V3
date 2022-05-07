@@ -59,12 +59,12 @@ export default () => {
     const userReducer = useSelector(store => store.userReducer);
     const styles = drawerStyles(colors);
     const onNavigationItemPress = (item) => {
-        const drawerRoutesCheck = [...drawerRoutes,...drawerInfoRoutes];
+        const drawerRoutesCheck = [...drawerRoutes, ...drawerInfoRoutes];
         drawerRoutesCheck.shift();
         NavigationService.NavigationActions.drawer_actions.toggleDrawer();
-        if(drawerRoutesCheck.find((item)=>item.route===_NavgationRef.current.getCurrentRoute().name)){
+        if (drawerRoutesCheck.find((item) => item.route === _NavgationRef.current.getCurrentRoute().name)) {
             NavigationService.NavigationActions.stack_actions.replace(item.route);
-        }else{
+        } else {
             NavigationService.NavigationActions.common_actions.navigate(item.route)
         }
     }
@@ -160,7 +160,7 @@ const drawerStyles = (colors) => StyleSheet.create({
     container: { flex: 1, backgroundColor: '#F8F8F8', paddingTop: isIOS ? (deviceInfoModule.hasNotch ? 40 : 0) : 0 },
     profileContainer: { height: '25%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: SPACING },
     crossIcon: { height: 30, width: 30, position: 'absolute', top: 5, right: -5 },
-    greetingText: { fontSize: 25, color: colors.black, paddingVertical: Platform.OS === "ios" ? 8 :  0 },
+    greetingText: { fontSize: 25, color: colors.black, paddingVertical: Platform.OS === "ios" ? 8 : 0 },
     userName: { fontSize: 25, color: colors.black, marginTop: -13 },
     profilePicContainer: { height: PROFILE_PICTURE_SECTION, width: PROFILE_PICTURE_SECTION, borderRadius: PROFILE_PICTURE_SECTION / 2, borderWidth: 3, borderColor: colors.black, backgroundColor: colors.white, justifyContent: 'center', alignItems: 'center' },
     profilePicInnerContainer: { height: PROFILE_PICTURE_INNER_SECTION, width: PROFILE_PICTURE_INNER_SECTION, borderRadius: PROFILE_PICTURE_INNER_SECTION / 2, backgroundColor: colors.primary },

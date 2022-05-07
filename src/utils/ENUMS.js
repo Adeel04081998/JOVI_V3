@@ -77,7 +77,7 @@ export default {
             "color": "#F94E41",
         },
         {
-            "text": "Grocery",
+            "text": "Shops",
             "value": 1,
             "icon": svgs.grocery(),
             "isActive": true,

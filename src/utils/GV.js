@@ -55,5 +55,6 @@ export default {
     THEME_VALUES: { ...PITSTOP_TYPES },
     MAX_PITSTOP_IMAGE_LIMIT: 3,
     MAX_JOVI_AMOUNT: 10000,
-    RIDER_INSTRUCTIONS: React.createRef("")
+    RIDER_INSTRUCTIONS: React.createRef(""),
+    IS_ROBOT_SHOWN: false,
 } 
