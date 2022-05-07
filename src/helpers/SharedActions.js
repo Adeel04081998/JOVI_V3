@@ -384,8 +384,8 @@ export const sharedCalculateMaxTime = (dataArr = [], key = "estimatePrepTime") =
 }
 export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
     console.log("[sharedCalculateCartTotals]", pitstops);
-    // let joviRemainingAmount = constants.max_jovi_order_amount,
-    let joviRemainingAmount = cartReducer.joviRemainingAmount,
+    let joviRemainingAmount = constants.max_jovi_order_amount,
+        // let joviRemainingAmount = cartReducer.joviRemainingAmount,
         subTotal = 0,
         discount = 0,
         itemsCount = 0,
@@ -402,7 +402,7 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
         if (_pitstop.pitstopType === PITSTOP_TYPES.JOVI) {
             itemsCount += 1;
             _pitstop.individualPitstopTotal = _pitstop.estimatePrice || 0;
-            joviPitstopsTotal = _pitstop.individualPitstopTotal;
+            joviPitstopsTotal += _pitstop.individualPitstopTotal;
             let openOrdersList = cartReducer.openOrdersList;
             if (openOrdersList.length) {
                 joviPrevOrdersPitstopsAmount += openOrdersList.map((orderInfo, index) => orderInfo?.estimatePrice ?? 0).reduce((a, b) => a + b);
@@ -455,7 +455,9 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
     console.log("joviPitstopsTotal", joviPitstopsTotal);
     console.log("joviPrevOrdersPitstopsAmount", joviPrevOrdersPitstopsAmount);
 
-    joviCalculation = joviRemainingAmount - (joviPitstopsTotal + joviPrevOrdersPitstopsAmount)
+    joviRemainingAmount = joviRemainingAmount - joviPrevOrdersPitstopsAmount;
+    joviCalculation = joviRemainingAmount - joviPitstopsTotal;
+    // joviCalculation = joviRemainingAmount - (joviPitstopsTotal + joviPrevOrdersPitstopsAmount)
     console.log("joviCalculation", joviCalculation);
 
     joviRemainingAmount = joviCalculation <= 0 ? 0 : joviCalculation;
