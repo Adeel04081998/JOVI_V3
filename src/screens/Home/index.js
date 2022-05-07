@@ -97,7 +97,7 @@ export default () => {
 
     React.useEffect(() => {
         const lattitude = userReducer?.finalDestObj?.latitude ?? -1;
-        if (!loaderVisible && lattitude !== -1 && isFocused) {
+        if (!loaderVisible && lattitude !== -1) {
 
             Animated.timing(homeFadeIn, {
                 toValue: 1,
@@ -105,7 +105,7 @@ export default () => {
                 useNativeDriver: true,
                 easing: Easing.ease
             }).start(finished => {
-                if (finished && !GV.IS_ROBOT_SHOWN && lattitude !== -1) {
+                if (finished && !GV.IS_ROBOT_SHOWN && lattitude !== -1 && isFocused) {
                     GV.IS_ROBOT_SHOWN = true;
                     dispatch(ReduxActions.showRobotAction());
                 }

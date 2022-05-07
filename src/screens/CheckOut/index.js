@@ -326,9 +326,27 @@ export default () => {
         return (
             <AnimatedView style={checkOutStyles.paymentCardMainCOntainder}>
                 <View style={{ margin: 10 }}>
-                    <View style={{ flexDirection: 'row', marginVertical: 7 }}>
-                        <SvgXml xml={svgs.paymentMethod()} width={20} height={20} />
-                        <Text style={checkOutStyles.paymentMethodLabelTxt} fontFamily='PoppinsSemiBold'>{paymentMethod}</Text>
+                    <View style={{ flexDirection: 'row', marginVertical: 7, alignItems: "center", justifyContent: "space-between", }}>
+                        <View style={{ flexDirection: "row", alignItems: "center", }}>
+                            <SvgXml xml={svgs.paymentMethod()} width={20} height={20} />
+                            <Text style={checkOutStyles.paymentMethodLabelTxt} fontFamily='PoppinsSemiBold'>{paymentMethod}</Text>
+                        </View>
+
+                        <Button style={{
+                            height: 20,
+                            width: 60,
+                            borderRadius: 10,
+                        }}
+                            text={"Top up"}
+                            textStyle={{
+                                fontSize: 12,
+                            }}
+                            onPress={() => {
+                                NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.TopUp.screen_name, {
+                                    isFromOrder: true,
+                                });
+                            }}
+                        />
                     </View>
                     <View style={checkOutStyles.paymentOptionMainContainer}>
                         <View style={{ flexDirection: 'row' }}>
