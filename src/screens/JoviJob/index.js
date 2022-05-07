@@ -253,7 +253,7 @@ export default ({ navigation, route }) => {
     }
     /*****************************     Start of  useEffect            ***********************************/
 
-    const setData = (data = route.params.pitstopItemObj,setPricing=true) => {
+    const setData = (data = route.params.pitstopItemObj, setPricing = true) => {
         //SET PRICEING IS ADDED DUE TO REQUIREMENT OF SAQIB BAHI AND ARSLAN
         const { title, nameval, imageData, voiceNote, estTime, description, estimatePrice, buyForMe, latitude, longitude } = data;
         let estPriceBool = false // bool for handling estimated amount
@@ -272,13 +272,13 @@ export default ({ navigation, route }) => {
         setVoiceNote(voiceNote ?? {})
         setEstTime(estTime)
         setDescription(description)
-        
+
         if (_estPrice > newAmount) {
             estPriceBool = false
         } else {
             estPriceBool = true
         }
-        if(setPricing){
+        if (setPricing) {
             setEstVal(_estPrice)
             setSwitch(estPriceBool)
         }
@@ -286,7 +286,7 @@ export default ({ navigation, route }) => {
         //for toggling Card
         toggleCardData(PITSTOP_CARD_TYPES["description"], colors.primary)
         toggleCardData(PITSTOP_CARD_TYPES["estimated-time"], colors.primary, description ?? imageData ?? voiceNote, typeForTogglingDescriptionCard())
-        if(setPricing){
+        if (setPricing) {
             toggleCardData(PITSTOP_CARD_TYPES["buy-for-me"], colors.primary)
         }
         if (isFromEdit && setPricing) {
@@ -789,7 +789,7 @@ export default ({ navigation, route }) => {
                             remainingAmountLength = 1;
                         }
                         const maxLengthRegex = new RegExp(`^([0-${remainingAmountLength > 1 ? '9' : remainingAmount}]{0,${remainingAmountLength}}|${remainingAmount})$`, "g");
-                        if (maxLengthRegex.test(newsliderValue) && (`${newsliderValue}` <= `${remainingAmount}`)) {
+                        if (maxLengthRegex.test(newsliderValue) && (parseInt(`${newsliderValue}`) <= parseInt(`${remainingAmount}`))) {
                             setEstVal(newsliderValue);
                             setInitialEstVal(newsliderValue);
                         }
@@ -863,7 +863,7 @@ export default ({ navigation, route }) => {
                                     userReducer.recentJoviPitstops?.map((item, i) => {
                                         return <TouchableOpacity style={{ display: 'flex', flexDirection: 'column', paddingLeft: 10, alignItems: 'flex-start', justifyContent: 'center', borderWidth: 0.3, marginHorizontal: 3, borderRadius: 7, borderColor: colors.primary, width: 192, padding: 5, backgroundColor: colors.white, height: 50, }} onPress={() => {
                                             customRecordingRef.current?.setStopRecording(true);
-                                            setData(item,false)
+                                            setData(item, false)
                                         }}>
                                             <TextRN style={{ fontSize: 12, color: colors.black }} fontFamily={'PoppinsRegular'} numberOfLines={1}>{item.title}</TextRN>
                                             <TextRN style={{ fontSize: 8, marginTop: 3, color: 'rgba(0, 0, 0, 0.6)' }} numberOfLines={1}>{item.timeStamp}</TextRN>
