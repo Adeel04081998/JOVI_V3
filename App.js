@@ -269,7 +269,6 @@ const App = () => {
                         </View>
                     </NavigationContainer>
                     {modalReducer?.customAlertVisible && <CustomAlert customAlertDetails={modalReducer.customAlertDetails} />}
-                    <Robot />
                     <Toast
                         config={toastConfig}
                     // ref={ref => {
@@ -277,7 +276,7 @@ const App = () => {
                     //     Toast.setRef(ref);
                     // }}//Function components cannot be given refs. Attempts to access this ref will fail
                     />
-                    <Robot />
+                    {(userReducer?.isLoggedIn ?? false) ? <Robot /> : null}
                     <NoInternetModal />
                 </SafeAreaView>
                 <SharedGetApis />

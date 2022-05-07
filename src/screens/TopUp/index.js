@@ -436,6 +436,11 @@ export default () => {
   }
 
   const renderCardHeader = (item, index) => {
+    const enableJazzCashPaymentGateway = (userReducer?.enableJazzCashPaymentGateway ?? false);
+    let disabled = item.disabled;
+    if (item.idx === 2) {
+      disabled = !enableJazzCashPaymentGateway;
+    }
     return (
       <CardHeader
         title={item.title}
@@ -452,7 +457,7 @@ export default () => {
           alignItems: 'center',
         }}
         activeOpacity={0.9}
-        disabled={item.disabled}
+        disabled={disabled}
         onHeaderPress={() => {
           updateCardOnHeaderPress(item, index);
         }} />
@@ -484,7 +489,7 @@ export default () => {
     return (
       <>
         {
-          item.idx === selectedItem.idx &&
+          (item.idx === selectedItem.idx) &&
           <View>
             <TextInput value={topUpAmount} placeholder="Rs. 100" maxLength={5} spaceFree={true} pattern={Regex.numberOnly} onChangeText={(t) => { setTopUpAmount(t) }} keyboardType="numeric" title="Enter Amount" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
             <TextInput value={mobileNumber} placeholder="03*********" maxLength={12} spaceFree={true} pattern={Regex.numberOnly} onChangeText={(t) => { setMobileNumber(t) }} keyboardType="numeric" title="Enter Mobile Number" titleStyle={{ fontFamily: FontFamily.Poppins.Regular, fontSize: 12, color: '#272727' }} containerStyle={{ marginTop: 25, width: '90%' }} />
