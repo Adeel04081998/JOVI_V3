@@ -604,6 +604,9 @@ export const sharedAddUpdatePitstop = (
                             currentPitstopItems[itemIndex] = { ...upcomingItemDetails, alreadyExisted: undefined, checkoutIndex: undefined, checkOutItemID: currentPitstopItems[itemIndex].checkOutItemID };
                             pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
                         }
+                    } else {
+                        currentPitstopItems.push({ checkOutItemID: sharedUniqueIdGenerator(), ...upcomingItemDetails, });
+                        pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
                     }
                 }
             }
