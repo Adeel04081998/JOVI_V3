@@ -21,6 +21,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import RNSplashScreen from './NativeModules/RNSplashScreen';
 import svgs from "./src/assets/svgs";
 import BottomAllignedModal from './src/components/atoms/BottomAllignedModal';
+import ErrorBoundary from "./src/components/atoms/ErrorBoundary/index";
 import NoInternetModal from "./src/components/atoms/NoInternetModal";
 import { _toastRef } from "./src/components/atoms/Toast";
 import View from './src/components/atoms/View';
@@ -254,31 +255,33 @@ const App = () => {
     };
     if (!state.appLoaded) return null;
     return (
-        <SafeAreaProvider>
-            <SafeAreaView style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
-                <StatusBar backgroundColor={'#fff'} barStyle={"dark-content"} />
-                {env.name === ENUMS.ENVS.STAGING ? <BaseUrlPrompt /> : null}
-                <NavigationContainer theme={theme} ref={_NavgationRef} >
-                    <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
+        <ErrorBoundary>
+            <SafeAreaProvider>
+                <SafeAreaView style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
+                    <StatusBar backgroundColor={'#fff'} barStyle={"dark-content"} />
+                    {env.name === ENUMS.ENVS.STAGING ? <BaseUrlPrompt /> : null}
+                    <NavigationContainer theme={theme} ref={_NavgationRef} >
+                        <View style={{ flex: 1, ...StyleSheet.absoluteFillObject }}>
 
-                        <RootStack />
-                        {visible && <BottomAllignedModal />}
-                        {isFinalDestinationSelected && <GenericPopUp />}
-                    </View>
-                </NavigationContainer>
-                {modalReducer?.customAlertVisible && <CustomAlert customAlertDetails={modalReducer.customAlertDetails} />}
-
-                <Toast
-                    config={toastConfig}
-                // ref={ref => {
-                //     _toastRef.current = ref;
-                //     Toast.setRef(ref);
-                // }}//Function components cannot be given refs. Attempts to access this ref will fail
-                />
-                <NoInternetModal />
-            </SafeAreaView>
-            <SharedGetApis />
-        </SafeAreaProvider>
+                            <RootStack />
+                            {visible && <BottomAllignedModal />}
+                            {isFinalDestinationSelected && <GenericPopUp />}
+                        </View>
+                    </NavigationContainer>
+                    {modalReducer?.customAlertVisible && <CustomAlert customAlertDetails={modalReducer.customAlertDetails} />}
+                    <Robot />
+                    <Toast
+                        config={toastConfig}
+                    // ref={ref => {
+                    //     _toastRef.current = ref;
+                    //     Toast.setRef(ref);
+                    // }}//Function components cannot be given refs. Attempts to access this ref will fail
+                    />
+                    <NoInternetModal />
+                </SafeAreaView>
+                <SharedGetApis />
+            </SafeAreaProvider>
+        </ErrorBoundary>
     );
 };
 export default App;
