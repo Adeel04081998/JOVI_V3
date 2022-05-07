@@ -270,6 +270,8 @@ export const sharedGetPromotions = () => {
 };
 
 export const sharedLogoutUser = () => {
+    GV.IS_ROBOT_SHOWN = false;
+    dispatch(ReduxActions.setUserFinalDestAction({ finalDestObj: { latitude: -1, } }))
     dispatch(ReduxActions.clearUserAction({ introScreenViewed: true }));
 };
 

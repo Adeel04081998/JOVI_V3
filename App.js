@@ -75,7 +75,7 @@ const CODE_PUSH_OPTIONS = {
 
 const App = () => {
     const modalReducer = useSelector(state => state.modalReducer)
-    const {visible} = modalReducer;
+    const { visible } = modalReducer;
     const [state, setState] = React.useState({ appLoaded: false });
     const userReducer = useSelector(state => state.userReducer);
     const isFinalDestinationSelected = userReducer.finalDestObj;
@@ -266,8 +266,8 @@ const App = () => {
                         {isFinalDestinationSelected && <GenericPopUp />}
                     </View>
                 </NavigationContainer>
-                {modalReducer?.customAlertVisible&&<CustomAlert customAlertDetails={modalReducer.customAlertDetails} />}
-                <Robot />
+                {modalReducer?.customAlertVisible && <CustomAlert customAlertDetails={modalReducer.customAlertDetails} />}
+
                 <Toast
                     config={toastConfig}
                 // ref={ref => {
@@ -338,7 +338,7 @@ const SharedGetApis = ({ }) => {
             const onNotification = (notify) => {
                 console.log('onNotification--', notify);
                 // console.log("===> onNotification.notify -> ", notify)
-                if(parseInt(notify.data.NotificationType)=== 21){
+                if (parseInt(notify.data.NotificationType) === 21) {
                     NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.OrderPitstops.screen_name, { orderID: notify.data?.OrderID, isFinalDestinationCompleted: true });
                 }
                 dispatch(actions.fcmAction({ ...notify }));
@@ -365,5 +365,7 @@ const SharedGetApis = ({ }) => {
             setState(pre => ({ ...pre, appLoaded: true }));
         }
     }, [isLoggedIn])
-    return (<></>);
+    return (<>
+        {isLoggedIn && <Robot />}
+    </>);
 }
