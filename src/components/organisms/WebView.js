@@ -90,6 +90,7 @@ export default ({ screenStyles = {}, route, onNavigationStateChange = null }) =>
                     // onError={(err) => {
                     //     // logErrorOnServer(err)
                     // }}
+                  //onhttperror commented because app crash
                     // onHttpError={err => {
                     //     console.log("[onHttpError.err", err);
                     //     // logErrorOnServer(err)
