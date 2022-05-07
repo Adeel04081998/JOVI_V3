@@ -10,11 +10,13 @@ import CustomHeader from '../../components/molecules/CustomHeader';
 import OrderEstTimeCard from '../../components/organisms/Card/OrderEstTimeCard';
 import DashedLine from '../../components/organisms/DashedLine';
 import SitBackAnimation from '../../components/organisms/SitBackAnimation';
+import { logGoogleApiHit } from '../../helpers/Location';
 import { checkIfFirstPitstopRestaurant, renderPrice, sharedFetchOrder, sharedGenerateProductItem, sharedNotificationHandlerForOrderScreens, sharedOrderNavigation, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { getRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService, { _NavgationRef } from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
+import colors from '../../res/colors';
 import constants from '../../res/constants';
 import theme from '../../res/theme';
 import ENUMS from '../../utils/ENUMS';
@@ -70,7 +72,6 @@ export default ({ navigation, route }) => {
         sitBackAnimation: false,
         postSitBackAnimationData: null,
     });
-
     // #endregion :: STATE's & REF's END's FROM HERE 
     const goToOrderTracking = (status = '', pitstopsList = []) => {
         sharedOrderNavigation(orderIDParam, status, ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name, null, false, pitstopsList = [] ?? []);
@@ -125,7 +126,7 @@ export default ({ navigation, route }) => {
                     estimateTime: res.data.estimateTime,
                 }));
             }
-            console.log('res [fetchOrderEstimation] - ', res);
+            // console.log('res [fetchOrderEstimation] - ', res);
         }, () => { }, {}, false);
     }
     const goToHome = () => {
@@ -357,7 +358,7 @@ export default ({ navigation, route }) => {
 
 
                     {/* ****************** Start of PAID WITH TOTAL PRICE ****************** */}
-                    <PaidWithUI price={renderPrice(state.orderReceiptVM.estTotalPlusPitstopAmount)} />
+                    <PaidWithUI price={renderPrice(state.orderReceiptVM.estTotalPlusPitstopAmount)} title={state.paymentMethodTitle} paymentMethodBool={state.paymentMethod} />
 
                     {/* ****************** End of PAID WITH TOTAL PRICE ****************** */}
 
@@ -372,7 +373,7 @@ export default ({ navigation, route }) => {
 };//end of EXPORT DEFAULT
 
 // #region :: PAID WITH UI START's FROM HERE 
-const PaidWithUI = ({ title = 'Cash on delivery', price = '' }) => {
+const PaidWithUI = ({ title = 'Cash on delivery', price = '', paymentMethodBool = 2 }) => {
     return (
         <>
             <Text fontFamily='PoppinsMedium' style={{
@@ -387,7 +388,7 @@ const PaidWithUI = ({ title = 'Cash on delivery', price = '' }) => {
                 paddingHorizontal: constants.spacing_horizontal,
                 paddingTop: 15,
             }}>
-                <SvgXml xml={svgs.dollar()} height={15} width={23} />
+                <SvgXml xml={paymentMethodBool === 1 ? svgs.wallet() : svgs.dollar()} height={15} width={23} fill={"#6B6B6B"} />
                 <View style={{ flexDirection: "row", flex: 1, paddingLeft: 8, alignItems: "center", justifyContent: "space-between", }}>
                     <Text fontFamily='PoppinsSemiBold' style={{
                         color: "#272727",

@@ -275,7 +275,7 @@ export default () => {
                 </View>
                 <View style={{ flexDirection: 'column', width: '25%' }} >
                     <SvgXml xml={isOrder ? svgs.redArrow() : svgs.greenArrow()} style={{alignSelf:'flex-end', marginRight: 5 }} />
-                    <Text fontFamily="PoppinsMedium" style={[styles.filterTypeStyle, { textAlign: 'right' }]} >Rs. {item.amount}0</Text>
+                    <Text fontFamily="PoppinsMedium" style={[styles.filterTypeStyle, { textAlign: 'right' }]} >Rs. {item.amount}</Text>
                 </View>
             </View>
         )

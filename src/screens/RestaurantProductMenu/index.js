@@ -6,7 +6,7 @@ import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import NoRecord from '../../components/organisms/NoRecord';
 import ProductCard from '../../components/organisms/Card/ProductCard';
-import { renderFile, renderPrice, sharedExceptionHandler, sharedGetFinalDestintionRequest, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { makeArrayRepeated, renderFile, renderPrice, sharedExceptionHandler, sharedGetFinalDestintionRequest, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import constants from '../../res/constants';
@@ -27,6 +27,7 @@ import ENUMS from '../../utils/ENUMS';
 import svgs from '../../assets/svgs';
 import { SvgXml } from 'react-native-svg';
 import VendorOpening from '../../components/organisms/Overlays/VendorOpening';
+import { useSelector } from 'react-redux';
 
 const WINDOW_HEIGHT = constants.window_dimensions.height;
 const PITSTOPS = {
@@ -56,6 +57,8 @@ export default ({ navigation, route }) => {
         error: false,
         errorText: '',
     });
+    const cartReducer = useSelector((store) => store.cartReducer);
+    const { itemsCount = 0 } = cartReducer;
 
     // #region :: ANIMATION START's FROM HERE 
     const animScroll = React.useRef(new Animated.Value(0)).current;
@@ -259,9 +262,12 @@ export default ({ navigation, route }) => {
                     transform: [{
                         translateY: tabTop
                     }],
+
                 }}
                 itemsScrollViewStyle={{
+                    marginBottom: itemsCount > 0 ? 80 : 0
                 }}
+
                 itemListPropertyName="restaurantItems"
                 renderSectionHeader={(item, index) => {
                     if (item?.isTopDeal ?? false) return null;
