@@ -40,7 +40,7 @@ export default React.memo((props) => {
     const getSliderStep = () => {
         let step = Math.ceil(parseInt(remainingAmount) / 10);
         // let step = Math.ceil((parseInt(remainingAmount) / 4) / 100) * 100;
-        if (step < 1) {
+        if (step < 1 || Number.isNaN(step)) {
             step = 1;
         }
         return step

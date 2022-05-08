@@ -173,7 +173,7 @@ export default ({ route }) => {
                     : slicedImages.length === 2 ? 1 : 3;
             for (let index = 0; index < maxIterator; index++) {
                 let imgObj = picData.assets[index];
-                if(imgObj){
+                if (imgObj) {
                     imgObj.id = Math.floor(Math.random() * 100000)
                     imgObj.fileName = imgObj.uri.split('/').pop();
                     imgObj.path = imgObj.uri
@@ -214,7 +214,7 @@ export default ({ route }) => {
                         setState(pre => ({ ...pre, pickUpPitstop: initState.pickUpPitstop }));
                     }
                 },
-                customColors:colors,
+                customColors: colors,
             });
         } else if (!isAttachmentBool && state.images?.length) {
             sharedConfirmationAlert('Uploaded Images', 'Your uploaded images will be lost if you choose this option. Are you sure?', null, null, {
@@ -225,7 +225,7 @@ export default ({ route }) => {
                         setState(pre => ({ ...pre, images: null }));
                     }
                 },
-                customColors:colors,
+                customColors: colors,
             });
         } else {
             setIsAttachment(isAttachmentBool);
@@ -391,6 +391,7 @@ export default ({ route }) => {
                 }
                 }
                 getRemainingAmount={() => getRemainingAmount()}
+                remainingAmount={remainingAmount}
                 onSliderChange={(newsliderValue) => {
                     setState(pre => ({ ...pre, estimatePrice: newsliderValue }));
                 }} />
