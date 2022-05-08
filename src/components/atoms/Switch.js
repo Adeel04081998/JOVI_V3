@@ -67,8 +67,8 @@ export default (props) => {
     return (
         <AnimatedTouchable activeOpacity={1} style={[
             active ?
-                props.switchContainerActive || switchStyles.switchContainerActive
-                : props.switchContainerInActive || switchStyles.switchContainerInActive
+                props.switchContainerActive || { ...switchStyles.switchContainerActive, backgroundColor: props.activeColor ?? switchStyles.switchContainerActive.backgroundColor }
+                : props.switchContainerInActive || { ...switchStyles.switchContainerInActive, backgroundColor: props.inActiveColor ?? switchStyles.switchContainerInActive.backgroundColor }
             , {
                 width,
                 height

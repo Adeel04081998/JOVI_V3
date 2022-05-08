@@ -119,10 +119,10 @@ const PharmacyHeader = (props: Props) => {
                         </TouchableOpacity>
                         })
                     } */}
-                    <View style={{height:60,borderRadius:10,flexDirection:'row',justifyContent:'space-between',alignItems:'center',width:'95%',marginHorizontal:10,paddingHorizontal:10,backgroundColor:colors.light_grey}}>
-                        <Text style={{color:colors.black}}>Prescribed?</Text>
+                    <View style={{height:60,borderRadius:10,borderWidth:0.5,borderColor:colors.primary,flexDirection:'row',justifyContent:'space-between',alignItems:'center',width:'95%',marginHorizontal:10,paddingHorizontal:10,backgroundColor:'#F8FAFF'}}>
+                        <Text style={{color:colors.primary}} fontFamily={'PoppinsMedium'}>Prescribed</Text>
                         <View>
-                            <Switch switchVal={props.pharmacyPitstopType === ENUMS.PharmacyPitstopType[1].value} onToggleSwitch={(check:boolean) => {props.onPressParent(ENUMS.PharmacyPitstopType[check?1:0])}} type={1} />
+                            <Switch switchVal={props.pharmacyPitstopType === ENUMS.PharmacyPitstopType[1].value} activeColor={colors.primary} inActiveColor={'#AEAEAE'} onToggleSwitch={(check:boolean) => {props.onPressParent(ENUMS.PharmacyPitstopType[check?1:0])}} type={1} />
                         </View>
                     </View>
                     {/* <TouchableOpacity style={{ height: 50, width: '45%', backgroundColor: colors.primary, borderRadius: 12, ...sharedStyles._styles(colors).placefor_specific_shadow, justifyContent: 'center', alignItems: 'center' }}>
