@@ -267,7 +267,7 @@ export default ({ navigation, route }) => {
                             colors={colors}
                             isDelivered={isDelivered}
                             orderID={item.orderID}
-                            noOfPitstops={item.pitstopCount}
+                            noOfPitstops={(item.pitstopCount-1)}
                             dateTime={item.dateTime}
                         />
                     )
