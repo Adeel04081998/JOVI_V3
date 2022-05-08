@@ -34,8 +34,7 @@ export default React.memo((props) => {
     const cartReducer = useSelector((store) => {
         return store.cartReducer;
     });
-    const remainingAmount =props.remainingAmount;// cartReducer.joviRemainingAmount;
-
+    const remainingAmount = props.remainingAmount ?? constants.max_jovi_order_amount;// cartReducer.joviRemainingAmount;
 
 
     const getSliderStep = () => {
@@ -94,9 +93,9 @@ export default React.memo((props) => {
                         placeholder={"Type your amount"}
                         containerStyle={{ textAlign: 'flex-end', width: WIDTH * 0.4, borderWidth: 0.5, borderColor: colors.primary, backgroundColor: colors.white, alignSelf: 'flex-end' }}
                         style={{
-                            fontFamily:props.textinputVal? FontFamily.Poppins.Bold:FontFamily.Poppins.Regular,
+                            fontFamily: props.textinputVal ? FontFamily.Poppins.Bold : FontFamily.Poppins.Regular,
                             textAlign: 'right',
-                            fontSize:13
+                            fontSize: 13
                         }}
                         value={`${props.textinputVal}`}
                         onChangeText={(text) => {
