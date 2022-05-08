@@ -13,6 +13,7 @@ import SafeAreaView from '../../../components/atoms/SafeAreaView';
 import constants from "../../../res/constants";
 import sharedStyles from "../../../res/sharedStyles";
 import ENUMS from "../../../utils/ENUMS";
+import Switch from "../../../components/atoms/Switch";
 
 // #region :: INTERFACE START's FROM HERE 
 export interface ProductMenuHeaderItem {
@@ -107,7 +108,7 @@ const PharmacyHeader = (props: Props) => {
                         style={styles.detailHeading} numberOfLines={1}>Pharmacy</Text>
                 </View>
                 <View style={{ width: '100%', marginVertical: 10, flexDirection: 'row', justifyContent: 'space-evenly' }}>
-                    {
+                    {/* {
                         ENUMS.PharmacyPitstopType.map((item,i)=>{
                             return <TouchableOpacity key={i} onPress={()=>{
                                 if(props.onPressParent){
@@ -117,7 +118,13 @@ const PharmacyHeader = (props: Props) => {
                             <Text style={{ fontSize: 16, color:item.value === props.pharmacyPitstopType? colors.white:colors.primary }} fontFamily={'PoppinsLight'}>{item.text}</Text>
                         </TouchableOpacity>
                         })
-                    }
+                    } */}
+                    <View style={{height:60,borderRadius:10,flexDirection:'row',justifyContent:'space-between',alignItems:'center',width:'95%',marginHorizontal:10,paddingHorizontal:10,backgroundColor:colors.light_grey}}>
+                        <Text style={{color:colors.black}}>Prescribed?</Text>
+                        <View>
+                            <Switch switchVal={props.pharmacyPitstopType === ENUMS.PharmacyPitstopType[1].value} onToggleSwitch={(check:boolean) => {props.onPressParent(ENUMS.PharmacyPitstopType[check?1:0])}} type={1} />
+                        </View>
+                    </View>
                     {/* <TouchableOpacity style={{ height: 50, width: '45%', backgroundColor: colors.primary, borderRadius: 12, ...sharedStyles._styles(colors).placefor_specific_shadow, justifyContent: 'center', alignItems: 'center' }}>
                         <Text style={{ fontSize: 16, color: colors.white }} fontFamily={'PoppinsLight'}>Prescribed</Text>
                     </TouchableOpacity>
