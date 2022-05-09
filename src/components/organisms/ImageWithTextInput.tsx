@@ -7,6 +7,7 @@ import svgs from "../../assets/svgs";
 import { sharedLaunchCameraorGallery } from "../../helpers/Camera";
 import { sharedConfirmationAlert } from "../../helpers/SharedActions";
 import { initColors } from "../../res/colors";
+import constants from "../../res/constants";
 
 import VectorIcon from "../atoms/VectorIcon";
 
@@ -122,6 +123,21 @@ const ImageWithTextInput = (props: Props) => {
                 <View style={{ flex: 1, position: "absolute", }}>
                     <ImageGallery
                         style={{ flex: 1, backgroundColor: '#000', }}
+                        imageComponent={(imageComponentItem: any) => {
+                            const imageItem = imageComponentItem.image;
+                            const imageHeight = imageItem.height > constants.window_dimensions.height ? constants.window_dimensions.height : imageItem.height;
+                            const imageWidth = imageItem.width > constants.window_dimensions.width ? constants.window_dimensions.width : imageItem.width;
+                            return (
+                                <Image
+                                    source={{ uri: imageItem.uri }}
+                                    style={{
+                                        height: imageHeight,
+                                        width: imageWidth,
+                                        resizeMode: "contain",
+                                    }}
+                                />
+                            )
+                        }}
                         pageMargin={10}
                         images={images}
                         initialPage={selectedImageIndex}
