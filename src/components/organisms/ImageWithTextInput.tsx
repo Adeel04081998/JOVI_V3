@@ -5,7 +5,7 @@ import { SvgXml } from "react-native-svg";
 import ImageGallery from "../../../libs/ImageGallery";
 import svgs from "../../assets/svgs";
 import { sharedLaunchCameraorGallery } from "../../helpers/Camera";
-import { sharedConfirmationAlert } from "../../helpers/SharedActions";
+import { sharedConfirmationAlert, VALIDATION_CHECK } from "../../helpers/SharedActions";
 import { initColors } from "../../res/colors";
 import constants from "../../res/constants";
 
@@ -124,7 +124,9 @@ const ImageWithTextInput = (props: Props) => {
                     <ImageGallery
                         style={{ flex: 1, backgroundColor: '#000', }}
                         imageComponent={(imageComponentItem: any) => {
-                            const imageItem = imageComponentItem.image;
+                            const imageItem = imageComponentItem?.image ?? {};
+                            if (Object.keys(imageItem).length < 1) return null;
+
                             const imageHeight = imageItem.height > constants.window_dimensions.height ? constants.window_dimensions.height : imageItem.height;
                             const imageWidth = imageItem.width > constants.window_dimensions.width ? constants.window_dimensions.width : imageItem.width;
                             return (
