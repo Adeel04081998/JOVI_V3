@@ -1,11 +1,15 @@
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { Animated, Appearance, Easing, SafeAreaView, ScrollView } from 'react-native';
+import { Alert, Animated, Appearance, Easing, SafeAreaView, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
 import Advertisment from '../../components/atoms/Advertisment/index';
 import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import GenericList from '../../components/molecules/GenericList';
+import BottomBarComponent from '../../components/organisms/BottomBarComponent';
+import { sharedExceptionHandler } from '../../helpers/SharedActions';
+import { postRequest } from '../../manager/ApiManager';
+import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import constants from '../../res/constants';
@@ -43,7 +47,7 @@ const SPACING_VERTICAL = 10;
 // }
 
 let scrollEvent = null;
-const PistopListingTest = ({ route }) => {
+const PistopListing = ({ route }) => {
 
     const [state, setState] = React.useState({ loaded: false });
     const { pitstopType } = route.params;
@@ -76,7 +80,7 @@ const PistopListingTest = ({ route }) => {
         </SafeAreaView>
     </View>
 }//when app is animating the screen, then there is a lag due to load time of pitstoplisting component, so there is a wrapper for that component, so the screen transition is smooth
-const PistopListing = ({ route, }) => {
+const PistopListingChild = React.memo(({ route, }) => {
     const { pitstopType } = route.params;
     const vendorDashboardCategoryIDReducer = useSelector(s => s.vendorDashboardCategoryIDReducer)?.data ?? [];
     const categoryItem = route.params?.categoryItem ?? {};
@@ -202,9 +206,6 @@ const PistopListing = ({ route, }) => {
         if (Math.ceil(mHeight + Y) >= cSize) return true;
         return false;
     }
-    const onBackPress = () => {
-        NavigationService.NavigationActions.common_actions.goBack();
-    }
     React.useEffect(() => {
         scrollEvent = null;
         // getAdvertisements();
@@ -326,12 +327,13 @@ const PistopListing = ({ route, }) => {
         }
     }, []));
     return (
-        <View style={listingStyles.container}>
-            <SafeAreaView style={{ flex: 1 }}>
-                <CustomHeader defaultColor={colors.primary} onLeftIconPress={onBackPress} leftIconColor={colors.primary} rightIconColor={colors.primary}
-                    // leftIconType={'AntDesign'} leftIconName={'left'}
-                    leftIconSize={30}
-                />
+        // <View style={listingStyles.container}>
+        //     <SafeAreaView style={{ flex: 1 }}>
+        //         <CustomHeader defaultColor={colors.primary} onLeftIconPress={onBackPress} leftIconColor={colors.primary} rightIconColor={colors.primary}
+        //             // leftIconType={'AntDesign'} leftIconName={'left'}
+        //             leftIconSize={30}
+        //         />
+        <>
             {isLoading ? <CardLoader styles={listingStyles} /> : null}
             <ScrollView
                 ref={scrollRef}
@@ -358,10 +360,12 @@ const PistopListing = ({ route, }) => {
                     screenName: ROUTES.APP_DRAWER_ROUTES.PitstopListing.screen_name,
                 }
             } />
-            </SafeAreaView>
-        </View>
+            {/* <BottomBarComponent pitstopType={pitstopType} screenName={ROUTES.APP_DRAWER_ROUTES.PitstopListing.screen_name} colors={colors} leftData={[{ id: 1, iconName: "home", title: "Home" }, { id: 2, iconName: "person", title: "Profile" }]} rightData={[{ id: 3, iconName: "wallet", title: "Wallet" }, { id: 4, iconName: "pin", title: "Location" }]} /> */}
+            {/* </SafeAreaView>
+        </View> */}
+        </>
     );
-}
+}, (next, prev) => next !== prev)
 export default PistopListing;
 
 
