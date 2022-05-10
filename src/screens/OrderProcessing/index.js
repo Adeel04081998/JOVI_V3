@@ -89,7 +89,7 @@ export default ({ navigation, route }) => {
     }
     const fetchOrderDetails = () => {
         sharedFetchOrder(orderIDParam, (res) => {
-            // console.log("[fetchOrderDetails].res", res);
+            console.log("[fetchOrderDetails].res", res);
             if (res.data.statusCode === 200) {
                 let allowedOrderStatuses = [ORDER_STATUSES.VendorApproval, ORDER_STATUSES.VendorProblem, ORDER_STATUSES.Initiated];
                 const isFirstPitstopRestaurant = checkIfFirstPitstopRestaurant(res.data?.order?.pitStopsList);
@@ -320,7 +320,7 @@ export default ({ navigation, route }) => {
                     {/* ****************** Start of DISCOUNT ****************** */}
                     <OrderProcessingChargesUI title='Total Discount'
 
-                        value={`${renderPrice({ showZero: true, price: state.orderReceiptVM.chargeBreakdown.discount }, 'Rs. -')}`} />
+                        value={`${renderPrice({ showZero: true, price: state.orderReceiptVM.discount }, 'Rs. -')}`} />
                     {/* value={parseInt(renderPrice(state.chargeBreakdown.discount)) > 0 ? renderPrice(state.chargeBreakdown?.discount) : renderPrice(state.chargeBreakdown.discount)} /> */}
                     <DashedLine />
 

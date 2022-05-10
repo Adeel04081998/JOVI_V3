@@ -202,7 +202,7 @@ export default ({ navigation, route }) => {
 
                 <OrderProcessingChargesUI
                     title='Total Discount'
-                    value={`${renderPrice({ showZero: true, price: state.orderReceiptVM.chargeBreakdown.discount }, 'Rs.')}`}
+                    value={`${renderPrice({ showZero: true, price: state.orderReceiptVM.discount }, 'Rs. -')}`}
                 // value={parseInt(renderPrice(state.orderReceiptVM.chargeBreakdown.discount, '')) > 0 ? renderPrice(state.chargeBreakdown.discount, '-') : renderPrice(state.chargeBreakdown.discount, '')}
                 />
                 <DashedLine />

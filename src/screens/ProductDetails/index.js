@@ -207,6 +207,7 @@ export default (props) => {
             discountedPriceWithoutGstWithoutJovi,
             generalProductOrDealDetail: {
                 ...pre.generalProductOrDealDetail,
+                gstAmount:totalGst,
                 // gstAddedPrice: discountedPrice,
                 // discountedPrice: pre.generalProductOrDealDetail.discountAmount > 0 ? discountedPrice : pre.generalProductOrDealDetail.discountedPrice
             }
@@ -227,13 +228,13 @@ export default (props) => {
                 _itemPrice: state.discountedPriceWithGst,
                 _totalGst: state.totalGst,
                 _totalDiscount: state.totalDiscount,
-                _totalJoviDiscount: state.totalJoviDiscount,
+                _totalJoviDiscount: state.totalJoviDiscount>0?state.totalJoviDiscount:state.generalProductOrDealDetail?.joviDiscountAmount,
                 // _priceForSubtotals: generalProductOrDealDetail.discountType > 0 ? state.discountedPriceWithGst : state.totalPriceWithoutDiscount,
                 _priceForSubtotals: state.totalPriceWithoutDiscount,
                 totalAddOnPrice,
                 actionKey: propItem.pitStopItemID ? "pitStopItemID" : "pitStopDealID",
                 estimatePrepTime: pitstopType === PITSTOP_TYPES.RESTAURANT ? generalProductOrDealDetail.estimateTime : "",
-                totalJoviDiscount: state.totalJoviDiscount,
+                totalJoviDiscount: state.totalJoviDiscount>0?state.totalJoviDiscount:state.generalProductOrDealDetail?.joviDiscountAmount,
                 _clientGstAddedPrice: generalProductOrDealDetail.gstAddedPrice,
                 ...!selectedOptions.length ? { ...sharedAddToCartKeys(null, { ...state.generalProductOrDealDetail, quantity: itemCount, notes, pitstopType }).item } : {},
                 pitstopType,

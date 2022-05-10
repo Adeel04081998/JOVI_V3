@@ -198,21 +198,18 @@ export default () => {
                         "isDestinationPitstop": item.isDestinationPitstop ? item.isDestinationPitstop : false,
                         "pitstopItemsList": (item.checkOutItemsListVM && Array.isArray(item.checkOutItemsListVM) ?
                             item.checkOutItemsListVM.map((obj) => ({
-                                ...console.log("obj...", obj),
+                                // ...console.log("obj...", obj,obj._totalDiscount + obj._totalJoviDiscount,obj._totalDiscount, obj._totalJoviDiscount),
                                 "pitstopItemID": obj.pitStopItemID ? obj.pitStopItemID : null,
                                 "pitstopDealID": obj.pitStopDealID && obj.pitStopDealID !== 0 ? obj.pitStopDealID : null,
                                 "pitstopItemName": obj.pitStopItemName ?? '',
-                                // "pitstopItemName": (obj.pitstopDealID && obj.pitstopDealVM) ? obj.pitstopDealVM.title : obj.productItemName,
                                 "quantity": obj.quantity,
                                 "checkoutItemID": obj.checkOutItemID,
                                 "amount": obj.itemPrice,
                                 //new Keys added for new create update order
                                 "actualPrice": (obj._priceForSubtotals - obj.gstAmount),
-                                // "actualPrice": obj.itemPrice,
                                 "Price": obj._itemPrice || obj.itemPrice,
                                 "DiscountType": obj.discountType,
                                 "DiscountRate": obj.discountAmount,
-                                "DiscountedPrice": obj.itemPrice - obj._totalDiscount,
                                 "Description": obj.notes ?? obj.description,
 
                                 "IsJoviDiscount": obj.isJoviDiscount ?? 0,
@@ -222,12 +219,11 @@ export default () => {
                                 // tabish
                                 "joviDiscountAmount": (obj.isJoviDiscount && obj.totalJoviDiscount) ? obj.totalJoviDiscount : 0,
                                 "discountAmount": obj.discountType > 0 ? obj._totalDiscount : 0,
-                                // "discountAmount": obj.discountType > 0 ? (obj.itemPrice - obj._totalDiscount) : 0,
                                 // tabish
                                 //End New Keys
                                 "estimateTime": obj.estimatePrepTime || 0,
                                 "gstPercentage": obj.gstPercentage,
-                                "gstAddedPrice": obj.gstAddedPrice + (obj.totalJoviDiscount || 0) + (obj._totalDiscount || 0),//backend is expecting gst added price without discounts, due to deadline, it couldn't be calculated from backend,
+                                "gstAddedPrice": obj.gstAddedPrice,//backend is expecting gst added price without discounts, due to deadline, it couldn't be calculated from backend,
                                 "restaurantProductNotFound": (obj.isRestaurant && obj.restaurantProductNotFound) ? obj.restaurantProductNotFound : 0,
                                 "pitstopItemsOptionList": (obj.isRestaurant || item.pitstopType === 4 ?
                                     // A non-deal type restaurant item
