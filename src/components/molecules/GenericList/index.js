@@ -43,14 +43,14 @@ export default React.memo(({ pitstopType = 0, index = null, vendorDashboardCatID
             },
             res => {
                 console.log('[GENERIC_LIST].fetchData.res', JSON.parse(res.config.data));
-                if (res.data.statusCode !== 200) return;
                 cb(true)
+                if (res.data.statusCode !== 200) return;
                 setData(res.data.vendorCategoryViewModel);
                 titleAnimationHandler();
             },
             err => {
-                isLoading.current = true
                 cb(true)
+                isLoading.current = true
                 sharedExceptionHandler(err)
             },
             {},

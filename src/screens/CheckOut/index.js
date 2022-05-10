@@ -258,7 +258,7 @@ export default () => {
                 "OrderPaymentType": switchVal ? ENUMS.OrderPaymentType.JoviWallet : ENUMS.OrderPaymentType.CashOnDelivery,
                 // "pitStopsImage": state?.mapImageBase64 ?? null,
                 "joviType": 1,
-                "chargeBreakdown": state.chargeBreakdown,
+                "chargeBreakdown": cartReducer.chargeBreakdown,
                 "hardwareID": await sharedGetDeviceInfo().deviceID,
                 // "productNotFoundQ": state.productNotFoundQ,
                 // "prescriptionImagesID": state.prescriptionImages,
