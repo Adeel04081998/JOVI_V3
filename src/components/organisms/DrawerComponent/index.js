@@ -132,7 +132,7 @@ export default () => {
                 }
             </ScrollView>
         </View>
-        <TouchableOpacity style={styles.logoutContainer} onPress={() => sharedConfirmationAlert("Alert", "Log me out and remove all the cache?",
+        <TouchableOpacity style={styles.logoutContainer} onPress={() => sharedConfirmationAlert("Alert", "Are you sure you want to logout?",
             null,
             {},
             {

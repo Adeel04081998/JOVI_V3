@@ -120,7 +120,7 @@ const PharmacyHeader = (props: Props) => {
                         })
                     } */}
                     <View style={{height:60,borderRadius:10,borderWidth:0.5,borderColor:colors.primary,flexDirection:'row',justifyContent:'space-between',alignItems:'center',width:'95%',marginHorizontal:10,paddingHorizontal:10,backgroundColor:'#F8FAFF'}}>
-                        <Text style={{color:colors.primary}} fontFamily={'PoppinsMedium'}>Prescribed</Text>
+                        <Text style={{color:colors.primary}} fontFamily={'PoppinsMedium'}>Prescription</Text>
                         <View>
                             <Switch switchVal={props.pharmacyPitstopType === ENUMS.PharmacyPitstopType[1].value} activeColor={colors.primary} inActiveColor={'#AEAEAE'} onToggleSwitch={(check:boolean) => {props.onPressParent(ENUMS.PharmacyPitstopType[check?1:0])}} type={1} />
                         </View>
