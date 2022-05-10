@@ -287,7 +287,7 @@ export default () => {
             if (recentJoviPitstops.length > 12) {
                 recentJoviPitstops.splice(11, recentJoviPitstops.length - 12);
             }
-            // console.log("Final Order =>", finalOrder, recentJoviPitstops);
+            // console.log("Final Order =>", JSON.stringify(finalOrder));
             postRequest(Endpoints.CreateUpdateOrder, finalOrder, (res) => {
                 // console.log('order place res', res);
                 if (res.data.statusCode === 200) {
