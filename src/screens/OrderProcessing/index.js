@@ -27,7 +27,7 @@ const DOUBLE_SPACING = constants.spacing_horizontal + 6;
 const IMAGE_SIZE = constants.window_dimensions.width * 0.3;
 
 export default ({ navigation, route }) => {
-    console.log('_NavgationRef', _NavgationRef.current)
+    // console.log('_NavgationRef', _NavgationRef.current)
     const pitstopType = route?.params?.pitstopType ?? PITSTOP_TYPES.JOVI;
     const fcmReducer = useSelector(store => store.fcmReducer);
     const orderIDParam = route?.params?.orderID ?? 0;
@@ -72,6 +72,7 @@ export default ({ navigation, route }) => {
         sitBackAnimation: false,
         postSitBackAnimationData: null,
     });
+    console.log("[ORDER PROCESSING].State...", state);
     // #endregion :: STATE's & REF's END's FROM HERE 
     const goToOrderTracking = (status = '', pitstopsList = []) => {
         sharedOrderNavigation(orderIDParam, status, ROUTES.APP_DRAWER_ROUTES.OrderProcessing.screen_name, null, false, pitstopsList = [] ?? []);
@@ -318,11 +319,17 @@ export default ({ navigation, route }) => {
                     {/* <DashedLine /> */}
 
                     {/* ****************** Start of DISCOUNT ****************** */}
-                    <OrderProcessingChargesUI title='Total Discount'
+                    {
+                        state?.orderReceiptVM?.chargeBreakdown?.discount ?
+                            <>
+                                <OrderProcessingChargesUI title='Total Discount'
 
-                        value={`${renderPrice({ showZero: true, price: state.orderReceiptVM.chargeBreakdown.discount }, 'Rs. -')}`} />
-                    {/* value={parseInt(renderPrice(state.chargeBreakdown.discount)) > 0 ? renderPrice(state.chargeBreakdown?.discount) : renderPrice(state.chargeBreakdown.discount)} /> */}
-                    <DashedLine />
+                                    value={`${renderPrice({ showZero: true, price: state.orderReceiptVM.chargeBreakdown.discount }, 'Rs. -')}`} />
+                                {/* value={parseInt(renderPrice(state.chargeBreakdown.discount)) > 0 ? renderPrice(state.chargeBreakdown?.discount) : renderPrice(state.chargeBreakdown.discount)} />  */}
+                                <DashedLine />
+                            </>
+                            : null
+                    }
 
                     {/* ****************** End of DISCOUNT ****************** */}
 
@@ -346,13 +353,13 @@ export default ({ navigation, route }) => {
 
 
                     {/* ****************** Start of SEPERATOR ****************** */}
-                    <View style={{
+                    {/* <View style={{
                         backgroundColor: "#707070",
                         height: 1,
                         marginHorizontal: DOUBLE_SPACING * 1.5,
                         marginTop: 8,
                         marginBottom: 12,
-                    }} />
+                    }} /> */}
 
                     {/* ****************** End of SEPERATOR ****************** */}
 
@@ -375,33 +382,35 @@ export default ({ navigation, route }) => {
 // #region :: PAID WITH UI START's FROM HERE 
 const PaidWithUI = ({ title = 'Cash on delivery', price = '', paymentMethodBool = 2 }) => {
     return (
-        <>
-            <Text fontFamily='PoppinsMedium' style={{
-                color: "#272727",
-                fontSize: 14,
-                paddingHorizontal: constants.spacing_horizontal,
-            }}>{`Payment Method`}</Text>
+        <View />
+        // TEMPORARLY COMMENTED
+        // <>
+        //     <Text fontFamily='PoppinsMedium' style={{
+        //         color: "#272727",
+        //         fontSize: 14,
+        //         paddingHorizontal: constants.spacing_horizontal,
+        //     }}>{`Payment Method`}</Text>
 
-            <View style={{
-                flexDirection: "row",
-                alignItems: "center",
-                paddingHorizontal: constants.spacing_horizontal,
-                paddingTop: 15,
-            }}>
-                <SvgXml xml={paymentMethodBool === 1 ? svgs.wallet() : svgs.dollar()} height={15} width={23} fill={"#6B6B6B"} />
-                <View style={{ flexDirection: "row", flex: 1, paddingLeft: 8, alignItems: "center", justifyContent: "space-between", }}>
-                    <Text fontFamily='PoppinsSemiBold' style={{
-                        color: "#272727",
-                        fontSize: 11,
-                    }}>{`${title}`}</Text>
-                    <Text fontFamily='PoppinsSemiBold' style={{
-                        color: "#272727",
-                        fontSize: 11,
-                        textAlign: "right",
-                    }}>{`${renderPrice(price)}`}</Text>
-                </View>
-            </View>
-        </>
+        //     <View style={{
+        //         flexDirection: "row",
+        //         alignItems: "center",
+        //         paddingHorizontal: constants.spacing_horizontal,
+        //         paddingTop: 15,
+        //     }}>
+        //         <SvgXml xml={paymentMethodBool === 1 ? svgs.wallet() : svgs.dollar()} height={15} width={23} fill={"#6B6B6B"} />
+        //         <View style={{ flexDirection: "row", flex: 1, paddingLeft: 8, alignItems: "center", justifyContent: "space-between", }}>
+        //             <Text fontFamily='PoppinsSemiBold' style={{
+        //                 color: "#272727",
+        //                 fontSize: 11,
+        //             }}>{`${title}`}</Text>
+        //             <Text fontFamily='PoppinsSemiBold' style={{
+        //                 color: "#272727",
+        //                 fontSize: 11,
+        //                 textAlign: "right",
+        //             }}>{`${renderPrice(price)}`}</Text>
+        //         </View>
+        //     </View>
+        // </>
     )
 }
 

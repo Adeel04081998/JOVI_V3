@@ -10,6 +10,7 @@
     "start": "react-native start",
     "dev_ios": "cd ios && pod install && cd .. && react-native run-ios",
     "new_package_dev_ios": "yarn install && cd ios && pod install && cd .. && react-native run-ios",
+    "new_package_dev_android": "yarn && cd android && ./gradlew clean && ./gradlew --stop && cd .. &&  npx react-native run-android ",
     "dev_android": "cd android&&./gradlew clean&&./gradlew --stop&&cd - &&npx react-native run-android",
     "ipod": "npx react-native run-ios --simulator \"iPod touch (7th generation)\"",
     "branch_change_new_packages": "yarn && cd android && ./gradlew clean && ./gradlew --stop && cd .. &&  npx react-native run-android && cd ios && pod install && cd .. && npx react-native run-ios",

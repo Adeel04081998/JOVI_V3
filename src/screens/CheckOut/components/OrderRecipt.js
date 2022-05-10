@@ -13,7 +13,7 @@ import { PITSTOP_TYPES } from '../../../utils/GV'
 
 const subDetailListTxtFontFamily = 'PoppinsRegular'
 
-export default ({ checkOutStyles = {},isOnlyJoviJobs=false, cartReducer = [], colors = {}, secondData = [] }) => {
+export default ({ checkOutStyles = {}, isOnlyJoviJobs = false, cartReducer = [], colors = {}, secondData = [] }) => {
     const [showDetails, setShowDetails] = useState(true)
     const pitStops = cartReducer.pitstops || []
     // console.log("[Order Reciept] cartReducer", cartReducer);
@@ -29,7 +29,7 @@ export default ({ checkOutStyles = {},isOnlyJoviJobs=false, cartReducer = [], co
 
 
                     <View style={checkOutStyles.gstPrimaryContainer}>
-                        <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular'>{`Subtotal ${isOnlyJoviJobs?'':'(Inc GST '+sharedCalculatedTotals().gst+')'}`}</Text>
+                        <Text style={checkOutStyles.gstCommonLabelTxtStyle} fontFamily='PoppinsRegular'>{`Subtotal ${isOnlyJoviJobs ? '' : '(Inc GST ' + sharedCalculatedTotals().gst + ')'}`}</Text>
                         <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1 }}>
                             <Text style={checkOutStyles.gstCommonPriceTxtStyle} fontFamily='PoppinsRegular'>{sharedCalculatedTotals().subTotal}</Text>
                         </View>
@@ -41,12 +41,16 @@ export default ({ checkOutStyles = {},isOnlyJoviJobs=false, cartReducer = [], co
                         </View>
                     </View> */}
 
-                    <View style={{ flexDirection: "row", flex: 1, borderWidth: 0, marginTop: 7, }}>
-                        <Text style={[checkOutStyles.gstCommonLabelTxtStyle, { textAlignVertical: 'center', }]} fontFamily='PoppinsRegular'>Total Discount</Text>
-                        <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1, }}>
-                            {<Text style={[checkOutStyles.gstCommonPriceTxtStyle, { textAlignVertical: 'center', }]} fontFamily='PoppinsRegular'>{`${renderPrice({ showZero: true, price: sharedCalculatedTotals().discount }, 'Rs -')}`}</Text>}
-                        </View>
-                    </View>
+                    {
+                        sharedCalculatedTotals().discount ?
+                            <View style={{ flexDirection: "row", flex: 1, borderWidth: 0, marginTop: 7, }}>
+                                <Text style={[checkOutStyles.gstCommonLabelTxtStyle, { textAlignVertical: 'center', }]} fontFamily='PoppinsRegular'>Total Discount</Text>
+                                <View style={{ justifyContent: 'flex-end', flexDirection: 'row', flex: 1, }}>
+                                    {<Text style={[checkOutStyles.gstCommonPriceTxtStyle, { textAlignVertical: 'center', }]} fontFamily='PoppinsRegular'>{`${renderPrice({ showZero: true, price: sharedCalculatedTotals().discount }, 'Rs -')}`}</Text>}
+                                </View>
+                            </View>
+                            : null
+                    }
                 </View>
                 <View style={{ marginHorizontal: 1 }}>
                     <DashedLine dashLineStyles={{ color: "#707070" }} />
@@ -108,7 +112,7 @@ export default ({ checkOutStyles = {},isOnlyJoviJobs=false, cartReducer = [], co
                             let pitStopNumber = i + 1
                             let pitstopName = x.pitstopName
                             let individualPitstopTotal = x.individualPitstopTotal;
-                            let checkOutItemsListVM = x?.checkOutItemsListVM ?? (isJoviJob ? [{ ...x, isJoviJob }] : isPharmacy?[{...x,isPharmacy}]: []);
+                            let checkOutItemsListVM = x?.checkOutItemsListVM ?? (isJoviJob ? [{ ...x, isJoviJob }] : isPharmacy ? [{ ...x, isPharmacy }] : []);
                             return <View style={{ flex: 1 }} key={i}>
                                 <ReceiptItem
                                     title={pitstopName}

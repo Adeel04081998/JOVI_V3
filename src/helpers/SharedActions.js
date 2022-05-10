@@ -271,6 +271,7 @@ export const sharedGetPromotions = () => {
 
 export const sharedLogoutUser = () => {
     dispatch(ReduxActions.clearUserAction({ introScreenViewed: true }));
+    dispatch(ReduxActions.clearCartAction({}));
 };
 
 export const sharedStartingRegionPK = {
@@ -285,6 +286,13 @@ export const sharedConfirmationAlert = (title, message, buttons = [], options = 
         store.dispatch(actions.setCustomAlertAction({
             title,
             message,
+            okButton: {
+                text: "Yes",
+                onPress: () => {
+                    NavigationService.NavigationActions.drawer_actions.toggleDrawer();
+                    preference_manager.clearAllCacheAsync().then(() => sharedLogoutUser());
+                }
+            },
             okButton: customAlert.okButton,
             cancelButton: customAlert.cancelButton,
             ...customAlert,
@@ -429,7 +437,7 @@ export const sharedCalculateCartTotals = (pitstops = [], cartReducer) => {
 
                 gst += product._totalGst * product.quantity;
                 individualPitstopGst += product._totalGst * product.quantity;
-                discount += (product._totalDiscount + (product._totalJoviDiscount??0)) * product.quantity;
+                discount += (product._totalDiscount + (product._totalJoviDiscount ?? 0)) * product.quantity;
                 _pitTotal += product._itemPrice * product.quantity;
                 // subTotal += _pitTotal + discount;
                 // itemsTotalWithDiscounts += _pitTotal;
@@ -736,7 +744,8 @@ export const sharedGetServiceCharges = (payload = null, successCb = () => { }) =
                     "itemPrice": product._itemPrice,
                     "gstAddedPrice": product._priceForSubtotals,
                     "gstPercentage": product.gstPercentage,
-                    "itemDiscount": (product._totalDiscount - product._totalJoviDiscount),
+                    "itemDiscount": product._totalDiscount > 0 ? product._totalDiscount : 0,
+                    // "itemDiscount": product._totalDiscount > 0 &&(product._totalDiscount - product._totalJoviDiscount>0)? (product._totalDiscount - product._totalJoviDiscount) : product._totalDiscount,
                     "joviDiscount": product._totalJoviDiscount,
                     "actualPrice": product._priceForSubtotals - product.gstAmount,
                     // "gstAddedPrice": item.pitstopType === PITSTOP_TYPES.SUPER_MARKET ? product.gstAddedPrice : product.gstAddedPrice + product.totalJoviDiscount + product._totalDiscount,

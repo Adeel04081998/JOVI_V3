@@ -106,7 +106,7 @@ export default () => {
                 });
             } else {
                 updateQuery({
-                    errorText: sharedExceptionHandler(res),
+                    errorText: sharedExceptionHandler(res,true),
                     error: true,
                     isLoading: false,
                     refreshing: false,
@@ -116,7 +116,7 @@ export default () => {
         }, (err) => {
             // sharedExceptionHandler(err);
             updateQuery({
-                errorText: sharedExceptionHandler(err),
+                errorText: sharedExceptionHandler(err, true),
                 isLoading: false,
                 error: true,
                 refreshing: false,
@@ -274,7 +274,7 @@ export default () => {
                     </View>
                 </View>
                 <View style={{ flexDirection: 'column', width: '25%' }} >
-                    <SvgXml xml={isOrder ? svgs.redArrow() : svgs.greenArrow()} style={{alignSelf:'flex-end', marginRight: 5 }} />
+                    <SvgXml xml={isOrder ? svgs.redArrow() : svgs.greenArrow()} style={{ alignSelf: 'flex-end', marginRight: 5 }} />
                     <Text fontFamily="PoppinsMedium" style={[styles.filterTypeStyle, { textAlign: 'right' }]} >Rs. {item.amount}</Text>
                 </View>
             </View>

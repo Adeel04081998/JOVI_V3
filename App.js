@@ -65,8 +65,8 @@ const CODE_PUSH_OPTIONS = {
     // `deploymentKey` should be dynamic according to environment like QA, STAGING, PRODUCTION before publish to staging and master
     //Currently QA Environment setup done 
     deploymentKey: Platform.select({
-        ios: env.CODE_PUSH_DEP_KEYS.JOVI_IOS.PRODUCTION,
-        android: env.CODE_PUSH_DEP_KEYS.JOVI_ANDROID.PRODUCTION
+        ios: env.CODE_PUSH_DEP_KEYS.JOVI_IOS.STAGING,
+        android: env.CODE_PUSH_DEP_KEYS.JOVI_ANDROID.STAGING
     }),
     checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
     installMode: CodePush.InstallMode.IMMEDIATE,

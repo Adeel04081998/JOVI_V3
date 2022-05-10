@@ -206,12 +206,23 @@ export default ({ navigation, route }) => {
 
     // #region :: GETTING PRODUCT MENU PRICE FROM ITEM START's FROM HERE 
     const getPricesForProductMenuItemCard = (item) => {
+        // console.log("[getPricesForProductMenuItemCard].item", item);
+        let discountType = 0,
+            discountAmount = 0;
+        if (item.discountType || item.joviDiscountType) {
+            discountType = (item.discountType === ENUMS.DISCOUNT_TYPES.Percentage || item.joviDiscountType === ENUMS.DISCOUNT_TYPES.Percentage) ? (item.discountType || item.joviDiscountType) : 0;
+        }
+        if (item.itemDiscount || item.joviDiscount) {
+            discountAmount = (item.itemDiscount || 0) + (item.joviDiscount || 0)
+        }
+        // console.log("[discountAmount]", discountAmount);
+        // console.log("[discountType]", discountType);
 
         return {
-            discountedPrice: item.discountAmount > 0 ? item.discountedPrice : item.gstAddedPrice || item.itemPrice, //MAIN PRICE
+            discountedPrice: (item?.discountType > 0 || item?.joviDiscountType > 0) ? item.discountedPrice : item.gstAddedPrice || item.itemPrice, //MAIN PRICE
             price: item.gstAddedPrice || item.itemPrice, //ACTUAL PRICE BEFORE DISCOUNT
-            discountAmount: item.discountAmount, //PERCENTAGE OF DISCOUNT
-            discountType: item.discountType, //DISCOUNT TYPE FIXED OR PERCENATAGE
+            discountAmount, //PERCENTAGE OF DISCOUNT
+            discountType//DISCOUNT TYPE FIXED OR PERCENATAGE
         }
     };
     // #endregion :: GETTING PRODUCT MENU PRICE FROM ITEM END's FROM HERE 

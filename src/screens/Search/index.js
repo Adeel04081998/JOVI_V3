@@ -141,7 +141,12 @@ export default ({ navigation, route }) => {
                             }}>
                                 <Search
                                     {...showProductVendor ? {
-                                        editable: false,
+                                        ...isFromListing ? {
+                                            autoFocus: true,
+                                            editable: true,
+                                        } : {
+                                            editable: false,
+                                        },
                                         onPress: () => {
                                             hideShowProductVendor();
                                         },
@@ -153,7 +158,7 @@ export default ({ navigation, route }) => {
                                     containerStyle={{ height: 40, }}
                                     colors={colors}
                                     fontSize={12}
-                                    placeholder={isRestaurantSelected?'Search for food or restaurant': 'Search for products or shops'}
+                                    placeholder={isRestaurantSelected ? 'Search for food or restaurant' : 'Search for products or shops'}
                                     onChangeText={(text) => {
                                         setSearchText(text);
                                         debounceInputSearch(text);

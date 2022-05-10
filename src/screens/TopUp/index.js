@@ -19,7 +19,7 @@ import { topUpStyles } from './styles';
 import DashedLine from '../../components/organisms/DashedLine';
 import Toast from '../../components/atoms/Toast';
 import { getRequest, postRequest } from '../../manager/ApiManager';
-import { sharedExceptionHandler } from '../../helpers/SharedActions';
+import { sharedConfirmationAlert, sharedExceptionHandler } from '../../helpers/SharedActions';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
 import Endpoints from '../../manager/Endpoints';
 import CardHeader from '../JoviJob/components/CardHeader';
@@ -176,6 +176,16 @@ export default () => {
 
 
   const JazzCashHandler = (txnType) => {
+    dispatch(actions.setCustomAlertAction({
+      title: "Transaction approval",
+      message: "Please approve your transaction from Jazz Cash account.",
+      okButton: {
+        text: "Okay",
+        onPress: () => {
+
+        }
+      }
+    }))
     let data = {
       "amount": parseInt(topUpAmount),
       "txnType": txnType,
@@ -187,6 +197,7 @@ export default () => {
       data,
       success => {
         console.log('[JazzCashHandler].success', success);
+        dispatch(actions.closeCustomAlertAction());
         let jazzCashHtml;
         let jazzCashResp = success.data
         if (typeof jazzCashResp === "object") jazzCashHtml = jazzCashResp.jazzCashHtml
@@ -199,6 +210,7 @@ export default () => {
       },
       fail => {
         console.log('[JazzCashHandler].fail', fail);
+        dispatch(actions.closeCustomAlertAction());
         sharedExceptionHandler(fail)
         setLoader(false)
       })

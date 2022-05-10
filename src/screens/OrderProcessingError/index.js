@@ -184,13 +184,14 @@ export default ({ navigation, route }) => {
         );
     }
     const verifyCustomerDecision = (isConfirm) => {
-        sharedConfirmationAlert("Confirm!", `Are you sure you want to ${isConfirm ? "continue" : "cancel"} this order?`, null,null,{
+        sharedConfirmationAlert("Confirm!", `Are you sure you want to ${isConfirm ? "continue" : "cancel"} this order?`, null, null, {
             cancelButton: { text: "No", onPress: () => { } },
             okButton: {
                 text: "Yes", onPress: () => orderDecision(isConfirm)
             },
         });
     }
+
     const _renderFooter = () => {
         return (
             <>
@@ -198,13 +199,19 @@ export default ({ navigation, route }) => {
                     title={`Subtotal (Incl GST ${state.orderReceiptVM.chargeBreakdown.totalProductGST})`}
                     value={renderPrice(state.orderReceiptVM.subTotal)} />
                 <DashedLine />
+                {
+                    state?.orderReceiptVM?.chargeBreakdown?.discount ?
+                        <>
+                            <OrderProcessingChargesUI
+                                title='Total Discount'
+                                value={`${renderPrice({ showZero: true, price: state.orderReceiptVM.chargeBreakdown.discount }, 'Rs.')}`}
+                            // value={parseInt(renderPrice(state.orderReceiptVM.chargeBreakdown.discount, '')) > 0 ? renderPrice(state.chargeBreakdown.discount, '-') : renderPrice(state.chargeBreakdown.discount, '')}
+                            />
+                            <DashedLine />
+                        </>
+                        : null
+                }
 
-                <OrderProcessingChargesUI
-                    title='Total Discount'
-                    value={`${renderPrice({ showZero: true, price: state.orderReceiptVM.chargeBreakdown.discount }, 'Rs. -')}`}
-                // value={parseInt(renderPrice(state.orderReceiptVM.chargeBreakdown.discount, '')) > 0 ? renderPrice(state.chargeBreakdown.discount, '-') : renderPrice(state.chargeBreakdown.discount, '')}
-                />
-                <DashedLine />
 
                 {/* <OrderProcessingChargesUI
                     title='Total GST'

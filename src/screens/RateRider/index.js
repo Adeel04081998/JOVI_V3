@@ -1,6 +1,6 @@
 import AnimatedLottieView from 'lottie-react-native';
 import * as React from 'react';
-import { Animated, Appearance, BackHandler, Easing, Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet } from 'react-native';
+import { Animated, Appearance, BackHandler, Easing, Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet, Alert } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useSelector } from 'react-redux';
 import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-aware-scroll-view';
@@ -229,7 +229,7 @@ export default ({ navigation, route }) => {
 
         postRequest(Endpoints.GET_RIDER_ORDER_RATING_REASON, params, (res) => {
             if (res.data.statusCode === 200) {
-                const resData = (res.data.reasonsList?.ratingLevels ?? []);
+                const resData = (res.data?.reasonsList?.ratingLevels ?? []);
                 setRatingData(resData);
             } else {
                 return
