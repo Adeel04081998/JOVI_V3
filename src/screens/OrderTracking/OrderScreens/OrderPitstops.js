@@ -311,9 +311,10 @@ export default ({ route }) => {
                 {row(`Subtotal (Inc GST ${totalProductGST})`, subTotal, false)}
                 {discount ? row('Total Discount', `- ${discount}`) : null}
                 {row(`Service Charges (Incl S.T ${actualServiceTax})`, (actualServiceTax + actualServiceCharges))}
+                {row('Total', actualTotalPlusPitstopAmount + (walletDeduction > 0 ? walletDeduction : 0), true, false)}
                 {walletDeduction ? row('Wallet Deduction', `- ${walletDeduction}`) : null}
+                {walletDeduction ? row('Total Payable', actualTotalPlusPitstopAmount, true, false) : null}
                 {arrears ? row('Arrears', `${arrears}`) : null}
-                {row('Total', actualTotalPlusPitstopAmount, true, false)}
 
             </View>
         );
