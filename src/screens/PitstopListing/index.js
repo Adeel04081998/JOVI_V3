@@ -51,7 +51,7 @@ const PistopListing = ({ route }) => {
 
     const [state, setState] = React.useState({ loaded: false });
     const { pitstopType } = route.params;
-    const isLoadedRef = React.useRef(true);
+    const isLoadedRef = React.useRef(false);
     const SCALE_IMAGE = {
         height: constants.window_dimensions.height / 5,
         width: constants.window_dimensions.width * 0.86
