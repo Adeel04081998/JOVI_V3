@@ -61,3 +61,7 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
     store.dispatch(actions.fcmAction({ ...remoteMessage }));
 
 });
+
+if (!__DEV__) {
+    console.log = () => { }
+}

@@ -286,6 +286,13 @@ export const sharedConfirmationAlert = (title, message, buttons = [], options = 
         store.dispatch(actions.setCustomAlertAction({
             title,
             message,
+            okButton: {
+                text: "Yes",
+                onPress: () => {
+                    NavigationService.NavigationActions.drawer_actions.toggleDrawer();
+                    preference_manager.clearAllCacheAsync().then(() => sharedLogoutUser());
+                }
+            },
             okButton: customAlert.okButton,
             cancelButton: customAlert.cancelButton,
             ...customAlert,
