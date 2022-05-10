@@ -197,7 +197,7 @@ const PistopListing = ({ route, }) => {
     }
     const handleInfinityScroll = (event) => {
         let mHeight = event.nativeEvent.layoutMeasurement.height;
-        let cSize = event.nativeEvent.contentSize.height;
+        let cSize = event.nativeEvent.contentSize.height - 380;
         let Y = event.nativeEvent.contentOffset.y;
         if (Math.ceil(mHeight + Y) >= cSize) return true;
         return false;
