@@ -493,7 +493,7 @@ export default (props) => {
 
 
                             <AnimatedView style={[productDetailsStyles.primaryContainer]}>
-                                <Text style={productDetailsStyles.productNametxt} numberOfLines={1} fontFamily="PoppinsMedium">{productName}</Text>
+                                <Text style={productDetailsStyles.productNametxt} fontFamily="PoppinsMedium">{productName}</Text>
                                 {productDetails ? <Text style={productDetailsStyles.productDescriptionTxt} fontFamily="PoppinsRegular" >{`${productDetails}`}</Text> : null}
                                 <AnimatedView style={productDetailsStyles.productPriceContainer}>
                                     <Text style={productDetailsStyles.productPricelabel} fontFamily="PoppinsRegular">Price:</Text>
