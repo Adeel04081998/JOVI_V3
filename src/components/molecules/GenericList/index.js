@@ -66,7 +66,7 @@ export default React.memo(({ pitstopType = 0, index = null, vendorDashboardCatID
     }
     React.useEffect(() => {
         fetchData();
-    }, [pitstopType])
+    }, [pitstopType,finalDestination])
     const colors = themeColors ?? theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
 
     const SCALE_IMAGE = {
