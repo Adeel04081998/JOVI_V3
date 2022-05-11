@@ -1,6 +1,6 @@
 import AnimatedLottieView from 'lottie-react-native';
 import * as React from 'react';
-import { Animated, Appearance, FlatList, SafeAreaView } from 'react-native';
+import { Alert, Animated, Appearance, FlatList, SafeAreaView } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { KeyboardAwareScrollView } from '../../../libs/react-native-keyboard-aware-scroll-view';
 import svgs from '../../assets/svgs';
@@ -52,7 +52,7 @@ export default ({ navigation, route }) => {
     // #region :: STATE & REF's START's FROM HERE 
     const [isRestaurantSelected, toggleIsRestaurantSelected] = React.useState(route.params.pitstopType === 1 ? false : true);
     const isRestaurantSelectedRef = React.useRef(route.params.pitstopType === 1 ? false : true);
-    const [showProductVendor, toggleShowProductVendor] = React.useState(isFromListing);
+    const [showProductVendor, toggleShowProductVendor] = React.useState(false);
     const [showJoviJob, toggleShowJoviJob] = React.useState(false);
     const [searchText, setSearchText] = React.useState('');
     const [recentSearchesData, updateRecentSearchedData] = React.useState({ restaurant: [], grocery: [], });
@@ -141,12 +141,7 @@ export default ({ navigation, route }) => {
                             }}>
                                 <Search
                                     {...showProductVendor ? {
-                                        ...isFromListing ? {
-                                            autoFocus: true,
-                                            editable: true,
-                                        } : {
-                                            editable: false,
-                                        },
+                                        editable: false,
                                         onPress: () => {
                                             hideShowProductVendor();
                                         },

@@ -89,7 +89,7 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
                 }
             }
             else if (res.data.statusCode === 404) {
-                setState(pre => ({ ...pre, isLoading: false, pitstopListViewModel: { list: [] } }));
+                setState(pre => ({ ...pre, isLoading: false,isAllDataLoaded:true, pitstopListViewModel: { list: [] } }));
             }
             console.log('GET_PITSTOPS', res);
         }, err => {
@@ -167,7 +167,7 @@ export default ({ config, filters, pitstopType, styles, imageStyles = { width: '
                     !state.isAllDataLoaded ? <CardLoader styles={styles} type={2} loaderStyles={{ marginTop: -15 }} /> : <></>
                 }
                 {
-                    state.pitstopListViewModel.list.length < 1 && state.isLoading ? <Text style={{ marginTop: 50, alignSelf: 'center', color: colors.grey }} fontFamily={'PoppinsMedium'}>
+                    state.pitstopListViewModel.list.length < 1 && state.isAllDataLoaded ? <Text style={{ marginTop: 50, alignSelf: 'center', color: colors.grey }} fontFamily={'PoppinsMedium'}>
                         No {pitstopType === 4 ? 'Restaurants' : 'Supermarkets'} Found
                     </Text> : null
                 }

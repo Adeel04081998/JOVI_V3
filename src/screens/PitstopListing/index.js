@@ -327,25 +327,26 @@ const PistopListingChild = React.memo(({ route, }) => {
         }
     }, []));
     return (
-        <View style={listingStyles.container}>
-            <SafeAreaView style={{ flex: 1 }}>
-                <CustomHeader defaultColor={colors.primary} onLeftIconPress={onBackPress} leftIconColor={colors.primary} rightIconColor={colors.primary}
-                    // leftIconType={'AntDesign'} leftIconName={'left'}
-                    leftIconSize={30}
-                />
-                {isLoading ? <CardLoader styles={listingStyles} /> : null}
-                <ScrollView
-                    ref={scrollRef}
-                    nestedScrollEnabled
-                    showsVerticalScrollIndicator={false}
-                    scrollEventThrottle={16}
-                    removeClippedSubviews={true}
-                    onScroll={(event) => {
-                        const yAxis = event?.nativeEvent?.contentOffset.y ?? 0;
-                        if (yAxis > 0)
-                            scrollEvent = event.nativeEvent.contentOffset;
-                        if (handleInfinityScroll(event)) {
-                            setFetchDataUseEffect(Math.random());
+        // <View style={listingStyles.container}>
+        //     <SafeAreaView style={{ flex: 1 }}>
+        //         <CustomHeader defaultColor={colors.primary} onLeftIconPress={onBackPress} leftIconColor={colors.primary} rightIconColor={colors.primary}
+        //             // leftIconType={'AntDesign'} leftIconName={'left'}
+        //             leftIconSize={30}
+        //         />
+        <>
+            {isLoading ? <CardLoader styles={listingStyles} /> : null}
+            <ScrollView
+                ref={scrollRef}
+                nestedScrollEnabled
+                showsVerticalScrollIndicator={false}
+                scrollEventThrottle={16}
+                removeClippedSubviews={true}
+                onScroll={(event) => {
+                    const yAxis = event?.nativeEvent?.contentOffset.y ?? 0;
+                    if (yAxis > 0)
+                        scrollEvent = event.nativeEvent.contentOffset;
+                    if (handleInfinityScroll(event)) {
+                        setFetchDataUseEffect(Math.random());
                         }
                     }}>
                     {renderFilters()}
@@ -359,8 +360,10 @@ const PistopListingChild = React.memo(({ route, }) => {
                         screenName: ROUTES.APP_DRAWER_ROUTES.PitstopListing.screen_name,
                     }
                 } />
-            </SafeAreaView>
-        </View>
+            {/* <BottomBarComponent pitstopType={pitstopType} screenName={ROUTES.APP_DRAWER_ROUTES.PitstopListing.screen_name} colors={colors} leftData={[{ id: 1, iconName: "home", title: "Home" }, { id: 2, iconName: "person", title: "Profile" }]} rightData={[{ id: 3, iconName: "wallet", title: "Wallet" }, { id: 4, iconName: "pin", title: "Location" }]} /> */}
+            {/* </SafeAreaView>
+        </View> */}
+        </>
     );
 }, (next, prev) => next !== prev)
 export default PistopListing;
