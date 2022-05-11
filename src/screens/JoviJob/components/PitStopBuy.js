@@ -31,6 +31,7 @@ export default React.memo((props) => {
                             <Switch switchVal={props.switchVal} onToggleSwitch={(bool) => {props.onToggleSwitch(bool)}} type={1} />
                         </View>
                     </View>
+                    <Text style={[styles.pitstopText, {paddingHorizontal:15,paddingBottom:5, fontWeight: '600', fontSize: 12, color:colors.redColor }]} fontFamily={'PoppinsMedium'} >There is no liability on JOVI, if the value of goods exceeds PKR 50,000</Text>
                 </>
 
     );
