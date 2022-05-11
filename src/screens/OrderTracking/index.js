@@ -389,11 +389,11 @@ export default ({ route }) => {
                 {renderProgressCircle()}
                 <View style={styles.orderInformationContainer}>
                     {isRiderFound ?
-                        <Text style={styles.joviTitle} fontFamily={'PoppinsSemiBold'}>JOVI</Text>
+                        <Text style={styles.joviTitle} fontFamily={'PoppinsSemiBold'}>Sit back and relax!</Text>
                         :
                         renderTime(30, 14)
                     }
-                    <Text style={styles.orderCaption} fontFamily={'PoppinsSemiBold'}>Almost there! Your order is being prepared now.</Text>
+                    <Text style={styles.orderCaption} fontFamily={'PoppinsSemiBold'}>JOVI is taking care of your order</Text>
                     {/* {
                         isRiderFound && state.currentPitstop ?
                             <Text style={styles.currentPitstopTime}>
