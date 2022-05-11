@@ -60,6 +60,7 @@ const ProductQuantityCard = (props: Props) => {
     const delayCbRef = React.useRef<any>(null);
     const skipEffect = React.useRef<boolean>(false);
     const firstPitstop = React.useRef<boolean>(false);
+    const userPressed = React.useRef<boolean>(false);
 
     React.useEffect(() => {
         setState(pre => ({ ...pre, quantity: parseInt(`${props?.initialQuantity ?? defaultProps.initialQuantity}`), }));
@@ -69,7 +70,7 @@ const ProductQuantityCard = (props: Props) => {
     React.useEffect(() => {
         if (firstPitstop.current) {
             firstPitstop.current = false;
-            // console.log("firstPitstop.current");
+            console.log("firstPitstop.current");
             props.updateQuantity && props.updateQuantity(1);
             return;
         }
@@ -81,7 +82,7 @@ const ProductQuantityCard = (props: Props) => {
             clearTimeout(delayCbRef.current);
         }
         delayCbRef.current = setTimeout(() => {
-            // console.log("setTimeout");
+            console.log("setTimeout");
             props.updateQuantity && props.updateQuantity(state.quantity);
         }, 800);
 
@@ -108,14 +109,18 @@ const ProductQuantityCard = (props: Props) => {
             // if ((updatedQuantity < 1)) {
             //     skipEffect.current = true;
             // }
-            setState(pre => ({ ...pre, quantity: updatedQuantity }));
+            console.log("updatedQuantity", updatedQuantity);
+            if (!isFocused) {
+                setState(pre => ({ ...pre, quantity: updatedQuantity }));
+            }
         } else {
             skipEffect.current = false;
         }
     }, [cartReducer]);
 
+
     React.useEffect(() => {
-        if (!state.quantity) {
+        if (!state.quantity && userPressed.current) {
             props.listener && props.listener(state.quantity)
         }
     }, [state.quantity])
@@ -124,6 +129,7 @@ const ProductQuantityCard = (props: Props) => {
 
 
     const incrementQuantity = () => {
+        userPressed.current = true;
         setState(pre => ({ ...pre, quantity: pre.quantity + 1 }))
         if (cartReducer.pitstops.length < 1) {
             // props.updateQuantity && props.updateQuantity(1);
@@ -132,6 +138,7 @@ const ProductQuantityCard = (props: Props) => {
     }
 
     const decrementQuantity = () => {
+        userPressed.current = true;
         setState(pre => ({ ...pre, quantity: pre.quantity - 1 }));
     }
 

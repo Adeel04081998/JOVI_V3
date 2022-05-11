@@ -9,7 +9,7 @@ import View from '../../components/atoms/View';
 import CustomHeader from '../../components/molecules/CustomHeader';
 import NoRecord from '../../components/organisms/NoRecord';
 import VendorOpening from '../../components/organisms/Overlays/VendorOpening';
-import { isNextPage, renderFile, sharedAddToCartKeys, sharedAddUpdatePitstop, sharedExceptionHandler, sharedGetFinalDestintionRequest, sharedGetPitstopData, uniqueKeyExtractor, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { isNextPage, renderFile, sharedAddToCartKeys, sharedAddUpdatePitstop, sharedDiscountsProvider, sharedExceptionHandler, sharedGetFinalDestintionRequest, sharedGetPitstopData, uniqueKeyExtractor, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { getStatusBarHeight } from '../../helpers/StatusBarHeight';
 import { postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
@@ -207,22 +207,21 @@ export default ({ navigation, route }) => {
     // #region :: GETTING PRODUCT MENU PRICE FROM ITEM START's FROM HERE 
     const getPricesForProductMenuItemCard = (item) => {
         // console.log("[getPricesForProductMenuItemCard].item", item);
-        let discountType = 0,
-            discountAmount = 0;
-        if (item.discountType || item.joviDiscountType) {
-            discountType = (item.discountType === ENUMS.DISCOUNT_TYPES.Percentage || item.joviDiscountType === ENUMS.DISCOUNT_TYPES.Percentage) ? (item.discountType || item.joviDiscountType) : 0;
-        }
-        if (item.itemDiscount || item.joviDiscount) {
-            discountAmount = (item.itemDiscount || 0) + (item.joviDiscount || 0)
-        }
+        const { joviDiscountPercentage, joviDiscountType, vendorDiscountAmountOrPercentage, vendorDiscountType, calculatedPercentageDiscount } = sharedDiscountsProvider(item);
+        // if (item.discountType || item.joviDiscountType) {
+        //     // discountType = (item.discountType === ENUMS.DISCOUNT_TYPES.Percentage || item.joviDiscountType === ENUMS.DISCOUNT_TYPES.Percentage) ? (item.discountType || item.joviDiscountType) : 0;
+        //     discountType = (item.discountType && item?.discountAmount > 0) || (item.joviDiscountType && item?.joviDiscountAmount > 0) ? (item.discountType || item.joviDiscountType) : 0;
+        // }
+        // if (item.itemDiscount || item.joviDiscount) {
+        //     discountAmount = (item.discountAmount || 0) + (item.joviDiscountAmount || 0)
+        // }
         // console.log("[discountAmount]", discountAmount);
         // console.log("[discountType]", discountType);
-
         return {
-            discountedPrice: (item?.discountType > 0 || item?.joviDiscountType > 0) ? item.discountedPrice : item.gstAddedPrice || item.itemPrice, //MAIN PRICE
+            discountedPrice: ((vendorDiscountType > 0 && vendorDiscountAmountOrPercentage > 0) || joviDiscountType > 0 && joviDiscountPercentage) ? item.discountedPrice : item.gstAddedPrice || item.itemPrice, //MAIN PRICE
             price: item.gstAddedPrice || item.itemPrice, //ACTUAL PRICE BEFORE DISCOUNT
-            discountAmount, //PERCENTAGE OF DISCOUNT
-            discountType//DISCOUNT TYPE FIXED OR PERCENATAGE
+            discountAmount: calculatedPercentageDiscount, //PERCENTAGE OF DISCOUNT
+            discountType: vendorDiscountType || joviDiscountType  //DISCOUNT TYPE FIXED OR PERCENATAGE
         }
     };
     // #endregion :: GETTING PRODUCT MENU PRICE FROM ITEM END's FROM HERE 

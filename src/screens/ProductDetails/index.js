@@ -13,7 +13,7 @@ import View from "../../components/atoms/View";
 import Button from "../../components/molecules/Button";
 import CustomHeader from "../../components/molecules/CustomHeader";
 import ImageCarousel from "../../components/molecules/ImageCarousel";
-import { renderPrice, sharedAddUpdatePitstop, sharedExceptionHandler, sharedInteval, sleep, sharedAddToCartKeys } from "../../helpers/SharedActions";
+import { renderPrice, sharedAddUpdatePitstop, sharedExceptionHandler, sharedInteval, sleep, sharedAddToCartKeys, sharedDiscountsProvider } from "../../helpers/SharedActions";
 import { postRequest } from "../../manager/ApiManager";
 import Endpoints from "../../manager/Endpoints";
 import NavigationService from "../../navigations/NavigationService";
@@ -168,10 +168,10 @@ export default (props) => {
             if (alreadyExist) {
                 updatedArr = updatedArr.filter(x => x.itemOptionID !== item.itemOptionID);
             } else {
-                updatedArr.splice(updatedArr.findIndex(x=>x.parentIndex === parentIndex),1)
+                updatedArr.splice(updatedArr.findIndex(x => x.parentIndex === parentIndex), 1)
                 updatedArr.push({ ...item, parentIndex, isRequired });
             };
-        }else if (!isMany && quantity === null && getOccurrence(state.selectedOptions, parentIndex) > 0) {
+        } else if (!isMany && quantity === null && getOccurrence(state.selectedOptions, parentIndex) > 0) {
             updatedArr = [...updatedArr.filter(x => x.parentIndex !== parentIndex), { ...item, parentIndex }];
         } else if (alreadyExist) {
             updatedArr = updatedArr.filter(x => x.itemOptionID !== item.itemOptionID);
@@ -207,7 +207,7 @@ export default (props) => {
             discountedPriceWithoutGstWithoutJovi,
             generalProductOrDealDetail: {
                 ...pre.generalProductOrDealDetail,
-                gstAmount:totalGst,
+                gstAmount: totalGst,
                 // gstAddedPrice: discountedPrice,
                 // discountedPrice: pre.generalProductOrDealDetail.discountAmount > 0 ? discountedPrice : pre.generalProductOrDealDetail.discountedPrice
             }
@@ -228,13 +228,13 @@ export default (props) => {
                 _itemPrice: state.discountedPriceWithGst,
                 _totalGst: state.totalGst,
                 _totalDiscount: state.totalDiscount,
-                _totalJoviDiscount: state.totalJoviDiscount>0?state.totalJoviDiscount:state.generalProductOrDealDetail?.joviDiscountAmount,
+                _totalJoviDiscount: state.totalJoviDiscount > 0 ? state.totalJoviDiscount : state.generalProductOrDealDetail?.joviDiscountAmount,
                 // _priceForSubtotals: generalProductOrDealDetail.discountType > 0 ? state.discountedPriceWithGst : state.totalPriceWithoutDiscount,
                 _priceForSubtotals: state.totalPriceWithoutDiscount,
                 totalAddOnPrice,
                 actionKey: propItem.pitStopItemID ? "pitStopItemID" : "pitStopDealID",
                 estimatePrepTime: pitstopType === PITSTOP_TYPES.RESTAURANT ? generalProductOrDealDetail.estimateTime : "",
-                totalJoviDiscount: state.totalJoviDiscount>0?state.totalJoviDiscount:state.generalProductOrDealDetail?.joviDiscountAmount,
+                totalJoviDiscount: state.totalJoviDiscount > 0 ? state.totalJoviDiscount : state.generalProductOrDealDetail?.joviDiscountAmount,
                 _clientGstAddedPrice: generalProductOrDealDetail.gstAddedPrice,
                 ...!selectedOptions.length ? { ...sharedAddToCartKeys(null, { ...state.generalProductOrDealDetail, quantity: itemCount, notes, pitstopType }).item } : {},
                 pitstopType,
@@ -447,6 +447,7 @@ export default (props) => {
         }
     }, [])
     const inputRef = React.useRef(null);
+    const { calculatedPercentageDiscount, joviDiscountType, vendorDiscountType } = sharedDiscountsProvider(generalProductOrDealDetail);
     return (
         <>
             {loading ? renderLoader() :
@@ -504,9 +505,16 @@ export default (props) => {
                                         discountedPrice > 0 ?
                                             <Text style={[productDetailsStyles.productPricetxt, { paddingHorizontal: 5, textDecorationLine: "line-through", color: colors.navTextColor, fontSize: 14 }]}
                                                 fontFamily='PoppinsRegular'
-                                            >{`${renderPrice(gstAddedPrice)}`}</Text>
+                                            >{`${renderPrice(propItem._itemPriceWithoutDiscount || gstAddedPrice)}`}</Text>
                                             : null
 
+                                    }
+                                    {
+                                        (vendorDiscountType || joviDiscountType) ?
+                                            <View style={{ alignItems: 'flex-end', flex: 1 }}>
+                                                <Text numberOfLines={1} style={{ color: colors.primary }}>{`${renderPrice(calculatedPercentageDiscount, '-', '%', /[^\d.]/g)}`}</Text>
+                                            </View>
+                                            : null
                                     }
                                 </AnimatedView>
 
@@ -534,6 +542,7 @@ export default (props) => {
                                             multiline={true} // ios fix for centering it at the top-left corner 
                                             numberOfLines={Platform.OS === "ios" ? null : numberOfLines}
                                             returnKeyType='done'
+                                            defaultValue={state.notes}
                                         // value={notes}
                                         />
                                     </View>
