@@ -109,7 +109,7 @@ const RestaurantProductMenuHeader = (props: Props) => {
                     <Text fontFamily="PoppinsBold"
                         style={styles.detailHeading} numberOfLines={1}>{propItem.title}</Text>
 
-                    <View style={styles.detailNameRightContainer}>
+                    {/* <View style={styles.detailNameRightContainer}>
                         <TouchableScale
                             onPress={() => { console.log("Heart Press");
                              }}
@@ -122,7 +122,7 @@ const RestaurantProductMenuHeader = (props: Props) => {
                             hitSlop={{ top: 20, bottom: 20, left: 0, right: 20 }}>
                             <VectorIcon name="forward" type="Entypo" color="#272727" />
                         </TouchableScale>
-                    </View>
+                    </View> */}
                 </View>
 
                 <Text style={styles.detailTypeText}>{`${propItem.description}`}</Text>
