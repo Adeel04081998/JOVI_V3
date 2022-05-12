@@ -248,7 +248,7 @@ export default (props) => {
     }
     const verifyResendOTPonEmail = () => {
         Keyboard.dismiss();
-        if (!params?.payload?.email) {
+        if (params?.payload?.email) {
             sharedConfirmationAlert('Resend OTP via Email', 'Are you sure you want to send OTP to ' + params?.payload?.email?.substring(0, 3) + '*******.com ?', null,
                 {},
                 {
