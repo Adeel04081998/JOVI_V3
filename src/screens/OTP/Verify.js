@@ -171,14 +171,24 @@ export default (props) => {
         Keyboard.dismiss()
         if (!isRequestSent.current) {
             isRequestSent.current = true;
-            const payload = {
+            let payload = {
                 "code": parseInt(otpCode),
-                "phoneNumber": params.payload.phoneNumber,
                 "userType": 1,
                 "imei": sharedGetDeviceInfo().deviceID,
                 "smartPhone": sharedGetDeviceInfo().model,
                 "hardwareID": sharedGetDeviceInfo().deviceID
             };
+            if(emailForOtp){
+                payload={
+                    ...payload,
+                    "email": params?.payload?.email,
+                }
+            }else{
+                payload={
+                    ...payload,
+                    "phoneNumber": params.payload.phoneNumber,
+                }
+            }
             postRequest(Endpoints.OTP_VERIFY, payload, res => {
                 const { statusCode, message, otpResult } = res.data;
                 if (statusCode === 417) return Toast.error(message);
