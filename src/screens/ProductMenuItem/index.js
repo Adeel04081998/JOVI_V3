@@ -264,6 +264,7 @@ export default ({ navigation, route }) => {
                             pitstopType: pitstopType
                         })
                     }}
+                    disabled={isOutOfStock}
                     colors={colors}
                     index={index}
                     itemImageSize={ITEM_IMAGE_SIZE}

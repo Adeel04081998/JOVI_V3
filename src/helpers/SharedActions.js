@@ -590,6 +590,7 @@ export const sharedAddUpdatePitstop = (
         console.log('[PITSTOP ID ACTION KEY]', pitstopActionKey);
         console.log('[ITEM ID ACTION KEY]', actionKey);
         const pitstopIdx = pitstops.findIndex(x => x[pitstopActionKey] === upcomingVendorDetails[pitstopActionKey]); //(x.pitstopID === pitstopDetails.pitstopID || x.smid === pitstopDetails.smid))
+        console.log('[pitstopIdx]', pitstopIdx);
         if (pitstopIdx !== -1) {
             let currentPitstopItems = pitstops[pitstopIdx].checkOutItemsListVM;
             console.log('[PITSTOP FOUND]', pitstops[pitstopIdx]);
@@ -625,12 +626,13 @@ export const sharedAddUpdatePitstop = (
                 if (!upcomingItemDetails.quantity) {
                     console.log('[QUANTITY LESS THAN OR EQUAL TO ZERO]');
                     if ((currentPitstopItems.length - 1) <= 0) {
-                        pitstops = pitstops.filter((pitstop, idx) => idx !== pitstopIdx);
+                        pitstops = pitstops.filter((pitstop, idx) => (idx !== pitstopIdx || pitstop[pitstopActionKey] !== upcomingVendorDetails[pitstopActionKey]));
                         console.log('[NO ITEMS EXIST IN PITSTOP SO PITSTOP HAS BEEN REMOVED FROM PITSTOSP]', pitstops);
                     }
                     else {
                         console.log('[REMOVE SINGLE ITEM FROM CHECKOUT LIST..]');
-                        currentPitstopItems = currentPitstopItems.filter((_item, idx) => idx !== itemIndex);
+                        currentPitstopItems = currentPitstopItems.filter((_item, idx) => (idx !== itemIndex || _item[actionKey] !== upcomingItemDetails[actionKey]));
+                        console.log('currentPitstopItems', currentPitstopItems);
                         pitstops[pitstopIdx].checkOutItemsListVM = currentPitstopItems;
                     }
                 } else {
@@ -731,7 +733,7 @@ const convertTime12to24 = (time12h) => {
 }
 export const sharedGetServiceCharges = (payload = null, successCb = () => { }) => {
     const cartReducer = store.getState().cartReducer;
-    console.log('cartReducercartReducercartReducercartReducercartReducercartReducercartReducer   ', cartReducer);
+    console.log('[sharedGetServiceCharges].cartReducer   ', cartReducer);
     const userReducer = store.getState().userReducer;
     // const estimateTime = cartReducer?.estimateTime?.includes('AM') || cartReducer?.estimateTime?.includes('PM') ? convertTime12to24(cartReducer.estimateTime) : cartReducer.estimateTime;
     const estimateTime = cartReducer.estimateTime;
@@ -756,12 +758,12 @@ export const sharedGetServiceCharges = (payload = null, successCb = () => { }) =
                     "quantity": product.quantity,
                     "pitStopType": item.pitstopType,
                     "pitstopID": item.marketID || item.pitstopID || 0,
-                    "pitstopItemID": product.pitStopItemID
+                    "pitstopItemID": product.pitStopItemID ? product.pitStopItemID : product.pitStopDealID
                 });
             });
         }
     });
-    console.log('payloadpayloadpayload befirreer      ', payload);
+    console.log('[sharedGetServiceCharges].payload', payload);
     // #region :: Handling Promo Code START's FROM HERE 
     let promoCodeApplied = null;
     if (payload && typeof payload === "object") {
@@ -1479,6 +1481,36 @@ export const sharedExpectedMarketID = (pitstop = {}) => {
         pitstopID: _id,
         vendorID: _id,
         marketID: _id,
+    }
+}
+
+export const sharedDiscountsProvider = (item = {}) => {
+    // Assuming both discounts would be same at a time like percentage or fixed
+    let vendorDiscountType = 0,
+        joviDiscountType = 0,
+        vendorDiscountAmountOrPercentage = 0,
+        joviDiscountPercentage = 0;
+    // Vendor
+    if (item.discountType) {
+        vendorDiscountType = item.discountType
+    }
+    if (vendorDiscountType) {
+        vendorDiscountAmountOrPercentage = item.discountAmount
+    }
+    // JOVI 
+    if (item.joviDiscountType && item.isJoviDiscount) {
+        joviDiscountType = item.joviDiscountType
+    }
+    if (joviDiscountType && joviDiscountType === ENUMS.DISCOUNT_TYPES.Percentage) {
+        joviDiscountPercentage = item.joviDiscount;
+    }
+
+    return {
+        vendorDiscountType,
+        joviDiscountType,
+        vendorDiscountAmountOrPercentage,
+        joviDiscountPercentage,
+        calculatedPercentageDiscount: vendorDiscountType === ENUMS.DISCOUNT_TYPES.Percentage ? (vendorDiscountAmountOrPercentage + joviDiscountPercentage) : joviDiscountPercentage
     }
 }
 

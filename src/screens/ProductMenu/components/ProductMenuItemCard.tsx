@@ -184,9 +184,10 @@ const ProductMenuItemCard = (props: Props) => {
 
 
                         {/* ****************** Start of DISCOUNT TYPE ****************** */}
-                        {parseInt(`${props.item.discountType}`) !== parseInt(`${ENUMS.PROMO_VALUE_TYPE.Empty.value}`) &&
+                        {
+                            parseInt(`${props.item.discountType}`) !== parseInt(`${ENUMS.PROMO_VALUE_TYPE.Empty.value}`) &&
                             <View style={itemStyles.discountTypeContainer}>
-                                {parseInt(`${props.item.discountType}`) === parseInt(`${ENUMS.PROMO_VALUE_TYPE.Percentage.value}`) && (
+                                {parseInt(`${props.item.discountType}`) === parseInt(`${ENUMS.DISCOUNT_TYPES.Percentage}`) && (
                                     <>
                                         {/* <SvgXml xml={svgs.discount(props.colors.primary)} height={15} width={15} style={itemStyles.discountTypeIcon} /> */}
                                         <View style={itemStyles.discountTypeIcon} />

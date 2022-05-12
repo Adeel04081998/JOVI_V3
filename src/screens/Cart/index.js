@@ -74,7 +74,7 @@ export default () => {
   const onEditPress = (product) => {
     console.log("[onEditPress].pitstop", product);
     // return Alert.alert("Dear lakaas! Bug ni bnana, \n Abi sirf JOVI job ko edit kr skty hain ap log! Bug ni bnana!")
-    if (product.pitstopType === PITSTOP_TYPES.JOVI) NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.JoviJob.screen_name, { pitstopItemObj: product,isEdit:true });
+    if (product.pitstopType === PITSTOP_TYPES.JOVI) NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.JoviJob.screen_name, { pitstopItemObj: product, isEdit: true });
     else if (product.pitstopType === PITSTOP_TYPES.PHARMACY) NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.Pharmacy.screen_name, { pitstopItemObj: product.isPickupPitstop ? { ...product.parentPitstop, pickUpPitstop: product } : { ...product } });
     else NavigationService.NavigationActions.common_actions.navigate(ROUTES.APP_DRAWER_ROUTES.ProductDetails.screen_name, {
       propItem: {
@@ -142,24 +142,28 @@ export default () => {
             <BottomLine />
           }
           <>
-            <Products
-              key={`product-key-${idx}`}
-              dynamiColors={dynamiColors}
-              isJOVI={isJOVI}
-              product={{ ...pitstop, ...product, title: product.title || product.pitStopItemName, pitstopType }}
-              incDecDelHandler={quantity => {
-                incDecDelHandler({
-                  // pitstopIndex,
-                  vendorDetails: {
-                    actionKey: "pitstopID",
-                    pitstopID,
-                    pitstopName,
-                    pitstopType,
-                  },
-                  itemDetails: { ...product, actionKey: "checkOutItemID", productIndex: idx, quantity },
-                });
-              }}
-            />
+            {
+              product.quantity ?
+                <Products
+                  key={`product-key-${idx}`}
+                  dynamiColors={dynamiColors}
+                  isJOVI={isJOVI}
+                  product={{ ...pitstop, ...product, title: product.title || product.pitStopItemName, pitstopType }}
+                  incDecDelHandler={quantity => {
+                    incDecDelHandler({
+                      // pitstopIndex,
+                      vendorDetails: {
+                        actionKey: "pitstopID",
+                        pitstopID,
+                        pitstopName,
+                        pitstopType,
+                      },
+                      itemDetails: { ...product, actionKey: "checkOutItemID", productIndex: idx, quantity },
+                    });
+                  }}
+                />
+                : null
+            }
             {
               idx === checkOutItemsListVM.length - 1 ? null : <DashedLine />
             }
@@ -403,10 +407,10 @@ export default () => {
                 updateQuantity={(quantity) => {
                   incDecDelHandler(quantity)
                 }}
-                listener={qty => {
-                  // console.log("qty", qty);
-                  incDecDelHandler(qty)
-                }}
+                // listener={qty => {
+                //   // console.log("qty", qty);
+                //   incDecDelHandler(qty)
+                // }}
                 fromCart={true}
                 pitstopItemID={pitStopItemID}
                 marketID={marketID || pitStopID}
