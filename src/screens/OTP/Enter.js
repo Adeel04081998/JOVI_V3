@@ -39,8 +39,11 @@ const Picker = ({ pickerVisible, setCountry, setPickerVisible }) => {
             Endpoints.GET_COUNTRY_CODES_LIST,
             res => {
                 // console.log("otpCountryCodes.res", res);
-                const {otpCountryCodes} = res.data;
-                setCountryCode(otpCountryCodes)
+                if (res.data.statusCode === 200) {
+                    const { otpCountryCodes } = res.data;
+                    setCountryCode(otpCountryCodes)
+                }
+
             },
             err => {
                 sharedExceptionHandler(err);
@@ -52,7 +55,7 @@ const Picker = ({ pickerVisible, setCountry, setPickerVisible }) => {
     React.useEffect(() => {
         getCountryCodesList()
     }, [])
-  
+
     if (pickerVisible && countryCodes.length) return <CountryPicker
         visible
         withEmoji
