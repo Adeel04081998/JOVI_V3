@@ -62,7 +62,7 @@ export default () => {
     sharedVerifyCartItems();
   }, [])
   const incDecDelHandler = (pitstopDetails, pitstopIndex = null, isDeletePitstop = false) => {
-    sharedAddUpdatePitstop({ ...pitstopDetails }, isDeletePitstop, [], false, true, null, false, true);
+    sharedAddUpdatePitstop({ ...pitstopDetails, pitstopType: pitstopDetails.vendorDetails.pitstopType || pitstopDetails.itemDetails.pitstopType }, isDeletePitstop, [], false, true, null, false, true);
   };
   const expandCollapeHanlder = (idx) => {
     let _list = [...expanded];
