@@ -255,7 +255,7 @@ export default (props) => {
                     cancelButton: { text: "No", onPress: () => { } },
                     okButton: {
                         text: "Yes", onPress: () => {
-                            resendOtp(true, params.email);
+                            resendOtp(true, params?.payload?.email);
                         }
                     },
                 });
