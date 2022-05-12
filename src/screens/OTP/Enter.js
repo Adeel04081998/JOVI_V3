@@ -14,7 +14,7 @@ import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import Button from '../../components/molecules/Button';
 import Dropdown from '../../components/molecules/Dropdown/Index';
-import { sendOTPToServer, sharedExceptionHandler } from '../../helpers/SharedActions';
+import { sendOTPToServer, sharedExceptionHandler, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import preference_manager, { IS_ALL_CACHE_CLEANED } from '../../preference_manager';
@@ -74,7 +74,7 @@ export default () => {
             console.log("res...", res);
             const { statusCode, message } = res.data;
             if (statusCode === 417) return Toast.error(message);
-            NavigationService.NavigationActions.common_actions.navigate(ROUTES.AUTH_ROUTES.VerifyOTP.screen_name, { payload })
+            NavigationService.NavigationActions.common_actions.navigate(ROUTES.AUTH_ROUTES.VerifyOTP.screen_name, { payload: { ...payload, sendOTPviaEmail: res.data.sendOTPviaEmail, email: VALIDATION_CHECK(res.data.email) ? res.data.email : null } })
         }
         const onError = (err) => {
             // console.log("err...", err.response);

@@ -2,7 +2,7 @@ import React from "react";
 import svgs from "../assets/svgs";
 import constants from "../res/constants";
 let initUrlRef = React.createRef(null);
-initUrlRef.current = __DEV__ ? constants.url_live : constants.url_live;
+initUrlRef.current = __DEV__ ? constants.url_staging : constants.url_live;
 export const PITSTOP_TYPES = {
     DEFAULT: 0,
     SUPER_MARKET: 1,
@@ -51,7 +51,7 @@ export default {
     SET_VALUE: 1,
     GET_VALUE: 2,
     NET_INFO_REF: React.createRef(null),
-    OTP_INTERVAL: 30, // SECONDS
+    OTP_INTERVAL: 60, // SECONDS
     THEME_VALUES: { ...PITSTOP_TYPES },
     MAX_PITSTOP_IMAGE_LIMIT: 3,
     MAX_JOVI_AMOUNT: 10000,
