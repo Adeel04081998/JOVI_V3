@@ -181,7 +181,7 @@ export default (props) => {
             if(emailForOtp){
                 payload={
                     ...payload,
-                    "email": params?.payload?.email,
+                    "email": emailForOtp,
                 }
             }else{
                 payload={
@@ -276,7 +276,6 @@ export default (props) => {
                     cancelButton: { text: "No", onPress: () => { } },
                     okButton: {
                         text: "Yes", onPress: () => {
-                            resendOtp(true, params.email);
                         }
                     },
                     CustomComponent: <CustomComponent onSubmit={(email = '') => {
@@ -412,7 +411,7 @@ export default (props) => {
             )
         }
         return (
-            <TouchableOpacity onPress={resendOtp}
+            <TouchableOpacity onPress={()=>resendOtp()}
                 // disabled={parseInt(seconds) !== 0}
                 disabled={requestAgain}
                 wait={1} >
