@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Appearance, Keyboard, Platform, SafeAreaView } from 'react-native';
 import CountryPicker from 'react-native-country-picker-modal';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
@@ -14,7 +14,9 @@ import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import Button from '../../components/molecules/Button';
 import Dropdown from '../../components/molecules/Dropdown/Index';
-import { sendOTPToServer, sharedExceptionHandler, VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { sendOTPToServer, sharedExceptionHandler,VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { getRequest } from '../../manager/ApiManager';
+import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
 import ROUTES from '../../navigations/ROUTES';
 import preference_manager, { IS_ALL_CACHE_CLEANED } from '../../preference_manager';
@@ -29,7 +31,29 @@ import otpStyles from './styles';
 const SPACING_VERTICAL = 10;
 
 const Picker = ({ pickerVisible, setCountry, setPickerVisible }) => {
-    if (pickerVisible) return <CountryPicker
+
+
+    const [countryCodes, setCountryCode] = useState([])
+    const getCountryCodesList = () => {
+        getRequest(
+            Endpoints.GET_COUNTRY_CODES_LIST,
+            res => {
+                // console.log("otpCountryCodes.res", res);
+                const {otpCountryCodes} = res.data;
+                setCountryCode(otpCountryCodes)
+            },
+            err => {
+                sharedExceptionHandler(err);
+            },
+            {},
+            false,
+        );
+    }
+    React.useEffect(() => {
+        getCountryCodesList()
+    }, [])
+  
+    if (pickerVisible && countryCodes.length) return <CountryPicker
         visible
         withEmoji
         withFilter
@@ -40,7 +64,9 @@ const Picker = ({ pickerVisible, setCountry, setPickerVisible }) => {
         onClose={() => setPickerVisible(false)}
         withAlphaFilter
         withCallingCode
-        countryCodes={ENUMS.COUNTRY_CODES}
+        // countryCodes={ENUMS.COUNTRY_CODES}
+        countryCodes={countryCodes}
+
     />
     else return null;
 }
