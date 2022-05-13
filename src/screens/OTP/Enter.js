@@ -14,7 +14,7 @@ import VectorIcon from '../../components/atoms/VectorIcon';
 import View from '../../components/atoms/View';
 import Button from '../../components/molecules/Button';
 import Dropdown from '../../components/molecules/Dropdown/Index';
-import { sendOTPToServer, sharedExceptionHandler,VALIDATION_CHECK } from '../../helpers/SharedActions';
+import { sendOTPToServer, sharedExceptionHandler, VALIDATION_CHECK } from '../../helpers/SharedActions';
 import { getRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
 import NavigationService from '../../navigations/NavigationService';
@@ -39,7 +39,7 @@ const Picker = ({ pickerVisible, setCountry, setPickerVisible }) => {
             Endpoints.GET_COUNTRY_CODES_LIST,
             res => {
                 // console.log("otpCountryCodes.res", res);
-                const {otpCountryCodes} = res.data;
+                const { otpCountryCodes } = res.data;
                 setCountryCode(otpCountryCodes)
             },
             err => {
@@ -52,7 +52,7 @@ const Picker = ({ pickerVisible, setCountry, setPickerVisible }) => {
     React.useEffect(() => {
         getCountryCodesList()
     }, [])
-  
+
     if (pickerVisible && countryCodes.length) return <CountryPicker
         visible
         withEmoji
@@ -72,6 +72,10 @@ const Picker = ({ pickerVisible, setCountry, setPickerVisible }) => {
 }
 
 export default () => {
+    const initNetworkState = {
+        text: __DEV__ ? "Choose your Mobile Network" : "Choose your Mobile Network",
+        value: __DEV__ ? 1 : 0
+    };
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
     const styles = otpStyles.styles(colors, SPACING_VERTICAL);
     const [collapsed, setCollapsed] = React.useState(true);
@@ -79,21 +83,19 @@ export default () => {
     const [forcePattern, setForcePattern] = React.useState(false);
     const [cellNo, setCellNo] = React.useState(__DEV__ ? "3149277092" : "");
     const [isLoading, setIsLoading] = React.useState(false);
-    const [network, setNetwork] = React.useState({
-        text: __DEV__ ? "Choose your Mobile Network" : "Choose your Mobile Network",
-        value: __DEV__ ? 1 : 0
-    });
+    const [network, setNetwork] = React.useState(initNetworkState);
     let regexp = new RegExp(Regex.pkCellNo);
 
 
     const [country, setCountry] = React.useState("92");
+    const isNationalNumber = `${country}` === "92";
     const onPress = async () => {
         IS_ALL_CACHE_CLEANED.current = false;
         Keyboard.dismiss();
         const appHash = Platform.OS === "android" ? (await RNOtpVerify.getHash())[0] : "";
         const phoneNumber = country + cellNo
         if (network.value <= 0) return Toast.info("Please select your mobile network.");
-        else if (!regexp.test(phoneNumber)) {
+        else if (isNationalNumber && !regexp.test(phoneNumber)) {
             return setForcePattern(true)
         }
         const onSuccess = (res) => {
@@ -124,20 +126,21 @@ export default () => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.AUTH_ROUTES.Legal.screen_name)
     }
 
-    const disbleContinueButton = network.value <= 0 || cellNo.length < 10;
+    const disbleContinueButton = isNationalNumber ? (network.value <= 0 || cellNo.length < 10) : cellNo.length < 10;
     return <SafeAreaView style={styles.otpSafeArea}>
         <KeyboardAwareScrollView keyboardShouldPersistTaps="handled">
             <SvgXml xml={svgs.otp()} height={120} width={120} style={{ alignSelf: "center", marginBottom: 20, }} />
             <Text fontFamily={'PoppinsMedium'} style={{ fontSize: 14, paddingLeft: 25, color: 'black', marginBottom: -3 }}>Enter your Mobile Number</Text>
             <View style={styles.otpDropdownParentView}>
                 <TouchableOpacity style={styles.otpDropdownView}
+                    disabled={!isNationalNumber}
                     wait={0.55}//greater than the animation time of dropdown rendered below
                     activeOpacity={1}
                     onPress={() => {
                         setCollapsed(!collapsed);
                     }} >
-                    <Text fontFamily="PoppinsRegular" style={{ color: "#fff", ...styles.textAlignCenter }}>{network.text}</Text>
-                    <VectorIcon type='AntDesign' name={collapsed ? "down" : "up"} style={{ paddingLeft: 5, }} size={12} color={"#fff"} />
+                    <Text fontFamily="PoppinsRegular" style={{ color: isNationalNumber? "#fff":colors.grey, ...styles.textAlignCenter }}>{network.text}</Text>
+                    <VectorIcon type='AntDesign' name={collapsed ? "down" : "up"} style={{ paddingLeft: 5, }} size={12} color={isNationalNumber? "#fff":colors.grey} />
                 </TouchableOpacity>
                 {/* Networks list */}
                 <Dropdown collapsed={collapsed} scrollViewStyles={{ top: 42 }} options={ENUMS.NETWORK_LIST} itemUI={(item, index, collapsed) => <TouchableOpacity key={`network-key-${index}`} style={{ paddingVertical: 4, borderWidth: 0.5, borderTopWidth: 0, borderColor: 'rgba(0,0,0,0.3)', borderBottomRightRadius: index === ENUMS.NETWORK_LIST.length - 1 ? 12 : 0, borderBottomLeftRadius: index === ENUMS.NETWORK_LIST.length - 1 ? 12 : 0 }} onPress={() => {
@@ -156,7 +159,7 @@ export default () => {
                     <TextInput value={cellNo.toString()}
                         keyboardType="numeric"
                         placeholder='3xxxxxxxxx'
-                        maxLength={10}
+                        maxLength={isNationalNumber ? 10 : 15}
                         iconName={''}
                         onChangeText={text => {
                             let number = parseInt(text);
@@ -222,7 +225,10 @@ export default () => {
             </View>
             {/* <Text style={{ color: 'black' }} onPress={() => { }} >and</Text> Privacy Policy */}
             {/* Country Code Picker */}
-            <Picker pickerVisible={pickerVisible} setCountry={setCountry} setPickerVisible={setPickerVisible} />
+            <Picker pickerVisible={pickerVisible} setCountry={(item)=>{
+                setNetwork(initNetworkState);
+                setCountry(item);
+            }} setPickerVisible={setPickerVisible} />
         </KeyboardAwareScrollView>
     </SafeAreaView >
 };
