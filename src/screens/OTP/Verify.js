@@ -178,13 +178,13 @@ export default (props) => {
                 "smartPhone": sharedGetDeviceInfo().model,
                 "hardwareID": sharedGetDeviceInfo().deviceID
             };
-            if(emailForOtp){
-                payload={
+            if (emailForOtp) {
+                payload = {
                     ...payload,
                     "email": emailForOtp,
                 }
-            }else{
-                payload={
+            } else {
+                payload = {
                     ...payload,
                     "phoneNumber": params.payload.phoneNumber,
                 }
@@ -194,7 +194,7 @@ export default (props) => {
                 if (statusCode === 417) return Toast.error(message);
                 resetInterval()
                 try {
-                    dispatch(ReduxAction.setUserAction({ ...otpResult, ...params.payload, isLoggedIn: otpResult.newUser ? false : true, introScreenViewed: otpResult.newUser ? false : true }))
+                    dispatch(ReduxAction.setUserAction({ ...otpResult, ...params.payload, email: emailForOtp ? emailForOtp : undefined, isLoggedIn: otpResult.newUser ? false : true, introScreenViewed: otpResult.newUser ? false : true }))
                     if (otpResult.newUser) {
                         NavigationService.NavigationActions.stack_actions.replace(ROUTES.AUTH_ROUTES.SignUp.screen_name, {}, ROUTES.AUTH_ROUTES.VerifyOTP.screen_name)
                         // NavigationService.NavigationActions.common_actions.reset(null,[{name: ROUTES.AUTH_ROUTES.SignUp.screen_name}])
@@ -356,7 +356,7 @@ export default (props) => {
         return (
             <View style={{ marginVertical: 30 }} >
                 <Text style={{ textAlign: "center", color: '#000', fontWeight: '600', paddingVertical: 10 }} fontFamily={"PoppinsMedium"} >{`Verify Number`}</Text>
-                <Text style={{ textAlign: "center", color: '#7D7D7D' }} fontFamily={"PoppinsMedium"}  >{`Code sent to ${emailForOtp ? (params?.payload?.email? emailForOtp?.substring(0, 3) + '*******.com': emailForOtp) : cellNo}`}</Text>
+                <Text style={{ textAlign: "center", color: '#7D7D7D' }} fontFamily={"PoppinsMedium"}  >{`Code sent to ${emailForOtp ? (params?.payload?.email ? emailForOtp?.substring(0, 3) + '*******.com' : emailForOtp) : cellNo}`}</Text>
             </View>
         )
     }
@@ -411,7 +411,7 @@ export default (props) => {
             )
         }
         return (
-            <TouchableOpacity onPress={()=>resendOtp()}
+            <TouchableOpacity onPress={() => resendOtp()}
                 // disabled={parseInt(seconds) !== 0}
                 disabled={requestAgain}
                 wait={1} >
