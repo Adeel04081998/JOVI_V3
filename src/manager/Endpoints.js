@@ -77,8 +77,10 @@ export default {
     "CREATE_COMPLAINT": "api/Order/Complaint/AddOrUpdate",//USED IN ORDER HISTORY DETAIL - TO CREATE NEW COMPLAINT AGAINEST ORDER
     "GET_PENDING_ORDER_RATING": "api/Order/Rating/PendingOrders",//USED IN SHARED ACTION - TO SHOW PENDING ORDER's RATING
     "IGNORE_ORDER_FOR_ORDER_RATING": "api/Order/IgnoreRating",//USED IN RATE RIDER 
-    "GET_BALANCE" : "api/Payment/Wallet/Balance",//USED IN TOP UP
-    "ERROR_LOGGER": "api/ErrorLog/FrontEndError/AddOrUpdate"
+    "ERROR_LOGGER": "api/ErrorLog/FrontEndError/AddOrUpdate",
+    "GET_COUNTRY_CODES_LIST": "api/Common/OTPCountryCodes",
+    "GET_BALANCE": "api/Payment/Wallet/Balance",//USED IN TOP UP
+    "LOGOUT_USER": "api/User/logout"
 }
 
 

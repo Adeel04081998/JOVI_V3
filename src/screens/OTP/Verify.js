@@ -10,7 +10,7 @@ import otpStyles from './styles';
 import theme from '../../res/theme';
 import GV from '../../utils/GV';
 import TouchableOpacity from '../../components/atoms/TouchableOpacity';
-import SharedActions, { sendOTPToServer, sharedGetDeviceInfo, sharedInteval, sharedExceptionHandler } from '../../helpers/SharedActions';
+import SharedActions, { sendOTPToServer, sharedGetDeviceInfo, sharedInteval, sharedExceptionHandler, sharedConfirmationAlert } from '../../helpers/SharedActions';
 import RNOtpVerify from "react-native-otp-verify";
 import Regex from '../../utils/Regex';
 import NavigationService from '../../navigations/NavigationService';
@@ -19,7 +19,9 @@ import ROUTES from '../../navigations/ROUTES';
 import { postRequest } from '../../manager/ApiManager';
 import Toast from '../../components/atoms/Toast';
 import ReduxAction from '../../redux/actions/index'
-
+import FontFamily from '../../res/FontFamily';
+import TI from '../../components/atoms/TextInput';
+import actions from '../../redux/actions/index';
 
 const SPACING = 20;
 export default (props) => {
@@ -30,6 +32,7 @@ export default (props) => {
     const [seconds, setSeconds] = React.useState("00");
     const [isLoading, setIsLoading] = React.useState(false);
     const [runInterval, setRunInterval] = React.useState(true);
+    const [emailForOtp, setEmailForOtp] = React.useState(null)
     const intervalRef = React.useRef(null);
     const arrRef = React.useRef([]);
     const disbleContinueButton = inputs?.includes('');
@@ -168,20 +171,30 @@ export default (props) => {
         Keyboard.dismiss()
         if (!isRequestSent.current) {
             isRequestSent.current = true;
-            const payload = {
+            let payload = {
                 "code": parseInt(otpCode),
-                "phoneNumber": params.payload.phoneNumber,
                 "userType": 1,
                 "imei": sharedGetDeviceInfo().deviceID,
                 "smartPhone": sharedGetDeviceInfo().model,
                 "hardwareID": sharedGetDeviceInfo().deviceID
             };
+            if (emailForOtp) {
+                payload = {
+                    ...payload,
+                    "email": emailForOtp,
+                }
+            } else {
+                payload = {
+                    ...payload,
+                    "phoneNumber": params.payload.phoneNumber,
+                }
+            }
             postRequest(Endpoints.OTP_VERIFY, payload, res => {
                 const { statusCode, message, otpResult } = res.data;
                 if (statusCode === 417) return Toast.error(message);
                 resetInterval()
                 try {
-                    dispatch(ReduxAction.setUserAction({ ...otpResult, ...params.payload, isLoggedIn: otpResult.newUser ? false : true, introScreenViewed: otpResult.newUser ? false : true }))
+                    dispatch(ReduxAction.setUserAction({ ...otpResult, ...params.payload, email: emailForOtp ? emailForOtp : undefined, isLoggedIn: otpResult.newUser ? false : true, introScreenViewed: otpResult.newUser ? false : true }))
                     if (otpResult.newUser) {
                         NavigationService.NavigationActions.stack_actions.replace(ROUTES.AUTH_ROUTES.SignUp.screen_name, {}, ROUTES.AUTH_ROUTES.VerifyOTP.screen_name)
                         // NavigationService.NavigationActions.common_actions.reset(null,[{name: ROUTES.AUTH_ROUTES.SignUp.screen_name}])
@@ -205,12 +218,78 @@ export default (props) => {
             );
         } else console.log(" isRequestSent.current", isRequestSent.current);
     };
-    const resendOtp = () => {
+    const CustomComponent = ({ onSubmit = () => { } }) => {
+        const [state, setState] = React.useState({
+            email: '',
+            isValid: true,
+            validationerror: 'Invalid Email',
+        });
+
+        return (
+            <View style={{ width: '100%', flexDirection: 'column', alignItems: 'center' }}>
+                <TI
+                    placeholder={'Email'}
+                    onChangeText={text => {
+                        setState((pre) => ({ ...pre, email: text }))
+                    }}
+                    errorTextStyle={{ fontSize: 12 }}
+                    containerStyle={{
+                        width: '95%', alignSelf: 'center', borderColor: !state.isValid ? "red" : '#f4f4f4',
+                        borderWidth: 1,
+                    }}
+                    isValid={(value) => {
+                        setState((pre) => ({ ...pre, isValid: value }))
+                    }}
+                    pattern={Regex.email}
+                    style={{ fontFamily: FontFamily.Poppins.Regular }}
+                    errorText={!state.isValid ? state.validationerror : ""}
+                    forceError={!state.isValid}
+                    errorTextStyle={[{ fontSize: 12 }]}
+                />
+                <Button
+                    style={{ ...styles.continueButton, height: 40, width: '95%', marginTop: state.isValid ? 0 : 10 }}
+                    text={'Continue'}
+                    textStyle={{ color: '#fff', ...styles.textAlignCenter, fontSize: 14 }}
+                    onPress={() => onSubmit(state.email)}
+                    disabled={!state.isValid || state.email === ''}
+                />
+            </View>
+        );
+    }
+    const verifyResendOTPonEmail = () => {
+        Keyboard.dismiss();
+        if (params?.payload?.email) {
+            sharedConfirmationAlert('Resend OTP via Email', 'Are you sure you want to send OTP to ' + params?.payload?.email?.substring(0, 3) + '*******.com ?', null,
+                {},
+                {
+                    cancelButton: { text: "No", onPress: () => { } },
+                    okButton: {
+                        text: "Yes", onPress: () => {
+                            resendOtp(true, params?.payload?.email);
+                        }
+                    },
+                });
+        } else {
+            sharedConfirmationAlert('Enter your email', '', null,
+                {},
+                {
+                    cancelButton: { text: "No", onPress: () => { } },
+                    okButton: {
+                        text: "Yes", onPress: () => {
+                        }
+                    },
+                    CustomComponent: <CustomComponent onSubmit={(email = '') => {
+                        dispatch(actions.closeCustomAlertAction());
+                        resendOtp(true, email);
+                    }} />
+                });
+        }
+    }
+    const resendOtp = (resendEmail = false, email = '') => {
         setRequestAgain(true)
         setInputs(["", "", "", ""])
         const { appHash, isNewVersion, isWhatsapp, mobileNetwork, otpType, userType, phoneNumber } = params.payload;
-        const payload = {
-            'phoneNumber': phoneNumber,
+        let payload = {
             'appHash': appHash,
             'otpType': otpType,
             'userType': userType,
@@ -218,12 +297,25 @@ export default (props) => {
             "isNewVersion": isNewVersion,
             "mobileNetwork": mobileNetwork
         };
+        if (resendEmail) {
+            payload = {
+                ...payload,
+                'email': email,
+            }
+        } else {
+            payload = {
+                ...payload,
+                'phoneNumber': phoneNumber,
+            }
+        }
         const onSuccess = (res) => {
+            console.log('resendOtp', res);
             const { statusCode, message } = res.data;
             if (statusCode === 417) return Toast.error(message);
             else {
-                setRunInterval(true)
-                _onSmsListener()
+                setRunInterval(true);
+                _onSmsListener();
+                setEmailForOtp(resendEmail ? email : null);
             }
         }
         const onError = (err) => {
@@ -232,11 +324,10 @@ export default (props) => {
         const onLoader = (loader) => {
             setIsLoading(loader)
         }
-        if (requestAgain) return
+        // if (requestAgain) return
         sendOTPToServer(payload, onSuccess, onError, onLoader)
 
     };
-
     const _onSmsListener = async () => {
         try {
             const registered = await RNOtpVerify.getOtp();
@@ -265,7 +356,7 @@ export default (props) => {
         return (
             <View style={{ marginVertical: 30 }} >
                 <Text style={{ textAlign: "center", color: '#000', fontWeight: '600', paddingVertical: 10 }} fontFamily={"PoppinsMedium"} >{`Verify Number`}</Text>
-                <Text style={{ textAlign: "center", color: '#7D7D7D' }} fontFamily={"PoppinsMedium"}  >{`Code sent to ${cellNo}`}</Text>
+                <Text style={{ textAlign: "center", color: '#7D7D7D' }} fontFamily={"PoppinsMedium"}  >{`Code sent to ${emailForOtp ? (params?.payload?.email ? emailForOtp?.substring(0, 3) + '*******.com' : emailForOtp) : cellNo}`}</Text>
             </View>
         )
     }
@@ -298,8 +389,29 @@ export default (props) => {
 
 
     const renderResendButtonUi = () => {
+        if (params?.payload?.sendOTPviaEmail) {
+            return (
+                <View
+                    style={{ flexDirection: 'row', justifyContent: 'center' }}
+                >
+                    <TouchableOpacity onPress={() => resendOtp()}
+                        // disabled={parseInt(seconds) !== 0}
+                        disabled={requestAgain}
+                        style={{ marginRight: 20 }}
+                        wait={1} >
+                        <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 12, color: requestAgain ? 'grey' : "#7359BE", marginTop: 3 }}>{`Resend via SMS`}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={verifyResendOTPonEmail}
+                        // disabled={parseInt(seconds) !== 0}
+                        disabled={requestAgain}
+                        wait={1} >
+                        <Text style={{ textAlign: "center", textDecorationLine: "underline", fontSize: 12, color: requestAgain ? 'grey' : "#7359BE", marginTop: 3 }}>{`Resend via Email`}</Text>
+                    </TouchableOpacity>
+                </View>
+            )
+        }
         return (
-            <TouchableOpacity onPress={resendOtp}
+            <TouchableOpacity onPress={() => resendOtp()}
                 // disabled={parseInt(seconds) !== 0}
                 disabled={requestAgain}
                 wait={1} >
