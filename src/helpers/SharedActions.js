@@ -177,7 +177,7 @@ export const sharedGetUserDetailsApi = () => {
         Endpoints.GET_USER_DETAILS,
         res => {
             // console.log("[getUserDetailsApi].res", res);
-            dispatch(ReduxActions.setUserAction({ ...res.data.userDetails, phoneNumber:res.data.userDetails.mobile??'' }));
+            dispatch(ReduxActions.setUserAction({ ...res.data.userDetails, phoneNumber: res.data.userDetails.mobile ?? '' }));
         },
         err => {
             sharedExceptionHandler(err);
