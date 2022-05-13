@@ -269,9 +269,32 @@ export const sharedGetPromotions = () => {
     );
 };
 
-export const sharedLogoutUser = () => {
-    dispatch(ReduxActions.clearUserAction({ introScreenViewed: true }));
-    dispatch(ReduxActions.clearCartAction({}));
+export const sharedLogoutUser = async () => {
+    const userReducer = store.getState().userReducer;
+    const refreshToken = userReducer.refreshToken || '';
+    const deviceInfo = await sharedGetDeviceInfo()
+    console.log("userReducer", userReducer);
+    postRequest(
+        `${Endpoints.LOGOUT_USER}`,
+        {
+            "refreshToken": refreshToken,
+            "isAutomatedLogout": false,
+            "isRider": false,
+            "hardwareID": deviceInfo.deviceID
+        },
+        res => {
+            console.log("[sharedLogoutUser].res", res);
+            dispatch(ReduxActions.clearUserAction({ introScreenViewed: true }));
+            dispatch(ReduxActions.clearCartAction({}));
+        },
+        err => {
+            console.log("[sharedLogoutUser].err", err);
+            sharedExceptionHandler(err);
+        },
+        {},
+        true,
+    );
+
 };
 
 export const sharedStartingRegionPK = {
