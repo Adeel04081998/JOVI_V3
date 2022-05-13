@@ -76,7 +76,7 @@ const Picker = ({ pickerVisible, setCountry, setPickerVisible }) => {
 
 export default () => {
     const initNetworkState = {
-        text: __DEV__ ? "Choose your Mobile Network" : "Choose your Mobile Network",
+        text: "Choose your Mobile Network",
         value: __DEV__ ? 1 : 0
     };
     const colors = theme.getTheme(GV.THEME_VALUES.JOVI, Appearance.getColorScheme() === "dark");
@@ -129,7 +129,8 @@ export default () => {
         NavigationService.NavigationActions.common_actions.navigate(ROUTES.AUTH_ROUTES.Legal.screen_name)
     }
 
-    const disbleContinueButton = isNationalNumber ? (network.value <= 0 || cellNo.length < 10) : cellNo.length < 10;
+    // const disbleContinueButton = isNationalNumber ? (network.value <= 0 || cellNo.length < 10) : cellNo.length < 10;
+    const disbleContinueButton = isNationalNumber ? (network.value <= 0 || cellNo.length < 10) : false; // Validation on International numbers removed after discussion with zulfiqar and atif
     return <SafeAreaView style={styles.otpSafeArea}>
         <KeyboardAwareScrollView keyboardShouldPersistTaps="handled">
             <SvgXml xml={svgs.otp()} height={120} width={120} style={{ alignSelf: "center", marginBottom: 20, }} />
@@ -142,8 +143,8 @@ export default () => {
                     onPress={() => {
                         setCollapsed(!collapsed);
                     }} >
-                    <Text fontFamily="PoppinsRegular" style={{ color: isNationalNumber? "#fff":colors.grey, ...styles.textAlignCenter }}>{network.text}</Text>
-                    <VectorIcon type='AntDesign' name={collapsed ? "down" : "up"} style={{ paddingLeft: 5, }} size={12} color={isNationalNumber? "#fff":colors.grey} />
+                    <Text fontFamily="PoppinsRegular" style={{ color: isNationalNumber ? "#fff" : colors.grey, ...styles.textAlignCenter }}>{network.text}</Text>
+                    <VectorIcon type='AntDesign' name={collapsed ? "down" : "up"} style={{ paddingLeft: 5, }} size={12} color={isNationalNumber ? "#fff" : colors.grey} />
                 </TouchableOpacity>
                 {/* Networks list */}
                 <Dropdown collapsed={collapsed} scrollViewStyles={{ top: 42 }} options={ENUMS.NETWORK_LIST} itemUI={(item, index, collapsed) => <TouchableOpacity key={`network-key-${index}`} style={{ paddingVertical: 4, borderWidth: 0.5, borderTopWidth: 0, borderColor: 'rgba(0,0,0,0.3)', borderBottomRightRadius: index === ENUMS.NETWORK_LIST.length - 1 ? 12 : 0, borderBottomLeftRadius: index === ENUMS.NETWORK_LIST.length - 1 ? 12 : 0 }} onPress={() => {
@@ -228,7 +229,7 @@ export default () => {
             </View>
             {/* <Text style={{ color: 'black' }} onPress={() => { }} >and</Text> Privacy Policy */}
             {/* Country Code Picker */}
-            <Picker pickerVisible={pickerVisible} setCountry={(item)=>{
+            <Picker pickerVisible={pickerVisible} setCountry={(item) => {
                 setNetwork(initNetworkState);
                 setCountry(item);
             }} setPickerVisible={setPickerVisible} />
