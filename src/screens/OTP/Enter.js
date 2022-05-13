@@ -94,7 +94,7 @@ export default () => {
         Keyboard.dismiss();
         const appHash = Platform.OS === "android" ? (await RNOtpVerify.getHash())[0] : "";
         const phoneNumber = country + cellNo
-        if (network.value <= 0) return Toast.info("Please select your mobile network.");
+        if (isNationalNumber && network.value <= 0) return Toast.info("Please select your mobile network.");
         else if (isNationalNumber && !regexp.test(phoneNumber)) {
             return setForcePattern(true)
         }
