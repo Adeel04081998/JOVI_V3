@@ -145,7 +145,7 @@ export default {
             "value": 2,
             "id": 2,
             "icon": null,
-            "price": "500 - 100"
+            "price": "500 - 1000"
 
 
         }
