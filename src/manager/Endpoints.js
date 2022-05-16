@@ -7,7 +7,7 @@ export default {
     "GET_ENUMS": "api/Common/Enums",
     "GET_USER_DETAILS": "api/User/Details",
     "GET_HOME_MSGS": "api/Menu/HomeScreen/GetData",
-    "GET_USER_ADDRESSES": "api/Order/GetAddress",
+    "GET_USER_ADDRESSES": "api/Order/GetAddressV2",
     "GET_PROMOTIONS": "api/Dashboard/DashboardContent/List",
     "ADD_PITSTOPIMAGE": "api/Common/Image/AddOrUpdate",
     "DELETE_PITSTOPIMAGE": 'api/Common/Image/DeleteJoviImage/',

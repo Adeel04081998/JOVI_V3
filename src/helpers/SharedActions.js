@@ -234,8 +234,10 @@ export const sharedGetUserAddressesApi = () => {
         Endpoints.GET_USER_ADDRESSES,
         res => {
             // console.log("[sharedGetUserAddressesApi].res", res);
-            if (res.data.statusCode === 200)
-                dispatch(ReduxActions.setUserAction({ ...res.data }));
+            if (res.data.statusCode === 200) {
+                const filteredArray = res.data.addressList.map(v => ({ ...v, latitude: v.geometry.location.lat, longitude: v.geometry.location.lng, title: v.description }))
+                dispatch(ReduxActions.setUserAction({ addresses: filteredArray }));
+            }
             else dispatch(ReduxActions.setUserAction({ addresses: [] }));
         },
         err => {
