@@ -301,6 +301,7 @@ export default (props) => {
             payload = {
                 ...payload,
                 'email': email,
+                'targetPhoneNumber': phoneNumber,
             }
         } else {
             payload = {
@@ -309,7 +310,7 @@ export default (props) => {
             }
         }
         const onSuccess = (res) => {
-            console.log('resendOtp', res);
+            // console.log('resendOtp', res);
             const { statusCode, message } = res.data;
             if (statusCode === 417) return Toast.error(message);
             else {
