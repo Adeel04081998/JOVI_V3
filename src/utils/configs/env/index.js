@@ -1,1 +1,1 @@
-export { env } from './release'
+export { env } from './debug'
