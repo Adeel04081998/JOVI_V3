@@ -327,7 +327,7 @@ export default ({ route }) => {
                 rightIconName={'home'}
                 leftIconColor={colors.black}
             />
-            {__DEV__ && <Animated.View style={{
+            {!__DEV__ && <Animated.View style={{
                 ...styles.container, transform: [{
                     translateY: loadAnimation.interpolate({
                         inputRange: [0, 1],
