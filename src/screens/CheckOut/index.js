@@ -176,7 +176,10 @@ export default () => {
                             "prescriptionImagesID": prescriptionImagesID,
                             ...(newFileIDList.length > 0) && {
                                 "fileIDList": newFileIDList,
-                            }
+                            },
+                            ...item.isPharmacy&&!item.isPickupPitstop?{
+                                "medicineName": item.medicineName,
+                            }:{},
                         }
                     }
                     return {
