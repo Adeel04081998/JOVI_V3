@@ -327,7 +327,7 @@ export default ({ route }) => {
                 rightIconName={'home'}
                 leftIconColor={colors.black}
             />
-            {!__DEV__ && <Animated.View style={{
+            {__DEV__ && <Animated.View style={{
                 ...styles.container, transform: [{
                     translateY: loadAnimation.interpolate({
                         inputRange: [0, 1],
@@ -342,7 +342,8 @@ export default ({ route }) => {
                     route={route}
                     showCurrentLocationBtn={false}
                     showContinueBtn={false}
-                    showDirections={true}
+                    showDirections={false}
+                    showOnlyMarkers={true}
                     markerStyle={styles.mapMarkerStyle}
                     riderLocation={realtimeChangingState.riderLocation}
                     // customCenter={{ latitude: 33.669147010259806, longitude: 73.07375434744728 }}

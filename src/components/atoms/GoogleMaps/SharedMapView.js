@@ -73,7 +73,7 @@ export default (props) => {
     /******************************************* START OF VARIABLE INITIALIZATION **********************************/
 
     console.log('props ==>>>', props);
-    const { showContinueBtn = false, customCenter = null, smoothRiderPlacement = false, riderLocation = null, selectFinalDestination = false, hideBackButton = false, newFinalDestination = null, showCurrentLocationBtn = true, showMarker = false, showDirections = true, customPitstops = null } = props;
+    const { showContinueBtn = false, showOnlyMarkers = false, customCenter = null, smoothRiderPlacement = false, riderLocation = null, selectFinalDestination = false, hideBackButton = false, newFinalDestination = null, showCurrentLocationBtn = true, showMarker = false, showDirections = true, customPitstops = null } = props;
 
     const HEIGHT = constants.window_dimensions.height;
     const WIDTH = constants.window_dimensions.width;
@@ -399,6 +399,7 @@ export default (props) => {
                 <_Direction
                     pitstops={pitstops}
                     showDirections={showDirections}
+                    showOnlyMarkers={showOnlyMarkers}
                     customPitstops={customPitstops}
                     userReducer={userReducer}
                     setLocation={setLocation}
@@ -516,7 +517,41 @@ export default (props) => {
     /******************************************* END OF MAIN UI **********************************/
 
 }
-const _Direction = React.memo(({ pitstops = [], setLocation = () => { }, customPitstops = [], userReducer = {}, showDirections }) => {
+const _Direction = React.memo(({ pitstops = [], setLocation = () => { }, customPitstops = [], userReducer = {},showOnlyMarkers, showDirections }) => {
+    const renderMarkers = (pitstop, index) => {
+        return <Marker identifier={`marker ${index + 1}`} key={`marker-key${index + 1}`} coordinate={pitstop} anchor={{ x: 0.46, y: 0.7 }}>
+            {
+                pitstop.isFinalDestination ? <View>
+                    <SvgXml xml={FINAL_DESTINATION_SVG} height={35} width={35} />
+                </View>
+                    :
+                    <View style={{
+                        backgroundColor: "#fff",
+                        borderRadius: 10,
+                        width: 30,
+                        height: 30,
+                        shadowColor: '#7359BE',
+                        shadowOffset: {
+                            width: 0,
+                            height: 2,
+                        },
+                        borderWidth: 2,
+                        shadowOpacity: 0.25,
+                        shadowRadius: 3.84,
+                        elevation: 5,
+                        borderColor: initColors.primary
+                    }}>
+                        <Text style={{
+                            paddingVertical: 2.5,
+                            fontWeight: "bold",
+                            alignSelf: "center",
+                            fontSize: 16,
+                            color: initColors.primary
+                        }}>{index + 1}</Text>
+                    </View>
+            }
+        </Marker>
+    }
     const renderDirection = (pitstop, index) => {
         return (<>
             <Marker identifier={`marker ${index + 1}`} key={`marker-key${index + 1}`} coordinate={pitstop} anchor={{ x: 0.46, y: 0.7 }}>
@@ -599,7 +634,15 @@ const _Direction = React.memo(({ pitstops = [], setLocation = () => { }, customP
             </View>
         })
             : null
-    } else return null;
+    } else if (showOnlyMarkers) {
+        return pitstops.length > 0 ? (pitstops || []).map((pitstop, index) => {
+            return isIOS ? renderMarkers(pitstop, index) : <View key={index}>
+                {renderMarkers(pitstop, index)}
+            </View>
+        })//this logic needs to be updated after pushed live
+            : null;
+    }
+    else return null;
 }, (p, n) => p !== n);
 
 /******************************************* START OF STYLES **********************************/
