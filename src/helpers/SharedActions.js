@@ -1540,3 +1540,13 @@ export const sharedDiscountsProvider = (item = {}) => {
 }
 
 
+
+export const sharedReconsilePayment = (successCb = (res) => { }, errorCb = (err) => { }, showLoader = false) => {
+    getRequest(Endpoints.PAYMENT_RECONCILE, (reconcileResposne) => {
+        console.log('reconcileResposne--- ', reconcileResposne);
+        successCb(reconcileResposne);
+    }, (reconcileError) => {
+        errorCb(reconcileError);
+    }, {}, showLoader);
+
+};

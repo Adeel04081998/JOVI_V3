@@ -2,7 +2,7 @@ import React from "react";
 import svgs from "../assets/svgs";
 import constants from "../res/constants";
 let initUrlRef = React.createRef(null);
-initUrlRef.current = __DEV__ ? constants.url_live : constants.url_live;
+initUrlRef.current = __DEV__ ? constants.url_live : constants.url_qa;
 export const PITSTOP_TYPES = {
     DEFAULT: 0,
     SUPER_MARKET: 1,

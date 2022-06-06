@@ -17,13 +17,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import AnimatedLottieView from 'lottie-react-native';
 import { getRequest, postRequest } from '../../manager/ApiManager';
 import Endpoints from '../../manager/Endpoints';
-import { isNextPage, sharedExceptionHandler } from '../../helpers/SharedActions';
+import { isNextPage, sharedExceptionHandler, sharedReconsilePayment } from '../../helpers/SharedActions';
 import NoRecord from '../../components/organisms/NoRecord';
 import Button from '../../components/molecules/Button';
 import TouchableScale from '../../components/atoms/TouchableScale';
 import VectorIcon from '../../components/atoms/VectorIcon';
 import actions from '../../redux/actions';
 import GenericLottieLoader from '../../components/atoms/GenericLottieLoader';
+import { useIsFocused } from '@react-navigation/native';
 
 const DEFAULT_PAGINATION_INFO = { totalItem: 0, itemPerRequest: 20, currentRequestNumber: 1 };
 
@@ -46,6 +47,15 @@ export default () => {
         errorText: '',
         refreshing: false,
     });
+
+    // #region :: useEffect - SCREEN FOCUSED START's FROM HERE
+    const isFocused = useIsFocused();
+    React.useEffect(() => {
+        sharedReconsilePayment();
+        return () => { };
+    }, [isFocused]);
+
+    // #endregion :: useEffect - SCREEN FOCUSEdsD END's FROM HERE 
 
     React.useEffect(() => {
         loadTransactionList();
@@ -106,7 +116,7 @@ export default () => {
                 });
             } else {
                 updateQuery({
-                    errorText: sharedExceptionHandler(res,true),
+                    errorText: sharedExceptionHandler(res, true),
                     error: true,
                     isLoading: false,
                     refreshing: false,

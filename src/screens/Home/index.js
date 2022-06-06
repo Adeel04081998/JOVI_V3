@@ -13,7 +13,7 @@ import GenericList from '../../components/molecules/GenericList';
 import ImageCarousel from '../../components/molecules/ImageCarousel';
 import VendorOpening from "../../components/organisms/Overlays/VendorOpening";
 import { sharedExceptionHandler, sharedGetPendingOrderRating, sharedOrderNavigation, uniqueKeyExtractor } from "../../helpers/SharedActions";
-import { getRequest } from "../../manager/ApiManager";
+import { getRequest, postRequest } from "../../manager/ApiManager";
 import Endpoints from "../../manager/Endpoints";
 import NavigationService from "../../navigations/NavigationService";
 import ROUTES from "../../navigations/ROUTES";
@@ -118,6 +118,23 @@ export default () => {
             });
         }
     }, [loaderVisible, userReducer?.finalDestObj]);
+    React.useEffect(() => {       
+        if (userReducer?.finalDestObj?.latitude) {
+            postRequest(Endpoints.AreaRestriction, {
+                "latitude":userReducer?.finalDestObj?.latitude,
+                "latitudeDelta": 0,
+                "longitude": userReducer?.finalDestObj?.longitude,
+                "longitudeDelta": 0,
+                "skipGoogleHit":true,
+            }, (res) => {
+                console.log('[AreaRestriction]',res,userReducer?.finalDestObj);
+            }, (err) => { 
+                console.log('[AreaRestriction]',err,userReducer?.finalDestObj);
+
+            }, {}, false);
+        }
+    }, [userReducer?.finalDestObj]);
+
     React.useEffect(() => {
         if (!isFocused) {
             dispatch(ReduxActions.hideRobotAction());
