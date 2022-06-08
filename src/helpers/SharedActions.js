@@ -186,6 +186,35 @@ export const sharedGetUserDetailsApi = () => {
         false,
     );
 };
+export const sharedCheckAppVersion = (notAllowedCB = () => {}) => {
+    postRequest(
+        Endpoints.APP_VERSION_CHECK,
+        {
+            "appType": 1,
+            "version": constants.app_version,
+            "os": Platform.OS
+        },
+        res => {
+            console.log("[APP_VERSION_CHECK].res", res);
+        },
+        error => {
+            console.log('error',error);
+            if (error?.data?.statusCode === 417) {
+                const versionUpdateURL = (
+                    (Platform.OS === "android") ?
+                        "market://details?id=com.jovi"
+                        :
+                        "itms-apps://apps.apple.com/id/app/halojasa/id1558160505?l=id"
+                );
+                if (error?.data?.updateFromPlayStore && notAllowedCB) {
+                    notAllowedCB(versionUpdateURL, error?.data?.updateFromPlayStore);
+                }
+            }
+        },
+        {},
+        false,
+    );
+};
 export const fetchRobotJson = (url, cb = () => { }) => {
     // fetch('https://cloud-ex42.usaupload.com/5OSX/Robot_-_With_Shape_Layer_Text.json?download_token=5c263b7ebfac80573376d00e6ee5ce29f3d822a4d3addb5209b2e6f4cfa3a8ed', {
     fetch(renderFile(url), {

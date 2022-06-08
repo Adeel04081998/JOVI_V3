@@ -80,7 +80,8 @@ export default {
     "ERROR_LOGGER": "api/ErrorLog/FrontEndError/AddOrUpdate",
     "GET_COUNTRY_CODES_LIST": "api/Common/OTPCountryCodes",
     "GET_BALANCE": "api/Payment/Wallet/Balance",//USED IN TOP UP
-    "LOGOUT_USER": "api/User/logout"
+    "LOGOUT_USER": "api/User/logout",
+    "APP_VERSION_CHECK":"api/Common/CheckAppVersion",
 }
 
 

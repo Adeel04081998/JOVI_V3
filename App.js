@@ -1,6 +1,6 @@
 import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
 import React, { useEffect } from 'react';
-import { LogBox, Platform, StatusBar, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
+import { Alert, Linking, LogBox, Platform, StatusBar, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
 import CodePush from "react-native-code-push"; //for codepush
 import Geolocation from 'react-native-geolocation-service';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -28,7 +28,7 @@ import View from './src/components/atoms/View';
 import BaseUrlPrompt from "./src/components/molecules/BaseUrlPrompt";
 import CustomAlert from "./src/components/molecules/CustomAlert";
 import Robot from './src/components/organisms/Robot';
-import { sharedClearReducers, sharedGetDashboardCategoryIApi, sharedGetEnumsApi, sharedGetFilters, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetRiderRatingReasonsList, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedSendFCMTokenToServer } from './src/helpers/SharedActions';
+import { sharedCheckAppVersion, sharedClearReducers, sharedConfirmationAlert, sharedGetDashboardCategoryIApi, sharedGetEnumsApi, sharedGetFilters, sharedGetHomeMsgsApi, sharedGetPromotions, sharedGetRiderRatingReasonsList, sharedGetUserAddressesApi, sharedGetUserDetailsApi, sharedSendFCMTokenToServer } from './src/helpers/SharedActions';
 import { postRequest } from './src/manager/ApiManager';
 import RootStack from "./src/navigations";
 import NavigationService, { _NavgationRef } from './src/navigations/NavigationService';
@@ -302,6 +302,34 @@ const SharedGetApis = ({ }) => {
         };
     }, [])
     React.useEffect(() => {
+        sharedCheckAppVersion((url = '', forceUpdate = false) => {
+            if (url && forceUpdate) {
+                sharedConfirmationAlert('Update Required!', `It's Time to Update Your JOVI App.`, null, {
+                }, {
+                    cancelable:false,
+                    hideCrossIcon:true,
+                    closePopupOnSuccess:false,
+                    showBubbleImage:false,
+                    customOkButtonStyle:{
+                        width: 170,
+                    },
+                    okButton: {
+                        text: "Update Now", onPress: () => {
+                            Linking.canOpenURL(url).then((supported) => {
+                                if (supported) {
+                                    Linking.openURL(url);
+                                }
+                                else {
+                                    Alert.alert(`Cannot Open URL to Update the App!`);
+                                }
+                            });
+                        },
+                        
+
+                    },
+                });
+            }
+        });
         if (isLoggedIn) {
             sharedGetUserDetailsApi();
             sharedGetDashboardCategoryIApi();
@@ -309,7 +337,7 @@ const SharedGetApis = ({ }) => {
             sharedGetUserAddressesApi();
             sharedGetPromotions();
             sharedGetFilters();
-            sharedGetRiderRatingReasonsList()
+            sharedGetRiderRatingReasonsList();
             const pushNotification = (notify = {}) => {
                 if (notify.data) {
                     localNotificationService.showNotification(0, notify.notification.title, notify.notification.body, notify, {

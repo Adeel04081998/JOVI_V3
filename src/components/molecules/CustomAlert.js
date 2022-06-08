@@ -14,7 +14,7 @@ import View from "../atoms/View";
 
 const width = constants.screen_dimensions.width;
 export default ({ customAlertDetails = {} }) => {
-    const { title = '', message = '', okButton, cancelButton, cancelable = true, customColors = null, CustomComponent = null } = customAlertDetails;
+    const { title = '', message = '', okButton, cancelButton,showBubbleImage=true, customOkButtonStyle={},closePopupOnSuccess = true, cancelable = true, hideCrossIcon = false, customColors = null, CustomComponent = null } = customAlertDetails;
     const alertAnimation = React.useRef(new Animated.Value(0)).current;
     const colors = customColors ?? theme.getTheme(ENUMS.PITSTOP_TYPES[0].value);
     const dispatch = useDispatch();
@@ -52,11 +52,11 @@ export default ({ customAlertDetails = {} }) => {
             <View style={styles.parentView}>
                 <View style={styles.headerContainer}>
                     <Text style={{ color: colors.white }}>{title}</Text>
-                    <TouchableOpacity onPress={closeCustomAlert}>
+                    {!hideCrossIcon && <TouchableOpacity onPress={closeCustomAlert}>
                         <VectorIcon color={colors.white} name={'cross'} type={'Entypo'} />
-                    </TouchableOpacity>
+                    </TouchableOpacity>}
                 </View>
-                <View style={styles.bodyContainer}>
+                <View style={{...styles.bodyContainer,paddingBottom:showBubbleImage?40:15}}>
                     {
                         CustomComponent ?
                             (CustomComponent)
@@ -76,12 +76,14 @@ export default ({ customAlertDetails = {} }) => {
                                     </TouchableOpacity>}
                                     {okButton && <TouchableOpacity
                                         onPress={() => {
-                                            closeCustomAlert();
+                                            if (closePopupOnSuccess) {
+                                                closeCustomAlert();
+                                            }
                                             if (okButton.onPress) {
                                                 okButton.onPress();
                                             }
                                         }}
-                                        style={styles.okButton}
+                                        style={[styles.okButton,customOkButtonStyle]}
                                     >
                                         <Text style={{ color: colors.white }}>{okButton.text}</Text>
                                     </TouchableOpacity>}
@@ -89,14 +91,14 @@ export default ({ customAlertDetails = {} }) => {
                             </>
                     }
                 </View>
-                <SvgXml style={styles.bubbleSvg} xml={svgs.BubblesToastIcon(colors.primary)} />
+                {showBubbleImage&&<SvgXml style={styles.bubbleSvg} xml={svgs.BubblesToastIcon(colors.primary)} />}
             </View>
         </Animated.View>
     );
 };
 
 const _styles = (colors = {}) => StyleSheet.create({
-    container: {flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center'},
+    container: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' },
     parentView: {
         width: width * 0.9,
         backgroundColor: colors.white,
